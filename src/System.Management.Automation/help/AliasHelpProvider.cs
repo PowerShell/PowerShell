@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -40,7 +40,7 @@ namespace System.Management.Automation
         /// of wildcard search patterns. This is currently not achievable
         /// through _commandDiscovery.
         /// </remarks>
-        private SessionState _sessionState;
+        private readonly SessionState _sessionState;
 
         /// <summary>
         /// Command Discovery object for current session.
@@ -50,7 +50,7 @@ namespace System.Management.Automation
         /// The AliasInfo object returned from _commandDiscovery is essential
         /// in creating AliasHelpInfo.
         /// </remarks>
-        private CommandDiscovery _commandDiscovery;
+        private readonly CommandDiscovery _commandDiscovery;
 
         #region Common Properties
 
@@ -141,7 +141,7 @@ namespace System.Management.Automation
             {
                 string target = helpRequest.Target;
                 string pattern = target;
-                Hashtable hashtable = new Hashtable(StringComparer.OrdinalIgnoreCase);
+                var allAliases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                 if (!WildcardPattern.ContainsWildcardCharacters(target))
                 {
@@ -161,7 +161,7 @@ namespace System.Management.Automation
                         foreach (HelpInfo helpInfo in ExactMatchHelp(exactMatchHelpRequest))
                         {
                             // Component/Role/Functionality match is done only for SearchHelp
-                            // as "get-help * -category alias" should not forwad help to
+                            // as "get-help * -category alias" should not forward help to
                             // CommandHelpProvider..(ExactMatchHelp does forward help to
                             // CommandHelpProvider)
                             if (!Match(helpInfo, helpRequest))
@@ -169,12 +169,12 @@ namespace System.Management.Automation
                                 continue;
                             }
 
-                            if (hashtable.ContainsKey(name))
+                            if (allAliases.Contains(name))
                             {
                                 continue;
                             }
 
-                            hashtable.Add(name, null);
+                            allAliases.Add(name);
 
                             yield return helpInfo;
                         }
@@ -208,7 +208,7 @@ namespace System.Management.Automation
                         foreach (HelpInfo helpInfo in ExactMatchHelp(exactMatchHelpRequest))
                         {
                             // Component/Role/Functionality match is done only for SearchHelp
-                            // as "get-help * -category alias" should not forwad help to
+                            // as "get-help * -category alias" should not forward help to
                             // CommandHelpProvider..(ExactMatchHelp does forward help to
                             // CommandHelpProvider)
                             if (!Match(helpInfo, helpRequest))
@@ -216,12 +216,12 @@ namespace System.Management.Automation
                                 continue;
                             }
 
-                            if (hashtable.ContainsKey(name))
+                            if (allAliases.Contains(name))
                             {
                                 continue;
                             }
 
-                            hashtable.Add(name, null);
+                            allAliases.Add(name);
 
                             yield return helpInfo;
                         }
@@ -243,12 +243,12 @@ namespace System.Management.Automation
 
                         HelpInfo helpInfo = AliasHelpInfo.GetHelpInfo(alias);
 
-                        if (hashtable.ContainsKey(name))
+                        if (allAliases.Contains(name))
                         {
                             continue;
                         }
 
-                        hashtable.Add(name, null);
+                        allAliases.Add(name);
 
                         yield return helpInfo;
                     }
@@ -261,7 +261,7 @@ namespace System.Management.Automation
             if (helpRequest == null)
                 return true;
 
-            if (0 == (helpRequest.HelpCategory & helpInfo.HelpCategory))
+            if ((helpRequest.HelpCategory & helpInfo.HelpCategory) == 0)
             {
                 return false;
             }

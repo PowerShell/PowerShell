@@ -1,0 +1,32 @@
+<!--=================================================================
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+==================================================================-->
+
+<Window x:Class="Microsoft.PowerShell.Commands.ShowCommandInternal.ShowCommandWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:this="clr-namespace:Microsoft.PowerShell.Commands.ShowCommandInternal"
+        xmlns:default="clr-namespace:"
+        xmlns:sc="clr-namespace:Microsoft.Management.UI.Internal"
+        MinWidth="300" MinHeight="300"
+        Title="{Binding Name}" Width="380" Height="450">
+    <Grid Margin="3" x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <this:CmdletControl Grid.Row="0"></this:CmdletControl>
+        <Grid x:Name="ButtonsGrid" Grid.Row="1" IsSharedSizeScope="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="ButtonsColumns"/>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="ButtonsColumns"/>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="ButtonsColumns"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="Run" IsDefault="True" Grid.Column="1" Margin="3" IsEnabled="{Binding Path=SelectedParameterSetAllMandatoryParametersHaveValues}" AutomationProperties.AutomationId="btnRun" Content="{x:Static default:ShowCommandResources.ActionButtons_Button_Run}"/>
+            <Button x:Name="Copy" Grid.Column="2" Margin="2" AutomationProperties.AutomationId="btnCopy" Content="{x:Static default:ShowCommandResources.ActionButtons_Button_Copy}"></Button>
+            <Button x:Name="Cancel" IsCancel="True" Grid.Column="3" Margin="3" AutomationProperties.AutomationId="btnCancel" Content="{x:Static default:ShowCommandResources.ActionButtons_Button_Cancel}"></Button>
+        </Grid>
+    </Grid>
+</Window>

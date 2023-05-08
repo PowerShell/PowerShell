@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Xml;
@@ -42,7 +42,7 @@ namespace System.Management.Automation
         /// <summary>
         /// PSObject representation on help.
         /// </summary>
-        private PSObject _fullHelpObject;
+        private readonly PSObject _fullHelpObject;
 
         #region Load
 
@@ -86,7 +86,7 @@ namespace System.Management.Automation
         internal MamlClassHelpInfo Copy(HelpCategory newCategoryToUse)
         {
             MamlClassHelpInfo result = new MamlClassHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);
-            result.FullHelp.Properties["Category"].Value = newCategoryToUse;
+            result.FullHelp.Properties["Category"].Value = newCategoryToUse.ToString();
             return result;
         }
 

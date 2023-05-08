@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -6,6 +6,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Security;
 using Microsoft.Management.Infrastructure;
+using Microsoft.PowerShell;
 using Xunit;
 
 namespace PowerShell.Hosting.SDK.Tests
@@ -50,7 +51,7 @@ namespace PowerShell.Hosting.SDK.Tests
 
                 foreach (dynamic item in results)
                 {
-                    Assert.Equal(6,item);
+                    Assert.Equal(6, item);
                 }
             }
         }
@@ -138,6 +139,86 @@ namespace PowerShell.Hosting.SDK.Tests
             {
                 File.Delete(target);
             }
+        }
+
+        /// <summary>
+        /// Reference assemblies should be handled correctly so that Add-Type works in the hosting scenario.
+        /// </summary>
+        [Fact]
+        public static void TestAddTypeCmdletInHostScenario()
+        {
+            string code = @"
+                using System;
+                public class Foo
+                {
+                    public Foo(string name, string path)
+                    {
+                        this.Name = name;
+                        this.Path = path;
+                    }
+
+                    public string Name;
+                    public string Path;
+                }
+            ";
+
+            using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
+            {
+                ps.AddCommand("Add-Type").AddParameter("TypeDefinition", code).Invoke();
+                ps.Commands.Clear();
+
+                var results = ps.AddScript("[Foo]::new('Joe', 'Unknown')").Invoke();
+                Assert.Single(results);
+
+                dynamic foo = results[0];
+                Assert.Equal("Joe", foo.Name);
+                Assert.Equal("Unknown", foo.Path);
+            }
+        }
+
+        [Fact]
+        public static void TestConsoleShellScenario()
+        {
+            int ret = ConsoleShell.Start("Hello", string.Empty, new string[] { "-noprofile", "-c", "exit 42" });
+            Assert.Equal(42, ret);
+        }
+
+        /* Test disabled because CommandLineParser is static and can only be initialized once (above in TestConsoleShellScenario)
+        /// <summary>
+        /// ConsoleShell cannot start with both InitialSessionState and -ConfigurationFile argument configurations specified.
+        /// </summary>
+        [Fact]
+        public static void TestConsoleShellConfigConflictError()
+        {
+            var iss = System.Management.Automation.Runspaces.InitialSessionState.CreateDefault2();
+            int ret = ConsoleShell.Start(iss, "BannerText", string.Empty, new string[] { @"-ConfigurationFile ""noneSuch""" });
+            Assert.Equal(70, ret);  // ExitCodeInitFailure.
+        }
+        */
+
+        [Fact]
+        public static void TestBuiltInModules()
+        {
+            var iss = System.Management.Automation.Runspaces.InitialSessionState.CreateDefault2();
+            if (System.Management.Automation.Platform.IsWindows)
+            {
+                iss.ExecutionPolicy = Microsoft.PowerShell.ExecutionPolicy.RemoteSigned;
+            }
+
+            using var runspace = System.Management.Automation.Runspaces.RunspaceFactory.CreateRunspace(iss);
+            runspace.Open();
+
+            using var ps = System.Management.Automation.PowerShell.Create(runspace);
+            var results_1 = ps.AddScript("Write-Output Hello > $null; Get-Module").Invoke<System.Management.Automation.PSModuleInfo>();
+            Assert.Single(results_1);
+
+            var module = results_1[0];
+            Assert.Equal("Microsoft.PowerShell.Utility", module.Name);
+
+            ps.Commands.Clear();
+            var results_2 = ps.AddScript("Join-Path $PSHOME 'Modules' 'Microsoft.PowerShell.Utility' 'Microsoft.PowerShell.Utility.psd1'").Invoke<string>();
+            var moduleManifestPath = results_2[0];
+            Assert.Equal(moduleManifestPath, module.Path, ignoreCase: true);
         }
     }
 }

@@ -1,7 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -11,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// The implementation of the "new-alias" cmdlet.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "Alias", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113352")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097022")]
     [OutputType(typeof(AliasInfo))]
     public class NewAliasCommand : WriteAliasCommandBase
     {
@@ -44,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
                     // Since the alias already exists, write an error.
 
                     SessionStateException aliasExists =
-                        new SessionStateException(
+                        new(
                             Name,
                             SessionStateCategory.Alias,
                             "AliasAlreadyExists",
@@ -62,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
             // Create the alias info
 
             AliasInfo newAlias =
-                new AliasInfo(
+                new(
                     Name,
                     Value,
                     Context,

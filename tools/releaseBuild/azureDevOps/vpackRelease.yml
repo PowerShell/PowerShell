@@ -1,0 +1,68 @@
+name: vpack-$(Build.BuildId)
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+pr:
+  branches:
+    include:
+    - master
+    - release*
+
+variables:
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+  - group: Azure Blob variable group
+  # adds the pat to publish the vPack
+  # instructions to create are in the description of the library
+  - group: vPack
+
+
+stages:
+- stage: prep
+  displayName: Create buildInfo and name the Pipeline
+  jobs:
+  - job: rename
+    displayName: Name the build
+    condition: succeeded()
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    steps:
+    - checkout: self
+      clean: true
+
+    - template: ./templates/SetVersionVariables.yml
+      parameters:
+        ReleaseTagVar: $(ReleaseTagVar)
+        CreateJson: yes
+        UseJson: no
+
+    - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
+      displayName: Set Build Name for Non-PR
+      condition: ne(variables['Build.Reason'], 'PullRequest')
+
+- stage: release
+  displayName: Release
+  jobs:
+  - template: ./templates/vpackReleaseJob.yml
+    parameters:
+      architecture: x64
+
+  - template: ./templates/vpackReleaseJob.yml
+    parameters:
+      architecture: x86
+
+  - template: ./templates/vpackReleaseJob.yml
+    parameters:
+      architecture: arm32
+
+  - template: ./templates/vpackReleaseJob.yml
+    parameters:
+      architecture: arm64

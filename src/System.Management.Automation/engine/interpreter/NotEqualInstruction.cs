@@ -43,7 +43,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((SByte)frame.Pop()) != ((SByte)frame.Pop()));
+                frame.Push(((sbyte)frame.Pop()) != ((sbyte)frame.Pop()));
                 return +1;
             }
         }
@@ -88,7 +88,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Byte)frame.Pop()) != ((Byte)frame.Pop()));
+                frame.Push(((byte)frame.Pop()) != ((byte)frame.Pop()));
                 return +1;
             }
         }
@@ -133,7 +133,7 @@ namespace System.Management.Automation.Interpreter
         {
             public override int Run(InterpretedFrame frame)
             {
-                frame.Push(((Double)frame.Pop()) != ((Double)frame.Pop()));
+                frame.Push(((double)frame.Pop()) != ((double)frame.Pop()));
                 return +1;
             }
         }
@@ -154,25 +154,25 @@ namespace System.Management.Automation.Interpreter
             var typeToUse = type.IsEnum ? Enum.GetUnderlyingType(type) : type;
             switch (typeToUse.GetTypeCode())
             {
-                case TypeCode.Boolean: return s_boolean ?? (s_boolean = new NotEqualBoolean());
-                case TypeCode.SByte: return s_SByte ?? (s_SByte = new NotEqualSByte());
-                case TypeCode.Byte: return s_byte ?? (s_byte = new NotEqualByte());
-                case TypeCode.Char: return s_char ?? (s_char = new NotEqualChar());
-                case TypeCode.Int16: return s_int16 ?? (s_int16 = new NotEqualInt16());
-                case TypeCode.Int32: return s_int32 ?? (s_int32 = new NotEqualInt32());
-                case TypeCode.Int64: return s_int64 ?? (s_int64 = new NotEqualInt64());
+                case TypeCode.Boolean: return s_boolean ??= new NotEqualBoolean();
+                case TypeCode.SByte: return s_SByte ??= new NotEqualSByte();
+                case TypeCode.Byte: return s_byte ??= new NotEqualByte();
+                case TypeCode.Char: return s_char ??= new NotEqualChar();
+                case TypeCode.Int16: return s_int16 ??= new NotEqualInt16();
+                case TypeCode.Int32: return s_int32 ??= new NotEqualInt32();
+                case TypeCode.Int64: return s_int64 ??= new NotEqualInt64();
 
-                case TypeCode.UInt16: return s_UInt16 ?? (s_UInt16 = new NotEqualInt16());
-                case TypeCode.UInt32: return s_UInt32 ?? (s_UInt32 = new NotEqualInt32());
-                case TypeCode.UInt64: return s_UInt64 ?? (s_UInt64 = new NotEqualInt64());
+                case TypeCode.UInt16: return s_UInt16 ??= new NotEqualInt16();
+                case TypeCode.UInt32: return s_UInt32 ??= new NotEqualInt32();
+                case TypeCode.UInt64: return s_UInt64 ??= new NotEqualInt64();
 
-                case TypeCode.Single: return s_single ?? (s_single = new NotEqualSingle());
-                case TypeCode.Double: return s_double ?? (s_double = new NotEqualDouble());
+                case TypeCode.Single: return s_single ??= new NotEqualSingle();
+                case TypeCode.Double: return s_double ??= new NotEqualDouble();
 
                 case TypeCode.Object:
                     if (!type.IsValueType)
                     {
-                        return s_reference ?? (s_reference = new NotEqualReference());
+                        return s_reference ??= new NotEqualReference();
                     }
                     // TODO: Nullable<T>
                     throw new NotImplementedException();
@@ -188,4 +188,3 @@ namespace System.Management.Automation.Interpreter
         }
     }
 }
-

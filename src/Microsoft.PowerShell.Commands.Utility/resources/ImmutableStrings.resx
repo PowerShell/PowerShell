@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -117,31 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArrayInitializedStateNotEqual" xml:space="preserve">
-    <value>Object is not a array with the same initialization state as the array to compare it to.</value>
-  </data>
-  <data name="ArrayLengthsNotEqual" xml:space="preserve">
-    <value>Object is not a array with the same number of elements as the array to compare it to.</value>
-  </data>
-  <data name="CannotFindOldValue" xml:space="preserve">
-    <value>Cannot find the old value</value>
-  </data>
-  <data name="CapacityMustBeGreaterThanOrEqualToCount" xml:space="preserve">
-    <value>Capacity was less than the current Count of elements.</value>
-  </data>
-  <data name="CapacityMustEqualCountOnMove" xml:space="preserve">
-    <value>MoveToImmutable can only be performed when Count equals Capacity.</value>
-  </data>
-  <data name="CollectionModifiedDuringEnumeration" xml:space="preserve">
-    <value>Collection was modified; enumeration operation may not execute.</value>
-  </data>
   <data name="DuplicateKey" xml:space="preserve">
     <value>An element with the same key but a different value already exists. Key: {0}</value>
-  </data>
-  <data name="InvalidEmptyOperation" xml:space="preserve">
-    <value>This operation does not apply to an empty instance.</value>
-  </data>
-  <data name="InvalidOperationOnDefaultArray" xml:space="preserve">
-    <value>This operation cannot be performed on a default instance of ImmutableArray&lt;T&gt;.  Consider initializing the array, or checking the ImmutableArray&lt;T&gt;.IsDefault property.</value>
   </data>
 </root>

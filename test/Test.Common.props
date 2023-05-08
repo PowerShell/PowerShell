@@ -1,15 +1,27 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\Analyzers.props" />
+
   <PropertyGroup>
     <Product>PowerShell Test</Product>
     <Company>Microsoft Corporation</Company>
-    <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
+    <Copyright>(c) Microsoft Corporation.</Copyright>
 
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-    <LangVersion>8.0</LangVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>11.0</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsWindows Condition="'$(OS)' == 'Windows_NT'">true</IsWindows>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <DisableImplicitNamespaceImports_DotNet>true</DisableImplicitNamespaceImports_DotNet>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Features>strict</Features>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(IsWindows)' != 'true' ">

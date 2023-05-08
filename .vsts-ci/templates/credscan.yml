@@ -1,20 +1,21 @@
 parameters:
-  pool: 'Hosted VS2017'
+  pool: 'windows-latest'
   jobName: 'credscan'
   displayName: Secret Scan
 
 jobs:
 - job: ${{ parameters.jobName }}
   pool:
-    name: ${{ parameters.pool }}
+    vmImage: ${{ parameters.pool }}
 
   displayName: ${{ parameters.displayName }}
 
   steps:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
-    displayName: 'Scan for secrets'
+    displayName: 'Scan for Secrets'
     inputs:
       suppressionsFile: tools/credScan/suppress.json
+      toolMajorVersion: V2
       debugMode: false
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
@@ -22,7 +23,7 @@ jobs:
     continueOnError: true
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-postanalysis.PostAnalysis@1
-    displayName: 'Check for failures'
+    displayName: 'Check for Failures'
     inputs:
       CredScan: true
       ToolLogsNotFoundAction: Error

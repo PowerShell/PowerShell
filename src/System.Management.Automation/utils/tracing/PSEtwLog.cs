@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -13,9 +13,9 @@ namespace System.Management.Automation.Tracing
     internal static class PSEtwLog
     {
 #if UNIX
-        private static PSSysLogProvider provider;
+        private static readonly PSSysLogProvider provider;
 #else
-        private static PSEtwLogProvider provider;
+        private static readonly PSEtwLogProvider provider;
 #endif
 
         /// <summary>
@@ -119,6 +119,32 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
+        /// Provider interface function for logging AmsiUtil State event.
+        /// </summary>
+        /// <param name="state">This the action performed in AmsiUtil class, like init, scan, etc.</param>
+        /// <param name="context">The amsiContext handled - Session pair.</param>
+        internal static void LogAmsiUtilStateEvent(string state, string context)
+        {
+            provider.LogAmsiUtilStateEvent(state, context);
+        }
+
+        /// <summary>
+        /// Provider interface function for logging WDAC query event.
+        /// </summary>
+        /// <param name="queryName">Name of the WDAC query.</param>
+        /// <param name="fileName">Name of script file for policy query. Can be null value.</param>
+        /// <param name="querySuccess">Query call succeed code.</param>
+        /// <param name="queryResult">Result code of WDAC query.</param>
+        internal static void LogWDACQueryEvent(
+            string queryName,
+            string fileName,
+            int querySuccess,
+            int queryResult)
+        {
+            provider.LogWDACQueryEvent(queryName, fileName, querySuccess, queryResult);
+        }
+
+        /// <summary>
         /// Provider interface function for logging settings event.
         /// </summary>
         /// <param name="logContext"></param>
@@ -218,8 +244,8 @@ namespace System.Management.Automation.Tracing
         {
             if (provider.IsEnabled(PSLevel.Verbose, keyword))
             {
-                string payLoadData = BitConverter.ToString(fragmentData.blob, fragmentData.offset, fragmentData.length);
-                payLoadData = string.Format(CultureInfo.InvariantCulture, "0x{0}", payLoadData.Replace("-", string.Empty));
+                string payLoadData = Convert.ToHexString(fragmentData.blob, fragmentData.offset, fragmentData.length);
+                payLoadData = string.Create(CultureInfo.InvariantCulture, $"0x{payLoadData}");
 
                 provider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Verbose, task, keyword,
                                     objectId, fragmentId, isStartFragment, isEndFragment, fragmentLength,

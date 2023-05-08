@@ -1,0 +1,121 @@
+parameters:
+  buildArchitecture: 'x64'
+
+jobs:
+  - job: MacFileSigningJob_${{ parameters.buildArchitecture }}
+    displayName: macOS File signing ${{ parameters.buildArchitecture }}
+    condition: succeeded()
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    variables:
+      - group: ESRP
+      - name: runCodesignValidationInjection
+        value: false
+      - name: NugetSecurityAnalysisWarningLevel
+        value: none
+      - name: repoFolder
+        value: PowerShell
+      - name: repoRoot
+        value: $(Agent.BuildDirectory)\$(repoFolder)
+      - name: complianceRepoFolder
+        value: compliance
+
+    steps:
+    - checkout: self
+      clean: true
+      path: $(repoFolder)
+
+    - checkout: ComplianceRepo
+      clean: true
+      path: $(complianceRepoFolder)
+
+    - template: SetVersionVariables.yml
+      parameters:
+        ReleaseTagVar: $(ReleaseTagVar)
+
+    - template: shouldSign.yml
+
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        artifactName: 'macosBinResults'
+        itemPattern: '**/*.zip'
+        downloadPath: '$(System.ArtifactsDirectory)\Symbols'
+
+    - pwsh: |
+        Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+      displayName: 'Capture Downloaded Artifacts'
+      # Diagnostics is not critical it passes every time it runs
+      continueOnError: true
+
+    - pwsh: |
+        $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*${{ parameters.buildArchitecture }}*.zip'
+        Write-Verbose -Verbose "Zip Path: $zipPath"
+
+        $expandedFolder = $zipPath.BaseName
+        Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
+        Write-Host "##vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
+
+        Expand-Archive -Path $zipPath -Destination "$(System.ArtifactsDirectory)\$expandedFolder" -Force
+      displayName: Expand symbols zip
+
+    - pwsh: |
+        Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+      displayName: 'Capture artifacts dir Binaries'
+
+    - pwsh: |
+        Get-ChildItem "$(System.ArtifactsDirectory)\$(SymbolsFolder)" -Recurse -Include pwsh, *.dylib
+      displayName: 'Capture Expanded Binaries'
+      # Diagnostics is not critical it passes every time it runs
+      continueOnError: true
+
+    - pwsh: |
+        $null = new-item -type directory -path "$(Build.StagingDirectory)\macos"
+        $zipFile = "$(Build.StagingDirectory)\macos\powershell-files-$(Version)-osx-${{ parameters.buildArchitecture }}.zip"
+        Get-ChildItem "$(System.ArtifactsDirectory)\$(SymbolsFolder)" -Recurse -Include pwsh, *.dylib |
+          Compress-Archive -Destination $zipFile
+        Write-Host $zipFile
+      displayName: 'Compress macOS binary files'
+
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+          buildOutputPath: $(Build.StagingDirectory)\macos
+          signOutputPath: $(Build.StagingDirectory)\signedMacOSPackages
+          certificateId: "CP-401337-Apple"
+          pattern: |
+            **\*.zip
+          useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
+          displayName: Sign macOS Binaries
+
+    - pwsh: |
+        $destination = "$(System.ArtifactsDirectory)\azureMacOs_${{ parameters.buildArchitecture }}"
+        New-Item -Path $destination -Type Directory
+        $zipPath = Get-ChildItem "$(Build.StagingDirectory)\signedMacOSPackages\powershell-*.zip" -Recurse | select-object -expandproperty fullname
+        foreach ($z in $zipPath) { Expand-Archive -Path $z -DestinationPath $destination }
+      displayName: 'Extract and copy macOS artifacts for upload'
+      condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+    - template: upload-final-results.yml
+      parameters:
+        artifactPath: $(System.ArtifactsDirectory)\azureMacOs_${{ parameters.buildArchitecture }}
+        artifactFilter: "*"
+        artifactName: signedMacOsBins_${{ parameters.buildArchitecture }}
+        condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+    - ${{ if eq(variables['SHOULD_SIGN'], 'true') }}:
+      - template: EsrpScan.yml@ComplianceRepo
+        parameters:
+            scanPath: $(System.ArtifactsDirectory)\azureMacOs_${{ parameters.buildArchitecture }}
+            pattern: |
+              **\*
+
+    - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+      displayName: 'Component Detection'
+      inputs:
+        sourceScanPath: '$(repoRoot)\tools'
+        snapshotForceEnabled: true
+
+    - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

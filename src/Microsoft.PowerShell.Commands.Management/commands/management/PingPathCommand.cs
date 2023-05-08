@@ -1,10 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
-
-using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -32,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to determine if an item exists at a specified path.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113418")]
+    [Cmdlet(VerbsDiagnostic.Test, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097057")]
     [OutputType(typeof(bool))]
     public class TestPathCommand : CoreCommandWithCredentialsBase
     {
@@ -64,7 +62,10 @@ namespace Microsoft.PowerShell.Commands
         [AllowEmptyString]
         public string[] LiteralPath
         {
-            get { return _paths; }
+            get
+            {
+                return _paths;
+            }
 
             set
             {
@@ -185,19 +186,21 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool result = false;
 
-                if (path == null)
-                {
-                    WriteError(new ErrorRecord(
-                        new ArgumentNullException(TestPathResources.PathIsNullOrEmptyCollection),
-                        "NullPathNotPermitted",
-                        ErrorCategory.InvalidArgument,
-                        Path));
-                    continue;
-                }
-
                 if (string.IsNullOrWhiteSpace(path))
                 {
-                    WriteObject(result);
+                    if (path is null)
+                    {
+                        WriteError(new ErrorRecord(
+                            new ArgumentNullException(TestPathResources.PathIsNullOrEmptyCollection),
+                            "NullPathNotPermitted",
+                            ErrorCategory.InvalidArgument,
+                            Path));
+                    }
+                    else
+                    {
+                        WriteObject(result);
+                    }
+                    
                     continue;
                 }
 
@@ -247,4 +250,3 @@ namespace Microsoft.PowerShell.Commands
 
     }
 }
-

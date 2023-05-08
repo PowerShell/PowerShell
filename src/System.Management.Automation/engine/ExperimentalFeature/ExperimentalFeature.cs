@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -9,6 +9,7 @@ using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Tracing;
 using System.Runtime.CompilerServices;
+using Microsoft.PowerShell.Telemetry;
 
 namespace System.Management.Automation
 {
@@ -20,6 +21,12 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
+        internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
+        internal const string PSNativeCommandPreserveBytePipe = "PSNativeCommandPreserveBytePipe";
+        internal const string PSModuleAutoLoadSkipOfflineFilesFeatureName = "PSModuleAutoLoadSkipOfflineFiles";
+        internal const string PSCustomTableHeaderLabelDecoration = "PSCustomTableHeaderLabelDecoration";
+        internal const string PSFeedbackProvider = "PSFeedbackProvider";
+        internal const string PSCommandWithArgs = "PSCommandWithArgs";
 
         #endregion
 
@@ -103,16 +110,38 @@ namespace System.Management.Automation
                     description: "Replace the old FileSystemProvider with cleaner design and faster code"),
                 */
                 new ExperimentalFeature(
-                    name: "PSImplicitRemotingBatching",
-                    description: "Batch implicit remoting proxy commands to improve performance"),
-                new ExperimentalFeature(
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
+                new ExperimentalFeature(
+                    name: "PSSubsystemPluginModel",
+                    description: "A plugin model for registering and un-registering PowerShell subsystems"),
+                new ExperimentalFeature(
+                    name: "PSLoadAssemblyFromNativeCode",
+                    description: "Expose an API to allow assembly loading from native code"),
+                new ExperimentalFeature(
+                    name: PSNativeCommandErrorActionPreferenceFeatureName,
+                    description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
+                new ExperimentalFeature(
+                    name: PSModuleAutoLoadSkipOfflineFilesFeatureName,
+                    description: "Module discovery will skip over files that are marked by cloud providers as not fully on disk."),
+                new ExperimentalFeature(
+                    name: PSCustomTableHeaderLabelDecoration,
+                    description: "Formatting differentiation for table header labels that aren't property members"),
+                new ExperimentalFeature(
+                    name: PSNativeCommandPreserveBytePipe,
+                    description: "Byte output is retained when piping between two or more native commands"),
+                new ExperimentalFeature(
+                    name: PSFeedbackProvider,
+                    description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
+                new ExperimentalFeature(
+                    name: PSCommandWithArgs,
+                    description: "Enable `-CommandWithArgs` parameter for pwsh"),
             };
+
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
             // Initialize the readonly dictionary 'EngineExperimentalFeatureMap'.
-            var engineExpFeatureMap = engineFeatures.ToDictionary(f => f.Name, StringComparer.OrdinalIgnoreCase);
+            var engineExpFeatureMap = engineFeatures.ToDictionary(static f => f.Name, StringComparer.OrdinalIgnoreCase);
             EngineExperimentalFeatureMap = new ReadOnlyDictionary<string, ExperimentalFeature>(engineExpFeatureMap);
 
             // Initialize the readonly hashset 'EnabledExperimentalFeatureNames'.
@@ -133,13 +162,30 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// We need to notify which features were not enabled.
+        /// </summary>
+        private static void SendTelemetryForDeactivatedFeatures(ReadOnlyBag<string> enabledFeatures)
+        {
+            foreach (var feature in EngineExperimentalFeatures)
+            {
+                if (!enabledFeatures.Contains(feature.Name))
+                {
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalEngineFeatureDeactivation, feature.Name);
+                }
+            }
+        }
+
+        /// <summary>
         /// Process the array of enabled feature names retrieved from configuration.
         /// Ignore invalid feature names and unavailable engine feature names, and
         /// return an ReadOnlyBag of the valid enabled feature names.
         /// </summary>
         private static ReadOnlyBag<string> ProcessEnabledFeatures(string[] enabledFeatures)
         {
-            if (enabledFeatures.Length == 0) { return ReadOnlyBag<string>.Empty; }
+            if (enabledFeatures.Length == 0)
+            {
+                return ReadOnlyBag<string>.Empty;
+            }
 
             var list = new List<string>(enabledFeatures.Length);
             foreach (string name in enabledFeatures)
@@ -147,6 +193,7 @@ namespace System.Management.Automation
                 if (IsModuleFeatureName(name))
                 {
                     list.Add(name);
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalModuleFeatureActivation, name);
                 }
                 else if (IsEngineFeatureName(name))
                 {
@@ -154,6 +201,7 @@ namespace System.Management.Automation
                     {
                         feature.Enabled = true;
                         list.Add(name);
+                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ExperimentalEngineFeatureActivation, name);
                     }
                     else
                     {
@@ -168,7 +216,9 @@ namespace System.Management.Automation
                 }
             }
 
-            return new ReadOnlyBag<string>(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
+            ReadOnlyBag<string> features = new(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
+            SendTelemetryForDeactivatedFeatures(features);
+            return features;
         }
 
         /// <summary>
@@ -194,7 +244,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsEngineFeatureName(string featureName)
         {
-            return featureName.Length > 2 && featureName.IndexOf('.') == -1 && featureName.StartsWith("PS", StringComparison.Ordinal);
+            return featureName.Length > 2 && !featureName.Contains('.') && featureName.StartsWith("PS", StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -325,20 +375,21 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(experimentName))
             {
-                string paramName = nameof(experimentName);
+                const string paramName = nameof(experimentName);
                 throw PSTraceSource.NewArgumentNullException(paramName, Metadata.ArgumentNullOrEmpty, paramName);
             }
 
             if (experimentAction == ExperimentAction.None)
             {
-                string paramName = nameof(experimentAction);
-                string invalidMember = ExperimentAction.None.ToString();
+                const string paramName = nameof(experimentAction);
+                const string invalidMember = nameof(ExperimentAction.None);
                 string validMembers = StringUtil.Format("{0}, {1}", ExperimentAction.Hide, ExperimentAction.Show);
                 throw PSTraceSource.NewArgumentException(paramName, Metadata.InvalidEnumArgument, invalidMember, paramName, validMembers);
             }
         }
 
         internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
+
         internal bool ToShow => EffectiveAction == ExperimentAction.Show;
 
         /// <summary>

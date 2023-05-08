@@ -1,58 +1,70 @@
 parameters:
-  jobName: 'build_macOS'
+  buildArchitecture: 'x64'
 
 jobs:
-- job: ${{ parameters.jobName }}
-  displayName: Build macOS
+- job: build_macOS_${{ parameters.buildArchitecture }}
+  displayName: Build macOS ${{ parameters.buildArchitecture }}
   condition: succeeded()
-  pool: Hosted Mac Internal
+  pool:
+    vmImage: macos-latest
   variables:
     # Turn off Homebrew analytics
-    HOMEBREW_NO_ANALYTICS: 1
+    - name: HOMEBREW_NO_ANALYTICS
+      value: 1
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - group: DotNetPrivateBuildAccess
   steps:
   #- task: <task type name>@<version>
   #  inputs:
   #    <task specific inputs>
   #  displayName: '<display name of task>'
+  - checkout: self
+    clean: true
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
 
-  - powershell: |
+  - pwsh: |
       # create folder
-      sudo mkdir /PowerShell
+      sudo mkdir "$(Agent.TempDirectory)/PowerShell"
 
       # make the current user the owner
-      sudo chown $env:USER /PowerShell
-    displayName: 'Create /PowerShell'
+      sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
+    displayName: 'Create $(Agent.TempDirectory)/PowerShell'
 
-  - powershell: |
-      Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
-      git clone $env:BUILD_REPOSITORY_LOCALPATH /PowerShell
-    displayName: Clone PowerShell Repo to /PowerShell
+  - template: cloneToOfficialPath.yml
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
 
-  - powershell: |
+  - pwsh: |
       tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
     displayName: 'Bootstrap VM'
+    env:
+      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
-  - powershell: |
-      Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination "$(PowerShellRoot)/src/Modules"
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+    parameters:
+      repoRoot: $(PowerShellRoot)
 
-      if(-not (Test-Path "$(PowerShellRoot)/src/Modules/nuget.config"))
-      {
-          throw "nuget.config is not created"
-      }
-    displayName: 'Add nuget.config for AzDevOps feed for PSGallery modules '
-
-  - powershell: |
-      $env:AZDEVOPSFEEDPAT = '$(AzDevOpsFeedPAT)'
-      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -ExtraPackage "tar" -location $(PowerShellRoot) -Build
-      $env:AZDEVOPSFEEDPAT = $null
-    displayName: 'Build and Package'
+  - pwsh: |
+      $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
+      # Add -SkipReleaseChecks as a mitigation to unblock release.
+      # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
+      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
+      $env:AzDevOpsFeedPAT2 = $null
+    displayName: 'Build'
+    env:
+      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
+      sourceScanPath: '$(Build.SourcesDirectory)/tools'
       snapshotForceEnabled: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

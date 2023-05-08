@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -42,8 +42,10 @@ namespace System.Management.Automation
         /// </summary>
         internal IDictionary<string, AliasInfo> GetAliasTable()
         {
+            // On 7.0 version we have 132 aliases so we set a larger number to reduce re-allocations.
+            const int InitialAliasCount = 150;
             Dictionary<string, AliasInfo> result =
-                new Dictionary<string, AliasInfo>(StringComparer.OrdinalIgnoreCase);
+                new Dictionary<string, AliasInfo>(InitialAliasCount, StringComparer.OrdinalIgnoreCase);
 
             SessionStateScopeEnumerator scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
@@ -253,12 +255,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(aliasName))
             {
-                throw PSTraceSource.NewArgumentException("aliasName");
+                throw PSTraceSource.NewArgumentException(nameof(aliasName));
             }
 
             if (string.IsNullOrEmpty(value))
             {
-                throw PSTraceSource.NewArgumentException("value");
+                throw PSTraceSource.NewArgumentException(nameof(value));
             }
 
             AliasInfo info = _currentScope.SetAliasValue(aliasName, value, this.ExecutionContext, force, origin);
@@ -330,12 +332,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(aliasName))
             {
-                throw PSTraceSource.NewArgumentException("aliasName");
+                throw PSTraceSource.NewArgumentException(nameof(aliasName));
             }
 
             if (string.IsNullOrEmpty(value))
             {
-                throw PSTraceSource.NewArgumentException("value");
+                throw PSTraceSource.NewArgumentException(nameof(value));
             }
 
             AliasInfo info = _currentScope.SetAliasValue(aliasName, value, options, this.ExecutionContext, force, origin);
@@ -403,7 +405,7 @@ namespace System.Management.Automation
         {
             if (alias == null)
             {
-                throw PSTraceSource.NewArgumentNullException("alias");
+                throw PSTraceSource.NewArgumentNullException(nameof(alias));
             }
 
             AliasInfo info = _currentScope.SetAliasItem(alias, force, origin);
@@ -450,7 +452,7 @@ namespace System.Management.Automation
         {
             if (alias == null)
             {
-                throw PSTraceSource.NewArgumentNullException("alias");
+                throw PSTraceSource.NewArgumentNullException(nameof(alias));
             }
 
             // If the "private" scope was specified, make sure the options contain
@@ -524,7 +526,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(aliasName))
             {
-                throw PSTraceSource.NewArgumentException("aliasName");
+                throw PSTraceSource.NewArgumentException(nameof(aliasName));
             }
 
             // Use the scope enumerator to find an existing function
@@ -581,4 +583,3 @@ namespace System.Management.Automation
         #endregion aliases
     }
 }
-

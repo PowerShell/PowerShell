@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
 using mvc.Models;
@@ -86,10 +88,10 @@ namespace mvc.Controllers
             }
             else
             {
-                linkHeader = string.Join(",", linkList);
+                linkHeader = string.Join(',', linkList);
             }
 
-            Response.Headers.Add("Link", linkHeader);
+            Response.Headers.Append("Link", linkHeader);
 
             // Generate /Get/ result and append linknumber, maxlinks, and type
             var getController = new GetController();
@@ -108,7 +110,7 @@ namespace mvc.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private string GetLink(string baseUri, int maxLinks, int linkNumber, string whitespace, string type, string rel)
+        private static string GetLink(string baseUri, int maxLinks, int linkNumber, string whitespace, string type, string rel)
         {
             return string.Format(Constants.LinkUriTemplate, baseUri, maxLinks, linkNumber, type, whitespace, rel);
         }

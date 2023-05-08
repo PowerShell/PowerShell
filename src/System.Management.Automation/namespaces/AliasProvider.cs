@@ -1,7 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
@@ -195,11 +194,7 @@ namespace Microsoft.PowerShell.Commands
                 if (dynamicParametersSpecified)
                 {
                     item = (AliasInfo)GetSessionStateItem(name);
-
-                    if (item != null)
-                    {
-                        item.SetOptions(dynamicParameters.Options, Force);
-                    }
+                    item?.SetOptions(dynamicParameters.Options, Force);
                 }
                 else
                 {
@@ -244,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    throw PSTraceSource.NewArgumentException("value");
+                    throw PSTraceSource.NewArgumentException(nameof(value));
                 } while (false);
             }
 
@@ -332,7 +327,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public ScopedItemOptions Options
         {
-            get { return _options; }
+            get
+            {
+                return _options;
+            }
 
             set
             {
@@ -355,4 +353,3 @@ namespace Microsoft.PowerShell.Commands
         private bool _optionsSet = false;
     }
 }
-

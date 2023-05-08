@@ -19,7 +19,7 @@ Please read the rest of this document to ensure a smooth contribution process.
 
 ## Quick Start Checklist
 
-* Review the [Contribution License Agreement][CLA] requirement.
+* Review the [Contributor License Agreement][CLA] requirement.
 * Get familiar with the [PowerShell repository](../docs/git).
 
 ## Contributing to Issues
@@ -27,7 +27,7 @@ Please read the rest of this document to ensure a smooth contribution process.
 * Review [Issue Management][issue-management].
 * Check if the issue you are going to file already exists in our [GitHub issues][open-issue].
 * If you can't find your issue already,
-  [open a new issue](https://github.com/PowerShell/PowerShell/issues/new),
+  [open a new issue](https://github.com/PowerShell/PowerShell/issues/new/choose),
   making sure to follow the directions as best you can.
 * If the issue is marked as [`Up-for-Grabs`][up-for-grabs],
   the PowerShell Maintainers are looking for help with the issue.
@@ -40,6 +40,32 @@ Please read the rest of this document to ensure a smooth contribution process.
 ### Contributing to documentation related to PowerShell
 
 Please see the [Contributor Guide in `MicrosoftDocs/PowerShell-Docs`](https://github.com/MicrosoftDocs/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
+
+#### Quick steps if you're changing an existing cmdlet
+
+If you made a change to an existing cmdlet and would like to update the documentation using PlatyPS,
+here are the quick steps:
+
+1. Install
+`PlatyPS`
+if you don't have it -
+`Install-Module PlatyPS`.
+1. Clone the
+[`MicrosoftDocs/PowerShell-Docs`](https://github.com/MicrosoftDocs/PowerShell-Docs)
+repo if you don't already have it.
+1. Start your local build of PowerShell
+(with the change to the cmdlet you made).
+1. Find the cmdlet's markdown file in PowerShell Docs - usually under
+`PowerShell-Docs/reference/<latest powershell version>/<module cmdlet is a part of>/<your changed cmdlet>.md`
+(Ex. `PowerShell-Docs/reference/7/Microsoft.PowerShell.Utility/Select-String.md`)
+1. Run
+`Update-MarkdownHelp -Path <path to cmdlet markdown file>`
+which will update the documentation for you.
+1. Make any additional changes needed for the cmdlet to be properly documented.
+1. Send a Pull Request to the PowerShell Docs repo with the changes that
+`PlatyPS`
+made.
+1. Link your Docs PR to your original change PR.
 
 ### Contributing to documentation related to maintaining or contributing to the PowerShell project
 
@@ -56,10 +82,12 @@ which can be run in interactive mode to correct typos or add words to the ignore
 
 To run the spellchecker, follow these steps:
 
-* install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
+* install [Node.js](https://nodejs.org/en/) (v10 or up)
 * install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
   `npm install -g markdown-spellcheck` (v0.11.0 or up)
-* run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms --en-us`
+* run `mdspell "**/*.md" "!**/dotnet-tools/**/*.md" --ignore-numbers --ignore-acronyms --en-us`.
+    - The folder `dotnet-tools` is excluded because files in that folder are copied from the `dotnet/performance` repository
+      and will need to be synchronized from time to time.
 * if the `.spelling` file is updated, commit and push it
 
 #### Checking links in documentation
@@ -70,9 +98,9 @@ which can be run to see if any links are dead.
 
 To run the link-checker, follow these steps:
 
-* install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
+* install [Node.js](https://nodejs.org/en/) (v10 or up)
 * install markdown-link-check by
-  `npm install -g markdown-link-check@3.7.2` (v3.7.2 **only**)
+  `npm install -g markdown-link-check@3.8.5`
 * run `find . \*.md -exec markdown-link-check {} \;`
 
 ## Contributing to Code
@@ -89,7 +117,7 @@ Please see [Building PowerShell](../README.md#building-the-repository).
 
 #### Testing PowerShell
 
-Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running-tests-outside-of-ci] on how to test you build locally.
+Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running-tests-outside-of-ci] on how to test your build locally.
 
 ### Finding or creating an issue
 
@@ -141,11 +169,11 @@ Additional references:
   An issue title is to briefly describe what is wrong, while a PR title is to briefly describe what is changed.
   A better example is: "Add Ensure parameter to New-Item cmdlet", with "Fix #5" in the PR's body.
 * When you create a pull request,
-  including a summary about your changes in the PR description.
+  include a summary about your changes in the PR description.
   The description is used to create change logs,
   so try to have the first sentence explain the benefit to end users.
   If the changes are related to an existing GitHub issue,
-  please reference the issue in PR description (e.g. ```Fix #11```).
+  please reference the issue in the PR description (e.g. ```Fix #11```).
   See [this][closing-via-message] for more details.
 
 * Please use the present tense and imperative mood when describing your changes:
@@ -170,7 +198,7 @@ Additional references:
     * For `.h`, `.cpp`, and `.cs` files use the copyright header with empty line after it:
 
     ```c#
-        // Copyright (c) Microsoft Corporation. All rights reserved.
+        // Copyright (c) Microsoft Corporation.
         // Licensed under the MIT License.
         <Add empty line here>
     ```
@@ -178,7 +206,7 @@ Additional references:
     * For `.ps1` and `.psm1` files use the copyright header with empty line after it:
 
     ```powershell
-        # Copyright (c) Microsoft Corporation. All rights reserved.
+        # Copyright (c) Microsoft Corporation.
         # Licensed under the MIT License.
         <Add empty line here>
     ```
@@ -188,7 +216,7 @@ Additional references:
   ```powershell
   Author = "PowerShell"
   Company = "Microsoft Corporation"
-  Copyright = "Copyright (c) Microsoft Corporation. All rights reserved."
+  Copyright = "Copyright (c) Microsoft Corporation."
   ```
 
   is at the top.
@@ -251,10 +279,10 @@ Additional references:
    - `Request changes` if you believe the PR merge should be blocked if your feedback is not addressed,
    - `Approve` if you believe your feedback has been addressed or the code is fine as-is, it is customary (although not required) to leave a simple "Looks good to me" (or "LGTM") as the comment for approval.
    - `Comment` if you are making suggestions that the *author* does not have to accept.
-   Early in the review, it is acceptable to provide feedback on coding formatting based on the published [Coding Guidelines](../docs/dev-process/coding-guidelines.md), however,
-   after the PR has been approved, it is generally _not_ recommended to focus on formatting issues unless they go against the [Coding Guidelines](../docs/dev-process/coding-guidelines.md).
+   Early in the review, it is acceptable to provide feedback on coding formatting based on the published [Coding Guidelines][coding-guidelines], however,
+   after the PR has been approved, it is generally _not_ recommended to focus on formatting issues unless they go against the [Coding Guidelines][coding-guidelines].
    Non-critical late feedback (after PR has been approved) can be submitted as a new issue or new pull request from the *reviewer*.
-1. *Assignee* who are always *Maintainers* ensure that proper review has occurred and if they believe one approval is not sufficient, the *maintainer* is responsible to add more reviewers.
+1. *Assignees* who are always *Maintainers* ensure that proper review has occurred and if they believe one approval is not sufficient, the *maintainer* is responsible to add more reviewers.
    An *assignee* may also be a reviewer, but the roles are distinct.
    Once the PR has been approved and the CI system is passing, the *assignee* will merge the PR after giving one business day for any critical feedback.
    For more information on the PowerShell Maintainers' process, see the [documentation](../docs/maintainers).
@@ -276,22 +304,22 @@ In these cases:
 ## Making Breaking Changes
 
 When you make code changes,
-please pay attention to these that can affect the [Public Contract](../docs/dev-process/breaking-change-contract.md).
+please pay attention to these that can affect the [Public Contract][breaking-changes-contract].
 For example, changing PowerShell parameters, APIs, or protocols break the public contract.
 Before making changes to the code,
-first review the [breaking changes contract](../docs/dev-process/breaking-change-contract.md)
+first review the [breaking changes contract][breaking-changes-contract]
 and follow the guidelines to keep PowerShell backward compatible.
 
 ## Making Design Changes
 
 To add new features such as cmdlets or making design changes,
-please follow the [PowerShell Request for Comments (RFC)](https://github.com/PowerShell/PowerShell-RFC) process.
+please follow the [PowerShell Request for Comments (RFC)][rfc-process] process.
 
 ## Common Engineering Practices
 
-Other than the guidelines for ([coding](../docs/dev-process/coding-guidelines.md),
-the [RFC process](https://github.com/PowerShell/PowerShell-RFC) for design,
-[documentation](#contributing-to-documentation) and [testing](../docs/testing-guidelines/testing-guidelines.md)) discussed above,
+Other than the guidelines for [coding][coding-guidelines],
+the [RFC process][rfc-process] for design,
+[documentation](#contributing-to-documentation) and [testing](../docs/testing-guidelines/testing-guidelines.md) discussed above,
 we encourage contributors to follow these common engineering practices:
 
 * Format commit messages following these guidelines:
@@ -333,7 +361,7 @@ is also appropriate, as is using Markdown syntax.
   If you find code that you think is a good fit to add to PowerShell,
   file an issue and start a discussion before proceeding.
 * Create and/or update tests when making code changes.
-* Run tests and ensure they are passing before pull request.
+* Run tests and ensure they are passing before opening a pull request.
 * All pull requests **must** pass CI systems before they can be approved.
 * Avoid making big pull requests.
   Before you invest a large amount of time,
@@ -342,7 +370,7 @@ is also appropriate, as is using Markdown syntax.
 ## Contributor License Agreement (CLA)
 
 To speed up the acceptance of any contribution to any PowerShell repositories,
-you should to [sign a Microsoft Contribution Licensing Agreement (CLA)](https://cla.microsoft.com/) ahead of time.
+you should sign the Microsoft [Contributor License Agreement (CLA)](https://cla.microsoft.com/) ahead of time.
 If you've already contributed to PowerShell or Microsoft repositories in the past, congratulations!
 You've already completed this step.
 This a one-time requirement for the PowerShell project.
@@ -356,7 +384,7 @@ Once you sign a CLA, all your existing and future pull requests will have the st
 [testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
 [running-tests-outside-of-ci]: ../docs/testing-guidelines/testing-guidelines.md#running-tests-outside-of-ci
 [issue-management]: ../docs/maintainers/issue-management.md
-[vuln-reporting]: ../docs/maintainers/issue-management.md#Security-Vulnerabilities
+[vuln-reporting]: ./SECURITY.md
 [governance]: ../docs/community/governance.md
 [using-prs]: https://help.github.com/articles/using-pull-requests/
 [fork-a-repo]: https://help.github.com/articles/fork-a-repo/
@@ -369,8 +397,10 @@ Once you sign a CLA, all your existing and future pull requests will have the st
 [up-for-grabs]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AUp-for-Grabs
 [semantic linefeeds]: https://rhodesmill.org/brandon/2012/one-sentence-per-line/
 [PowerShell-Docs]: https://github.com/powershell/powershell-docs/
-[use-vscode-editor]: ../docs/learning-powershell/using-vscode.md#editing-with-visual-studio-code
+[use-vscode-editor]: https://docs.microsoft.com/dotnet/core/tutorials/with-visual-studio-code
 [repository-maintainer]: ../docs/community/governance.md#repository-maintainers
 [area-expert]: ../docs/community/governance.md#area-experts
-[ci-system]: ../docs/testing-guidelines/testing-guidelines.md#ci-system
 [first-time-issue]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AFirst-Time-Issue
+[coding-guidelines]: ../docs/dev-process/coding-guidelines.md
+[breaking-changes-contract]: ../docs/dev-process/breaking-change-contract.md
+[rfc-process]: https://github.com/PowerShell/PowerShell-RFC

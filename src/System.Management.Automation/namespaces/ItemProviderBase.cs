@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Internal;
@@ -8,15 +8,15 @@ namespace System.Management.Automation.Provider
     #region ItemCmdletProvider
 
     /// <summary>
-    /// The base class for Cmdlet providers that expose an item as an MSH path.
+    /// The base class for Cmdlet providers that expose an item as a PowerShell path.
     /// </summary>
     /// <remarks>
     /// The ItemCmdletProvider class is a base class that a provider derives from to
-    /// inherit a set of methods that allows the Monad engine
+    /// inherit a set of methods that allows the PowerShell engine
     /// to provide a core set of commands for getting and setting of data on one or
     /// more items. A provider should derive from this class if they want
     /// to take advantage of the item core commands that are
-    /// already implemented by the Monad engine. This allows users to have common
+    /// already implemented by the engine. This allows users to have common
     /// commands and semantics across multiple providers.
     /// </remarks>
     public abstract class ItemCmdletProvider : DriveCmdletProvider
@@ -688,4 +688,3 @@ namespace System.Management.Automation.Provider
 
     #endregion ItemCmdletProvider
 }
-

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -19,10 +19,10 @@ namespace Microsoft.PowerShell
     {
         // This is actually a VarEnum value, but the VarEnum type requires 4 bytes instead of the expected 2.
         [FieldOffset(0)]
-        ushort _valueType;
+        private readonly ushort _valueType;
 
         [FieldOffset(8)]
-        IntPtr _ptr;
+        private readonly IntPtr _ptr;
 
         /// <summary>
         /// Set a string value.
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell
         {
             if (value == null)
             {
-                throw new ArgumentException("PropVariantNullString", "value");
+                throw new ArgumentException("PropVariantNullString", nameof(value));
             }
 
 #pragma warning disable CS0618 // Type or member is obsolete (might get deprecated in future versions
@@ -51,14 +51,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Finalizer.
+        /// Finalizes an instance of the <see cref="PropVariant"/> class.
         /// </summary>
         ~PropVariant()
         {
             Dispose();
         }
 
-        private class PropVariantNativeMethods
+        private static class PropVariantNativeMethods
         {
             [DllImport("Ole32.dll", PreserveSig = false)]
             internal static extern void PropVariantClear([In, Out] PropVariant pvar);

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -48,14 +48,20 @@ namespace System.Management.Automation
         /// Initializes a new instance of MetadataException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public MetadataException(string message, Exception innerException) : base(message, innerException)
         {
             SetErrorCategory(ErrorCategory.MetadataError);
         }
 
-        internal MetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :
-            base(StringUtil.Format(resourceStr, arguments), innerException)
+        internal MetadataException(
+            string errorId,
+            Exception innerException,
+            string resourceStr,
+            params object[] arguments)
+            : base(
+                  StringUtil.Format(resourceStr, arguments),
+                  innerException)
         {
             SetErrorCategory(ErrorCategory.MetadataError);
             SetErrorId(errorId);
@@ -118,11 +124,15 @@ namespace System.Management.Automation
         /// Initializes a new instance of ValidationMetadataException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public ValidationMetadataException(string message, Exception innerException) : base(message, innerException) { }
 
-        internal ValidationMetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :
-            base(errorId, innerException, resourceStr, arguments)
+        internal ValidationMetadataException(
+            string errorId,
+            Exception innerException,
+            string resourceStr,
+            params object[] arguments)
+            : base(errorId, innerException, resourceStr, arguments)
         {
         }
 
@@ -151,7 +161,7 @@ namespace System.Management.Automation
             get { return _swallowException; }
         }
 
-        private bool _swallowException = false;
+        private readonly bool _swallowException = false;
     }
 
     /// <summary>
@@ -167,26 +177,37 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        protected ArgumentTransformationMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        protected ArgumentTransformationMetadataException(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
+
         /// <summary>
         /// Initializes a new instance of ArgumentTransformationMetadataException with the message set
         /// to typeof(ArgumentTransformationMetadataException).FullName.
         /// </summary>
-        public ArgumentTransformationMetadataException() : base(typeof(ArgumentTransformationMetadataException).FullName) { }
+        public ArgumentTransformationMetadataException()
+            : base(typeof(ArgumentTransformationMetadataException).FullName) { }
+
         /// <summary>
         /// Initializes a new instance of ArgumentTransformationMetadataException setting the message.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        public ArgumentTransformationMetadataException(string message) : base(message) { }
+        public ArgumentTransformationMetadataException(string message)
+            : base(message) { }
+
         /// <summary>
         /// Initializes a new instance of ArgumentTransformationMetadataException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
-        public ArgumentTransformationMetadataException(string message, Exception innerException) : base(message, innerException) { }
+        /// <param name="innerException">The exception's inner exception.</param>
+        public ArgumentTransformationMetadataException(string message, Exception innerException)
+            : base(message, innerException) { }
 
-        internal ArgumentTransformationMetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :
-            base(errorId, innerException, resourceStr, arguments)
+        internal ArgumentTransformationMetadataException(
+            string errorId,
+            Exception innerException,
+            string resourceStr,
+            params object[] arguments)
+            : base(errorId, innerException, resourceStr, arguments)
         {
         }
     }
@@ -204,28 +225,38 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        protected ParsingMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        protected ParsingMetadataException(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
+
         /// <summary>
         /// Initializes a new instance of ParsingMetadataException with the message set
         /// to typeof(ParsingMetadataException).FullName.
         /// </summary>
-        public ParsingMetadataException() : base(typeof(ParsingMetadataException).FullName) { }
+        public ParsingMetadataException()
+            : base(typeof(ParsingMetadataException).FullName) { }
+
         /// <summary>
         /// Initializes a new instance of ParsingMetadataException setting the message.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        public ParsingMetadataException(string message) : base(message) { }
+        public ParsingMetadataException(string message)
+            : base(message) { }
+
         /// <summary>
         /// Initializes a new instance of ParsingMetadataException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
-        public ParsingMetadataException(string message, Exception innerException) : base(message, innerException) { }
+        /// <param name="innerException">The exception's inner exception.</param>
+        public ParsingMetadataException(string message, Exception innerException)
+            : base(message, innerException) { }
 
-        internal ParsingMetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :
-            base(errorId, innerException, resourceStr, arguments)
+        internal ParsingMetadataException(
+            string errorId,
+            Exception innerException,
+            string resourceStr,
+            params object[] arguments)
+            : base(errorId, innerException, resourceStr, arguments)
         {
         }
     }
 }
-

@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
 using mvc.Models;
@@ -20,9 +22,10 @@ namespace mvc.Controllers
         public IActionResult Index(int count)
         {
             string url = Regex.Replace(input: Request.GetDisplayUrl(), pattern: "\\/Redirect.*", replacement: string.Empty, options: RegexOptions.IgnoreCase);
+            var destinationIsPresent = Request.Query.TryGetValue("destination", out StringValues destination);
             if (count <= 1)
             {
-                url = $"{url}/Get/";
+                url = destinationIsPresent ? destination.FirstOrDefault() : $"{url}/Get/";
             }
             else
             {
@@ -36,12 +39,17 @@ namespace mvc.Controllers
             {
                 Response.StatusCode = (int)status;
                 url = $"{url}?type={type.FirstOrDefault()}";
-                Response.Headers.Add("Location", url);
+                Response.Headers.Append("Location", url);
             }
             else if (typeIsPresent && string.Equals(type.FirstOrDefault(), "relative", StringComparison.InvariantCultureIgnoreCase))
             {
                 url = new Uri($"{url}?type={type.FirstOrDefault()}").PathAndQuery;
                 Response.Redirect(url, false);
+            }
+            else if (destinationIsPresent)
+            {
+                Response.StatusCode = 302;
+                Response.Headers.Append("Location", url);
             }
             else
             {

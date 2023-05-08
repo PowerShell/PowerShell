@@ -1,6 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Debug-Runspace" -tag "CI" {
+Describe "Debug-Runspace" -Tag "CI" {
     BeforeAll {
         $rs1 = [runspacefactory]::CreateRunspace()
         $rs1.Open()
@@ -24,12 +24,12 @@ Describe "Debug-Runspace" -tag "CI" {
 
     It "Debugging a runspace should fail if the runspace is not open" {
         $rs2.Close()
-        { Debug-Runspace -runspace $rs2 -ErrorAction stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
+        { Debug-Runspace -Runspace $rs2 -ErrorAction stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
     }
 
     It "Debugging a runspace should fail if the runspace has no debugger" {
         $rs1.Debugger.SetDebugMode("None")
-        { Debug-Runspace -runspace $rs1 -ErrorAction stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
+        { Debug-Runspace -Runspace $rs1 -ErrorAction stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
     }
 
 }

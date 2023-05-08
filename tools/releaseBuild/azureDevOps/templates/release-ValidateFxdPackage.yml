@@ -1,0 +1,93 @@
+parameters:
+  jobName: ""
+  displayName: ""
+  imageName: ""
+  packageNamePattern: ""
+  use1ES: false
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: ${{ parameters.displayName }}
+  variables:
+  - group: DotNetPrivateBuildAccess
+  pool:
+    ${{ if eq(parameters.use1ES, 'false') }}:
+      vmImage: ${{ parameters.imageName }}
+    ${{ else }}:
+      name: 'PS-MSCodeHub-ARM' # add ImageOverride to select image
+  steps:
+    - checkout: self
+      clean: true
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        source: specific
+        project: PowerShellCore
+        pipeline: '696'
+        preferTriggeringPipeline: true
+        runVersion: latestFromBranch
+        runBranch: '$(Build.SourceBranch)'
+        artifact: finalResults
+        patterns: '${{ parameters.packageNamePattern }}'
+        path: '$(Pipeline.Workspace)/releasePipeline/finalResults'
+
+    - pwsh: |
+        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+        Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
+        Start-PSBootstrap
+        Write-Verbose -Message "Installing .NET SDK completed." -Verbose
+      displayName: Install .NET
+      env:
+        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+    - pwsh: |
+        Get-ChildItem -Path '$(Pipeline.Workspace)/releasePipeline/finalResults' -Recurse
+      displayName: Capture downloaded package
+
+    - pwsh: |
+        $destPath = New-Item '$(Pipeline.Workspace)/releasePipeline/finalResults/fxd' -ItemType Directory
+        $packageNameFilter = '${{ parameters.packageNamePattern }}'
+
+        if ($packageNameFilter.EndsWith('tar.gz')) {
+            $package = @(Get-ChildItem -Path '$(Pipeline.Workspace)/releasePipeline/finalResults/*.tar.gz')
+            Write-Verbose -Verbose "Package: $package"
+            if ($package.Count -ne 1) {
+                throw 'Only 1 package was expected.'
+            }
+            tar -xvf $package.FullName -C $destPath
+        }
+        else {
+            $package = @(Get-ChildItem -Path '$(Pipeline.Workspace)/releasePipeline/finalResults/*.zip')
+            Write-Verbose -Verbose "Package: $package"
+            if ($package.Count -ne 1) {
+                throw 'Only 1 package was expected.'
+            }
+            Expand-Archive -Path $package.FullName -Destination "$destPath" -Verbose
+        }
+      displayName: Expand fxd package
+
+    - pwsh: |
+        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+        Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
+        Find-Dotnet -SetDotnetRoot
+        Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
+        Write-Verbose -Verbose "Check dotnet install"
+        dotnet --info
+        Write-Verbose -Verbose "Start test"
+        $packageNameFilter = '${{ parameters.packageNamePattern }}'
+        $pwshExeName = if ($packageNameFilter.EndsWith('tar.gz')) { 'pwsh' } else { 'pwsh.exe' }
+        $pwshPath = Join-Path '$(Pipeline.Workspace)/releasePipeline/finalResults/fxd' $pwshExeName
+
+        if ($IsLinux) {
+          chmod u+x $pwshPath
+        }
+
+        $pwshDllPath = Join-Path '$(Pipeline.Workspace)/releasePipeline/finalResults/fxd' 'pwsh.dll'
+
+        $actualOutput = & dotnet $pwshDllPath -c 'Start-ThreadJob -ScriptBlock { "1" } | Wait-Job | Receive-Job'
+        Write-Verbose -Verbose "Actual output: $actualOutput"
+        if ($actualOutput -ne 1) {
+            throw "Actual output is not as expected"
+        }
+      displayName: Test package

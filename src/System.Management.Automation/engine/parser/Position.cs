@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -15,12 +15,13 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Represents a single point in a script.  The script may come from a file or interactive input.
     /// </summary>
+#nullable enable
     public interface IScriptPosition
     {
         /// <summary>
         /// The name of the file, or if the script did not come from a file, then null.
         /// </summary>
-        string File { get; }
+        string? File { get; }
 
         /// <summary>
         /// The line number of the position, with the value 1 being the first line.
@@ -45,18 +46,20 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The complete script that this position is included in.
         /// </summary>
-        string GetFullScript();
+        string? GetFullScript();
     }
+#nullable restore
 
     /// <summary>
     /// Represents the a span of text in a script.
     /// </summary>
+#nullable enable
     public interface IScriptExtent
     {
         /// <summary>
         /// The filename the extent includes, or null if the extent is not included in any file.
         /// </summary>
-        string File { get; }
+        string? File { get; }
 
         /// <summary>
         /// The starting position of the extent.
@@ -103,6 +106,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         int EndOffset { get; }
     }
+#nullable restore
 
     /// <summary>
     /// A few utility functions for script positions.
@@ -145,12 +149,12 @@ namespace System.Management.Automation.Language
             if (!string.IsNullOrEmpty(sourceLine))
             {
                 int spacesBeforeError = position.StartColumnNumber - 1;
-                int errorLength = (position.StartLineNumber == position.EndLineNumber)
+                int errorLength = (position.StartLineNumber == position.EndLineNumber && position.EndColumnNumber <= sourceLine.Length + 1)
                                       ? position.EndColumnNumber - position.StartColumnNumber
-                                      : sourceLine.TrimEnd().Length - position.StartColumnNumber + 1;
+                                      : sourceLine.Length - position.StartColumnNumber + 1;
 
                 // Expand tabs before figuring out if we need to truncate the line
-                if (sourceLine.IndexOf('\t') != -1)
+                if (sourceLine.Contains('\t'))
                 {
                     var copyLine = new StringBuilder(sourceLine.Length * 2);
 
@@ -230,20 +234,32 @@ namespace System.Management.Automation.Language
                 }
 
                 if (needsPrefixDots)
-                    sb.Append("... ");
+                {
+                    sb.Append("\u2026 "); // Unicode ellipsis character
+                }
+
                 sb.Append(sourceLine);
+
                 if (needsSuffixDots)
-                    sb.Append(" ...");
+                {
+                    sb.Append(" \u2026"); // Unicode ellipsis character
+                }
+
                 sb.Append(Environment.NewLine);
                 sb.Append("+ ");
-                sb.Append(' ', spacesBeforeError + (needsPrefixDots ? 4 : 0));
+                sb.Append(' ', spacesBeforeError + (needsPrefixDots ? 2 : 0));
                 // errorLength of 0 happens at EOF - always write out 1.
                 sb.Append('~', errorLength > 0 ? errorLength : 1);
+
                 message = sb.ToString();
             }
 
-            return StringUtil.Format(ParserStrings.TextForPositionMessage, fileName, position.StartLineNumber,
-                                     position.StartColumnNumber, message);
+            return StringUtil.Format(
+                ParserStrings.TextForPositionMessage,
+                fileName,
+                position.StartLineNumber,
+                position.StartColumnNumber,
+                message);
         }
 
         /// <summary>
@@ -340,10 +356,18 @@ namespace System.Management.Automation.Language
         {
             if (extent.StartLineNumber == line)
             {
-                if (column == 0) return true;
+                if (column == 0)
+                {
+                    return true;
+                }
+
                 if (column >= extent.StartColumnNumber)
                 {
-                    if (extent.EndLineNumber != extent.StartLineNumber) return true;
+                    if (extent.EndLineNumber != extent.StartLineNumber)
+                    {
+                        return true;
+                    }
+
                     return (column < extent.EndColumnNumber);
                 }
 
@@ -559,8 +583,7 @@ namespace System.Management.Automation.Language
 
         public override bool Equals(object obj)
         {
-            IScriptExtent otherPosition = obj as IScriptExtent;
-            if (otherPosition == null)
+            if (!(obj is IScriptExtent otherPosition))
             {
                 return false;
             }
@@ -633,8 +656,8 @@ namespace System.Management.Automation.Language
             int scriptLineNumber,
             int offsetInLine,
             string line,
-            string fullScript) :
-            this(scriptName, scriptLineNumber, offsetInLine, line)
+            string fullScript)
+            : this(scriptName, scriptLineNumber, offsetInLine, line)
         {
             _fullScript = fullScript;
         }
@@ -751,9 +774,9 @@ namespace System.Management.Automation.Language
                                                              _endPosition.ColumnNumber - _startPosition.ColumnNumber);
                     }
 
-                    return string.Format(CultureInfo.InvariantCulture, "{0}...{1}",
-                                         _startPosition.Line.Substring(_startPosition.ColumnNumber),
-                                         _endPosition.Line.Substring(0, _endPosition.ColumnNumber));
+                    var start = _startPosition.Line.AsSpan(_startPosition.ColumnNumber);
+                    var end = _endPosition.Line.AsSpan(0, _endPosition.ColumnNumber);
+                    return string.Create(CultureInfo.InvariantCulture, $"{start}...{end}");
                 }
                 else
                 {

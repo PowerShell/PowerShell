@@ -1,9 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
-using System.Text;
 
 namespace System.Management.Automation.Provider
 {
@@ -308,7 +307,7 @@ namespace System.Management.Automation.Provider
         /// If the <paramref name="childIsLeaf"/> is True, then we don't normalize the child path, and would do
         /// some checks to decide whether to normalize the parent path.
         /// </remarks>
-        /// <returns></returns>
+        /// <returns>New path string.</returns>
         protected string MakePath(string parent, string child, bool childIsLeaf)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -318,33 +317,24 @@ namespace System.Management.Automation.Provider
                 if (parent == null &&
                     child == null)
                 {
-                    // If both are null it is an error
-
-                    throw PSTraceSource.NewArgumentException("parent");
+                    throw PSTraceSource.NewArgumentException(nameof(parent));
                 }
-                else if (string.IsNullOrEmpty(parent) &&
-                         string.IsNullOrEmpty(child))
-                {
-                    // If both are empty, just return the empty string.
 
+                if (string.IsNullOrEmpty(parent) &&
+                    string.IsNullOrEmpty(child))
+                {
                     result = string.Empty;
                 }
                 else if (string.IsNullOrEmpty(parent) &&
                          !string.IsNullOrEmpty(child))
                 {
-                    // If the parent is empty but the child is not, return the
-                    // child
-
                     result = NormalizePath(child);
                 }
                 else if (!string.IsNullOrEmpty(parent) &&
-                         string.IsNullOrEmpty(child))
+                         (string.IsNullOrEmpty(child) ||
+                          child.Equals(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) ||
+                          child.Equals(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal)))
                 {
-                    // If the child is empty but the parent is not, return the
-                    // parent with the path separator appended.
-
-                    // Append the default path separator
-
                     if (parent.EndsWith(StringLiterals.DefaultPathSeparator))
                     {
                         result = parent;
@@ -357,7 +347,6 @@ namespace System.Management.Automation.Provider
                 else
                 {
                     // Both parts are not empty so join them
-
                     // 'childIsLeaf == true' indicates that 'child' is actually the name of a child item and
                     // guaranteed to exist. In this case, we don't normalize the child path.
                     if (childIsLeaf)
@@ -368,51 +357,17 @@ namespace System.Management.Automation.Provider
                     {
                         // Normalize the path so that only the default path separator is used as a
                         // separator even if the user types the alternate slash.
-
                         parent = NormalizePath(parent);
                         child = NormalizePath(child);
                     }
 
-                    // Joins the paths
-
-                    StringBuilder builder = new StringBuilder(parent, parent.Length + child.Length + 1);
-
-                    if (parent.EndsWith(StringLiterals.DefaultPathSeparator))
+                    ReadOnlySpan<char> appendChild = child.AsSpan();
+                    if (child.StartsWith(StringLiterals.DefaultPathSeparator))
                     {
-                        if (child.StartsWith(StringLiterals.DefaultPathSeparator))
-                        {
-                            builder.Append(child, 1, child.Length - 1);
-                        }
-                        else
-                        {
-                            builder.Append(child);
-                        }
-                    }
-                    else
-                    {
-                        if (child.StartsWith(StringLiterals.DefaultPathSeparator))
-                        {
-                            if (parent.Length == 0)
-                            {
-                                builder.Append(child, 1, child.Length - 1);
-                            }
-                            else
-                            {
-                                builder.Append(child);
-                            }
-                        }
-                        else
-                        {
-                            if (parent.Length > 0 && child.Length > 0)
-                            {
-                                builder.Append(StringLiterals.DefaultPathSeparator);
-                            }
-
-                            builder.Append(child);
-                        }
+                        appendChild = appendChild.Slice(1);
                     }
 
-                    result = builder.ToString();
+                    result = IO.Path.Join(parent.AsSpan(), appendChild);
                 }
 
                 return result;
@@ -451,7 +406,7 @@ namespace System.Management.Automation.Provider
 
                 if (string.IsNullOrEmpty(path))
                 {
-                    throw PSTraceSource.NewArgumentException("path");
+                    throw PSTraceSource.NewArgumentException(nameof(path));
                 }
 
                 if (root == null)
@@ -476,10 +431,10 @@ namespace System.Management.Automation.Provider
                 // Check to see if the path is equal to the root
                 // of the virtual drive
 
-                if (string.Compare(
+                if (string.Equals(
                     path,
                     rootPath,
-                    StringComparison.OrdinalIgnoreCase) == 0)
+                    StringComparison.OrdinalIgnoreCase))
                 {
                     parentPath = string.Empty;
                 }
@@ -552,7 +507,7 @@ namespace System.Management.Automation.Provider
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (path.Length == 0)
@@ -560,10 +515,7 @@ namespace System.Management.Automation.Provider
                 return string.Empty;
             }
 
-            if (basePath == null)
-            {
-                basePath = string.Empty;
-            }
+            basePath ??= string.Empty;
 
             providerBaseTracer.WriteLine("basePath = {0}", basePath);
 
@@ -695,7 +647,7 @@ namespace System.Management.Automation.Provider
 
             if (originalPathHadTrailingSlash)
             {
-                result = result + StringLiterals.DefaultPathSeparator;
+                result += StringLiterals.DefaultPathSeparator;
             }
 
             return result;
@@ -750,7 +702,7 @@ namespace System.Management.Automation.Provider
 
                 if (string.IsNullOrEmpty(path))
                 {
-                    throw PSTraceSource.NewArgumentException("path");
+                    throw PSTraceSource.NewArgumentException(nameof(path));
                 }
 
                 // Normalize the path
@@ -905,38 +857,53 @@ namespace System.Management.Automation.Provider
         /// those errors.
         /// </summary>
         /// <param name="path">
-        /// The path to normalize
+        /// The path to normalize.
         /// </param>
         /// <returns>
-        /// Normalized path or the original path
+        /// Normalized path or the original path.
         /// </returns>
         private string NormalizePath(string path)
         {
             // If we have a mix of slashes, then we may introduce an error by normalizing the path.
             // For example: path HKCU:\Test\/ is pointing to a subkey '/' of 'HKCU:\Test', if we
             // normalize it, then we will get a wrong path.
-            bool pathHasForwardSlash = path.IndexOf(StringLiterals.AlternatePathSeparator) != -1;
-            bool pathHasBackSlash = path.IndexOf(StringLiterals.DefaultPathSeparator) != -1;
-            bool pathHasMixedSlashes = pathHasForwardSlash && pathHasBackSlash;
-            bool shouldNormalizePath = true;
+            //
+            // Fast return if nothing to normalize.
+            if (!path.Contains(StringLiterals.AlternatePathSeparator))
+            {
+                return path;
+            }
 
-            string normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+            bool pathHasBackSlash = path.Contains(StringLiterals.DefaultPathSeparator);
+            string normalizedPath;
 
             // There is a mix of slashes & the path is rooted & the path exists without normalization.
             // In this case, we might want to skip the normalization to the path.
-            if (pathHasMixedSlashes && IsAbsolutePath(path) && ItemExists(path))
+            if (pathHasBackSlash && IsAbsolutePath(path) && ItemExists(path))
             {
                 // 1. The path exists and ends with a forward slash, in this case, it's very possible the ending forward slash
                 //    make sense to the underlying provider, so we skip normalization
                 // 2. The path exists, but not anymore after normalization, then we skip normalization
-                bool parentEndsWithForwardSlash = path.EndsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal);
-                if (parentEndsWithForwardSlash || !ItemExists(normalizedPath))
+                if (path.EndsWith(StringLiterals.AlternatePathSeparator))
                 {
-                    shouldNormalizePath = false;
+                    return path;
+                }
+
+                normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+
+                if (!ItemExists(normalizedPath))
+                {
+                    return path;
+                }
+                else
+                {
+                    return normalizedPath;
                 }
             }
 
-            return shouldNormalizePath ? normalizedPath : path;
+            normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+
+            return normalizedPath;
         }
 
         /// <summary>
@@ -1066,9 +1033,8 @@ namespace System.Management.Automation.Provider
                         if (!allowNonExistingPaths)
                         {
                             PSArgumentException e =
-                                (PSArgumentException)
-                                PSTraceSource.NewArgumentException(
-                                    "path",
+                                (PSArgumentException)PSTraceSource.NewArgumentException(
+                                    nameof(path),
                                     SessionStateStrings.NormalizeRelativePathOutsideBase,
                                     path,
                                     basePath);
@@ -1123,4 +1089,3 @@ namespace System.Management.Automation.Provider
 
     #endregion NavigationCmdletProvider
 }
-

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (
                     var e in
-                        parentJob.ExecutionError.Where(e => e.FullyQualifiedErrorId == "ContainerParentJobResumeAsyncError")
+                        parentJob.ExecutionError.Where(static e => e.FullyQualifiedErrorId == "ContainerParentJobResumeAsyncError")
                     )
                 {
                     if (e.Exception is InvalidJobStateException)
@@ -231,15 +231,31 @@ namespace Microsoft.PowerShell.Commands
             {
                 _needToCheckForWaitingJobs = true;
                 if (_pendingJobs.Count > 0)
+                {
                     jobsPending = true;
+                }
             }
 
             if (Wait && jobsPending)
+            {
                 _waitForJobs.WaitOne();
+            }
 
-            if (_warnInvalidState) WriteWarning(RemotingErrorIdStrings.ResumeJobInvalidJobState);
-            foreach (var e in _errorsToWrite) WriteError(e);
-            foreach (var j in _allJobsToResume) WriteObject(j);
+            if (_warnInvalidState)
+            {
+                WriteWarning(RemotingErrorIdStrings.ResumeJobInvalidJobState);
+            }
+
+            foreach (var e in _errorsToWrite)
+            {
+                WriteError(e);
+            }
+
+            foreach (var j in _allJobsToResume)
+            {
+                WriteObject(j);
+            }
+
             base.EndProcessing();
         }
 
@@ -267,7 +283,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)
         {
-            if (!disposing) return;
+            if (!disposing)
+            {
+                return;
+            }
+
             foreach (var pair in _cleanUpActions)
             {
                 pair.Key.ResumeJobCompleted -= pair.Value;

@@ -118,10 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommandAlreadySpecified" xml:space="preserve">
-    <value>Cannot process command because a command is already specified with -Command or -EncodedCommand.</value>
-  </data>
-  <data name="CannotReadFile" xml:space="preserve">
-    <value>Unable to read from file '{0}'.</value>
+    <value>Cannot process command because a command is already specified with -Command, -CommandWithArgs, or -EncodedCommand.</value>
   </data>
   <data name="MissingCommandParameter" xml:space="preserve">
     <value>Cannot process the command because of a missing parameter. A command must follow -Command.</value>
@@ -136,15 +133,18 @@
     <value>'-' was specified as the argument to -Command but standard input has not been redirected for this process.</value>
   </data>
   <data name="MissingOutputFormatParameter" xml:space="preserve">
-    <value>The command cannot be run because no argument has been supplied for the OutputFormat parameter. Specify one of the following formats for this parameter.
+    <value>The command cannot be run because no argument has been supplied for the OutputFormat parameter.
+Specify one of the following formats for this parameter:
 {0}</value>
   </data>
   <data name="MissingInputFormatParameter" xml:space="preserve">
-    <value>Cannot process the command because the -InputFormat parameter requires an argument. Specify a valid format argument for this parameter.  Valid formats are:
+    <value>Cannot process the command because the -InputFormat parameter requires an argument. Specify a valid format argument for this parameter.
+Valid formats are:
 {0}</value>
   </data>
   <data name="BadFormatParameterValue" xml:space="preserve">
-    <value>Cannot process the command because of an incorrect parameter value. "{0}" is not a valid format.  Valid formats are:
+    <value>Cannot process the command because of an incorrect parameter value. "{0}" is not a valid format.
+Valid formats are:
 {1}</value>
   </data>
   <data name="ArgsAlreadySpecified" xml:space="preserve">
@@ -184,7 +184,10 @@
     <value>Cannot process the command because -STA and -MTA are both specified. Specify either -STA or -MTA.</value>
   </data>
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
-    <value>Cannot process the command because -Configuration requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
+    <value>Cannot process the command because -ConfigurationName requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
+  </data>
+  <data name="MissingConfigurationFileArgument" xml:space="preserve">
+    <value>Cannot process the command because -ConfigurationFile requires an argument that is a session configuration (.pssc) file path. Specify this argument and try again.</value>
   </data>
   <data name="MissingCustomPipeNameArgument" xml:space="preserve">
     <value>Cannot process the command because -CustomPipeName requires an argument that is a name of the pipe you want to use. Specify this argument and try again.</value>
@@ -209,5 +212,14 @@
   </data>
   <data name="MissingWorkingDirectoryArgument" xml:space="preserve">
     <value>Cannot process the command because -WorkingDirectory requires an argument that is a directory path.</value>
+  </data>
+  <data name="MTANotImplemented" xml:space="preserve">
+    <value>Parameter -MTA is not supported on this platform.</value>
+  </data>
+  <data name="STANotImplemented" xml:space="preserve">
+    <value>Parameter -STA is not supported on this platform.</value>
+  </data>
+  <data name="NullElementInArgs" xml:space="preserve">
+    <value>The specified arguments must not contain null elements.</value>
   </data>
 </root>

@@ -1,50 +1,49 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using Runspaces = System.Management.Automation.Runspaces;
-using Dbg = System.Management.Automation;
-using Security = System.Management.Automation.Security;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections;
-using System.Runtime.InteropServices;
 using System.Management.Automation.Provider;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
-using System.Globalization;
-using System.IO;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 using System.Xml.XPath;
-using System.Security;
+
+using Dbg = System.Management.Automation;
 using DWORD = System.UInt32;
+using Runspaces = System.Management.Automation.Runspaces;
+using SMASecurity = System.Management.Automation.Security;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Defines the Certificate Provider dynamic parameters.
-    ///
     /// We only support one dynamic parameter for Win 7 and earlier:
     /// CodeSigningCert
     /// If provided, we only return certificates valid for signing code or
     /// scripts.
     /// </summary>
-
-    internal sealed class CertificateProviderCodeSigningDynamicParameters
+    internal sealed class CertificateProviderDynamicParameters
     {
         /// <summary>
-        /// Switch that controls whether we only return
+        /// Gets or sets a switch that controls whether we only return
         /// code signing certs.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter CodeSigningCert
         {
             get { return _codeSigningCert; }
@@ -52,7 +51,71 @@ namespace Microsoft.PowerShell.Commands
             set { _codeSigningCert = value; }
         }
 
-        private SwitchParameter _codeSigningCert = new SwitchParameter();
+        private SwitchParameter _codeSigningCert = new();
+
+        /// <summary>
+        /// Gets or sets a filter that controls whether we only return
+        /// data encipherment certs.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter DocumentEncryptionCert
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a filter that controls whether we only return
+        /// server authentication certs.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter SSLServerAuthentication
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a filter by DNSName.
+        /// Expected content is a single DNS Name that may start and/or end
+        /// with '*': "contoso.com" or "*toso.c*".
+        /// All WildcardPattern class features supported.
+        /// </summary>
+        [Parameter]
+        public string DnsName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a filter by EKU.
+        /// Expected content is one or more OID strings:
+        /// "1.3.6.1.5.5.7.3.1", "*Server*", etc.
+        /// For a cert to match, it must be valid for all listed OIDs.
+        /// All WildcardPattern class features supported.
+        /// </summary>
+        [Parameter]
+        public string[] Eku
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a filter by the number of valid days.
+        /// Expected content is a non-negative integer.
+        /// "0" matches all certs that have already expired.
+        /// "1" matches all certs that are currently valid and will expire
+        /// by next day (local time).
+        /// </summary>
+        [Parameter]
+        [ValidateRange(ValidateRangeKind.NonNegative)]
+        public int ExpiringInDays
+        {
+            get;
+            set;
+        } = -1;
     }
 
     /// <summary>
@@ -60,17 +123,17 @@ namespace Microsoft.PowerShell.Commands
     /// The structure contains punycode name and unicode name.
     /// </summary>
     [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
-    public struct DnsNameRepresentation
+    public readonly struct DnsNameRepresentation
     {
         /// <summary>
         /// Punycode version of DNS name.
         /// </summary>
-        private string _punycodeName;
+        private readonly string _punycodeName;
 
         /// <summary>
         /// Unicode version of DNS name.
         /// </summary>
-        private string _unicodeName;
+        private readonly string _unicodeName;
 
         /// <summary>
         /// Ambiguous constructor of a DnsNameRepresentation.
@@ -151,9 +214,9 @@ namespace Microsoft.PowerShell.Commands
             // to differ only by upper/lower case.  If they do, that's really
             // a code bug, and the effect is to just display both strings.
 
-            return string.Equals(_punycodeName, _unicodeName) ?
-                        _punycodeName :
-                        _unicodeName + " (" + _punycodeName + ")";
+            return string.Equals(_punycodeName, _unicodeName, StringComparison.Ordinal)
+                ? _punycodeName
+                : _unicodeName + " (" + _punycodeName + ")";
         }
     }
 
@@ -169,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
         /// Switch that controls whether we should delete private key
         /// when remove a certificate.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter DeleteKey
         {
             get
@@ -187,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private SwitchParameter _deleteKey = new SwitchParameter();
+        private SwitchParameter _deleteKey = new();
     }
 
     /// <summary>
@@ -210,9 +273,9 @@ namespace Microsoft.PowerShell.Commands
         {
             bool fResult = false;
 
-            if (IntPtr.Zero != handle)
+            if (handle != IntPtr.Zero)
             {
-                fResult = Security.NativeMethods.CertCloseStore(handle, 0);
+                fResult = SMASecurity.NativeMethods.CertCloseStore(handle, 0);
                 handle = IntPtr.Zero;
             }
 
@@ -255,25 +318,25 @@ namespace Microsoft.PowerShell.Commands
                 _valid = false;
                 _open = false;
 
-                Security.NativeMethods.CertOpenStoreFlags StoreFlags =
-                    Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_SHARE_STORE_FLAG |
-                    Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_SHARE_CONTEXT_FLAG |
-                    Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_OPEN_EXISTING_FLAG |
-                    Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG;
+                SMASecurity.NativeMethods.CertOpenStoreFlags StoreFlags =
+                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_SHARE_STORE_FLAG |
+                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_SHARE_CONTEXT_FLAG |
+                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_OPEN_EXISTING_FLAG |
+                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG;
 
                 if (includeArchivedCerts)
                 {
-                    StoreFlags |= Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_ENUM_ARCHIVED_FLAG;
+                    StoreFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_ENUM_ARCHIVED_FLAG;
                 }
 
                 switch (_storeLocation.Location)
                 {
                     case StoreLocation.LocalMachine:
-                        StoreFlags |= Security.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
+                        StoreFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
                         break;
 
                     case StoreLocation.CurrentUser:
-                        StoreFlags |= Security.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_CURRENT_USER;
+                        StoreFlags |= SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_CURRENT_USER;
                         break;
 
                     default:
@@ -281,13 +344,13 @@ namespace Microsoft.PowerShell.Commands
                         break;
                 }
 
-                IntPtr hCertStore = Security.NativeMethods.CertOpenStore(
-                                Security.NativeMethods.CertOpenStoreProvider.CERT_STORE_PROV_SYSTEM,
-                                Security.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
+                IntPtr hCertStore = SMASecurity.NativeMethods.CertOpenStore(
+                                SMASecurity.NativeMethods.CertOpenStoreProvider.CERT_STORE_PROV_SYSTEM,
+                                SMASecurity.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
                                 IntPtr.Zero,  // hCryptProv
                                 StoreFlags,
                                 _storeName);
-                if (IntPtr.Zero == hCertStore)
+                if (hCertStore == IntPtr.Zero)
                 {
                     throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
                 }
@@ -301,10 +364,10 @@ namespace Microsoft.PowerShell.Commands
                                 "UserDS",
                                 StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!Security.NativeMethods.CertControlStore(
+                    if (!SMASecurity.NativeMethods.CertControlStore(
                                 _storeHandle.Handle,
                                 0,
-                                Security.NativeMethods.CertControlStoreType.CERT_STORE_CTRL_AUTO_RESYNC,
+                                SMASecurity.NativeMethods.CertControlStoreType.CERT_STORE_CTRL_AUTO_RESYNC,
                                 IntPtr.Zero))
                     {
                         _storeHandle = null;
@@ -328,12 +391,12 @@ namespace Microsoft.PowerShell.Commands
             if (!_open)
             {
                 throw Marshal.GetExceptionForHR(
-                                    Security.NativeMethods.CRYPT_E_NOT_FOUND);
+                                    SMASecurity.NativeMethods.CRYPT_E_NOT_FOUND);
             }
 
             if (Valid)
             {
-                certContext = Security.NativeMethods.CertEnumCertificatesInStore(
+                certContext = SMASecurity.NativeMethods.CertEnumCertificatesInStore(
                                                     _storeHandle.Handle,
                                                     certContext);
             }
@@ -352,18 +415,18 @@ namespace Microsoft.PowerShell.Commands
             if (!_open)
             {
                 throw Marshal.GetExceptionForHR(
-                                    Security.NativeMethods.CRYPT_E_NOT_FOUND);
+                                    SMASecurity.NativeMethods.CRYPT_E_NOT_FOUND);
             }
 
             if (Valid)
             {
                 if (DownLevelHelper.HashLookupSupported())
                 {
-                    certContext = Security.NativeMethods.CertFindCertificateInStore(
+                    certContext = SMASecurity.NativeMethods.CertFindCertificateInStore(
                             _storeHandle.Handle,
-                            Security.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
+                            SMASecurity.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
                             0,                                // dwFindFlags
-                            Security.NativeMethods.CertFindType.CERT_FIND_HASH_STR,
+                            SMASecurity.NativeMethods.CertFindType.CERT_FIND_HASH_STR,
                             Name,
                             IntPtr.Zero);                     // pPrevCertContext
                 }
@@ -379,12 +442,12 @@ namespace Microsoft.PowerShell.Commands
                     while (true)
                     {
                         certContext = GetNextCert(certContext);
-                        if (IntPtr.Zero == certContext)
+                        if (certContext == IntPtr.Zero)
                         {
                             break;
                         }
 
-                        X509Certificate2 cert = new X509Certificate2(certContext);
+                        X509Certificate2 cert = new(certContext);
                         if (string.Equals(
                                     cert.Thumbprint,
                                     Name,
@@ -401,13 +464,12 @@ namespace Microsoft.PowerShell.Commands
 
         public void FreeCert(IntPtr certContext)
         {
-            Security.NativeMethods.CertFreeCertificateContext(certContext);
+            SMASecurity.NativeMethods.CertFreeCertificateContext(certContext);
         }
 
         /// <summary>
         /// Native IntPtr store handle.
         /// </summary>
-
         public IntPtr StoreHandle
         {
             get
@@ -441,7 +503,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// True if a real store is open.
         /// </summary>
-
         public bool Valid
         {
             get
@@ -451,8 +512,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _archivedCerts = false;
-        private X509StoreLocation _storeLocation = null;
-        private string _storeName = null;
+        private readonly X509StoreLocation _storeLocation = null;
+        private readonly string _storeName = null;
         private CertificateStoreHandle _storeHandle = null;
         private bool _valid = false;
         private bool _open = false;
@@ -495,6 +556,7 @@ namespace Microsoft.PowerShell.Commands
     [CmdletProvider("Certificate", ProviderCapabilities.ShouldProcess)]
     [OutputType(typeof(string), typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.ResolvePath)]
     [OutputType(typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.PushLocation)]
+    [OutputType(typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.PopLocation)]
     [OutputType(typeof(Microsoft.PowerShell.Commands.X509StoreLocation), typeof(X509Certificate2), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(X509Store), typeof(X509Certificate2), ProviderCmdlet = ProviderCmdlet.GetChildItem)]
     public sealed class CertificateProvider : NavigationCmdletProvider, ICmdletProviderSupportsHelp
@@ -506,7 +568,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [TraceSource("CertificateProvider",
                       "The core command provider for certificates")]
-        private readonly static PSTraceSource s_tracer = PSTraceSource.GetTracer("CertificateProvider",
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("CertificateProvider",
                       "The core command provider for certificates");
 
         #endregion tracer
@@ -521,7 +583,7 @@ namespace Microsoft.PowerShell.Commands
         /// -- storeLocations
         /// -- pathCache.
         /// </summary>
-        private static object s_staticLock = new object();
+        private static readonly object s_staticLock = new();
 
         /// <summary>
         /// List of store locations. They do not change once initialized.
@@ -565,6 +627,7 @@ namespace Microsoft.PowerShell.Commands
         /// this property.
         /// </remarks>
         private static Regex s_certPathRegex = null;
+
         private static Regex CertPathRegex
         {
             get
@@ -573,7 +636,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (s_certPathRegex == null)
                     {
-                        RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Compiled;
+                        const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Compiled;
                         s_certPathRegex = new Regex(certPathPattern, options);
                     }
                 }
@@ -602,19 +665,17 @@ namespace Microsoft.PowerShell.Commands
                     //
                     // create and cache CurrentUser store-location
                     //
-                    X509StoreLocation user =
-                        new X509StoreLocation(StoreLocation.CurrentUser);
+                    X509StoreLocation user = new(StoreLocation.CurrentUser);
                     s_storeLocations.Add(user);
-                    AddItemToCache(StoreLocation.CurrentUser.ToString(),
+                    AddItemToCache(nameof(StoreLocation.CurrentUser),
                                   user);
 
                     //
                     // create and cache LocalMachine store-location
                     //
-                    X509StoreLocation machine =
-                        new X509StoreLocation(StoreLocation.LocalMachine);
+                    X509StoreLocation machine = new(StoreLocation.LocalMachine);
                     s_storeLocations.Add(machine);
-                    AddItemToCache(StoreLocation.LocalMachine.ToString(),
+                    AddItemToCache(nameof(StoreLocation.LocalMachine),
                                    machine);
 
                     AddItemToCache(string.Empty, s_storeLocations);
@@ -638,7 +699,6 @@ namespace Microsoft.PowerShell.Commands
         ///     path is null or empty.
         ///     destination is null or empty.
         /// </exception>
-
         protected override void RemoveItem(
                                 string path,
                                 bool recurse)
@@ -660,7 +720,7 @@ namespace Microsoft.PowerShell.Commands
                  string.Equals(pathElements[1], "ROOT", StringComparison.OrdinalIgnoreCase))
             {
                 string message = CertificateProviderStrings.UINotAllowed;
-                string errorId = "UINotAllowed";
+                const string errorId = "UINotAllowed";
                 ThrowInvalidOperation(errorId, message);
             }
 
@@ -685,7 +745,7 @@ namespace Microsoft.PowerShell.Commands
                     if (fUserContext)
                     {
                         string message = CertificateProviderStrings.CannotDeleteUserStore;
-                        string errorId = "CannotDeleteUserStore";
+                        const string errorId = "CannotDeleteUserStore";
                         ThrowInvalidOperation(errorId, message);
                     }
 
@@ -695,7 +755,7 @@ namespace Microsoft.PowerShell.Commands
                 else // other container than a store
                 {
                     string message = CertificateProviderStrings.CannotRemoveContainer;
-                    string errorId = "CannotRemoveContainer";
+                    const string errorId = "CannotRemoveContainer";
                     ThrowInvalidOperation(errorId, message);
                 }
             }
@@ -745,7 +805,6 @@ namespace Microsoft.PowerShell.Commands
         ///     path is null or empty.
         ///     destination is null or empty.
         /// </exception>
-
         protected override void MoveItem(
                                 string path,
                                 string destination)
@@ -767,7 +826,7 @@ namespace Microsoft.PowerShell.Commands
             if (isContainer)
             {
                 string message = CertificateProviderStrings.CannotMoveContainer;
-                string errorId = "CannotMoveContainer";
+                const string errorId = "CannotMoveContainer";
                 ThrowInvalidOperation(errorId, message);
             }
 
@@ -784,7 +843,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     string message = CertificateProviderStrings.InvalidDestStore;
-                    string errorId = "InvalidDestStore";
+                    const string errorId = "InvalidDestStore";
                     ThrowInvalidOperation(errorId, message);
                 }
             }
@@ -796,14 +855,14 @@ namespace Microsoft.PowerShell.Commands
             if (!string.Equals(pathElements[0], destElements[0], StringComparison.OrdinalIgnoreCase))
             {
                 string message = CertificateProviderStrings.CannotMoveCrossContext;
-                string errorId = "CannotMoveCrossContext";
+                const string errorId = "CannotMoveCrossContext";
                 ThrowInvalidOperation(errorId, message);
             }
 
             if (string.Equals(pathElements[1], destElements[1], StringComparison.OrdinalIgnoreCase))
             {
                 string message = CertificateProviderStrings.CannotMoveToSameStore;
-                string errorId = "CannotMoveToSameStore";
+                const string errorId = "CannotMoveToSameStore";
                 ThrowInvalidOperation(errorId, message);
             }
 
@@ -817,7 +876,7 @@ namespace Microsoft.PowerShell.Commands
                      string.Equals(destElements[1], "ROOT", StringComparison.OrdinalIgnoreCase)))
                 {
                     string message = CertificateProviderStrings.UINotAllowed;
-                    string errorId = "UINotAllowed";
+                    const string errorId = "UINotAllowed";
                     ThrowInvalidOperation(errorId, message);
                 }
             }
@@ -867,7 +926,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">
         /// The path of the certificate store to create.
         /// </param>
-        ///<param name="type">
+        /// <param name="type">
         /// Ignored.
         /// Only support store.
         /// </param>
@@ -901,7 +960,7 @@ namespace Microsoft.PowerShell.Commands
             if (pathElements.Length != 2)
             {
                 string message = CertificateProviderStrings.CannotCreateItem;
-                string errorId = "CannotCreateItem";
+                const string errorId = "CannotCreateItem";
                 ThrowInvalidOperation(errorId, message);
             }
 
@@ -911,35 +970,33 @@ namespace Microsoft.PowerShell.Commands
             if (fUserContext)
             {
                 string message = CertificateProviderStrings.CannotCreateUserStore;
-                string errorId = "CannotCreateUserStore";
+                const string errorId = "CannotCreateUserStore";
                 ThrowInvalidOperation(errorId, message);
             }
 
-            Security.NativeMethods.CertOpenStoreFlags StoreFlags =
-                    Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_CREATE_NEW_FLAG |
-                    Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG |
-                    Security.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
+            const SMASecurity.NativeMethods.CertOpenStoreFlags StoreFlags =
+                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_CREATE_NEW_FLAG |
+                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG |
+                    SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
 
             // Create new store
-            IntPtr hCertStore = Security.NativeMethods.CertOpenStore(
-                                Security.NativeMethods.CertOpenStoreProvider.CERT_STORE_PROV_SYSTEM,
-                                Security.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
+            IntPtr hCertStore = SMASecurity.NativeMethods.CertOpenStore(
+                                SMASecurity.NativeMethods.CertOpenStoreProvider.CERT_STORE_PROV_SYSTEM,
+                                SMASecurity.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
                                 IntPtr.Zero,  // hCryptProv
                                 StoreFlags,
                                 pathElements[1]);
-            if (IntPtr.Zero == hCertStore)
+            if (hCertStore == IntPtr.Zero)
             {
                 throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
             }
             else // free native store handle
             {
                 bool fResult = false;
-                fResult = Security.NativeMethods.CertCloseStore(hCertStore, 0);
+                fResult = SMASecurity.NativeMethods.CertCloseStore(hCertStore, 0);
             }
 
-            X509Store outStore = new X509Store(
-                                 pathElements[1],
-                                 StoreLocation.LocalMachine);
+            X509Store outStore = new(pathElements[1], StoreLocation.LocalMachine);
             WriteItemObject(outStore, path, true);
         }
 
@@ -956,15 +1013,14 @@ namespace Microsoft.PowerShell.Commands
         {
             string providerDescription = CertificateProviderStrings.CertProvidername;
 
-            PSDriveInfo drive =
-                new PSDriveInfo(
-                    "Cert", // drive name
-                    ProviderInfo,// provider name
-                    @"\",     // root path
-                    providerDescription,
-                    null);
+            PSDriveInfo drive = new(
+                name: "Cert",
+                provider: ProviderInfo,
+                root: @"\",
+                providerDescription,
+                credential: null);
 
-            Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
+            Collection<PSDriveInfo> drives = new();
             drives.Add(drive);
 
             return drives;
@@ -1024,7 +1080,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         store.Open(IncludeArchivedCerts());
                         IntPtr certContext = store.GetFirstCert();
-                        if (IntPtr.Zero != certContext)
+                        if (certContext != IntPtr.Zero)
                         {
                             store.FreeCert(certContext);
                             result = true;
@@ -1132,7 +1188,7 @@ namespace Microsoft.PowerShell.Commands
                     // If the inner exception is not of that type
                     // then we need to rethrow
                     //
-                    if (!(e.InnerException is CertificateProviderItemNotFoundException))
+                    if (e.InnerException is not CertificateProviderItemNotFoundException)
                     {
                         throw;
                     }
@@ -1184,15 +1240,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        // The filter is non null.  If the certificate
-                        // satisfies the filter, output it.  Otherwise, don't.
-
+                        // The filter is non null. If the certificate
+                        // satisfies the filter, output it. Otherwise, don't.
                         X509Certificate2 cert = item as X509Certificate2;
                         Dbg.Diagnostics.Assert(cert != null, "item should be a certificate");
 
-                        // If it's Win8 or above, filter matching for certain properties is done by
-                        // the certificate enumeration filter at the API level. In that case,
-                        // filter.Purpose will be 'None' and MatchesFilter will return 'True'.
                         if (MatchesFilter(cert, filter))
                         {
                             WriteItemObject(item, path, isContainer);
@@ -1218,9 +1270,7 @@ namespace Microsoft.PowerShell.Commands
                         if (store != null)
                         {
                             // create X509Store
-                            X509Store outStore = new X509Store(
-                                                    store.StoreName,
-                                                    store.Location.Location);
+                            X509Store outStore = new(store.StoreName, store.Location.Location);
                             WriteItemObject(outStore, path, isContainer);
                         }
                     }
@@ -1293,7 +1343,7 @@ namespace Microsoft.PowerShell.Commands
                 new CmdletInfo(
                     "Import-Module",
                      typeof(Microsoft.PowerShell.Commands.ImportModuleCommand));
-            Runspaces.Command importModuleCommand = new Runspaces.Command(commandInfo);
+            Runspaces.Command importModuleCommand = new(commandInfo);
 
             s_tracer.WriteLine("Attempting to load module: {0}", moduleName);
 
@@ -1318,13 +1368,13 @@ namespace Microsoft.PowerShell.Commands
             _hasAttemptedToLoadPkiModule = true;
         }
 
-        private string MyGetChildName(string path)
+        private static string MyGetChildName(string path)
         {
             // Verify the parameters
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             // Normalize the path
@@ -1359,7 +1409,7 @@ namespace Microsoft.PowerShell.Commands
         {
             path = NormalizePath(path);
             string action = CertificateProviderStrings.Action_Invoke;
-            string certmgr = "certmgr.msc";
+            const string certmgr = "certmgr.msc";
             string certPath = System.IO.Path.Combine(
                 System.Environment.ExpandEnvironmentVariables("%windir%"), "system32");
 
@@ -1426,7 +1476,7 @@ namespace Microsoft.PowerShell.Commands
             message = string.Format(
                 System.Globalization.CultureInfo.CurrentCulture,
                 message, path);
-            ErrorDetails ed = new ErrorDetails(message);
+            ErrorDetails ed = new(message);
 
             //
             // create appropriate exception type
@@ -1450,11 +1500,11 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            ErrorRecord er =
-                new ErrorRecord(e,
-                                "CertProviderItemNotFound",
-                                ErrorCategory.ObjectNotFound,
-                                null);
+            ErrorRecord er = new(
+                e,
+                "CertProviderItemNotFound",
+                ErrorCategory.ObjectNotFound,
+                targetObject: null);
 
             er.ErrorDetails = ed;
 
@@ -1470,7 +1520,7 @@ namespace Microsoft.PowerShell.Commands
                 string message = CertificateProviderStrings.RemoteErrorMessage;
                 error += message;
 
-                Exception e2 = new Exception(error);
+                Exception e2 = new(error);
                 ThrowTerminatingError(
                         new ErrorRecord(
                             e2,
@@ -1486,11 +1536,11 @@ namespace Microsoft.PowerShell.Commands
 
         private void ThrowInvalidOperation(string errorId, string message)
         {
-            ErrorRecord errorRecord = new ErrorRecord(
-                            new InvalidOperationException(message),
-                            errorId,
-                            ErrorCategory.InvalidOperation,
-                            null);
+            ErrorRecord errorRecord = new(
+                new InvalidOperationException(message),
+                errorId,
+                ErrorCategory.InvalidOperation,
+                targetObject: null);
             errorRecord.ErrorDetails = new ErrorDetails(message);
             ThrowTerminatingError(errorRecord);
 
@@ -1518,7 +1568,7 @@ namespace Microsoft.PowerShell.Commands
 
                 string[] elts = GetPathElements(path);
 
-                path = string.Join("\\", elts);
+                path = string.Join('\\', elts);
             }
 
             return path;
@@ -1529,7 +1579,7 @@ namespace Microsoft.PowerShell.Commands
             string[] allElts = path.Split(s_pathSeparators);
             string[] result = null;
 
-            Stack<string> elts = new Stack<string>();
+            Stack<string> elts = new();
 
             foreach (string e in allElts)
             {
@@ -1561,14 +1611,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="pProvInfo">Key prov info.</param>
         /// <returns>No return.</returns>
-
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "System.Management.Automation.Security.NativeMethods.NCryptSetProperty(System.IntPtr,System.String,System.Void*,System.Int32,System.Int32)")]
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "System.Management.Automation.Security.NativeMethods.NCryptFreeObject(System.IntPtr)")]
         private void DoDeleteKey(IntPtr pProvInfo)
         {
             IntPtr hProv = IntPtr.Zero;
-            Security.NativeMethods.CRYPT_KEY_PROV_INFO keyProvInfo =
-                Marshal.PtrToStructure<Security.NativeMethods.CRYPT_KEY_PROV_INFO>(pProvInfo);
+            SMASecurity.NativeMethods.CRYPT_KEY_PROV_INFO keyProvInfo =
+                Marshal.PtrToStructure<SMASecurity.NativeMethods.CRYPT_KEY_PROV_INFO>(pProvInfo);
 
             IntPtr hWnd = DetectUIHelper.GetOwnerWindow(Host);
 
@@ -1576,33 +1625,33 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (hWnd != IntPtr.Zero)
                 {
-                    if (Security.NativeMethods.CryptAcquireContext(
+                    if (SMASecurity.NativeMethods.CryptAcquireContext(
                         ref hProv,
                         keyProvInfo.pwszContainerName,
                         keyProvInfo.pwszProvName,
                         (int)keyProvInfo.dwProvType,
-                        (uint)Security.NativeMethods.ProviderFlagsEnum.CRYPT_VERIFYCONTEXT))
+                        (uint)SMASecurity.NativeMethods.ProviderFlagsEnum.CRYPT_VERIFYCONTEXT))
                     {
                         unsafe
                         {
                             void* pWnd = hWnd.ToPointer();
-                            Security.NativeMethods.CryptSetProvParam(
+                            SMASecurity.NativeMethods.CryptSetProvParam(
                                 hProv,
-                                Security.NativeMethods.ProviderParam.PP_CLIENT_HWND,
+                                SMASecurity.NativeMethods.ProviderParam.PP_CLIENT_HWND,
                                 &pWnd,
                                 0);
-                            Security.NativeMethods.CryptReleaseContext(hProv, 0);
+                            SMASecurity.NativeMethods.CryptReleaseContext(hProv, 0);
                         }
                     }
                 }
 
-                if (!Security.NativeMethods.CryptAcquireContext(
+                if (!SMASecurity.NativeMethods.CryptAcquireContext(
                                 ref hProv,
                                 keyProvInfo.pwszContainerName,
                                 keyProvInfo.pwszProvName,
                                 (int)keyProvInfo.dwProvType,
-                                keyProvInfo.dwFlags | (uint)Security.NativeMethods.ProviderFlagsEnum.CRYPT_DELETEKEYSET |
-                                (hWnd == IntPtr.Zero ? (uint)Security.NativeMethods.ProviderFlagsEnum.CRYPT_SILENT : 0)))
+                                keyProvInfo.dwFlags | (uint)SMASecurity.NativeMethods.ProviderFlagsEnum.CRYPT_DELETEKEYSET |
+                                (hWnd == IntPtr.Zero ? (uint)SMASecurity.NativeMethods.ProviderFlagsEnum.CRYPT_SILENT : 0)))
                 {
                     ThrowErrorRemoting(Marshal.GetLastWin32Error());
                 }
@@ -1615,21 +1664,21 @@ namespace Microsoft.PowerShell.Commands
                 IntPtr hCNGProv = IntPtr.Zero;
                 IntPtr hCNGKey = IntPtr.Zero;
 
-                if ((keyProvInfo.dwFlags & (uint)Security.NativeMethods.ProviderFlagsEnum.CRYPT_MACHINE_KEYSET) != 0)
+                if ((keyProvInfo.dwFlags & (uint)SMASecurity.NativeMethods.ProviderFlagsEnum.CRYPT_MACHINE_KEYSET) != 0)
                 {
-                    cngKeyFlag = (uint)Security.NativeMethods.NCryptDeletKeyFlag.NCRYPT_MACHINE_KEY_FLAG;
+                    cngKeyFlag = (uint)SMASecurity.NativeMethods.NCryptDeletKeyFlag.NCRYPT_MACHINE_KEY_FLAG;
                 }
 
                 if (hWnd == IntPtr.Zero ||
-                    (keyProvInfo.dwFlags & (uint)Security.NativeMethods.ProviderFlagsEnum.CRYPT_SILENT) != 0)
+                    (keyProvInfo.dwFlags & (uint)SMASecurity.NativeMethods.ProviderFlagsEnum.CRYPT_SILENT) != 0)
                 {
-                    cngKeyFlag |= (uint)Security.NativeMethods.NCryptDeletKeyFlag.NCRYPT_SILENT_FLAG;
+                    cngKeyFlag |= (uint)SMASecurity.NativeMethods.NCryptDeletKeyFlag.NCRYPT_SILENT_FLAG;
                 }
 
                 int stat = 0;
                 try
                 {
-                    stat = Security.NativeMethods.NCryptOpenStorageProvider(
+                    stat = SMASecurity.NativeMethods.NCryptOpenStorageProvider(
                                     ref hCNGProv,
                                     keyProvInfo.pwszProvName,
                                     0);
@@ -1638,7 +1687,7 @@ namespace Microsoft.PowerShell.Commands
                         ThrowErrorRemoting(stat);
                     }
 
-                    stat = Security.NativeMethods.NCryptOpenKey(
+                    stat = SMASecurity.NativeMethods.NCryptOpenKey(
                                         hCNGProv,
                                         ref hCNGKey,
                                         keyProvInfo.pwszContainerName,
@@ -1649,21 +1698,21 @@ namespace Microsoft.PowerShell.Commands
                         ThrowErrorRemoting(stat);
                     }
 
-                    if (0 != (cngKeyFlag & (uint)Security.NativeMethods.NCryptDeletKeyFlag.NCRYPT_SILENT_FLAG))
+                    if ((cngKeyFlag & (uint)SMASecurity.NativeMethods.NCryptDeletKeyFlag.NCRYPT_SILENT_FLAG) != 0)
                     {
                         unsafe
                         {
                             void* pWnd = hWnd.ToPointer();
-                            Security.NativeMethods.NCryptSetProperty(
+                            SMASecurity.NativeMethods.NCryptSetProperty(
                                 hCNGProv,
-                                Security.NativeMethods.NCRYPT_WINDOW_HANDLE_PROPERTY,
+                                SMASecurity.NativeMethods.NCRYPT_WINDOW_HANDLE_PROPERTY,
                                 &pWnd,
                                 sizeof(void*),
                                 0); // dwFlags
                         }
                     }
 
-                    stat = Security.NativeMethods.NCryptDeleteKey(hCNGKey, 0);
+                    stat = SMASecurity.NativeMethods.NCryptDeleteKey(hCNGKey, 0);
                     if (stat != 0)
                     {
                         ThrowErrorRemoting(stat);
@@ -1674,10 +1723,10 @@ namespace Microsoft.PowerShell.Commands
                 finally
                 {
                     if (hCNGProv != IntPtr.Zero)
-                        result = Security.NativeMethods.NCryptFreeObject(hCNGProv);
+                        result = SMASecurity.NativeMethods.NCryptFreeObject(hCNGProv);
 
                     if (hCNGKey != IntPtr.Zero)
-                        result = Security.NativeMethods.NCryptFreeObject(hCNGKey);
+                        result = SMASecurity.NativeMethods.NCryptFreeObject(hCNGKey);
                 }
             }
         }
@@ -1690,13 +1739,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fDeleteKey">Boolean to specify whether or not to delete private key.</param>
         /// <param name = "sourcePath">Source path.</param>
         /// <returns>No return.</returns>
-
         private void RemoveCertStore(string storeName, bool fDeleteKey, string sourcePath)
         {
             // if recurse is true, remove every cert in the store
-            IntPtr localName = Security.NativeMethods.CryptFindLocalizedName(storeName);
+            IntPtr localName = SMASecurity.NativeMethods.CryptFindLocalizedName(storeName);
             string[] pathElements = GetPathElements(sourcePath);
-            if (IntPtr.Zero == localName)//not find, we can remove
+            if (localName == IntPtr.Zero)//not find, we can remove
             {
                 X509NativeStore store = null;
 
@@ -1710,26 +1758,26 @@ namespace Microsoft.PowerShell.Commands
                 // enumerate over each cert and remove it
                 //
                 IntPtr certContext = store.GetFirstCert();
-                while (IntPtr.Zero != certContext)
+                while (certContext != IntPtr.Zero)
                 {
-                    X509Certificate2 cert = new X509Certificate2(certContext);
+                    X509Certificate2 cert = new(certContext);
                     string certPath = sourcePath + cert.Thumbprint;
                     RemoveCertItem(cert, fDeleteKey, true, certPath);
 
                     certContext = store.GetNextCert(certContext);
                 }
                 // remove the cert store
-                Security.NativeMethods.CertOpenStoreFlags StoreFlags =
-                        Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_READONLY_FLAG |
-                        Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_OPEN_EXISTING_FLAG |
-                        Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_DEFER_CLOSE_UNTIL_LAST_FREE_FLAG |
-                        Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_DELETE_FLAG |
-                        Security.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
+                const SMASecurity.NativeMethods.CertOpenStoreFlags StoreFlags =
+                        SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_READONLY_FLAG |
+                        SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_OPEN_EXISTING_FLAG |
+                        SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_DEFER_CLOSE_UNTIL_LAST_FREE_FLAG |
+                        SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_STORE_DELETE_FLAG |
+                        SMASecurity.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
 
                 // delete store
-                IntPtr hCertStore = Security.NativeMethods.CertOpenStore(
-                                Security.NativeMethods.CertOpenStoreProvider.CERT_STORE_PROV_SYSTEM,
-                                Security.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
+                IntPtr hCertStore = SMASecurity.NativeMethods.CertOpenStore(
+                                SMASecurity.NativeMethods.CertOpenStoreProvider.CERT_STORE_PROV_SYSTEM,
+                                SMASecurity.NativeMethods.CertOpenStoreEncodingType.X509_ASN_ENCODING,
                                 IntPtr.Zero,  // hCryptProv
                                 StoreFlags,
                                 storeName);
@@ -1740,7 +1788,7 @@ namespace Microsoft.PowerShell.Commands
                                         CultureInfo.CurrentCulture,
                                         CertificateProviderStrings.RemoveStoreTemplate,
                                         storeName);
-                string errorId = "CannotRemoveSystemStore";
+                const string errorId = "CannotRemoveSystemStore";
                 ThrowInvalidOperation(errorId, message);
             }
         }
@@ -1788,7 +1836,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fMachine">Machine context or user.</param>
         /// <param name = "sourcePath">Source path.</param>
         /// <returns>No return.</returns>
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
         private void DoRemove(X509Certificate2 cert, bool fDeleteKey, bool fMachine, string sourcePath)
         {
@@ -1802,17 +1849,17 @@ namespace Microsoft.PowerShell.Commands
                 if (fDeleteKey)
                 {
                     // it is fine if below call fails
-                    if (Security.NativeMethods.CertGetCertificateContextProperty(
+                    if (SMASecurity.NativeMethods.CertGetCertificateContextProperty(
                                 cert.Handle,
-                                Security.NativeMethods.CertPropertyId.CERT_KEY_PROV_INFO_PROP_ID,
+                                SMASecurity.NativeMethods.CertPropertyId.CERT_KEY_PROV_INFO_PROP_ID,
                                 IntPtr.Zero,
                                 ref provSize))
                     {
                         pProvInfo = Marshal.AllocHGlobal((int)provSize);
 
-                        if (Security.NativeMethods.CertGetCertificateContextProperty(
+                        if (SMASecurity.NativeMethods.CertGetCertificateContextProperty(
                                 cert.Handle,
-                                Security.NativeMethods.CertPropertyId.CERT_KEY_PROV_INFO_PROP_ID,
+                                SMASecurity.NativeMethods.CertPropertyId.CERT_KEY_PROV_INFO_PROP_ID,
                                 pProvInfo,
                                 ref provSize))
                         {
@@ -1832,8 +1879,8 @@ namespace Microsoft.PowerShell.Commands
                 // do remove certificate
                 // should not use the original handle
 
-                if (!Security.NativeMethods.CertDeleteCertificateFromStore(
-                            Security.NativeMethods.CertDuplicateCertificateContext(cert.Handle)))
+                if (!SMASecurity.NativeMethods.CertDeleteCertificateFromStore(
+                            SMASecurity.NativeMethods.CertDuplicateCertificateContext(cert.Handle)))
                 {
                     throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
                 }
@@ -1841,8 +1888,8 @@ namespace Microsoft.PowerShell.Commands
                 // commit the change to physical store
                 if (sourcePath.Contains("UserDS"))
                 {
-                    Security.NativeMethods.CERT_CONTEXT context =
-                        Marshal.PtrToStructure<Security.NativeMethods.CERT_CONTEXT>(cert.Handle);
+                    SMASecurity.NativeMethods.CERT_CONTEXT context =
+                        Marshal.PtrToStructure<SMASecurity.NativeMethods.CERT_CONTEXT>(cert.Handle);
 
                     CommitUserDS(context.hCertStore);
                 }
@@ -1867,12 +1914,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="storeHandle">An IntPtr for store handle.</param>
         /// <returns>No return.</returns>
-        private void CommitUserDS(IntPtr storeHandle)
+        private static void CommitUserDS(IntPtr storeHandle)
         {
-            if (!Security.NativeMethods.CertControlStore(
+            if (!SMASecurity.NativeMethods.CertControlStore(
                                         storeHandle,
                                         0,
-                                        Security.NativeMethods.CertControlStoreType.CERT_STORE_CTRL_COMMIT,
+                                        SMASecurity.NativeMethods.CertControlStoreType.CERT_STORE_CTRL_COMMIT,
                                         IntPtr.Zero))
             {
                 throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
@@ -1894,7 +1941,7 @@ namespace Microsoft.PowerShell.Commands
             IntPtr outCert = IntPtr.Zero;
 
             // duplicate cert first
-            dupCert = Security.NativeMethods.CertDuplicateCertificateContext(cert.Handle);
+            dupCert = SMASecurity.NativeMethods.CertDuplicateCertificateContext(cert.Handle);
 
             if (dupCert == IntPtr.Zero)
             {
@@ -1902,16 +1949,16 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (!Security.NativeMethods.CertAddCertificateContextToStore(
+                if (!SMASecurity.NativeMethods.CertAddCertificateContextToStore(
                                              store.StoreHandle,
                                              cert.Handle,
-                                             (uint)Security.NativeMethods.AddCertificateContext.CERT_STORE_ADD_ALWAYS,
+                                             (uint)SMASecurity.NativeMethods.AddCertificateContext.CERT_STORE_ADD_ALWAYS,
                                              ref outCert))
                 {
                     throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
                 }
 
-                if (!Security.NativeMethods.CertDeleteCertificateFromStore(dupCert))
+                if (!SMASecurity.NativeMethods.CertDeleteCertificateFromStore(dupCert))
                 {
                     throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
                 }
@@ -1927,13 +1974,13 @@ namespace Microsoft.PowerShell.Commands
 
             if (sourcePath.Contains("UserDS"))
             {
-                Security.NativeMethods.CERT_CONTEXT context = Marshal.PtrToStructure<Security.NativeMethods.CERT_CONTEXT>(cert.Handle);
+                SMASecurity.NativeMethods.CERT_CONTEXT context = Marshal.PtrToStructure<SMASecurity.NativeMethods.CERT_CONTEXT>(cert.Handle);
 
                 CommitUserDS(context.hCertStore);
             }
 
             // get the output object
-            X509Certificate2 outObj = new X509Certificate2(outCert);
+            X509Certificate2 outObj = new(outCert);
             string certName = GetCertName(outObj);
             string certPath = MakePath(destination, certName);
             WriteItemObject((object)outObj, certPath, false);
@@ -1964,16 +2011,14 @@ namespace Microsoft.PowerShell.Commands
             //
             // Thus lengths 1 & 2 are container items.
             //
-            isContainer = (pathElements.Length >= 0) &&
-                (pathElements.Length <= 2);
+            isContainer = pathElements.Length <= 2;
 
             X509NativeStore store = null;
 
             //
             // handle invalid path depth
             //
-            if ((pathElements.Length > 3) ||
-                (pathElements.Length < 0))
+            if (pathElements.Length > 3)
             {
                 if (test)
                 {
@@ -2046,7 +2091,7 @@ namespace Microsoft.PowerShell.Commands
                         store.Open(IncludeArchivedCerts());
 
                         IntPtr certContext = store.GetCertByName(pathElements[2]);
-                        if (IntPtr.Zero == certContext)
+                        if (certContext == IntPtr.Zero)
                         {
                             if (test)
                             {
@@ -2211,7 +2256,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override object GetItemDynamicParameters(string path)
         {
-            return new CertificateProviderCodeSigningDynamicParameters();
+            return new CertificateProviderDynamicParameters();
         }
 
         /// <summary>
@@ -2233,7 +2278,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override object GetChildItemsDynamicParameters(string path, bool recurse)
         {
-            return new CertificateProviderCodeSigningDynamicParameters();
+            return new CertificateProviderDynamicParameters();
         }
 
         #endregion DriveCmdletProvider overrides
@@ -2397,9 +2442,9 @@ namespace Microsoft.PowerShell.Commands
             //
             IntPtr certContext = store.GetFirstCert();
 
-            while (IntPtr.Zero != certContext)
+            while (certContext != IntPtr.Zero)
             {
-                X509Certificate2 cert = new X509Certificate2(certContext);
+                X509Certificate2 cert = new(certContext);
 
                 if (MatchesFilter(cert, filter))
                 {
@@ -2412,7 +2457,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        PSObject myPsObj = new PSObject(cert);
+                        PSObject myPsObj = new(cert);
                         thingToReturn = (object)myPsObj;
                     }
 
@@ -2501,10 +2546,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (s_storeCache == null)
-            {
-                s_storeCache = new X509NativeStore(storeLocation, storeName);
-            }
+            s_storeCache ??= new X509NativeStore(storeLocation, storeName);
 
             return s_storeCache;
         }
@@ -2542,9 +2584,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     X509NativeStore store = GetStore(storePath, name, location);
-                    X509Store ManagedStore = new X509Store(
-                                                    store.StoreName,
-                                                    store.Location.Location);
+                    X509Store ManagedStore = new(store.StoreName, store.Location.Location);
                     thingToReturn = ManagedStore;
                 }
 
@@ -2606,14 +2646,48 @@ namespace Microsoft.PowerShell.Commands
 
             if (DynamicParameters != null)
             {
-                CertificateProviderCodeSigningDynamicParameters dp =
-                    DynamicParameters as CertificateProviderCodeSigningDynamicParameters;
+                CertificateProviderDynamicParameters dp =
+                    DynamicParameters as CertificateProviderDynamicParameters;
                 if (dp != null)
                 {
                     if (dp.CodeSigningCert)
                     {
                         filter = new CertificateFilterInfo();
                         filter.Purpose = CertificatePurpose.CodeSigning;
+                    }
+
+                    if (dp.DocumentEncryptionCert)
+                    {
+                        filter ??= new CertificateFilterInfo();
+                        filter.Purpose = CertificatePurpose.DocumentEncryption;
+                    }
+
+                    if (dp.DnsName != null)
+                    {
+                        filter ??= new CertificateFilterInfo();
+                        filter.DnsName = new WildcardPattern(dp.DnsName, WildcardOptions.IgnoreCase);
+                    }
+
+                    if (dp.Eku != null)
+                    {
+                        filter ??= new CertificateFilterInfo();
+                        filter.Eku = new List<WildcardPattern>();
+                        foreach (var pattern in dp.Eku)
+                        {
+                            filter.Eku.Add(new WildcardPattern(pattern, WildcardOptions.IgnoreCase));
+                        }
+                    }
+
+                    if (dp.ExpiringInDays >= 0)
+                    {
+                        filter ??= new CertificateFilterInfo();
+                        filter.Expiring = DateTime.Now.AddDays(dp.ExpiringInDays);
+                    }
+
+                    if (dp.SSLServerAuthentication)
+                    {
+                        filter ??= new CertificateFilterInfo();
+                        filter.SSLServerAuthentication = true;
                     }
                 }
             }
@@ -2633,42 +2707,131 @@ namespace Microsoft.PowerShell.Commands
             return includeArchivedCerts;
         }
 
-        // If it's Win8 or above, filter matching for certain properties is done by
-        // the certificate enumeration filter at the API level. In that case,
-        // filter.Purpose will be 'None' and MatchesFilter will return 'True'.
-        private static bool MatchesFilter(X509Certificate2 cert,
-                                   CertificateFilterInfo filter)
+        private static bool MatchesFilter(X509Certificate2 cert, CertificateFilterInfo filter)
         {
-            //
-            // no filter means, match everything
-            //
-            if ((filter == null) ||
-                (filter.Purpose == CertificatePurpose.NotSpecified) ||
-                (filter.Purpose == CertificatePurpose.All))
+            // No filter means, match everything
+            if (filter == null)
             {
                 return true;
+            }
+
+            if (filter.Expiring > DateTime.MinValue && !SecuritySupport.CertExpiresByTime(cert, filter.Expiring))
+            {
+                return false;
+            }
+
+            if (filter.DnsName != null && !CertContainsName(cert, filter.DnsName))
+            {
+                return false;
+            }
+
+            if (filter.Eku != null && !CertContainsEku(cert, filter.Eku))
+            {
+                return false;
+            }
+
+            if (filter.SSLServerAuthentication && !CertIsSSLServerAuthentication(cert))
+            {
+                return false;
             }
 
             switch (filter.Purpose)
             {
                 case CertificatePurpose.CodeSigning:
-                    if (SecuritySupport.CertIsGoodForSigning(cert))
-                    {
-                        return true;
-                    }
-
-                    break;
+                    return SecuritySupport.CertIsGoodForSigning(cert);
 
                 case CertificatePurpose.DocumentEncryption:
-                    if (SecuritySupport.CertIsGoodForEncryption(cert))
-                    {
-                        return true;
-                    }
+                    return SecuritySupport.CertIsGoodForEncryption(cert);
 
-                    break;
+                case CertificatePurpose.NotSpecified:
+                case CertificatePurpose.All:
+                    return true;
 
                 default:
                     break;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check if the specified certificate has the name in DNS name list.
+        /// </summary>
+        /// <param name="cert">Certificate object.</param>
+        /// <param name="pattern">Wildcard pattern for DNS name to search.</param>
+        /// <returns>True on success, false otherwise.</returns>
+        internal static bool CertContainsName(X509Certificate2 cert, WildcardPattern pattern)
+        {
+            List<DnsNameRepresentation> list = (new DnsNameProperty(cert)).DnsNameList;
+            foreach (DnsNameRepresentation dnsName in list)
+            {
+                if (pattern.IsMatch(dnsName.Unicode))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check if the specified certificate is a server authentication certificate.
+        /// </summary>
+        /// <param name="cert">Certificate object.</param>
+        /// <returns>True on success, false otherwise.</returns>
+        internal static bool CertIsSSLServerAuthentication(X509Certificate2 cert)
+        {
+            X509ExtensionCollection extentionList = cert.Extensions;
+            foreach (var extension in extentionList)
+            {
+                if (extension is X509EnhancedKeyUsageExtension eku)
+                {
+                    foreach (Oid usage in eku.EnhancedKeyUsages)
+                    {
+                        if (usage.Value.Equals(CertificateFilterInfo.OID_PKIX_KP_SERVER_AUTH, StringComparison.Ordinal))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Check if the specified certificate contains EKU matching all of these patterns.
+        /// </summary>
+        /// <param name="cert">Certificate object.</param>
+        /// <param name="ekuPatterns">EKU patterns.</param>
+        /// <returns>True on success, false otherwise.</returns>
+        internal static bool CertContainsEku(X509Certificate2 cert, List<WildcardPattern> ekuPatterns)
+        {
+            X509ExtensionCollection extensionList = cert.Extensions;
+            foreach (var extension in extensionList)
+            {
+                if (extension is X509EnhancedKeyUsageExtension eku)
+                {
+                    OidCollection enhancedKeyUsages = eku.EnhancedKeyUsages;
+                    foreach (WildcardPattern ekuPattern in ekuPatterns)
+                    {
+                        const bool patternPassed = false;
+                        foreach (var usage in enhancedKeyUsages)
+                        {
+                            if (ekuPattern.IsMatch(usage.Value) || ekuPattern.IsMatch(usage.FriendlyName))
+                            {
+                                return true;
+                            }
+                        }
+
+                        if (!patternPassed)
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
             }
 
             return false;
@@ -2744,7 +2907,7 @@ namespace Microsoft.PowerShell.Commands
                 //
                 // Load the help file from the current UI culture subfolder of the module's root folder
                 //
-                XmlDocument document = new XmlDocument();
+                XmlDocument document = new();
 
                 CultureInfo currentUICulture = CultureInfo.CurrentUICulture;
 
@@ -2752,7 +2915,7 @@ namespace Microsoft.PowerShell.Commands
                     this.ProviderInfo.ApplicationBase,
                     currentUICulture.ToString(),
                     this.ProviderInfo.HelpFile);
-                XmlReaderSettings settings = new XmlReaderSettings();
+                XmlReaderSettings settings = new();
                 settings.XmlResolver = null;
                 using (XmlReader reader = XmlReader.Create(fullHelpPath, settings))
                 {
@@ -2760,7 +2923,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Add "msh" and "command" namespaces from the MAML schema
-                XmlNamespaceManager nsMgr = new XmlNamespaceManager(document.NameTable);
+                XmlNamespaceManager nsMgr = new(document.NameTable);
                 nsMgr.AddNamespace("msh", HelpCommentsParser.mshURI);
                 nsMgr.AddNamespace("command", HelpCommentsParser.commandURI);
 
@@ -2834,7 +2997,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets the location as a
-        /// <see cref="System.Security.Cryptography.X509Certificates.StoreLocation" />
+        /// <see cref="System.Security.Cryptography.X509Certificates.StoreLocation"/>
         /// </summary>
         public StoreLocation Location
         {
@@ -2888,22 +3051,21 @@ namespace Microsoft.PowerShell.Commands
     /// The structure contains friendly name and EKU oid.
     /// </summary>
     [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
-    public struct EnhancedKeyUsageRepresentation
+    public readonly struct EnhancedKeyUsageRepresentation
     {
         /// <summary>
         /// Localized friendly name of EKU.
         /// </summary>
-        private string _friendlyName;
+        private readonly string _friendlyName;
 
         /// <summary>
         /// OID of EKU.
         /// </summary>
-        private string _oid;
+        private readonly string _oid;
 
         /// <summary>
         /// Constructor of an EnhancedKeyUsageRepresentation.
         /// </summary>
-
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Oid")]
 
         public EnhancedKeyUsageRepresentation(string inputFriendlyName, string inputOid)
@@ -2972,14 +3134,12 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class for SendAsTrustedIssuer.
     /// </summary>
-
     [SuppressMessage("Microsoft.Design", "CA1053:StaticHolderTypesShouldNotHaveConstructors")]
     public sealed class SendAsTrustedIssuerProperty
     {
         /// <summary>
         /// Get property of SendAsTrustedIssuer.
         /// </summary>
-
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static bool ReadSendAsTrustedIssuerProperty(X509Certificate2 cert)
         {
@@ -2989,9 +3149,9 @@ namespace Microsoft.PowerShell.Commands
                 int propSize = 0;
                 // try to get the property
                 // it is fine if fail for not there
-                if (Security.NativeMethods.CertGetCertificateContextProperty(
+                if (SMASecurity.NativeMethods.CertGetCertificateContextProperty(
                                 cert.Handle,
-                                Security.NativeMethods.CertPropertyId.CERT_SEND_AS_TRUSTED_ISSUER_PROP_ID,
+                                SMASecurity.NativeMethods.CertPropertyId.CERT_SEND_AS_TRUSTED_ISSUER_PROP_ID,
                                 IntPtr.Zero,
                                 ref propSize))
                 {
@@ -3002,7 +3162,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // if fail
                     int error = Marshal.GetLastWin32Error();
-                    if (error != Security.NativeMethods.CRYPT_E_NOT_FOUND)
+                    if (error != SMASecurity.NativeMethods.CRYPT_E_NOT_FOUND)
                     {
                         throw new System.ComponentModel.Win32Exception(error);
                     }
@@ -3015,14 +3175,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Set property of SendAsTrustedIssuer.
         /// </summary>
-
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static void WriteSendAsTrustedIssuerProperty(X509Certificate2 cert, string certPath, bool addProperty)
         {
             if (DownLevelHelper.TrustedIssuerSupported())
             {
                 IntPtr propertyPtr = IntPtr.Zero;
-                Security.NativeMethods.CRYPT_DATA_BLOB dataBlob = new Security.NativeMethods.CRYPT_DATA_BLOB();
+                SMASecurity.NativeMethods.CRYPT_DATA_BLOB dataBlob = new();
                 dataBlob.cbData = 0;
                 dataBlob.pbData = IntPtr.Zero;
                 X509Certificate certFromStore = null;
@@ -3045,7 +3204,7 @@ namespace Microsoft.PowerShell.Commands
                         bool fUserContext = string.Equals(pathElements[1], "Certificate::CurrentUser", StringComparison.OrdinalIgnoreCase);
 
                         X509StoreLocation storeLocation =
-                            new X509StoreLocation(fUserContext ? StoreLocation.CurrentUser : StoreLocation.LocalMachine);
+                            new(fUserContext ? StoreLocation.CurrentUser : StoreLocation.LocalMachine);
 
                         // get certificate from the store pathElements[2]
                         X509NativeStore store = null;
@@ -3069,9 +3228,9 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // set property
-                    if (!Security.NativeMethods.CertSetCertificateContextProperty(
+                    if (!SMASecurity.NativeMethods.CertSetCertificateContextProperty(
                                 certFromStore != null ? certFromStore.Handle : cert.Handle,
-                                Security.NativeMethods.CertPropertyId.CERT_SEND_AS_TRUSTED_ISSUER_PROP_ID,
+                                SMASecurity.NativeMethods.CertPropertyId.CERT_SEND_AS_TRUSTED_ISSUER_PROP_ID,
                                 0,
                                 propertyPtr))
                     {
@@ -3088,17 +3247,18 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                throw Marshal.GetExceptionForHR(Security.NativeMethods.NTE_NOT_SUPPORTED);
+                Marshal.ThrowExceptionForHR(SMASecurity.NativeMethods.NTE_NOT_SUPPORTED);
             }
         }
 
         private static readonly char[] s_separators = new char[] { '/', '\\' };
+
         private static string[] GetPathElements(string path)
         {
             string[] allElts = path.Split(s_separators);
             string[] result = null;
 
-            Stack<string> elts = new Stack<string>();
+            Stack<string> elts = new();
 
             foreach (string e in allElts)
             {
@@ -3128,10 +3288,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class for ekulist.
     /// </summary>
-
     public sealed class EnhancedKeyUsageProperty
     {
-        private List<EnhancedKeyUsageRepresentation> _ekuList = new List<EnhancedKeyUsageRepresentation>();
+        private readonly List<EnhancedKeyUsageRepresentation> _ekuList = new();
 
         /// <summary>
         /// Get property of EKUList.
@@ -3160,7 +3319,7 @@ namespace Microsoft.PowerShell.Commands
                         OidCollection oids = ext.EnhancedKeyUsages;
                         foreach (Oid oid in oids)
                         {
-                            EnhancedKeyUsageRepresentation ekuString = new EnhancedKeyUsageRepresentation(oid.FriendlyName, oid.Value);
+                            EnhancedKeyUsageRepresentation ekuString = new(oid.FriendlyName, oid.Value);
                             _ekuList.Add(ekuString);
                         }
                     }
@@ -3172,11 +3331,11 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class for DNSNameList.
     /// </summary>
-
     public sealed class DnsNameProperty
     {
-        private List<DnsNameRepresentation> _dnsList = new List<DnsNameRepresentation>();
-        private System.Globalization.IdnMapping idnMapping = new System.Globalization.IdnMapping();
+        private readonly List<DnsNameRepresentation> _dnsList = new();
+        private readonly System.Globalization.IdnMapping idnMapping = new();
+
         private const string dnsNamePrefix = "DNS Name=";
         private const string distinguishedNamePrefix = "CN=";
 
@@ -3192,7 +3351,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Constructor for EkuList.
+        /// Constructor for DnsNameProperty.
         /// </summary>
         public DnsNameProperty(X509Certificate2 cert)
         {
@@ -3325,12 +3484,12 @@ namespace Microsoft.PowerShell.Commands
 
                     if (hWnd == IntPtr.Zero)
                     {
-                        hWnd = Security.NativeMethods.GetConsoleWindow();
+                        hWnd = SMASecurity.NativeMethods.GetConsoleWindow();
                     }
 
                     if (hWnd == IntPtr.Zero)
                     {
-                        hWnd = Security.NativeMethods.GetDesktopWindow();
+                        hWnd = SMASecurity.NativeMethods.GetDesktopWindow();
                     }
                 }
             }
@@ -3345,7 +3504,7 @@ namespace Microsoft.PowerShell.Commands
 
             uint SessionId;
             uint ProcessId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
-            if (!Security.NativeMethods.ProcessIdToSessionId(ProcessId, out SessionId))
+            if (!SMASecurity.NativeMethods.ProcessIdToSessionId(ProcessId, out SessionId))
                 return false;
 
             if (SessionId == 0)
@@ -3381,27 +3540,26 @@ namespace Microsoft.PowerShell.Commands
         /// Lock that guards access to the following static members
         /// -- storeNames.
         /// </summary>
-        private static object s_staticLock = new object();
+        private static readonly object s_staticLock = new();
 
-        internal static List<string> storeNames = new List<string>();
+        internal static readonly List<string> storeNames = new();
 
         /// <summary>
         /// Get a list of store names at the specified location.
         /// </summary>
-        [ArchitectureSensitive]
         internal static List<string> GetStoreNamesAtLocation(StoreLocation location)
         {
-            Security.NativeMethods.CertStoreFlags locationFlag =
-                Security.NativeMethods.CertStoreFlags.CERT_SYSTEM_STORE_CURRENT_USER;
+            SMASecurity.NativeMethods.CertStoreFlags locationFlag =
+                SMASecurity.NativeMethods.CertStoreFlags.CERT_SYSTEM_STORE_CURRENT_USER;
 
             switch (location)
             {
                 case StoreLocation.CurrentUser:
-                    locationFlag = Security.NativeMethods.CertStoreFlags.CERT_SYSTEM_STORE_CURRENT_USER;
+                    locationFlag = SMASecurity.NativeMethods.CertStoreFlags.CERT_SYSTEM_STORE_CURRENT_USER;
                     break;
 
                 case StoreLocation.LocalMachine:
-                    locationFlag = Security.NativeMethods.CertStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
+                    locationFlag = SMASecurity.NativeMethods.CertStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
                     break;
 
                 default:
@@ -3409,17 +3567,16 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            Security.NativeMethods.CertEnumSystemStoreCallBackProto callBack =
-                new Security.NativeMethods.CertEnumSystemStoreCallBackProto(CertEnumSystemStoreCallBack);
+            SMASecurity.NativeMethods.CertEnumSystemStoreCallBackProto callBack = new(CertEnumSystemStoreCallBack);
 
             // Return a new list to avoid synchronization issues.
 
-            List<string> names = new List<string>();
+            List<string> names = new();
             lock (s_staticLock)
             {
                 storeNames.Clear();
 
-                Security.NativeMethods.CertEnumSystemStore(locationFlag, IntPtr.Zero,
+                SMASecurity.NativeMethods.CertEnumSystemStore(locationFlag, IntPtr.Zero,
                                                   IntPtr.Zero, callBack);
                 foreach (string name in storeNames)
                 {

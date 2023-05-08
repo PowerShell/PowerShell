@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Resolve-Path returns proper path" -Tag "CI" {
     BeforeAll {
@@ -47,5 +47,9 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         finally {
             Pop-Location
         }
+    }
+    It 'Resolve-Path should support user specified base paths' {
+        $Expected = Join-Path -Path .\ -ChildPath fakeroot
+        Resolve-Path -Path $fakeRoot -RelativeBasePath $testRoot | Should -BeExactly $Expected
     }
 }

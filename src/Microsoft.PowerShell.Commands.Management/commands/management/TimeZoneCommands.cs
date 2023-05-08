@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -16,7 +16,8 @@ namespace Microsoft.PowerShell.Commands
     /// A cmdlet to retrieve time zone information.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TimeZone", DefaultParameterSetName = "Name",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=799468")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096904")]
+    [OutputType(typeof(TimeZoneInfo))]
     [Alias("gtz")]
     public class GetTimeZoneCommand : PSCmdlet
     {
@@ -82,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string tzname in Name)
                     {
                         TimeZoneInfo[] timeZones = TimeZoneHelper.LookupSystemTimeZoneInfoByName(tzname);
-                        if (0 < timeZones.Length)
+                        if (timeZones.Length > 0)
                         {
                             // manually process each object in the array, so if there is only a single
                             // entry then the returned type is TimeZoneInfo and not TimeZoneInfo[], and
@@ -120,7 +121,8 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Set, "TimeZone",
         SupportsShouldProcess = true,
         DefaultParameterSetName = "Name",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=799469")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097056")]
+    [OutputType(typeof(TimeZoneInfo))]
     [Alias("stz")]
     public class SetTimeZoneCommand : PSCmdlet
     {
@@ -159,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         /// <summary>
-        /// Implementation of the ProcessRecord method for Get-TimeZone.
+        /// Implementation of the ProcessRecord method for Set-TimeZone.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification = "Since Name is not a parameter of this method, it confuses FXCop. It is the appropriate value for the exception.")]
         protected override void ProcessRecord()
@@ -188,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // lookup the time zone name and make sure we have one (and only one) match
                 TimeZoneInfo[] timeZones = TimeZoneHelper.LookupSystemTimeZoneInfoByName(Name);
-                if (0 == timeZones.Length)
+                if (timeZones.Length == 0)
                 {
                     string message = string.Format(CultureInfo.InvariantCulture,
                         TimeZoneResources.TimeZoneNameNotFound, Name);
@@ -198,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.InvalidArgument,
                         "Name"));
                 }
-                else if (1 < timeZones.Length)
+                else if (timeZones.Length > 1)
                 {
                     string message = string.Format(CultureInfo.InvariantCulture,
                         TimeZoneResources.MultipleMatchingTimeZones, Name);
@@ -254,14 +256,14 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     // construct and populate a new DYNAMIC_TIME_ZONE_INFORMATION structure
-                    NativeMethods.DYNAMIC_TIME_ZONE_INFORMATION dtzi = new NativeMethods.DYNAMIC_TIME_ZONE_INFORMATION();
+                    NativeMethods.DYNAMIC_TIME_ZONE_INFORMATION dtzi = new();
                     dtzi.Bias -= (int)InputObject.BaseUtcOffset.TotalMinutes;
                     dtzi.StandardName = InputObject.StandardName;
                     dtzi.DaylightName = InputObject.DaylightName;
                     dtzi.TimeZoneKeyName = InputObject.Id;
 
                     // Request time zone transition information for the current year
-                    NativeMethods.TIME_ZONE_INFORMATION tzi = new NativeMethods.TIME_ZONE_INFORMATION();
+                    NativeMethods.TIME_ZONE_INFORMATION tzi = new();
                     if (!NativeMethods.GetTimeZoneInformationForYear((ushort)DateTime.Now.Year, ref dtzi, ref tzi))
                     {
                         ThrowWin32Error();
@@ -343,7 +345,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     // setup the privileges being checked
-                    NativeMethods.PRIVILEGE_SET ps = new NativeMethods.PRIVILEGE_SET()
+                    NativeMethods.PRIVILEGE_SET ps = new()
                     {
                         PrivilegeCount = 1,
                         Control = 1,
@@ -390,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // setup the privileges being requested
-                NativeMethods.TOKEN_PRIVILEGES tp = new NativeMethods.TOKEN_PRIVILEGES()
+                NativeMethods.TOKEN_PRIVILEGES tp = new()
                 {
                     PrivilegeCount = 1,
                     Luid = 0,
@@ -428,15 +430,8 @@ namespace Microsoft.PowerShell.Commands
 
         #region Win32 interop helper
 
-        internal class NativeMethods
+        internal static class NativeMethods
         {
-            /// <summary>
-            /// Private constructor to prevent instantiation.
-            /// </summary>
-            private NativeMethods()
-            {
-            }
-
             #region Native DLL locations
 
             private const string SetDynamicTimeZoneApiDllName = "api-ms-win-core-timezone-l1-1-0.dll";
@@ -779,8 +774,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A TimeZoneInfo object array containing information about the specified system time zones.</returns>
         internal static TimeZoneInfo[] LookupSystemTimeZoneInfoByName(string name)
         {
-            WildcardPattern namePattern = new WildcardPattern(name, WildcardOptions.IgnoreCase);
-            List<TimeZoneInfo> tzi = new List<TimeZoneInfo>();
+            WildcardPattern namePattern = new(name, WildcardOptions.IgnoreCase);
+            List<TimeZoneInfo> tzi = new();
 
             // get the available system time zones
             ReadOnlyCollection<TimeZoneInfo> zones = TimeZoneInfo.GetSystemTimeZones();

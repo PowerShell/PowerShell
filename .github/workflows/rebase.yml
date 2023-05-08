@@ -1,0 +1,39 @@
+# This cannot rebase workflow changes into a PR
+# It also only works if the GITHUB_TOKEN has permission to push to the branch
+# see: https://github.com/cirrus-actions/rebase/issues/12#issuecomment-632594995
+on:
+  issue_comment:
+    types: [created]
+name: Automatic Rebase
+permissions:
+  contents: read
+
+jobs:
+  rebase:
+    permissions:
+      contents: write  # for cirrus-actions/rebase to push code to rebase
+      pull-requests: write  # for actions/github-script to create PR comment
+    name: Rebase
+    if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/rebase')
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the latest code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Post rebase started comment to pull request
+      uses: actions/github-script@v6
+      continue-on-error: true
+      with:
+        script: |
+          const backport_start_body = `Started rebase: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+          await github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: backport_start_body
+          });
+    - name: Automatic Rebase
+      uses: cirrus-actions/rebase@1.8
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

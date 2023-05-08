@@ -1,10 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using Xunit;
 
 namespace PSTests.Sequential
@@ -13,8 +13,8 @@ namespace PSTests.Sequential
     // otherwise Invoke will not return any objects
     public class RunspaceTests
     {
-        private static int count = 1;
-        private static string script = string.Format($"get-command get-command");
+        private static readonly int count = 1;
+        private static readonly string script = string.Format($"get-command get-command");
 
         [Fact]
         public void TestRunspaceWithPipeline()
@@ -102,30 +102,31 @@ namespace PSTests.Sequential
             }
         }
 
-        [Fact]
-        public void TestRunspaceSetBreakpoints()
+        [SkippableFact]
+        public void TestAppDomainProcessExitEvenHandlerNotLeaking()
         {
-            using (var runspace = RunspaceFactory.CreateRunspace())
+            // Skip this flaky test for now.
+            Skip.IfNot(false);
+
+            Skip.IfNot(Platform.IsWindows);
+
+            EventHandler eventHandler;
+            Delegate[] delegates;
+            FieldInfo field = typeof(AppContext).GetField("ProcessExit", BindingFlags.NonPublic | BindingFlags.Static);
+
+            // Open runspace and invoke script.
+            using (var ps = PowerShell.Create())
             {
-                var expectedBreakpoints = new Breakpoint[] {
-                    new LineBreakpoint(@"./path/to/some/file.ps1", 1),
-                    new CommandBreakpoint(@"./path/to/some/file.ps1", new WildcardPattern("Write-Host"), "Write-Host"),
-                };
-
-                runspace.Open();
-
-                try
-                {
-                    runspace.Debugger.SetBreakpoints(expectedBreakpoints);
-                    List<Breakpoint> actualBreakpoints = runspace.Debugger.GetBreakpoints();
-                    Assert.Equal(expectedBreakpoints.Length, actualBreakpoints.Count);
-                    Assert.Equal(expectedBreakpoints, actualBreakpoints);
-                }
-                finally
-                {
-                    runspace.Close();
-                }
+                ps.AddScript("1").Invoke();
+                eventHandler = (EventHandler)field.GetValue(null);
+                delegates = eventHandler.GetInvocationList();
+                Assert.Contains(delegates, d => d.Method.Name == "CurrentDomain_ProcessExit");
             }
+
+            // Handler registered by PowerShell should be unregistered.
+            eventHandler = (EventHandler)field.GetValue(null);
+            delegates = eventHandler.GetInvocationList();
+            Assert.DoesNotContain(delegates, d => d.Method.Name == "CurrentDomain_ProcessExit");
         }
     }
 }

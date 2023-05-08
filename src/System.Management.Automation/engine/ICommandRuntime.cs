@@ -1,5 +1,7 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
+#nullable enable
 
 using System.Management.Automation.Host;
 
@@ -13,8 +15,8 @@ namespace System.Management.Automation
     /// When a cmdlet is instantiated and run directly, all calls to the stream APIs will be proxied
     /// through to an instance of this class. For example, when a cmdlet calls WriteObject, the
     /// WriteObject implementation on the instance of the class implementing this interface will be
-    /// called. The Monad implementation provides a default implementation of this class for use with
-    /// standalone cmdlets as well as the implementation provided for running in the monad engine itself.
+    /// called. PowerShell implementation provides a default implementation of this class for use with
+    /// standalone cmdlets as well as the implementation provided for running in the engine itself.
     ///
     /// If you do want to run Cmdlet instances standalone and capture their output with more
     /// fidelity than is provided for with the default implementation, then you should create your own
@@ -26,7 +28,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns an instance of the PSHost implementation for this environment.
         /// </summary>
-        PSHost Host { get; }
+        PSHost? Host { get; }
         #region Write
         /// <summary>
         /// Display debug information.
@@ -65,7 +67,7 @@ namespace System.Management.Automation
         /// When the cmdlet wants to write a single object out, it will call this
         /// API. It is up to the implementation to decide what to do with these objects.
         /// </remarks>
-        void WriteObject(object sendToPipeline);
+        void WriteObject(object? sendToPipeline);
 
         /// <summary>
         /// Called to write one or more objects to the output pipe.
@@ -83,7 +85,7 @@ namespace System.Management.Automation
         ///  When the cmdlet wants to write multiple objects out, it will call this
         /// API. It is up to the implementation to decide what to do with these objects.
         /// </remarks>
-        void WriteObject(object sendToPipeline, bool enumerateCollection);
+        void WriteObject(object? sendToPipeline, bool enumerateCollection);
 
         /// <summary>
         /// Called by the cmdlet to display progress information.
@@ -172,7 +174,7 @@ namespace System.Management.Automation
         /// pipeline execution log.
         ///
         /// If LogPipelineExecutionDetail is turned on, this information will be written
-        /// to monad log under log category "Pipeline execution detail"
+        /// to PowerShell log under log category "Pipeline execution detail"
         /// </remarks>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteDebug(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteVerbose(string)"/>
@@ -219,7 +221,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string, out ShouldProcessReason)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string,ref bool,ref bool)"/>
-        bool ShouldProcess(string target);
+        bool ShouldProcess(string? target);
 
         /// <summary>
         /// Called by a cmdlet to confirm the operation with the user.  Cmdlets which make changes
@@ -265,7 +267,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string, out ShouldProcessReason)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string,ref bool,ref bool)"/>
-        bool ShouldProcess(string target, string action);
+        bool ShouldProcess(string? target, string? action);
 
         /// <summary>
         /// Called by a cmdlet to confirm the operation with the user.  Cmdlets which make changes
@@ -319,7 +321,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string, out ShouldProcessReason)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string,ref bool,ref bool)"/>
-        bool ShouldProcess(string verboseDescription, string verboseWarning, string caption);
+        bool ShouldProcess(string? verboseDescription, string? verboseWarning, string? caption);
 
         /// <summary>
         /// Called by a cmdlet to confirm the operation with the user.  Cmdlets which make changes
@@ -379,7 +381,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string,ref bool,ref bool)"/>
-        bool ShouldProcess(string verboseDescription, string verboseWarning, string caption, out ShouldProcessReason shouldProcessReason);
+        bool ShouldProcess(string? verboseDescription, string? verboseWarning, string? caption, out ShouldProcessReason shouldProcessReason);
 
         /// <summary>
         /// Called by a cmdlet to confirm an operation or grouping of operations with the user.
@@ -436,7 +438,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string)"/>
-        bool ShouldContinue(string query, string caption);
+        bool ShouldContinue(string? query, string? caption);
 
         /// <summary>
         /// Called to confirm an operation or grouping of operations with the user.
@@ -501,7 +503,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string)"/>
-        bool ShouldContinue(string query, string caption, ref bool yesToAll, ref bool noToAll);
+        bool ShouldContinue(string? query, string? caption, ref bool yesToAll, ref bool noToAll);
 
         #endregion Should
 
@@ -515,7 +517,7 @@ namespace System.Management.Automation
         /// Gets an object that surfaces the current PowerShell transaction.
         /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
-        PSTransactionContext CurrentPSTransaction { get; }
+        PSTransactionContext? CurrentPSTransaction { get; }
         #endregion Transaction Support
 
         #region Misc
@@ -549,6 +551,7 @@ namespace System.Management.Automation
         /// if any information is to be added. It should encapsulate the
         /// error record into an exception and then throw that exception.
         /// </remarks>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         void ThrowTerminatingError(ErrorRecord errorRecord);
         #endregion ThrowTerminatingError
         #endregion misc
@@ -614,6 +617,6 @@ namespace System.Management.Automation
         /// performed, and the Cmdlet should move on to the next target resource.
         /// </returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        bool ShouldContinue(string query, string caption, bool hasSecurityImpact, ref bool yesToAll, ref bool noToAll);
+        bool ShouldContinue(string? query, string? caption, bool hasSecurityImpact, ref bool yesToAll, ref bool noToAll);
     }
 }

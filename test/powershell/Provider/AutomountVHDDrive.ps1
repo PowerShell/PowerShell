@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # Precondition: start from fresh PS session, do not have the media mounted
@@ -6,15 +6,15 @@ param([switch]$useModule, [string]$VHDPath)
 
 function CreateVHD ($VHDPath, $Size)
 {
-  $drive = (New-VHD -path $vhdpath -SizeBytes $size -Dynamic   | `
+  $drive = (New-VHD -Path $vhdpath -SizeBytes $size -Dynamic   | `
               Mount-VHD -Passthru |  `
-              get-disk -number {$_.DiskNumber} | `
+              Get-Disk -Number {$_.DiskNumber} | `
               Initialize-Disk -PartitionStyle MBR -PassThru | `
-              New-Partition -UseMaximumSize -AssignDriveLetter:$False -MbrType IFS | `
-              Format-Volume -Confirm:$false -FileSystem NTFS -force | `
-              get-partition | `
+              New-Partition -UseMaximumSize -AssignDriveLetter:$false -MbrType IFS | `
+              Format-Volume -Confirm:$false -FileSystem NTFS -Force | `
+              Get-Partition | `
               Add-PartitionAccessPath -AssignDriveLetter -PassThru | `
-              get-volume).DriveLetter
+              Get-Volume).DriveLetter
 
     $drive
 }

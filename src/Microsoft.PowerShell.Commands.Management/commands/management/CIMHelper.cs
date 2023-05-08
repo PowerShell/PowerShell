@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -79,14 +79,13 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal static T GetFirst<T>(CimSession session, string nameSpace, string wmiClassName) where T : class, new()
         {
-            if (string.IsNullOrEmpty(wmiClassName))
-                throw new ArgumentException("String argument may not be null or empty", "wmiClassName");
+            ArgumentException.ThrowIfNullOrEmpty(wmiClassName);
 
             try
             {
                 var type = typeof(T);
-                var binding = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-                T rv = new T();
+                const BindingFlags binding = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+                T rv = new();
 
                 using (var instance = session.QueryFirstInstance(nameSpace, CIMHelper.WqlQueryAll(wmiClassName)))
                 {
@@ -132,9 +131,8 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         internal static T[] GetAll<T>(CimSession session, string nameSpace, string wmiClassName) where T : class, new()
         {
-            if (string.IsNullOrEmpty(wmiClassName))
-                throw new ArgumentException("String argument may not be null or empty", "wmiClassName");
-
+            ArgumentException.ThrowIfNullOrEmpty(wmiClassName);
+            
             var rv = new List<T>();
 
             try
@@ -144,11 +142,11 @@ namespace Microsoft.PowerShell.Commands
                 if (instances != null)
                 {
                     var type = typeof(T);
-                    var binding = BindingFlags.Public | BindingFlags.Instance;
+                    const BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
 
                     foreach (var instance in instances)
                     {
-                        T objT = new T();
+                        T objT = new();
 
                         using (instance)
                         {

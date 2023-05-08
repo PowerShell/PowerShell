@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Out-File DRT Unit Tests" -Tags "CI" {
     It "Should be able to write the contents into a file with -pspath" {
@@ -11,19 +11,30 @@ Describe "Out-File DRT Unit Tests" -Tags "CI" {
 
     It "Should be able to write the contents into a file with -pspath" {
         $tempFile = Join-Path -Path $TestDrive -ChildPath "outfileAppendTest.txt"
-        { 'This is first line.' | out-file $tempFile } | Should -Not -Throw
-        { 'This is second line.' | out-file -append $tempFile } | Should -Not -Throw
-        $tempFile |Should -FileContentMatch "first"
-        $tempFile |Should -FileContentMatch "second"
+        { 'This is first line.' | Out-File $tempFile } | Should -Not -Throw
+        { 'This is second line.' | Out-File -Append $tempFile } | Should -Not -Throw
+        $tempFile | Should -FileContentMatch "first"
+        $tempFile | Should -FileContentMatch "second"
         Remove-Item $tempFile -Force
     }
 }
 
 Describe "Out-File" -Tags "CI" {
     BeforeAll {
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+
         $expectedContent = "some test text"
         $inObject = New-Object psobject -Property @{text=$expectedContent}
         $testfile = Join-Path -Path $TestDrive -ChildPath outfileTest.txt
+    }
+
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
     }
 
     AfterEach {

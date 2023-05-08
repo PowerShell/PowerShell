@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -151,10 +151,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static bool CollectionContainsValue(IEnumerable collection, object value, IComparer comparer)
         {
-            if (collection == null)
-            {
-                throw new ArgumentNullException("collection");
-            }
+            ArgumentNullException.ThrowIfNull(collection);
 
             bool result = false;
 
@@ -325,4 +322,3 @@ namespace Microsoft.PowerShell.Commands
         Overwrite
     }
 }
-

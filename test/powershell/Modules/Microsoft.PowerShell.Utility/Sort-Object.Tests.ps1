@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Sort-Object" -Tags "CI" {
 
@@ -103,12 +103,12 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Sort-Object with Non Existing And Null Script Property should work"{
-		$n = new-object microsoft.powershell.commands.newobjectcommand
-		$d = new-object microsoft.powershell.commands.newobjectcommand
+		$n = New-Object microsoft.powershell.commands.newobjectcommand
+		$d = New-Object microsoft.powershell.commands.newobjectcommand
 		$d.TypeName = 'Deetype'
-		$b = new-object microsoft.powershell.commands.newobjectcommand
+		$b = New-Object microsoft.powershell.commands.newobjectcommand
 		$b.TypeName = 'btype'
-		$a = new-object microsoft.powershell.commands.newobjectcommand
+		$a = New-Object microsoft.powershell.commands.newobjectcommand
 		$a.TypeName = 'atype'
 		$results = $n, $d, $b, 'b', $a | Sort-Object -proper {$_.TypeName}
 		$results.Count | Should -Be 5
@@ -119,13 +119,13 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Sort-Object with Non Existing And Null Property should work"{
-		$n = new-object microsoft.powershell.commands.newobjectcommand
+		$n = New-Object microsoft.powershell.commands.newobjectcommand
 		$n.TypeName = $null
-		$d = new-object microsoft.powershell.commands.newobjectcommand
+		$d = New-Object microsoft.powershell.commands.newobjectcommand
 		$d.TypeName = 'Deetype'
-		$b = new-object microsoft.powershell.commands.newobjectcommand
+		$b = New-Object microsoft.powershell.commands.newobjectcommand
 		$b.TypeName = 'btype'
-		$a = new-object microsoft.powershell.commands.newobjectcommand
+		$a = New-Object microsoft.powershell.commands.newobjectcommand
 		$a.TypeName = 'atype'
 		$results = $n, $d, $b, 'b', $a | Sort-Object -prop TypeName
 		$results.Count | Should -Be 5
@@ -295,6 +295,18 @@ Describe 'Sort-Object Stable Unit Tests' -Tags 'CI' {
 			$results[0]  | Should -Be 2
 			$results[1]  | Should -Be 1
 			$results[2]  | Should -Be 3
+		}
+		
+		It "Sort-Object with Unique Stable should return proper records"{
+			$Record1=[PSCustomObject]@{Key="A";Record="A1"}
+			$Record2=[PSCustomObject]@{Key="A";Record="A2"}
+			$Record3=[PSCustomObject]@{Key="B";Record="B1"}
+			$Record4=[PSCustomObject]@{Key="B";Record="B2"}
+			$Records = @($Record1,$Record2,$Record3,$Record4)
+			$results = $Records | Sort-Object -Stable -Unique -Property Key
+	
+			$results[0] | Should -Be $Records[0]
+			$results[1] | Should -Be $Records[2]
 		}
 	}
 }

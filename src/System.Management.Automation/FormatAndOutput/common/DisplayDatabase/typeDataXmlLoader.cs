@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #region tracer
         [TraceSource("TypeInfoDataBaseLoader", "TypeInfoDataBaseLoader")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("TypeInfoDataBaseLoader", "TypeInfoDataBaseLoader");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("TypeInfoDataBaseLoader", "TypeInfoDataBaseLoader");
         #endregion tracer
 
         /// <summary>
@@ -193,16 +193,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             bool preValidated)
         {
             if (info == null)
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
 
             if (info.filePath == null)
                 throw PSTraceSource.NewArgumentNullException("info.filePath");
 
             if (db == null)
-                throw PSTraceSource.NewArgumentNullException("db");
+                throw PSTraceSource.NewArgumentNullException(nameof(db));
 
             if (expressionFactory == null)
-                throw PSTraceSource.NewArgumentNullException("expressionFactory");
+                throw PSTraceSource.NewArgumentNullException(nameof(expressionFactory));
 
             if (SecuritySupport.IsProductBinary(info.filePath))
             {
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="typeDefinition">The ExtendedTypeDefinition instance to load formatting data from.</param>
         /// <param name="db">Database instance to load the formatting data into.</param>
         /// <param name="expressionFactory">Expression factory to validate the script block.</param>
-        /// <param name="isBuiltInFormatData">Do we implicitly trust the script blocks (so they should run in full langauge mode)?</param>
+        /// <param name="isBuiltInFormatData">Do we implicitly trust the script blocks (so they should run in full language mode)?</param>
         /// <param name="isForHelp">True when the view is for help output.</param>
         /// <returns></returns>
         internal bool LoadFormattingData(
@@ -288,13 +288,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             bool isForHelp)
         {
             if (typeDefinition == null)
-                throw PSTraceSource.NewArgumentNullException("typeDefinition");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeDefinition));
             if (typeDefinition.TypeName == null)
                 throw PSTraceSource.NewArgumentNullException("typeDefinition.TypeName");
             if (db == null)
-                throw PSTraceSource.NewArgumentNullException("db");
+                throw PSTraceSource.NewArgumentNullException(nameof(db));
             if (expressionFactory == null)
-                throw PSTraceSource.NewArgumentNullException("expressionFactory");
+                throw PSTraceSource.NewArgumentNullException(nameof(expressionFactory));
 
             this.expressionFactory = expressionFactory;
             this.ReportTrace("loading ExtendedTypeDefinition started");
@@ -337,10 +337,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void LoadData(XmlDocument doc, TypeInfoDataBase db)
         {
             if (doc == null)
-                throw PSTraceSource.NewArgumentNullException("doc");
+                throw PSTraceSource.NewArgumentNullException(nameof(doc));
 
             if (db == null)
-                throw PSTraceSource.NewArgumentNullException("db");
+                throw PSTraceSource.NewArgumentNullException(nameof(db));
 
             // create a new instance of the database to be loaded
             XmlElement documentElement = doc.DocumentElement;
@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 throw PSTraceSource.NewArgumentNullException("viewDefinition");
 
             if (db == null)
-                throw PSTraceSource.NewArgumentNullException("db");
+                throw PSTraceSource.NewArgumentNullException(nameof(db));
 
             int viewIndex = 0;
             foreach (FormatViewDefinition formatView in typeDefinition.FormatViewDefinition)
@@ -436,10 +436,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ViewDefinition view = LoadViewFromObjectModel(typeDefinition.TypeNames, formatView, viewIndex++);
                 if (view != null)
                 {
-                    ReportTrace(string.Format(CultureInfo.InvariantCulture,
+                    ReportTrace(string.Format(
+                        CultureInfo.InvariantCulture,
                         "{0} view {1} is loaded from the 'FormatViewDefinition' at index {2} in 'ExtendedTypeDefinition' with type name {3}",
                         ControlBase.GetControlShapeName(view.mainControl),
-                        view.name, viewIndex - 1, typeDefinition.TypeName));
+                        view.name,
+                        viewIndex - 1,
+                        typeDefinition.TypeName));
 
                     // we are fine, add the view to the list
                     db.viewDefinitionsSection.viewDefinitionList.Add(view);
@@ -586,7 +589,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="tableBody"></param>
         /// <param name="headers"></param>
-        private void LoadHeadersSectionFromObjectModel(TableControlBody tableBody, List<TableControlColumnHeader> headers)
+        private static void LoadHeadersSectionFromObjectModel(TableControlBody tableBody, List<TableControlColumnHeader> headers)
         {
             foreach (TableControlColumnHeader header in headers)
             {
@@ -746,7 +749,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Load EntrySelectedBy (TypeName) into AppliesTo.
         /// </summary>
         /// <returns></returns>
-        private AppliesTo LoadAppliesToSectionFromObjectModel(List<string> selectedBy, List<DisplayEntry> condition)
+        private static AppliesTo LoadAppliesToSectionFromObjectModel(List<string> selectedBy, List<DisplayEntry> condition)
         {
             AppliesTo appliesTo = new AppliesTo();
 
@@ -1122,9 +1125,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 frameInfoDefinition =
                 {
-                    leftIndentation = (int) frame.LeftIndent,
-                    rightIndentation = (int) frame.RightIndent,
-                    firstLine = frame.FirstLineHanging != 0 ? -(int) frame.FirstLineHanging : (int) frame.FirstLineIndent
+                    leftIndentation = (int)frame.LeftIndent,
+                    rightIndentation = (int)frame.RightIndent,
+                    firstLine = frame.FirstLineHanging != 0 ? -(int)frame.FirstLineHanging : (int)frame.FirstLineIndent
                 }
             };
 
@@ -2035,7 +2038,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return _token;
             }
 
-            private TypeInfoDataBaseLoader _loader;
+            private readonly TypeInfoDataBaseLoader _loader;
             private ExpressionToken _token;
             private bool _fatalError = false;
         }
@@ -2054,7 +2057,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal bool ProcessExpressionDirectives(XmlNode containerNode, List<XmlNode> unprocessedNodes)
             {
                 if (containerNode == null)
-                    throw PSTraceSource.NewArgumentNullException("containerNode");
+                    throw PSTraceSource.NewArgumentNullException(nameof(containerNode));
 
                 string formatString = null;
                 TextToken textToken = null;
@@ -2175,7 +2178,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             private TextToken _textToken;
             private ExpressionToken _expression;
 
-            private TypeInfoDataBaseLoader _loader;
+            private readonly TypeInfoDataBaseLoader _loader;
         }
 
         #endregion
@@ -2228,10 +2231,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             private ControlBase _control;
-            private TypeInfoDataBaseLoader _loader;
+            private readonly TypeInfoDataBaseLoader _loader;
         }
 
         #endregion
     }
 }
-

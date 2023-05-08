@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -233,14 +233,16 @@ namespace System.Management.Automation.Help
     /// </summary>
     internal class UpdatableHelpSystem : IDisposable
     {
-        private TimeSpan _defaultTimeout;
-        private Collection<UpdatableHelpProgressEventArgs> _progressEvents;
+        private readonly TimeSpan _defaultTimeout;
+        private readonly Collection<UpdatableHelpProgressEventArgs> _progressEvents;
         private bool _stopping;
-        private object _syncObject;
-        private UpdatableHelpCommandBase _cmdlet;
-        private CancellationTokenSource _cancelTokenSource;
+        private readonly object _syncObject;
+        private readonly UpdatableHelpCommandBase _cmdlet;
+        private readonly CancellationTokenSource _cancelTokenSource;
 
-        internal WebClient WebClient { get; }
+        internal HttpClient HttpClient { get; }
+
+        internal bool UseDefaultCredentials;
 
         internal string CurrentModule { get; set; }
 
@@ -249,7 +251,7 @@ namespace System.Management.Automation.Help
         /// </summary>
         internal UpdatableHelpSystem(UpdatableHelpCommandBase cmdlet, bool useDefaultCredentials)
         {
-            WebClient = new WebClient();
+            HttpClient = new HttpClient();
             _defaultTimeout = new TimeSpan(0, 0, 30);
             _progressEvents = new Collection<UpdatableHelpProgressEventArgs>();
             Errors = new Collection<Exception>();
@@ -258,7 +260,7 @@ namespace System.Management.Automation.Help
             _cmdlet = cmdlet;
             _cancelTokenSource = new CancellationTokenSource();
 
-            WebClient.UseDefaultCredentials = useDefaultCredentials;
+            UseDefaultCredentials = useDefaultCredentials;
 
 #if !CORECLR
             WebClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(HandleDownloadProgressChanged);
@@ -275,7 +277,7 @@ namespace System.Management.Automation.Help
             _completionEvent.Dispose();
 #endif
             _cancelTokenSource.Dispose();
-            WebClient.Dispose();
+            HttpClient.Dispose();
             GC.SuppressFinalize(this);
         }
 
@@ -339,7 +341,7 @@ namespace System.Management.Automation.Help
                 string xml;
                 using (HttpClientHandler handler = new HttpClientHandler())
                 {
-                    handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
+                    handler.UseDefaultCredentials = UseDefaultCredentials;
                     using (HttpClient client = new HttpClient(handler))
                     {
                         client.Timeout = _defaultTimeout;
@@ -390,7 +392,7 @@ namespace System.Management.Automation.Help
             // Like if you send a request to www.technet.com/powershell you will get
             // a 301/203 response with the response URI set to www.technet.com/powershell/
             //
-            if (Directory.Exists(baseUri) || baseUri.EndsWith("/", StringComparison.OrdinalIgnoreCase))
+            if (Directory.Exists(baseUri) || baseUri.EndsWith('/'))
             {
                 if (verbose)
                 {
@@ -420,7 +422,7 @@ namespace System.Management.Automation.Help
                     using (HttpClientHandler handler = new HttpClientHandler())
                     {
                         handler.AllowAutoRedirect = false;
-                        handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
+                        handler.UseDefaultCredentials = UseDefaultCredentials;
                         using (HttpClient client = new HttpClient(handler))
                         {
                             client.Timeout = new TimeSpan(0, 0, 30); // Set 30 second timeout
@@ -451,14 +453,14 @@ namespace System.Management.Automation.Help
                                         _cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.URIRedirectWarningToHost, uri));
                                     }
 
-                                    if (uri.EndsWith("/", StringComparison.OrdinalIgnoreCase))
+                                    if (uri.EndsWith('/'))
                                     {
                                         return uri;
                                     }
                                 }
                                 else if (response.StatusCode == HttpStatusCode.OK)
                                 {
-                                    if (uri.EndsWith("/", StringComparison.OrdinalIgnoreCase))
+                                    if (uri.EndsWith('/'))
                                     {
                                         return uri;
                                     }
@@ -510,8 +512,12 @@ namespace System.Management.Automation.Help
                     </xs:complexType>
                 </xs:element>
             </xs:schema>";
+
         private const string HelpInfoXmlNamespace = "http://schemas.microsoft.com/powershell/help/2010/05";
         private const string HelpInfoXmlValidationFailure = "HelpInfoXmlValidationFailure";
+        private const string MamlXmlNamespace = "http://schemas.microsoft.com/maml/2004/10";
+        private const string CommandXmlNamespace = "http://schemas.microsoft.com/maml/dev/command/2004/10";
+        private const string DscResourceXmlNamespace = "http://schemas.microsoft.com/maml/dev/dscResource/2004/10";
 
         /// <summary>
         /// Creates a HelpInfo object.
@@ -549,7 +555,10 @@ namespace System.Management.Automation.Help
             }
             catch (XmlException e)
             {
-                if (ignoreValidationException) { return null; }
+                if (ignoreValidationException)
+                {
+                    return null;
+                }
 
                 throw new UpdatableHelpSystemException(HelpInfoXmlValidationFailure,
                     e.Message, ErrorCategory.InvalidData, null, e);
@@ -585,8 +594,9 @@ namespace System.Management.Automation.Help
 
             if (!string.IsNullOrEmpty(currentCulture))
             {
-                WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
-                IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { currentCulture }, wildcardOptions);
+                IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(
+                    globPatterns: new[] { currentCulture },
+                    options: WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
                 for (int i = 0; i < updatableHelpItem.Length; i++)
                 {
@@ -616,7 +626,7 @@ namespace System.Management.Automation.Help
         /// <param name="schema">Xml schema.</param>
         /// <param name="handler">Validation event handler.</param>
         /// <param name="helpInfo">HelpInfo or HelpContent?</param>
-        private XmlDocument CreateValidXmlDocument(string xml, string ns, string schema, ValidationEventHandler handler,
+        private static XmlDocument CreateValidXmlDocument(string xml, string ns, string schema, ValidationEventHandler handler,
             bool helpInfo)
         {
             XmlReaderSettings settings = new XmlReaderSettings();
@@ -780,7 +790,7 @@ namespace System.Management.Automation.Help
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 handler.AllowAutoRedirect = false;
-                handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
+                handler.UseDefaultCredentials = UseDefaultCredentials;
                 using (HttpClient client = new HttpClient(handler))
                 {
                     client.Timeout = _defaultTimeout;
@@ -993,7 +1003,7 @@ namespace System.Management.Automation.Help
         /// Removes the read only attribute.
         /// </summary>
         /// <param name="path"></param>
-        private void RemoveReadOnly(string path)
+        private static void RemoveReadOnly(string path)
         {
             if (File.Exists(path))
             {
@@ -1001,7 +1011,7 @@ namespace System.Management.Automation.Help
 
                 if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 {
-                    attributes = (attributes & ~FileAttributes.ReadOnly);
+                    attributes &= ~FileAttributes.ReadOnly;
                     File.SetAttributes(path, attributes);
                 }
             }
@@ -1088,16 +1098,16 @@ namespace System.Management.Automation.Help
         }
 
 #if UNIX
-        private bool ExpandArchive(string source, string destination)
+        private static bool ExpandArchive(string source, string destination)
         {
-            bool sucessfulDecompression = false;
+            bool successfulDecompression = false;
 
             try
             {
                 using (ZipArchive zipArchive = ZipFile.Open(source, ZipArchiveMode.Read))
                 {
                     zipArchive.ExtractToDirectory(destination);
-                    sucessfulDecompression = true;
+                    successfulDecompression = true;
                 }
             }
             catch (ArgumentException) { }
@@ -1109,7 +1119,7 @@ namespace System.Management.Automation.Help
             catch (UnauthorizedAccessException) { }
             catch (ObjectDisposedException) { }
 
-            return sucessfulDecompression;
+            return successfulDecompression;
         }
 #endif
 
@@ -1120,7 +1130,7 @@ namespace System.Management.Automation.Help
         /// <param name="srcPath">Source path.</param>
         /// <param name="destPath">Destination path.</param>
         /// <param name="needToCopy">Is set to false if we find a single file placeholder.txt in cab. This means we no longer need to install help files.</param>
-        private void UnzipHelpContent(ExecutionContext context, string srcPath, string destPath, out bool needToCopy)
+        private static void UnzipHelpContent(ExecutionContext context, string srcPath, string destPath, out bool needToCopy)
         {
             needToCopy = true;
 
@@ -1130,24 +1140,24 @@ namespace System.Management.Automation.Help
             }
 
             string sourceDirectory = Path.GetDirectoryName(srcPath);
-            bool sucessfulDecompression = false;
+            bool successfulDecompression = false;
 #if UNIX
-            sucessfulDecompression = ExpandArchive(Path.Combine(sourceDirectory, Path.GetFileName(srcPath)), destPath);
+            successfulDecompression = ExpandArchive(Path.Combine(sourceDirectory, Path.GetFileName(srcPath)), destPath);
 #else
             // Cabinet API doesn't handle the trailing back slash
-            if (!sourceDirectory.EndsWith("\\", StringComparison.Ordinal))
+            if (!sourceDirectory.EndsWith('\\'))
             {
                 sourceDirectory += "\\";
             }
 
-            if (!destPath.EndsWith("\\", StringComparison.Ordinal))
+            if (!destPath.EndsWith('\\'))
             {
                 destPath += "\\";
             }
 
-            sucessfulDecompression = CabinetExtractorFactory.GetCabinetExtractor().Extract(Path.GetFileName(srcPath), sourceDirectory, destPath);
+            successfulDecompression = CabinetExtractorFactory.GetCabinetExtractor().Extract(Path.GetFileName(srcPath), sourceDirectory, destPath);
 #endif
-            if (!sucessfulDecompression)
+            if (!successfulDecompression)
             {
                 throw new UpdatableHelpSystemException("UnableToExtract", StringUtil.Format(HelpDisplayStrings.UnzipFailure),
                     ErrorCategory.InvalidOperation, null, null);
@@ -1304,8 +1314,6 @@ namespace System.Management.Automation.Help
 
                         Debug.Assert(helpItemsNode != null, "helpItemsNode must not be null");
 
-                        string targetNamespace = "http://schemas.microsoft.com/maml/2004/10";
-
                         foreach (XmlNode node in helpItemsNode.ChildNodes)
                         {
                             if (node.NodeType == XmlNodeType.Element)
@@ -1314,11 +1322,11 @@ namespace System.Management.Automation.Help
                                 {
                                     if (node.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        if (!node.NamespaceURI.Equals("http://schemas.microsoft.com/maml/2004/10", StringComparison.OrdinalIgnoreCase))
+                                        if (!node.NamespaceURI.Equals(MamlXmlNamespace, StringComparison.OrdinalIgnoreCase))
                                         {
                                             throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
                                                 StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure,
-                                                StringUtil.Format(HelpDisplayStrings.HelpContentMustBeInTargetNamespace, targetNamespace)), ErrorCategory.InvalidData, null, null);
+                                                StringUtil.Format(HelpDisplayStrings.HelpContentMustBeInTargetNamespace, MamlXmlNamespace)), ErrorCategory.InvalidData, null, null);
                                         }
                                         else
                                         {
@@ -1326,16 +1334,16 @@ namespace System.Management.Automation.Help
                                         }
                                     }
 
-                                    if (!node.NamespaceURI.Equals("http://schemas.microsoft.com/maml/dev/command/2004/10", StringComparison.OrdinalIgnoreCase) &&
-                                        !node.NamespaceURI.Equals("http://schemas.microsoft.com/maml/dev/dscResource/2004/10", StringComparison.OrdinalIgnoreCase))
+                                    if (!node.NamespaceURI.Equals(CommandXmlNamespace, StringComparison.OrdinalIgnoreCase) &&
+                                        !node.NamespaceURI.Equals(DscResourceXmlNamespace, StringComparison.OrdinalIgnoreCase))
                                     {
                                         throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
                                             StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure,
-                                            StringUtil.Format(HelpDisplayStrings.HelpContentMustBeInTargetNamespace, targetNamespace)), ErrorCategory.InvalidData, null, null);
+                                            StringUtil.Format(HelpDisplayStrings.HelpContentMustBeInTargetNamespace, MamlXmlNamespace)), ErrorCategory.InvalidData, null, null);
                                     }
                                 }
 
-                                CreateValidXmlDocument(node.OuterXml, targetNamespace, xsd,
+                                CreateValidXmlDocument(node.OuterXml, MamlXmlNamespace, xsd,
                                     new ValidationEventHandler(HelpContentValidationHandler),
                                     false);
                             }
@@ -1500,52 +1508,6 @@ namespace System.Management.Automation.Help
             return string.IsNullOrEmpty(defaultSourcePath) ? null : defaultSourcePath;
         }
 
-        /// <summary>
-        /// Sets the DisablePromptToUpdatableHelp regkey.
-        /// </summary>
-        internal static void SetDisablePromptToUpdateHelp()
-        {
-            try
-            {
-                PowerShellConfig.Instance.SetDisablePromptToUpdateHelp(true);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // Ignore AccessDenied related exceptions
-            }
-            catch (SecurityException)
-            {
-                // Ignore AccessDenied related exceptions
-            }
-        }
-
-        /// <summary>
-        /// Checks if it is necessary to prompt to update help.
-        /// </summary>
-        /// <returns></returns>
-        internal static bool ShouldPromptToUpdateHelp()
-        {
-#if UNIX
-            // TODO: This workaround needs to be removed once updatable help
-            //       works on Linux.
-            return false;
-#else
-            try
-            {
-                if (!Utils.IsAdministrator())
-                {
-                    return false;
-                }
-
-                return PowerShellConfig.Instance.GetDisablePromptToUpdateHelp();
-            }
-            catch (SecurityException)
-            {
-                return false;
-            }
-#endif
-        }
-
         #endregion
 
         #region Events
@@ -1624,8 +1586,8 @@ namespace System.Management.Automation.Help
     /// </summary>
     internal class UpdatableHelpSystemDrive : IDisposable
     {
-        private string _driveName;
-        private PSCmdlet _cmdlet;
+        private readonly string _driveName;
+        private readonly PSCmdlet _cmdlet;
 
         /// <summary>
         /// Gets the drive name.
@@ -1651,7 +1613,7 @@ namespace System.Management.Automation.Help
                 _cmdlet = cmdlet;
 
                 // Need to get rid of the trailing \, otherwise New-PSDrive will not work...
-                if (path.EndsWith("\\", StringComparison.OrdinalIgnoreCase) || path.EndsWith("/", StringComparison.OrdinalIgnoreCase))
+                if (path.EndsWith('\\') || path.EndsWith('/'))
                 {
                     path = path.Remove(path.Length - 1);
                 }

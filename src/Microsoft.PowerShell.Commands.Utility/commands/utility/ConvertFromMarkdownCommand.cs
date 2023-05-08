@@ -1,9 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -11,8 +10,6 @@ using System.Security;
 using System.Threading.Tasks;
 
 using Microsoft.PowerShell.MarkdownRender;
-
-using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -58,6 +55,7 @@ namespace Microsoft.PowerShell.Commands
         private const string PathParameterSet = "PathParamSet";
         private const string LiteralPathParameterSet = "LiteralParamSet";
         private const string InputObjParamSet = "InputObjParamSet";
+
         private MarkdownConversionType _conversionType = MarkdownConversionType.HTML;
         private PSMarkdownOptionInfo _mdOption = null;
 
@@ -108,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, baseObj.GetType());
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        ErrorRecord errorRecord = new(
                             new InvalidDataException(errorMessage),
                             "InvalidInputObject",
                             ErrorCategory.InvalidData,
@@ -152,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                using (StreamReader reader = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
+                using (StreamReader reader = new(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
                 {
                     string mdContent = await reader.ReadToEndAsync();
                     return mdContent;
@@ -191,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ProviderInfo provider = null;
             PSDriveInfo drive = null;
-            List<string> resolvedPaths = new List<string>();
+            List<string> resolvedPaths = new();
 
             try
             {
@@ -218,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
             if (!provider.Name.Equals("FileSystem", StringComparison.OrdinalIgnoreCase))
             {
                 string errorMessage = StringUtil.Format(ConvertMarkdownStrings.FileSystemPathsOnly, path);
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new ArgumentException(),
                     "OnlyFileSystemPathsSupported",
                     ErrorCategory.InvalidArgument,

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 /*
@@ -18,9 +18,8 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This class is used in the server side remoting scenarios. This class
     /// holds information about the incoming connection like:
-    /// (a) Client's TimeZone
-    /// (b) Connecting User information
-    /// (c) Connection String used by the user to connect to the server.
+    /// (a) Connecting User information
+    /// (b) Connection String used by the user to connect to the server.
     /// </summary>
     [Serializable]
     public sealed class PSSenderInfo : ISerializable
@@ -81,8 +80,6 @@ namespace System.Management.Automation.Remoting
                 UserInfo = senderInfo.UserInfo;
                 ConnectionString = senderInfo.ConnectionString;
                 _applicationArguments = senderInfo._applicationArguments;
-
-                ClientTimeZone = senderInfo.ClientTimeZone;
             }
             catch (Exception)
             {
@@ -129,11 +126,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Contains the TimeZone information from the client machine.
         /// </summary>
-        public TimeZoneInfo ClientTimeZone
-        {
-            get;
-            internal set;
-        }
+        public TimeZoneInfo ClientTimeZone => null;
 
         /// <summary>
         /// Connection string used by the client to connect to the server. This is

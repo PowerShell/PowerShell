@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-Unique DRT Unit Tests" -Tags "CI" {
     It "Command get-unique works with AsString switch" {
@@ -12,10 +12,10 @@ Describe "Get-Unique DRT Unit Tests" -Tags "CI" {
         $results[2] | Should -BeExactly "ba"
         $results[3] | Should -BeExactly "BA"
 
-        $results[0] | Should -BeOfType "System.String"
-        $results[1] | Should -BeOfType "System.String"
-        $results[2] | Should -BeOfType "System.String"
-        $results[3] | Should -BeOfType "System.String"
+        $results[0] | Should -BeOfType System.String
+        $results[1] | Should -BeOfType System.String
+        $results[2] | Should -BeOfType System.String
+        $results[3] | Should -BeOfType System.String
     }
 }
 
@@ -35,7 +35,7 @@ Describe "Get-Unique" -Tags "CI" {
     It "Should output an array" {
         $result = Get-Unique -InputObject $sortedList1
         $result | Should -Not -BeNullOrEmpty
-        ,$result | Should -BeOfType "System.Array"
+        ,$result | Should -BeOfType System.Array
     }
 
     It "Should output an array of unchanged items when the InputObject switch is used" {

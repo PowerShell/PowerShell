@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation;
@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// </summary>
     internal abstract class QueryJobBase : CimChildJobBase<CimInstance>
     {
-        private CimQuery _cimQuery;
+        private readonly CimQuery _cimQuery;
 
         internal QueryJobBase(CimJobContext jobContext, CimQuery cimQuery)
                 : base(jobContext)

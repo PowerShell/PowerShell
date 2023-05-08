@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Disconnect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = DisconnectPSSessionCommand.SessionParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210605", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096576", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
     public class DisconnectPSSessionCommand : PSRunspaceCmdlet, IDisposable
     {
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // no need to lock as the cmdlet parameters will not be assigned
                 // from multiple threads.
-                return _sessionOption ?? (_sessionOption = new PSSessionOption());
+                return _sessionOption ??= new PSSessionOption();
             }
         }
 
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
             base.BeginProcessing();
 
             _throttleManager.ThrottleLimit = ThrottleLimit;
-            _throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleDisconnectComplete);
+            _throttleManager.ThrottleComplete += HandleThrottleDisconnectComplete;
         }
 
         /// <summary>
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
         {
             int idleTimeout = session.Runspace.ConnectionInfo.IdleTimeout;
             int maxIdleTimeout = session.Runspace.ConnectionInfo.MaxIdleTimeout;
-            int minIdleTimeout = BaseTransportManager.MinimumIdleTimeout;
+            const int minIdleTimeout = BaseTransportManager.MinimumIdleTimeout;
 
             if (idleTimeout != BaseTransportManager.UseServerDefaultIdleTimeout &&
                 (idleTimeout > maxIdleTimeout || idleTimeout < minIdleTimeout))
@@ -363,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
-        private string GetLocalhostWithNetworkAccessEnabled(Dictionary<Guid, PSSession> psSessions)
+        private static string GetLocalhostWithNetworkAccessEnabled(Dictionary<Guid, PSSession> psSessions)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
@@ -392,10 +392,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Throttle class to perform a remoterunspace disconnect operation.
         /// </summary>
-        private class DisconnectRunspaceOperation : IThrottleOperation
+        private sealed class DisconnectRunspaceOperation : IThrottleOperation
         {
-            private PSSession _remoteSession;
-            private ObjectStream _writeStream;
+            private readonly PSSession _remoteSession;
+            private readonly ObjectStream _writeStream;
 
             internal DisconnectRunspaceOperation(PSSession session, ObjectStream stream)
             {
@@ -481,10 +481,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_writeStream.ObjectWriter.IsOpen)
                 {
-                    Action<Cmdlet> outputWriter = delegate (Cmdlet cmdlet)
-                    {
-                        cmdlet.WriteObject(_remoteSession);
-                    };
+                    Action<Cmdlet> outputWriter = (Cmdlet cmdlet) => cmdlet.WriteObject(_remoteSession);
                     _writeStream.ObjectWriter.Write(outputWriter);
                 }
             }
@@ -506,10 +503,7 @@ namespace Microsoft.PowerShell.Commands
 
                     Exception reason = new RuntimeException(msg, e);
                     ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionDisconnectFailed", ErrorCategory.InvalidOperation, _remoteSession);
-                    Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
-                    {
-                        cmdlet.WriteError(errorRecord);
-                    };
+                    Action<Cmdlet> errorWriter = (Cmdlet cmdlet) => cmdlet.WriteError(errorRecord);
                     _writeStream.ObjectWriter.Write(errorWriter);
                 }
             }
@@ -546,7 +540,7 @@ namespace Microsoft.PowerShell.Commands
                 _operationsComplete.WaitOne();
                 _operationsComplete.Dispose();
 
-                _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleDisconnectComplete);
+                _throttleManager.ThrottleComplete -= HandleThrottleDisconnectComplete;
                 _stream.Dispose();
             }
         }
@@ -556,14 +550,14 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         // Object used to perform network disconnect operations in a limited manner.
-        private ThrottleManager _throttleManager = new ThrottleManager();
+        private readonly ThrottleManager _throttleManager = new ThrottleManager();
 
         // Event indicating that all disconnect operations through the ThrottleManager
         // are complete.
-        private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
+        private readonly ManualResetEvent _operationsComplete = new ManualResetEvent(true);
 
         // Output data stream.
-        private ObjectStream _stream = new ObjectStream();
+        private readonly ObjectStream _stream = new ObjectStream();
 
         #endregion
     }

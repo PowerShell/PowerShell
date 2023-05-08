@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements New-PSSessionOption cmdlet.
     /// Spec: TBD.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144305", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommon.New, "PSSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096488", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(PSSessionOption))]
     public sealed class NewPSSessionOptionCommand : PSCmdlet
     {
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoCompression { get; set; }
 
         /// <summary>
-        /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
+        /// If <see langword="true"/> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
         /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
         /// already loaded the profile (i.e. in another session).
         /// </summary>
@@ -136,11 +136,13 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _openTimeout.HasValue ? _openTimeout.Value :
-                    RunspaceConnectionInfo.DefaultOpenTimeout;
+                return _openTimeout ?? RunspaceConnectionInfo.DefaultOpenTimeout;
             }
 
-            set { _openTimeout = value; }
+            set
+            {
+                _openTimeout = value;
+            }
         }
 
         private int? _openTimeout;
@@ -161,11 +163,13 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _cancelTimeout.HasValue ? _cancelTimeout.Value :
-                    BaseTransportManager.ClientCloseTimeoutMs;
+                return _cancelTimeout ?? BaseTransportManager.ClientCloseTimeoutMs;
             }
 
-            set { _cancelTimeout = value; }
+            set
+            {
+                _cancelTimeout = value;
+            }
         }
 
         private int? _cancelTimeout;
@@ -183,11 +187,13 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _idleTimeout.HasValue ? _idleTimeout.Value
-                    : RunspaceConnectionInfo.DefaultIdleTimeout;
+                return _idleTimeout ?? RunspaceConnectionInfo.DefaultIdleTimeout;
             }
 
-            set { _idleTimeout = value; }
+            set
+            {
+                _idleTimeout = value;
+            }
         }
 
         private int? _idleTimeout;
@@ -290,11 +296,13 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (_operationtimeout.HasValue ? _operationtimeout.Value :
-                    BaseTransportManager.ClientDefaultOperationTimeoutMs);
+                return _operationtimeout ?? BaseTransportManager.ClientDefaultOperationTimeoutMs;
             }
 
-            set { _operationtimeout = value; }
+            set
+            {
+                _operationtimeout = value;
+            }
         }
 
         private int? _operationtimeout;
@@ -308,7 +316,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter NoEncryption
         {
-            get { return _noencryption; }
+            get
+            {
+                return _noencryption;
+            }
 
             set
             {
@@ -327,7 +338,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
         public SwitchParameter UseUTF16
         {
-            get { return _useutf16; }
+            get
+            {
+                return _useutf16;
+            }
 
             set
             {

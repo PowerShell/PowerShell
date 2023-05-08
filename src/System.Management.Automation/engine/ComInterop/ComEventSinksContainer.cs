@@ -1,10 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT // ComObject
-
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Management.Automation.InteropServices;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -13,7 +13,7 @@ namespace System.Management.Automation.ComInterop
     /// This list is usually attached as a custom data for RCW object and
     /// is finalized whenever RCW is finalized.
     /// </summary>
-    internal class ComEventSinksContainer : List<ComEventSink>, IDisposable
+    internal class ComEventSinksContainer : List<ComEventsSink>, IDisposable
     {
         private ComEventSinksContainer()
         {
@@ -21,14 +21,10 @@ namespace System.Management.Automation.ComInterop
 
         private static readonly object s_comObjectEventSinksKey = new object();
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         public static ComEventSinksContainer FromRuntimeCallableWrapper(object rcw, bool createIfNotFound)
         {
-            // !!! Marshal.Get/SetComObjectData has a LinkDemand for UnmanagedCode which will turn into
-            // a full demand. We need to avoid this by making this method SecurityCritical
             object data = Marshal.GetComObjectData(rcw, s_comObjectEventSinksKey);
-            if (data != null || createIfNotFound == false)
+            if (data != null || !createIfNotFound)
             {
                 return (ComEventSinksContainer)data;
             }
@@ -63,9 +59,9 @@ namespace System.Management.Automation.ComInterop
 
         private void DisposeAll()
         {
-            foreach (ComEventSink sink in this)
+            foreach (ComEventsSink sink in this)
             {
-                sink.Dispose();
+                ComEventsSink.RemoveAll(sink);
             }
         }
 
@@ -75,6 +71,3 @@ namespace System.Management.Automation.ComInterop
         }
     }
 }
-
-#endif
-

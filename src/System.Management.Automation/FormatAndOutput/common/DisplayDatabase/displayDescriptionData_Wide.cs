@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 // this file contains the data structures for the in memory database
@@ -130,7 +130,7 @@ namespace System.Management.Automation
             OutOfBand = viewDefinition.outOfBand;
             GroupBy = PSControlGroupBy.Get(viewDefinition.groupBy);
 
-            AutoSize = widecontrolbody.autosize.HasValue && widecontrolbody.autosize.Value;
+            AutoSize = widecontrolbody.autosize.GetValueOrDefault();
             Columns = (uint)widecontrolbody.columns;
 
             Entries.Add(new WideControlEntryItem(widecontrolbody.defaultEntryDefinition));
@@ -145,7 +145,7 @@ namespace System.Management.Automation
         public WideControl(IEnumerable<WideControlEntryItem> wideEntries) : this()
         {
             if (wideEntries == null)
-                throw PSTraceSource.NewArgumentNullException("wideEntries");
+                throw PSTraceSource.NewArgumentNullException(nameof(wideEntries));
 
             foreach (WideControlEntryItem entryItem in wideEntries)
             {
@@ -157,7 +157,7 @@ namespace System.Management.Automation
         public WideControl(IEnumerable<WideControlEntryItem> wideEntries, uint columns) : this()
         {
             if (wideEntries == null)
-                throw PSTraceSource.NewArgumentNullException("wideEntries");
+                throw PSTraceSource.NewArgumentNullException(nameof(wideEntries));
 
             foreach (WideControlEntryItem entryItem in wideEntries)
             {
@@ -187,8 +187,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (EntrySelectedBy == null)
-                    EntrySelectedBy = new EntrySelectedBy { TypeNames = new List<string>() };
+                EntrySelectedBy ??= new EntrySelectedBy { TypeNames = new List<string>() };
                 return EntrySelectedBy.TypeNames;
             }
         }
@@ -224,7 +223,7 @@ namespace System.Management.Automation
         public WideControlEntryItem(DisplayEntry entry) : this()
         {
             if (entry == null)
-                throw PSTraceSource.NewArgumentNullException("entry");
+                throw PSTraceSource.NewArgumentNullException(nameof(entry));
             this.DisplayEntry = entry;
         }
 
@@ -234,9 +233,9 @@ namespace System.Management.Automation
         public WideControlEntryItem(DisplayEntry entry, IEnumerable<string> selectedBy) : this()
         {
             if (entry == null)
-                throw PSTraceSource.NewArgumentNullException("entry");
+                throw PSTraceSource.NewArgumentNullException(nameof(entry));
             if (selectedBy == null)
-                throw PSTraceSource.NewArgumentNullException("selectedBy");
+                throw PSTraceSource.NewArgumentNullException(nameof(selectedBy));
 
             this.DisplayEntry = entry;
             this.EntrySelectedBy = EntrySelectedBy.Get(selectedBy, null);
@@ -259,6 +258,7 @@ namespace System.Management.Automation
     public sealed class WideControlBuilder
     {
         private readonly WideControl _control;
+
         internal WideControlBuilder(WideControl control)
         {
             _control = control;

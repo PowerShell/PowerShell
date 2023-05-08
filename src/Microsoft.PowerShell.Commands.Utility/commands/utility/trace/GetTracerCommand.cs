@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Linq;
@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A cmdlet that gets the TraceSource instances that are instantiated in the process.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TraceSource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113333")]
+    [Cmdlet(VerbsCommon.Get, "TraceSource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096707")]
     [OutputType(typeof(PSTraceSource))]
     public class GetTraceSourceCommand : TraceCommandBase
     {
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             var sources = GetMatchingTraceSource(_names, true);
-            var result = sources.OrderBy(source => source.Name);
+            var result = sources.OrderBy(static source => source.Name);
             WriteObject(result, true);
         }
 

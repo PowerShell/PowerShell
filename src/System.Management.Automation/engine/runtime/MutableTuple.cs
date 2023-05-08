@@ -30,6 +30,7 @@ namespace System.Management.Automation
     internal abstract class MutableTuple
     {
         private const int MaxSize = 128;
+
         private static readonly Dictionary<Type, int> s_sizeDict = new Dictionary<Type, int>();
 
         private int _size;
@@ -148,6 +149,7 @@ namespace System.Management.Automation
         }
 
         protected abstract object GetValueImpl(int index);
+
         protected abstract void SetValueImpl(int index, object value);
 
         /// <summary>
@@ -279,7 +281,11 @@ namespace System.Management.Automation
             // ContractUtils.RequiresNotNull(tupleType, "tupleType");
 
             int count = 0;
-            lock (s_sizeDict) if (s_sizeDict.TryGetValue(tupleType, out count)) return count;
+            lock (s_sizeDict) if (s_sizeDict.TryGetValue(tupleType, out count))
+            {
+                return count;
+            }
+
             Stack<Type> types = new Stack<Type>(tupleType.GetGenericArguments());
 
             while (types.Count != 0)
@@ -296,7 +302,10 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                if (t == typeof(DynamicNull)) continue;
+                if (t == typeof(DynamicNull))
+                {
+                    continue;
+                }
 
                 count++;
             }
@@ -307,6 +316,7 @@ namespace System.Management.Automation
 
         private static readonly ConcurrentDictionary<Type, Func<MutableTuple>> s_tupleCreators =
             new ConcurrentDictionary<Type, Func<MutableTuple>>(concurrencyLevel: 3, capacity: 100);
+
         public static Func<MutableTuple> TupleCreator(Type type)
         {
             return s_tupleCreators.GetOrAdd(type,
@@ -366,7 +376,7 @@ namespace System.Management.Automation
 
             foreach (int curIndex in GetAccessPath(size, index))
             {
-                PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", curIndex));
+                PropertyInfo pi = tupleType.GetProperty("Item" + string.Create(CultureInfo.InvariantCulture, $"{curIndex:D3}"));
                 Diagnostics.Assert(pi != null, "reflection should always find Item");
                 yield return pi;
                 tupleType = pi.PropertyType;
@@ -437,7 +447,7 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < size; i++)
                 {
-                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
+                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Create(CultureInfo.InvariantCulture, $"{i:D3}"));
                     res.SetValueImpl(i, MakeTuple(pi.PropertyType, null, null));
                 }
             }
@@ -501,7 +511,7 @@ namespace System.Management.Automation
         /// </summary>
         public static Expression Create(params Expression[] values)
         {
-            return CreateNew(MakeTupleType(values.Select(x => x.Type).ToArray()), 0, values.Length, values);
+            return CreateNew(MakeTupleType(values.Select(static x => x.Type).ToArray()), 0, values.Length, values);
         }
 
         private static int PowerOfTwoRound(int value)
@@ -509,7 +519,7 @@ namespace System.Management.Automation
             int res = 1;
             while (value > res)
             {
-                res = res << 1;
+                res <<= 1;
             }
 
             return res;
@@ -537,7 +547,7 @@ namespace System.Management.Automation
                     int newStart = start + (i * multiplier);
                     int newEnd = System.Math.Min(end, start + ((i + 1) * multiplier));
 
-                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", i));
+                    PropertyInfo pi = tupleType.GetProperty("Item" + string.Create(CultureInfo.InvariantCulture, $"{i:D3}"));
 
                     newValues[i] = CreateNew(pi.PropertyType, newStart, newEnd, values);
                 }
@@ -561,7 +571,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return Expression.New(tupleType.GetConstructor(newValues.Select(x => x.Type).ToArray()), newValues);
+            return Expression.New(tupleType.GetConstructor(newValues.Select(static x => x.Type).ToArray()), newValues);
         }
     }
 

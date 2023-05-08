@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Join-String" -Tags "CI" {
@@ -25,13 +25,13 @@ Describe "Join-String" -Tags "CI" {
     }
 
     It "Should join property values with default separator" {
-        $expected = $testObject.Name -join $ofs
+        $expected = $testObject.Name -join $OFS
         $actual = $testObject | Join-String -Property Name
         $actual | Should -BeExactly $expected
     }
 
     It "Should join property values positionally with default separator" {
-        $expected = $testObject.Name -join $ofs
+        $expected = $testObject.Name -join $OFS
         $actual = $testObject | Join-String Name
         $actual | Should -BeExactly $expected
     }
@@ -69,7 +69,7 @@ Describe "Join-String" -Tags "CI" {
 
     It "Should join script block results with default separator" {
         $sb = {$_.Name + $_.Length}
-        $expected = ($testObject | ForEach-Object $sb) -join $ofs
+        $expected = ($testObject | ForEach-Object $sb) -join $OFS
         $actual = $testObject | Join-String -Property $sb
         $actual | Should -BeExactly $expected
     }
@@ -83,13 +83,13 @@ Describe "Join-String" -Tags "CI" {
 
     It "Should join script block results SingleQuoted" {
         $sb = {$_.Name + $_.Length}
-        $expected = ($testObject | ForEach-Object $sb).ForEach{"'$_'"} -join $ofs
+        $expected = ($testObject | ForEach-Object $sb).ForEach{"'$_'"} -join $OFS
         $actual = $testObject | Join-String -Property $sb -SingleQuote
         $actual | Should -BeExactly $expected
     }
     It "Should join script block results DoubleQuoted" {
         $sb = {$_.Name + $_.Length}
-        $expected = ($testObject | ForEach-Object $sb).ForEach{"""$_"""} -join $ofs
+        $expected = ($testObject | ForEach-Object $sb).ForEach{"""$_"""} -join $OFS
         $actual = $testObject | Join-String -Property $sb -DoubleQuote
         $actual | Should -BeExactly $expected
     }
@@ -102,7 +102,7 @@ Describe "Join-String" -Tags "CI" {
     }
 
     It "Should Handle OutputPrefix and OutputSuffix" {
-        $ofs = ','
+        $OFS = ','
         $expected = "A 1,2,3 B"
         $actual = 1..3 | Join-String -OutputPrefix "A " -OutputSuffix " B"
         $actual | Should -BeExactly $expected
@@ -116,7 +116,7 @@ Describe "Join-String" -Tags "CI" {
 
     It "Should tabcomplete InputObject properties" {
         $cmd = '[io.fileinfo]::new("c:\temp") | Join-String -Property '
-        $res = tabexpansion2 $cmd $cmd.length
+        $res = TabExpansion2 $cmd $cmd.length
         $completionTexts = $res.CompletionMatches.CompletionText
         $Properties = [io.fileinfo]::new($PSScriptRoot).psobject.properties.Name
         foreach ($n in $Properties) {

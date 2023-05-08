@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -214,7 +214,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// Used primarily by the private ThrowOnFailure method when building
         /// Exception objects to throw.
         /// </remarks>
-        private class Context
+        private sealed class Context
         {
             public ContextOperation operation;
             public ContextObjectType type;
@@ -308,7 +308,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// AccountInfo is the return type from the private
         /// LookupAccountInfo method.
         /// </remarks>
-        private class AccountInfo
+        private sealed class AccountInfo
         {
             public string AccountName;
             public string DomainName;
@@ -3145,8 +3145,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             internal OperatingSystem(Version version, string servicePack)
             {
-                if (version == null)
-                    throw new ArgumentNullException("version");
+                ArgumentNullException.ThrowIfNull(version);
 
                 _version = version;
                 _servicePack = servicePack;

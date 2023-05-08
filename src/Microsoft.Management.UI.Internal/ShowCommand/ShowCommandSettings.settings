@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Microsoft.Management.UI.Internal.ShowCommand" GeneratedClassName="ShowCommandSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ShowOneCommandTop" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">-1</Value>
+    </Setting>
+    <Setting Name="ShowOneCommandLeft" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">-1</Value>
+    </Setting>
+    <Setting Name="ShowOneCommandWidth" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">-1</Value>
+    </Setting>
+    <Setting Name="ShowOneCommandHeight" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">-1</Value>
+    </Setting>
+    <Setting Name="ShowCommandsTop" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">-1</Value>
+    </Setting>
+    <Setting Name="ShowCommandsLeft" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">-1</Value>
+    </Setting>
+    <Setting Name="ShowCommandsWidth" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">-1</Value>
+    </Setting>
+    <Setting Name="ShowCommandsHeight" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">-1</Value>
+    </Setting>
+    <Setting Name="ShowCommandsWindowMaximized" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ShowOneCommandWindowMaximized" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

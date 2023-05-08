@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (control == null)
             {
-                throw PSTraceSource.NewArgumentNullException("control");
+                throw PSTraceSource.NewArgumentNullException(nameof(control));
             }
 
             ExecuteFormatControl(new TraversalInfo(0, maxTreeDepth), control,
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (so == null)
             {
-                throw PSTraceSource.NewArgumentNullException("so");
+                throw PSTraceSource.NewArgumentNullException(nameof(so));
             }
 
             // guard against infinite loop
@@ -283,10 +283,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         // Since it is a leaf node we just consider it an empty string and go
                         // on with formatting
-                        if (val == null)
-                        {
-                            val = string.Empty;
-                        }
+                        val ??= string.Empty;
 
                         FieldFormattingDirective fieldFormattingDirective = null;
                         StringFormatError formatErrorObject = null;
@@ -383,13 +380,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return retVal;
         }
 
-        private TypeInfoDataBase _db;
-        private DatabaseLoadingInfo _loadingInfo;
-        private PSPropertyExpressionFactory _expressionFactory;
-        private List<ControlDefinition> _controlDefinitionList;
-        private FormatErrorManager _errorManager;
-        private TerminatingErrorContext _errorContext;
-        private int _enumerationLimit;
+        private readonly TypeInfoDataBase _db;
+        private readonly DatabaseLoadingInfo _loadingInfo;
+        private readonly PSPropertyExpressionFactory _expressionFactory;
+        private readonly List<ControlDefinition> _controlDefinitionList;
+        private readonly FormatErrorManager _errorManager;
+        private readonly TerminatingErrorContext _errorContext;
+        private readonly int _enumerationLimit;
     }
 
     internal class TraversalInfo
@@ -412,8 +409,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private int _level;
-        private int _maxDepth;
+        private readonly int _level;
+        private readonly int _maxDepth;
     }
 
     /// <summary>
@@ -494,7 +491,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (formatErrorObject != null && formatErrorObject.exception != null)
             {
-                // if we did no thave any errors in the expression evaluation
+                // if we did not have any errors in the expression evaluation
                 // we might have errors in the formatting, if present
                 _errorManager.LogStringFormatError(formatErrorObject);
                 if (_errorManager.DisplayFormatErrorString)
@@ -717,7 +714,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (_complexSpecificParameters.classDisplay == ComplexSpecificParameters.ClassInfoDisplay.shortName)
             {
                 // get the last token in the full name
-                string[] arr = typeNames[0].Split(Utils.Separators.Dot);
+                string[] arr = typeNames[0].Split('.');
                 if (arr.Length > 0)
                     return arr[arr.Length - 1];
             }
@@ -771,13 +768,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Indentation added to each level in the recursion.
         /// </summary>
-        private int _indentationStep = 2;
+        private readonly int _indentationStep = 2;
 
-        private FormatErrorManager _errorManager;
+        private readonly FormatErrorManager _errorManager;
 
-        private PSPropertyExpressionFactory _expressionFactory;
+        private readonly PSPropertyExpressionFactory _expressionFactory;
 
-        private int _enumerationLimit;
+        private readonly int _enumerationLimit;
     }
 }
-

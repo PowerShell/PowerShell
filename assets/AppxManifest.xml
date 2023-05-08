@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <Package IgnorableNamespaces="uap mp rescap desktop6"
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -9,10 +9,10 @@
   xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
 
-  <Identity Name="Microsoft.PowerShell" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="$VERSION$" />
+  <Identity Name="Microsoft.$PRODUCTNAME$" ProcessorArchitecture="$ARCH$" Publisher="$PUBLISHER$" Version="$VERSION$" />
 
   <Properties>
-    <DisplayName>PowerShell 7</DisplayName>
+    <DisplayName>$DISPLAYNAME$</DisplayName>
     <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>assets\StoreLogo.png</Logo>
     <desktop6:RegistryWriteVirtualization>disabled</desktop6:RegistryWriteVirtualization>
@@ -20,11 +20,11 @@
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.17763.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.18362.0" />
   </Dependencies>
 
   <Resources>
-    <Resource Language="en-US"/>
+    <Resource Language="en-us"/>
   </Resources>
 
   <Applications>
@@ -36,7 +36,7 @@
           </uap3:AppExecutionAlias>
         </uap3:Extension>
       </Extensions>
-      <uap:VisualElements DisplayName="PowerShell 7" Description="PowerShell is an automation and configuration management platform. It consists of a cross-platform (Windows, Linux, and macOS) command-line shell and associated scripting language." BackgroundColor="transparent" Square150x150Logo="assets\Square150x150Logo.png" Square44x44Logo="assets\Square44x44Logo.png">
+      <uap:VisualElements DisplayName="$DISPLAYNAME$" Description="PowerShell is an automation and configuration management platform. It consists of a cross-platform (Windows, Linux, and macOS) command-line shell and associated scripting language." BackgroundColor="transparent" Square150x150Logo="assets\Square150x150Logo.png" Square44x44Logo="assets\Square44x44Logo.png">
       </uap:VisualElements>
     </Application>
   </Applications>
@@ -45,5 +45,7 @@
     <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="unvirtualizedResources" />
+    <rescap:Capability Name="packageManagement" />
+    <rescap:Capability Name="packageQuery" />
   </Capabilities>
 </Package>

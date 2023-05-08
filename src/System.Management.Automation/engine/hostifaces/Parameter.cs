@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Language;
@@ -33,7 +33,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
         }
 
@@ -51,7 +51,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (string.IsNullOrWhiteSpace(name))
                 {
-                    throw PSTraceSource.NewArgumentException("name");
+                    throw PSTraceSource.NewArgumentException(nameof(name));
                 }
 
                 Name = name;
@@ -80,9 +80,10 @@ namespace System.Management.Automation.Runspaces
 
         #endregion Public properties
 
-        #region Private Fields
-
-        #endregion Private Fields
+        /// <summary>
+        /// Gets whether the parameter was from splatting a Hashtable.
+        /// </summary>
+        private bool FromHashtableSplatting { get; set; }
 
         #region Conversion from and to CommandParameterInternal
 
@@ -90,7 +91,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (internalParameter == null)
             {
-                throw PSTraceSource.NewArgumentNullException("internalParameter");
+                throw PSTraceSource.NewArgumentNullException(nameof(internalParameter));
             }
 
             // we want the name to preserve 1) dashes, 2) colons, 3) followed-by-space information
@@ -100,7 +101,7 @@ namespace System.Management.Automation.Runspaces
                 name = internalParameter.ParameterText;
                 if (internalParameter.SpaceAfterParameter)
                 {
-                    name = name + " ";
+                    name += " ";
                 }
 
                 Diagnostics.Assert(name != null, "'name' variable should be initialized at this point");
@@ -108,24 +109,21 @@ namespace System.Management.Automation.Runspaces
                 Diagnostics.Assert(name.Trim().Length != 1, "Parameter name has to have some non-whitespace characters in it");
             }
 
-            if (internalParameter.ParameterAndArgumentSpecified)
-            {
-                return new CommandParameter(name, internalParameter.ArgumentValue);
-            }
+            CommandParameter result = internalParameter.ParameterAndArgumentSpecified
+                ? new CommandParameter(name, internalParameter.ArgumentValue)
+                : name != null
+                    ? new CommandParameter(name)
+                    : new CommandParameter(name: null, internalParameter.ArgumentValue);
 
-            if (name != null) // either a switch parameter or first part of parameter+argument
-            {
-                return new CommandParameter(name);
-            }
-            // either a positional argument or second part of parameter+argument
-            return new CommandParameter(null, internalParameter.ArgumentValue);
+            result.FromHashtableSplatting = internalParameter.FromHashtableSplatting;
+            return result;
         }
 
         internal static CommandParameterInternal ToCommandParameterInternal(CommandParameter publicParameter, bool forNativeCommand)
         {
             if (publicParameter == null)
             {
-                throw PSTraceSource.NewArgumentNullException("publicParameter");
+                throw PSTraceSource.NewArgumentNullException(nameof(publicParameter));
             }
 
             string name = publicParameter.Name;
@@ -143,9 +141,12 @@ namespace System.Management.Automation.Runspaces
             {
                 parameterText = forNativeCommand ? name : "-" + name;
                 return CommandParameterInternal.CreateParameterWithArgument(
-                    /*parameterAst*/null, name, parameterText,
-                    /*argumentAst*/null, value,
-                    true);
+                    parameterAst: null,
+                    parameterName: name,
+                    parameterText: parameterText,
+                    argumentAst: null,
+                    value: value,
+                    spaceAfterParameter: true);
             }
 
             // if first character of name is '-', then we try to fake the original token
@@ -184,9 +185,13 @@ namespace System.Management.Automation.Runspaces
 
             // name+value pair
             return CommandParameterInternal.CreateParameterWithArgument(
-                /*parameterAst*/null, parameterName, parameterText,
-                /*argumentAst*/null, value,
-                spaceAfterParameter);
+                parameterAst: null,
+                parameterName,
+                parameterText,
+                argumentAst: null,
+                value,
+                spaceAfterParameter,
+                publicParameter.FromHashtableSplatting);
         }
 
         #endregion
@@ -211,7 +216,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (parameterAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameterAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterAsPSObject));
             }
 
             string name = RemotingDecoder.GetPropertyValue<string>(parameterAsPSObject, RemoteDataNameStrings.ParameterName);
@@ -233,34 +238,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion
-
-        #region Win Blue Extensions
-
-#if !CORECLR // PSMI Not Supported On CSS
-        internal CimInstance ToCimInstance()
-        {
-            CimInstance c = InternalMISerializer.CreateCimInstance("PS_Parameter");
-            CimProperty nameProperty = InternalMISerializer.CreateCimProperty("Name", this.Name,
-                                                                                Microsoft.Management.Infrastructure.CimType.String);
-            c.CimInstanceProperties.Add(nameProperty);
-            Microsoft.Management.Infrastructure.CimType cimType = CimConverter.GetCimType(this.Value.GetType());
-            CimProperty valueProperty;
-            if (cimType == Microsoft.Management.Infrastructure.CimType.Unknown)
-            {
-                valueProperty = InternalMISerializer.CreateCimProperty("Value", (object)PSMISerializer.Serialize(this.Value),
-                                                                                Microsoft.Management.Infrastructure.CimType.Instance);
-            }
-            else
-            {
-                valueProperty = InternalMISerializer.CreateCimProperty("Value", this.Value, cimType);
-            }
-
-            c.CimInstanceProperties.Add(valueProperty);
-            return c;
-        }
-#endif
-
-        #endregion Win Blue Extensions
     }
 
     /// <summary>
@@ -309,4 +286,3 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-

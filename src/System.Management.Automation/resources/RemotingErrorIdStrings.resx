@@ -760,9 +760,6 @@ Do you want to continue?</value>
   <data name="ShowUIAndSDDLCannotExist" xml:space="preserve">
     <value>"{0}" and "{1}" parameters cannot be specified together. Specify either "{0}" or  "{1}" parameter.</value>
   </data>
-  <data name="UseSharedProcessCannotBeFalseForWorkflowSessionType" xml:space="preserve">
-    <value>The SharedHost attribute cannot be set to false on a workflow session type configuration.</value>
-  </data>
   <data name="RestartWinRMMessage" xml:space="preserve">
     <value>This operation might restart the WinRM service. Do you want to continue?</value>
   </data>
@@ -840,8 +837,7 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
     <value>A {1} job source adapter threw an exception with the following message: {0}</value>
   </data>
   <data name="PSVersionParameterOutOfRange" xml:space="preserve">
-    <value>The value {0} is not valid for the {1} parameter. The available values are 2.0, 3.0, 4.0, 5.0, 5.1.</value>
-    <comment>{StrContains="2.0"} {StrContains="3.0"}</comment>
+    <value>The value {0} is not valid for the {1} parameter. The only allowed value is 5.1.</value>
   </data>
   <data name="BlockCannotBeUsedWithKeep" xml:space="preserve">
     <value>The Wait and Keep parameters cannot be used together in the same command.</value>
@@ -849,8 +845,8 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
   <data name="WriteEventsCannotBeUsedWithoutWait" xml:space="preserve">
     <value>The WriteEvents parameter cannot be used without the Wait parameter.</value>
   </data>
-  <data name="PowerShellNotInstalled" xml:space="preserve">
-    <value>PowerShell {0} is not installed. Install PowerShell {0}, and then try again.</value>
+  <data name="PowerShellVersionNotSupported" xml:space="preserve">
+    <value>PowerShell remoting endpoint versioning is not supported on PowerShell Core.</value>
   </data>
   <data name="JobManagerRegistrationConstructorError" xml:space="preserve">
     <value>The following type cannot be instantiated because its constructor is not public: {0}.</value>
@@ -975,9 +971,6 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="SetEnabledTrueTarget" xml:space="preserve">
     <value>Enabled: True. This configures the WS-Management service to accept the connection request.</value>
-  </data>
-  <data name="PSJobProxyInvalidReasonException" xml:space="preserve">
-    <value>Reason in a deserialized Job object is not valid.</value>
   </data>
   <data name="DISCAliasDefinitionsComment" xml:space="preserve">
     <value>Aliases to be defined when applied to a session</value>
@@ -1307,6 +1300,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>Cannot find a scheduled job with type {0} and name {1}.</value>
     <comment>{0} is the job definition type and {1} is the job definition name.</comment>
   </data>
+  <data name="StartJobWorkingDirectoryNotFound" xml:space="preserve">
+    <value>Cannot find the WorkingDirectory path {0}.</value>
+  </data>
   <data name="CannotFindSessionForConnect" xml:space="preserve">
     <value>Cannot connect to session {0}.  The session no longer exists on computer {1}.</value>
     <comment>{0} is the session name that cannot be found.
@@ -1333,9 +1329,6 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="ErrorParsingTheKeyInPSSessionConfigurationFile" xml:space="preserve">
     <value>Register-PSSessionConfiguration : The '{0}' key in the {1}. session configuration file contains a value that is not valid. Correct the file and try the command again. </value>
   </data>
-  <data name="JobWasStopped" xml:space="preserve">
-    <value>The workflow job "{0}" was stopped. Receive-Job is only displaying partial results.</value>
-  </data>
   <data name="EndpointDoesNotSupportDisconnect" xml:space="preserve">
     <value>Disconnected sessions are supported only when the remote computer is running PowerShell 3.0 or a later version of PowerShell.</value>
   </data>
@@ -1344,9 +1337,6 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="EnableNetworkAccessWarning" xml:space="preserve">
     <value>PSSession {0} was created using the EnableNetworkAccess parameter and can only be reconnected from the local computer.</value>
-  </data>
-  <data name="RemoteHostDoesNotSupportPushRunspace" xml:space="preserve">
-    <value>You are currently in a PowerShell PSSession and cannot use the Enter-PSSession cmdlet to enter another PSSession.</value>
   </data>
   <data name="CannotStartJobInconsistentLanguageMode" xml:space="preserve">
     <value>Cannot start job. The language mode for this session is incompatible with the system-wide language mode.</value>
@@ -1370,7 +1360,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>The remote session command is currently stopped in the debugger.  Use the Enter-PSSession cmdlet to connect interactively to the remote session and automatically enter into the console debugger.</value>
   </data>
   <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
-    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running PowerShell {0} or greater.</value>
+    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running PowerShell 4.0 or greater.</value>
   </data>
   <data name="ICMInvalidSessionState" xml:space="preserve">
     <value>Because the session state for session {0}, {1}, {2} is not equal to Open, you cannot run a command in the session.  The session state is {3}.</value>
@@ -1418,7 +1408,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>Multiple processes were found with this name {0}. Use the process Id to specify a single process to enter.</value>
   </data>
   <data name="EnterPSHostProcessNoPowerShell" xml:space="preserve">
-    <value>Cannot enter process {0} because it has not loaded the PowerShell engine.</value>
+    <value>Cannot enter process with Id '{0}' because it has not loaded the PowerShell engine.</value>
   </data>
   <data name="EnterPSHostProcessNoProcessFoundWithId" xml:space="preserve">
     <value>No process was found with Id: {0}.</value>
@@ -1634,6 +1624,13 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="SSHClientEndWithErrorMessage" xml:space="preserve">
     <value>The SSH client session has ended with error message: {0}</value>
   </data>
+  <data name="SSHClientConnectTimeout" xml:space="preserve">
+    <value>SSH connection attempt failed after time out: {0} seconds.</value>
+  </data>
+  <data name="SSHClientConnectProcessTerminated" xml:space="preserve">
+    <value>
+SSH client process terminated before connection could be established.</value>
+  </data>
   <data name="MissingRequiredSSHParameter" xml:space="preserve">
     <value>The provided SSHConnection hashtable is missing the required ComputerName or HostName parameter.</value>
   </data>
@@ -1660,6 +1657,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="InvalidProcessorArchitecture" xml:space="preserve">
     <value>PowerShell 6+ does not support WOW64. The binary must match the architecture of the processor.</value>
+  </data>
+  <data name="WowComponentNotPresent" xml:space="preserve">
+    <value>The "{0}" executable file was not found. Verify that the WOW64 feature is installed.</value>
   </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
     <value>Unable to install plugin {0} to directory {1}.</value>
@@ -1692,5 +1692,26 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="PSCoreRemotingEnableWarning" xml:space="preserve">
     <value>PowerShell remoting has been enabled only for PowerShell 6+ configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.</value>
+  </data>
+  <data name="EnterPSHostProcessCmdletDisabled" xml:space="preserve">
+    <value>Enter-PSHostProcess cmdlet is disabled because an application control policy such as 'AppLocker' or 'Windows Defender Application Control' is in enforcement.</value>
+  </data>
+  <data name="RemoteDebuggerError" xml:space="preserve">
+    <value>Remote debugger exception: {0}, error message: {1}</value>
+  </data>
+  <data name="WindowsPowerShellNotPresent" xml:space="preserve">
+    <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
+  </data>
+  <data name="InvalidPSSessionArgument" xml:space="preserve">
+    <value>The Runspace argument to Create must be a non-null RemoteRunspace object.</value>
+  </data>
+  <data name="DISCInvalidConfigKeyType" xml:space="preserve">
+    <value>The session configuration hash table contains an invalid key type. Keys should be string types.</value>
+  </data>
+  <data name="DISCUnsupportedConfigName" xml:space="preserve">
+    <value>The session configuration file contains an unsupported configuration option: {0}. This is a remoting endpoint configuration option, that does not apply to PowerShell session state.</value>
+  </data>
+  <data name="DISCUnknownConfigName" xml:space="preserve">
+    <value>The session configuration file contains an unknown configuration option: {0}.</value>
   </data>
 </root>

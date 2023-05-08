@@ -216,9 +216,6 @@
   <data name="DirectoryExist" xml:space="preserve">
     <value>An item with the specified name {0} already exists.</value>
   </data>
-  <data name="BasePathLengthError" xml:space="preserve">
-    <value>The path length is too short. The character length of a path cannot be less than the character length of the basePath.</value>
-  </data>
   <data name="DelimiterError" xml:space="preserve">
     <value>A delimiter cannot be specified when reading the stream one byte at a time.</value>
   </data>
@@ -253,7 +250,7 @@
     <value>Cannot process the file because the file {0} was not found.</value>
   </data>
   <data name="DirectoryDisplayGrouping" xml:space="preserve">
-    <value>Directory: </value>
+    <value>    Directory: </value>
   </data>
   <data name="ReadBackward_Encoding_NotSupport" xml:space="preserve">
     <value>Cannot detect the encoding of the file. The specified encoding {0} is not supported when the content is read in reverse.</value>
@@ -275,9 +272,6 @@
   </data>
   <data name="NoFirstLastWaitForRaw" xml:space="preserve">
     <value>The '{0}' and '{1}' parameters cannot be specified in the same command.</value>
-  </data>
-  <data name="SubstitutePathTooLong" xml:space="preserve">
-    <value>The substitute path for the DOS device '{0}' is too long. It exceeds the maximum total path length (32,767 characters) that is valid for the Windows API.</value>
   </data>
   <data name="ItemNotDirectory" xml:space="preserve">
     <value>A directory is required for the operation. The item '{0}' is not a directory.</value>
@@ -324,14 +318,8 @@
   <data name="CopyItemRemotelyFailedToReadFile" xml:space="preserve">
     <value>Failed to read remote file '{0}'.</value>
   </data>
-  <data name="CopyItemRemotelyFailedToValidateDestination" xml:space="preserve">
-    <value>Failed to validate remote destination '{0}'.</value>
-  </data>
   <data name="CopyItemRemotelyFailedToValidateIfDestinationIsFile" xml:space="preserve">
     <value>Cannot validate if remote destination {0} is a file.</value>
-  </data>
-  <data name="CopyItemRemotelyOperationNotSupported" xml:space="preserve">
-    <value>Remote copy with {0} is not supported.</value>
   </data>
   <data name="CopyItemRemotelyFailedToCreateDirectory" xml:space="preserve">
     <value>Failed to create directory '{0}' on remote destination.</value>
@@ -340,9 +328,21 @@
     <value>Maximum size for drive has been exceeded: {0}.</value>
   </data>
   <data name="SymlinkItemExists" xml:space="preserve">
-    <value>Cannot create symbolic link because the path {0} already exists.</value>
+    <value>Cannot create link because the path already exists: {0}.</value>
   </data>
   <data name="AlreadyListedDirectory" xml:space="preserve">
     <value>Skip already-visited directory {0}.</value>
+  </data>
+  <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
+    <value>Destination path cannot be a subdirectory of the source: {0}.</value>
+  </data>
+  <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
+    <value>The target and path cannot be the same.</value>
+  </data>
+  <data name="CopyingLocalFileActivity" xml:space="preserve">
+    <value>Copied {0} of {1} files</value>
+  </data>
+  <data name="CopyingLocalBytesStatus" xml:space="preserve">
+    <value>{0} of {1} ({2:0.0} MB/s)</value>
   </data>
 </root>

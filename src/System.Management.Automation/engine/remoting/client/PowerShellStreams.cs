@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 namespace System.Management.Automation
@@ -238,11 +238,11 @@ namespace System.Management.Automation
         /// </summary>
         public void CloseAll()
         {
-            if (_disposed == false)
+            if (!_disposed)
             {
                 lock (_syncLock)
                 {
-                    if (_disposed == false)
+                    if (!_disposed)
                     {
                         _outputStream.Complete();
                         _errorStream.Complete();

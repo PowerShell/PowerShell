@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Host;
@@ -17,12 +17,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Remote host user interface.
         /// </summary>
-        private ServerRemoteHostUserInterface _remoteHostUserInterface;
+        private readonly ServerRemoteHostUserInterface _remoteHostUserInterface;
 
         /// <summary>
         /// Server method executor.
         /// </summary>
-        private ServerMethodExecutor _serverMethodExecutor;
+        private readonly ServerMethodExecutor _serverMethodExecutor;
 
         /// <summary>
         /// Host default data.
@@ -343,10 +343,7 @@ namespace System.Management.Automation.Remoting
         // to keep the other overload in sync: LengthInBufferCells(string, int)
         public override int LengthInBufferCells(string source)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
+            ArgumentNullException.ThrowIfNull(source);
 
             return source.Length;
         }
@@ -354,10 +351,7 @@ namespace System.Management.Automation.Remoting
         // more performant than the default implementation provided by PSHostRawUserInterface
         public override int LengthInBufferCells(string source, int offset)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException("source");
-            }
+            ArgumentNullException.ThrowIfNull(source);
 
             Dbg.Assert(offset >= 0, "offset >= 0");
             Dbg.Assert(string.IsNullOrEmpty(source) || (offset < source.Length), "offset < source.Length");

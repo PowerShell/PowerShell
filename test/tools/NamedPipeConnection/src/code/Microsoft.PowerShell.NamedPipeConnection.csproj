@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Microsoft.PowerShell.NamedPipeConnection</RootNamespace>
+    <AssemblyName>Microsoft.PowerShell.NamedPipeConnection</AssemblyName>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+    <LangVersion>11.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Management.Automation" Version="7.4.0-preview.2" />
+  </ItemGroup>
+</Project>

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -238,7 +238,7 @@ namespace System.Management.Automation
         /// </summary>
         public List<CommandParameterCollection> Parameters
         {
-            get { return _parameters ?? (_parameters = new List<CommandParameterCollection>()); }
+            get { return _parameters ??= new List<CommandParameterCollection>(); }
         }
 
         /// <summary>
@@ -361,7 +361,7 @@ namespace System.Management.Automation
                 return null;
             CommandParameterCollection paramCollection = new CommandParameterCollection();
             foreach (CommandParameter paramItem in
-                parameters.Select(param => new CommandParameter(param.Key, param.Value)))
+                parameters.Select(static param => new CommandParameter(param.Key, param.Value)))
             {
                 paramCollection.Add(paramItem);
             }
@@ -405,7 +405,7 @@ namespace System.Management.Automation
         {
             if (job == null)
             {
-                PSTraceSource.NewArgumentNullException("job", RemotingErrorIdStrings.JobSourceAdapterCannotSaveNullJob);
+                PSTraceSource.NewArgumentNullException(nameof(job), RemotingErrorIdStrings.JobSourceAdapterCannotSaveNullJob);
             }
 
             JobManager.SaveJobId(job.InstanceId, job.Id, this.GetType().Name);
@@ -415,8 +415,7 @@ namespace System.Management.Automation
                 duplicateDetector.Add(job.InstanceId, job.InstanceId);
                 foreach (Job child in job.ChildJobs)
                 {
-                    Job2 childJob = child as Job2;
-                    if (childJob == null) continue;
+                    if (!(child is Job2 childJob)) continue;
                     StoreJobIdForReuseHelper(duplicateDetector, childJob, true);
                 }
             }
@@ -432,8 +431,7 @@ namespace System.Management.Automation
             if (!recurse || job.ChildJobs == null) return;
             foreach (Job child in job.ChildJobs)
             {
-                Job2 childJob = child as Job2;
-                if (childJob == null) continue;
+                if (!(child is Job2 childJob)) continue;
                 StoreJobIdForReuseHelper(duplicateDetector, childJob, recurse);
             }
         }

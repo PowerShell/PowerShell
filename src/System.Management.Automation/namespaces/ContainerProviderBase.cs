@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -999,7 +999,7 @@ namespace System.Management.Automation.Provider
         }
 
         /// <summary>
-        /// Copies an item at the specified path to an item at the <paramref name="copyPath" />.
+        /// Copies an item at the specified path to an item at the <paramref name="copyPath"/>.
         /// </summary>
         /// <param name="path">
         /// The path of the item to copy.
@@ -1084,4 +1084,3 @@ namespace System.Management.Automation.Provider
 
     #endregion ContainerCmdletProvider
 }
-

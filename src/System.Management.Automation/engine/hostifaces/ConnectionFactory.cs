@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -62,7 +62,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             return new LocalRunspace(host, InitialSessionState.CreateDefault());
@@ -85,7 +85,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             PSHost host = new DefaultHost(CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture);
@@ -116,12 +116,12 @@ namespace System.Management.Automation.Runspaces
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             return new LocalRunspace(host, initialSessionState);
@@ -150,12 +150,12 @@ namespace System.Management.Automation.Runspaces
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             return new LocalRunspace(host, initialSessionState, true);
@@ -454,11 +454,11 @@ namespace System.Management.Automation.Runspaces
         public static RunspacePool CreateRunspacePool(int minRunspaces,
             int maxRunspaces, RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable, PSPrimitiveDictionary applicationArguments)
         {
-            if ((!(connectionInfo is WSManConnectionInfo)) &&
-                (!(connectionInfo is NewProcessConnectionInfo)) &&
-                (!(connectionInfo is NamedPipeConnectionInfo)) &&
-                (!(connectionInfo is VMConnectionInfo)) &&
-                (!(connectionInfo is ContainerConnectionInfo)))
+            if (connectionInfo is not WSManConnectionInfo &&
+                connectionInfo is not NewProcessConnectionInfo &&
+                connectionInfo is not NamedPipeConnectionInfo &&
+                connectionInfo is not VMConnectionInfo &&
+                connectionInfo is not ContainerConnectionInfo)
             {
                 throw new NotSupportedException();
             }
@@ -476,58 +476,64 @@ namespace System.Management.Automation.Runspaces
         #region Runspace - Remote Factory
 
         /// <summary>
+        /// Creates a remote Runspace.
         /// </summary>
+        /// <param name="connectionInfo">It defines connection path to a remote runspace that needs to be created.</param>
+        /// <param name="host">The explicit PSHost implementation.</param>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
         ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
+        ///
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
-        /// <param name="host"></param>
-        /// <param name="connectionInfo"></param>
-        /// <returns></returns>
+        /// <returns>A remote Runspace.</returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
         {
             return CreateRunspace(connectionInfo, host, typeTable, null, null);
         }
 
         /// <summary>
+        /// Creates a remote Runspace.
         /// </summary>
+        /// <param name="connectionInfo">It defines connection path to a remote runspace that needs to be created.</param>
+        /// <param name="host">The explicit PSHost implementation.</param>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
         ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
+        ///
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
-        /// <param name="host"></param>
-        /// <param name="connectionInfo"></param>
         /// <param name="applicationArguments">
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
         /// </param>
-        /// <returns></returns>
+        /// <returns>A remote Runspace.</returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable, PSPrimitiveDictionary applicationArguments)
         {
             return CreateRunspace(connectionInfo, host, typeTable, applicationArguments, null);
         }
 
         /// <summary>
+        /// Creates a remote Runspace.
         /// </summary>
-        /// <param name="connectionInfo"></param>
-        /// <param name="host"></param>
+        /// <param name="connectionInfo">It defines connection path to a remote runspace that needs to be created.</param>
+        /// <param name="host">The explicit PSHost implementation.</param>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
         ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
+        ///
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
@@ -536,19 +542,9 @@ namespace System.Management.Automation.Runspaces
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
         /// </param>
         /// <param name="name">Name for remote runspace.</param>
-        /// <returns></returns>
+        /// <returns>A remote Runspace.</returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable, PSPrimitiveDictionary applicationArguments, string name)
         {
-            if ((!(connectionInfo is WSManConnectionInfo)) &&
-                (!(connectionInfo is NewProcessConnectionInfo)) &&
-                (!(connectionInfo is NamedPipeConnectionInfo)) &&
-                (!(connectionInfo is SSHConnectionInfo)) &&
-                (!(connectionInfo is VMConnectionInfo)) &&
-                (!(connectionInfo is ContainerConnectionInfo)))
-            {
-                throw new NotSupportedException();
-            }
-
             if (connectionInfo is WSManConnectionInfo)
             {
                 RemotingCommandUtil.CheckHostRemotingPrerequisites();
@@ -558,19 +554,21 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Creates a remote Runspace.
         /// </summary>
-        /// <param name="host"></param>
-        /// <param name="connectionInfo"></param>
-        /// <returns></returns>
+        /// <param name="host">The explicit PSHost implementation.</param>
+        /// <param name="connectionInfo">It defines connection path to a remote runspace that needs to be created.</param>
+        /// <returns>A remote Runspace.</returns>
         public static Runspace CreateRunspace(PSHost host, RunspaceConnectionInfo connectionInfo)
         {
             return CreateRunspace(connectionInfo, host, null);
         }
 
         /// <summary>
+        /// Creates a remote Runspace.
         /// </summary>
-        /// <param name="connectionInfo"></param>
-        /// <returns></returns>
+        /// <param name="connectionInfo">It defines connection path to a remote runspace that needs to be created.</param>
+        /// <returns>A remote Runspace.</returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo)
         {
             return CreateRunspace(null, connectionInfo);
@@ -581,9 +579,20 @@ namespace System.Management.Automation.Runspaces
         #region V3 Extensions
 
         /// <summary>
+        /// Creates an out-of-process remote Runspace.
         /// </summary>
-        /// <param name="typeTable"></param>
-        /// <returns></returns>
+        /// <param name="typeTable">
+        /// The TypeTable to use while deserializing/serializing remote objects.
+        /// TypeTable has the following information used by serializer:
+        ///   1. SerializationMethod
+        ///   2. SerializationDepth
+        ///   3. SpecificSerializationProperties
+        ///
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
+        ///   2. TypeConverter
+        /// </param>
+        /// <returns>An out-of-process remote Runspace.</returns>
         public static Runspace CreateOutOfProcessRunspace(TypeTable typeTable)
         {
             NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(null);
@@ -592,10 +601,21 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Creates an out-of-process remote Runspace.
         /// </summary>
-        /// <param name="typeTable"></param>
-        /// <param name="processInstance"></param>
-        /// <returns></returns>
+        /// <param name="typeTable">
+        /// The TypeTable to use while deserializing/serializing remote objects.
+        /// TypeTable has the following information used by serializer:
+        ///   1. SerializationMethod
+        ///   2. SerializationDepth
+        ///   3. SpecificSerializationProperties
+        ///
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
+        ///   2. TypeConverter
+        /// </param>
+        /// <param name="processInstance">It represents a PowerShell process that is used for an out-of-process remote Runspace</param>
+        /// <returns>An out-of-process remote Runspace.</returns>
         public static Runspace CreateOutOfProcessRunspace(TypeTable typeTable, PowerShellProcessInstance processInstance)
         {
             NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(null) { Process = processInstance };
@@ -606,4 +626,3 @@ namespace System.Management.Automation.Runspaces
         #endregion V3 Extensions
     }
 }
-

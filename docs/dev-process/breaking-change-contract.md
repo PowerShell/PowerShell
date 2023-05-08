@@ -71,7 +71,9 @@ Changes to surface area or behavior that is clearly internal or non-breaking in 
 
 Examples:
 
-+ Changes to internal APIs that break private reflection
++ Changes to internal APIs that break private reflection.
++ Changes to APIs in the `System.Management.Automation.Internal` namespace (even if they are public, they are still considered internal and subject to change).
++ Renaming a parameter set (see related discussion [here](https://github.com/PowerShell/PowerShell/issues/10058)).
 
 It is impossible to evolve a code base without making such changes, so we don't require up-front approval for these, but we will sometimes have to go back and
 revisit such change if there's too much pain inflicted on the ecosystem through a popular app or library.

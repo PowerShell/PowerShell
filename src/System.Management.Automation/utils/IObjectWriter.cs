@@ -1,7 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections;
 using System.Threading;
 
@@ -115,7 +114,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         /// <remarks>
         /// If the enumeration contains elements equal to
-        /// AutomationNull.Value, they are are ignored.
+        /// AutomationNull.Value, they are ignored.
         /// This can cause the return value to be less than the size of
         /// the collection.
         /// </remarks>
@@ -124,19 +123,22 @@ namespace System.Management.Automation.Runspaces
 
     internal class DiscardingPipelineWriter : PipelineWriter
     {
-        private ManualResetEvent _waitHandle = new ManualResetEvent(true);
+        private readonly ManualResetEvent _waitHandle = new ManualResetEvent(true);
+
         public override WaitHandle WaitHandle
         {
             get { return _waitHandle; }
         }
 
         private bool _isOpen = true;
+
         public override bool IsOpen
         {
             get { return _isOpen; }
         }
 
         private int _count = 0;
+
         public override int Count
         {
             get { return _count; }
@@ -158,7 +160,7 @@ namespace System.Management.Automation.Runspaces
 
         public override int Write(object obj)
         {
-            int numberOfObjectsWritten = 1;
+            const int numberOfObjectsWritten = 1;
             _count += numberOfObjectsWritten;
             return numberOfObjectsWritten;
         }
@@ -189,4 +191,3 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-

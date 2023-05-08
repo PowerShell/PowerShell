@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -201,11 +201,13 @@ namespace System.Management.Automation
         {
             get
             {
-                return _boundParameters ??
-                       (_boundParameters = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
+                return _boundParameters ??= new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             }
 
-            internal set { _boundParameters = value; }
+            internal set
+            {
+                _boundParameters = value;
+            }
         }
 
         /// <summary>
@@ -213,7 +215,7 @@ namespace System.Management.Automation
         /// </summary>
         public List<object> UnboundArguments
         {
-            get { return _unboundArguments ?? (_unboundArguments = new List<object>()); }
+            get { return _unboundArguments ??= new List<object>(); }
 
             internal set { _unboundArguments = value; }
         }
@@ -266,6 +268,18 @@ namespace System.Management.Automation
                 }
 
                 return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// The full text of the invocation statement, may span multiple lines.
+        /// </summary>
+        /// <value>Statement that was entered to invoke this command.</value>
+        public string Statement
+        {
+            get
+            {
+                return ScriptPosition.Text;
             }
         }
 
@@ -382,7 +396,10 @@ namespace System.Management.Automation
                 }
             }
 
-            set { _scriptPosition = value; }
+            set
+            {
+                _scriptPosition = value;
+            }
         }
 
         /// <summary>
@@ -435,11 +452,11 @@ namespace System.Management.Automation
             if (extent != null)
             {
                 extent.ToPSObjectForRemoting(psObject);
-                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", () => true);
+                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", static () => true);
             }
             else
             {
-                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", () => false);
+                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", static () => false);
             }
 
             RemoteCommandInfo.ToPSObjectForRemoting(this.MyCommand, psObject);
@@ -518,4 +535,3 @@ namespace System.Management.Automation
         private string _definition;
     }
 }
-

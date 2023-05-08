@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -63,7 +63,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Holds the set of parameters that were not bound to any argument (i.e $args)
         /// </summary>
-        internal List<object> DollarArgs { get; private set; }
+        internal List<object> DollarArgs { get; }
 
         /// <summary>
         /// Binds the command line parameters for shell functions/filters/scripts/scriptblocks.
@@ -77,16 +77,10 @@ namespace System.Management.Automation
         internal void BindCommandLineParameters(Collection<CommandParameterInternal> arguments)
         {
             // Add the passed in arguments to the unboundArguments collection
-
-            foreach (CommandParameterInternal argument in arguments)
-            {
-                UnboundArguments.Add(argument);
-            }
-
+            InitUnboundArguments(arguments);
             ReparseUnboundArguments();
 
-            // To support named parameters you just have un-comment the following line
-            UnboundArguments = BindParameters(UnboundArguments);
+            UnboundArguments = BindNamedParameters(uint.MaxValue, UnboundArguments);
 
             ParameterBindingException parameterBindingError;
             UnboundArguments =
@@ -134,75 +128,6 @@ namespace System.Management.Automation
             // Just pass the binding straight through.  No metadata to verify the parameter against.
             DefaultParameterBinder.BindParameter(argument.ParameterName, argument.ArgumentValue, parameterMetadata: null);
             return true;
-        }
-
-        /// <summary>
-        /// Binds the specified parameters to the shell function.
-        /// </summary>
-        /// <param name="arguments">
-        /// The arguments to bind.
-        /// </param>
-        internal override Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> arguments)
-        {
-            Collection<CommandParameterInternal> result = new Collection<CommandParameterInternal>();
-
-            foreach (CommandParameterInternal argument in arguments)
-            {
-                if (!argument.ParameterNameSpecified)
-                {
-                    result.Add(argument);
-                    continue;
-                }
-
-                // We don't want to throw an exception yet because
-                // the parameter might be a positional argument
-
-                MergedCompiledCommandParameter parameter =
-                    BindableParameters.GetMatchingParameter(
-                        argument.ParameterName,
-                        false, true,
-                        new InvocationInfo(this.InvocationInfo.MyCommand, argument.ParameterExtent));
-
-                // If the parameter is not in the specified parameter set,
-                // throw a binding exception
-
-                if (parameter != null)
-                {
-                    // Now check to make sure it hasn't already been
-                    // bound by looking in the boundParameters collection
-
-                    if (BoundParameters.ContainsKey(parameter.Parameter.Name))
-                    {
-                        ParameterBindingException bindingException =
-                            new ParameterBindingException(
-                                ErrorCategory.InvalidArgument,
-                                this.InvocationInfo,
-                                GetParameterErrorExtent(argument),
-                                argument.ParameterName,
-                                null,
-                                null,
-                                ParameterBinderStrings.ParameterAlreadyBound,
-                                nameof(ParameterBinderStrings.ParameterAlreadyBound));
-
-                        throw bindingException;
-                    }
-
-                    BindParameter(uint.MaxValue, argument, parameter, ParameterBindingFlags.ShouldCoerceType);
-                }
-                else if (argument.ParameterName.Equals(Language.Parser.VERBATIM_PARAMETERNAME, StringComparison.Ordinal))
-                {
-                    // We sometimes send a magic parameter from a remote machine with the values referenced via
-                    // a using expression ($using:x).  We then access these values via PSBoundParameters, so
-                    // "bind" them here.
-                    DefaultParameterBinder.CommandLineParameters.SetImplicitUsingParameters(argument.ArgumentValue);
-                }
-                else
-                {
-                    result.Add(argument);
-                }
-            }
-
-            return result;
         }
 
         /// <summary>
@@ -274,7 +199,7 @@ namespace System.Management.Automation
                     //    foo "-abc"
                     // This is important when splatting, we reconstruct the parameter if the
                     // value is splatted.
-                    var parameterText = new PSObject(new String(parameter.ParameterText.ToCharArray()));
+                    var parameterText = new PSObject(new string(parameter.ParameterText));
                     if (parameterText.Properties[NotePropertyNameForSplattingParametersInArgs] == null)
                     {
                         var noteProperty = new PSNoteProperty(NotePropertyNameForSplattingParametersInArgs,

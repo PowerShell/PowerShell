@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 // NOTE: A vast majority of this code was copied from BCL in
@@ -16,16 +16,10 @@ namespace Microsoft.PowerShell.Commands.Internal
 {
     using System;
     using System.Security;
-    using System.Text;
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
     using System.Management.Automation;
     using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.ConstrainedExecution;
-
-    using BOOL = System.Int32;
-    using DWORD = System.UInt32;
-    using ULONG = System.UInt32;
 
     /**
      * Win32 encapsulation for MSCORLIB.
@@ -146,7 +140,6 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]
         [ResourceExposure(ResourceScope.Machine)]
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CloseHandle(IntPtr handle);

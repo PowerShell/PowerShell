@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -22,36 +22,24 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Channel id.
         /// </summary>
-        private UInt32 channel;
-
-        /// <summary>
-        /// Message to write to the channel.
-        /// </summary>
-        private string message;
         #endregion
 
         #region Properties
 
-        internal UInt32 Channel
-        {
-            get { return channel; }
-        }
+        internal uint Channel { get; }
 
-        internal string Message
-        {
-            get { return message; }
-        }
+        internal string Message { get; }
 
         #endregion
 
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CimWriteMessage"/> class.
         /// </summary>
-        public CimWriteMessage(UInt32 channel,
+        public CimWriteMessage(uint channel,
             string message)
         {
-            this.channel = channel;
-            this.message = message;
+            this.Channel = channel;
+            this.Message = message;
         }
 
         /// <summary>
@@ -64,16 +52,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             ValidationHelper.ValidateNoNullArgument(cmdlet, "cmdlet");
 
-            switch ((CimWriteMessageChannel)channel)
+            switch ((CimWriteMessageChannel)Channel)
             {
                 case CimWriteMessageChannel.Verbose:
-                    cmdlet.WriteVerbose(message);
+                    cmdlet.WriteVerbose(Message);
                     break;
                 case CimWriteMessageChannel.Warning:
-                    cmdlet.WriteWarning(message);
+                    cmdlet.WriteWarning(Message);
                     break;
                 case CimWriteMessageChannel.Debug:
-                    cmdlet.WriteDebug(message);
+                    cmdlet.WriteDebug(Message);
                     break;
                 default:
                     break;

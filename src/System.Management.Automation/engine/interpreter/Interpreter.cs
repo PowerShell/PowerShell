@@ -13,17 +13,9 @@
  *
  * ***************************************************************************/
 
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
-
-using System.Runtime.CompilerServices;
-using System.Threading;
-
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace System.Management.Automation.Interpreter
 {
@@ -39,6 +31,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed class Interpreter
     {
         internal static readonly object NoValue = new object();
+
         internal const int RethrowOnReturn = Int32.MaxValue;
 
         // zero: sync compilation
@@ -111,52 +104,6 @@ namespace System.Management.Automation.Interpreter
             {
                 index += instructions[index].Run(frame);
                 frame.InstructionIndex = index;
-            }
-        }
-
-        /// <summary>
-        /// To get to the current AbortReason object on Thread.CurrentThread
-        /// we need to use ExceptionState property of any ThreadAbortException instance.
-        /// </summary>
-        [ThreadStatic]
-        internal static ThreadAbortException AnyAbortException = null;
-
-        /// <summary>
-        /// If the target that 'Goto' jumps to is inside the current catch block or the subsequent finally block,
-        /// we delay the call to 'Abort' method, because we want to finish the catch/finally blocks.
-        /// </summary>
-        internal static void AbortThreadIfRequested(InterpretedFrame frame, int targetLabelIndex)
-        {
-            var abortHandler = frame.CurrentAbortHandler;
-            var targetInstrIndex = frame.Interpreter._labels[targetLabelIndex].Index;
-            if (abortHandler != null &&
-                !abortHandler.IsInsideCatchBlock(targetInstrIndex) &&
-                !abortHandler.IsInsideFinallyBlock(targetInstrIndex))
-            {
-                frame.CurrentAbortHandler = null;
-
-                var currentThread = Thread.CurrentThread;
-                if ((currentThread.ThreadState & System.Threading.ThreadState.AbortRequested) != 0)
-                {
-                    Debug.Assert(AnyAbortException != null);
-
-                    // The current abort reason needs to be preserved.
-#if SILVERLIGHT
-                    currentThread.Abort();
-#else
-                    currentThread.Abort(AnyAbortException.ExceptionState);
-#endif
-                }
-            }
-        }
-
-        internal int ReturnAndRethrowLabelIndex
-        {
-            get
-            {
-                // the last label is "return and rethrow" label:
-                Debug.Assert(_labels[_labels.Length - 1].Index == RethrowOnReturn);
-                return _labels.Length - 1;
             }
         }
     }

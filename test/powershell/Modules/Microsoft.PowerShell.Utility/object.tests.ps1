@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Object cmdlets" -Tags "CI" {
     Context "Group-Object" {
@@ -35,13 +35,13 @@ Describe "Object cmdlets" -Tags "CI" {
             $firstValue = "9995788.71"
             $expectedFirstValue = $null
             $null = [System.Management.Automation.LanguagePrimitives]::TryConvertTo($firstValue, [double], [cultureinfo]::InvariantCulture, [ref] $expectedFirstValue)
-            $firstObject = new-object psobject
+            $firstObject = New-Object psobject
             $firstObject | Add-Member -NotePropertyName Header -NotePropertyValue $firstValue
 
             $secondValue = "15847577.7"
             $expectedSecondValue = $null
             $null = [System.Management.Automation.LanguagePrimitives]::TryConvertTo($secondValue, [double], [cultureinfo]::InvariantCulture, [ref] $expectedSecondValue)
-            $secondObject = new-object psobject
+            $secondObject = New-Object psobject
             $secondObject | Add-Member -NotePropertyName Header -NotePropertyValue $secondValue
 
             $testCases = @(
@@ -85,17 +85,17 @@ Describe "Object cmdlets" -Tags "CI" {
         }
 
         It 'returns a GenericMeasureInfoObject' {
-            $gmi = 1,2,3 | measure-object -max -min
+            $gmi = 1,2,3 | Measure-Object -max -min
             $gmi | Should -BeOfType Microsoft.PowerShell.Commands.GenericMeasureInfo
         }
 
         It 'should return correct error for non-numeric input' {
-            $gmi = "abc",[Datetime]::Now | Measure-Object -sum -max -ErrorVariable err -ErrorAction silentlycontinue
+            $gmi = "abc",[Datetime]::Now | Measure-Object -Sum -max -ErrorVariable err -ErrorAction silentlycontinue
             $err | ForEach-Object { $_.FullyQualifiedErrorId | Should -Be 'NonNumericInputObject,Microsoft.PowerShell.Commands.MeasureObjectCommand' }
         }
 
         It 'should have the correct count' {
-            $gmi = "abc",[Datetime]::Now | Measure-Object -sum -max -ErrorVariable err -ErrorAction silentlycontinue
+            $gmi = "abc",[Datetime]::Now | Measure-Object -Sum -max -ErrorVariable err -ErrorAction silentlycontinue
             $gmi.Count | Should -Be 2
         }
     }

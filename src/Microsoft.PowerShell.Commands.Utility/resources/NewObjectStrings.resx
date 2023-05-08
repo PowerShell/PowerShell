@@ -144,7 +144,7 @@
   <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
     <value>Cannot create type. Only core types are supported in this language mode.</value>
   </data>
-  <data name="ApartmentNotSupported" xml:space="preserve">
-    <value>{0} Please note that Single-Threaded Apartment is not supported in PowerShell.</value>
+  <data name="CannotCreateTypeLanguageMode" xml:space="preserve">
+    <value>Cannot create type. Only core types are supported in {0} language mode on a policy locked down machine.</value>
   </data>
 </root>

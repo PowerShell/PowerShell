@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -101,6 +101,26 @@ namespace System.Management.Automation
         /// <param name="value"></param>
         /// <param name="previousValue"></param>
         internal abstract void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue);
+
+        /// <summary>
+        /// Provider interface function for logging AmsiUtil State event.
+        /// </summary>
+        /// <param name="state">This the action performed in AmsiUtil class, like init, scan, etc.</param>
+        /// <param name="context">The amsiContext handled - Session pair.</param>
+        internal abstract void LogAmsiUtilStateEvent(string state, string context);
+
+        /// <summary>
+        /// Provider interface function for logging WDAC query event.
+        /// </summary>
+        /// <param name="queryName">Name of the WDAC query.</param>
+        /// <param name="fileName">Name of script file for policy query. Can be null value.</param>
+        /// <param name="querySuccess">Query call succeed code.</param>
+        /// <param name="queryResult">Result code of WDAC query.</param>
+        internal abstract void LogWDACQueryEvent(
+            string queryName,
+            string fileName,
+            int querySuccess,
+            int queryResult);
 
         /// <summary>
         /// True if the log provider needs to use logging variables.
@@ -228,7 +248,7 @@ namespace System.Management.Automation
         // Estimated length of all Strings.* values
         // Rough estimate of values
         // max path for Command path
-        const int LogContextInitialSize = 30 * 16 + 13 * 20 + 255;
+        private const int LogContextInitialSize = 30 * 16 + 13 * 20 + 255;
 
         /// <summary>
         /// Converts log context to string.
@@ -367,6 +387,30 @@ namespace System.Management.Automation
         /// <param name="value"></param>
         /// <param name="previousValue"></param>
         internal override void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue)
+        {
+        }
+
+        /// <summary>
+        /// Provider interface function for logging provider health event.
+        /// </summary>
+        /// <param name="state">This the action performed in AmsiUtil class, like init, scan, etc.</param>
+        /// <param name="context">The amsiContext handled - Session pair.</param>
+        internal override void LogAmsiUtilStateEvent(string state, string context)
+        {
+        }
+
+        /// <summary>
+        /// Provider interface function for logging WDAC query event.
+        /// </summary>
+        /// <param name="queryName">Name of the WDAC query.</param>
+        /// <param name="fileName">Name of script file for policy query. Can be null value.</param>
+        /// <param name="querySuccess">Query call succeed code.</param>
+        /// <param name="queryResult">Result code of WDAC query.</param>
+        internal override void LogWDACQueryEvent(
+            string queryName,
+            string fileName,
+            int querySuccess,
+            int queryResult)
         {
         }
 

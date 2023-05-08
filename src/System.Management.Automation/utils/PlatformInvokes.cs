@@ -1,16 +1,14 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 
 using Microsoft.Win32.SafeHandles;
 
 namespace System.Management.Automation
 {
-    internal class PlatformInvokes
+    internal static class PlatformInvokes
     {
         [StructLayout(LayoutKind.Sequential)]
         internal class FILETIME
@@ -34,7 +32,7 @@ namespace System.Management.Automation
             {
                 return ((long)dwHighDateTime << 32) + dwLowDateTime;
             }
-        };
+        }
 
         [Flags]
         // dwDesiredAccess of CreateFile
@@ -99,6 +97,7 @@ namespace System.Management.Automation
             internal int nLength;
             internal SafeLocalMemHandle lpSecurityDescriptor;
             internal bool bInheritHandle;
+
             internal SecurityAttributes()
             {
                 this.nLength = 12;
@@ -115,15 +114,15 @@ namespace System.Management.Automation
             {
             }
 
-            [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
             internal SafeLocalMemHandle(IntPtr existingHandle, bool ownsHandle)
                 : base(ownsHandle)
             {
                 base.SetHandle(existingHandle);
             }
 
-            [DllImport(PinvokeDllNames.LocalFreeDllName), ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+            [DllImport(PinvokeDllNames.LocalFreeDllName)]
             private static extern IntPtr LocalFree(IntPtr hMem);
+
             protected override bool ReleaseHandle()
             {
                 return (LocalFree(base.handle) == IntPtr.Zero);
@@ -234,7 +233,7 @@ namespace System.Management.Automation
         /// This can happen if you close a handle twice, or if you call CloseHandle on a handle
         /// returned by the FindFirstFile function.
         /// </returns>
-        [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]//, ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         // [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         internal static extern bool CloseHandle(IntPtr handle);
@@ -488,7 +487,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Retrieves the current process token.
-        /// This function exists just for backward compatibility. It is prefered to use the other override that takes 'SafeHandle' as parameter.
+        /// This function exists just for backward compatibility. It is preferred to use the other override that takes 'SafeHandle' as parameter.
         /// </summary>
         /// <param name="processHandle">Process handle.</param>
         /// <param name="desiredAccess">Token access.</param>
@@ -527,14 +526,14 @@ namespace System.Management.Automation
 
         // Fields
         internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-        internal static UInt32 GENERIC_READ = 0x80000000;
-        internal static UInt32 GENERIC_WRITE = 0x40000000;
-        internal static UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
-        internal static UInt32 CREATE_ALWAYS = 2;
-        internal static UInt32 FILE_SHARE_WRITE = 0x00000002;
-        internal static UInt32 FILE_SHARE_READ = 0x00000001;
-        internal static UInt32 OF_READWRITE = 0x00000002;
-        internal static UInt32 OPEN_EXISTING = 3;
+        internal static readonly UInt32 GENERIC_READ = 0x80000000;
+        internal static readonly UInt32 GENERIC_WRITE = 0x40000000;
+        internal static readonly UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
+        internal static readonly UInt32 CREATE_ALWAYS = 2;
+        internal static readonly UInt32 FILE_SHARE_WRITE = 0x00000002;
+        internal static readonly UInt32 FILE_SHARE_READ = 0x00000001;
+        internal static readonly UInt32 OF_READWRITE = 0x00000002;
+        internal static readonly UInt32 OPEN_EXISTING = 3;
 
         [StructLayout(LayoutKind.Sequential)]
         internal class PROCESS_INFORMATION
@@ -602,6 +601,7 @@ namespace System.Management.Automation
             public SafeFileHandle hStdInput;
             public SafeFileHandle hStdOutput;
             public SafeFileHandle hStdError;
+
             public STARTUPINFO()
             {
                 this.lpReserved = IntPtr.Zero;
@@ -650,6 +650,7 @@ namespace System.Management.Automation
             public int nLength;
             public SafeLocalMemHandle lpSecurityDescriptor;
             public bool bInheritHandle;
+
             public SECURITY_ATTRIBUTES()
             {
                 this.nLength = 12;
@@ -674,35 +675,8 @@ namespace System.Management.Automation
 
         [DllImport(PinvokeDllNames.ResumeThreadDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern uint ResumeThread(IntPtr threadHandle);
-        internal static uint RESUME_THREAD_FAILED = System.UInt32.MaxValue; // (DWORD)-1
 
-        [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern System.IntPtr CreateFileW(
-            [In, MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
-            UInt32 dwDesiredAccess,
-            UInt32 dwShareMode,
-            SECURITY_ATTRIBUTES lpSecurityAttributes,
-            UInt32 dwCreationDisposition,
-            UInt32 dwFlagsAndAttributes,
-            System.IntPtr hTemplateFile);
-
-#endif
-
-        #endregion
-
-        #region GetStdHandle
-
-#if !UNIX
-
-        internal enum StandardHandleId : uint
-        {
-            Error = unchecked((uint)-12),
-            Output = unchecked((uint)-11),
-            Input = unchecked((uint)-10),
-        }
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern IntPtr GetStdHandle(uint handleId);
+        internal static readonly uint RESUME_THREAD_FAILED = System.UInt32.MaxValue; // (DWORD)-1
 
 #endif
 

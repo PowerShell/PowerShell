@@ -1,8 +1,7 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT // ComObject
-
+using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -11,7 +10,7 @@ using ComTypes = System.Runtime.InteropServices.ComTypes;
 namespace System.Management.Automation.ComInterop
 {
     /// <summary>
-    /// This is similar to ComTypes.EXCEPINFO, but lets us do our own custom marshaling.
+    /// This is similar to ComTypes.EXCEPINFO, but lets us do our own custom marshalling.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     internal struct ExcepInfo
@@ -27,7 +26,6 @@ namespace System.Management.Automation.ComInterop
         private int _scode;
 
 #if DEBUG
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2207:InitializeValueTypeStaticFieldsInline")]
         static ExcepInfo()
         {
             Debug.Assert(Marshal.SizeOf(typeof(ExcepInfo)) == Marshal.SizeOf(typeof(ComTypes.EXCEPINFO)));
@@ -47,22 +45,6 @@ namespace System.Management.Automation.ComInterop
             return result;
         }
 
-        internal void Dummy()
-        {
-            _wCode = 0;
-            _wReserved = 0; _wReserved++;
-            _bstrSource = IntPtr.Zero;
-            _bstrDescription = IntPtr.Zero;
-            _bstrHelpFile = IntPtr.Zero;
-            _dwHelpContext = 0;
-            _pfnDeferredFillIn = IntPtr.Zero;
-            _pvReserved = IntPtr.Zero;
-            _scode = 0;
-
-            throw Error.MethodShouldNotBeCalled();
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
         internal Exception GetException()
         {
             Debug.Assert(_pfnDeferredFillIn == IntPtr.Zero);
@@ -101,13 +83,9 @@ namespace System.Management.Automation.ComInterop
             {
                 helpLink += "#" + _dwHelpContext;
             }
-
             exception.HelpLink = helpLink;
 
             return exception;
         }
     }
 }
-
-#endif
-

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.ComponentModel;
@@ -11,6 +11,7 @@ using System.Text;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
+    /// This class represents a PowerShell process that is used for an out-of-process remote Runspace.
     /// </summary>
     public sealed class PowerShellProcessInstance : IDisposable
     {
@@ -24,50 +25,70 @@ namespace System.Management.Automation.Runspaces
         private bool _processExited;
 
         internal static readonly string PwshExePath;
+        internal static readonly string WinPwshExePath;
 
         #endregion Fields
 
         #region Constructors
 
-        /// <summary>
-        /// </summary>
         static PowerShellProcessInstance()
         {
 #if UNIX
             PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, "pwsh");
 #else
             PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, "pwsh.exe");
+            var winPowerShellDir = Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID);
+            WinPwshExePath = string.IsNullOrEmpty(winPowerShellDir) ? null : Path.Combine(winPowerShellDir, "powershell.exe");
 #endif
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class.
         /// </summary>
-        /// <param name="powerShellVersion"></param>
-        /// <param name="credential"></param>
-        /// <param name="initializationScript"></param>
-        /// <param name="useWow64"></param>
-        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64)
+        /// <param name="powerShellVersion">Specifies the version of powershell.</param>
+        /// <param name="credential">Specifies a user account credentials.</param>
+        /// <param name="initializationScript">Specifies a script that will be executed when the powershell process is initialized.</param>
+        /// <param name="useWow64">Specifies if the powershell process will be 32-bit.</param>
+        /// <param name="workingDirectory">Specifies the initial working directory for the new powershell process.</param>
+        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory)
         {
-            string processArguments = " -s -NoLogo -NoProfile";
-
-            if (initializationScript != null)
+            string exePath = PwshExePath;
+            bool startingWindowsPowerShell51 = false;
+#if !UNIX
+            // if requested PS version was "5.1" then we start Windows PS instead of PS Core
+            startingWindowsPowerShell51 = (powerShellVersion != null) && (powerShellVersion.Major == 5) && (powerShellVersion.Minor == 1);
+            if (startingWindowsPowerShell51)
             {
-                string scripBlockAsString = initializationScript.ToString();
-                if (!string.IsNullOrEmpty(scripBlockAsString))
+                if (WinPwshExePath == null)
                 {
-                    string encodedCommand =
-                        Convert.ToBase64String(Encoding.Unicode.GetBytes(scripBlockAsString));
-                    processArguments = string.Format(CultureInfo.InvariantCulture,
-                        "{0} -EncodedCommand {1}", processArguments, encodedCommand);
+                    throw new PSInvalidOperationException(RemotingErrorIdStrings.WindowsPowerShellNotPresent);
+                }
+
+                exePath = WinPwshExePath;
+
+                if (useWow64)
+                {
+                    string procArch = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
+
+                    if ((!string.IsNullOrEmpty(procArch)) && (procArch.Equals("amd64", StringComparison.OrdinalIgnoreCase) ||
+                        procArch.Equals("ia64", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        exePath = WinPwshExePath.ToLowerInvariant().Replace("\\system32\\", "\\syswow64\\");
+
+                        if (!File.Exists(exePath))
+                        {
+                            string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.WowComponentNotPresent, exePath);
+                            throw new PSInvalidOperationException(message);
+                        }
+                    }
                 }
             }
-
+#endif
             // 'WindowStyle' is used only if 'UseShellExecute' is 'true'. Since 'UseShellExecute' is set
             // to 'false' in our use, we can ignore the 'WindowStyle' setting in the initialization below.
             _startInfo = new ProcessStartInfo
             {
-                FileName = PwshExePath,
-                Arguments = processArguments,
+                FileName = exePath,
                 UseShellExecute = false,
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
@@ -77,6 +98,36 @@ namespace System.Management.Automation.Runspaces
                 LoadUserProfile = true,
 #endif
             };
+#if !UNIX
+            if (startingWindowsPowerShell51)
+            {
+                _startInfo.ArgumentList.Add("-Version");
+                _startInfo.ArgumentList.Add("5.1");
+
+                // if starting Windows PowerShell, need to remove PowerShell specific segments of PSModulePath
+                _startInfo.Environment["PSModulePath"] = ModuleIntrinsics.GetWindowsPowerShellModulePath();
+            }
+#endif
+            _startInfo.ArgumentList.Add("-s");
+            _startInfo.ArgumentList.Add("-NoLogo");
+            _startInfo.ArgumentList.Add("-NoProfile");
+
+            if (!string.IsNullOrWhiteSpace(workingDirectory) && !startingWindowsPowerShell51)
+            {
+                _startInfo.ArgumentList.Add("-wd");
+                _startInfo.ArgumentList.Add(workingDirectory);
+            }
+
+            if (initializationScript != null)
+            {
+                var scriptBlockString = initializationScript.ToString();
+                if (!string.IsNullOrEmpty(scriptBlockString))
+                {
+                    var encodedCommand = Convert.ToBase64String(Encoding.Unicode.GetBytes(scriptBlockString));
+                    _startInfo.ArgumentList.Add("-EncodedCommand");
+                    _startInfo.ArgumentList.Add(encodedCommand);
+                }
+            }
 
             if (credential != null)
             {
@@ -91,8 +142,20 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class.
         /// </summary>
-        public PowerShellProcessInstance() : this(null, null, null, false)
+        /// <param name="powerShellVersion">Specifies the version of powershell.</param>
+        /// <param name="credential">Specifies a user account credentials.</param>
+        /// <param name="initializationScript">Specifies a script that will be executed when the powershell process is initialized.</param>
+        /// <param name="useWow64">Specifies if the powershell process will be 32-bit.</param>
+        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64) : this(powerShellVersion, credential, initializationScript, useWow64, workingDirectory: null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Default initializes the underlying dotnet process class.
+        /// </summary>
+        public PowerShellProcessInstance() : this(powerShellVersion: null, credential: null, initializationScript: null, useWow64: false, workingDirectory: null)
         {
         }
 
@@ -114,22 +177,30 @@ namespace System.Management.Automation.Runspaces
         #endregion Constructors
 
         #region Dispose
+
         /// <summary>
+        /// Implementing the <see cref="IDisposable"/> interface.
         /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        /// <summary>
-        /// </summary>
-        /// <param name="disposing"></param>
+
         private void Dispose(bool disposing)
         {
-            if (_isDisposed) return;
+            if (_isDisposed)
+            {
+                return;
+            }
+
             lock (_syncObject)
             {
-                if (_isDisposed) return;
+                if (_isDisposed)
+                {
+                    return;
+                }
+
                 _isDisposed = true;
             }
 
@@ -155,7 +226,9 @@ namespace System.Management.Automation.Runspaces
         #endregion Dispose
 
         #region Public Properties
+
         /// <summary>
+        /// Gets the process object of the remote target.
         /// </summary>
         public Process Process { get; }
 

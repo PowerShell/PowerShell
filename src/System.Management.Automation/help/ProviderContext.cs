@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Internal;
@@ -108,11 +108,9 @@ namespace System.Management.Automation
 
             // Does the provider know how to generate MAML.
             CmdletProvider cmdletProvider = providerInfo.CreateInstance();
-            ICmdletProviderSupportsHelp provider = cmdletProvider as ICmdletProviderSupportsHelp;
-
-            // Under JEA sessions the resolvedProviderPath will be null, we should allow get-help to continue.
-            if (provider == null)
+            if (!(cmdletProvider is ICmdletProviderSupportsHelp provider))
             {
+                // Under JEA sessions the resolvedProviderPath will be null, we should allow get-help to continue.
                 return null;
             }
 
@@ -143,7 +141,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // ok we have path and valid provider that supplys content..initialize the provider
+            // ok we have path and valid provider that supplies content..initialize the provider
             // and get the help content for the path.
             cmdletProvider.Start(providerInfo, cmdletProviderContext);
             // There should be exactly one resolved path.

@@ -1,8 +1,7 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
@@ -13,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Write-Debug command.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Write, "Debug", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113424", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Debug", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097132", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteDebugCommand : PSCmdlet
     {
         /// <summary>
@@ -22,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
         [Alias("Msg")]
-        public string Message { get; set; } = null;
+        public string Message { get; set; }
 
         /// <summary>
         /// This method implements the ProcessRecord method for Write-Debug command.
@@ -38,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (mshCommandRuntime != null)
             {
-                DebugRecord record = new DebugRecord(Message);
+                DebugRecord record = new(Message);
 
                 InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
@@ -61,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Write-Verbose command.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Write, "Verbose", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113429", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Verbose", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097043", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteVerboseCommand : PSCmdlet
     {
         /// <summary>
@@ -70,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
         [Alias("Msg")]
-        public string Message { get; set; } = null;
+        public string Message { get; set; }
 
         /// <summary>
         /// This method implements the ProcessRecord method for Write-verbose command.
@@ -86,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (mshCommandRuntime != null)
             {
-                VerboseRecord record = new VerboseRecord(Message);
+                VerboseRecord record = new(Message);
 
                 InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
@@ -109,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Write-Warning command.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Write, "Warning", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113430", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Warning", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097044", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteWarningCommand : PSCmdlet
     {
         /// <summary>
@@ -118,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
         [Alias("Msg")]
-        public string Message { get; set; } = null;
+        public string Message { get; set; }
 
         /// <summary>
         /// This method implements the ProcessRecord method for Write-Warning command.
@@ -134,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (mshCommandRuntime != null)
             {
-                WarningRecord record = new WarningRecord(Message);
+                WarningRecord record = new(Message);
 
                 InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
@@ -157,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Write-Information command.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Write, "Information", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=525909", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Information", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097040", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteInformationCommand : PSCmdlet
     {
         /// <summary>
@@ -172,7 +171,6 @@ namespace Microsoft.PowerShell.Commands
         /// Any tags to be associated with this information.
         /// </summary>
         [Parameter(Position = 1)]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Tags { get; set; }
 
         /// <summary>
@@ -186,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (tag.StartsWith("PS", StringComparison.OrdinalIgnoreCase))
                     {
-                        ErrorRecord er = new ErrorRecord(
+                        ErrorRecord er = new(
                             new InvalidOperationException(StringUtil.Format(UtilityCommonStrings.PSPrefixReservedInInformationTag, tag)),
                             "PSPrefixReservedInInformationTag", ErrorCategory.InvalidArgument, tag);
                         ThrowTerminatingError(er);
@@ -216,8 +214,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ErrorRecord.Exception -- if not specified, ErrorRecord.Exception is System.Exception.
         /// </summary>
-        [Parameter(ParameterSetName = "WithException", Mandatory = true)]
-        public Exception Exception { get; set; } = null;
+        [Parameter(Position = 0, ParameterSetName = "WithException", Mandatory = true)]
+        public Exception Exception { get; set; }
 
         /// <summary>
         /// If Exception is specified, this is ErrorRecord.ErrorDetails.Message;
@@ -228,15 +226,15 @@ namespace Microsoft.PowerShell.Commands
         [AllowNull]
         [AllowEmptyString]
         [Alias("Msg")]
-        public string Message { get; set; } = null;
+        public string Message { get; set; }
 
         /// <summary>
         /// If Exception is specified, this is ErrorRecord.ErrorDetails.Message;
         /// otherwise, the Exception is System.Exception, and this is Exception.Message.
         /// </summary>
-        [Parameter(ParameterSetName = "ErrorRecord", Mandatory = true)]
-        public ErrorRecord ErrorRecord { get; set; } = null;
-
+        [Parameter(Position = 0, ParameterSetName = "ErrorRecord", Mandatory = true)]
+        public ErrorRecord ErrorRecord { get; set; }
+        
         /// <summary>
         /// ErrorRecord.CategoryInfo.Category.
         /// </summary>
@@ -256,7 +254,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "NoException")]
         [Parameter(ParameterSetName = "WithException")]
-        public object TargetObject { get; set; } = null;
+        public object TargetObject { get; set; }
 
         /// <summary>
         /// ErrorRecord.ErrorDetails.RecommendedAction.
@@ -314,10 +312,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Exception e = this.Exception;
                 string msg = Message;
-                if (e == null)
-                {
-                    e = new WriteErrorException(msg);
-                }
+                e ??= new WriteErrorException(msg);
 
                 string errid = ErrorId;
                 if (string.IsNullOrEmpty(errid))
@@ -341,10 +336,7 @@ namespace Microsoft.PowerShell.Commands
             string recact = RecommendedAction;
             if (!string.IsNullOrEmpty(recact))
             {
-                if (errorRecord.ErrorDetails == null)
-                {
-                    errorRecord.ErrorDetails = new ErrorDetails(errorRecord.ToString());
-                }
+                errorRecord.ErrorDetails ??= new ErrorDetails(errorRecord.ToString());
 
                 errorRecord.ErrorDetails.RecommendedAction = recact;
             }
@@ -391,11 +383,11 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Write-Error command.
     /// </summary>
     [Cmdlet(VerbsCommunications.Write, "Error", DefaultParameterSetName = "NoException",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113425", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097039", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteErrorCommand : WriteOrThrowErrorCommand
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="WriteErrorCommand"/> class.
         /// </summary>
         public WriteErrorCommand()
         {
@@ -435,7 +427,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region ctor
         /// <summary>
-        /// Constructor for class WriteErrorException.
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public WriteErrorException()
@@ -444,7 +436,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Constructor for class WriteErrorException.
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -454,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Constructor for class WriteErrorException.
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -468,7 +460,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Serialization
         /// <summary>
-        /// Serialization constructor for class WriteErrorException.
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class for serialization.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>

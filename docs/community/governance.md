@@ -5,10 +5,10 @@
 * [**PowerShell Committee**](#powershell-committee): A committee of project owners who are responsible for design decisions,
   approving [RFCs][RFC-repo], and approving new maintainers/committee members
 * [**Repository maintainer**](#repository-maintainers): An individual responsible for merging pull requests (PRs) into `master` when all requirements are met (code review, tests, docs, and RFC approval as applicable).
-
   Repository Maintainers are the only people with write permissions for the `master` branch.
-* [**Area experts**](#area-experts): People who are experts for specific components (e.g. PSReadline, the parser) or technologies (e.g. security, performance).
-  Area experts are responsible for code reviews, issue triage, and providing their expertise to others.
+* [**Working Groups (WGs)**](#working-groups-(wgs)) are collections of contributors responsible for
+  providing expertise on a specific area of PowerShell in order to help establish consensus within
+  the community and Committee.
 * **Corporation**: The Corporation owns the PowerShell repository and, under extreme circumstances,
   reserves the right to dissolve or reform the PowerShell Committee, the Project Leads, and the Corporate Maintainer.
   The Corporation for PowerShell is Microsoft.
@@ -17,7 +17,7 @@
   This veto power will be used with restraint since it is intended that the community drive the project.
   The Corporate Maintainer is determined by the Corporation both initially and in continuation.
   The initial Corporate Maintainer for PowerShell is Jeffrey Snover ([jpsnover](https://github.com/jpsnover)).
-* [**RFC process**][RFC-repo]: The "review-for-comment" (RFC) process whereby design decisions get made.
+* [**RFC process**][RFC-repo]: The "request-for-comments" (RFC) process whereby design decisions get made.
 
 ## PowerShell Committee
 
@@ -26,10 +26,9 @@ The PowerShell Committee and its members (aka Committee Members) are the primary
 ### Current Committee Members
 
 * Bruce Payette ([BrucePay](https://github.com/BrucePay))
-* Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
 * Jim Truher ([JamesWTruher](https://github.com/JamesWTruher))
-* Joey Aiello ([joeyaiello](https://github.com/joeyaiello))
-* Kenneth Hansen ([khansen00](https://github.com/khansen00))
+* Paul Higinbotham ([paulhigin](https://github.com/paulhigin))
+* Rob Holt ([rjmholt](https://github.com/rjmholt))
 * Steve Lee ([SteveL-MSFT](https://github.com/SteveL-MSFT))
 
 ### Committee Member Responsibilities
@@ -90,36 +89,45 @@ One of their primary responsibilities is merging pull requests after all require
 
 For more information on Repository Maintainers--their responsibilities, who they are, and how one becomes a Maintainer--see the [README for Repository Maintainers][maintainers].
 
-## Area Experts
+## Working Groups (WGs)
 
-Area Experts are people with knowledge of specific components or technologies in the PowerShell domain. They are responsible for code reviews, issue triage, and providing their expertise to others.
+[Working Groups (WGs)][wg] are collections of contributors with knowledge of specific components or
+technologies in the PowerShell domain.
+They are responsible for issue triage/acceptance, code reviews, and providing their expertise to
+others in issues, PRs, and RFC discussions,
+as well as to the Committee when said expertise is helpful in broader discussions.
 
-They have [write access](https://help.github.com/articles/permission-levels-for-an-organization-repository/) to the PowerShell repository which gives them the power to:
+They have [write access](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-organizations-and-teams/repository-permission-levels-for-an-organization) to the PowerShell repository which gives them the power to:
 
 1. `git push` to all branches *except* `master`.
 1. Merge pull requests to all branches *except* `master` (though this should not be common given that [`master`is the only long-living branch](../git/README.md#understand-branches)).
 1. Assign labels, milestones, and people to [issues](https://guides.github.com/features/issues/).
 
-A list of Area Experts can be found [here][experts].
+### Working Group Responsibilities
 
-### Area Expert Responsibilities
+If you are a member of a Working Group, you are expected to be actively involved in any development, design, or contributions in the focus area of the WG.
+More information on the responsibilities of Working Groups can be found [here][wg],
+while current WG definitions and membership can be found [here][wg-definitions].
 
-If you are an Area Expert, you are expected to be actively involved in any development, design, or contributions in your area of expertise.
+If you are a Working Group member:
 
-If you are an Area Expert:
-
-1. **DO** assign the [correct labels][issue-process]
-1. **DO** assign yourself to issues labeled with your area of expertise
-1. **DO** code reviews for issues where you're assigned or in your areas of expertise.
-1. **DO** reply to new issues and pull requests that are related to your area of expertise
-  (while reviewing PRs, leave your comment even if everything looks good - a simple "Looks good to me" or "LGTM" will suffice, so that we know someone has already taken a look at it).
-1. **DO** make sure contributors are following the [contributor guidelines](../../.github/CONTRIBUTING.md).
-1. **DO** ask people to resend a pull request, if it [doesn't target `master`](../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request).
-1. **DO** ensure that contributors [write Pester tests][pester] for all new/changed functionality
-1. **DO** ensure that contributors [write documentation][docs-contributing] for all new-/changed functionality
-1. **DO** encourage contributors to refer to issues in their pull request description (e.g. `Resolves issue #123`).
-1. **DO** encourage contributors to create meaningful titles for all PRs. Edit title if necessary.
-1. **DO** verify that all contributors are following the [Coding Guidelines](../dev-process/coding-guidelines.md).
+1. **DO** triage and contribute to discussions in issues and PRs that have `WG-*` labels assigned
+1. **DO** regularly communicate with other members of your WG to coordinate decisions about
+   whether issues should move forward
+1. **DO** make decisions on whether or not issues should proceed forward with implementations or RFCs
+1. **DO** assign the [correct labels][issue-process] to issues
+1. **DO** assign yourself to issues and PRs labeled with your area of expertise only when you are actively
+   working on or implementing them
+1. **DO** code reviews for PRs where you're assigned or in your WG
+   (while reviewing PRs, leave your comment even if everything looks good - a simple "Looks good to me" or "LGTM" will suffice, so that we know someone has already taken a look at it).
+1. **DO** ensure that contributors are following the [contributor guidelines](../../.github/CONTRIBUTING.md)
+   and [Code of Conduct](https://github.com/PowerShell/PowerShell/blob/master/CODE_OF_CONDUCT.md)
+1. **DO** ensure that contributions [include Pester tests][pester] for all new/changed functionality
+1. **DO** ensure that contributions [include documentation][docs-contributing] for all new-/changed functionality
+1. **DO** encourage contributions to refer to issues in their pull request description (e.g. `Resolves issue #123`)
+1. **DO** encourage contributions to have meaningful titles for all PRs,
+   editing their title if necessary to ensure that changelogs convey useful and accurate information
+1. **DO** verify that all contributions are following the [Coding Guidelines](../dev-process/coding-guidelines.md)
 
 1. **DON'T** create new features, new designs, or change behaviors without following the [RFC][RFC-repo] or approval process
 
@@ -133,10 +141,10 @@ See our [Pull Request Process][pull-request-process]
 
 [RFC-repo]: https://github.com/PowerShell/PowerShell-RFC
 [pester]: ../testing-guidelines/WritingPesterTests.md
-[ci-system]: ../testing-guidelines/testing-guidelines.md#ci-system
 [breaking-changes]: ../dev-process/breaking-change-contract.md
 [issue-process]: ../maintainers/issue-management.md
 [pull-request-process]: ../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request
 [docs-contributing]: https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md
 [maintainers]: ../maintainers/README.md
-[experts]: ../../.github/CODEOWNERS
+[wg]: ./working-group.md
+[wg-defintions]: ./working-group-definitions.md

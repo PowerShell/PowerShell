@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -12,8 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements the start-transcript cmdlet.
     /// </summary>
-
-    [Cmdlet(VerbsLifecycle.Start, "Transcript", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113408")]
+    [Cmdlet(VerbsLifecycle.Start, "Transcript", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096485")]
     [OutputType(typeof(string))]
     public sealed class StartTranscriptCommand : PSCmdlet
     {
@@ -23,7 +22,6 @@ namespace Microsoft.PowerShell.Commands
         /// Documents/PowerShell_transcript.YYYYMMDDmmss.txt.
         /// </summary>
         /// <value></value>
-
         [Parameter(Position = 0, ParameterSetName = "ByPath")]
         [ValidateNotNullOrEmpty]
         public string Path
@@ -77,7 +75,6 @@ namespace Microsoft.PowerShell.Commands
         /// Describes the current state of the activity.
         /// </summary>
         /// <value></value>
-
         [Parameter]
         public SwitchParameter Append
         {
@@ -99,7 +96,6 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// The read-only attribute will not be replaced when the transcript is done.
         /// </remarks>
-
         [Parameter()]
         public SwitchParameter Force
         {
@@ -350,4 +346,3 @@ namespace Microsoft.PowerShell.Commands
         private bool _isFilenameSet;
     }
 }
-

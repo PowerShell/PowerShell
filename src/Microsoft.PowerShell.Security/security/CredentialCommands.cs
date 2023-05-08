@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -9,11 +9,11 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Defines the implementation of the 'get-credential' cmdlet.
     /// The get-credential Cmdlet establishes a credential object called a
-    /// Msh credential, by pairing a given username with
+    /// PSCredential, by pairing a given username with
     /// a prompted password. That credential object can then be used for other
     /// operations involving security.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Credential", DefaultParameterSetName = GetCredentialCommand.credentialSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113311")]
+    [Cmdlet(VerbsCommon.Get, "Credential", DefaultParameterSetName = GetCredentialCommand.credentialSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096824")]
     [OutputType(typeof(PSCredential), ParameterSetName = new string[] { GetCredentialCommand.credentialSet, GetCredentialCommand.messageSet })]
     public sealed class GetCredentialCommand : PSCmdlet
     {
@@ -104,7 +104,11 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (ArgumentException exception)
             {
-                ErrorRecord errorRecord = new ErrorRecord(exception, "CouldNotPromptForCredential", ErrorCategory.InvalidOperation, null);
+                ErrorRecord errorRecord = new(
+                    exception,
+                    "CouldNotPromptForCredential",
+                    ErrorCategory.InvalidOperation,
+                    targetObject: null);
                 WriteError(errorRecord);
             }
 

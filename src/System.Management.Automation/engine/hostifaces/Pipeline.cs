@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -113,13 +113,13 @@ namespace System.Management.Automation.Runspaces
         /// State of pipeline when exception was thrown.
         /// </summary>
         [NonSerialized]
-        private PipelineState _currentState = 0;
+        private readonly PipelineState _currentState = 0;
 
         /// <summary>
         /// States of the pipeline expected in method which throws this exception.
         /// </summary>
         [NonSerialized]
-        private PipelineState _expectedState = 0;
+        private readonly PipelineState _expectedState = 0;
     }
 
     #endregion Exceptions
@@ -305,7 +305,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (runspace == null)
             {
-                PSTraceSource.NewArgumentNullException("runspace");
+                PSTraceSource.NewArgumentNullException(nameof(runspace));
             }
             // This constructor is used only internally.
             // Caller should make sure the input is valid
@@ -445,7 +445,7 @@ namespace System.Management.Automation.Runspaces
         ///
         /// This flag is used to force the redirection. By default it is false to maintain compatibility with
         /// V1, but the V2 hosting interface (PowerShell class) sets this flag to true to ensure the global
-        /// error output pipe is always set and $ErrorActionPreference when invoking the Pipeline.
+        /// error output pipe is always set and $ErrorActionPreference is checked when invoking the Pipeline.
         /// </summary>
         internal bool RedirectShellErrorOutputPipe { get; set; } = false;
 
@@ -496,9 +496,6 @@ namespace System.Management.Automation.Runspaces
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the pipeline was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// Pipeline.Invoke can throw a variety of exceptions derived
@@ -567,9 +564,6 @@ namespace System.Management.Automation.Runspaces
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the pipeline was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// Pipeline.Invoke can throw a variety of exceptions derived
@@ -744,4 +738,3 @@ namespace System.Management.Automation.Runspaces
         #endregion IDisposable Members
     }
 }
-

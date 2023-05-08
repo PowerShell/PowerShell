@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 namespace System.Management.Automation
@@ -114,11 +114,6 @@ namespace System.Management.Automation
         /// The file extension (including the dot) of an PowerShell data file.
         /// </summary>
         internal const string PowerShellDataFileExtension = ".psd1";
-
-        /// <summary>
-        /// The file extension (including the dot) of an workflow file.
-        /// </summary>
-        internal const string WorkflowFileExtension = ".xaml";
 
         /// <summary>
         /// The file extension (including the dot) of an workflow dependent assembly.

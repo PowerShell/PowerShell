@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 namespace System.Management.Automation
@@ -70,11 +70,7 @@ namespace System.Management.Automation
         // internal for unit testing only.  Otherwise, would be private.
         internal BackgroundDispatcher(IMethodInvoker etwActivityMethodInvoker)
         {
-            if (etwActivityMethodInvoker == null)
-            {
-                throw new ArgumentNullException("etwActivityMethodInvoker");
-            }
-
+            ArgumentNullException.ThrowIfNull(etwActivityMethodInvoker);
             _etwActivityMethodInvoker = etwActivityMethodInvoker;
             _invokerWaitCallback = DoInvoker;
         }

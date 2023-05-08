@@ -1,5 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "Add-Type" -Tags "CI" {
     BeforeAll {
         $guid = [Guid]::NewGuid().ToString().Replace("-","")
@@ -57,15 +58,15 @@ Describe "Add-Type" -Tags "CI" {
         # Also we check that '-Language CSharp' is by default.
         # In subsequent launches from the same session
         # the test will be passed without real compile - it will return an assembly previously compiled.
-        { Add-Type -TypeDefinition "public static class CSharpfooType { }" } | Should Not Throw
-        [CSharpfooType].Name | Should BeExactly "CSharpfooType"
+        { Add-Type -TypeDefinition "public static class CSharpfooType { }" } | Should -Not -Throw
+        [CSharpfooType].Name | Should -BeExactly "CSharpfooType"
     }
 
     It "Can use System.Management.Automation.CmdletAttribute" {
         $code = @"
 using System.Management.Automation;
 [System.Management.Automation.Cmdlet("Get", "Thing$guid", ConfirmImpact = System.Management.Automation.ConfirmImpact.High, SupportsPaging = true)]
-public class AttributeTest$guid : PSCmdlet
+public class SMAAttributeTest$guid : PSCmdlet
 {
     protected override void EndProcessing()
 
@@ -77,15 +78,15 @@ public class AttributeTest$guid : PSCmdlet
         $cls = Add-Type -TypeDefinition $code -PassThru | Select-Object -First 1
         $testModule = Import-Module $cls.Assembly -PassThru
 
-        Invoke-Expression -Command "Get-Thing$guid" | Should BeExactly $guid
+        Invoke-Expression -Command "Get-Thing$guid" | Should -BeExactly $guid
 
         Remove-Module $testModule -ErrorAction SilentlyContinue -Force
     }
 
     It "Can load TPA assembly System.Runtime.Serialization.Primitives.dll" {
         $returnedTypes = Add-Type -AssemblyName 'System.Runtime.Serialization.Primitives' -PassThru
-        $returnedTypes.Count | Should BeGreaterThan 0
-        ($returnedTypes[0].Assembly.FullName -Split ",")[0]  | Should BeExactly 'System.Runtime.Serialization.Primitives'
+        $returnedTypes.Count | Should -BeGreaterThan 0
+        ($returnedTypes[0].Assembly.FullName -Split ",")[0]  | Should -BeExactly 'System.Runtime.Serialization.Primitives'
     }
 
     It "Can compile <sourceLanguage> files" -TestCases @(
@@ -100,8 +101,8 @@ public class AttributeTest$guid : PSCmdlet
         param($type1, $type2, $file1, $file2, $sourceLanguage)
 
         # The types shouldn't exist before compile the test code.
-        $type1 -as [type] | Should BeNullOrEmpty
-        $type2 -as [type] | Should BeNullOrEmpty
+        $type1 -as [type] | Should -BeNullOrEmpty
+        $type2 -as [type] | Should -BeNullOrEmpty
 
         $returnedTypes = Add-Type -Path $file1,$file2 -PassThru
 
@@ -109,13 +110,13 @@ public class AttributeTest$guid : PSCmdlet
         $type2 = Invoke-Expression -Command $type2
 
         # We can compile, load and use new code.
-        $type1::Add1(1, 2) | Should Be 3
-        $type2::Add2(3, 4) | Should Be 7
+        $type1::Add1(1, 2) | Should -Be 3
+        $type2::Add2(3, 4) | Should -Be 7
 
         # Return the same assembly if source code has not been changed.
         # Also check that '-LiteralPath' works.
         $returnedTypes2 = Add-Type -LiteralPath $file1,$file2 -PassThru
-        $returnedTypes[0].Assembly.FullName | Should BeExactly $returnedTypes2[0].Assembly.FullName
+        $returnedTypes[0].Assembly.FullName | Should -BeExactly $returnedTypes2[0].Assembly.FullName
     }
 
     It "Can compile <sourceLanguage> with MemberDefinition" -TestCases @(
@@ -139,22 +140,28 @@ public class AttributeTest$guid : PSCmdlet
         { Add-Type -MemberDefinition $sourceCode -Name $sourceType -Namespace $sourceNS -Language $sourceLanguage -ErrorAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
 
         $returnedTypes = Add-Type -MemberDefinition $sourceCode -Name $sourceType -UsingNamespace $sourceUsingNS -Namespace $sourceNS -Language $sourceLanguage -PassThru
-        ([type]$sourceRunType)::TestString() | Should BeExactly $expectedResult
+        ([type]$sourceRunType)::TestString() | Should -BeExactly $expectedResult
 
         # Return the same assembly if source code has not been changed.
         $returnedTypes2 = Add-Type -MemberDefinition $sourceCode -Name $sourceType -UsingNamespace $sourceUsingNS -Namespace $sourceNS -Language $sourceLanguage -PassThru
-        $returnedTypes[0].Assembly.FullName | Should BeExactly $returnedTypes2[0].Assembly.FullName
+        $returnedTypes[0].Assembly.FullName | Should -BeExactly $returnedTypes2[0].Assembly.FullName
 
         # With default namespace.
         Add-Type -MemberDefinition $sourceCode -Name $sourceType -UsingNamespace $sourceUsingNS -Language $sourceLanguage
-        ([type]$sourceDefaultNSRunType)::TestString() | Should BeExactly $expectedResult
+        ([type]$sourceDefaultNSRunType)::TestString() | Should -BeExactly $expectedResult
     }
 
     It "Can compile without loading" {
 
         ## The assembly files cannot be removed once they are loaded, unless the current PowerShell session exits.
         ## If we use $TestDrive here, then Pester will try to remove them afterward and result in errors.
-        $TempPath = [System.IO.Path]::GetTempFileName()
+        if ($IsWindows) {
+            $TempPath = [System.IO.Path]::GetTempFileName()
+        }
+        else {
+            $TempPath = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
+        }
+
         if (Test-Path $TempPath) { Remove-Item -Path $TempPath -Force -Recurse }
         New-Item -Path $TempPath -ItemType Directory -Force > $null
 
@@ -185,10 +192,10 @@ public class AttributeTest$guid : PSCmdlet
         $types[0].Name | Should -BeExactly "AttributeTest$guid"
         $outFile2 | Should -Exist
 
-        { Invoke-Expression -Command $cmdlet } | Should Throw
+        { Invoke-Expression -Command $cmdlet } | Should -Throw
 
         $testModule = Import-Module -Name $outFile -PassThru
-        & $cmdlet | Should BeExactly $guid
+        & $cmdlet | Should -BeExactly $guid
 
         Remove-Module $testModule -Force
     }
@@ -205,6 +212,15 @@ public class AttributeTest$guid : PSCmdlet
 
         # Catch non-termination information error for CompilerOptions.
         { Add-Type -CompilerOptions "/platform:anycpuERROR" -Language CSharp -MemberDefinition "public static string TestString() { return ""}" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | Should -Throw -ErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
+    }
+
+    It "Throw if the type already exists" {
+        Add-Type -TypeDefinition "public class Foo$guid {}"
+
+        # The cmdlet writes TYPE_ALREADY_EXISTS for every duplicated type and then terminates with COMPILER_ERRORS.
+        # So here we check 2 errors.
+        { Add-Type -TypeDefinition "public class Foo$guid { public int Bar {get {return 42;} }" -ErrorAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
+        $error[1].FullyQualifiedErrorId | Should -BeExactly "TYPE_ALREADY_EXISTS,Microsoft.PowerShell.Commands.AddTypeCommand"
     }
 
     It "OutputType parameter requires that the OutputAssembly parameter be specified." {
@@ -235,5 +251,25 @@ public class AttributeTest$guid : PSCmdlet
     ) {
         param ($assemblyName, $errorid)
         { Add-Type -AssemblyName $assemblyName } | Should -Throw -ErrorId $errorid
+    }
+
+    It "Throw terminating error when '-OutputType' is '<outputType>'" -TestCases @(
+        @{ outputType = 'ConsoleApplication' }
+        @{ outputType = 'WindowsApplication' }
+    ) {
+        param($outputType)
+        { Add-Type -TypeDefinition "Hello" -OutputType $outputType } | Should -Throw -ErrorId 'AssemblyTypeNotSupported,Microsoft.PowerShell.Commands.AddTypeCommand'
+    }
+
+    It "Can run with the same C# code simultaneously from multiple Runspaces" {
+        $script = {
+            $source = 'public class BasicTest {}'
+            1..10 | ForEach-Object -ThrottleLimit 10 -Parallel {
+                Add-Type -TypeDefinition $using:source
+            }
+        }
+
+        pwsh -noprofile -command $script.ToString()
+        $LASTEXITCODE | Should -Be 0
     }
 }

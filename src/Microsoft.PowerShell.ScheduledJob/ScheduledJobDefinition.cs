@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -235,7 +235,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="info">SerializationInfo.</param>
         /// <param name="context">StreamingContext.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private ScheduledJobDefinition(
             SerializationInfo info,
             StreamingContext context)
@@ -275,7 +274,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="info">SerializationInfo.</param>
         /// <param name="context">StreamingContext.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -938,7 +936,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     { }
                 }
 
-                if (!(ex is ScheduledJobException))
+                if (ex is not ScheduledJobException)
                 {
                     // Wrap in ScheduledJobException type.
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.ErrorRegisteringDefinitionStore, this.Name);
@@ -2020,10 +2018,6 @@ namespace Microsoft.PowerShell.ScheduledJob
                     ex = e;
                 }
                 catch (System.Security.SecurityException e)
-                {
-                    ex = e;
-                }
-                catch (System.Threading.ThreadAbortException e)
                 {
                     ex = e;
                 }

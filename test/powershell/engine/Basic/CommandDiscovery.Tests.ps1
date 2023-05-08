@@ -1,10 +1,11 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "Command Discovery tests" -Tags "CI" {
 
     BeforeAll {
-        setup -f testscript.ps1 -content "'This script should not run. Running from testscript.ps1'"
-        setup -f testscripp.ps1 -content "'This script should not run. Running from testscripp.ps1'"
+        Setup -f testscript.ps1 -Content "'This script should not run. Running from testscript.ps1'"
+        Setup -f testscripp.ps1 -Content "'This script should not run. Running from testscripp.ps1'"
 
         $TestCasesCommandNotFound = @(
                         @{command = 'CommandThatDoesnotExist' ; testName = 'Non-existent command'}
@@ -29,7 +30,7 @@ Describe "Command Discovery tests" -Tags "CI" {
             New-Item -Path "$TestDrive\\TestFunctionA\TestFunctionA.psm1" -Value "function TestFunctionA {}" | Out-Null
 
             $env:PSModulePath = "$TestDrive" + [System.IO.Path]::PathSeparator + "$TestDrive"
-            (Get-command 'TestFunctionA').count | Should -Be 1
+            (Get-Command 'TestFunctionA').count | Should -Be 1
         }
         finally
         {
@@ -44,7 +45,7 @@ Describe "Command Discovery tests" -Tags "CI" {
 
             $commands.Count | Should -Be 1
             $aliasResult = $commands -as [System.Management.Automation.AliasInfo]
-            $aliasResult | Should -BeOfType [System.Management.Automation.AliasInfo]
+            $aliasResult | Should -BeOfType System.Management.Automation.AliasInfo
             $aliasResult.Name | Should -Be 'AliasCommandDiscoveryTest'
     }
 
@@ -82,7 +83,7 @@ Describe "Command Discovery tests" -Tags "CI" {
     }
 
     It "Get- is prepended to commands" {
-        (& 'location').Path | Should -Be (get-location).Path
+        (& 'location').Path | Should -Be (Get-Location).Path
     }
 
     Context "Use literal path first when executing scripts" {
@@ -93,17 +94,17 @@ Describe "Command Discovery tests" -Tags "CI" {
             $firstResult = "executing $firstFileName in root"
             $secondResult = "executing $secondFileName in root"
             $thirdResult = "executing $thirdFileName in root"
-            setup -f $firstFileName -content "'$firstResult'"
-            setup -f $secondFileName -content "'$secondResult'"
-            setup -f $thirdFileName -content "'$thirdResult'"
+            Setup -f $firstFileName -Content "'$firstResult'"
+            Setup -f $secondFileName -Content "'$secondResult'"
+            Setup -f $thirdFileName -Content "'$thirdResult'"
 
             $subFolder = 'subFolder'
             $firstFileInSubFolder = Join-Path $subFolder -ChildPath $firstFileName
             $secondFileInSubFolder = Join-Path $subFolder -ChildPath $secondFileName
             $thirdFileInSubFolder = Join-Path $subFolder -ChildPath $thirdFileName
-            setup -f $firstFileInSubFolder -content "'$firstResult'"
-            setup -f $secondFileInSubFolder -content "'$secondResult'"
-            setup -f $thirdFileInSubFolder -content "'$thirdResult'"
+            Setup -f $firstFileInSubFolder -Content "'$firstResult'"
+            Setup -f $secondFileInSubFolder -Content "'$secondResult'"
+            Setup -f $thirdFileInSubFolder -Content "'$thirdResult'"
 
             $secondFileSearchInSubfolder = (Join-Path -Path $subFolder -ChildPath '[t1].ps1')
 
@@ -175,9 +176,9 @@ Describe "Command Discovery tests" -Tags "CI" {
             $firstResult = '[first script]'
             $secondResult = 'alt script'
             $thirdResult = 'bad script'
-            setup -f '[test1].ps1' -content "'$firstResult'"
-            setup -f '1.ps1' -content "'$secondResult'"
-            setup -f '2.ps1' -content "'$thirdResult'"
+            Setup -f '[test1].ps1' -Content "'$firstResult'"
+            Setup -f '1.ps1' -Content "'$secondResult'"
+            Setup -f '2.ps1' -Content "'$thirdResult'"
 
             $gcmWithWildcardCases = @(
                 @{command = '.\?[tb]est1?.ps1'; expectedCommand = '[test1].ps1'; expectedCommandCount =1; name = '''.\?[tb]est1?.ps1'''}
@@ -213,6 +214,17 @@ Describe "Command Discovery tests" -Tags "CI" {
 
         It "Should return command not found for commands in the global scope" {
             {Get-Command -Name 'global:help' -ErrorAction Stop} | Should -Throw -ErrorId 'CommandNotFoundException'
+        }
+    }
+
+    Context "Native command discovery" {
+        It 'Can discover a native command without extension' {
+            $expectedName = if ($IsWindows) { "ping.exe" } else { "ping" }
+            (Get-Command -Name "ping" -CommandType Application).Name | Should -Match $expectedName
+        }
+
+        It 'Can discover a native command with extension on Windows' -Skip:(-not $IsWindows) {
+            (Get-Command -Name "ping.exe" -CommandType Application).Name | Should -Match "ping.exe"
         }
     }
 }

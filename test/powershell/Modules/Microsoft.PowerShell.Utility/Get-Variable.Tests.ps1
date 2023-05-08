@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
@@ -9,32 +9,32 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 
 	It "Get-Variable of existing variable Name with include and bogus exclude should work"{
 		Set-Variable newVar testing
-		$var1=get-variable -Name newVar -Include newVar -Exclude bogus
-		$var1.Name|Should -BeExactly "newVar"
-		$var1.Value|Should -BeExactly "testing"
+		$var1=Get-Variable -Name newVar -Include newVar -Exclude bogus
+		$var1.Name | Should -BeExactly "newVar"
+		$var1.Value | Should -BeExactly "testing"
 	}
 
 	It "Get-Variable of existing variable Name with Description and Option should work"{
 		Set-Variable newVar testing -Option ReadOnly -Description "testing description"
-		$var1=get-variable -Name newVar
-		$var1.Name|Should -BeExactly "newVar"
-		$var1.Value|Should -BeExactly "testing"
-		$var1.Options|Should -BeExactly "ReadOnly"
-		$var1.Description|Should -BeExactly "testing description"
+		$var1=Get-Variable -Name newVar
+		$var1.Name | Should -BeExactly "newVar"
+		$var1.Value | Should -BeExactly "testing"
+		$var1.Options | Should -BeExactly "ReadOnly"
+		$var1.Description | Should -BeExactly "testing description"
 	}
 
 	It "Get-Variable of existing variable Globbing Name should work"{
 		Set-Variable abcaVar testing
 		Set-Variable bcdaVar "another test"
 		Set-Variable aVarfoo wow
-		$var1=get-variable -Name *aVar* -Scope local
+		$var1=Get-Variable -Name *aVar* -Scope local
 		$var1.Count | Should -Be 3
-		$var1[0].Name|Should -BeExactly "abcaVar"
-		$var1[0].Value|Should -BeExactly "testing"
-		$var1[1].Name|Should -BeExactly "aVarfoo"
-		$var1[1].Value|Should -BeExactly "wow"
-		$var1[2].Name|Should -BeExactly "bcdaVar"
-		$var1[2].Value|Should -BeExactly "another test"
+		$var1[0].Name | Should -BeExactly "abcaVar"
+		$var1[0].Value | Should -BeExactly "testing"
+		$var1[1].Name | Should -BeExactly "aVarfoo"
+		$var1[1].Value | Should -BeExactly "wow"
+		$var1[2].Name | Should -BeExactly "bcdaVar"
+		$var1[2].Value | Should -BeExactly "another test"
 	}
 
 	It "Get-Variable of existing private variable Name should throw ItemNotFoundException"{

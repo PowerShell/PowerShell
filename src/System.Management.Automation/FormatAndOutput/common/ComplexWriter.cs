@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -146,7 +148,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int indentationAbsoluteValue = (firstLineIndentation > 0) ? firstLineIndentation : -firstLineIndentation;
             if (indentationAbsoluteValue >= usefulWidth)
             {
-                // valu too big, we reset it to zero
+                // value too big, we reset it to zero
                 firstLineIndentation = 0;
             }
 
@@ -206,7 +208,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Helper object to manage the frame-based indentation and margins.
         /// </summary>
-        private IndentationManager _indentationManager = new IndentationManager();
+        private readonly IndentationManager _indentationManager = new IndentationManager();
 
         /// <summary>
         /// Buffer to accumulate partially constructed text.
@@ -237,13 +239,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             public void Dispose()
             {
-                if (_mgr != null)
-                {
-                    _mgr.RemoveStackFrame();
-                }
+                _mgr?.RemoveStackFrame();
             }
 
-            private IndentationManager _mgr;
+            private readonly IndentationManager _mgr;
         }
 
         internal void Clear()
@@ -311,7 +310,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return val;
         }
 
-        private Stack<FrameInfo> _frameInfoStack = new Stack<FrameInfo>();
+        private readonly Stack<FrameInfo> _frameInfoStack = new Stack<FrameInfo>();
     }
 
     /// <summary>
@@ -328,10 +327,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed class StringManipulationHelper
     {
-        private static readonly char s_softHyphen = '\u00AD';
-        private static readonly char s_hardHyphen = '\u2011';
-        private static readonly char s_nonBreakingSpace = '\u00A0';
-        private static Collection<string> s_cultureCollection = new Collection<string>();
+        private const char SoftHyphen = '\u00AD';
+        private const char HardHyphen = '\u2011';
+        private const char NonBreakingSpace = '\u00A0';
+
+        private static readonly Collection<string> s_cultureCollection = new Collection<string>();
 
         static StringManipulationHelper()
         {
@@ -353,27 +353,58 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static IEnumerable<GetWordsResult> GetWords(string s)
         {
             StringBuilder sb = new StringBuilder();
-            GetWordsResult result = new GetWordsResult();
+            StringBuilder vtSeqs = null;
+            Dictionary<int, int> vtRanges = null;
 
+            var valueStrDec = new ValueStringDecorated(s);
+            if (valueStrDec.IsDecorated)
+            {
+                vtSeqs = new StringBuilder();
+                vtRanges = valueStrDec.EscapeSequenceRanges;
+            }
+
+            bool wordHasVtSeqs = false;
             for (int i = 0; i < s.Length; i++)
             {
-                // Soft hyphen = \u00AD - Should break, and add a hyphen if needed. If not needed for a break, hyphen should be absent
-                if (s[i] == ' ' || s[i] == '\t' || s[i] == s_softHyphen)
+                if (vtRanges?.TryGetValue(i, out int len) == true)
                 {
-                    result.Word = sb.ToString();
-                    sb.Clear();
-                    result.Delim = new String(s[i], 1);
+                    var vtSpan = s.AsSpan(i, len);
+                    sb.Append(vtSpan);
+                    vtSeqs.Append(vtSpan);
 
-                    yield return result;
+                    wordHasVtSeqs = true;
+                    i += len - 1;
+                    continue;
                 }
-                // Non-breaking space = \u00A0 - ideally shouldn't wrap
-                // Hard hyphen = \u2011 - Should not break
-                else if (s[i] == s_hardHyphen || s[i] == s_nonBreakingSpace)
-                {
-                    result.Word = sb.ToString();
-                    sb.Clear();
-                    result.Delim = string.Empty;
 
+                string delimiter = null;
+                if (s[i] is ' ' or '\t' or SoftHyphen)
+                {
+                    // Soft hyphen = \u00AD - Should break, and add a hyphen if needed.
+                    // If not needed for a break, hyphen should be absent.
+                    delimiter = new string(s[i], 1);
+                }
+                else if (s[i] is HardHyphen or NonBreakingSpace)
+                {
+                    // Non-breaking space = \u00A0 - ideally shouldn't wrap.
+                    // Hard hyphen = \u2011 - Should not break.
+                    delimiter = string.Empty;
+                }
+
+                if (delimiter is not null)
+                {
+                    if (wordHasVtSeqs && !sb.EndsWith(PSStyle.Instance.Reset))
+                    {
+                        sb.Append(PSStyle.Instance.Reset);
+                    }
+
+                    var result = new GetWordsResult()
+                    {
+                        Word = sb.ToString(),
+                        Delim = delimiter
+                    };
+
+                    sb.Clear().Append(vtSeqs);
                     yield return result;
                 }
                 else
@@ -382,10 +413,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            result.Word = sb.ToString();
-            result.Delim = string.Empty;
+            if (wordHasVtSeqs)
+            {
+                if (sb.Length == vtSeqs.Length)
+                {
+                    // This indicates 'sb' only contains all VT sequences, which may happen when the string ends with a word delimiter.
+                    // For a word that contains VT sequence only, it's the same as an empty string to the formatting system,
+                    // because nothing will actually be rendered.
+                    // So, we use an empty string in this case to avoid unneeded string allocations.
+                    sb.Clear();
+                }
+                else if (!sb.EndsWith(PSStyle.Instance.Reset))
+                {
+                    sb.Append(PSStyle.Instance.Reset);
+                }
+            }
 
-            yield return result;
+            yield return new GetWordsResult() { Word = sb.ToString(), Delim = string.Empty };
         }
 
         internal static StringCollection GenerateLines(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
@@ -412,14 +456,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // break string on newlines and process each line separately
-            string[] lines = SplitLines(val);
+            List<string> lines = SplitLines(val);
 
-            for (int k = 0; k < lines.Length; k++)
+            for (int k = 0; k < lines.Count; k++)
             {
-                if (lines[k] == null || displayCells.Length(lines[k]) <= firstLineLen)
+                string currentLine = lines[k];
+
+                if (currentLine == null || displayCells.Length(currentLine) <= firstLineLen)
                 {
                     // we do not need to split further, just add
-                    retVal.Add(lines[k]);
+                    retVal.Add(currentLine);
                     continue;
                 }
 
@@ -432,7 +478,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 int offset = 0; // offset into the line we are splitting
 
-                while (true)
+                while (offset < currentLine.Length)
                 {
                     // acquire the current active display line length (it can very from call to call)
                     int currentDisplayLen = accumulator.ActiveLen;
@@ -440,7 +486,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // determine if the current tail would fit or not
 
                     // for the remaining part of the string, determine its display cell count
-                    int currentCellsToFit = displayCells.Length(lines[k], offset);
+                    int currentCellsToFit = displayCells.Length(currentLine, offset);
 
                     // determine if we fit into the line
                     int excessCells = currentCellsToFit - currentDisplayLen;
@@ -449,7 +495,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         // we are not at the end of the string, select a sub string
                         // that would fit in the remaining display length
-                        int charactersToAdd = displayCells.GetHeadSplitLength(lines[k], offset, currentDisplayLen);
+                        int charactersToAdd = displayCells.TruncateTail(currentLine, offset, currentDisplayLen);
 
                         if (charactersToAdd <= 0)
                         {
@@ -463,7 +509,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         else
                         {
                             // of the given length, add it to the accumulator
-                            accumulator.AddLine(lines[k].Substring(offset, charactersToAdd));
+                            accumulator.AddLine(currentLine.VtSubstring(offset, charactersToAdd));
                         }
 
                         // increase the offset by the # of characters added
@@ -472,7 +518,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     else
                     {
                         // we reached the last (partial) line, we add it all
-                        accumulator.AddLine(lines[k].Substring(offset));
+                        accumulator.AddLine(currentLine.VtSubstring(offset));
                         break;
                     }
                 }
@@ -510,10 +556,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            private StringCollection _retVal;
+            private readonly StringCollection _retVal;
             private bool _addedFirstLine;
-            private int _firstLineLen;
-            private int _followingLinesLen;
+            private readonly int _firstLineLen;
+            private readonly int _followingLinesLen;
         }
 
         private static StringCollection GenerateLinesWithWordWrap(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
@@ -528,9 +574,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // break string on newlines and process each line separately
-            string[] lines = SplitLines(val);
+            List<string> lines = SplitLines(val);
 
-            for (int k = 0; k < lines.Length; k++)
+            for (int k = 0; k < lines.Count; k++)
             {
                 if (lines[k] == null || displayCells.Length(lines[k]) <= firstLineLen)
                 {
@@ -543,28 +589,34 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 int lineWidth = firstLineLen;
                 bool firstLine = true;
                 StringBuilder singleLine = new StringBuilder();
+                string resetStr = PSStyle.Instance.Reset;
 
                 foreach (GetWordsResult word in GetWords(lines[k]))
                 {
                     string wordToAdd = word.Word;
+                    string suffix = null;
 
                     // Handle soft hyphen
-                    if (word.Delim == s_softHyphen.ToString())
+                    if (word.Delim.Length == 1 && word.Delim[0] is SoftHyphen)
                     {
-                        int wordWidthWithHyphen = displayCells.Length(wordToAdd) + displayCells.Length(s_softHyphen.ToString());
+                        int wordWidthWithHyphen = displayCells.Length(wordToAdd) + displayCells.Length(SoftHyphen);
 
                         // Add hyphen only if necessary
                         if (wordWidthWithHyphen == spacesLeft)
                         {
-                            wordToAdd += "-";
+                            suffix = "-";
                         }
                     }
-                    else
+                    else if (!string.IsNullOrEmpty(word.Delim))
                     {
-                        if (!string.IsNullOrEmpty(word.Delim))
-                        {
-                            wordToAdd += word.Delim;
-                        }
+                        suffix = word.Delim;
+                    }
+
+                    if (suffix is not null)
+                    {
+                        wordToAdd = wordToAdd.EndsWith(resetStr)
+                            ? wordToAdd.Insert(wordToAdd.Length - resetStr.Length, suffix)
+                            : wordToAdd + suffix;
                     }
 
                     int wordWidth = displayCells.Length(wordToAdd);
@@ -589,15 +641,35 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // Word is wider than a single line
                     if (wordWidth > lineWidth)
                     {
-                        foreach (char c in wordToAdd)
-                        {
-                            char charToAdd = c;
-                            int charWidth = displayCells.Length(c);
+                        Dictionary<int, int> vtRanges = null;
+                        StringBuilder vtSeqs = null;
 
-                            // corner case: we have a two cell character and the current
-                            // display length is one.
-                            // add a single cell arbitrary character instead of the original
-                            // one and keep going
+                        var valueStrDec = new ValueStringDecorated(wordToAdd);
+                        if (valueStrDec.IsDecorated)
+                        {
+                            vtSeqs = new StringBuilder();
+                            vtRanges = valueStrDec.EscapeSequenceRanges;
+                        }
+
+                        bool hasEscSeqs = false;
+                        for (int i = 0; i < wordToAdd.Length; i++)
+                        {
+                            if (vtRanges?.TryGetValue(i, out int len) == true)
+                            {
+                                var vtSpan = wordToAdd.AsSpan(i, len);
+                                singleLine.Append(vtSpan);
+                                vtSeqs.Append(vtSpan);
+
+                                hasEscSeqs = true;
+                                i += len - 1;
+                                continue;
+                            }
+
+                            char charToAdd = wordToAdd[i];
+                            int charWidth = displayCells.Length(charToAdd);
+
+                            // Corner case: we have a two cell character and the current display length is one.
+                            // Add a single cell arbitrary character instead of the original one and keep going.
                             if (charWidth > lineWidth)
                             {
                                 charToAdd = '?';
@@ -606,9 +678,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                             if (charWidth > spacesLeft)
                             {
+                                if (hasEscSeqs && !singleLine.EndsWith(resetStr))
+                                {
+                                    singleLine.Append(resetStr);
+                                }
+
                                 retVal.Add(singleLine.ToString());
-                                singleLine.Clear();
-                                singleLine.Append(charToAdd);
+                                singleLine.Clear().Append(vtSeqs).Append(charToAdd);
 
                                 if (firstLine)
                                 {
@@ -630,8 +706,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (wordWidth > spacesLeft)
                         {
                             retVal.Add(singleLine.ToString());
-                            singleLine.Clear();
-                            singleLine.Append(wordToAdd);
+                            singleLine.Clear().Append(wordToAdd);
 
                             if (firstLine)
                             {
@@ -661,49 +736,77 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="s">String to split.</param>
         /// <returns>String array with the values.</returns>
-        internal static string[] SplitLines(string s)
+        internal static List<string> SplitLines(string s)
         {
-            if (string.IsNullOrEmpty(s))
-                return new string[1] { s };
+            if (string.IsNullOrEmpty(s) || !s.Contains('\n'))
+            {
+                return new List<string>(capacity: 1) { s?.Replace("\r", string.Empty) };
+            }
 
             StringBuilder sb = new StringBuilder();
+            List<string> list = new List<string>();
 
-            foreach (char c in s)
+            StringBuilder vtSeqs = null;
+            Dictionary<int, int> vtRanges = null;
+
+            var valueStrDec = new ValueStringDecorated(s);
+            if (valueStrDec.IsDecorated)
             {
-                if (c != '\r')
+                vtSeqs = new StringBuilder();
+                vtRanges = valueStrDec.EscapeSequenceRanges;
+            }
+
+            bool hasVtSeqs = false;
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (vtRanges?.TryGetValue(i, out int len) == true)
+                {
+                    var vtSpan = s.AsSpan(i, len);
+                    sb.Append(vtSpan);
+                    vtSeqs.Append(vtSpan);
+
+                    hasVtSeqs = true;
+                    i += len - 1;
+                    continue;
+                }
+
+                char c = s[i];
+                if (c == '\n')
+                {
+                    if (hasVtSeqs && !sb.EndsWith(PSStyle.Instance.Reset))
+                    {
+                        sb.Append(PSStyle.Instance.Reset);
+                    }
+
+                    list.Add(sb.ToString());
+                    sb.Clear().Append(vtSeqs);
+                }
+                else if (c != '\r')
+                {
                     sb.Append(c);
+                }
             }
 
-            return sb.ToString().Split(s_newLineChar);
-        }
-
-#if false
-        internal static string StripNewLines (string s)
-        {
-            if (string.IsNullOrEmpty (s))
-                return s;
-
-            string[] lines = SplitLines (s);
-
-            if (lines.Length == 0)
-                return null;
-
-            if (lines.Length == 1)
-                return lines[0];
-
-            StringBuilder sb = new StringBuilder ();
-
-            for (int k = 0; k < lines.Length; k++)
+            if (hasVtSeqs)
             {
-                if (k == 0)
-                    sb.Append (lines[k]);
-                else
-                    sb.Append (" " + lines[k]);
+                if (sb.Length == vtSeqs.Length)
+                {
+                    // This indicates 'sb' only contains all VT sequences, which may happen when the string ends with '\n'.
+                    // For a sub-string that contains VT sequence only, it's the same as an empty string to the formatting
+                    // system, because nothing will actually be rendered.
+                    // So, we use an empty string in this case to avoid unneeded string allocations.
+                    sb.Clear();
+                }
+                else if (!sb.EndsWith(PSStyle.Instance.Reset))
+                {
+                    sb.Append(PSStyle.Instance.Reset);
+                }
             }
 
-            return sb.ToString ();
+            list.Add(sb.ToString());
+            return list;
         }
-#endif
+
         internal static string TruncateAtNewLine(string s)
         {
             if (string.IsNullOrEmpty(s))
@@ -711,7 +814,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return string.Empty;
             }
 
-            int lineBreak = s.IndexOfAny(s_lineBreakChars);
+            int lineBreak = s.AsSpan().IndexOfAny('\n', '\r');
 
             if (lineBreak < 0)
             {
@@ -725,9 +828,5 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return StringUtil.Padding(count) + val;
         }
-
-        private static readonly char[] s_newLineChar = new char[] { '\n' };
-        private static readonly char[] s_lineBreakChars = new char[] { '\n', '\r' };
     }
 }
-

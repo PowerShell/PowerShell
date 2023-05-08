@@ -18,13 +18,12 @@ refer to the [Working with the PowerShell Repository](../git/README.md),
 
 ### Toolchain Setup
 
-We use the [.NET Command-Line Interface][dotnet-cli] (`dotnet`) to build the managed components,
-and [CMake][] to build the native components.
+We use the [.NET Command-Line Interface][dotnet-cli] (`dotnet`) to build the managed components.
 
 Installing the toolchain is as easy as running `Start-PSBootstrap` in PowerShell.
 Of course, this requires a self-hosted copy of PowerShell on Linux.
 
-Fortunately, this is as easy as [downloading and installing the package](https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-6#binary-archives).
+Fortunately, this is as easy as [downloading and installing the package](https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#binary-archives).
 The `./tools/install-powershell.sh` script will also install the PowerShell package.
 
 In Bash:
@@ -54,8 +53,7 @@ The `Start-PSBootstrap` function does the following:
 
 If you want to use `dotnet` outside of `Start-PSBuild`, add `~/.dotnet` to your `PATH` environment variable.
 
-[dotnet-cli]: https://github.com/dotnet/cli
-[CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
+[dotnet-cli]: https://docs.microsoft.com/dotnet/core/tools/
 
 ## Build using our module
 
@@ -71,7 +69,7 @@ Start-PSBuild
 Congratulations! If everything went right, PowerShell is now built.
 The `Start-PSBuild` script will output the location of the executable:
 
-`./src/powershell-unix/bin/Debug/netcoreapp3.0/linux-x64/publish/pwsh`.
+`./src/powershell-unix/bin/Debug/net6.0/linux-x64/publish/pwsh`.
 
-You should now be running the PowerShell Core that you just built, if your run the above executable.
+You should now be running the PowerShell Core that you just built, if you run the above executable.
 You can run our cross-platform Pester tests with `Start-PSPester`, and our xUnit tests with `Start-PSxUnit`.

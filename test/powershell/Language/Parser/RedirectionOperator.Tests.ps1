@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Redirection operator now supports encoding changes" -Tags "CI" {
     BeforeAll {
@@ -14,8 +14,8 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         # If Out-File -Encoding happens to have a default, be sure to
         # save it away
         $SavedValue = $null
-        $oldDefaultParameterValues = $psDefaultParameterValues.Clone()
-        $psDefaultParameterValues = @{}
+        $oldDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues = @{}
     }
     AfterAll {
         # be sure to tidy up afterwards
@@ -23,11 +23,11 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
     }
     BeforeEach {
         # start each test with a clean plate!
-        $psdefaultParameterValues.Remove("Out-File:Encoding")
+        $PSDefaultParameterValues.Remove("Out-File:Encoding")
     }
     AfterEach {
         # end each test with a clean plate!
-        $psdefaultParameterValues.Remove("Out-File:Encoding")
+        $PSDefaultParameterValues.Remove("Out-File:Encoding")
     }
 
     It "If encoding is unset, redirection should be UTF8 without bom" {
@@ -45,42 +45,32 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         }
     }
 
-    # $availableEncodings = "unknown","string","unicode","bigendianunicode","utf8","utf7", "utf32","ascii","default","oem"
-    $availableEncodings = (Get-Command Out-File).Parameters["Encoding"].Attributes.ValidValues
+    $availableEncodings =
+        @([System.Text.Encoding]::ASCII
+          [System.Text.Encoding]::BigEndianUnicode
+          [System.Text.UTF32Encoding]::new($true,$true)
+          [System.Text.Encoding]::Unicode
+          [System.Text.Encoding]::UTF7
+          [System.Text.Encoding]::UTF8
+          [System.Text.Encoding]::UTF32)
 
     foreach($encoding in $availableEncodings) {
-        $skipTest = $false
-        if ($encoding -eq "default") {
-            # [System.Text.Encoding]::Default is exposed by 'System.Private.CoreLib.dll' at
-            # runtime via reflection. However,it isn't exposed in the reference contract of
-            # 'System.Text.Encoding', and therefore we cannot use 'Encoding.Default' in our
-            # code. So we need to skip this encoding in the test.
-            $skipTest = $true
-        }
 
-        # some of the encodings accepted by Out-File aren't real,
-        # and Out-File has its own translation, so we'll
-        # not do that logic here, but simply ignore those encodings
-        # as they eventually are translated to "real" encoding
-        $enc = [System.Text.Encoding]::$encoding
-        if ( $enc )
-        {
-            $msg = "Overriding encoding for Out-File is respected for $encoding"
-            $BOM = $enc.GetPreamble()
-            $TXT = $enc.GetBytes($asciiString)
-            $CR  = $enc.GetBytes($asciiCR)
-            $expectedBytes = .{ $BOM; $TXT; $CR }
-            $psdefaultparameterValues["Out-File:Encoding"] = "$encoding"
-            $asciiString > TESTDRIVE:/file.txt
-            $observedBytes = Get-Content -AsByteStream TESTDRIVE:/file.txt
-            # THE TEST
-            It $msg -Skip:$skipTest {
-                $observedBytes.Count | Should -Be $expectedBytes.Count
-                for($i = 0;$i -lt $observedBytes.Count; $i++) {
-                    $observedBytes[$i] | Should -Be $expectedBytes[$i]
-                }
+        $encodingName = $encoding.EncodingName
+        $msg = "Overriding encoding for Out-File is respected for $encodingName"
+        $BOM = $encoding.GetPreamble()
+        $TXT = $encoding.GetBytes($asciiString)
+        $CR  = $encoding.GetBytes($asciiCR)
+        $expectedBytes = @( $BOM; $TXT; $CR )
+        $PSDefaultParameterValues["Out-File:Encoding"] = $encoding
+        $asciiString > TESTDRIVE:/file.txt
+        $observedBytes = Get-Content -AsByteStream TESTDRIVE:/file.txt
+        # THE TEST
+        It $msg {
+            $observedBytes.Count | Should -Be $expectedBytes.Count
+            for($i = 0;$i -lt $observedBytes.Count; $i++) {
+                $observedBytes[$i] | Should -Be $expectedBytes[$i]
             }
-
         }
     }
 }
@@ -96,6 +86,15 @@ Describe "File redirection mixed with Out-Null" -Tags CI {
 }
 
 Describe "File redirection should have 'DoComplete' called on the underlying pipeline processor" -Tags CI {
+    BeforeAll {
+        $originalErrorView = $ErrorView
+        $ErrorView = "NormalView"
+    }
+
+    AfterAll {
+        $ErrorView = $originalErrorView
+    }
+
     It "File redirection should result in the same file as Out-File" {
         $object = [pscustomobject] @{ one = 1 }
         $redirectFile = Join-Path $TestDrive fileRedirect.txt

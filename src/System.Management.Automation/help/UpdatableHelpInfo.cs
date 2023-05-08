@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -93,7 +93,7 @@ namespace System.Management.Automation.Help
                 return true;
             }
 
-            return v1 > v2; ;
+            return v1 > v2;
         }
 
         /// <summary>
@@ -107,8 +107,8 @@ namespace System.Management.Automation.Help
 
             foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)
             {
-                if (string.Compare(updatableHelpItem.Culture.Name, culture.Name,
-                    StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(updatableHelpItem.Culture.Name, culture.Name,
+                    StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
@@ -152,8 +152,8 @@ namespace System.Management.Automation.Help
         {
             foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)
             {
-                if (string.Compare(updatableHelpItem.Culture.Name, culture.Name,
-                    StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(updatableHelpItem.Culture.Name, culture.Name,
+                    StringComparison.OrdinalIgnoreCase))
                 {
                     return updatableHelpItem.Version;
                 }

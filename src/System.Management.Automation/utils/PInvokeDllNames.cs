@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 namespace System.Management.Automation
@@ -89,7 +89,7 @@ namespace System.Management.Automation
         internal const string PrivilegeCheckDllName = "api-ms-win-security-base-l1-1-0.dll";                 /*76*/
         internal const string ImpersonateNamedPipeClientDllName = "api-ms-win-core-namedpipe-l1-1-0.dll";    /*77*/
         internal const string RevertToSelfDllName = "api-ms-win-security-base-l1-1-0.dll";                   /*78*/
-        internal const string CreateProcessInComputeSystemDllName = "vmcompute.dll";                         /*79*/
+        internal const string CreateProcessInComputeSystemDllName = "ComputeCore.dll";                       /*79*/
         internal const string CLSIDFromProgIDDllName = "api-ms-win-core-com-l1-1-0.dll";                     /*80*/
         internal const string LoadLibraryEx = "api-ms-win-core-libraryloader-l1-1-0.dll";                    /*81*/
         internal const string FreeLibrary = "api-ms-win-core-libraryloader-l1-1-0.dll";                      /*82*/
@@ -116,26 +116,26 @@ namespace System.Management.Automation
         internal const string PeekConsoleInputDllName = "api-ms-win-core-console-l2-1-0.dll";                /*103*/
         internal const string GetNumberOfConsoleInputEventsDllName = "api-ms-win-core-console-l1-1-0.dll";   /*104*/
         internal const string SetConsoleCtrlHandlerDllName = "api-ms-win-core-console-l1-1-0.dll";           /*105*/
-        internal const string SetConsoleCursorPositionDllName = "api-ms-win-core-console-l2-1-0.dll";        /*106*/
-        internal const string SetConsoleModeDllName = "api-ms-win-core-console-l1-1-0.dll";                  /*107*/
-        internal const string SetConsoleScreenBufferSizeDllName = "api-ms-win-core-console-l2-1-0.dll";      /*108*/
-        internal const string SetConsoleTextAttributeDllName = "api-ms-win-core-console-l2-1-0.dll";         /*109*/
-        internal const string SetConsoleWindowInfoDllName = "api-ms-win-core-console-l2-1-0.dll";            /*110*/
-        internal const string WriteConsoleOutputDllName = "api-ms-win-core-console-l2-1-0.dll";              /*111*/
-        internal const string ReadConsoleOutputDllName = "api-ms-win-core-console-l2-1-0.dll";               /*112*/
-        internal const string ScrollConsoleScreenBufferDllName = "api-ms-win-core-console-l2-1-0.dll";       /*113*/
-        internal const string SendInputDllName = "ext-ms-win-ntuser-keyboard-l1-2-1.dll";                    /*114*/
-        internal const string GetConsoleCursorInfoDllName = "api-ms-win-core-console-l2-1-0.dll";            /*115*/
-        internal const string SetConsoleCursorInfoDllName = "api-ms-win-core-console-l2-1-0.dll";            /*116*/
-        internal const string ReadConsoleInputDllName = "api-ms-win-core-console-l1-1-0.dll";                /*117*/
-        internal const string GetVersionExDllName = "api-ms-win-core-sysinfo-l1-1-0.dll";                    /*118*/
-        internal const string FormatMessageDllName = "api-ms-win-core-localization-l1-2-0.dll";              /*119*/
-        internal const string CreateToolhelp32SnapshotDllName = "api-ms-win-core-toolhelp-l1-1-0";           /*120*/
-        internal const string Process32FirstDllName = "api-ms-win-core-toolhelp-l1-1-0";                     /*121*/
-        internal const string Process32NextDllName = "api-ms-win-core-toolhelp-l1-1-0";                      /*122*/
-        internal const string GetACPDllName = "api-ms-win-core-localization-l1-2-0.dll";                     /*123*/
-        internal const string DeleteServiceDllName = "api-ms-win-service-management-l1-1-0.dll";             /*124*/
-        internal const string QueryServiceConfigDllName = "api-ms-win-service-management-l2-1-0.dll";        /*125*/
-        internal const string QueryServiceConfig2DllName = "api-ms-win-service-management-l2-1-0.dll";       /*126*/
+        internal const string SetConsoleModeDllName = "api-ms-win-core-console-l1-1-0.dll";                  /*106*/
+        internal const string SetConsoleScreenBufferSizeDllName = "api-ms-win-core-console-l2-1-0.dll";      /*107*/
+        internal const string SetConsoleTextAttributeDllName = "api-ms-win-core-console-l2-1-0.dll";         /*108*/
+        internal const string SetConsoleWindowInfoDllName = "api-ms-win-core-console-l2-1-0.dll";            /*109*/
+        internal const string WriteConsoleOutputDllName = "api-ms-win-core-console-l2-1-0.dll";              /*110*/
+        internal const string ReadConsoleOutputDllName = "api-ms-win-core-console-l2-1-0.dll";               /*111*/
+        internal const string ScrollConsoleScreenBufferDllName = "api-ms-win-core-console-l2-1-0.dll";       /*112*/
+        internal const string SendInputDllName = "ext-ms-win-ntuser-keyboard-l1-2-1.dll";                    /*113*/
+        internal const string GetConsoleCursorInfoDllName = "api-ms-win-core-console-l2-1-0.dll";            /*114*/
+        internal const string SetConsoleCursorInfoDllName = "api-ms-win-core-console-l2-1-0.dll";            /*115*/
+        internal const string ReadConsoleInputDllName = "api-ms-win-core-console-l1-1-0.dll";                /*116*/
+        internal const string GetVersionExDllName = "api-ms-win-core-sysinfo-l1-1-0.dll";                    /*117*/
+        internal const string FormatMessageDllName = "api-ms-win-core-localization-l1-2-0.dll";              /*118*/
+        internal const string CreateToolhelp32SnapshotDllName = "api-ms-win-core-toolhelp-l1-1-0";           /*119*/
+        internal const string Process32FirstDllName = "api-ms-win-core-toolhelp-l1-1-0";                     /*120*/
+        internal const string Process32NextDllName = "api-ms-win-core-toolhelp-l1-1-0";                      /*121*/
+        internal const string GetACPDllName = "api-ms-win-core-localization-l1-2-0.dll";                     /*122*/
+        internal const string DeleteServiceDllName = "api-ms-win-service-management-l1-1-0.dll";             /*123*/
+        internal const string QueryServiceConfigDllName = "api-ms-win-service-management-l2-1-0.dll";        /*124*/
+        internal const string QueryServiceConfig2DllName = "api-ms-win-service-management-l2-1-0.dll";       /*125*/
+        internal const string SetServiceObjectSecurityDllName = "api-ms-win-service-management-l2-1-0.dll";  /*126*/
     }
 }

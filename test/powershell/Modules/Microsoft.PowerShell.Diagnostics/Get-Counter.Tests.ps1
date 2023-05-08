@@ -1,13 +1,5 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-<############################################################################################
- # File: Get-Counter.Tests.ps1
- # Provides Pester tests for the Get-Counter cmdlet.
- ############################################################################################>
-
-# Counter CmdLets are removed see issue #4272
-# Tests are disabled
- return
 
  $cmdletName = "Get-Counter"
 

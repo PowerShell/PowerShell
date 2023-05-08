@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -12,6 +12,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 using Microsoft.PowerShell.Commands;
+using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
@@ -41,7 +43,7 @@ namespace System.Management.Automation.Language
         /// Name may be optionally present, expression or bare word.
         /// </summary>
         OptionalName = 4,
-    };
+    }
 
     /// <summary>
     /// Defines the body mode for a dynamic keyword. It can be a scriptblock, hashtable or command which means no body.
@@ -77,8 +79,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                return t_dynamicKeywords ??
-                       (t_dynamicKeywords = new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase));
+                return t_dynamicKeywords ??= new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
@@ -92,8 +93,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                return t_dynamicKeywordsStack ??
-                       (t_dynamicKeywordsStack = new Stack<Dictionary<string, DynamicKeyword>>());
+                return t_dynamicKeywordsStack ??= new Stack<Dictionary<string, DynamicKeyword>>();
             }
         }
 
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(name));
                 throw e;
             }
 
@@ -167,7 +167,7 @@ namespace System.Management.Automation.Language
         {
             if (keywordToAdd == null)
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("keywordToAdd");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(keywordToAdd));
                 throw e;
             }
 
@@ -191,7 +191,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(name));
                 throw e;
             }
 
@@ -207,7 +207,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(name));
                 throw e;
             }
 
@@ -314,28 +314,26 @@ namespace System.Management.Automation.Language
         public bool HasReservedProperties { get; set; }
 
         /// <summary>
-        /// A list of the properties allowed for this constuctor.
+        /// A list of the properties allowed for this constructor.
         /// </summary>
         public Dictionary<string, DynamicKeywordProperty> Properties
         {
             get
             {
-                return _properties ??
-                       (_properties = new Dictionary<string, DynamicKeywordProperty>(StringComparer.OrdinalIgnoreCase));
+                return _properties ??= new Dictionary<string, DynamicKeywordProperty>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
         private Dictionary<string, DynamicKeywordProperty> _properties;
 
         /// <summary>
-        /// A list of the parameters allowed for this constuctor.
+        /// A list of the parameters allowed for this constructor.
         /// </summary>
         public Dictionary<string, DynamicKeywordParameter> Parameters
         {
             get
             {
-                return _parameters ??
-                       (_parameters = new Dictionary<string, DynamicKeywordParameter>(StringComparer.OrdinalIgnoreCase));
+                return _parameters ??= new Dictionary<string, DynamicKeywordParameter>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
@@ -365,7 +363,15 @@ namespace System.Management.Automation.Language
             string implementingModule = keyword.ImplementingModule;
             if (implementingModule != null)
             {
-                return implementingModule.Equals(DscClassCache.DefaultModuleInfoForMetaConfigResource.Item1, StringComparison.OrdinalIgnoreCase);
+                ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                if (dscSubsystem != null)
+                {
+                    dscSubsystem.IsDefaultModuleNameForMetaConfigResource(implementingModule);
+                }
+                else
+                {
+                    return implementingModule.Equals(DscClassCache.DefaultModuleInfoForMetaConfigResource.Item1, StringComparison.OrdinalIgnoreCase);
+                }
             }
 
             return false;
@@ -377,7 +383,7 @@ namespace System.Management.Automation.Language
                     (ConfigurationType != ConfigurationType.Meta && !keyword.IsMetaDSCResource()));
         }
 
-        private static Dictionary<string, List<string>> s_excludeKeywords = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
+        private static readonly Dictionary<string, List<string>> s_excludeKeywords = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
         {
             {@"Node", new List<string> {@"Node"}},
         };
@@ -391,7 +397,7 @@ namespace System.Management.Automation.Language
         internal static IEnumerable<DynamicKeyword> GetAllowedKeywords(this DynamicKeyword keyword, IEnumerable<DynamicKeyword> allowedKeywords)
         {
             string keywordName = keyword.Keyword;
-            if (string.Compare(keywordName, @"Node", StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Equals(keywordName, @"Node", StringComparison.OrdinalIgnoreCase))
             {
                 List<string> excludeKeywords;
                 if (s_excludeKeywords.TryGetValue(keywordName, out excludeKeywords))
@@ -426,7 +432,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public List<string> Attributes
         {
-            get { return _attributes ?? (_attributes = new List<string>()); }
+            get { return _attributes ??= new List<string>(); }
         }
 
         private List<string> _attributes;
@@ -436,7 +442,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public List<string> Values
         {
-            get { return _values ?? (_values = new List<string>()); }
+            get { return _values ??= new List<string>(); }
         }
 
         private List<string> _values;
@@ -446,7 +452,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public Dictionary<string, string> ValueMap
         {
-            get { return _valueMap ?? (_valueMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
+            get { return _valueMap ??= new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); }
         }
 
         private Dictionary<string, string> _valueMap;
@@ -543,7 +549,7 @@ namespace System.Management.Automation.Language
         Decimal = 0x10,
 
         /// <summary>
-        /// Indicates 'I' suffix for BigInteger (arbitrarily large integer) numerals.
+        /// Indicates 'N' suffix for BigInteger (arbitrarily large integer) numerals.
         /// </summary>
         BigInteger = 0x20
     }
@@ -590,6 +596,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly Dictionary<string, TokenKind> s_keywordTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
+
         private static readonly Dictionary<string, TokenKind> s_operatorTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
 
@@ -628,23 +635,23 @@ namespace System.Management.Automation.Language
         /*A*/    "configuration",           "public",           "private",          "static",                     /*A*/
         /*B*/    "interface",               "enum",             "namespace",        "module",                     /*B*/
         /*C*/    "type",                    "assembly",         "command",          "hidden",                     /*C*/
-        /*D*/    "base",                                                                                          /*D*/
+        /*D*/    "base",                    "default",          "clean",                                          /*D*/
         };
 
         private static readonly TokenKind[] s_keywordTokenKind = new TokenKind[] {
-        /*1*/    TokenKind.ElseIf,          TokenKind.If,       TokenKind.Else,     TokenKind.Switch,             /*1*/
-        /*2*/    TokenKind.Foreach,         TokenKind.From,     TokenKind.In,       TokenKind.For,                /*2*/
-        /*3*/    TokenKind.While,           TokenKind.Until,    TokenKind.Do,       TokenKind.Try,                /*3*/
-        /*4*/    TokenKind.Catch,           TokenKind.Finally,  TokenKind.Trap,     TokenKind.Data,               /*4*/
-        /*5*/    TokenKind.Return,          TokenKind.Continue, TokenKind.Break,    TokenKind.Exit,               /*5*/
-        /*6*/    TokenKind.Throw,           TokenKind.Begin,    TokenKind.Process,  TokenKind.End,                /*6*/
-        /*7*/    TokenKind.Dynamicparam,    TokenKind.Function, TokenKind.Filter,   TokenKind.Param,              /*7*/
-        /*8*/    TokenKind.Class,           TokenKind.Define,   TokenKind.Var,      TokenKind.Using,              /*8*/
-        /*9*/    TokenKind.Workflow,        TokenKind.Parallel, TokenKind.Sequence, TokenKind.InlineScript,       /*9*/
-        /*A*/    TokenKind.Configuration,   TokenKind.Public,   TokenKind.Private,  TokenKind.Static,             /*A*/
-        /*B*/    TokenKind.Interface,       TokenKind.Enum,     TokenKind.Namespace,TokenKind.Module,             /*B*/
-        /*C*/    TokenKind.Type,            TokenKind.Assembly, TokenKind.Command,  TokenKind.Hidden,             /*C*/
-        /*D*/    TokenKind.Base,                                                                                  /*D*/
+        /*1*/    TokenKind.ElseIf,          TokenKind.If,       TokenKind.Else,      TokenKind.Switch,             /*1*/
+        /*2*/    TokenKind.Foreach,         TokenKind.From,     TokenKind.In,        TokenKind.For,                /*2*/
+        /*3*/    TokenKind.While,           TokenKind.Until,    TokenKind.Do,        TokenKind.Try,                /*3*/
+        /*4*/    TokenKind.Catch,           TokenKind.Finally,  TokenKind.Trap,      TokenKind.Data,               /*4*/
+        /*5*/    TokenKind.Return,          TokenKind.Continue, TokenKind.Break,     TokenKind.Exit,               /*5*/
+        /*6*/    TokenKind.Throw,           TokenKind.Begin,    TokenKind.Process,   TokenKind.End,                /*6*/
+        /*7*/    TokenKind.Dynamicparam,    TokenKind.Function, TokenKind.Filter,    TokenKind.Param,              /*7*/
+        /*8*/    TokenKind.Class,           TokenKind.Define,   TokenKind.Var,       TokenKind.Using,              /*8*/
+        /*9*/    TokenKind.Workflow,        TokenKind.Parallel, TokenKind.Sequence,  TokenKind.InlineScript,       /*9*/
+        /*A*/    TokenKind.Configuration,   TokenKind.Public,   TokenKind.Private,   TokenKind.Static,             /*A*/
+        /*B*/    TokenKind.Interface,       TokenKind.Enum,     TokenKind.Namespace, TokenKind.Module,             /*B*/
+        /*C*/    TokenKind.Type,            TokenKind.Assembly, TokenKind.Command,   TokenKind.Hidden,             /*C*/
+        /*D*/    TokenKind.Base,            TokenKind.Default,  TokenKind.Clean,                                   /*D*/
         };
 
         internal static readonly string[] _operatorText = new string[] {
@@ -707,7 +714,7 @@ namespace System.Management.Automation.Language
             // The hash we compute is intentionally dumb, we want collisions to catch similar strings,
             // so we just sum up the characters.
             const string beginSig = "sig#beginsignatureblock";
-            beginSig.Aggregate(0, (current, t) => current + t);
+            beginSig.Aggregate(0, static (current, t) => current + t);
 
             // Spot check to help make sure the arrays are in sync
             Diagnostics.Assert(s_keywordTable["using"] == TokenKind.Using, "Keyword table out of sync w/ enum");
@@ -720,10 +727,24 @@ namespace System.Management.Automation.Language
         }
 
         internal TokenizerMode Mode { get; set; }
+
         internal bool AllowSignedNumbers { get; set; }
+
+        // TODO: use auto-properties when making 'ternary operator' an official feature.
+        private bool _forceEndNumberOnTernaryOpChars;
+
+        internal bool ForceEndNumberOnTernaryOpChars
+        {
+            get { return _forceEndNumberOnTernaryOpChars; }
+            set { _forceEndNumberOnTernaryOpChars = value; }
+        }
+
         internal bool WantSimpleName { get; set; }
+
         internal bool InWorkflowContext { get; set; }
+
         internal List<Token> TokenList { get; set; }
+
         internal Token FirstToken { get; private set; }
 
         internal Token LastToken { get; private set; }
@@ -815,7 +836,7 @@ namespace System.Management.Automation.Language
 
         private char GetChar()
         {
-            Diagnostics.Assert(0 <= _currentIndex, "GetChar reading before start of input.");
+            Diagnostics.Assert(_currentIndex >= 0, "GetChar reading before start of input.");
             Diagnostics.Assert(_currentIndex <= _script.Length + 1, "GetChar reading after end of input.");
 
             // Increment _currentIndex, even if it goes over the Length so callers can call UngetChar to unget EOF.
@@ -837,7 +858,7 @@ namespace System.Management.Automation.Language
 
         private char PeekChar()
         {
-            Diagnostics.Assert(0 <= _currentIndex && _currentIndex <= _script.Length, "PeekChar out of range.");
+            Diagnostics.Assert(_currentIndex >= 0 && _currentIndex <= _script.Length, "PeekChar out of range.");
 
             if (_currentIndex == _script.Length)
             {
@@ -876,9 +897,9 @@ namespace System.Management.Automation.Language
 
         internal void SkipNewlines(bool skipSemis)
         {
-            // We normally don't create any tokens in a Skip method, but the
-            // V2 tokenizer api returns newline, semi-colon, and line
-            // continuation tokens so we create them as they are encountered.
+        // We normally don't create any tokens in a Skip method, but the
+        // V2 tokenizer api returns newline, semi-colon, and line
+        // continuation tokens so we create them as they are encountered.
         again:
             char c = GetChar();
             switch (c)
@@ -1034,7 +1055,7 @@ namespace System.Management.Automation.Language
             {
                 _currentIndex = _script.Length + 1;
             }
-            else if (0 > _currentIndex)
+            else if (_currentIndex < 0)
             {
                 _currentIndex = 0;
             }
@@ -1197,10 +1218,7 @@ namespace System.Management.Automation.Language
 
         private T SaveToken<T>(T token) where T : Token
         {
-            if (TokenList != null)
-            {
-                TokenList.Add(token);
-            }
+            TokenList?.Add(token);
 
             // Keep track of the first and last token even if we're not saving tokens
             // for the special variables $$ and $^.
@@ -1213,10 +1231,7 @@ namespace System.Management.Automation.Language
                     // Don't remember these tokens, they aren't useful in $$ and $^.
                     break;
                 default:
-                    if (FirstToken == null)
-                    {
-                        FirstToken = token;
-                    }
+                    FirstToken ??= token;
 
                     LastToken = token;
                     break;
@@ -1258,7 +1273,7 @@ namespace System.Management.Automation.Language
             }
             else if ((flags & TokenFlags.TokenInError) == 0)
             {
-                if (nestedTokens.Any(tok => tok.HasError))
+                if (nestedTokens.Any(static tok => tok.HasError))
                 {
                     flags |= TokenFlags.TokenInError;
                 }
@@ -1342,15 +1357,15 @@ namespace System.Management.Automation.Language
             return true;
         }
 
-        internal bool IsPipeContinuance(IScriptExtent extent)
+        internal bool IsPipeContinuation(IScriptExtent extent)
         {
-            return extent.EndOffset < _script.Length && PipeContinuanceAfterExtent(extent);
+            // If the first non-whitespace & non-comment (regular or block) character following a newline is a pipe, we have
+            // pipe continuation.
+            return extent.EndOffset < _script.Length && ContinuationAfterExtent(extent, continuationChar: '|');
         }
 
-        private bool PipeContinuanceAfterExtent(IScriptExtent extent)
+        private bool ContinuationAfterExtent(IScriptExtent extent, char continuationChar)
         {
-            // If the first non-comment (regular or block) character following a newline is a pipe, we have
-            // pipe continuance.
             bool lastNonWhitespaceIsNewline = true;
             int i = extent.EndOffset;
 
@@ -1372,7 +1387,7 @@ namespace System.Management.Automation.Language
                 {
                     if (lastNonWhitespaceIsNewline)
                     {
-                        // blank or whitespace-only lines are not allowed in automatic line continuance
+                        // blank or whitespace-only lines are not allowed in automatic line continuation
                         return false;
                     }
 
@@ -1384,7 +1399,7 @@ namespace System.Management.Automation.Language
                 {
                     if (lastNonWhitespaceIsNewline)
                     {
-                        // blank or whitespace-only lines are not allowed in automatic line continuance
+                        // blank or whitespace-only lines are not allowed in automatic line continuation
                         return false;
                     }
 
@@ -1409,10 +1424,10 @@ namespace System.Management.Automation.Language
                     continue;
                 }
 
-                return c == '|';
+                return c == continuationChar;
             }
 
-            return _script[_script.Length - 1] == '|';
+            return _script[_script.Length - 1] == continuationChar;
         }
 
         private int SkipLineComment(int i)
@@ -1451,17 +1466,28 @@ namespace System.Management.Automation.Language
 
             switch (c)
             {
-                case '0': return '\0';
-                case 'a': return '\a';
-                case 'b': return '\b';
-                case 'e': return '\u001b';
-                case 'f': return '\f';
-                case 'n': return '\n';
-                case 'r': return '\r';
-                case 't': return '\t';
-                case 'u': return ScanUnicodeEscape(out surrogateCharacter);
-                case 'v': return '\v';
-                default: return c;
+                case '0':
+                    return '\0';
+                case 'a':
+                    return '\a';
+                case 'b':
+                    return '\b';
+                case 'e':
+                    return '\u001b';
+                case 'f':
+                    return '\f';
+                case 'n':
+                    return '\n';
+                case 'r':
+                    return '\r';
+                case 't':
+                    return '\t';
+                case 'u':
+                    return ScanUnicodeEscape(out surrogateCharacter);
+                case 'v':
+                    return '\v';
+                default:
+                    return c;
             }
         }
 
@@ -1661,6 +1687,9 @@ namespace System.Management.Automation.Language
                     case '\n':
                         UngetChar();
 
+                        // Detect a line comment that disguises itself to look like the beginning of a signature block.
+                        // This could be used to hide code at the bottom of a script, since people might assume there is nothing else after the signature.
+                        //
                         // The token similarity threshold was chosen by instrumenting the tokenizer and
                         // analyzing every comment from PoshCode, Technet Script Center, and Windows.
                         //
@@ -1677,15 +1706,16 @@ namespace System.Management.Automation.Language
                         //
                         // There were only 279 (out of 269,387) comments with a similarity of 11,12,13,14, or 15.
                         // At a similarity of 16-77, there were thousands of comments per similarity bucket.
-                        //
-                        // System.IO.File.AppendAllText(@"c:\temp\signature_similarity.txt", "" + sawBeginTokenSimilarity + ":" + commentLineComparison);
 
                         const string beginSignatureTextNoSpace = "sig#beginsignatureblock\n";
                         const int beginTokenSimilarityThreshold = 10;
 
-                        // Quick exit - the comment line is more than 'threshold' longer. Therefore,
+                        const int beginTokenSimilarityUpperBound = 34; // beginSignatureTextNoSpace.Length + beginTokenSimilarityThreshold
+                        const int beginTokenSimilarityLowerBound = 14; // beginSignatureTextNoSpace.Length - beginTokenSimilarityThreshold
+
+                        // Quick exit - the comment line is more than 'threshold' longer, or is less than 'threshold' shorter. Therefore,
                         // its similarity will be over the threshold.
-                        if (commentLine.Length > (beginSignatureTextNoSpace.Length + beginTokenSimilarityThreshold))
+                        if (commentLine.Length > beginTokenSimilarityUpperBound || commentLine.Length < beginTokenSimilarityLowerBound)
                         {
                             sawBeginSig = false;
                         }
@@ -1697,10 +1727,20 @@ namespace System.Management.Automation.Language
                             //
                             // The average script is 14% comments and parses in about 5.05 ms with this algorithm,
                             // about 4.45 ms with the more simplistic algorithm.
-                            //
-                            string commentLineComparison = commentLine.ToString().ToLowerInvariant();
 
-                            int sawBeginTokenSimilarity = GetStringSimilarity(commentLineComparison, beginSignatureTextNoSpace);
+                            string commentLineComparison = commentLine.ToString().ToLowerInvariant();
+                            if (_beginTokenSimilarity2dArray == null)
+                            {
+                                // Create the 2 dimensional array for edit distance calculation if it hasn't been created yet.
+                                _beginTokenSimilarity2dArray = new int[beginTokenSimilarityUpperBound + 1, beginSignatureTextNoSpace.Length + 1];
+                            }
+                            else
+                            {
+                                // Zero out the 2 dimensional array before using it.
+                                Array.Clear(_beginTokenSimilarity2dArray, 0, _beginTokenSimilarity2dArray.Length);
+                            }
+
+                            int sawBeginTokenSimilarity = GetStringSimilarity(commentLineComparison, beginSignatureTextNoSpace, _beginTokenSimilarity2dArray);
                             sawBeginSig = sawBeginTokenSimilarity < beginTokenSimilarityThreshold;
                         }
 
@@ -1716,6 +1756,9 @@ namespace System.Management.Automation.Language
         #endregion Utilities
 
         #region Object reuse
+
+        // A two-dimensional integer array reused for calculating string similarity.
+        private int[,] _beginTokenSimilarity2dArray;
 
         private readonly Queue<StringBuilder> _stringBuilders = new Queue<StringBuilder>();
 
@@ -1758,8 +1801,7 @@ namespace System.Management.Automation.Language
             }
             else if (matchedRequires && _nestedTokensAdjustment == 0)
             {
-                if (RequiresTokens == null)
-                    RequiresTokens = new List<Token>();
+                RequiresTokens ??= new List<Token>();
                 RequiresTokens.Add(token);
             }
         }
@@ -1796,14 +1838,14 @@ namespace System.Management.Automation.Language
 
         // Implementation of the Levenshtein Distance algorithm
         // https://en.wikipedia.org/wiki/Levenshtein_distance
-        private static int GetStringSimilarity(string first, string second)
+        private static int GetStringSimilarity(string first, string second, int[,] distanceMap = null)
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(first) && !string.IsNullOrEmpty(second), "Caller never calls us with empty strings");
 
             // Store a distance map to store the number of edits required to
             // convert the first <row> letters of First to the first <column>
             // letters of Second.
-            int[,] distanceMap = new int[first.Length + 1, second.Length + 1];
+            distanceMap ??= new int[first.Length + 1, second.Length + 1];
 
             // Initialize the first row and column of the matrix - the number
             // of edits required when one of the strings is empty is just
@@ -1896,10 +1938,7 @@ namespace System.Management.Automation.Language
                             PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
                         {
                             snapinSpecified = true;
-                            if (requiredSnapins == null)
-                            {
-                                requiredSnapins = new List<PSSnapInSpecification>();
-                            }
+                            requiredSnapins ??= new List<PSSnapInSpecification>();
 
                             break;
                         }
@@ -1937,9 +1976,6 @@ namespace System.Management.Automation.Language
                 RequiredPSEditions = requiredEditions != null
                                                     ? new ReadOnlyCollection<string>(requiredEditions)
                                                     : ScriptRequirements.EmptyEditionCollection,
-                RequiresPSSnapIns = requiredSnapins != null
-                                                   ? new ReadOnlyCollection<PSSnapInSpecification>(requiredSnapins)
-                                                   : ScriptRequirements.EmptySnapinCollection,
                 RequiredAssemblies = requiredAssemblies != null
                                                     ? new ReadOnlyCollection<string>(requiredAssemblies)
                                                     : ScriptRequirements.EmptyAssemblyCollection,
@@ -2017,7 +2053,7 @@ namespace System.Management.Automation.Language
                     return;
                 }
 
-                if (!(argumentValue is string))
+                if (argumentValue is not string)
                 {
                     ReportError(argumentAst.Extent,
                         nameof(ParserStrings.RequiresInvalidStringArgument),
@@ -2030,7 +2066,7 @@ namespace System.Management.Automation.Language
             }
             else if (PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
-                if (!(argumentValue is string))
+                if (argumentValue is not string)
                 {
                     ReportError(argumentAst.Extent,
                         nameof(ParserStrings.RequiresInvalidStringArgument),
@@ -2071,7 +2107,7 @@ namespace System.Management.Automation.Language
                     return;
                 }
 
-                if (argumentValue is string || !(argumentValue is IEnumerable))
+                if (argumentValue is string || argumentValue is not IEnumerable)
                 {
                     requiredEditions = HandleRequiresPSEditionArgument(argumentAst, argumentValue, ref requiredEditions);
                 }
@@ -2126,7 +2162,7 @@ namespace System.Management.Automation.Language
             }
             else if (assemblyToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
-                if (argumentValue is string || !(argumentValue is IEnumerable))
+                if (argumentValue is string || argumentValue is not IEnumerable)
                 {
                     requiredAssemblies = HandleRequiresAssemblyArgument(argumentAst, argumentValue, requiredAssemblies);
                 }
@@ -2165,8 +2201,7 @@ namespace System.Management.Automation.Language
                         return;
                     }
 
-                    if (requiredModules == null)
-                        requiredModules = new List<ModuleSpecification>();
+                    requiredModules ??= new List<ModuleSpecification>();
                     requiredModules.Add(moduleSpecification);
                 }
             }
@@ -2180,7 +2215,7 @@ namespace System.Management.Automation.Language
 
         private List<string> HandleRequiresAssemblyArgument(Ast argumentAst, object arg, List<string> requiredAssemblies)
         {
-            if (!(arg is string))
+            if (arg is not string)
             {
                 ReportError(argumentAst.Extent,
                     nameof(ParserStrings.RequiresInvalidStringArgument),
@@ -2189,8 +2224,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                if (requiredAssemblies == null)
-                    requiredAssemblies = new List<string>();
+                requiredAssemblies ??= new List<string>();
 
                 if (!requiredAssemblies.Contains((string)arg))
                 {
@@ -2203,7 +2237,7 @@ namespace System.Management.Automation.Language
 
         private List<string> HandleRequiresPSEditionArgument(Ast argumentAst, object arg, ref List<string> requiredEditions)
         {
-            if (!(arg is string))
+            if (arg is not string)
             {
                 ReportError(argumentAst.Extent,
                     nameof(ParserStrings.RequiresInvalidStringArgument),
@@ -2212,8 +2246,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                if (requiredEditions == null)
-                    requiredEditions = new List<string>();
+                requiredEditions ??= new List<string>();
 
                 var edition = (string)arg;
                 if (!Utils.IsValidPSEditionValue(edition))
@@ -2527,7 +2560,7 @@ namespace System.Management.Automation.Language
 
             // Make sure we didn't consume anything because we didn't find
             // any nested tokens (no variable or subexpression.)
-            Diagnostics.Assert(PeekChar() == c1, "We accidently consumed a character we shouldn't have.");
+            Diagnostics.Assert(PeekChar() == c1, "We accidentally consumed a character we shouldn't have.");
 
             return false;
         }
@@ -2579,7 +2612,7 @@ namespace System.Management.Automation.Language
                     nameof(ParserStrings.UnexpectedCharactersAfterHereStringHeader),
                     ParserStrings.UnexpectedCharactersAfterHereStringHeader);
 
-                do
+                while (true)
                 {
                     c = GetChar();
                     if (c == header[1] && (PeekChar() == '@'))
@@ -2593,7 +2626,7 @@ namespace System.Management.Automation.Language
                         UngetChar();
                         break;
                     }
-                } while (true);
+                }
 
                 return false;
             }
@@ -3531,8 +3564,9 @@ namespace System.Management.Automation.Language
             {
                 try
                 {
-                    NumberStyles style = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint |
-                                         NumberStyles.AllowExponent;
+                    NumberStyles style = NumberStyles.AllowLeadingSign
+                        | NumberStyles.AllowDecimalPoint
+                        | NumberStyles.AllowExponent;
 
                     if (real)
                     {
@@ -3659,9 +3693,21 @@ namespace System.Management.Automation.Language
                             }
 
                             // If we're expecting a sign bit, remove the leading 0 added in ScanNumberHelper
-                            if (!suffix.HasFlag(NumberSuffixFlags.Unsigned) && ((strNum.Length - 1) & 7) == 0)
+                            if (!suffix.HasFlag(NumberSuffixFlags.Unsigned))
                             {
-                                strNum = strNum.Slice(1);
+                                var expectedLength = suffix switch
+                                {
+                                    NumberSuffixFlags.SignedByte => 2,
+                                    NumberSuffixFlags.Short => 4,
+                                    NumberSuffixFlags.Long => 16,
+                                    // No suffix flag can mean int or long depending on input string length
+                                    _ => strNum.Length < 16 ? 8 : 16
+                                };
+
+                                if (strNum.Length == expectedLength + 1)
+                                {
+                                    strNum = strNum.Slice(1);
+                                }
                             }
 
                             style = NumberStyles.AllowHexSpecifier;
@@ -3841,7 +3887,7 @@ namespace System.Management.Automation.Language
                 firstChar == '.' || (firstChar >= '0' && firstChar <= '9')
                 || (AllowSignedNumbers && (firstChar == '+' || firstChar.IsDash())), "Number must start with '.', '-', or digit.");
 
-            ReadOnlySpan<char> strNum = ScanNumberHelper(firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier);
+            string strNum = ScanNumberHelper(firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier);
 
             // the token is not a number. i.e. 77z.exe
             if (strNum == null)
@@ -3883,7 +3929,7 @@ namespace System.Management.Automation.Language
         /// OR
         /// Return the string format of the number.
         /// </returns>
-        private ReadOnlySpan<char> ScanNumberHelper(char firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier)
+        private string ScanNumberHelper(char firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier)
         {
             format = NumberFormat.Decimal;
             suffix = NumberSuffixFlags.None;
@@ -4089,7 +4135,7 @@ namespace System.Management.Automation.Language
 
             if (!c.ForceStartNewToken())
             {
-                if (!InExpressionMode() || !c.ForceStartNewTokenAfterNumber())
+                if (!InExpressionMode() || !c.ForceStartNewTokenAfterNumber(ForceEndNumberOnTernaryOpChars))
                 {
                     notNumber = true;
                 }
@@ -4112,7 +4158,7 @@ namespace System.Management.Automation.Language
                 sb[0] = '-';
             }
 
-            return GetStringAndRelease(sb).AsSpan();
+            return GetStringAndRelease(sb);
         }
 
         #endregion Numbers
@@ -4189,6 +4235,26 @@ namespace System.Management.Automation.Language
                 _tokenStart = _currentIndex;
                 SkipChar();
                 return NewToken(TokenKind.LBracket);
+            }
+
+            if (c == '?')
+            {
+                _tokenStart = _currentIndex;
+                SkipChar();
+                c = PeekChar();
+                if (c == '.')
+                {
+                    SkipChar();
+                    return NewToken(TokenKind.QuestionDot);
+                }
+                else if (c == '[' && allowLBracket)
+                {
+                    SkipChar();
+                    return NewToken(TokenKind.QuestionLBracket);
+                }
+
+                UngetChar();
+                return null;
             }
 
             return null;
@@ -4491,7 +4557,7 @@ namespace System.Management.Automation.Language
                 if (PeekChar() == '=')
                 {
                     _tokenStart = _currentIndex;
-                    sb.Append("=");
+                    sb.Append('=');
                     SkipChar();
                     NewToken(TokenKind.Equals);
                     ScanAssemblyNameSpecToken(sb);
@@ -4936,12 +5002,15 @@ namespace System.Management.Automation.Language
                     if (InExpressionMode() && (char.IsDigit(c1) || c1 == '.'))
                     {
                         // check if the next token is actually a number
-                        ReadOnlySpan<char> strNum = ScanNumberHelper(c, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier);
+                        string strNum = ScanNumberHelper(c, out _, out _, out _, out _);
                         // rescan characters after the check
                         _currentIndex = _tokenStart;
                         c = GetChar();
 
-                        if (strNum == null) { return ScanGenericToken(c); }
+                        if (strNum == null)
+                        {
+                            return ScanGenericToken(c);
+                        }
                     }
 
                     return NewToken(TokenKind.Exclaim);
@@ -4966,6 +5035,25 @@ namespace System.Management.Automation.Language
                     }
 
                     return this.NewToken(TokenKind.Colon);
+
+                case '?' when InExpressionMode():
+                    c1 = PeekChar();
+
+                    if (c1 == '?')
+                    {
+                        SkipChar();
+                        c1 = PeekChar();
+
+                        if (c1 == '=')
+                        {
+                            SkipChar();
+                            return this.NewToken(TokenKind.QuestionQuestionEquals);
+                        }
+
+                        return this.NewToken(TokenKind.QuestionQuestion);
+                    }
+
+                    return this.NewToken(TokenKind.QuestionMark);
 
                 case '\0':
                     if (AtEof())

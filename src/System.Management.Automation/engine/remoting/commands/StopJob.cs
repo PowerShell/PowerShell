@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet stops the asynchronously invoked remote operations.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Stop, "Job", SupportsShouldProcess = true, DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113413")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096795")]
     [OutputType(typeof(Job))]
     public class StopJobCommand : JobCmdletBase, IDisposable
     {
@@ -137,7 +137,11 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (Job job in jobsToStop)
             {
-                if (this.Stopping) return;
+                if (this.Stopping)
+                {
+                    return;
+                }
+
                 if (job.IsFinishedState(job.JobStateInfo.State))
                 {
                     continue;
@@ -253,6 +257,7 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly HashSet<Guid> _pendingJobs = new HashSet<Guid>();
         private readonly ManualResetEvent _waitForJobs = new ManualResetEvent(false);
+
         private readonly Dictionary<Job2, EventHandler<AsyncCompletedEventArgs>> _cleanUpActions =
             new Dictionary<Job2, EventHandler<AsyncCompletedEventArgs>>();
 
@@ -279,7 +284,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)
         {
-            if (!disposing) return;
+            if (!disposing)
+            {
+                return;
+            }
+
             foreach (var pair in _cleanUpActions)
             {
                 pair.Key.StopJobCompleted -= pair.Value;

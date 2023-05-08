@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
@@ -10,7 +10,8 @@ try
     $originalWarningPreference = $WarningPreference
     $WarningPreference = "SilentlyContinue"
     # Skip all tests if can't write to $PSHOME as Register-PSSessionConfiguration writes to $PSHOME
-    $IsNotSkipped = ($IsWindows -and $IsCoreCLR -and (Test-IsElevated) -and (Test-CanWriteToPsHome))
+    # or if the processor architecture is Arm64
+    $IsNotSkipped = ($IsWindows -and $IsCoreCLR -and (Test-IsElevated) -and (Test-CanWriteToPsHome) -and [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -ne [System.Runtime.InteropServices.Architecture]::Arm64)
     $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 
     #
@@ -21,7 +22,7 @@ try
     #
     if ($IsNotSkipped)
     {
-        $endpointName = "PowerShell.$($psversiontable.GitCommitId)"
+        $endpointName = "PowerShell.$($PSVersionTable.GitCommitId)"
 
         $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
 
@@ -57,6 +58,7 @@ try
 
                 $result.MaxShells | Should -Be 40
                 $result.IdleTimeoutms | Should -Be 3600000
+                $result.UseSharedProcess | Should -Be 'False'
             }
         }
         Describe "Validate Get-PSSessionConfiguration, Enable-PSSessionConfiguration, Disable-PSSessionConfiguration, Unregister-PSSessionConfiguration cmdlets" -Tags @("CI", 'RequireAdminOnWindows') {
@@ -255,7 +257,7 @@ try
                     It "$Description" {
 
                         $Result = [PSObject] @{Output = $true ; Error = $null}
-                        $Error.Clear()
+                        $error.Clear()
                         try
                         {
                             $null = Unregister-PSSessionConfiguration -name $SessionConfigName -ErrorAction stop
@@ -490,13 +492,9 @@ namespace PowershellTestConfigNamespace
                     $Result.Session.UseSharedProcess | Should -Be $UseSharedProcess
                 }
 
-                It "Validate Register-PSSessionConfiguration -PSVersion" {
+                It "Verifies that Register-PSSessionConfiguration -PSVersion parameter is not supported" {
 
-                    Register-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1
-                    $Session = Get-PSSessionConfiguration -Name $TestSessionConfigName
-
-                    $Session.Name | Should -Be $TestSessionConfigName
-                    $Session.PSVersion | Should -BeExactly 5.1
+                    { Register-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1 } | Should -Throw -ErrorId 'ParameterBindingFailed,Microsoft.PowerShell.Commands.RegisterPSSessionConfigurationCommand'
                 }
 
                 It "Validate Register-PSSessionConfiguration -startupscript parameter" -Pending {
@@ -566,13 +564,9 @@ namespace PowershellTestConfigNamespace
                     $Result.Session.UseSharedProcess | Should -Be $UseSharedProcess
                 }
 
-                It "Validate Set-PSSessionConfiguration -PSVersion" {
+                It "Verifies that Set-PSSessionConfiguration -PSVersion parameter is not supported" {
 
-                    Set-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1
-                    $Session = (Get-PSSessionConfiguration -Name $TestSessionConfigName)
-
-                    $Session.Name | Should -Be $TestSessionConfigName
-                    $Session.PSVersion | Should -BeExactly 5.1
+                    { Set-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1 } | Should -Throw -ErrorId 'ParameterBindingFailed,Microsoft.PowerShell.Commands.SetPSSessionConfigurationCommand'
                 }
 
                 It "Validate Set-PSSessionConfiguration -startupscript parameter" -Pending {
@@ -629,7 +623,7 @@ namespace PowershellTestConfigNamespace
             }
 
             $resultContent = invoke-expression ($result)
-            $resultContent | Should -BeOfType "System.Collections.Hashtable"
+            $resultContent | Should -BeOfType System.Collections.Hashtable
 
             # The default created hashtable in the session configuration file would have the
             # following keys which we are validating below.
@@ -656,7 +650,7 @@ namespace PowershellTestConfigNamespace
                     SessionType = 'Default'
                     Author = 'User'
                     CompanyName = 'Microsoft Corporation'
-                    Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
+                    Copyright = 'Copyright (c) Microsoft Corporation.'
                     Description = 'This is a sample session configuration file.'
                     GUID = '73cba863-aa49-4cbf-9917-269ddcf2b1e3'
                     SchemaVersion = '1.0.0.0'
@@ -700,12 +694,12 @@ namespace PowershellTestConfigNamespace
                     FunctionDefinitions=@(
                         @{
                             Name = "sysmodules";
-                            ScriptBlock = 'pushd $pshome\Modules';
+                            ScriptBlock = 'pushd $PSHOME\Modules';
                             Options = "AllScope";
                         },
                         @{
                             Name = "mymodules";
-                            ScriptBlock = 'pushd $home\Documents\WindowsPowerShell\Modules';
+                            ScriptBlock = 'pushd $HOME\Documents\WindowsPowerShell\Modules';
                             Options = "ReadOnly";
                         }
                     )
@@ -837,8 +831,14 @@ namespace PowershellTestConfigNamespace
 
     Describe "Validate Enable-PSSession Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') {
         BeforeAll {
+            if (Test-IsWindowsArm64) {
+                Write-Verbose "remoting is not setup on ARM64, skipping tests" -Verbose
+                $PSDefaultParameterValues["it:skip"] = $true
+                return
+            }
+
             if ($IsNotSkipped) {
-                Enable-PSRemoting
+                Enable-PSRemoting -SkipNetworkProfileCheck -Force
             }
         }
 

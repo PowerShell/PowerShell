@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         {
             if (commandInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
             while (commandInfo is AliasInfo)
             {
@@ -162,7 +162,7 @@ namespace System.Management.Automation
         {
             if (other == null)
             {
-                throw PSTraceSource.NewArgumentNullException("other");
+                throw PSTraceSource.NewArgumentNullException(nameof(other));
             }
 
             Name = other.Name;
@@ -315,7 +315,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(commandName))
             {
-                throw PSTraceSource.NewArgumentException("commandName");
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             CommandMetadata result = null;
@@ -369,7 +369,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(commandName))
             {
-                throw PSTraceSource.NewArgumentException("commandName");
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             Name = commandName;
@@ -412,7 +412,7 @@ namespace System.Management.Automation
         {
             if (scriptblock == null)
             {
-                throw PSTraceSource.NewArgumentException("scriptblock");
+                throw PSTraceSource.NewArgumentException(nameof(scriptblock));
             }
 
             CmdletBindingAttribute cmdletBindingAttribute = scriptblock.CmdletBindingAttribute;
@@ -464,7 +464,10 @@ namespace System.Management.Automation
         /// </summary>
         public string DefaultParameterSetName
         {
-            get { return _defaultParameterSetName; }
+            get
+            {
+                return _defaultParameterSetName;
+            }
 
             set
             {
@@ -528,7 +531,10 @@ namespace System.Management.Automation
                 return _remotingCapability;
             }
 
-            set { _remotingCapability = value; }
+            set
+            {
+                _remotingCapability = value;
+            }
         }
 
         private RemotingCapability _remotingCapability = RemotingCapability.PowerShell;
@@ -647,6 +653,7 @@ namespace System.Management.Automation
         // The CommandType for a script cmdlet is not CommandTypes.Cmdlet, yet
         // proxy generation needs to know the difference between script and script cmdlet.
         private bool _wrappedAnyCmdlet;
+
         internal bool WrappedAnyCmdlet
         {
             get { return _wrappedAnyCmdlet; }
@@ -679,7 +686,7 @@ namespace System.Management.Automation
 
             // Determine if the cmdlet implements dynamic parameters by looking for the interface
 
-            Type dynamicParametersType = CommandType.GetInterface(typeof(IDynamicParameters).Name, true);
+            Type dynamicParametersType = CommandType.GetInterface(nameof(IDynamicParameters), true);
 
             if (dynamicParametersType != null)
             {
@@ -725,7 +732,7 @@ namespace System.Management.Automation
         {
             if (attribute == null)
             {
-                throw PSTraceSource.NewArgumentNullException("attribute");
+                throw PSTraceSource.NewArgumentNullException(nameof(attribute));
             }
 
             // Process the default parameter set name
@@ -840,45 +847,40 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(helpComment))
             {
-                helpComment = string.Format(CultureInfo.InvariantCulture, @"
-.ForwardHelpTargetName {0}
-.ForwardHelpCategory {1}
-",
-                    _wrappedCommand, _wrappedCommandType);
+                helpComment = string.Create(CultureInfo.InvariantCulture, $@"
+.ForwardHelpTargetName {_wrappedCommand}
+.ForwardHelpCategory {_wrappedCommandType}
+");
             }
 
             string dynamicParamblock = string.Empty;
             if (generateDynamicParameters && this.ImplementsDynamicParameters)
             {
-                dynamicParamblock = string.Format(CultureInfo.InvariantCulture, @"
+                dynamicParamblock = string.Create(CultureInfo.InvariantCulture, $@"
 dynamicparam
-{{{0}}}
+{{{GetDynamicParamBlock()}}}
 
-", GetDynamicParamBlock());
+");
             }
 
-            string result = string.Format(CultureInfo.InvariantCulture, @"{0}
-param({1})
+            string result = string.Create(CultureInfo.InvariantCulture, $@"{GetDecl()}
+param({GetParamBlock()})
 
-{2}begin
-{{{3}}}
+{dynamicParamblock}begin
+{{{GetBeginBlock()}}}
 
 process
-{{{4}}}
+{{{GetProcessBlock()}}}
 
 end
-{{{5}}}
+{{{GetEndBlock()}}}
+
+clean
+{{{GetCleanBlock()}}}
 <#
-{6}
+{CodeGeneration.EscapeBlockCommentContent(helpComment)}
 #>
-",
-                GetDecl(),
-                GetParamBlock(),
-                dynamicParamblock,
-                GetBeginBlock(),
-                GetProcessBlock(),
-                GetEndBlock(),
-                CodeGeneration.EscapeBlockCommentContent(helpComment));
+");
 
             return result;
         }
@@ -896,7 +898,7 @@ end
                     decl.Append(separator);
                     decl.Append("DefaultParameterSetName='");
                     decl.Append(CodeGeneration.EscapeSingleQuotedStringContent(_defaultParameterSetName));
-                    decl.Append("'");
+                    decl.Append('\'');
                     separator = ", ";
                 }
 
@@ -908,7 +910,7 @@ end
                     decl.Append(separator);
                     decl.Append("ConfirmImpact='");
                     decl.Append(ConfirmImpact);
-                    decl.Append("'");
+                    decl.Append('\'');
                 }
 
                 if (SupportsPaging)
@@ -925,7 +927,7 @@ end
                     separator = ", ";
                 }
 
-                if (PositionalBinding == false)
+                if (!PositionalBinding)
                 {
                     decl.Append(separator);
                     decl.Append("PositionalBinding=$false");
@@ -937,7 +939,7 @@ end
                     decl.Append(separator);
                     decl.Append("HelpUri='");
                     decl.Append(CodeGeneration.EscapeSingleQuotedStringContent(HelpUri));
-                    decl.Append("'");
+                    decl.Append('\'');
                     separator = ", ";
                 }
 
@@ -946,7 +948,7 @@ end
                     decl.Append(separator);
                     decl.Append("RemotingCapability='");
                     decl.Append(_remotingCapability);
-                    decl.Append("'");
+                    decl.Append('\'');
                     separator = ", ";
                 }
 
@@ -1007,9 +1009,10 @@ end
                 commandOrigin = string.Empty;
             }
 
+            string wrappedCommand = CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand);
             if (_wrappedAnyCmdlet)
             {
-                result = string.Format(CultureInfo.InvariantCulture, @"
+                result = string.Create(CultureInfo.InvariantCulture, $@"
     try {{
         $outBuffer = $null
         if ($PSBoundParameters.TryGetValue('OutBuffer', [ref]$outBuffer))
@@ -1017,38 +1020,30 @@ end
             $PSBoundParameters['OutBuffer'] = 1
         }}
 
-        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1})
+        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{wrappedCommand}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType})
         $scriptCmd = {{& $wrappedCmd @PSBoundParameters }}
 
-        $steppablePipeline = $scriptCmd.GetSteppablePipeline({2})
+        $steppablePipeline = $scriptCmd.GetSteppablePipeline({commandOrigin})
         $steppablePipeline.Begin($PSCmdlet)
     }} catch {{
         throw
     }}
-",
-                    CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand),
-                    _wrappedCommandType,
-                    commandOrigin
-                    );
+");
             }
             else
             {
-                result = string.Format(CultureInfo.InvariantCulture, @"
+                result = string.Create(CultureInfo.InvariantCulture, $@"
     try {{
-        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1})
+        $wrappedCmd = $ExecutionContext.InvokeCommand.GetCommand('{wrappedCommand}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType})
         $PSBoundParameters.Add('$args', $args)
         $scriptCmd = {{& $wrappedCmd @PSBoundParameters }}
 
-        $steppablePipeline = $scriptCmd.GetSteppablePipeline({2})
+        $steppablePipeline = $scriptCmd.GetSteppablePipeline({commandOrigin})
         $steppablePipeline.Begin($myInvocation.ExpectingInput, $ExecutionContext)
     }} catch {{
         throw
     }}
-",
-                CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand),
-                _wrappedCommandType,
-                commandOrigin
-                );
+");
             }
 
             return result;
@@ -1056,6 +1051,11 @@ end
 
         internal string GetProcessBlock()
         {
+            // The reason we wrap scripts in 'try { } catch { throw }' (here and elsewhere) is to turn
+            // an exception that could be thrown from .NET method invocation into a terminating error
+            // that can be propagated up.
+            // By default, an exception thrown from .NET method is not terminating, but when enclosed
+            // in try/catch, it will be turned into a terminating error.
             return @"
     try {
         $steppablePipeline.Process($_)
@@ -1067,9 +1067,10 @@ end
 
         internal string GetDynamicParamBlock()
         {
-            return string.Format(CultureInfo.InvariantCulture, @"
+            string wrappedCommand = CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand);
+            return string.Create(CultureInfo.InvariantCulture, $@"
     try {{
-        $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('{0}', [System.Management.Automation.CommandTypes]::{1}, $PSBoundParameters)
+        $targetCmd = $ExecutionContext.InvokeCommand.GetCommand('{wrappedCommand}', [System.Management.Automation.CommandTypes]::{_wrappedCommandType}, $PSBoundParameters)
         $dynamicParams = @($targetCmd.Parameters.GetEnumerator() | Microsoft.PowerShell.Core\Where-Object {{ $_.Value.IsDynamic }})
         if ($dynamicParams.Length -gt 0)
         {{
@@ -1090,9 +1091,7 @@ end
     }} catch {{
         throw
     }}
-",
-            CodeGeneration.EscapeSingleQuotedStringContent(_wrappedCommand),
-            _wrappedCommandType);
+");
         }
 
         internal string GetEndBlock()
@@ -1102,6 +1101,18 @@ end
         $steppablePipeline.End()
     } catch {
         throw
+    }
+";
+        }
+
+        internal string GetCleanBlock()
+        {
+            // Here we don't need to enclose the script in a 'try/catch' like elsewhere, because
+            //  1. the 'Clean' block doesn't propagate up any exception (terminating error);
+            //  2. only one expression in the script, so nothing else needs to be stopped when invoking the method fails.
+            return @"
+    if ($null -ne $steppablePipeline) {
+        $steppablePipeline.Clean()
     }
 ";
         }
@@ -1221,7 +1232,7 @@ end
 
             // This should only be called with 1 valid category
             ParameterMetadata categoryParameter = new ParameterMetadata("Category", typeof(string[]));
-            categoryParameter.Attributes.Add(new ValidateSetAttribute(Enum.GetNames(typeof(HelpCategory))));
+            categoryParameter.Attributes.Add(new ValidateSetAttribute(Enum.GetNames<HelpCategory>()));
             categoryParameter.Attributes.Add(new ValidateCountAttribute(0, 1));
 
             return GetRestrictedCmdlet("Get-Help", null, "https://go.microsoft.com/fwlink/?LinkID=113316", nameParameter, categoryParameter);
@@ -1250,7 +1261,7 @@ end
                     ParameterSetMetadata.ParameterFlags.ValueFromPipeline | ParameterSetMetadata.ParameterFlags.Mandatory,
                     null)); // no help message
 
-            return GetRestrictedCmdlet("Select-Object", null, "https://go.microsoft.com/fwlink/?LinkID=113387", propertyParameter, inputParameter);
+            return GetRestrictedCmdlet("Select-Object", null, "https://go.microsoft.com/fwlink/?LinkID=2096716", propertyParameter, inputParameter);
         }
 
         private static CommandMetadata GetRestrictedMeasureObject()
@@ -1291,7 +1302,7 @@ end
             // remote Exit-PSSession is not called by PowerShell, but is needed so that users
             // can exit an interactive remoting session
 
-            return GetRestrictedCmdlet("Exit-PSSession", null, "https://go.microsoft.com/fwlink/?LinkID=135210"); // no parameters are used
+            return GetRestrictedCmdlet("Exit-PSSession", null, "https://go.microsoft.com/fwlink/?LinkID=2096787"); // no parameters are used
         }
 
         /// <summary>
@@ -1315,7 +1326,7 @@ end
             List<CommandMetadata> restrictedCommands = new List<CommandMetadata>();
 
             // all remoting cmdlets need to be included for workflow scenarios as wel
-            if (SessionCapabilities.RemoteServer == (sessionCapabilities & SessionCapabilities.RemoteServer))
+            if ((sessionCapabilities & SessionCapabilities.RemoteServer) == SessionCapabilities.RemoteServer)
             {
                 restrictedCommands.AddRange(GetRestrictedRemotingCommands());
             }
@@ -1444,7 +1455,7 @@ end
             ParameterMetadata passThruParameter = new ParameterMetadata("PassThru", typeof(SwitchParameter));
             ParameterMetadata anyParameter = new ParameterMetadata("Any", typeof(SwitchParameter));
 
-            CommandMetadata stopJob = GetRestrictedCmdlet("Stop-Job", JobCmdletBase.SessionIdParameterSet, "https://go.microsoft.com/fwlink/?LinkID=113413", nameParameter,
+            CommandMetadata stopJob = GetRestrictedCmdlet("Stop-Job", JobCmdletBase.SessionIdParameterSet, "https://go.microsoft.com/fwlink/?LinkID=2096795", nameParameter,
                                                           instanceIdParameter, idParameter,
                                                           stateParameter, filterParameter, jobParameter, passThruParameter);
             restrictedJobCommands.Add(stopJob);
@@ -1453,7 +1464,7 @@ end
             ParameterMetadata timeoutParameter = new ParameterMetadata("Timeout", typeof(int));
             timeoutParameter.Attributes.Add(new ValidateRangeAttribute(-1, Int32.MaxValue));
 
-            CommandMetadata waitJob = GetRestrictedCmdlet("Wait-Job", JobCmdletBase.SessionIdParameterSet, "https://go.microsoft.com/fwlink/?LinkID=113422", nameParameter,
+            CommandMetadata waitJob = GetRestrictedCmdlet("Wait-Job", JobCmdletBase.SessionIdParameterSet, "https://go.microsoft.com/fwlink/?LinkID=2096902", nameParameter,
                                                           instanceIdParameter, idParameter,
                                                           jobParameter, stateParameter, filterParameter, anyParameter, timeoutParameter);
             restrictedJobCommands.Add(waitJob);
@@ -1492,7 +1503,7 @@ end
             ParameterMetadata writeJobParameter = new ParameterMetadata("WriteJobInResults", typeof(SwitchParameter));
             ParameterMetadata autoRemoveParameter = new ParameterMetadata("AutoRemoveJob", typeof(SwitchParameter));
 
-            CommandMetadata receiveJob = GetRestrictedCmdlet("Receive-Job", "Location", "https://go.microsoft.com/fwlink/?LinkID=113372", nameParameter,
+            CommandMetadata receiveJob = GetRestrictedCmdlet("Receive-Job", "Location", "https://go.microsoft.com/fwlink/?LinkID=2096965", nameParameter,
                                                              instanceIdParameter,
                                                              idParameter, stateParameter, jobParameter2,
                                                              computerNameParameter, locationParameter,
@@ -1503,7 +1514,7 @@ end
             // Remove-Job cmdlet
             ParameterMetadata forceParameter = new ParameterMetadata("Force", typeof(SwitchParameter));
 
-            CommandMetadata removeJob = GetRestrictedCmdlet("Remove-Job", JobCmdletBase.SessionIdParameterSet, "https://go.microsoft.com/fwlink/?LinkID=113377",
+            CommandMetadata removeJob = GetRestrictedCmdlet("Remove-Job", JobCmdletBase.SessionIdParameterSet, "https://go.microsoft.com/fwlink/?LinkID=2096868",
                                                             nameParameter, instanceIdParameter,
                                                             idParameter, stateParameter, filterParameter, jobParameter, forceParameter);
 
@@ -1532,7 +1543,7 @@ end
         /// The command metadata cache. This is separate from the parameterMetadata cache
         /// because it is specific to cmdlets.
         /// </summary>
-        private static System.Collections.Concurrent.ConcurrentDictionary<string, CommandMetadata> s_commandMetadataCache =
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, CommandMetadata> s_commandMetadataCache =
             new System.Collections.Concurrent.ConcurrentDictionary<string, CommandMetadata>(StringComparer.OrdinalIgnoreCase);
 
         #endregion

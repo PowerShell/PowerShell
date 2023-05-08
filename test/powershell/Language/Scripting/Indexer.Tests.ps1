@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'Tests for indexers' -Tags "CI" {
     It 'Indexer in dictionary' {
@@ -7,22 +7,22 @@ Describe 'Tests for indexers' -Tags "CI" {
         $hashtable["Hello"] | Should -BeExactly "There"
     }
 
-    It 'Accessing a Indexed property of a dictionary that does not exist should return $NULL' {
+    It 'Accessing a Indexed property of a dictionary that does not exist should return $null' {
         $hashtable = @{ "Hello"="There" }
         $hashtable["Hello There"] | Should -BeNullOrEmpty
         }
 
-    It 'Wmi object implements an indexer' -Skip:$IsCoreCLR  {
+    It 'CimClass implements an indexer' -Skip:(-not $IsWindows)  {
 
-        $service = Get-WmiObject -List -Amended Win32_Service
+        $service = Get-CimClass -ClassName Win32_Service
 
-        $service.Properties["DisplayName"].Name | Should -BeExactly 'DisplayName'
+        $service.CimClassProperties["DisplayName"].Name | Should -BeExactly 'DisplayName'
     }
 
-    It 'Accessing a Indexed property of a wmi object that does not exist should return $NULL' -skip:$IsCoreCLR {
+    It 'Accessing a Indexed property of a CimClass that does not exist should return $null' -Skip:(-not $IsWindows) {
 
-        $service = Get-WmiObject -List -Amended Win32_Service
-        $service.Properties["Hello There"] | Should -BeNullOrEmpty
+        $service = Get-CimClass -ClassName Win32_Service
+        $service.CimClassProperties["Hello There"] | Should -BeNullOrEmpty
     }
 
     It 'ITuple implementations can be indexed' {

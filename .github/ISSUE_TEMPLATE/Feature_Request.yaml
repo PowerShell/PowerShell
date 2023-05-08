@@ -1,0 +1,20 @@
+name: Feature Request / Idea 🚀
+description: Suggest a new feature or improvement (this does not mean you have to implement it)
+labels: [Issue-Enhancement, Needs-Triage]
+body:
+- type: textarea
+  attributes:
+    label: Summary of the new feature / enhancement
+    description: >
+      A clear and concise description of what the problem is that the
+      new feature would solve. Try formulating it in user story style
+      (if applicable).
+    placeholder: "'As a user I want X so that Y...' with X being the being the action and Y being the value of the action."
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Proposed technical implementation details (optional)
+    placeholder: >
+      A clear and concise description of what you want to happen.
+      Consider providing an example PowerShell experience with expected result.

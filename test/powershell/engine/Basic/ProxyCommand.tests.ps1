@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'ProxyCommand Tests' -Tag 'CI' {
@@ -16,6 +16,24 @@ Describe 'ProxyCommand Tests' -Tag 'CI' {
             @{ Name = 'ValidateNotNullOrEmptyAttribute';                 ParamBlock = '[ValidateNotNullOrEmpty()][int]${Parameter}' }
             @{ Name = 'ValidateSetAttribute with explicit set';          ParamBlock = '[ValidateSet(''1'',''10'')][int]${Parameter}' }
             @{ Name = 'PSTypeNameAttribute';                             ParamBlock = '[PSTypeName(''TypeName'')][int]${Parameter}' }
+        )
+
+        $validateRangeEnumTestCases = @(
+            @{
+                Name       = 'Enum min and Enum max';
+                ParamBlock = '[ValidateRange([Microsoft.PowerShell.ExecutionPolicy]::Unrestricted, [Microsoft.PowerShell.ExecutionPolicy]::Undefined)][Microsoft.PowerShell.ExecutionPolicy]${Parameter}'
+                Expected   = '[ValidateRange([Microsoft.PowerShell.ExecutionPolicy]::Unrestricted, [Microsoft.PowerShell.ExecutionPolicy]::Undefined)][Microsoft.PowerShell.ExecutionPolicy]${Parameter}'
+            },
+            @{
+                Name       = 'Enum min and int max';
+                ParamBlock = '[ValidateRange([Microsoft.PowerShell.ExecutionPolicy]::Unrestricted, 5)][Microsoft.PowerShell.ExecutionPolicy]${Parameter}'
+                Expected   = '[ValidateRange(0, 5)][Microsoft.PowerShell.ExecutionPolicy]${Parameter}'
+            }
+            @{
+                Name       = 'int min and Enum max';
+                ParamBlock = '[ValidateRange(0, [Microsoft.PowerShell.ExecutionPolicy]::Undefined)][Microsoft.PowerShell.ExecutionPolicy]${Parameter}'
+                Expected   = '[ValidateRange(0, 5)][Microsoft.PowerShell.ExecutionPolicy]${Parameter}'
+            }
         )
     }
 
@@ -39,6 +57,24 @@ Describe 'ProxyCommand Tests' -Tag 'CI' {
             $generatedParamBlock = $generatedParamBlock -split '\r?\n' -replace '^ *' -join ''
 
             $generatedParamBlock | Should -Be $ParamBlock
+        }
+
+        It 'Generates a param block when ValidateRangeAttribute is used with <Name>' -TestCases $validateRangeEnumTestCases {
+            param (
+                $Name,
+                $ParamBlock,
+                $Expected
+            )
+
+            $functionDefinition = 'param ( {0} )' -f $ParamBlock
+            Set-Item -Path function:testProxyCommandFunction -Value $functionDefinition
+
+            $generatedParamBlock = [System.Management.Automation.ProxyCommand]::GetParamBlock(
+                (Get-Command testProxyCommandFunction)
+            )
+            $generatedParamBlock = $generatedParamBlock -split '\r?\n' -replace '^ *' -join ''
+
+            $generatedParamBlock | Should -Be $Expected
         }
 
         It 'Generates a param block when ValidateScriptAttribute is used' {

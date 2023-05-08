@@ -1,0 +1,15 @@
+{
+  "sdk": {
+    "channel": "8.0.1xx-preview3",
+    "quality": "daily",
+    "qualityFallback": "preview",
+    "packageVersionPattern": "8.0.0-preview.3",
+    "sdkImageVersion": "8.0.100",
+    "nextChannel": "8.0.1xx-preview3",
+    "azureFeed": "",
+    "sdkImageOverride": ""
+  },
+  "internalfeed": {
+    "url": ""
+  }
+}

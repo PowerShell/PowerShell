@@ -1,10 +1,9 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -18,9 +17,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class comment.
     /// </summary>
-
     [Cmdlet(VerbsData.ConvertTo, "Html", DefaultParameterSetName = "Page",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113290", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096595", RemotingCapability = RemotingCapability.None)]
+    [OutputType(typeof(string))]
     public sealed
     class ConvertToHtmlCommand : PSCmdlet
     {
@@ -342,13 +341,10 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<MshParameter> ProcessParameter(object[] properties)
         {
-            TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
+            TerminatingErrorContext invocationContext = new(this);
             ParameterProcessor processor =
-                new ParameterProcessor(new ConvertHTMLExpressionParameterDefinition());
-            if (properties == null)
-            {
-                properties = new object[] { "*" };
-            }
+                new(new ConvertHTMLExpressionParameterDefinition());
+            properties ??= new object[] { "*" };
 
             return processor.ProcessParameters(properties, invocationContext);
         }
@@ -359,7 +355,7 @@ namespace Microsoft.PowerShell.Commands
         private void InitializeResolvedNameMshParameters()
         {
             // temp list of properties with wildcards resolved
-            ArrayList resolvedNameProperty = new ArrayList();
+            var resolvedNameProperty = new List<object>();
 
             foreach (MshParameter p in _propertyMshParameterList)
             {
@@ -396,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
             string alignment,
             string width)
         {
-            Hashtable ht = new Hashtable();
+            Hashtable ht = new();
             if (label != null)
             {
                 ht.Add(ConvertHTMLParameterDefinitionKeys.LabelEntryKey, label);
@@ -446,8 +442,8 @@ namespace Microsoft.PowerShell.Commands
             // ValidateNotNullOrEmpty attribute is not working for System.Uri datatype, so handling it here
             if ((_cssuriSpecified) && (string.IsNullOrEmpty(_cssuri.OriginalString.Trim())))
             {
-                ArgumentException ex = new ArgumentException(StringUtil.Format(UtilityCommonStrings.EmptyCSSUri, "CSSUri"));
-                ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, "CSSUri");
+                ArgumentException ex = new(StringUtil.Format(UtilityCommonStrings.EmptyCSSUri, "CSSUri"));
+                ErrorRecord er = new(ex, "ArgumentException", ErrorCategory.InvalidArgument, "CSSUri");
                 ThrowTerminatingError(er);
             }
 
@@ -482,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_metaSpecified)
                 {
-                    List<string> useditems = new List<string>();
+                    List<string> useditems = new();
                     foreach (string s in _meta.Keys)
                     {
                         if (!useditems.Contains(s))
@@ -505,7 +501,7 @@ namespace Microsoft.PowerShell.Commands
                                 default:
                                     MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
                                     string Message = StringUtil.Format(ConvertHTMLStrings.MetaPropertyNotFound, s, _meta[s]);
-                                    WarningRecord record = new WarningRecord(Message);
+                                    WarningRecord record = new(Message);
                                     InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
                                     if (invocationInfo != null)
@@ -551,7 +547,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="mshParams"></param>
         private void WriteColumns(List<MshParameter> mshParams)
         {
-            StringBuilder COLTag = new StringBuilder();
+            StringBuilder COLTag = new();
 
             COLTag.Append("<colgroup>");
             foreach (MshParameter p in mshParams)
@@ -562,7 +558,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     COLTag.Append(" width = \"");
                     COLTag.Append(width);
-                    COLTag.Append("\"");
+                    COLTag.Append('"');
                 }
 
                 string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
@@ -570,7 +566,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     COLTag.Append(" align = \"");
                     COLTag.Append(alignment);
-                    COLTag.Append("\"");
+                    COLTag.Append('"');
                 }
 
                 COLTag.Append("/>");
@@ -589,12 +585,12 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (MshParameter p in _resolvedNameMshParameters)
             {
-                StringBuilder Listtag = new StringBuilder();
+                StringBuilder Listtag = new();
                 Listtag.Append("<tr><td>");
 
                 // for writing the property name
                 WritePropertyName(Listtag, p);
-                Listtag.Append(":");
+                Listtag.Append(':');
                 Listtag.Append("</td>");
 
                 // for writing the property value
@@ -609,7 +605,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// To write the Property name.
         /// </summary>
-        private void WritePropertyName(StringBuilder Listtag, MshParameter p)
+        private static void WritePropertyName(StringBuilder Listtag, MshParameter p)
         {
             // for writing the property name
             string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
@@ -654,7 +650,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// To write the Table header for the object property names.
         /// </summary>
-        private void WriteTableHeader(StringBuilder THtag, List<MshParameter> resolvedNameMshParameters)
+        private static void WriteTableHeader(StringBuilder THtag, List<MshParameter> resolvedNameMshParameters)
         {
             // write the property names
             foreach (MshParameter p in resolvedNameMshParameters)
@@ -715,7 +711,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteColumns(_resolvedNameMshParameters);
 
-                    StringBuilder THtag = new StringBuilder("<tr>");
+                    StringBuilder THtag = new("<tr>");
 
                     // write the table header
                     WriteTableHeader(THtag, _resolvedNameMshParameters);
@@ -728,7 +724,7 @@ namespace Microsoft.PowerShell.Commands
             // if the As parameter is Table, write the property values
             if (_as.Equals("Table", StringComparison.OrdinalIgnoreCase))
             {
-                StringBuilder TRtag = new StringBuilder("<tr>");
+                StringBuilder TRtag = new("<tr>");
 
                 // write the table row
                 WriteTableRow(TRtag, _resolvedNameMshParameters);

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 #region privateFunctions
@@ -31,7 +31,7 @@ function Get-ClassCoverageData([xml.xmlelement]$element)
     $classes = [system.collections.arraylist]::new()
     foreach ( $class in $element.classes.class )
     {
-        # skip classes with names like <>f__AnonymousType6`4
+        # skip classes with names like <>f__AnonymousType6`4
         if ( $class.fullname -match "<>" ) { continue }
         $name = $class.fullname
         $branch = $class.summary.branchcoverage
@@ -129,8 +129,8 @@ function Format-FileCoverage
     PROCESS {
         $file = $CoverageData.Path
         $filepath = $file -replace "$oldBase","${newBase}"
-        if ( test-path $filepath ) {
-            $content = get-content $filepath
+        if ( Test-Path $filepath ) {
+            $content = Get-Content $filepath
             for($i = 0; $i -lt $content.length; $i++ ) {
                 if ( $CoverageData.Hit -contains ($i+1)) {
                     $sign = "+"
@@ -142,9 +142,9 @@ function Format-FileCoverage
                     $sign = " "
                 }
                 $outputline = "{0:0000} {1} {2}" -f ($i+1),$sign,$content[$i]
-                if ( $sign -eq "+" ) { write-host -fore green $outputline }
-                elseif ( $sign -eq "-" ) { write-host -fore red $outputline }
-                else { write-host -fore white $outputline }
+                if ( $sign -eq "+" ) { Write-Host -fore green $outputline }
+                elseif ( $sign -eq "-" ) { Write-Host -fore red $outputline }
+                else { Write-Host -fore white $outputline }
             }
         }
         else {
@@ -158,7 +158,7 @@ function Get-FileCoverageData([xml]$CoverageData)
     $result = [Collections.Generic.Dictionary[string,FileCoverage]]::new()
     $count = 0
     Write-Progress "collecting files"
-    $filehash = $CoverageData.SelectNodes(".//File") | Foreach-Object { $h = @{} } { $h[$_.uid] = $_.fullpath } { $h }
+    $filehash = $CoverageData.SelectNodes(".//File") | ForEach-Object { $h = @{} } { $h[$_.uid] = $_.fullpath } { $h }
     Write-Progress "collecting sequence points"
     $nodes = $CoverageData.SelectNodes(".//SequencePoint")
     $ncount = $nodes.count
@@ -209,7 +209,7 @@ function Get-FileCoverageData([xml]$CoverageData)
 function Get-CodeCoverageChange($r1, $r2, [string[]]$ClassName)
 {
     $h = @{}
-    $Deltas = new-object "System.Collections.ArrayList"
+    $Deltas = New-Object "System.Collections.ArrayList"
 
     if ( $ClassName ) {
         foreach ( $Class in $ClassName ) {
@@ -272,7 +272,7 @@ function Get-AssemblyCoverageChange($r1, $r2)
         $r2 = @{ AssemblyName = $r1.AssemblyName ; Branch = 0 ; Sequence = 0 }
     }
 
-    if ( compare-object $r1.assemblyname $r2.assemblyname ) { throw "different assemblies" }
+    if ( Compare-Object $r1.assemblyname $r2.assemblyname ) { throw "different assemblies" }
 
     $AssemblyCoverageChange = [pscustomobject] @{
         AssemblyName = $r1.AssemblyName
@@ -287,7 +287,7 @@ function Get-AssemblyCoverageChange($r1, $r2)
 
 function Get-CoverageData($xmlPath)
 {
-    [xml]$CoverageXml = get-content -readcount 0 $xmlPath
+    [xml]$CoverageXml = Get-Content -ReadCount 0 $xmlPath
     if ( $null -eq $CoverageXml.CoverageSession ) { throw "CoverageSession data not found" }
 
     $assemblies = New-Object System.Collections.ArrayList
@@ -425,7 +425,7 @@ function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
 function Get-CodeCoverage
 {
     param ( [string]$CoverageXmlFile = "$HOME/Documents/OpenCover.xml" )
-    $xmlPath = (get-item $CoverageXmlFile).Fullname
+    $xmlPath = (Get-Item $CoverageXmlFile).Fullname
     (Get-CoverageData -xmlPath $xmlPath)
 }
 
@@ -500,10 +500,10 @@ function Compare-CodeCoverage
 
     if ( $PSCmdlet.ParameterSetName -eq "file" )
     {
-        [string]$xmlPath1 = (get-item $Run1File).Fullname
+        [string]$xmlPath1 = (Get-Item $Run1File).Fullname
         $Run1 = (Get-CoverageData -xmlPath $xmlPath1)
 
-        [string]$xmlPath2 = (get-item $Run1File).Fullname
+        [string]$xmlPath2 = (Get-Item $Run1File).Fullname
         $Run2 = (Get-CoverageData -xmlPath $xmlPath2)
     }
 
@@ -527,10 +527,10 @@ function Compare-FileCoverage
     )
     # create a couple of hashtables where the key is the path
     # so we can compare file coverage
-    $reference = $ReferenceCoverage.GetFileCoverage($FileName) | Foreach-Object { $h = @{} } { $h[$_.path] = $_ } {$h}
-    $difference = $differenceCoverage.GetFileCoverage($FileName) | Foreach-Object { $h = @{}}{ $h[$_.path] = $_ }{$h }
+    $reference = $ReferenceCoverage.GetFileCoverage($FileName) | ForEach-Object { $h = @{} } { $h[$_.path] = $_ } {$h}
+    $difference = $differenceCoverage.GetFileCoverage($FileName) | ForEach-Object { $h = @{}}{ $h[$_.path] = $_ }{$h }
     # based on the paths, create objects which show the difference between the two runs
-    $reference.Keys | Sort-Object | Foreach-Object {
+    $reference.Keys | Sort-Object | ForEach-Object {
         $referenceObject = $reference[$_]
         $differenceObject = $difference[$_]
         if ( $differenceObject )
@@ -562,29 +562,29 @@ function Install-OpenCover
 {
     param (
         [parameter()][string]$Version = "4.6.519",
-        [parameter()][string]$TargetDirectory = "$home",
+        [parameter()][string]$TargetDirectory = "$HOME",
         [parameter()][switch]$Force
         )
 
     $filename =  "opencover.${version}.zip"
     $tempPath = "$env:TEMP/$Filename"
     $packageUrl = "https://github.com/OpenCover/opencover/releases/download/${version}/${filename}"
-    if ( test-path $tempPath )
+    if ( Test-Path $tempPath )
     {
         if ( $force )
         {
-            remove-item -force $tempPath
+            Remove-Item -Force $tempPath
         }
         else
         {
             throw "Package already exists at $tempPath, not continuing.  Use -force to re-install"
         }
     }
-    if ( test-path "$TargetDirectory/OpenCover" )
+    if ( Test-Path "$TargetDirectory/OpenCover" )
     {
         if ( $force )
         {
-            remove-item -recurse -force "$TargetDirectory/OpenCover"
+            Remove-Item -Recurse -Force "$TargetDirectory/OpenCover"
         }
         else
         {
@@ -593,20 +593,20 @@ function Install-OpenCover
     }
 
     Invoke-WebRequest -Uri $packageUrl -OutFile "$tempPath"
-    if ( ! (test-path $tempPath) )
+    if ( ! (Test-Path $tempPath) )
     {
         throw "Download failed: $packageUrl"
     }
 
     ## We add ErrorAction as we do not have this module on PS v4 and below. Calling import-module will throw an error otherwise.
-    import-module Microsoft.PowerShell.Archive -ErrorAction SilentlyContinue
+    Import-Module Microsoft.PowerShell.Archive -ErrorAction SilentlyContinue
 
     if ($null -ne (Get-Command Expand-Archive -ErrorAction Ignore)) {
         Expand-Archive -Path $tempPath -DestinationPath "$TargetDirectory/OpenCover"
     } else {
         Expand-ZipArchive -Path $tempPath -DestinationPath "$TargetDirectory/OpenCover"
     }
-    Remove-Item -force $tempPath
+    Remove-Item -Force $tempPath
 }
 
 <#
@@ -615,16 +615,16 @@ function Install-OpenCover
 .Description
    Invoke-OpenCover runs tests under OpenCover by executing tests on PowerShell located at $PowerShellExeDirectory.
 .EXAMPLE
-   Invoke-OpenCover -TestPath $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win7-x64
+   Invoke-OpenCover -TestPath $PWD/test/powershell -PowerShellExeDirectory $PWD/src/powershell-win-core/bin/CodeCoverage/7.0/win7-x64
 #>
 function Invoke-OpenCover
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param (
-        [parameter()]$OutputLog = "$home/Documents/OpenCover.xml",
+        [parameter()]$OutputLog = "$HOME/Documents/OpenCover.xml",
         [parameter()]$TestPath = "${script:psRepoPath}/test/powershell",
-        [parameter()]$OpenCoverPath = "$home/OpenCover",
-        [parameter()]$PowerShellExeDirectory = "${script:psRepoPath}/src/powershell-win-core/bin/CodeCoverage/netcoreapp3.0/win7-x64/publish",
+        [parameter()]$OpenCoverPath = "$HOME/OpenCover",
+        [parameter()]$PowerShellExeDirectory = "${script:psRepoPath}/src/powershell-win-core/bin/CodeCoverage/net8.0/win7-x64/publish",
         [parameter()]$PesterLogElevated = "$HOME/Documents/TestResultsElevated.xml",
         [parameter()]$PesterLogUnelevated = "$HOME/Documents/TestResultsUnelevated.xml",
         [parameter()]$PesterLogFormat = "NUnitXml",
@@ -647,7 +647,7 @@ function Invoke-OpenCover
 
     $OpenCoverBin = "$OpenCoverPath\opencover.console.exe"
 
-    if ( ! (test-path $OpenCoverBin))
+    if ( ! (Test-Path $OpenCoverBin))
     {
         # see if it's somewhere else in the path
         $openCoverBin = (Get-Command -Name 'opencover.console' -ErrorAction Ignore).Source
@@ -658,7 +658,7 @@ function Invoke-OpenCover
 
     # check to be sure that pwsh.exe is present
     $target = "${PowerShellExeDirectory}\pwsh.exe"
-    if ( ! (test-path $target) )
+    if ( ! (Test-Path $target) )
     {
         throw "$target does not exist, use 'Start-PSBuild -configuration CodeCoverage'"
     }
@@ -704,7 +704,7 @@ function Invoke-OpenCover
             # Write the command line to a file and then invoke file.
             # '&' invoke caused issues with cmdline parameters for opencover.console.exe
             $elevatedFile = "$env:temp\elevated.ps1"
-            "$OpenCoverBin $cmdlineElevated" | Out-File -FilePath $elevatedFile -force
+            "$OpenCoverBin $cmdlineElevated" | Out-File -FilePath $elevatedFile -Force
             powershell.exe -file $elevatedFile
 
             # invoke OpenCover unelevated and poll for completion
@@ -738,8 +738,8 @@ function Invoke-OpenCover
         }
         finally
         {
-            Remove-Item $elevatedFile -force -ErrorAction SilentlyContinue
-            Remove-Item $unelevatedFile -force -ErrorAction SilentlyContinue
+            Remove-Item $elevatedFile -Force -ErrorAction SilentlyContinue
+            Remove-Item $unelevatedFile -Force -ErrorAction SilentlyContinue
         }
     }
 }

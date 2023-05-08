@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation;
@@ -8,13 +8,15 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Implementation for the format-table command.
+    /// Implementation for the Format-Table command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Format, "Table", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113303")]
+    [Cmdlet(VerbsCommon.Format, "Table", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096703")]
+    [OutputType(typeof(FormatStartData), typeof(FormatEntryData), typeof(FormatEndData), typeof(GroupStartData), typeof(GroupEndData))]
     public class FormatTableCommand : OuterFormatTableBase
     {
         /// <summary>
-        /// Constructor to set the inner command.
+        /// Initializes a new instance of the <see cref="FormatTableCommand"/> class
+        /// and sets the inner command.
         /// </summary>
         public FormatTableCommand()
         {
@@ -22,4 +24,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

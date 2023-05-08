@@ -1,0 +1,87 @@
+parameters:
+  - name: pool
+    default: 'windows-latest'
+  - name: jobName
+    default: 'win_packaging'
+  - name: runtimePrefix
+    default: 'win7'
+  - name: architecture
+    default: 'x64'
+  - name: channel
+    default: 'preview'
+
+jobs:
+- job: ${{ parameters.jobName }}_${{ parameters.channel }}_${{ parameters.architecture }}
+
+  variables:
+    - name: repoFolder
+      value: PowerShell
+    - name: repoPath
+      value: $(Agent.BuildDirectory)\$(repoFolder)
+    - name: complianceRepoFolder
+      value: compliance
+    - name: complianceRepoPath
+      value: $(Agent.BuildDirectory)\$(complianceRepoFolder)
+
+  pool:
+    vmImage: ${{ parameters.pool }}
+
+  displayName: Windows Packaging - ${{ parameters.architecture }} - ${{ parameters.channel }}
+
+  steps:
+  - checkout: self
+    clean: true
+    path: $(repoFolder)
+
+  - checkout: ComplianceRepo
+    clean: true
+    path: $(complianceRepoFolder)
+
+  - powershell: |
+      Get-ChildItem -Path env:
+    displayName: Capture environment
+    condition: succeededOrFailed()
+
+  - pwsh: |
+      $PSVersionTable
+    displayName: Capture PowerShell Version Table
+    condition: succeededOrFailed()
+
+
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Invoke-CIInstall -SkipUser
+    displayName: Bootstrap
+    condition: succeeded()
+    workingDirectory: $(repoPath)
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      New-CodeCoverageAndTestPackage
+      Invoke-CIFinish -Runtime ${{ parameters.runtimePrefix }}-${{ parameters.architecture }} -channel ${{ parameters.channel }} -Stage Build
+    displayName: Build
+    workingDirectory: $(repoPath)
+
+  - template: Sbom.yml@ComplianceRepo
+    parameters:
+      BuildDropPath: '$(System.ArtifactsDirectory)/mainBuild'
+      Build_Repository_Uri: $(build.repository.uri)
+      displayName: SBOM
+      sourceScanPath: '$(repoPath)\tools'
+
+  # This is needed as SBOM task removed the installed .NET and installs .NET 3.1
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Invoke-CIInstall -SkipUser
+    displayName: Bootstrap
+    condition: succeeded()
+    workingDirectory: $(repoPath)
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      New-CodeCoverageAndTestPackage
+      Invoke-CIFinish -Runtime ${{ parameters.runtimePrefix }}-${{ parameters.architecture }} -channel ${{ parameters.channel }} -Stage Package
+    displayName: Package and Test
+    workingDirectory: $(repoPath)

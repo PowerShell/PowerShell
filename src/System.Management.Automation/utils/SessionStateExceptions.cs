@@ -1,10 +1,9 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace System.Management.Automation
 {
@@ -96,10 +95,7 @@ namespace System.Management.Automation
             : base(RuntimeException.RetrieveMessage(errorRecord),
                     RuntimeException.RetrieveException(errorRecord))
         {
-            if (errorRecord == null)
-            {
-                throw new ArgumentNullException("errorRecord");
-            }
+            ArgumentNullException.ThrowIfNull(errorRecord);
 
             _message = base.Message;
             _providerInfo = provider;
@@ -235,14 +231,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "ProviderInvocationException",
-                        ErrorCategory.NotSpecified,
-                        null);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "ProviderInvocationException",
+                    ErrorCategory.NotSpecified,
+                    null);
 
                 return _errorRecord;
             }
@@ -323,7 +316,7 @@ namespace System.Management.Automation
         }
 
         [NonSerialized]
-        private string _message /* = null */;
+        private readonly string _message /* = null */;
 
         #endregion Private/Internal
     }
@@ -477,12 +470,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -499,14 +491,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        _errorId,
-                        _errorCategory,
-                        _itemName);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    _errorId,
+                    _errorCategory,
+                    _itemName);
 
                 return _errorRecord;
             }
@@ -522,7 +511,7 @@ namespace System.Management.Automation
             get { return _itemName; }
         }
 
-        private string _itemName = string.Empty;
+        private readonly string _itemName = string.Empty;
 
         /// <summary>
         /// Gets the category of session state object the error occurred on.
@@ -532,12 +521,12 @@ namespace System.Management.Automation
             get { return _sessionStateCategory; }
         }
 
-        private SessionStateCategory _sessionStateCategory = SessionStateCategory.Variable;
+        private readonly SessionStateCategory _sessionStateCategory = SessionStateCategory.Variable;
         #endregion Properties
 
         #region Private
-        private string _errorId = "SessionStateException";
-        private ErrorCategory _errorCategory = ErrorCategory.InvalidArgument;
+        private readonly string _errorId = "SessionStateException";
+        private readonly ErrorCategory _errorCategory = ErrorCategory.InvalidArgument;
 
         private static string BuildMessage(
             string itemName,
@@ -545,7 +534,7 @@ namespace System.Management.Automation
             params object[] messageArgs)
         {
             object[] a;
-            if (messageArgs != null && 0 < messageArgs.Length)
+            if (messageArgs != null && messageArgs.Length > 0)
             {
                 a = new object[messageArgs.Length + 1];
                 a[0] = itemName;
@@ -855,7 +844,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ReadOnlyCollection<ProviderInfo> _possibleMatches;
+        private readonly ReadOnlyCollection<ProviderInfo> _possibleMatches;
 
         #endregion public properties
     }
@@ -1026,4 +1015,3 @@ namespace System.Management.Automation
         #endregion Serialization
     }
 }
-

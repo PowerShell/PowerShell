@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis; // for fxcop
@@ -8,7 +8,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Stores help information related to Alias Commands.
     /// </summary>
-    internal class AliasHelpInfo : HelpInfo
+    internal sealed class AliasHelpInfo : HelpInfo
     {
         /// <summary>
         /// Initializes a new instance of the AliasHelpInfo class.
@@ -27,7 +27,7 @@ namespace System.Management.Automation
             this.ForwardTarget = name;
             // A Cmdlet/Function/Script etc can have alias.
             this.ForwardHelpCategory = HelpCategory.Cmdlet |
-                HelpCategory.Function | HelpCategory.ExternalScript | HelpCategory.ScriptCommand | HelpCategory.Filter | HelpCategory.Workflow;
+                HelpCategory.Function | HelpCategory.ExternalScript | HelpCategory.ScriptCommand | HelpCategory.Filter;
 
             if (!string.IsNullOrEmpty(aliasInfo.Name))
             {
@@ -40,8 +40,7 @@ namespace System.Management.Automation
             }
 
             _fullHelpObject.TypeNames.Clear();
-            _fullHelpObject.TypeNames.Add(string.Format(Globalization.CultureInfo.InvariantCulture,
-                "AliasHelpInfo#{0}", Name));
+            _fullHelpObject.TypeNames.Add(string.Create(Globalization.CultureInfo.InvariantCulture, $"AliasHelpInfo#{Name}"));
             _fullHelpObject.TypeNames.Add("AliasHelpInfo");
             _fullHelpObject.TypeNames.Add("HelpInfo");
         }
@@ -70,7 +69,7 @@ namespace System.Management.Automation
             }
         }
 
-        private PSObject _fullHelpObject;
+        private readonly PSObject _fullHelpObject;
 
         /// <summary>
         /// Returns full help object for alias help.

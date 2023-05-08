@@ -1,7 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.IO;
 using System.Management.Automation;
 
@@ -11,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// The implementation of the "New-TemporaryFile" cmdlet.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TemporaryFile", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=821836")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097032")]
     [OutputType(typeof(System.IO.FileInfo))]
     public class NewTemporaryFileCommand : Cmdlet
     {
@@ -41,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!string.IsNullOrEmpty(filePath))
                 {
-                    FileInfo file = new FileInfo(filePath);
+                    FileInfo file = new(filePath);
                     WriteObject(file);
                 }
             }

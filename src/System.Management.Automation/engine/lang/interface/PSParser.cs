@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 /********************************************************************++
 
     Project:     PowerShell
@@ -147,7 +148,7 @@ namespace System.Management.Automation
         public static Collection<PSToken> Tokenize(string script, out Collection<PSParseError> errors)
         {
             if (script == null)
-                throw PSTraceSource.NewArgumentNullException("script");
+                throw PSTraceSource.NewArgumentNullException(nameof(script));
 
             PSParser psParser = new PSParser();
 
@@ -174,7 +175,7 @@ namespace System.Management.Automation
         public static Collection<PSToken> Tokenize(object[] script, out Collection<PSParseError> errors)
         {
             if (script == null)
-                throw PSTraceSource.NewArgumentNullException("script");
+                throw PSTraceSource.NewArgumentNullException(nameof(script));
 
             StringBuilder sb = new StringBuilder();
             foreach (object obj in script)

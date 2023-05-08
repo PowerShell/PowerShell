@@ -1,11 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -13,7 +12,6 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Reflection;
 using System.Text;
-
 using Dbg = System.Management.Automation.Diagnostics;
 
 //
@@ -27,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     /// Cmdlet to create a new module manifest file.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "ModuleManifest", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141555")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096487")]
     [OutputType(typeof(string))]
     public sealed class NewModuleManifestCommand : PSCmdlet
     {
@@ -49,7 +47,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public object[] NestedModules
         {
             get { return _nestedModules; }
@@ -163,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public ProcessorArchitecture ProcessorArchitecture
         {
-            get { return _processorArchitecture.HasValue ? _processorArchitecture.Value : ProcessorArchitecture.None; }
+            get { return _processorArchitecture ?? ProcessorArchitecture.None; }
 
             set { _processorArchitecture = value; }
         }
@@ -187,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the CLR version required by the module.
         /// </summary>
         [Parameter]
-        public Version CLRVersion
+        public Version ClrVersion
         {
             get { return _ClrVersion; }
 
@@ -240,8 +237,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ArgumentTypeConverter(typeof(ModuleSpecification[]))]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public object[] RequiredModules
         {
             get { return _requiredModules; }
@@ -256,8 +251,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] TypesToProcess
         {
             get { return _types; }
@@ -272,8 +265,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] FormatsToProcess
         {
             get { return _formats; }
@@ -288,8 +279,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] ScriptsToProcess
         {
             get { return _scripts; }
@@ -304,8 +293,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] RequiredAssemblies
         {
             get { return _requiredAssemblies; }
@@ -320,8 +307,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] FileList
         {
             get { return _miscFiles; }
@@ -338,8 +323,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [AllowEmptyCollection]
         [ArgumentTypeConverter(typeof(ModuleSpecification[]))]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public object[] ModuleList
         {
             get { return _moduleList; }
@@ -354,8 +337,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] FunctionsToExport
         {
             get { return _exportedFunctions; }
@@ -370,8 +351,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] AliasesToExport
         {
             get { return _exportedAliases; }
@@ -386,8 +365,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] VariablesToExport
         {
             get { return _exportedVariables; }
@@ -402,8 +379,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] CmdletsToExport
         {
             get { return _exportedCmdlets; }
@@ -418,8 +393,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] DscResourcesToExport
         {
             get { return _dscResourcesToExport; }
@@ -435,8 +408,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [AllowEmptyCollection]
         [ValidateSet("Desktop", "Core")]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] CompatiblePSEditions
         {
             get { return _compatiblePSEditions; }
@@ -465,8 +436,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Tags { get; set; }
 
         /// <summary>
@@ -508,7 +477,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether or not the module requires explicit user acceptance for install/update/save.
         /// </summary>
         [Parameter]
-        public SwitchParameter RequireLicenseAcceptance { get; set; } = true;
+        public SwitchParameter RequireLicenseAcceptance { get; set; }
 
         /// <summary>
         /// Gets or sets the external module dependencies.
@@ -522,7 +491,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowNull]
-        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         public string HelpInfoUri
         {
             get { return _helpInfoUri; }
@@ -566,11 +534,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="name">The string to quote.</param>
         /// <returns>The quoted string.</returns>
-        private string QuoteName(string name)
+        private static string QuoteName(string name)
         {
             if (name == null)
                 return "''";
-            return ("'" + name.ToString().Replace("'", "''") + "'");
+            return ("'" + name.Replace("'", "''") + "'");
         }
 
         /// <summary>
@@ -578,7 +546,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="name">The Uri to quote.</param>
         /// <returns>The quoted AbsoluteUri.</returns>
-        private string QuoteName(Uri name)
+        private static string QuoteName(Uri name)
         {
             if (name == null)
                 return "''";
@@ -590,7 +558,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="name">The Version object to quote.</param>
         /// <returns>The quoted Version string.</returns>
-        private string QuoteName(Version name)
+        private static string QuoteName(Version name)
         {
             if (name == null)
                 return "''";
@@ -604,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="names">The list to quote.</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from.</param>
         /// <returns>The quoted list.</returns>
-        private string QuoteNames(IEnumerable names, StreamWriter streamWriter)
+        private static string QuoteNames(IEnumerable names, StreamWriter streamWriter)
         {
             if (names == null)
                 return "@()";
@@ -654,13 +622,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="moduleSpecs"></param>
         /// <returns></returns>
-        private IEnumerable PreProcessModuleSpec(IEnumerable moduleSpecs)
+        private static IEnumerable PreProcessModuleSpec(IEnumerable moduleSpecs)
         {
             if (moduleSpecs != null)
             {
                 foreach (object spec in moduleSpecs)
                 {
-                    if (!(spec is Hashtable))
+                    if (spec is not Hashtable)
                     {
                         yield return spec.ToString();
                     }
@@ -679,7 +647,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleSpecs">The list to quote.</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from.</param>
         /// <returns>The quoted list.</returns>
-        private string QuoteModules(IEnumerable moduleSpecs, StreamWriter streamWriter)
+        private static string QuoteModules(IEnumerable moduleSpecs, StreamWriter streamWriter)
         {
             StringBuilder result = new StringBuilder();
             result.Append("@(");
@@ -694,8 +662,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    ModuleSpecification moduleSpecification = (ModuleSpecification)
-                        LanguagePrimitives.ConvertTo(
+                    ModuleSpecification moduleSpecification = (ModuleSpecification)LanguagePrimitives.ConvertTo(
                             spec,
                             typeof(ModuleSpecification),
                             CultureInfo.InvariantCulture);
@@ -749,12 +716,12 @@ namespace Microsoft.PowerShell.Commands
                             result.Append("; ");
                         }
 
-                        result.Append("}");
+                        result.Append('}');
                     }
                 }
             }
 
-            result.Append(")");
+            result.Append(')');
             return result.ToString();
         }
 
@@ -919,17 +886,15 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private string ManifestFragment(string key, string resourceString, string value, StreamWriter streamWriter)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}{3:19} = {4}{2}{2}",
-                _indent, resourceString, streamWriter.NewLine, key, value);
+            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}{3:19} = {4}{2}{2}", _indent, resourceString, streamWriter.NewLine, key, value);
         }
 
         private string ManifestFragmentForNonSpecifiedManifestMember(string key, string resourceString, string value, StreamWriter streamWriter)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}# {3:19} = {4}{2}{2}",
-                _indent, resourceString, streamWriter.NewLine, key, value);
+            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}# {3:19} = {4}{2}{2}", _indent, resourceString, streamWriter.NewLine, key, value);
         }
 
-        private string ManifestComment(string insert, StreamWriter streamWriter)
+        private static string ManifestComment(string insert, StreamWriter streamWriter)
         {
             // Prefix a non-empty string with a space for formatting reasons...
             if (!string.IsNullOrEmpty(insert))
@@ -981,12 +946,9 @@ namespace Microsoft.PowerShell.Commands
             // wildcards for exported commands that weren't specified on the command line.
             if (_rootModule != null || _nestedModules != null || _requiredModules != null)
             {
-                if (_exportedFunctions == null)
-                    _exportedFunctions = new string[] { "*" };
-                if (_exportedAliases == null)
-                    _exportedAliases = new string[] { "*" };
-                if (_exportedCmdlets == null)
-                    _exportedCmdlets = new string[] { "*" };
+                _exportedAliases ??= new string[] { "*" };
+                _exportedCmdlets ??= new string[] { "*" };
+                _exportedFunctions ??= new string[] { "*" };
             }
 
             ValidateUriParameterValue(ProjectUri, "ProjectUri");
@@ -997,9 +959,9 @@ namespace Microsoft.PowerShell.Commands
                 ValidateUriParameterValue(new Uri(_helpInfoUri), "HelpInfoUri");
             }
 
-            if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Count()))
+            if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Length))
             {
-                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, string.Join(",", CompatiblePSEditions));
+                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, string.Join(',', CompatiblePSEditions));
                 var ioe = new InvalidOperationException(message);
                 var er = new ErrorRecord(ioe, "Modules_DuplicateEntriesInCompatiblePSEditions", ErrorCategory.InvalidArgument, CompatiblePSEditions);
                 ThrowTerminatingError(er);
@@ -1063,8 +1025,7 @@ namespace Microsoft.PowerShell.Commands
                     result.Append(streamWriter.NewLine);
                     result.Append(streamWriter.NewLine);
 
-                    if (_rootModule == null)
-                        _rootModule = string.Empty;
+                    _rootModule ??= string.Empty;
 
                     BuildModuleManifest(result, nameof(RootModule), Modules.RootModule, !string.IsNullOrEmpty(_rootModule), () => QuoteName(_rootModule), streamWriter);
 
@@ -1090,7 +1051,7 @@ namespace Microsoft.PowerShell.Commands
 
                     BuildModuleManifest(result, nameof(DotNetFrameworkVersion), StringUtil.Format(Modules.DotNetFrameworkVersion, Modules.PrerequisiteForDesktopEditionOnly), _DotNetFrameworkVersion != null && !string.IsNullOrEmpty(_DotNetFrameworkVersion.ToString()), () => QuoteName(_DotNetFrameworkVersion), streamWriter);
 
-                    BuildModuleManifest(result, nameof(CLRVersion), StringUtil.Format(Modules.CLRVersion, Modules.PrerequisiteForDesktopEditionOnly), _ClrVersion != null && !string.IsNullOrEmpty(_ClrVersion.ToString()), () => QuoteName(_ClrVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(ClrVersion), StringUtil.Format(Modules.CLRVersion, Modules.PrerequisiteForDesktopEditionOnly), _ClrVersion != null && !string.IsNullOrEmpty(_ClrVersion.ToString()), () => QuoteName(_ClrVersion), streamWriter);
 
                     BuildModuleManifest(result, nameof(ProcessorArchitecture), Modules.ProcessorArchitecture, _processorArchitecture.HasValue, () => QuoteName(_processorArchitecture.ToString()), streamWriter);
 
@@ -1126,7 +1087,7 @@ namespace Microsoft.PowerShell.Commands
 
                     BuildModuleManifest(result, nameof(DefaultCommandPrefix), Modules.DefaultCommandPrefix, !string.IsNullOrEmpty(_defaultCommandPrefix), () => QuoteName(_defaultCommandPrefix), streamWriter);
 
-                    result.Append("}");
+                    result.Append('}');
                     result.Append(streamWriter.NewLine);
                     result.Append(streamWriter.NewLine);
                     string strResult = result.ToString();
@@ -1220,7 +1181,7 @@ namespace Microsoft.PowerShell.Commands
                 BuildModuleManifest(result, nameof(IconUri), Modules.IconUri, IconUri != null, () => QuoteName(IconUri), streamWriter);
                 BuildModuleManifest(result, nameof(ReleaseNotes), Modules.ReleaseNotes, !string.IsNullOrEmpty(ReleaseNotes), () => QuoteName(ReleaseNotes), streamWriter);
                 BuildModuleManifest(result, nameof(Prerelease), Modules.Prerelease, !string.IsNullOrEmpty(Prerelease), () => QuoteName(Prerelease), streamWriter);
-                BuildModuleManifest(result, nameof(RequireLicenseAcceptance), Modules.RequireLicenseAcceptance, RequireLicenseAcceptance.IsPresent, () => { return RequireLicenseAcceptance.IsPresent ? "$true" : "$false"; }, streamWriter);
+                BuildModuleManifest(result, nameof(RequireLicenseAcceptance), Modules.RequireLicenseAcceptance, RequireLicenseAcceptance.IsPresent, () => RequireLicenseAcceptance.IsPresent ? "$true" : "$false", streamWriter);
                 BuildModuleManifest(result, nameof(ExternalModuleDependencies), Modules.ExternalModuleDependencies, ExternalModuleDependencies != null && ExternalModuleDependencies.Length > 0, () => QuoteNames(ExternalModuleDependencies, streamWriter), streamWriter);
 
                 result.Append("    } ");

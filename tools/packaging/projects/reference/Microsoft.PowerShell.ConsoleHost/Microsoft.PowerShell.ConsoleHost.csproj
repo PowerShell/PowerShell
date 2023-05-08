@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Version>$(RefAsmVersion)</Version>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>$(SnkFile)</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <LangVersion>11.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Management.Automation">
+    <HintPath>$(SmaRefFile)</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

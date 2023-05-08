@@ -1,10 +1,10 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
 
     BeforeAll {
         $command = [System.Management.Automation.PSCommand]::new()
-        $localRunspace = $host.Runspace
+        $localRunspace = $Host.Runspace
     }
 
     It "Null argument exception should be thrown for null PSCommand argument" {
@@ -24,7 +24,7 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
 
         $command = [System.Management.Automation.PSCommand]::new()
         $command.AddScript('"Hello!"')
-        $currentRunspace = $host.Runspace
+        $currentRunspace = $Host.Runspace
 
         $results = [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $currentRunspace)
 
@@ -35,6 +35,14 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
 Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        $pendingTest = (Test-IsWinWow64)
+
+        if ($pendingTest) {
+            $global:PSDefaultParameterValues["it:pending"] = $true
+            return
+        }
 
         if ($IsWindows) {
             $script:remoteRunspace = New-RemoteRunspace
@@ -42,10 +50,12 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAd
     }
 
     AfterAll {
-        if ($script:remoteRunspace)
+        if ($script:remoteRunspace -and -not $pendingTest)
         {
             $script:remoteRunspace.Dispose();
         }
+
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     It "Method should successfully invoke command on remote runspace" -Skip:(!$IsWindows) {
@@ -56,5 +66,25 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAd
         $results = [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $script:remoteRunspace)
 
         $results[0] | Should -Be "Hello!"
+    }
+}
+
+Describe 'PromptForCredential' -Tags "CI" {
+    BeforeAll {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('NoPromptForPassword', $true)
+    }
+
+    AfterAll {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('NoPromptForPassword', $false)
+    }
+
+    It 'Should accept no targetname' {
+        $out = $Host.UI.PromptForCredential('caption','message','myUser',$null)
+        $out.UserName | Should -BeExactly 'myUser'
+    }
+
+    It 'Should accept targetname as domain' {
+        $out = $Host.UI.PromptForCredential('caption','message','myUser','myDomain')
+        $out.UserName | Should -BeExactly 'myDomain\myUser'
     }
 }

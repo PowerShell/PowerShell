@@ -2,14 +2,14 @@
 GUID="EEFCB906-B326-4E99-9F54-8B4BB6EF3C6D"
 Author="PowerShell"
 CompanyName="Microsoft Corporation"
-Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
-ModuleVersion="6.1.0.0"
+Copyright="Copyright (c) Microsoft Corporation."
+ModuleVersion="7.0.0.0"
 CompatiblePSEditions = @("Core")
 PowerShellVersion="3.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
-HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855958'
+HelpInfoURI = 'https://aka.ms/powershell73-help'
 FunctionsToExport = @()
-AliasesToExport = @("gtz")
+AliasesToExport = @("gcb", "gtz", "scb")
 CmdletsToExport=@("Add-Content",
     "Clear-Content",
     "Clear-ItemProperty",
@@ -17,6 +17,8 @@ CmdletsToExport=@("Add-Content",
     "Convert-Path",
     "Copy-ItemProperty",
     "Get-ChildItem",
+    "Get-Clipboard",
+    "Set-Clipboard",
     "Get-Content",
     "Get-ItemProperty",
     "Get-ItemPropertyValue",
@@ -52,5 +54,7 @@ CmdletsToExport=@("Add-Content",
     "Resolve-Path",
     "Set-Content",
     "Set-ItemProperty",
-    "Get-TimeZone")
+    "Get-TimeZone",
+    "Stop-Computer",
+    "Restart-Computer")
 }

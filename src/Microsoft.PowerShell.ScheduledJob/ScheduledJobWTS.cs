@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -878,19 +878,40 @@ namespace Microsoft.PowerShell.ScheduledJob
         {
             List<DayOfWeek> daysOfWeek = new List<DayOfWeek>();
 
-            if ((mask & WTSSunday) != 0) { daysOfWeek.Add(DayOfWeek.Sunday); }
+            if ((mask & WTSSunday) != 0)
+            {
+                daysOfWeek.Add(DayOfWeek.Sunday);
+            }
 
-            if ((mask & WTSMonday) != 0) { daysOfWeek.Add(DayOfWeek.Monday); }
+            if ((mask & WTSMonday) != 0)
+            {
+                daysOfWeek.Add(DayOfWeek.Monday);
+            }
 
-            if ((mask & WTSTuesday) != 0) { daysOfWeek.Add(DayOfWeek.Tuesday); }
+            if ((mask & WTSTuesday) != 0)
+            {
+                daysOfWeek.Add(DayOfWeek.Tuesday);
+            }
 
-            if ((mask & WTSWednesday) != 0) { daysOfWeek.Add(DayOfWeek.Wednesday); }
+            if ((mask & WTSWednesday) != 0)
+            {
+                daysOfWeek.Add(DayOfWeek.Wednesday);
+            }
 
-            if ((mask & WTSThursday) != 0) { daysOfWeek.Add(DayOfWeek.Thursday); }
+            if ((mask & WTSThursday) != 0)
+            {
+                daysOfWeek.Add(DayOfWeek.Thursday);
+            }
 
-            if ((mask & WTSFriday) != 0) { daysOfWeek.Add(DayOfWeek.Friday); }
+            if ((mask & WTSFriday) != 0)
+            {
+                daysOfWeek.Add(DayOfWeek.Friday);
+            }
 
-            if ((mask & WTSSaturday) != 0) { daysOfWeek.Add(DayOfWeek.Saturday); }
+            if ((mask & WTSSaturday) != 0)
+            {
+                daysOfWeek.Add(DayOfWeek.Saturday);
+            }
 
             return daysOfWeek;
         }

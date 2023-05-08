@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 #####################################################################################################
@@ -11,7 +11,7 @@
 # If no parameter is specified, it means that this instance of PowerShell is registering itself.
 #
 # Assumptions:
-#     1. The CoreCLR and the the PowerShell assemblies are side-by-side in $PSHOME
+#     1. The CoreCLR and the PowerShell assemblies are side-by-side in $PSHOME
 #     2. Plugins are registered by version number. Only one plugin can be automatically registered
 #        per PowerShell version. However, multiple endpoints may be manually registered for a given
 #        plugin.
@@ -26,7 +26,7 @@ param
     $PowerShellHome
 )
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 3.0
 
 if (! ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
 {
@@ -124,7 +124,7 @@ function Install-PluginEndpoint {
     #                    #
     ######################
 
-    if ($PowerShellHome -ne $null)
+    if (-not [String]::IsNullOrEmpty($PowerShellHome))
     {
         $targetPsHome = $PowerShellHome
         $targetPsVersion = & "$targetPsHome\pwsh" -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
@@ -188,7 +188,7 @@ function Install-PluginEndpoint {
 
     $pluginPath = Join-Path $resolvedPluginAbsolutePath "pwrshplugin.dll"
 
-    # This is forced to ensure the the file is placed correctly
+    # This is forced to ensure the file is placed correctly
     Copy-Item $targetPsHome\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose -ErrorAction Stop
 
     $pluginFile = Join-Path $resolvedPluginAbsolutePath "RemotePowerShellConfig.txt"
@@ -215,7 +215,7 @@ function Install-PluginEndpoint {
 
     try
     {
-        Write-Host "`nGet-PSSessionConfiguration $pluginEndpointName" -foregroundcolor "green"
+        Write-Host "`nGet-PSSessionConfiguration $pluginEndpointName" -ForegroundColor "green"
         Get-PSSessionConfiguration $pluginEndpointName -ErrorAction Stop
     }
     catch [Microsoft.PowerShell.Commands.WriteErrorException]
@@ -227,6 +227,6 @@ function Install-PluginEndpoint {
 Install-PluginEndpoint -Force $Force
 Install-PluginEndpoint -Force $Force -VersionIndependent
 
-Write-Host "Restarting WinRM to ensure that the plugin configuration change takes effect.`nThis is required for WinRM running on Windows SKUs prior to Windows 10." -foregroundcolor Magenta
+Write-Host "Restarting WinRM to ensure that the plugin configuration change takes effect.`nThis is required for WinRM running on Windows SKUs prior to Windows 10." -ForegroundColor Magenta
 Restart-Service winrm
 

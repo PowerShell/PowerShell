@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet("Sort",
             "Object",
-            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113403",
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097038",
             DefaultParameterSetName = "Default",
             RemotingCapability = RemotingCapability.None)]
     public sealed class SortObjectCommand : OrderObjectBase
@@ -53,14 +53,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "Top", Mandatory = true)]
         [ValidateRange(1, int.MaxValue)]
-        public int Top { get; set; } = 0;
+        public int Top { get; set; }
 
         /// <summary>
         /// Gets or sets the number of items to return in a Bottom N sort.
         /// </summary>
         [Parameter(ParameterSetName = "Bottom", Mandatory = true)]
         [ValidateRange(1, int.MaxValue)]
-        public int Bottom { get; set; } = 0;
+        public int Bottom { get; set; }
 
         /// <summary>
         /// Moves unique entries to the front of the list.
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Tracking the index is necessary so that unsortable items can be output at the end, in the order
             // in which they were received.
-            for (int dataIndex = 0, discardedDuplicates = 0; dataIndex < dataToSort.Count - discardedDuplicates; dataIndex++)
+            for (int dataIndex = 0, discardedDuplicates = 0; dataIndex + discardedDuplicates < dataToSort.Count; dataIndex++)
             {
                 // Min-heap: if the heap is full and the root item is larger than the entry, discard the entry
                 // Max-heap: if the heap is full and the root item is smaller than the entry, discard the entry
@@ -157,18 +157,17 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // If we're doing a unique sort and the entry is not unique, discard the duplicate entry
-                if (Unique && !uniqueSet.Add(dataToSort[dataIndex]))
+                if (Unique && !uniqueSet.Add(dataToSort[dataIndex + discardedDuplicates]))
                 {
                     discardedDuplicates++;
-                    if (dataIndex != dataToSort.Count - discardedDuplicates)
-                    {
-                        // When discarding duplicates, replace them with an item at the end of the list and
-                        // adjust our counter so that we check the item we just swapped in next
-                        dataToSort[dataIndex] = dataToSort[dataToSort.Count - discardedDuplicates];
-                        dataIndex--;
-                    }
-
+                    dataIndex--;
                     continue;
+                }
+
+                // Shift next non-duplicate entry into place
+                if (discardedDuplicates > 0)
+                {
+                    dataToSort[dataIndex] = dataToSort[dataIndex + discardedDuplicates];
                 }
 
                 // Add the current item to the heap and bubble it up into the correct position
@@ -239,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            OrderByProperty orderByProperty = new OrderByProperty(
+            OrderByProperty orderByProperty = new(
                 this, InputObjects, Property, !Descending, ConvertedCulture, CaseSensitive);
 
             var dataToProcess = orderByProperty.OrderMatrix;

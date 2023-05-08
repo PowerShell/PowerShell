@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
@@ -80,7 +80,7 @@ Describe "New-Item" -Tags "CI" {
         Test-Path $FullyQualifiedFile | Should -BeTrue
     }
 
-    It "Should create a file with sample text inside the file using the Value switch" {
+    It "Should create a file with sample text inside the file using the Value parameter" {
         $expected = "This is test string"
         New-Item -Name $testfile -Path $tmpDirectory -ItemType file -Value $expected
 
@@ -89,7 +89,7 @@ Describe "New-Item" -Tags "CI" {
         Get-Content $FullyQualifiedFile | Should -Be $expected
     }
 
-    It "Should not create a file when the Name switch is not used and only a directory specified" {
+    It "Should not create a file when the Name parameter is not used and only a directory specified" {
         #errorAction used because permissions issue in Windows
         New-Item -Path $tmpDirectory -ItemType file -ErrorAction SilentlyContinue
 
@@ -97,7 +97,7 @@ Describe "New-Item" -Tags "CI" {
 
     }
 
-    It "Should create a file when the Name switch is not used but a fully qualified path is specified" {
+    It "Should create a file when the Name parameter is not used but a fully qualified path is specified" {
         New-Item -Path $FullyQualifiedFile -ItemType file
 
         Test-Path $FullyQualifiedFile | Should -BeTrue
@@ -185,6 +185,13 @@ Describe "New-Item" -Tags "CI" {
             Pop-Location
         }
     }
+
+    It "Should display an error message when a symbolic link target is not specified" {
+        { New-Item -Name $testfile -Path $tmpDirectory -ItemType SymbolicLink } | Should -Throw -ErrorId 'ArgumentNull,Microsoft.PowerShell.Commands.NewItemCommand'
+        $Error[0].Exception.ParamName | Should -BeExactly 'content'
+        { New-Item -Name $testfile -Path $tmpDirectory -ItemType:SymbolicLink -Value {} } | Should -Throw -ErrorId 'ArgumentNull,Microsoft.PowerShell.Commands.NewItemCommand'
+         $Error[0].Exception.ParamName | Should -BeExactly 'content'
+    }
 }
 
 # More precisely these tests require SeCreateSymbolicLinkPrivilege.
@@ -268,12 +275,71 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 }
 
+Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'RequireAdminOnWindows') {
+    BeforeAll {
+        # on macOS, the /tmp directory is a symlink, so we'll resolve it here
+        $TestPath = $TestDrive
+        if ($IsMacOS)
+        {
+            $item = Get-Item $TestPath
+            $dirName = $item.BaseName
+            $item = Get-Item $item.PSParentPath -Force
+            if ($item.LinkType -eq "SymbolicLink")
+            {
+                $TestPath = Join-Path $item.Target $dirName
+            }
+        }
+
+        Push-Location $TestPath
+        $null = New-Item -Type Directory someDir
+        $null = New-Item -Type File someFile
+    }
+
+    AfterAll {
+        Pop-Location
+    }
+
+    It "Symlink with absolute path to existing directory behaves like a directory" {
+        New-Item -Type SymbolicLink someDirLinkAbsolute -Target (Convert-Path someDir)
+        Get-Item someDirLinkAbsolute | Should -BeOfType System.IO.DirectoryInfo
+    }
+
+    It "Symlink with relative path to existing directory behaves like a directory" {
+        # PowerShell should normalize '.\someDir' to './someDir' as needed.
+        New-Item -Type SymbolicLink someDirLinkRelative -Target .\someDir
+        Get-Item someDirLinkRelative | Should -BeOfType System.IO.DirectoryInfo
+    }
+
+    It "Symlink with absolute path to existing file behaves like a file" {
+        New-Item -Type SymbolicLink someFileLinkAbsolute -Target (Convert-Path someFile)
+        Get-Item someFileLinkAbsolute | Should -BeOfType System.IO.FileInfo
+    }
+
+    It "Symlink with relative path to existing file behaves like a file" {
+        New-Item -Type SymbolicLink someFileLinkRelative -Target ./someFile
+        Get-Item someFileLinkRelative | Should -BeOfType System.IO.FileInfo
+    }
+}
+
 Describe "New-Item with links fails for non elevated user if developer mode not enabled on Windows." -Tags "CI" {
     BeforeAll {
+        # on macOS, the /tmp directory is a symlink, so we'll resolve it here
+        $TestPath = $TestDrive
+        if ($IsMacOS)
+        {
+            $item = Get-Item $TestPath
+            $dirName = $item.BaseName
+            $item = Get-Item $item.PSParentPath -Force
+            if ($item.LinkType -eq "SymbolicLink")
+            {
+                $TestPath = Join-Path $item.Target $dirName
+            }
+        }
+
         $testfile             = "testfile.txt"
         $testlink             = "testlink"
-        $FullyQualifiedFile   = Join-Path -Path $TestDrive -ChildPath $testfile
-        $TestFilePath         = Join-Path -Path $TestDrive -ChildPath $testlink
+        $FullyQualifiedFile   = Join-Path -Path $TestPath -ChildPath $testfile
+        $TestFilePath         = Join-Path -Path $TestPath -ChildPath $testlink
         $developerModeEnabled = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
         $minBuildRequired     = [System.Environment]::OSVersion.Version -ge "10.0.14972"
         $developerMode = $developerModeEnabled -and $minBuildRequired
@@ -292,5 +358,31 @@ Describe "New-Item with links fails for non elevated user if developer mode not 
     It "Should succeed to create a symbolic link without elevation and in developer mode" -Skip:(!$IsWindows -or !$developerMode -or (Test-IsElevated)) {
         { New-Item -ItemType SymbolicLink -Path $TestFilePath -Target $FullyQualifiedFile -ErrorAction Stop } | Should -Not -Throw
         $TestFilePath | Should -Exist
+    }
+}
+
+Describe "New-Item -Force allows to create an item even if the directories in the path don't exist" -Tags "CI" {
+    BeforeAll {
+        $testFile             = 'testfile.txt'
+        $testFolder           = 'testfolder'
+        $FullyQualifiedFolder = Join-Path -Path $TestDrive -ChildPath $testFolder
+        $FullyQualifiedFile   = Join-Path -Path $TestDrive -ChildPath $testFolder -AdditionalChildPath $testFile
+    }
+
+    BeforeEach {
+        # Explicitly removing folder and the file before tests
+        Remove-Item $FullyQualifiedFolder -ErrorAction SilentlyContinue
+        Remove-Item $FullyQualifiedFile   -ErrorAction SilentlyContinue
+        Test-Path -Path $FullyQualifiedFolder | Should -BeFalse
+        Test-Path -Path $FullyQualifiedFile   | Should -BeFalse
+    }
+
+    It "Should error correctly when -Force is not used and folder in the path doesn't exist" {
+        { New-Item $FullyQualifiedFile -ErrorAction Stop } | Should -Throw -ErrorId 'NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand'
+        $FullyQualifiedFile | Should -Not -Exist
+    }
+    It "Should create new file correctly when -Force is used and folder in the path doesn't exist" {
+        { New-Item $FullyQualifiedFile -Force -ErrorAction Stop } | Should -Not -Throw
+        $FullyQualifiedFile | Should -Exist
     }
 }

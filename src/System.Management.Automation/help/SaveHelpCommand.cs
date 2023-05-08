@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the Save-Help cmdlet.
     /// </summary>
     [Cmdlet(VerbsData.Save, "Help", DefaultParameterSetName = SaveHelpCommand.PathParameterSetName,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210612")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096794")]
     public sealed class SaveHelpCommand : UpdatableHelpCommandBase
     {
         #region Constructor
@@ -188,11 +188,11 @@ namespace Microsoft.PowerShell.Commands
 
                     if (_credential != null)
                     {
-                        if (path.Contains("*"))
+                        if (path.Contains('*'))
                         {
                             // Deal with wildcards
 
-                            int index = path.IndexOf("*", StringComparison.OrdinalIgnoreCase);
+                            int index = path.IndexOf('*');
 
                             if (index == 0)
                             {
@@ -260,10 +260,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 finally
                 {
-                    if (helpInfoDrive != null)
-                    {
-                        helpInfoDrive.Dispose();
-                    }
+                    helpInfoDrive?.Dispose();
                 }
             }
 
@@ -407,10 +404,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         finally
                         {
-                            if (helpContentDrive != null)
-                            {
-                                helpContentDrive.Dispose();
-                            }
+                            helpContentDrive?.Dispose();
                         }
                     }
                 }
@@ -484,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
             return inputData;
         }
 
-        private bool TryConvertFromDeserializedModuleInfo(object inputData, out PSModuleInfo moduleInfo)
+        private static bool TryConvertFromDeserializedModuleInfo(object inputData, out PSModuleInfo moduleInfo)
         {
             moduleInfo = null;
             PSObject pso = inputData as PSObject;

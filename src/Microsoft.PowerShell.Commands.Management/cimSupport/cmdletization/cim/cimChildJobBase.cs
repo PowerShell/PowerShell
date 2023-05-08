@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -27,6 +27,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     {
         private static long s_globalJobNumberCounter;
         private readonly long _myJobNumber = Interlocked.Increment(ref s_globalJobNumberCounter);
+
         private const string CIMJobType = "CimJob";
 
         internal CimJobContext JobContext
@@ -56,7 +57,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             _jobSpecificCustomOptions = new Lazy<CimCustomOptionsDictionary>(this.CalculateJobSpecificCustomOptions);
         }
 
-        private readonly CimSensitiveValueConverter _cimSensitiveValueConverter = new CimSensitiveValueConverter();
+        private readonly CimSensitiveValueConverter _cimSensitiveValueConverter = new();
+
         internal CimSensitiveValueConverter CimSensitiveValueConverter { get { return _cimSensitiveValueConverter; } }
 
         internal abstract IObservable<T> GetCimOperation();
@@ -82,8 +84,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private static bool IsWsManQuotaReached(Exception exception)
         {
-            var cimException = exception as CimException;
-            if (cimException == null)
+            if (!(exception is CimException cimException))
             {
                 return false;
             }
@@ -110,7 +111,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 return false;
             }
 
-            WsManErrorCode wsManErrorCode = (WsManErrorCode)(UInt32)(errorCodeProperty.Value);
+            WsManErrorCode wsManErrorCode = (WsManErrorCode)(uint)(errorCodeProperty.Value);
             switch (wsManErrorCode) // error codes that should result in sleep-and-retry are based on an email from Ryan
             {
                 case WsManErrorCode.ERROR_WSMAN_QUOTA_MAX_SHELLS:
@@ -157,13 +158,16 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     });
         }
 
-        private static readonly Random s_globalRandom = new Random();
+        private static readonly Random s_globalRandom = new();
         private readonly Random _random;
         private int _sleepAndRetryDelayRangeMs = 1000;
         private int _sleepAndRetryExtraDelayMs = 0;
+
         private const int MaxRetryDelayMs = 15 * 1000;
         private const int MinRetryDelayMs = 100;
+
         private Timer _sleepAndRetryTimer;
+
         private void SleepAndRetry_OnWakeup(object state)
         {
             this.ExceptionSafeWrapper(
@@ -311,10 +315,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 this.ExceptionSafeWrapper(delegate
                 {
                     IObservable<T> observable = this.GetCimOperation();
-                    if (observable != null)
-                    {
-                        observable.Subscribe(this);
-                    }
+                    observable?.Subscribe(this);
                 });
             });
         }
@@ -419,11 +420,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                   (_jobContext.WarningActionPreference == ActionPreference.Ignore)
                 ) && (!_jobContext.IsRunningInBackground))
             {
-                operationOptions.DisableChannel((UInt32)MessageChannel.Warning);
+                operationOptions.DisableChannel((uint)MessageChannel.Warning);
             }
             else
             {
-                operationOptions.EnableChannel((UInt32)MessageChannel.Warning);
+                operationOptions.EnableChannel((uint)MessageChannel.Warning);
             }
 
             if ((
@@ -431,11 +432,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                   (_jobContext.VerboseActionPreference == ActionPreference.Ignore)
                 ) && (!_jobContext.IsRunningInBackground))
             {
-                operationOptions.DisableChannel((UInt32)MessageChannel.Verbose);
+                operationOptions.DisableChannel((uint)MessageChannel.Verbose);
             }
             else
             {
-                operationOptions.EnableChannel((UInt32)MessageChannel.Verbose);
+                operationOptions.EnableChannel((uint)MessageChannel.Verbose);
             }
 
             if ((
@@ -443,11 +444,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                   (_jobContext.DebugActionPreference == ActionPreference.Ignore)
                 ) && (!_jobContext.IsRunningInBackground))
             {
-                operationOptions.DisableChannel((UInt32)MessageChannel.Debug);
+                operationOptions.DisableChannel((uint)MessageChannel.Debug);
             }
             else
             {
-                operationOptions.EnableChannel((UInt32)MessageChannel.Debug);
+                operationOptions.EnableChannel((uint)MessageChannel.Debug);
             }
 
             switch (this.JobContext.ShouldProcessOptimization)
@@ -518,16 +519,15 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             CimCustomOptionsDictionary jobSpecificCustomOptions = this.GetJobSpecificCustomOptions();
-            if (jobSpecificCustomOptions != null)
-            {
-                jobSpecificCustomOptions.Apply(operationOptions, CimSensitiveValueConverter);
-            }
+            jobSpecificCustomOptions?.Apply(operationOptions, CimSensitiveValueConverter);
 
             return operationOptions;
         }
 
         private readonly Lazy<CimCustomOptionsDictionary> _jobSpecificCustomOptions;
+
         internal abstract CimCustomOptionsDictionary CalculateJobSpecificCustomOptions();
+
         private CimCustomOptionsDictionary GetJobSpecificCustomOptions()
         {
             return _jobSpecificCustomOptions.Value;
@@ -537,7 +537,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         #region Controlling job state
 
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         /// <summary>
         /// Stops this job.
@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             _cancellationTokenSource.Cancel();
         }
 
-        private readonly object _jobStateLock = new object();
+        private readonly object _jobStateLock = new();
         private bool _jobHadErrors;
         private bool _jobWasStarted;
         private bool _jobWasStopped;
@@ -724,7 +724,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         #region Support for progress reporting
 
-        private readonly ConcurrentDictionary<int, ProgressRecord> _activityIdToLastProgressRecord = new ConcurrentDictionary<int, ProgressRecord>();
+        private readonly ConcurrentDictionary<int, ProgressRecord> _activityIdToLastProgressRecord = new();
 
         internal override void WriteProgress(ProgressRecord progressRecord)
         {
@@ -757,7 +757,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         #region Handling extended semantics callbacks
 
-        private void WriteProgressCallback(string activity, string currentOperation, string statusDescription, UInt32 percentageCompleted, UInt32 secondsRemaining)
+        private void WriteProgressCallback(string activity, string currentOperation, string statusDescription, uint percentageCompleted, uint secondsRemaining)
         {
             if (string.IsNullOrEmpty(activity))
             {
@@ -769,28 +769,28 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 statusDescription = this.StatusMessage;
             }
 
-            Int32 signedSecondsRemaining;
-            if (secondsRemaining == UInt32.MaxValue)
+            int signedSecondsRemaining;
+            if (secondsRemaining == uint.MaxValue)
             {
                 signedSecondsRemaining = -1;
             }
-            else if (secondsRemaining <= Int32.MaxValue)
+            else if (secondsRemaining <= int.MaxValue)
             {
-                signedSecondsRemaining = (Int32)secondsRemaining;
+                signedSecondsRemaining = (int)secondsRemaining;
             }
             else
             {
-                signedSecondsRemaining = Int32.MaxValue;
+                signedSecondsRemaining = int.MaxValue;
             }
 
-            Int32 signedPercentageComplete;
-            if (percentageCompleted == UInt32.MaxValue)
+            int signedPercentageComplete;
+            if (percentageCompleted == uint.MaxValue)
             {
                 signedPercentageComplete = -1;
             }
             else if (percentageCompleted <= 100)
             {
-                signedPercentageComplete = (Int32)percentageCompleted;
+                signedPercentageComplete = (int)percentageCompleted;
             }
             else
             {
@@ -819,7 +819,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Debug = 2,
         }
 
-        private void WriteMessageCallback(UInt32 channel, string message)
+        private void WriteMessageCallback(uint channel, string message)
         {
             this.ExceptionSafeWrapper(
                     delegate
@@ -1003,8 +1003,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal static bool IsShowComputerNameMarkerPresent(CimInstance cimInstance)
         {
             PSObject pso = PSObject.AsPSObject(cimInstance);
-            PSPropertyInfo psShowComputerNameProperty = pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] as PSPropertyInfo;
-            if (psShowComputerNameProperty == null)
+            if (!(pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] is PSPropertyInfo psShowComputerNameProperty))
             {
                 return false;
             }
@@ -1048,10 +1047,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             if (this.JobContext.ShowComputerName)
             {
-                if (pso == null)
-                {
-                    pso = PSObject.AsPSObject(outputObject);
-                }
+                pso ??= PSObject.AsPSObject(outputObject);
 
                 AddShowComputerNameMarker(pso);
                 if (cimInstance == null)
@@ -1080,6 +1076,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
 
                 _cimSensitiveValueConverter.Dispose();
+                _cancellationTokenSource.Dispose();
             }
         }
     }

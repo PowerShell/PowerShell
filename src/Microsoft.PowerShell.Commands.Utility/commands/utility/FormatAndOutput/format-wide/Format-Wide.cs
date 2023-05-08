@@ -1,7 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -11,13 +10,15 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Implementation for the format-table command.
+    /// Implementation for the Format-Wide command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Format, "Wide", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113304")]
+    [Cmdlet(VerbsCommon.Format, "Wide", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096930")]
+    [OutputType(typeof(FormatStartData), typeof(FormatEntryData), typeof(FormatEndData), typeof(GroupStartData), typeof(GroupEndData))]
     public class FormatWideCommand : OuterFormatShapeCommandBase
     {
         /// <summary>
-        /// Constructor to se the inner command.
+        /// Initializes a new instance of the <see cref="FormatWideCommand"/> class
+        /// and sets the inner command.
         /// </summary>
         public FormatWideCommand()
         {
@@ -47,14 +48,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter AutoSize
         {
-            get
-            {
-                if (_autosize.HasValue)
-                    return _autosize.Value;
-                return false;
-            }
-
-            set { _autosize = value; }
+            get => _autosize.GetValueOrDefault();
+            set => _autosize = value;
         }
 
         private bool? _autosize = null;
@@ -67,14 +62,8 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRangeAttribute(1, int.MaxValue)]
         public int Column
         {
-            get
-            {
-                if (_column.HasValue)
-                    return _column.Value;
-                return -1;
-            }
-
-            set { _column = value; }
+            get => _column.GetValueOrDefault(-1);
+            set => _column = value;
         }
 
         private int? _column = null;
@@ -83,12 +72,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal override FormattingCommandLineParameters GetCommandLineParameters()
         {
-            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters();
+            FormattingCommandLineParameters parameters = new();
 
             if (_prop != null)
             {
-                ParameterProcessor processor = new ParameterProcessor(new FormatWideParameterDefinition());
-                TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
+                ParameterProcessor processor = new(new FormatWideParameterDefinition());
+                TerminatingErrorContext invocationContext = new(this);
                 parameters.mshParameterList = processor.ProcessParameters(new object[] { _prop }, invocationContext);
             }
 
@@ -104,22 +93,19 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // we cannot specify -column and -autosize, they are mutually exclusive
-            if (_autosize.HasValue && _column.HasValue)
+            if (AutoSize && _column.HasValue)
             {
-                if (_autosize.Value)
-                {
-                    // the user specified -autosize:true AND a column number
-                    string msg = StringUtil.Format(FormatAndOut_format_xxx.CannotSpecifyAutosizeAndColumnsError);
+                // the user specified -autosize:true AND a column number
+                string msg = StringUtil.Format(FormatAndOut_format_xxx.CannotSpecifyAutosizeAndColumnsError);
 
-                    ErrorRecord errorRecord = new ErrorRecord(
-                        new InvalidDataException(),
-                        "FormatCannotSpecifyAutosizeAndColumns",
-                        ErrorCategory.InvalidArgument,
-                        null);
+                ErrorRecord errorRecord = new(
+                    new InvalidDataException(),
+                    "FormatCannotSpecifyAutosizeAndColumns",
+                    ErrorCategory.InvalidArgument,
+                    null);
 
-                    errorRecord.ErrorDetails = new ErrorDetails(msg);
-                    this.ThrowTerminatingError(errorRecord);
-                }
+                errorRecord.ErrorDetails = new ErrorDetails(msg);
+                this.ThrowTerminatingError(errorRecord);
             }
 
             parameters.groupByParameter = this.ProcessGroupByParameter();
@@ -134,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
             if (_autosize.HasValue)
                 parameters.autosize = _autosize.Value;
 
-            WideSpecificParameters wideSpecific = new WideSpecificParameters();
+            WideSpecificParameters wideSpecific = new();
             parameters.shapeParameters = wideSpecific;
             if (_column.HasValue)
             {
@@ -145,4 +131,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

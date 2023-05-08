@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -94,10 +94,9 @@ namespace System.Management.Automation
         {
             using (FileStream readerStream = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
-                Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
                 Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = readerStream.SafeFileHandle;
 
-                using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))
+                using (StreamReader scriptReader = new StreamReader(readerStream, Encoding.Default))
                 {
                     return scriptReader.ReadToEnd();
                 }
@@ -105,10 +104,15 @@ namespace System.Management.Automation
         }
 
         internal List<string> DiscoveredExports { get; set; }
+
         internal Dictionary<string, string> DiscoveredAliases { get; set; }
+
         internal List<RequiredModuleInfo> DiscoveredModules { get; set; }
+
         internal List<string> DiscoveredCommandFilters { get; set; }
+
         internal bool AddsSelfToPath { get; set; }
+
         internal List<TypeDefinitionAst> DiscoveredClasses { get; set; }
     }
 
@@ -158,12 +162,19 @@ namespace System.Management.Automation
         }
 
         private readonly bool _forCompletion;
+
         internal List<string> DiscoveredExports { get; set; }
+
         internal List<RequiredModuleInfo> DiscoveredModules { get; set; }
+
         internal Dictionary<string, FunctionDefinitionAst> DiscoveredFunctions { get; set; }
+
         internal Dictionary<string, string> DiscoveredAliases { get; set; }
+
         internal List<string> DiscoveredCommandFilters { get; set; }
+
         internal bool AddsSelfToPath { get; set; }
+
         internal List<TypeDefinitionAst> DiscoveredClasses { get; set; }
 
         public override AstVisitAction VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst)
@@ -258,6 +269,8 @@ namespace System.Management.Automation
 
         public override AstVisitAction VisitSwitchStatement(SwitchStatementAst switchStatementAst) { return AstVisitAction.SkipChildren; }
 
+        public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return AstVisitAction.SkipChildren; }
+
         // Visit one the other variations:
         //  - Dotting scripts
         //  - Setting aliases
@@ -332,10 +345,7 @@ namespace System.Management.Automation
 
                 List<string> commandsToPostFilter = new List<string>();
 
-                Action<string> onEachCommand = importedCommandName =>
-                {
-                    commandsToPostFilter.Add(importedCommandName);
-                };
+                Action<string> onEachCommand = importedCommandName => commandsToPostFilter.Add(importedCommandName);
 
                 // Process any exports from the module that we determine from
                 // the -Function, -Cmdlet, or -Alias parameters
@@ -424,7 +434,10 @@ namespace System.Management.Automation
 
         private void ProcessCmdletArguments(object value, Action<string> onEachArgument)
         {
-            if (value == null) return;
+            if (value == null)
+            {
+                return;
+            }
 
             var commandName = value as string;
             if (commandName != null)
@@ -451,7 +464,7 @@ namespace System.Management.Automation
         //
         // It also only populates the bound parameters for a limited set of parameters needed
         // for module analysis.
-        private Hashtable DoPsuedoParameterBinding(CommandAst commandAst, string commandName)
+        private static Hashtable DoPsuedoParameterBinding(CommandAst commandAst, string commandName)
         {
             var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
@@ -544,9 +557,9 @@ namespace System.Management.Automation
             return result;
         }
 
-        private static Dictionary<string, ParameterBindingInfo> s_parameterBindingInfoTable;
+        private static readonly Dictionary<string, ParameterBindingInfo> s_parameterBindingInfoTable;
 
-        private class ParameterBindingInfo
+        private sealed class ParameterBindingInfo
         {
             internal ParameterInfo[] parameterInfo;
         }
@@ -564,6 +577,7 @@ namespace System.Management.Automation
     internal class RequiredModuleInfo
     {
         internal string Name { get; set; }
+
         internal List<string> CommandsToPostFilter { get; set; }
     }
 }

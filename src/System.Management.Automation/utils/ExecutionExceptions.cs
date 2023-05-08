@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -7,7 +7,6 @@
 using System.Runtime.Serialization;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
-using System.Security.Permissions;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -31,10 +30,7 @@ namespace System.Management.Automation
         internal CmdletInvocationException(ErrorRecord errorRecord)
             : base(RetrieveMessage(errorRecord), RetrieveException(errorRecord))
         {
-            if (errorRecord == null)
-            {
-                throw new ArgumentNullException("errorRecord");
-            }
+            ArgumentNullException.ThrowIfNull(errorRecord);
 
             _errorRecord = errorRecord;
             if (errorRecord.Exception != null)
@@ -56,10 +52,7 @@ namespace System.Management.Automation
                                            InvocationInfo invocationInfo)
             : base(RetrieveMessage(innerException), innerException)
         {
-            if (innerException == null)
-            {
-                throw new ArgumentNullException("innerException");
-            }
+            ArgumentNullException.ThrowIfNull(innerException);
             // invocationInfo may be null
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
@@ -137,12 +130,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -163,14 +155,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "CmdletInvocationException",
-                        ErrorCategory.NotSpecified,
-                        null);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "CmdletInvocationException",
+                    ErrorCategory.NotSpecified,
+                    null);
 
                 return _errorRecord;
             }
@@ -206,10 +195,7 @@ namespace System.Management.Automation
                     InvocationInfo myInvocation)
             : base(GetInnerException(innerException), myInvocation)
         {
-            if (innerException == null)
-            {
-                throw new ArgumentNullException("innerException");
-            }
+            ArgumentNullException.ThrowIfNull(innerException);
 
             _providerInvocationException = innerException;
         }
@@ -276,7 +262,7 @@ namespace System.Management.Automation
         }
 
         [NonSerialized]
-        private ProviderInvocationException _providerInvocationException;
+        private readonly ProviderInvocationException _providerInvocationException;
 
         /// <summary>
         /// This is the ProviderInfo associated with the provider which
@@ -287,9 +273,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (_providerInvocationException == null)
-                    ? null
-                    : _providerInvocationException.ProviderInfo;
+                return _providerInvocationException?.ProviderInfo;
             }
         }
 
@@ -298,7 +282,7 @@ namespace System.Management.Automation
         #region Internal
         private static Exception GetInnerException(Exception e)
         {
-            return (e == null) ? null : e.InnerException;
+            return e?.InnerException;
         }
         #endregion Internal
     }
@@ -314,13 +298,13 @@ namespace System.Management.Automation
     /// user hitting CTRL-C, or by a call to
     /// <see cref="System.Management.Automation.Runspaces.Pipeline.Stop"/>.
     ///
-    /// When a cmdlet or provider sees this exception thrown from a Monad API such as
+    /// When a cmdlet or provider sees this exception thrown from a PowerShell API such as
     ///     WriteObject(object)
     /// this means that the command was already stopped.  The cmdlet or provider
     /// should clean up and return.
     /// Catching this exception is optional; if the cmdlet or providers chooses not to
     /// handle PipelineStoppedException and instead allow it to propagate to the
-    /// Monad Engine's call to ProcessRecord, the Monad Engine will handle it properly.
+    /// PowerShell Engine's call to ProcessRecord, the PowerShell Engine will handle it properly.
     /// </remarks>
     [Serializable]
     public class PipelineStoppedException : RuntimeException
@@ -471,10 +455,7 @@ namespace System.Management.Automation
         internal ActionPreferenceStopException(ErrorRecord error)
             : this(RetrieveMessage(error))
         {
-            if (error == null)
-            {
-                throw new ArgumentNullException("error");
-            }
+            ArgumentNullException.ThrowIfNull(error);
 
             _errorRecord = error;
         }
@@ -499,10 +480,7 @@ namespace System.Management.Automation
                                                string message)
             : this(invocationInfo, message)
         {
-            if (errorRecord == null)
-            {
-                throw new ArgumentNullException("errorRecord");
-            }
+            ArgumentNullException.ThrowIfNull(errorRecord);
 
             _errorRecord = errorRecord;
         }
@@ -537,7 +515,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
@@ -624,13 +601,13 @@ namespace System.Management.Automation
     #region ParentContainsErrorRecordException
     /// <summary>
     /// ParentContainsErrorRecordException is the exception contained by the ErrorRecord
-    /// which is associated with a Monad engine custom exception through
+    /// which is associated with a PowerShell engine custom exception through
     /// the IContainsErrorRecord interface.
     /// </summary>
     /// <remarks>
     /// We use this exception class
     /// so that there is not a recursive "containment" relationship
-    /// between the Monad engine exception and its ErrorRecord.
+    /// between the PowerShell engine exception and its ErrorRecord.
     /// </remarks>
     [Serializable]
     public class ParentContainsErrorRecordException : SystemException
@@ -712,7 +689,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _message ?? (_message = (_wrapperException != null) ? _wrapperException.Message : string.Empty);
+                return _message ??= (_wrapperException != null) ? _wrapperException.Message : string.Empty;
             }
         }
 
@@ -725,7 +702,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -816,8 +793,8 @@ namespace System.Management.Automation
     /// exceeds the configured maximum.
     /// </summary>
     /// <remarks>
-    /// When one Monad command or script calls another, this creates an additional
-    /// scope.  Some script expressions also create a scope.  Monad imposes a maximum
+    /// When one PowerShell command or script calls another, this creates an additional
+    /// scope.  Some script expressions also create a scope.  PowerShell imposes a maximum
     /// call depth to prevent stack overflows.  The maximum call depth is configurable
     /// but generally high enough that scripts which are not deeply recursive
     /// should not have a problem.
@@ -878,9 +855,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Context.</param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override
-        void GetObjectData(SerializationInfo info, StreamingContext context)
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
         }
@@ -898,14 +873,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "CallDepthOverflow",
-                        ErrorCategory.InvalidOperation,
-                        CallDepth);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "CallDepthOverflow",
+                    ErrorCategory.InvalidOperation,
+                    CallDepth);
 
                 return _errorRecord;
             }
@@ -987,9 +959,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Context.</param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override
-        void GetObjectData(SerializationInfo info, StreamingContext context)
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
         }
@@ -1008,14 +978,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "CallDepthOverflow",
-                        ErrorCategory.InvalidOperation,
-                        CallDepth);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "CallDepthOverflow",
+                    ErrorCategory.InvalidOperation,
+                    CallDepth);
 
                 return _errorRecord;
             }

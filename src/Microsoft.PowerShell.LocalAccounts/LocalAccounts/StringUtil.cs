@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Globalization;
@@ -12,7 +12,7 @@ namespace System.Management.Automation.SecurityAccountsManager
     internal class StringUtil
     {
         /// <summary>
-        /// Private constructor to precent auto-generation of a default constructor with greater accessability.
+        /// Private constructor to present auto-generation of a default constructor with greater accessibility.
         /// </summary>
         private StringUtil()
         {

@@ -1,0 +1,27 @@
+steps:
+- template: release-SetReleaseTagAndContainerName.yml
+
+- pwsh: |
+    $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
+    $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+  displayName: Set Package version
+
+- pwsh: |
+   git clone https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
+  displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
+
+- pwsh: |
+    $metadata = Get-Content -Path "$(Build.SourcesDirectory)/tools/metadata.json" -Raw | ConvertFrom-Json
+    Write-Verbose -Verbose "$(ReleaseTag) $(RepoClientCliClientID) $(RepoClientCliSecret) $(AzureVersion) $($metadata.LTSRelease.Latest)"
+    $params = @{
+        ReleaseTag = "$(ReleaseTag)"
+        AadClientId = "$(RepoClientCliClientID)"
+        AadClientSecret = "$(RepoClientCliSecret)"
+        BlobFolderName = "$(AzureVersion)"
+        LTS = $metadata.LTSRelease.Latest
+        ForProduction = $true
+    }
+    & '$(Pipeline.Workspace)/tools/packages.microsoft.com/releaseLinuxPackages.ps1' -MappingFilePath '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'  @params
+  displayName: Run release script

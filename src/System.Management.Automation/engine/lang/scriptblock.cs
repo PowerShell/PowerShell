@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -361,7 +361,6 @@ namespace System.Management.Automation
         public SteppablePipeline GetSteppablePipeline()
             => GetSteppablePipelineImpl(commandOrigin: CommandOrigin.Internal, args: null);
 
-
         /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>
@@ -464,7 +463,7 @@ namespace System.Management.Automation
             if (variablesToDefine != null)
             {
                 // Extract the special variables "this", "input" and "_"
-                PSVariable located = variablesToDefine.FirstOrDefault(
+                PSVariable located = variablesToDefine.Find(
                     v => string.Equals(v.Name, "this", StringComparison.OrdinalIgnoreCase));
                 if (located != null)
                 {
@@ -472,7 +471,7 @@ namespace System.Management.Automation
                     variablesToDefine.Remove(located);
                 }
 
-                located = variablesToDefine.FirstOrDefault(
+                located = variablesToDefine.Find(
                     v => string.Equals(v.Name, "_", StringComparison.Ordinal));
                 if (located != null)
                 {
@@ -480,7 +479,7 @@ namespace System.Management.Automation
                     variablesToDefine.Remove(located);
                 }
 
-                located = variablesToDefine.FirstOrDefault(
+                located = variablesToDefine.Find(
                     v => string.Equals(v.Name, "input", StringComparison.OrdinalIgnoreCase));
                 if (located != null)
                 {
@@ -546,7 +545,7 @@ namespace System.Management.Automation
             // is a pipeline that emits nothing then result.Count will
             // be zero so we catch that and "convert" it to null. Note that
             // the return statement is still required in the method, it
-            // just recieves nothing from it's argument.
+            // just receives nothing from it's argument.
             if (result.Count == 0)
             {
                 return default(T);
@@ -597,7 +596,7 @@ namespace System.Management.Automation
         /// Get the PSModuleInfo object for the module that defined this
         /// scriptblock.
         /// </summary>
-        public PSModuleInfo Module { get => SessionStateInternal != null ? SessionStateInternal.Module : null; }
+        public PSModuleInfo Module { get => SessionStateInternal?.Module; }
 
         /// <summary>
         /// Return the PSToken object for this function definition...
@@ -647,16 +646,17 @@ namespace System.Management.Automation
         /// <remarks>
         /// This does normal array reduction in the case of a one-element array.
         /// </remarks>
-        internal static object GetRawResult(List<object> result)
+        internal static object GetRawResult(List<object> result, bool wrapToPSObject)
         {
             switch (result.Count)
             {
                 case 0:
                     return AutomationNull.Value;
                 case 1:
-                    return LanguagePrimitives.AsPSObjectOrNull(result[0]);
+                    return wrapToPSObject ? LanguagePrimitives.AsPSObjectOrNull(result[0]) : result[0];
                 default:
-                    return LanguagePrimitives.AsPSObjectOrNull(result.ToArray());
+                    object resultArray = result.ToArray();
+                    return wrapToPSObject ? LanguagePrimitives.AsPSObjectOrNull(resultArray) : resultArray;
             }
         }
 
@@ -709,7 +709,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                return SessionStateInternal != null ? SessionStateInternal.PublicSessionState : null;
+                return SessionStateInternal?.PublicSessionState;
             }
 
             set
@@ -778,7 +778,7 @@ namespace System.Management.Automation
                 CachedReflectionInfo.ScriptBlock_InvokeAsDelegateHelper,
                 dollarUnderExpr,
                 dollarThisExpr,
-                Expression.NewArrayInit(typeof(object), parameterExprs.Select(p => p.Cast(typeof(object)))));
+                Expression.NewArrayInit(typeof(object), parameterExprs.Select(static p => p.Cast(typeof(object)))));
             if (returnsSomething)
             {
                 call = DynamicExpression.Dynamic(
@@ -807,7 +807,7 @@ namespace System.Management.Automation
                 outputPipe: outputPipe,
                 invocationInfo: null,
                 args: args);
-            return GetRawResult(rawResult);
+            return GetRawResult(rawResult, wrapToPSObject: false);
         }
 
         #endregion
@@ -934,7 +934,7 @@ namespace System.Management.Automation
                 outputPipe: outputPipe,
                 invocationInfo: null,
                 args: args);
-            return GetRawResult(result);
+            return GetRawResult(result, wrapToPSObject: true);
         }
 
         internal void InvokeWithPipe(
@@ -975,7 +975,8 @@ namespace System.Management.Automation
                 try
                 {
                     var runspace = (RunspaceBase)context.CurrentRunspace;
-                    shouldGenerateEvent = !runspace.RunActionIfNoRunningPipelinesWithThreadCheck(() =>
+                    if (runspace.CanRunActionInCurrentPipeline())
+                    {
                         InvokeWithPipeImpl(
                             useLocalScope,
                             functionsToDefine,
@@ -986,7 +987,12 @@ namespace System.Management.Automation
                             scriptThis,
                             outputPipe,
                             invocationInfo,
-                            args));
+                            args);
+                    }
+                    else
+                    {
+                        shouldGenerateEvent = true;
+                    }
                 }
                 finally
                 {
@@ -1029,10 +1035,7 @@ namespace System.Management.Automation
                     processInCurrentThread: true,
                     waitForCompletionInCurrentThread: true);
 
-                if (scriptBlockInvocationEventArgs.Exception != null)
-                {
-                    scriptBlockInvocationEventArgs.Exception.Throw();
-                }
+                scriptBlockInvocationEventArgs.Exception?.Throw();
             }
         }
 
@@ -1093,46 +1096,37 @@ namespace System.Management.Automation
     {
         internal SteppablePipeline(ExecutionContext context, PipelineProcessor pipeline)
         {
-            if (pipeline == null)
-            {
-                throw new ArgumentNullException(nameof(pipeline));
-            }
+            ArgumentNullException.ThrowIfNull(pipeline);
 
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
 
             _pipeline = pipeline;
             _context = context;
         }
 
-        private PipelineProcessor _pipeline;
-        private ExecutionContext _context;
+        private readonly PipelineProcessor _pipeline;
+        private readonly ExecutionContext _context;
         private bool _expectInput;
 
         /// <summary>
         /// Begin execution of a steppable pipeline. This overload doesn't reroute output and error pipes.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c> otherwise.</param>
+        /// <param name="expectInput"><see langword="true"/> if you plan to write input into this pipe; <see langword="false"/> otherwise.</param>
         public void Begin(bool expectInput) => Begin(expectInput, commandRuntime: (ICommandRuntime)null);
 
         /// <summary>
         /// Begin execution of a steppable pipeline, using the command running currently in the specified context to figure
         /// out how to route the output and errors.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c> otherwise.</param>
+        /// <param name="expectInput"><see langword="true"/> if you plan to write input into this pipe; <see langword="false"/> otherwise.</param>
         /// <param name="contextToRedirectTo">Context used to figure out how to route the output and errors.</param>
         public void Begin(bool expectInput, EngineIntrinsics contextToRedirectTo)
         {
-            if (contextToRedirectTo == null)
-            {
-                throw new ArgumentNullException(nameof(contextToRedirectTo));
-            }
+            ArgumentNullException.ThrowIfNull(contextToRedirectTo);
 
             ExecutionContext executionContext = contextToRedirectTo.SessionState.Internal.ExecutionContext;
             CommandProcessorBase commandProcessor = executionContext.CurrentCommandProcessor;
-            ICommandRuntime crt = commandProcessor == null ? null : commandProcessor.CommandRuntime;
+            ICommandRuntime crt = commandProcessor?.CommandRuntime;
             Begin(expectInput, crt);
         }
 
@@ -1144,7 +1138,7 @@ namespace System.Management.Automation
         /// <param name="command">The command you're calling this from (i.e. instance of PSCmdlet or value of $PSCmdlet variable).</param>
         public void Begin(InternalCommand command)
         {
-            if (command == null || command.MyInvocation == null)
+            if (command is null || command.MyInvocation is null)
             {
                 throw new ArgumentNullException(nameof(command));
             }
@@ -1274,7 +1268,42 @@ namespace System.Management.Automation
             {
                 // then pop this pipeline and dispose it...
                 _context.PopPipelineProcessor(true);
-                _pipeline.Dispose();
+                Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Clean resources for script commands of this steppable pipeline.
+        /// </summary>
+        /// <remarks>
+        /// The way we handle 'Clean' blocks in a steppable pipeline makes sure that:
+        ///  1. The 'Clean' blocks get to run if any exception is thrown from 'Begin/Process/End'.
+        ///  2. The 'Clean' blocks get to run if 'End' finished successfully.
+        /// However, this is not enough for a steppable pipeline, because the function, where the steppable
+        /// pipeline gets used, may fail (think about a proxy function). And that may lead to the situation
+        /// where "no exception was thrown from the steppable pipeline" but "the steppable pipeline didn't
+        /// run to the end". In that case, 'Clean' won't run unless it's triggered explicitly on the steppable
+        /// pipeline. This method allows a user to do that from the 'Clean' block of the proxy function.
+        /// </remarks>
+        public void Clean()
+        {
+            if (_pipeline.Commands is null)
+            {
+                // The pipeline commands have been disposed. In this case, 'Clean'
+                // should have already been called on the pipeline processor.
+                return;
+            }
+
+            try
+            {
+                _context.PushPipelineProcessor(_pipeline);
+                _pipeline.DoCleanup();
+            }
+            finally
+            {
+                // then pop this pipeline and dispose it...
+                _context.PopPipelineProcessor(true);
+                Dispose();
             }
         }
 
@@ -1288,31 +1317,13 @@ namespace System.Management.Automation
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
             if (_disposed)
             {
                 return;
             }
 
-            if (disposing)
-            {
-                _pipeline.Dispose();
-            }
-
+            _pipeline.Dispose();
             _disposed = true;
-        }
-
-        /// <summary>
-        /// Finalizer for class SteppablePipeline.
-        /// </summary>
-        ~SteppablePipeline()
-        {
-            Dispose(false);
         }
 
         #endregion IDispose
@@ -1349,7 +1360,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public ScriptBlockToPowerShellNotSupportedException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -1441,13 +1452,21 @@ namespace System.Management.Automation
         }
 
         internal ScriptBlock ScriptBlock { get; set; }
+
         internal bool UseLocalScope { get; set; }
+
         internal ScriptBlock.ErrorHandlingBehavior ErrorHandlingBehavior { get; set; }
+
         internal object DollarUnder { get; set; }
+
         internal object Input { get; set; }
+
         internal object ScriptThis { get; set; }
+
         internal Pipe OutputPipe { get; set; }
+
         internal InvocationInfo InvocationInfo { get; set; }
+
         internal object[] Args { get; set; }
 
         /// <summary>

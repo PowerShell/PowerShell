@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Tests conversion of deserialized types to original type using object properties." -Tags "CI" {
     BeforeAll {
@@ -88,13 +88,13 @@ Describe "Tests conversion of deserialized types to original type using object p
 
     Context 'Type conversion and parameter binding of deserialized Type case 1: type definition contains public fields' {
         BeforeAll {
-            $t1 = new-object test1 -Property @{name="TestName1";port=80;scriptText="1..5"}
+            $t1 = New-Object test1 -Property @{name="TestName1";port=80;scriptText="1..5"}
             $s = [System.Management.Automation.PSSerializer]::Serialize($t1)
             $dst1 = [System.Management.Automation.PSSerializer]::Deserialize($s)
         }
 
         It 'Type casts should succeed.' {
-            { $tc1 = [test1]$dst1 }| Should -Not -Throw
+            { $tc1 = [test1]$dst1 } | Should -Not -Throw
         }
 
         It 'Parameter bindings should succeed.' {
@@ -114,7 +114,7 @@ Describe "Tests conversion of deserialized types to original type using object p
 
     Context 'Type conversion and parameter binding of deserialized Type case 2: type definition contains public properties' {
         BeforeAll {
-            $t2 = new-object test2 -Property @{Name="TestName2";Port=80;ScriptText="1..5"}
+            $t2 = New-Object test2 -Property @{Name="TestName2";Port=80;ScriptText="1..5"}
             $s = [System.Management.Automation.PSSerializer]::Serialize($t2)
             $dst2 = [System.Management.Automation.PSSerializer]::Deserialize($s)
         }
@@ -138,7 +138,7 @@ Describe "Tests conversion of deserialized types to original type using object p
 
     Context 'Type conversion and parameter binding of deserialized Type case 1: type definition contains 2 public properties and 1 read only property' {
         BeforeAll {
-            $t3 = new-object test3 -Property @{Name="TestName3";Port=80}
+            $t3 = New-Object test3 -Property @{Name="TestName3";Port=80}
             $s = [System.Management.Automation.PSSerializer]::Serialize($t3)
             $dst3 = [System.Management.Automation.PSSerializer]::Deserialize($s)
         }
@@ -165,7 +165,7 @@ Describe "Tests conversion of deserialized types to original type using object p
 
     Context 'Type conversion and parameter binding of deserialized Type case 1: type definition contains 2 public properties' {
         BeforeAll {
-            $t4 = new-object test4 -Property @{Name="TestName4";Port=80}
+            $t4 = New-Object test4 -Property @{Name="TestName4";Port=80}
             $s = [System.Management.Automation.PSSerializer]::Serialize($t4)
             $dst4 = [System.Management.Automation.PSSerializer]::Deserialize($s)
         }

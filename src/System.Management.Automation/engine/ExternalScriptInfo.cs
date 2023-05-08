@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Provides information for MSH scripts that are directly executable by MSH
+    /// Provides information for scripts that are directly executable by PowerShell
     /// but are not built into the runspace configuration.
     /// </summary>
     public class ExternalScriptInfo : CommandInfo, IScriptCommandInfo
@@ -44,7 +44,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             Diagnostics.Assert(IO.Path.IsPathRooted(path), "Caller makes sure that 'path' is already resolved.");
@@ -71,7 +71,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             Diagnostics.Assert(IO.Path.IsPathRooted(path), "Caller makes sure that 'path' is already resolved.");
@@ -188,12 +188,18 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Context == null) return SessionStateEntryVisibility.Public;
+                if (Context == null)
+                {
+                    return SessionStateEntryVisibility.Public;
+                }
 
                 return Context.EngineSessionState.CheckScriptVisibility(_path);
             }
 
-            set { throw PSTraceSource.NewNotImplementedException(); }
+            set
+            {
+                throw PSTraceSource.NewNotImplementedException();
+            }
         }
 
         /// <summary>
@@ -358,9 +364,8 @@ namespace System.Management.Automation
         {
             get
             {
-                return _commandMetadata ??
-                       (_commandMetadata =
-                        new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
+                return _commandMetadata ??=
+                    new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS());
             }
         }
 
@@ -382,7 +387,7 @@ namespace System.Management.Automation
 
                 // If we got here, there was some sort of parsing exception.  We'll just
                 // ignore it and assume the script does not implement dynamic parameters.
-                // Futhermore, we'll clear out the fields so that the next attempt to
+                // Furthermore, we'll clear out the fields so that the next attempt to
                 // access ScriptBlock will result in an exception that doesn't get ignored.
                 _scriptBlock = null;
                 _scriptContents = null;
@@ -403,7 +408,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredApplicationId;
+                return data?.RequiredApplicationId;
             }
         }
 
@@ -417,7 +422,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredPSVersion;
+                return data?.RequiredPSVersion;
             }
         }
 
@@ -426,7 +431,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredPSEditions;
+                return data?.RequiredPSEditions;
             }
         }
 
@@ -435,7 +440,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredModules;
+                return data?.RequiredModules;
             }
         }
 
@@ -444,22 +449,13 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? false : data.IsElevationRequired;
+                return data != null && data.IsElevationRequired;
             }
         }
 
         internal uint PSVersionLineNumber
         {
             get { return 0; }
-        }
-
-        internal IEnumerable<PSSnapInSpecification> RequiresPSSnapIns
-        {
-            get
-            {
-                var data = GetRequiresData();
-                return data == null ? null : data.RequiresPSSnapIns;
-            }
         }
 
         /// <summary>
@@ -513,33 +509,44 @@ namespace System.Management.Automation
                 {
                     using (FileStream readerStream = new FileStream(_path, FileMode.Open, FileAccess.Read))
                     {
-                        Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
-                        Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = readerStream.SafeFileHandle;
-
-                        using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))
+                        using (StreamReader scriptReader = new StreamReader(readerStream, Encoding.Default))
                         {
                             _scriptContents = scriptReader.ReadToEnd();
                             _originalEncoding = scriptReader.CurrentEncoding;
 
-                            // Check if this came from a trusted path. If so, set its language mode to FullLanguage.
-                            if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.None)
+                            // Check this file against any system wide enforcement policies.
+                            SystemScriptFileEnforcement filePolicyEnforcement = SystemPolicy.GetFilePolicyEnforcement(_path, readerStream);
+                            switch (filePolicyEnforcement)
                             {
-                                SystemEnforcementMode scriptSpecificPolicy = SystemPolicy.GetLockdownPolicy(_path, safeFileHandle);
-                                if (scriptSpecificPolicy != SystemEnforcementMode.Enforce)
-                                {
-                                    this.DefiningLanguageMode = PSLanguageMode.FullLanguage;
-                                }
-                                else
-                                {
-                                    this.DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
-                                }
-                            }
-                            else
-                            {
-                                if (this.Context != null)
-                                {
-                                    this.DefiningLanguageMode = this.Context.LanguageMode;
-                                }
+                                case SystemScriptFileEnforcement.None:
+                                    if (Context != null)
+                                    {
+                                        DefiningLanguageMode = Context.LanguageMode;
+                                    }
+
+                                    break;
+
+                                case SystemScriptFileEnforcement.Allow:
+                                    DefiningLanguageMode = PSLanguageMode.FullLanguage;
+                                    break;
+
+                                case SystemScriptFileEnforcement.AllowConstrained:
+                                    DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                                    break;
+
+                                case SystemScriptFileEnforcement.Block:
+                                    throw new PSSecurityException(
+                                        string.Format(
+                                            Globalization.CultureInfo.CurrentUICulture,
+                                            SecuritySupportStrings.ScriptFileBlockedBySystemPolicy,
+                                            _path));
+
+                                default:
+                                    throw new PSSecurityException(
+                                        string.Format(
+                                            Globalization.CultureInfo.CurrentUICulture,
+                                            SecuritySupportStrings.UnknownSystemScriptFileEnforcement,
+                                            filePolicyEnforcement));
                             }
                         }
                     }
@@ -608,4 +615,3 @@ namespace System.Management.Automation
         public Version Version { get; internal set; }
     }
 }
-

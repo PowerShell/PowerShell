@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -25,41 +25,25 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterDefinitionEntry
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterDefinitionEntry"/> class.
         /// </summary>
         /// <param name="parameterSetName"></param>
         /// <param name="mandatory"></param>
         internal ParameterDefinitionEntry(string parameterSetName, bool mandatory)
         {
-            this.mandatory = mandatory;
-            this.parameterSetName = parameterSetName;
+            this.IsMandatory = mandatory;
+            this.ParameterSetName = parameterSetName;
         }
 
         /// <summary>
         /// Property ParameterSetName.
         /// </summary>
-        internal string ParameterSetName
-        {
-            get
-            {
-                return this.parameterSetName;
-            }
-        }
-
-        private readonly string parameterSetName = null;
+        internal string ParameterSetName { get; }
 
         /// <summary>
         /// Whether the parameter is mandatory to the set.
         /// </summary>
-        internal bool IsMandatory
-        {
-            get
-            {
-                return this.mandatory;
-            }
-        }
-
-        private readonly bool mandatory = false;
+        internal bool IsMandatory { get; }
     }
 
     /// <summary>
@@ -70,36 +54,36 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterSetEntry
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
-        internal ParameterSetEntry(UInt32 mandatoryParameterCount)
+        internal ParameterSetEntry(uint mandatoryParameterCount)
         {
-            this.mandatoryParameterCount = mandatoryParameterCount;
-            this.isDefaultParameterSet = false;
+            this.MandatoryParameterCount = mandatoryParameterCount;
+            this.IsDefaultParameterSet = false;
             reset();
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// </summary>
         /// <param name="toClone"></param>
         internal ParameterSetEntry(ParameterSetEntry toClone)
         {
-            this.mandatoryParameterCount = toClone.MandatoryParameterCount;
-            this.isDefaultParameterSet = toClone.IsDefaultParameterSet;
+            this.MandatoryParameterCount = toClone.MandatoryParameterCount;
+            this.IsDefaultParameterSet = toClone.IsDefaultParameterSet;
             reset();
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
         /// <param name="mandatory"></param>
-        internal ParameterSetEntry(UInt32 mandatoryParameterCount, bool isDefault)
+        internal ParameterSetEntry(uint mandatoryParameterCount, bool isDefault)
         {
-            this.mandatoryParameterCount = mandatoryParameterCount;
-            this.isDefaultParameterSet = isDefault;
+            this.MandatoryParameterCount = mandatoryParameterCount;
+            this.IsDefaultParameterSet = isDefault;
             reset();
         }
 
@@ -108,107 +92,39 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal void reset()
         {
-            this.setMandatoryParameterCount = this.setMandatoryParameterCountAtBeginProcess;
-            this.isValueSet = this.isValueSetAtBeginProcess;
+            this.SetMandatoryParameterCount = this.SetMandatoryParameterCountAtBeginProcess;
+            this.IsValueSet = this.IsValueSetAtBeginProcess;
         }
 
         /// <summary>
         /// Property <c>DefaultParameterSet</c>
         /// </summary>
-        internal bool IsDefaultParameterSet
-        {
-            get
-            {
-                return this.isDefaultParameterSet;
-            }
-        }
-
-        private readonly bool isDefaultParameterSet = false;
+        internal bool IsDefaultParameterSet { get; }
 
         /// <summary>
         /// Property <c>MandatoryParameterCount</c>
         /// </summary>
-        internal UInt32 MandatoryParameterCount
-        {
-            get
-            {
-                return this.mandatoryParameterCount;
-            }
-        }
-
-        private readonly UInt32 mandatoryParameterCount = 0;
+        internal uint MandatoryParameterCount { get; } = 0;
 
         /// <summary>
         /// Property <c>IsValueSet</c>
         /// </summary>
-        internal bool IsValueSet
-        {
-            get
-            {
-                return this.isValueSet;
-            }
-
-            set
-            {
-                this.isValueSet = value;
-            }
-        }
-
-        private bool isValueSet = false;
+        internal bool IsValueSet { get; set; }
 
         /// <summary>
         /// Property <c>IsValueSetAtBeginProcess</c>
         /// </summary>
-        internal bool IsValueSetAtBeginProcess
-        {
-            get
-            {
-                return this.isValueSetAtBeginProcess;
-            }
-
-            set
-            {
-                this.isValueSetAtBeginProcess = value;
-            }
-        }
-
-        private bool isValueSetAtBeginProcess = false;
+        internal bool IsValueSetAtBeginProcess { get; set; }
 
         /// <summary>
         /// Property <c>SetMandatoryParameterCount</c>
         /// </summary>
-        internal UInt32 SetMandatoryParameterCount
-        {
-            get
-            {
-                return this.setMandatoryParameterCount;
-            }
-
-            set
-            {
-                this.setMandatoryParameterCount = value;
-            }
-        }
-
-        private UInt32 setMandatoryParameterCount = 0;
+        internal uint SetMandatoryParameterCount { get; set; } = 0;
 
         /// <summary>
         /// Property <c>SetMandatoryParameterCountAtBeginProcess</c>
         /// </summary>
-        internal UInt32 SetMandatoryParameterCountAtBeginProcess
-        {
-            get
-            {
-                return this.setMandatoryParameterCountAtBeginProcess;
-            }
-
-            set
-            {
-                this.setMandatoryParameterCountAtBeginProcess = value;
-            }
-        }
-
-        private UInt32 setMandatoryParameterCountAtBeginProcess = 0;
+        internal uint SetMandatoryParameterCountAtBeginProcess { get; set; } = 0;
     }
 
     /// <summary>
@@ -217,7 +133,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterBinder
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterBinder"/> class.
         /// </summary>
         /// <param name="parameters"></param>
         /// <param name="sets"></param>
@@ -256,12 +172,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// throw exception
         /// </para>
         /// </summary>
-        private List<string> parametersetNamesList = new List<string>();
+        private List<string> parametersetNamesList = new();
 
         /// <summary>
         /// Parameter names list.
         /// </summary>
-        private List<string> parameterNamesList = new List<string>();
+        private readonly List<string> parameterNamesList = new();
 
         /// <summary>
         /// <para>
@@ -270,12 +186,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// throw exception
         /// </para>
         /// </summary>
-        private List<string> parametersetNamesListAtBeginProcess = new List<string>();
+        private List<string> parametersetNamesListAtBeginProcess = new();
 
         /// <summary>
         /// Parameter names list before begin process.
         /// </summary>
-        private List<string> parameterNamesListAtBeginProcess = new List<string>();
+        private readonly List<string> parameterNamesListAtBeginProcess = new();
 
         /// <summary>
         /// <para>
@@ -331,7 +247,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (this.parametersetNamesList.Count == 0)
             {
-                List<string> nameset = new List<string>();
+                List<string> nameset = new();
                 foreach (ParameterDefinitionEntry parameterDefinitionEntry in this.parameterDefinitionEntries[parameterName])
                 {
                     DebugHelper.WriteLogEx("parameterset name = '{0}'; mandatory = '{1}'", 1, parameterDefinitionEntry.ParameterSetName, parameterDefinitionEntry.IsMandatory);
@@ -370,7 +286,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
             else
             {
-                List<string> nameset = new List<string>();
+                List<string> nameset = new();
                 foreach (ParameterDefinitionEntry entry in this.parameterDefinitionEntries[parameterName])
                 {
                     if (this.parametersetNamesList.Contains(entry.ParameterSetName))
@@ -395,7 +311,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 if (nameset.Count == 0)
                 {
-                    throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
+                    throw new PSArgumentException(CimCmdletStrings.UnableToResolveParameterSetName);
                 }
                 else
                 {
@@ -418,7 +334,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             string boundParameterSetName = null;
             string defaultParameterSetName = null;
-            List<string> noMandatoryParameterSet = new List<string>();
+            List<string> noMandatoryParameterSet = new();
 
             // Looking for parameter set which have mandatory parameters
             foreach (string parameterSetName in this.parameterSetEntries.Keys)
@@ -452,7 +368,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     if (boundParameterSetName != null)
                     {
-                        throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
+                        throw new PSArgumentException(CimCmdletStrings.UnableToResolveParameterSetName);
                     }
 
                     boundParameterSetName = parameterSetName;
@@ -465,7 +381,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 // throw if there are > 1 parameter set
                 if (noMandatoryParameterSet.Count > 1)
                 {
-                    throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
+                    throw new PSArgumentException(CimCmdletStrings.UnableToResolveParameterSetName);
                 }
                 else if (noMandatoryParameterSet.Count == 1)
                 {
@@ -474,15 +390,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             // Looking for default parameter set
-            if (boundParameterSetName == null)
-            {
-                boundParameterSetName = defaultParameterSetName;
-            }
+            boundParameterSetName ??= defaultParameterSetName;
 
             // throw if still can not find the parameter set name
             if (boundParameterSetName == null)
             {
-                throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
+                throw new PSArgumentException(CimCmdletStrings.UnableToResolveParameterSetName);
             }
 
             return boundParameterSetName;
@@ -511,7 +424,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// </summary>
     public class CimBaseCommand : Cmdlet, IDisposable
     {
-
         #region resolve parameter set name
         /// <summary>
         /// <para>
@@ -532,7 +444,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 try
                 {
-                    this.parameterSetName = this.parameterBinder.GetParameterSet();
+                    this.ParameterSetName = this.parameterBinder.GetParameterSet();
                 }
                 finally
                 {
@@ -540,7 +452,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            DebugHelper.WriteLog("current parameterset is: " + this.parameterSetName, 4);
+            DebugHelper.WriteLog("current parameterset is: " + this.ParameterSetName, 4);
         }
 
         /// <summary>
@@ -558,17 +470,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return;
             }
 
-            if (this.parameterBinder != null)
-            {
-                this.parameterBinder.SetParameter(parameterName, this.AtBeginProcess);
-            }
+            this.parameterBinder?.SetParameter(parameterName, this.AtBeginProcess);
         }
         #endregion
 
         #region constructors
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimBaseCommand"/> class.
         /// </summary>
         internal CimBaseCommand()
         {
@@ -577,7 +486,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimBaseCommand"/> class.
         /// </summary>
         internal CimBaseCommand(Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters,
             Dictionary<string, ParameterSetEntry> sets)
@@ -664,10 +573,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected virtual void DisposeInternal()
         {
             // Dispose managed resources.
-            if (this.operation != null)
-            {
-                this.operation.Dispose();
-            }
+            this.operation?.Dispose();
         }
         #endregion
 
@@ -676,7 +582,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Parameter binder used to resolve parameter set name.
         /// </summary>
-        private ParameterBinder parameterBinder;
+        private readonly ParameterBinder parameterBinder;
 
         /// <summary>
         /// <para>
@@ -688,14 +594,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock object.
         /// </summary>
-        private readonly object myLock = new object();
-
-        /// <summary>
-        /// <para>
-        /// parameter set name
-        /// </para>
-        /// </summary>
-        private string parameterSetName;
+        private readonly object myLock = new();
 
         /// <summary>
         /// This flag is introduced to resolve the parameter set name
@@ -703,6 +602,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Whether at begin process time, false means in processrecord.
         /// </summary>
         private bool atBeginProcess = true;
+
         internal bool AtBeginProcess
         {
             get
@@ -727,6 +627,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal CimAsyncOperation AsyncOperation
         {
+            get
+            {
+                return this.operation;
+            }
+
             set
             {
                 lock (this.myLock)
@@ -735,11 +640,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     this.operation = value;
                 }
             }
-
-            get
-            {
-                return this.operation;
-            }
         }
 
         /// <summary>
@@ -747,13 +647,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Get current ParameterSetName of the cmdlet
         /// </para>
         /// </summary>
-        internal string ParameterSetName
-        {
-            get
-            {
-                return this.parameterSetName;
-            }
-        }
+        internal string ParameterSetName { get; private set; }
 
         /// <summary>
         /// Gets/Sets cmdlet operation wrapper object.
@@ -769,9 +663,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Throw terminating error
         /// </para>
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         internal void ThrowTerminatingError(Exception exception, string operation)
         {
-            ErrorRecord errorRecord = new ErrorRecord(exception, operation, ErrorCategory.InvalidOperation, this);
+            ErrorRecord errorRecord = new(exception, operation, ErrorCategory.InvalidOperation, this);
             this.CmdletOperation.ThrowTerminatingError(errorRecord);
         }
 
@@ -903,13 +798,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string parameterName,
             PasswordAuthenticationMechanism authentication)
         {
-            string message = string.Format(CultureInfo.CurrentUICulture, Strings.InvalidAuthenticationTypeWithNullCredential,
+            string message = string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidAuthenticationTypeWithNullCredential,
                 authentication,
                 ImpersonatedAuthenticationMechanism.None,
                 ImpersonatedAuthenticationMechanism.Negotiate,
                 ImpersonatedAuthenticationMechanism.Kerberos,
                 ImpersonatedAuthenticationMechanism.NtlmDomain);
-            PSArgumentOutOfRangeException exception = new PSArgumentOutOfRangeException(
+            PSArgumentOutOfRangeException exception = new(
                 parameterName, authentication, message);
             ThrowTerminatingError(exception, operationName);
         }
@@ -926,9 +821,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string conflictParameterName)
         {
             string message = string.Format(CultureInfo.CurrentUICulture,
-                Strings.ConflictParameterWasSet,
+                CimCmdletStrings.ConflictParameterWasSet,
                 parameterName, conflictParameterName);
-            PSArgumentException exception = new PSArgumentException(message, parameterName);
+            PSArgumentException exception = new(message, parameterName);
             ThrowTerminatingError(exception, operationName);
         }
 
@@ -944,20 +839,20 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string operationName,
             IDictionary actualValue)
         {
-            StringBuilder propList = new StringBuilder();
+            StringBuilder propList = new();
             foreach (string property in propertiesList)
             {
                 if (propList.Length > 0)
                 {
-                    propList.Append(",");
+                    propList.Append(',');
                 }
 
                 propList.Append(property);
             }
 
-            string message = string.Format(CultureInfo.CurrentUICulture, Strings.CouldNotFindPropertyFromGivenClass,
+            string message = string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.CouldNotFindPropertyFromGivenClass,
                 className, propList);
-            PSArgumentOutOfRangeException exception = new PSArgumentOutOfRangeException(
+            PSArgumentOutOfRangeException exception = new(
                 parameterName, actualValue, message);
             ThrowTerminatingError(exception, operationName);
         }
@@ -981,7 +876,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 NetworkCredential networkCredential = psCredentials.GetNetworkCredential();
                 DebugHelper.WriteLog("Domain:{0}; UserName:{1}; Password:{2}.", 1, networkCredential.Domain, networkCredential.UserName, psCredentials.Password);
                 credentials = new CimCredential(passwordAuthentication, networkCredential.Domain, networkCredential.UserName, psCredentials.Password);
-
             }
             else
             {

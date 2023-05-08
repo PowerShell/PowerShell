@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Using assembly" -Tags "CI" {
@@ -44,7 +44,7 @@ public class ABC {}
             $err[0].ErrorId | Should -Be CannotLoadAssemblyWithUriSchema
         }
 
-        It "parse does not load the assembly" -pending {
+        It "parse does not load the assembly" -Pending {
             $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
             $assemblies -contains "UsingAssemblyTest$guid" | Should -BeFalse
 
@@ -73,26 +73,26 @@ public class ABC {}
             $e.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -Be 'ErrorLoadingAssembly'
         }
 #>
-        It "Assembly loaded at runtime" -pending {
-            $assemblies = pwsh -noprofile -command @"
+        It "Assembly loaded at runtime" -Pending {
+            $assemblies = & "$PSHOME/pwsh" -noprofile -command @"
     using assembly .\UsingAssemblyTest$guid.dll
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@
             $assemblies -contains "UsingAssemblyTest$guid" | Should -BeTrue
 
-            $assemblies = pwsh -noprofile -command @"
+            $assemblies = & "$PSHOME/pwsh" -noprofile -command @"
     using assembly $PSScriptRoot\UsingAssemblyTest$guid.dll
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@
             $assemblies -contains "UsingAssemblyTest$guid" | Should -BeTrue
 
-            $assemblies = pwsh -noprofile -command @"
+            $assemblies = & "$PSHOME/pwsh" -noprofile -command @"
     using assembly System.Drawing
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@
             $assemblies -contains "System.Drawing" | Should -BeTrue
 
-            $assemblies = pwsh -noprofile -command @"
+            $assemblies = & "$PSHOME/pwsh" -noprofile -command @"
     using assembly 'System.Drawing, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@

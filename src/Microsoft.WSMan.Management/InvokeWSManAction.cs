@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -23,8 +23,8 @@ namespace Microsoft.WSMan.Management
     /// Invoke-WSManAction -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
-
-    [Cmdlet(VerbsLifecycle.Invoke, "WSManAction", DefaultParameterSetName = "URI", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141446")]
+    [Cmdlet(VerbsLifecycle.Invoke, "WSManAction", DefaultParameterSetName = "URI", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096843")]
+    [OutputType(typeof(XmlElement))]
     public class InvokeWSManActionCommand : AuthenticatingWSManCommand, IDisposable
     {
         /// <summary>
@@ -69,7 +69,10 @@ namespace Microsoft.WSMan.Management
         [Alias("cn")]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -144,20 +147,20 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        [ValidateRange(1, Int32.MaxValue)]
-        public Int32 Port
+        [ValidateRange(1, int.MaxValue)]
+        public int Port
         {
             get { return port; }
 
             set { port = value; }
         }
 
-        private Int32 port = 0;
+        private int port = 0;
 
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
-        /// management resource if there are are more than 1 instance of the resource
+        /// management resource if there are more than 1 instance of the resource
         /// class.
         /// </summary>
         [Parameter(Position = 2,
@@ -245,9 +248,9 @@ namespace Microsoft.WSMan.Management
         private Uri resourceuri;
 
         private WSManHelper helper;
-        IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
-        IWSManSession m_session = null;
-        string connectionStr = string.Empty;
+        private readonly IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
+        private IWSManSession m_session = null;
+        private string connectionStr = string.Empty;
 
         /// <summary>
         /// BeginProcessing method.

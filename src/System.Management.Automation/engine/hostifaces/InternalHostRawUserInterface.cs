@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Host;
@@ -78,7 +78,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         ConsoleColor
         BackgroundColor
@@ -114,7 +113,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         Coordinates
         CursorPosition
@@ -150,7 +148,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         Coordinates
         WindowPosition
@@ -186,7 +183,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         int
         CursorSize
@@ -222,7 +218,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         Size
         BufferSize
@@ -258,7 +253,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         Size
         WindowSize
@@ -294,7 +288,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         Size
         MaxWindowSize
@@ -320,7 +313,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         Size
         MaxPhysicalWindowSize
@@ -348,7 +340,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         KeyInfo
         ReadKey(ReadKeyOptions options)
@@ -386,7 +377,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         void
         FlushInputBuffer()
@@ -407,7 +397,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         bool
         KeyAvailable
@@ -433,7 +422,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         string
         WindowTitle
@@ -495,7 +483,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         void
         SetBufferContents(Rectangle r, BufferCell fill)
@@ -517,7 +504,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         BufferCell[,]
         GetBufferContents(Rectangle r)
@@ -545,7 +531,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
         ///  implemented by the external host
         /// </exception>
-
         public override
         void
         ScrollBufferContents
@@ -624,7 +609,7 @@ namespace System.Management.Automation.Internal.Host
             return _externalRawUI.LengthInBufferCells(character);
         }
 
-        private PSHostRawUserInterface _externalRawUI;
-        private InternalHost _parentHost;
+        private readonly PSHostRawUserInterface _externalRawUI;
+        private readonly InternalHost _parentHost;
     }
 }

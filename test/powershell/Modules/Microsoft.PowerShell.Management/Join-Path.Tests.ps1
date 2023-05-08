@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Join-Path cmdlet tests" -Tags "CI" {
   $SepChar=[io.path]::DirectorySeparatorChar
@@ -10,20 +10,20 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
   }
   It "should output multiple paths when called with multiple -Path targets" {
     Setup -Dir SubDir1
-    (Join-Path -Path TestDrive:,$TestDrive -ChildPath "SubDir1" -resolve).Length | Should -Be 2
+    (Join-Path -Path TestDrive:,$TestDrive -ChildPath "SubDir1" -Resolve).Length | Should -Be 2
   }
   It "should throw 'DriveNotFound' when called with -Resolve and drive does not exist" {
-    { Join-Path bogusdrive:\\somedir otherdir -resolve -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..." } |
+    { Join-Path bogusdrive:\\somedir otherdir -Resolve -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..." } |
       Should -Throw -ErrorId "DriveNotFound,Microsoft.PowerShell.Commands.JoinPathCommand"
   }
   It "should throw 'PathNotFound' when called with -Resolve and item does not exist" {
-    { Join-Path "Bogus" "Path" -resolve -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..." } |
+    { Join-Path "Bogus" "Path" -Resolve -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..." } |
       Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.JoinPathCommand"
   }
   #[BugId(BugDatabase.WindowsOutOfBandReleases, 905237)] Note: Result should be the same on non-Windows platforms too
   It "should return one object when called with a Windows FileSystem::Redirector" {
-    set-location ("env:"+$SepChar)
-    $result=join-path FileSystem::windir system32
+    Set-Location ("env:"+$SepChar)
+    $result=Join-Path FileSystem::windir system32
     $result.Count | Should -Be 1
     $result       | Should -BeExactly ("FileSystem::windir"+$SepChar+"system32")
   }

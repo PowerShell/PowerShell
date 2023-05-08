@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -37,128 +37,181 @@ namespace System.Management.Automation.Language
         internal AstVisitAction CheckForPostAction(Ast ast, AstVisitAction action)
         {
             var postActionHandler = this as IAstPostVisitHandler;
-            if (postActionHandler != null)
-            {
-                postActionHandler.PostVisit(ast);
-            }
+            postActionHandler?.PostVisit(ast);
 
             return action;
         }
 
         /// <summary/>
-        public virtual AstVisitAction VisitErrorStatement(ErrorStatementAst errorStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction DefaultVisit(Ast ast) => AstVisitAction.Continue;
+
         /// <summary/>
-        public virtual AstVisitAction VisitErrorExpression(ErrorExpressionAst errorExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitErrorStatement(ErrorStatementAst errorStatementAst) => DefaultVisit(errorStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitScriptBlock(ScriptBlockAst scriptBlockAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitErrorExpression(ErrorExpressionAst errorExpressionAst) => DefaultVisit(errorExpressionAst);
+
+        /// <summary/>
+        public virtual AstVisitAction VisitScriptBlock(ScriptBlockAst scriptBlockAst) => DefaultVisit(scriptBlockAst);
+
         /// <summary/>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "param")]
-        public virtual AstVisitAction VisitParamBlock(ParamBlockAst paramBlockAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitParamBlock(ParamBlockAst paramBlockAst) => DefaultVisit(paramBlockAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitNamedBlock(NamedBlockAst namedBlockAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitNamedBlock(NamedBlockAst namedBlockAst) => DefaultVisit(namedBlockAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitTypeConstraint(TypeConstraintAst typeConstraintAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitTypeConstraint(TypeConstraintAst typeConstraintAst) => DefaultVisit(typeConstraintAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitAttribute(AttributeAst attributeAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitAttribute(AttributeAst attributeAst) => DefaultVisit(attributeAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitParameter(ParameterAst parameterAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitParameter(ParameterAst parameterAst) => DefaultVisit(parameterAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitTypeExpression(TypeExpressionAst typeExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitTypeExpression(TypeExpressionAst typeExpressionAst) => DefaultVisit(typeExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst) => DefaultVisit(functionDefinitionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitStatementBlock(StatementBlockAst statementBlockAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitStatementBlock(StatementBlockAst statementBlockAst) => DefaultVisit(statementBlockAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitIfStatement(IfStatementAst ifStmtAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitIfStatement(IfStatementAst ifStmtAst) => DefaultVisit(ifStmtAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitTrap(TrapStatementAst trapStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitTrap(TrapStatementAst trapStatementAst) => DefaultVisit(trapStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitSwitchStatement(SwitchStatementAst switchStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitSwitchStatement(SwitchStatementAst switchStatementAst) => DefaultVisit(switchStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitDataStatement(DataStatementAst dataStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitDataStatement(DataStatementAst dataStatementAst) => DefaultVisit(dataStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitForEachStatement(ForEachStatementAst forEachStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitForEachStatement(ForEachStatementAst forEachStatementAst) => DefaultVisit(forEachStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst) => DefaultVisit(doWhileStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitForStatement(ForStatementAst forStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitForStatement(ForStatementAst forStatementAst) => DefaultVisit(forStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitWhileStatement(WhileStatementAst whileStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitWhileStatement(WhileStatementAst whileStatementAst) => DefaultVisit(whileStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitCatchClause(CatchClauseAst catchClauseAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitCatchClause(CatchClauseAst catchClauseAst) => DefaultVisit(catchClauseAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitTryStatement(TryStatementAst tryStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitTryStatement(TryStatementAst tryStatementAst) => DefaultVisit(tryStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitBreakStatement(BreakStatementAst breakStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitBreakStatement(BreakStatementAst breakStatementAst) => DefaultVisit(breakStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitContinueStatement(ContinueStatementAst continueStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitContinueStatement(ContinueStatementAst continueStatementAst) => DefaultVisit(continueStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitReturnStatement(ReturnStatementAst returnStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitReturnStatement(ReturnStatementAst returnStatementAst) => DefaultVisit(returnStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitExitStatement(ExitStatementAst exitStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitExitStatement(ExitStatementAst exitStatementAst) => DefaultVisit(exitStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitThrowStatement(ThrowStatementAst throwStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitThrowStatement(ThrowStatementAst throwStatementAst) => DefaultVisit(throwStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) => DefaultVisit(doUntilStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst) => DefaultVisit(assignmentStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitPipeline(PipelineAst pipelineAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitPipeline(PipelineAst pipelineAst) => DefaultVisit(pipelineAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitCommand(CommandAst commandAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitCommand(CommandAst commandAst) => DefaultVisit(commandAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitCommandExpression(CommandExpressionAst commandExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitCommandExpression(CommandExpressionAst commandExpressionAst) => DefaultVisit(commandExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitCommandParameter(CommandParameterAst commandParameterAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitCommandParameter(CommandParameterAst commandParameterAst) => DefaultVisit(commandParameterAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitMergingRedirection(MergingRedirectionAst redirectionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitMergingRedirection(MergingRedirectionAst redirectionAst) => DefaultVisit(redirectionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitFileRedirection(FileRedirectionAst redirectionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitFileRedirection(FileRedirectionAst redirectionAst) => DefaultVisit(redirectionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst) => DefaultVisit(binaryExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst) => DefaultVisit(unaryExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitConvertExpression(ConvertExpressionAst convertExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitConvertExpression(ConvertExpressionAst convertExpressionAst) => DefaultVisit(convertExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitConstantExpression(ConstantExpressionAst constantExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitConstantExpression(ConstantExpressionAst constantExpressionAst) => DefaultVisit(constantExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitStringConstantExpression(StringConstantExpressionAst stringConstantExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitStringConstantExpression(StringConstantExpressionAst stringConstantExpressionAst) => DefaultVisit(stringConstantExpressionAst);
+
         /// <summary/>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "SubExpression")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "subExpression")]
-        public virtual AstVisitAction VisitSubExpression(SubExpressionAst subExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitSubExpression(SubExpressionAst subExpressionAst) => DefaultVisit(subExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitUsingExpression(UsingExpressionAst usingExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitUsingExpression(UsingExpressionAst usingExpressionAst) => DefaultVisit(usingExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst) => DefaultVisit(variableExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitMemberExpression(MemberExpressionAst memberExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitMemberExpression(MemberExpressionAst memberExpressionAst) => DefaultVisit(memberExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst methodCallAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst methodCallAst) => DefaultVisit(methodCallAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitArrayExpression(ArrayExpressionAst arrayExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitArrayExpression(ArrayExpressionAst arrayExpressionAst) => DefaultVisit(arrayExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst) => DefaultVisit(arrayLiteralAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitHashtable(HashtableAst hashtableAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitHashtable(HashtableAst hashtableAst) => DefaultVisit(hashtableAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst) => DefaultVisit(scriptBlockExpressionAst);
+
         /// <summary/>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Paren")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "paren")]
-        public virtual AstVisitAction VisitParenExpression(ParenExpressionAst parenExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitParenExpression(ParenExpressionAst parenExpressionAst) => DefaultVisit(parenExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitExpandableStringExpression(ExpandableStringExpressionAst expandableStringExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitExpandableStringExpression(ExpandableStringExpressionAst expandableStringExpressionAst) => DefaultVisit(expandableStringExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitIndexExpression(IndexExpressionAst indexExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitIndexExpression(IndexExpressionAst indexExpressionAst) => DefaultVisit(indexExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst) => DefaultVisit(attributedExpressionAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitBlockStatement(BlockStatementAst blockStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitBlockStatement(BlockStatementAst blockStatementAst) => DefaultVisit(blockStatementAst);
+
         /// <summary/>
-        public virtual AstVisitAction VisitNamedAttributeArgument(NamedAttributeArgumentAst namedAttributeArgumentAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitNamedAttributeArgument(NamedAttributeArgumentAst namedAttributeArgumentAst) => DefaultVisit(namedAttributeArgumentAst);
     }
 
     /// <summary>
@@ -167,31 +220,38 @@ namespace System.Management.Automation.Language
     public abstract class AstVisitor2 : AstVisitor
     {
         /// <summary/>
-        public virtual AstVisitAction VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) => DefaultVisit(typeDefinitionAst);
 
         /// <summary/>
-        public virtual AstVisitAction VisitPropertyMember(PropertyMemberAst propertyMemberAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitPropertyMember(PropertyMemberAst propertyMemberAst) => DefaultVisit(propertyMemberAst);
 
         /// <summary/>
-        public virtual AstVisitAction VisitFunctionMember(FunctionMemberAst functionMemberAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitFunctionMember(FunctionMemberAst functionMemberAst) => DefaultVisit(functionMemberAst);
 
         /// <summary/>
-        public virtual AstVisitAction VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) => DefaultVisit(baseCtorInvokeMemberExpressionAst);
 
         /// <summary/>
-        public virtual AstVisitAction VisitUsingStatement(UsingStatementAst usingStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitUsingStatement(UsingStatementAst usingStatementAst) => DefaultVisit(usingStatementAst);
 
         /// <summary/>
-        public virtual AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) => DefaultVisit(configurationDefinitionAst);
 
         /// <summary/>
-        public virtual AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordStatementAst) { return AstVisitAction.Continue; }
+        public virtual AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordStatementAst) => DefaultVisit(dynamicKeywordStatementAst);
+
+        /// <summary/>
+        public virtual AstVisitAction VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) => DefaultVisit(ternaryExpressionAst);
+
+        /// <summary/>
+        public virtual AstVisitAction VisitPipelineChain(PipelineChainAst statementChain) => DefaultVisit(statementChain);
     }
 
     /// <summary>
     /// Implement this interface when you implement <see cref="AstVisitor"/> or <see cref="AstVisitor2"/> when
     /// you want to do something after possibly visiting the children of the ast.
     /// </summary>
+#nullable enable
     public interface IAstPostVisitHandler
     {
         /// <summary>

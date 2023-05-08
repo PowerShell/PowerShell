@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Tests OutVariable only" -Tags "CI" {
     BeforeAll {
@@ -16,7 +16,7 @@ Describe "Tests OutVariable only" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            $pscmdlet.writeobject("foo")
+            $PSCmdlet.writeobject("foo")
         }
 
         function get-bar
@@ -25,7 +25,7 @@ Describe "Tests OutVariable only" -Tags "CI" {
             param()
 
             "bar"
-            get-foo1 -outVariable script:a
+            get-foo1 -OutVariable script:a
         }
     }
 
@@ -35,7 +35,7 @@ Describe "Tests OutVariable only" -Tags "CI" {
                         OutVariable = 'a';
                         Expected = 'foo'
                         },
-                    @{ Name = 'Updating OutVariable Case 2: $pscmdlet.writeobject';
+                    @{ Name = 'Updating OutVariable Case 2: $PSCmdlet.writeobject';
                         Command = "get-foo2";
                         OutVariable = 'a';
                         Expected = 'foo'
@@ -46,7 +46,7 @@ Describe "Tests OutVariable only" -Tags "CI" {
                         PreSet = 'a','b';
                         Expected = @("a", "b", "foo")
                         },
-                    @{ Name = 'Appending OutVariable Case 2: $pscmdlet.writeobject';
+                    @{ Name = 'Appending OutVariable Case 2: $PSCmdlet.writeobject';
                         Command = "get-foo2";
                         OutVariable = 'a';
                         PreSet = 'a','b';
@@ -71,7 +71,7 @@ Describe "Tests OutVariable only" -Tags "CI" {
 
     It 'Nested OutVariable' {
 
-        get-bar -outVariable b > $null
+        get-bar -OutVariable b > $null
         $script:a | Should -BeExactly 'foo'
         $b | Should -BeExactly @("bar", "foo")
     }
@@ -84,7 +84,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            write-error "foo"
+            Write-Error "foo"
         }
 
         function get-foo2
@@ -92,7 +92,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            $pscmdlet.WriteError($script:foo[0])
+            $PSCmdlet.WriteError($script:foo[0])
         }
 
         function get-bar
@@ -100,8 +100,8 @@ Describe "Test ErrorVariable only" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            write-error "bar"
-            get-foo1 -errorVariable script:a
+            Write-Error "bar"
+            get-foo1 -ErrorVariable script:a
         }
     }
 
@@ -111,7 +111,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
                        ErrorVariable = 'a';
                        Expected = 'foo'
                      },
-                     @{ Name = 'Updating ErrorVariable Case 2: $pscmdlet.WriteError';
+                     @{ Name = 'Updating ErrorVariable Case 2: $PSCmdlet.WriteError';
                        Command = "get-foo1";
                        ErrorVariable = 'a';
                        Expected = 'foo'
@@ -140,11 +140,11 @@ Describe "Test ErrorVariable only" -Tags "CI" {
         $a | Should -BeExactly $Expected
     }
 
-    It 'Appending ErrorVariable Case 2: $pscmdlet.writeerror' {
-        write-error "foo" -errorVariable script:foo 2> $null
+    It 'Appending ErrorVariable Case 2: $PSCmdlet.writeerror' {
+        Write-Error "foo" -ErrorVariable script:foo 2> $null
         $a = 'a','b'
 
-        get-foo2 -errorVariable +a 2> $null
+        get-foo2 -ErrorVariable +a 2> $null
 
         $a.count | Should -Be 3
         $a| ForEach-Object {$_.ToString()} | Should -BeExactly @('a', 'b', 'foo')
@@ -152,7 +152,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
 
     It 'Nested ErrorVariable' {
 
-        get-bar -errorVariable b 2> $null
+        get-bar -ErrorVariable b 2> $null
 
         $script:a | Should -BeExactly 'foo'
         $b | Should -BeExactly @("bar","foo")
@@ -160,7 +160,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
 
     It 'Nested ErrorVariable with redirection' {
 
-        get-bar -errorVariable b 2>&1 > $null
+        get-bar -ErrorVariable b 2>&1 > $null
 
         $script:a | Should -BeExactly 'foo'
         $b | Should -BeExactly @("bar", "foo")
@@ -176,8 +176,8 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
           [CmdletBinding()]
           param()
 
-          write-output "foo-output"
-          write-error  "foo-error"
+          Write-Output "foo-output"
+          Write-Error  "foo-error"
         }
 
         function get-foo1
@@ -185,7 +185,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            write-error "foo"
+            Write-Error "foo"
         }
 
         function get-foo2
@@ -193,7 +193,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            $pscmdlet.WriteError($script:foo[0])
+            $PSCmdlet.WriteError($script:foo[0])
         }
 
         function get-bar
@@ -201,8 +201,8 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            write-error "bar"
-            get-foo1 -errorVariable script:a
+            Write-Error "bar"
+            get-foo1 -ErrorVariable script:a
         }
 
         function get-foo3
@@ -211,8 +211,8 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             param()
 
             "foo-output-0"
-            write-output "foo-output-1"
-            write-error "foo-error"
+            Write-Output "foo-output-1"
+            Write-Error "foo-error"
         }
 
         function get-bar2
@@ -221,15 +221,15 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             param()
 
             "bar-output-0"
-            write-output "bar-output-1"
-            write-error "bar-error"
-            get-foo3 -OutVariable script:foo_out -errorVariable script:foo_err
+            Write-Output "bar-output-1"
+            Write-Error "bar-error"
+            get-foo3 -OutVariable script:foo_out -ErrorVariable script:foo_err
         }
     }
 
     It 'Update OutVariable and ErrorVariable' {
 
-        get-foo3 -OutVariable out -errorVariable err 2> $null > $null
+        get-foo3 -OutVariable out -ErrorVariable err 2> $null > $null
 
         $out | Should -BeExactly @("foo-output-0", "foo-output-1")
         $err | Should -BeExactly "foo-error"
@@ -237,7 +237,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
     It 'Update OutVariable and ErrorVariable' {
 
-        get-bar2 -OutVariable script:bar_out -errorVariable script:bar_err 2> $null > $null
+        get-bar2 -OutVariable script:bar_out -ErrorVariable script:bar_err 2> $null > $null
 
         $foo_out | Should -BeExactly @("foo-output-0", "foo-output-1")
         $foo_err | Should -BeExactly 'foo-error'
@@ -252,7 +252,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            write-error "foo-error"
+            Write-Error "foo-error"
 
             try
             {
@@ -262,7 +262,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             {}
         }
 
-        get-foo4 -errorVariable err 2> $null
+        get-foo4 -ErrorVariable err 2> $null
 
         $err | Should -BeExactly @("foo-error", "foo-exception")
     }
@@ -275,8 +275,8 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
           process
           {
-            write-output $foo
-            write-error  $foo
+            Write-Output $foo
+            Write-Error  $foo
           }
         }
 
@@ -293,7 +293,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
     Context 'Error variable in multi-command pipeline (with native cmdlet)' {
 
         BeforeAll {
-            (get-foo -ErrorVariable foo_err | get-item -ErrorVariable get_item_err ) 2>&1 > $null
+            (get-foo -ErrorVariable foo_err | Get-Item -ErrorVariable get_item_err ) 2>&1 > $null
         }
 
         It '$foo_err should be "foo-error"' {
@@ -303,7 +303,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
         It '$get_item_err.count and $get_item_err[0].exception' {
             $get_item_err.count | Should -Be 1
             $get_item_err[0].exception | Should -Not -BeNullOrEmpty
-            $get_item_err[0].exception | Should -BeOftype 'System.Management.Automation.ItemNotFoundException'
+            $get_item_err[0].exception | Should -BeOfType System.Management.Automation.ItemNotFoundException
         }
     }
 
@@ -314,12 +314,12 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             [CmdletBinding()]
             param([Parameter(ValueFromPipeline = $true)][string] $i)
 
-            write-error  'bar-error'
-            write-output 'bar-output'
+            Write-Error  'bar-error'
+            Write-Output 'bar-output'
             get-foo
         }
 
-        (get-foo -errorVariable foo_err | get-bar3 -errorVariable bar_err) 2>&1 > $null
+        (get-foo -ErrorVariable foo_err | get-bar3 -ErrorVariable bar_err) 2>&1 > $null
 
         $foo_err | Should -BeExactly 'foo-error'
         $bar_err | Should -BeExactly @("bar-error", "foo-error")
@@ -332,8 +332,8 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             [CmdletBinding()]
             param([Parameter(ValueFromPipeline = $true)][string] $i)
 
-            write-error  "foo-error"
-            write-output $i
+            Write-Error  "foo-error"
+            Write-Output $i
         }
 
         function get-bar4
@@ -341,11 +341,11 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             [CmdletBinding()]
             param([Parameter(ValueFromPipeline = $true)][string] $i)
 
-            write-error  "bar-error"
-            get-foo6 "foo-output" -errorVariable script:foo_err1 | get-foo6 -errorVariable script:foo_err2
+            Write-Error  "bar-error"
+            get-foo6 "foo-output" -ErrorVariable script:foo_err1 | get-foo6 -ErrorVariable script:foo_err2
         }
 
-        get-bar4 -errorVariable script:bar_err 2>&1 > $null
+        get-bar4 -ErrorVariable script:bar_err 2>&1 > $null
 
         $script:foo_err1 | Should -BeExactly "foo-error"
         $script:foo_err2 | Should -BeExactly "foo-error"
@@ -359,7 +359,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             param([Parameter(ValueFromPipeline = $true)][string] $output)
 
             $output
-            write-error "foo-error"
+            Write-Error "foo-error"
         }
 
         function get-bar5
@@ -368,7 +368,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             param()
 
             "bar-output"
-            write-error  "bar-error"
+            Write-Error  "bar-error"
             get-foo7 "foo-output" -ErrorVariable script:foo_err1 -ov script:foo_out1 | get-foo7 -ErrorVariable script:foo_err2 -ov script:foo_out2
             get-foo7 "foo-output" -ErrorVariable script:foo_err3 -ov script:foo_out3 | get-foo7 -ErrorVariable script:foo_err4 -ov script:foo_out4
         }

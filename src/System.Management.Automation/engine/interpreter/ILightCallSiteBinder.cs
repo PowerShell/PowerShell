@@ -13,6 +13,7 @@
  *
  * ***************************************************************************/
 
+#nullable enable
 #if !CLR2
 #else
 using Microsoft.Scripting.Ast;

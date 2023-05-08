@@ -1,14 +1,14 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Test-Path" -Tags "CI" {
     BeforeAll {
         $testdirectory = $TestDrive
-        $testfilename = New-Item -path $testdirectory -Name testfile.txt -ItemType file -Value 1 -force
+        $testfilename = New-Item -Path $testdirectory -Name testfile.txt -ItemType file -Value 1 -Force
 
         # populate with additional files
-        New-Item -Path $testdirectory -Name datestfile -value 1 -ItemType file | Out-Null
-        New-Item -Path $testdirectory -Name gatestfile -value 1 -ItemType file | Out-Null
-        New-Item -Path $testdirectory -Name usr -value 1 -ItemType directory | Out-Null
+        New-Item -Path $testdirectory -Name datestfile -Value 1 -ItemType file | Out-Null
+        New-Item -Path $testdirectory -Name gatestfile -Value 1 -ItemType file | Out-Null
+        New-Item -Path $testdirectory -Name usr -Value 1 -ItemType directory | Out-Null
 
         $nonExistentDir = Join-Path -Path (Join-Path -Path $testdirectory -ChildPath usr) -ChildPath bin
         $nonExistentPath = Join-Path -Path (Join-Path -Path (Join-Path -Path $testdirectory -ChildPath usr) -ChildPath bin) -ChildPath error

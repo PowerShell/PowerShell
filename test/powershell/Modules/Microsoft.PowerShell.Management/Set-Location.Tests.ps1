@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Set-Location" -Tags "CI" {
 
@@ -34,7 +34,7 @@ Describe "Set-Location" -Tags "CI" {
         $(Get-Location).Path | Should -BeExactly $startDirectory.Path
     }
 
-    It "Should be able to use the Path switch" {
+    It "Should be able to use the Path parameter" {
         { Set-Location -Path $target } | Should -Not -Throw
     }
 
@@ -171,7 +171,7 @@ Describe "Set-Location" -Tags "CI" {
             foreach ($i in 1..$maximumLocationHistory) {
                 Set-Location -
             }
-            (Get-Location).Path | Should Be $initialLocation
+            (Get-Location).Path | Should -Be $initialLocation
             { Set-Location - } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
             # Go forwards up to the maximum
             foreach ($i in 1..($maximumLocationHistory)) {
@@ -202,7 +202,7 @@ Describe "Set-Location" -Tags "CI" {
         }
 
         It 'The LocationChangedAction should fire when changing location' {
-            $initialPath = $pwd
+            $initialPath = $PWD
             $oldPath = $null
             $newPath = $null
             $eventSessionState = $null
@@ -214,7 +214,7 @@ Describe "Set-Location" -Tags "CI" {
                 (Get-Variable newPath).Value = $_.newPath
             }
             Set-Location ..
-            $newPath.Path | Should -Be $pwd.Path
+            $newPath.Path | Should -Be $PWD.Path
             $oldPath.Path | Should -Be $initialPath.Path
             $eventSessionState | Should -Be $ExecutionContext.SessionState
             $eventRunspace | Should -Be ([runspace]::DefaultRunspace)
@@ -228,6 +228,38 @@ Describe "Set-Location" -Tags "CI" {
             { Set-Location $location } | Should -Throw "Boom"
             # But the location should still have changed
             $PWD.Path | Should -Be $location.Path
+        }
+    }
+
+    Context 'Parsing of Set-Location to cd' {
+        It 'Should go to Filesystem home on cd~ run' {
+            Set-Location 'TestDrive:\'
+            cd~
+            (Get-Location).Path | Should -BeExactly (Get-PSProvider FileSystem).Home
+        }
+        It 'Should go to the parent folder on cd.. run' {
+            Set-Location 'TestDrive:\'
+            $ParentDir = (Get-Location).path
+            New-Item -Path 'TestDrive:\' -Name 'Directory1' -ItemType Directory
+            Set-Location 'TestDrive:\Directory1'
+            cd..
+            (Get-Location).Path | Should -BeExactly $ParentDir
+        }
+        It 'Should go to root of current drive on cd\ run (Windows)' -Skip:(!$IsWindows){
+            #root is / on linux and Mac, so it's not happy with this check.
+            Set-Location 'TestDrive:\'
+            $DriveRoot = (Get-Location).path
+            New-Item -Path 'TestDrive:\Directory1' -Name 'Directory2' -ItemType Directory
+            Set-Location 'TestDrive:\Directory1\Directory2'
+            cd\
+            (Get-Location).Path | Should -BeExactly $DriveRoot
+        }
+        It 'Should go to root of current drive on cd\ run (Linux/Mac)' -Skip:($IsWindows){
+            Set-Location 'TestDrive:\'
+            New-Item -Path 'TestDrive:\Directory1' -Name 'Directory2' -ItemType Directory
+            Set-Location 'TestDrive:\Directory1\Directory2'
+            cd\
+            (Get-Location).Path | Should -BeExactly "/"
         }
     }
 }

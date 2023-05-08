@@ -1,11 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.ComponentModel;
 using System.Management.Automation.Internal;
 using System.Security.Cryptography.X509Certificates;
 
-using Dbg = System.Management.Automation;
 using DWORD = System.UInt32;
 
 namespace System.Management.Automation
@@ -72,7 +71,7 @@ namespace System.Management.Automation
         /// with the current system.
         /// </summary>
         Incompatible
-    };
+    }
 
     /// <summary>
     /// Defines the valid types of signatures.
@@ -93,7 +92,7 @@ namespace System.Management.Automation
         /// The signature is a catalog signature.
         /// </summary>
         Catalog = 2
-    };
+    }
 
     /// <summary>
     /// Represents a digital signature on a signed
@@ -111,7 +110,7 @@ namespace System.Management.Automation
 
         // Three states:
         //   - True: we can rely on the catalog API to check catalog signature.
-        //   - False: we cannot rely on the catalog API, either because it doesn't exist in the OS (win7),
+        //   - False: we cannot rely on the catalog API, either because it doesn't exist in the OS (win7, nano),
         //            or it's not working properly (OneCore SKUs or dev environment where powershell might
         //            be updated/refreshed).
         //   - Null: it's not determined yet whether catalog API can be relied on or not.
@@ -390,6 +389,5 @@ namespace System.Management.Automation
 
             return message;
         }
-    };
+    }
 }
-

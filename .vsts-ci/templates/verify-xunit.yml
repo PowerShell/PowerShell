@@ -1,13 +1,13 @@
 parameters:
   parentJobs: []
-  pool: 'Hosted VS2017'
+  pool: 'windows-latest'
   jobName: 'xunit_verify'
 
 jobs:
 - job: verify_xunit
   displayName: Verify xUnit Results
   pool:
-    name: ${{ parameters.pool }}
+    vmImage: ${{ parameters.pool }}
   dependsOn:
     ${{ parameters.parentJobs }}
   steps:
@@ -19,12 +19,12 @@ jobs:
         xunit/**/*
       downloadPath: '$(System.ArtifactsDirectory)'
 
-  - powershell: |
+  - pwsh: |
       dir "$(System.ArtifactsDirectory)\*" -Recurse
     displayName: 'Capture artifacts directory'
     continueOnError: true
 
-  - powershell: |
+  - pwsh: |
       Import-Module .\tools\ci.psm1
       $xUnitTestResultsFile = "$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml"
 

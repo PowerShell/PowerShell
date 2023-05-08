@@ -1,7 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -20,7 +21,7 @@ namespace Microsoft.PowerShell
     {
         // Some random hex characters to identify the beginning of a
         // V2-exported SecureString.
-        internal static string SecureStringExportHeader = "76492d1116743f0423413b16050a5345";
+        internal static readonly string SecureStringExportHeader = "76492d1116743f0423413b16050a5345";
 
         /// <summary>
         /// Create a new SecureString based on the specified binary data.
@@ -67,7 +68,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="s">Input string.</param>
         /// <returns>Contents of s (char[]) converted to byte[].</returns>
-        [ArchitectureSensitive]
         internal static byte[] GetData(SecureString s)
         {
             //
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell
             {
                 for (int i = 0; i < dataLen; i++)
                 {
-                    data[i] = byte.Parse(s.Substring(2 * i, 2),
+                    data[i] = byte.Parse(s.AsSpan(2 * i, 2),
                                          NumberStyles.AllowHexSpecifier,
                                          System.Globalization.CultureInfo.InvariantCulture);
                 }
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell
             Utils.CheckArgForNullOrEmpty(input, "input");
             if ((input.Length % 2) != 0)
             {
-                throw PSTraceSource.NewArgumentException("input", Serialization.InvalidEncryptedString, input);
+                throw PSTraceSource.NewArgumentException(nameof(input), Serialization.InvalidEncryptedString, input);
             }
 
             byte[] data = null;
@@ -216,8 +216,6 @@ namespace Microsoft.PowerShell
         /// <returns>A string (see summary).</returns>
         internal static EncryptionResult Encrypt(SecureString input, SecureString key)
         {
-            EncryptionResult output = null;
-
             //
             // get clear text key from the SecureString key
             //
@@ -226,14 +224,14 @@ namespace Microsoft.PowerShell
             //
             // encrypt the data
             //
-            output = Encrypt(input, keyBlob);
-
-            //
-            // clear the clear text key
-            //
-            Array.Clear(keyBlob, 0, keyBlob.Length);
-
-            return output;
+            try
+            {
+                return Encrypt(input, keyBlob);
+            }
+            finally
+            {
+                Array.Clear(keyBlob);
+            }
         }
 
         /// <summary>
@@ -253,48 +251,43 @@ namespace Microsoft.PowerShell
             Utils.CheckSecureStringArg(input, "input");
             Utils.CheckKeyArg(key, "key");
 
-            byte[] encryptedData = null;
-            MemoryStream ms = null;
-            ICryptoTransform encryptor = null;
-            CryptoStream cs = null;
-
             //
             // prepare the crypto stuff. Initialization Vector is
             // randomized by default.
             //
-            Aes aes = Aes.Create();
-            if (iv == null)
-                iv = aes.IV;
-
-            encryptor = aes.CreateEncryptor(key, iv);
-            ms = new MemoryStream();
-
-            using (cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+            using (Aes aes = Aes.Create())
             {
+                iv ??= aes.IV;
+
                 //
                 // get clear text data from the input SecureString
                 //
                 byte[] data = GetData(input);
+                try
+                {
+                    using (ICryptoTransform encryptor = aes.CreateEncryptor(key, iv))
+                    using (var sourceStream = new MemoryStream(data))
+                    using (var encryptedStream = new MemoryStream())
+                    {
+                        //
+                        // encrypt it
+                        //
+                        using (var cryptoStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write))
+                        {
+                            sourceStream.CopyTo(cryptoStream);
+                        }
 
-                //
-                // encrypt it
-                //
-                cs.Write(data, 0, data.Length);
-                cs.FlushFinalBlock();
-
-                //
-                // clear the clear text data array
-                //
-                Array.Clear(data, 0, data.Length);
-
-                //
-                // convert the encrypted blob to a string
-                //
-                encryptedData = ms.ToArray();
-
-                EncryptionResult output = new EncryptionResult(ByteArrayToString(encryptedData), Convert.ToBase64String(iv));
-
-                return output;
+                        //
+                        // return encrypted data
+                        //
+                        byte[] encryptedData = encryptedStream.ToArray();
+                        return new EncryptionResult(ByteArrayToString(encryptedData), Convert.ToBase64String(iv));
+                    }
+                }
+                finally
+                {
+                    Array.Clear(data, 0, data.Length);
+                }
             }
         }
 
@@ -310,8 +303,6 @@ namespace Microsoft.PowerShell
         /// <returns>SecureString .</returns>
         internal static SecureString Decrypt(string input, SecureString key, byte[] IV)
         {
-            SecureString output = null;
-
             //
             // get clear text key from the SecureString key
             //
@@ -320,14 +311,14 @@ namespace Microsoft.PowerShell
             //
             // decrypt the data
             //
-            output = Decrypt(input, keyBlob, IV);
-
-            //
-            // clear the clear text key
-            //
-            Array.Clear(keyBlob, 0, keyBlob.Length);
-
-            return output;
+            try
+            {
+                return Decrypt(input, keyBlob, IV);
+            }
+            finally
+            {
+                Array.Clear(keyBlob);
+            }
         }
 
         /// <summary>
@@ -345,46 +336,55 @@ namespace Microsoft.PowerShell
             Utils.CheckArgForNullOrEmpty(input, "input");
             Utils.CheckKeyArg(key, "key");
 
-            byte[] decryptedData = null;
-            byte[] encryptedData = null;
-            SecureString s = null;
-
             //
             // prepare the crypto stuff
             //
-            Aes aes = Aes.Create();
-            encryptedData = ByteArrayFromString(input);
-
-            var decryptor = aes.CreateDecryptor(key, IV ?? aes.IV);
-
-            MemoryStream ms = new MemoryStream(encryptedData);
-
-            using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+            using (var aes = Aes.Create())
             {
-                byte[] tempDecryptedData = new byte[encryptedData.Length];
-
-                int numBytesRead = 0;
-
-                //
-                // decrypt the data
-                //
-                numBytesRead = cs.Read(tempDecryptedData, 0,
-                                       tempDecryptedData.Length);
-
-                decryptedData = new byte[numBytesRead];
-
-                for (int i = 0; i < numBytesRead; i++)
+                using (ICryptoTransform decryptor = aes.CreateDecryptor(key, IV ?? aes.IV))
+                using (var encryptedStream = new MemoryStream(ByteArrayFromString(input)))
+                using (var targetStream = new MemoryStream())
                 {
-                    decryptedData[i] = tempDecryptedData[i];
+                    //
+                    // decrypt the data and return as SecureString
+                    //
+                    using (var sourceStream = new CryptoStream(encryptedStream, decryptor, CryptoStreamMode.Read))
+                    {
+                        sourceStream.CopyTo(targetStream);
+                    }
+
+                    byte[] decryptedData = targetStream.ToArray();
+                    try
+                    {
+                        return New(decryptedData);
+                    }
+                    finally
+                    {
+                        Array.Clear(decryptedData);
+                    }
                 }
-
-                s = New(decryptedData);
-                Array.Clear(decryptedData, 0, decryptedData.Length);
-                Array.Clear(tempDecryptedData, 0, tempDecryptedData.Length);
-
-                return s;
             }
         }
+
+#nullable enable
+        /// <summary>Creates a new <see cref="SecureString"/> from a <see cref="string"/>.</summary>
+        /// <param name="plainTextString">Plain text string. Must not be null.</param>
+        /// <returns>A new SecureString.</returns>
+        internal static unsafe SecureString FromPlainTextString(string plainTextString)
+        {
+            Debug.Assert(plainTextString is not null);
+
+            if (plainTextString.Length == 0)
+            {
+                return new SecureString();
+            }
+
+            fixed (char* charsPtr = plainTextString)
+            {
+                return new SecureString(charsPtr, plainTextString.Length);
+            }
+        }
+#nullable restore
     }
 
     /// <summary>
@@ -430,10 +430,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static byte[] Protect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
         {
-            if (userData == null)
-            {
-                throw new ArgumentNullException("userData");
-            }
+            ArgumentNullException.ThrowIfNull(userData);
 
             GCHandle pbDataIn = new GCHandle();
             GCHandle pOptionalEntropy = new GCHandle();
@@ -518,10 +515,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static byte[] Unprotect(byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope)
         {
-            if (encryptedData == null)
-            {
-                throw new ArgumentNullException("encryptedData");
-            }
+            ArgumentNullException.ThrowIfNull(encryptedData);
 
             GCHandle pbDataIn = new GCHandle();
             GCHandle pOptionalEntropy = new GCHandle();
@@ -617,23 +611,23 @@ namespace Microsoft.PowerShell
         [DllImport("CRYPT32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptProtectData(
-                [In]     IntPtr pDataIn,
-                [In]     string szDataDescr,
-                [In]     IntPtr pOptionalEntropy,
-                [In]     IntPtr pvReserved,
-                [In]     IntPtr pPromptStruct,
-                [In]     uint dwFlags,
+                [In] IntPtr pDataIn,
+                [In] string szDataDescr,
+                [In] IntPtr pOptionalEntropy,
+                [In] IntPtr pvReserved,
+                [In] IntPtr pPromptStruct,
+                [In] uint dwFlags,
                 [In, Out] IntPtr pDataBlob);
 
         [DllImport("CRYPT32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptUnprotectData(
-                [In]     IntPtr pDataIn,
-                [In]     IntPtr ppszDataDescr,
-                [In]     IntPtr pOptionalEntropy,
-                [In]     IntPtr pvReserved,
-                [In]     IntPtr pPromptStruct,
-                [In]     uint dwFlags,
+                [In] IntPtr pDataIn,
+                [In] IntPtr ppszDataDescr,
+                [In] IntPtr pOptionalEntropy,
+                [In] IntPtr pvReserved,
+                [In] IntPtr pPromptStruct,
+                [In] uint dwFlags,
                 [In, Out] IntPtr pDataBlob);
 
         [DllImport("ntdll.dll", EntryPoint = "RtlZeroMemory", SetLastError = true)]
@@ -647,4 +641,3 @@ namespace Microsoft.PowerShell
 
 #endif
 }
-

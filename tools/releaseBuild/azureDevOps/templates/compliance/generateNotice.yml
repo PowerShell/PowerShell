@@ -1,0 +1,89 @@
+parameters:
+  - name: parentJobs
+    type: jobList
+
+jobs:
+- job: generateNotice
+  variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+
+  displayName: Generate Notice
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  pool:
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
+
+  timeoutInMinutes: 15
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - pwsh: |
+      [string]$Branch=$env:BUILD_SOURCEBRANCH
+      $branchOnly = $Branch -replace '^refs/heads/';
+      $branchOnly = $branchOnly -replace '[_\-]'
+
+      if ($branchOnly -eq 'master') {
+        $container = 'tpn'
+      } else {
+        $branchOnly = $branchOnly -replace '[\./]', '-'
+        $container = "tpn-$branchOnly"
+      }
+
+      $vstsCommandString = "vso[task.setvariable variable=tpnContainer]$container"
+      Write-Verbose -Message $vstsCommandString -Verbose
+      Write-Host -Object "##$vstsCommandString"
+    displayName: Set ContainerName
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)\tools'
+
+  - pwsh: |
+      ./tools/clearlyDefined/ClearlyDefined.ps1 -TestAndHarvest
+    displayName: Verify that packages have license data
+
+  - task: msospo.ospo-extension.8d7f9abb-6896-461d-9e25-4f74ed65ddb2.notice@0
+    displayName: 'NOTICE File Generator'
+    inputs:
+      outputfile: '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt'
+      # output format can be html or text
+      outputformat: text
+      # this isn't working
+      # additionaldata: $(Build.SourcesDirectory)\assets\additionalAttributions.txt
+
+
+  - pwsh: |
+      Get-Content -Raw -Path $(Build.SourcesDirectory)\assets\additionalAttributions.txt | Out-File '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt' -Encoding utf8NoBOM -Force -Append
+      Get-Content -Raw -Path '$(Build.SourcesDirectory)\assets\additionalAttributions.txt'
+    displayName: Append Additional Attributions
+    continueOnError: true
+
+  - pwsh: |
+      Get-Content -Raw -Path '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt'
+    displayName: Capture Notice
+    continueOnError: true
+
+  - task: AzureFileCopy@4
+    displayName: 'upload Notice'
+    inputs:
+      SourcePath: $(System.ArtifactsDirectory)\ThirdPartyNotices.txt
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: $(tpnContainer)
+      resourceGroup: '$(StorageResourceGroup)'
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: $(System.ArtifactsDirectory)
+      artifactName: notice
+    displayName: Publish notice artifacts
+    condition: always()

@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.Security project</Description>
-    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <NoWarn>$(NoWarn);CS1570;CA1416</NoWarn>
     <AssemblyName>Microsoft.PowerShell.Security</AssemblyName>
   </PropertyGroup>
 

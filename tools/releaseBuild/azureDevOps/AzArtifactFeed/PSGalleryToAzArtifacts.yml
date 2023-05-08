@@ -4,22 +4,28 @@ resources:
 - repo: self
   clean: true
 
-queue:
-  name: Hosted VS2017
+pool:
+  name: 1es
+  demands:
+    - ImageOverride -equals PSMMS2019-Minimal
+
 steps:
-  - powershell: |
-      Install-Module -Name PowerShellGet -MinimumVersion 2.0.1 -Force
-      Import-Module PowerShellGet -Force -Verbose
+  - pwsh: |
+      $minVer = [version]"2.2.3"
+      $curVer = Get-Module PowerShellGet -ListAvailable | Select-Object -First 1 | ForEach-Object Version
+      if (-not $curVer -or $curVer -lt $minVer) {
+        Install-Module -Name PowerShellGet -MinimumVersion 2.2.3 -Force
+      }
     displayName: Update PSGet and PackageManagement
     condition: succeededOrFailed()
 
-  - powershell: |
+  - pwsh: |
       Import-Module -Force "$(Build.SourcesDirectory)/tools/releaseBuild/azureDevOps/AzArtifactFeed/SyncGalleryToAzArtifacts.psm1"
-      SyncGalleryToAzArtifacts -AzDevOpsFeedUserName $(AzDevOpsFeedUserName) -AzDevOpsPAT $(AzDevOpsFeedPAT) -Destination $(Build.ArtifactStagingDirectory)
+      SyncGalleryToAzArtifacts -AzDevOpsFeedUserName $(AzDevOpsFeedUserName) -AzDevOpsPAT $(AzDevOpsFeedPAT2) -Destination $(Build.ArtifactStagingDirectory)
     displayName: Download packages from PSGallery that need to be updated
     condition: succeededOrFailed()
 
-  - powershell: |
+  - pwsh: |
       Write-Verbose -Verbose "Packages to upload"
       if(Test-Path $(Build.ArtifactStagingDirectory)) { Get-ChildItem "$(Build.ArtifactStagingDirectory)/*.nupkg" | ForEach-Object { $_.FullName }}
     displayName: List packages to upload

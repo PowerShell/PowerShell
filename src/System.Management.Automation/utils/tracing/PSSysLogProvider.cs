@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #if UNIX
 
 using System.Diagnostics.Eventing;
@@ -15,10 +16,10 @@ namespace System.Management.Automation.Tracing
     /// </summary>
     internal class PSSysLogProvider : LogProvider
     {
-        private static SysLogProvider s_provider;
+        private static readonly SysLogProvider s_provider;
 
         // by default, do not include channel bits
-        internal const PSKeyword DefaultKeywords = (PSKeyword) (0x00FFFFFFFFFFFFFF);
+        internal const PSKeyword DefaultKeywords = (PSKeyword)(0x00FFFFFFFFFFFFFF);
 
         // the default enabled channel(s)
         internal const PSChannel DefaultChannels = PSChannel.Operational;
@@ -42,19 +43,16 @@ namespace System.Management.Automation.Tracing
         /// property to ensure correct thread initialization; otherwise, a null reference can occur.
         /// </remarks>
         [ThreadStatic]
-        private static StringBuilder _payloadBuilder;
+        private static StringBuilder t_payloadBuilder;
 
         private static StringBuilder PayloadBuilder
         {
             get
             {
-                if (_payloadBuilder == null)
-                {
-                    // NOTE: Thread static fields must be explicitly initialized for each thread.
-                    _payloadBuilder = new StringBuilder(200);
-                }
+                // NOTE: Thread static fields must be explicitly initialized for each thread.
+                t_payloadBuilder ??= new StringBuilder(200);
 
-                return _payloadBuilder;
+                return t_payloadBuilder;
             }
         }
 
@@ -92,6 +90,32 @@ namespace System.Management.Automation.Tracing
             AppendAdditionalInfo(payload, additionalInfo);
 
             WriteEvent(PSEventId.Engine_Health, PSChannel.Operational, PSOpcode.Exception, PSTask.ExecutePipeline, logContext, payload.ToString());
+        }
+
+        /// <summary>
+        /// Provider interface function for logging provider health event.
+        /// </summary>
+        /// <param name="state">This the action performed in AmsiUtil class, like init, scan, etc</param>
+        /// <param name="context">The amsiContext handled - Session pair</param>
+        internal override void LogAmsiUtilStateEvent(string state, string context)
+        {
+            WriteEvent(PSEventId.Amsi_Init, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, PSTask.Amsi, (PSKeyword)0x0, state, context);
+        }
+
+        /// <summary>
+        /// Provider interface function for logging WDAC query event.
+        /// </summary>
+        /// <param name="queryName">Name of the WDAC query.</param>
+        /// <param name="fileName">Name of script file for policy query. Can be null value.</param>
+        /// <param name="querySuccess">Query call succeed code.</param>
+        /// <param name="queryResult">Result code of WDAC query.</param>
+        internal override void LogWDACQueryEvent(
+            string queryName,
+            string fileName,
+            int querySuccess,
+            int queryResult)
+        {
+            WriteEvent(PSEventId.WDAC_Query, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, PSTask.WDAC, (PSKeyword)0x0, queryName, fileName, querySuccess, queryResult);
         }
 
         /// <summary>

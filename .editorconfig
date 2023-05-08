@@ -2,44 +2,60 @@
 # .NET coding convention settings for EditorConfig
 # https://docs.microsoft.com/visualstudio/ide/editorconfig-code-style-settings-reference
 #
-# The .editorconfig comes from Roslyn and CoreFX repositories:
-# https://github.com/dotnet/corefx/blob/master/.editorconfig
+# This file comes from dotnet repositories:
+# https://github.com/dotnet/runtime/blob/master/.editorconfig
 # https://github.com/dotnet/roslyn/blob/master/.editorconfig
 
 # Top-most EditorConfig file
 root = true
 
-# Don't use tabs for indentation.
 [*]
-indent_style = space
-# (Please don't specify an indent_size here; that has too many unintended consequences.)
-
-# Code files
-[*.{cs,csx,cpp,h}]
-indent_size = 4
-insert_final_newline = true
 charset = utf-8
+# indent_size intentionally not specified in this section
+indent_style = space
+insert_final_newline = true
+
+# Source code
+[*.{cs,ps1,psd1,psm1}]
+indent_size = 4
+
+# Shell scripts
+[*.sh]
+end_of_line = lf
+indent_size = 4
 
 # Xml project files
 [*.{csproj,resx,ps1xml}]
 indent_size = 2
 
-# JSON files
-[*.json]
+# Data serialization
+[*.{json,yaml,yml}]
+indent_size = 2
+
+# Markdown
+[*.md]
 indent_size = 2
 
 # Xml files
-[*.{xml,stylecop,resx,ruleset}]
+[*.{resx,ruleset,stylecop,xml,xsd,xsl}]
 indent_size = 2
 
 # Xml config files
 [*.{props,targets,config,nuspec}]
 indent_size = 2
 
+[*.tsv]
+indent_style = tab
+
 # Dotnet code style settings:
-[*.{cs,cpp}]
+[*.cs]
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
+
+file_header_template = Copyright (c) Microsoft Corporation.\nLicensed under the MIT License.
+
+# Modifier preferences
+csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:suggestion
 
 # Avoid "this." and "Me." if not necessary
 dotnet_style_qualification_for_field = false:suggestion
@@ -68,6 +84,7 @@ dotnet_naming_rule.static_fields_should_have_prefix.style    = static_prefix_sty
 
 dotnet_naming_symbols.static_fields.applicable_kinds   = field
 dotnet_naming_symbols.static_fields.required_modifiers = static
+dotnet_naming_symbols.static_fields.applicable_accessibilities = private, internal, private_protected
 
 dotnet_naming_style.static_prefix_style.required_prefix = s_
 dotnet_naming_style.static_prefix_style.capitalization = camel_case
@@ -89,17 +106,38 @@ dotnet_style_collection_initializer = true:suggestion
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_explicit_tuple_names = true:suggestion
+dotnet_style_readonly_field = true:suggestion
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
+dotnet_style_prefer_inferred_tuple_names = true:suggestion
+dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
+dotnet_style_prefer_conditional_expression_over_return = true:silent
+dotnet_style_prefer_conditional_expression_over_assignment = true:silent
+dotnet_style_prefer_auto_properties = true:suggestion
+csharp_prefer_simple_default_expression = true:suggestion
+
+dotnet_code_quality_unused_parameters = non_public:suggestion
 
 # CSharp code style settings:
 [*.cs]
 
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = false
+csharp_prefer_braces = true:silent
+
+csharp_prefer_static_local_function = true:suggestion
+csharp_prefer_simple_using_statement = false:none
+csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_prefer_range_operator = false:none
+csharp_style_prefer_index_operator = false:none
+csharp_style_pattern_local_over_anonymous_function = false:none
+
+csharp_using_directive_placement = outside_namespace:suggestion
 
 # Indentation preferences
 csharp_indent_block_contents = true
 csharp_indent_braces = false
 csharp_indent_case_contents = true
+csharp_indent_case_contents_when_block = true
 csharp_indent_switch_labels = true
 csharp_indent_labels = one_less_than_current
 
@@ -107,6 +145,9 @@ csharp_indent_labels = one_less_than_current
 csharp_style_var_for_built_in_types = false:none
 csharp_style_var_when_type_is_apparent = false:none
 csharp_style_var_elsewhere = false:suggestion
+
+# Expression-bodied members
+csharp_style_expression_bodied_local_functions = true:silent
 
 # Prefer method-like constructs to have a block body
 csharp_style_expression_bodied_methods = false:none
@@ -156,3 +197,4 @@ csharp_new_line_before_catch = true
 csharp_new_line_before_finally = true
 csharp_new_line_before_members_in_object_initializers = true
 csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_between_query_expression_clauses = true

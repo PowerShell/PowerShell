@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -18,7 +18,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimWriteProgress : CimBaseAction
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimWriteProgress"/> class.
         /// </summary>
         /// <param name="activity">
         ///  Activity identifier of the given activity
@@ -40,23 +40,23 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             int theActivityID,
             string theCurrentOperation,
             string theStatusDescription,
-            UInt32 thePercentageCompleted,
-            UInt32 theSecondsRemaining)
+            uint thePercentageCompleted,
+            uint theSecondsRemaining)
         {
-            this.activity = theActivity;
-            this.activityID = theActivityID;
-            this.currentOperation = theCurrentOperation;
+            this.Activity = theActivity;
+            this.ActivityID = theActivityID;
+            this.CurrentOperation = theCurrentOperation;
             if (string.IsNullOrEmpty(theStatusDescription))
             {
-                this.statusDescription = Strings.DefaultStatusDescription;
+                this.StatusDescription = CimCmdletStrings.DefaultStatusDescription;
             }
             else
             {
-                this.statusDescription = theStatusDescription;
+                this.StatusDescription = theStatusDescription;
             }
 
-            this.percentageCompleted = thePercentageCompleted;
-            this.secondsRemaining = theSecondsRemaining;
+            this.PercentageCompleted = thePercentageCompleted;
+            this.SecondsRemaining = theSecondsRemaining;
         }
 
         /// <summary>
@@ -70,84 +70,54 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLog(
                 "...Activity {0}: id={1}, remain seconds ={2}, percentage completed = {3}",
                 4,
-                this.activity,
-                this.activityID,
-                this.secondsRemaining,
-                this.percentageCompleted);
+                this.Activity,
+                this.ActivityID,
+                this.SecondsRemaining,
+                this.PercentageCompleted);
 
             ValidationHelper.ValidateNoNullArgument(cmdlet, "cmdlet");
-            ProgressRecord record = new ProgressRecord(
-                this.activityID,
-                this.activity,
-                this.statusDescription);
-            record.Activity = this.activity;
+            ProgressRecord record = new(
+                this.ActivityID,
+                this.Activity,
+                this.StatusDescription);
+            record.Activity = this.Activity;
             record.ParentActivityId = 0;
-            record.SecondsRemaining = (int)this.secondsRemaining;
-            record.PercentComplete = (int)this.percentageCompleted;
+            record.SecondsRemaining = (int)this.SecondsRemaining;
+            record.PercentComplete = (int)this.PercentageCompleted;
             cmdlet.WriteProgress(record);
         }
 
         #region members
 
         /// <summary>
-        /// Activity of the given activity.
+        /// Gets the activity of the given activity.
         /// </summary>
-        private string activity;
+        internal string Activity { get; }
 
         /// <summary>
-        /// Activity identifier of the given activity.
+        /// Gets the activity identifier of the given activity.
         /// </summary>
-        private int activityID;
+        internal int ActivityID { get; }
 
         /// <summary>
-        /// Current operation text of the given activity.
+        /// Gets the current operation text of the given activity.
         /// </summary>
-        private string currentOperation;
+        internal string CurrentOperation { get; }
 
         /// <summary>
-        /// Status description of the given activity.
+        /// Gets the status description of the given activity.
         /// </summary>
-        private string statusDescription;
+        internal string StatusDescription { get; }
 
         /// <summary>
-        /// Percentage completed of the given activity.
+        /// Gets the percentage completed of the given activity.
         /// </summary>
-        private UInt32 percentageCompleted;
+        internal uint PercentageCompleted { get; }
 
         /// <summary>
-        /// How many seconds remained for the given activity.
+        /// Gets the number of seconds remaining for the given activity.
         /// </summary>
-        private UInt32 secondsRemaining;
-
-        internal string Activity
-        {
-            get { return activity; }
-        }
-
-        internal int ActivityID
-        {
-            get { return activityID; }
-        }
-
-        internal string CurrentOperation
-        {
-            get { return currentOperation; }
-        }
-
-        internal string StatusDescription
-        {
-            get { return statusDescription; }
-        }
-
-        internal UInt32 PercentageCompleted
-        {
-            get { return percentageCompleted; }
-        }
-
-        internal UInt32 SecondsRemaining
-        {
-            get { return secondsRemaining; }
-        }
+        internal uint SecondsRemaining { get; }
 
         #endregion
     }

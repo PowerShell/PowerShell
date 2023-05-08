@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Cmdletization
         public Type ParameterType { get; set; }
 
         /// <summary>
-        /// Contents of the ETS type attribute in the CDXML file (or <c>null</c> if that attribute was not specified).
+        /// Contents of the ETS type attribute in the CDXML file (or <see langword="null"/> if that attribute was not specified).
         /// The expectation is that the CmdletAdapter will stamp this value onto PSTypeNames of emitted objects.
         /// </summary>
         public string ParameterTypeName { get; set; }

@@ -1,16 +1,11 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT // ComObject
-
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
-using System.Runtime.InteropServices;
+using System;
 using System.Dynamic;
 using System.Globalization;
+using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 
 namespace System.Management.Automation.ComInterop
@@ -20,19 +15,15 @@ namespace System.Management.Automation.ComInterop
         private readonly string[] _memberNames;
         private readonly object[] _memberValues;
 
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.CurrentCulture, "<enum '{0}'>", TypeName);
-        }
+        public override string ToString() => $"<enum '{TypeName}'>";
 
-        internal ComTypeEnumDesc(ComTypes.ITypeInfo typeInfo, ComTypeLibDesc typeLibDesc) :
-            base(typeInfo, ComType.Enum, typeLibDesc)
+        internal ComTypeEnumDesc(ComTypes.ITypeInfo typeInfo, ComTypeLibDesc typeLibDesc) : base(typeInfo, typeLibDesc)
         {
             ComTypes.TYPEATTR typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
             string[] memberNames = new string[typeAttr.cVars];
             object[] memberValues = new object[typeAttr.cVars];
 
-            IntPtr p = IntPtr.Zero;
+            IntPtr p;
 
             // For each enum member get name and value.
             for (int i = 0; i < typeAttr.cVars; i++)
@@ -93,13 +84,9 @@ namespace System.Management.Automation.ComInterop
             return false;
         }
 
-        // TODO: internal
         public string[] GetMemberNames()
         {
             return (string[])_memberNames.Clone();
         }
     }
 }
-
-#endif
-

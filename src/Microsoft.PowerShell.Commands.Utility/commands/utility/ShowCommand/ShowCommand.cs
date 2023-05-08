@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Show-Command displays a GUI for a cmdlet, or for all cmdlets if no specific cmdlet is specified.
     /// </summary>
-    [Cmdlet(VerbsCommon.Show, "Command", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217448")]
+    [Cmdlet(VerbsCommon.Show, "Command", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2109589")]
     public class ShowCommandCommand : PSCmdlet, IDisposable
     {
         #region Private Fields
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Record the EndProcessing error.
         /// </summary>
-        private PSDataCollection<ErrorRecord> _errors = new PSDataCollection<ErrorRecord>();
+        private PSDataCollection<ErrorRecord> _errors = new();
 
         /// <summary>
         /// Field used for the NoCommonParameter parameter.
@@ -62,14 +62,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private object _commandViewModelObj;
         #endregion
-
-        /// <summary>
-        /// Finalizes an instance of the ShowCommandCommand class.
-        /// </summary>
-        ~ShowCommandCommand()
-        {
-            this.Dispose(false);
-        }
 
         #region Input Cmdlet Parameter
         /// <summary>
@@ -83,14 +75,14 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the Width.
         /// </summary>
         [Parameter]
-        [ValidateRange(300, Int32.MaxValue)]
+        [ValidateRange(300, int.MaxValue)]
         public double Height { get; set; }
 
         /// <summary>
         /// Gets or sets the Width.
         /// </summary>
         [Parameter]
-        [ValidateRange(300, Int32.MaxValue)]
+        [ValidateRange(300, int.MaxValue)]
         public double Width { get; set; }
 
         /// <summary>
@@ -156,7 +148,8 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (!ConsoleInputWithNativeMethods.AddToConsoleInputBuffer(script, true))
+            // Don't send newline at end as PSReadLine shows it rather than executing
+            if (!ConsoleInputWithNativeMethods.AddToConsoleInputBuffer(script, newLine: false))
             {
                 this.WriteDebug(FormatAndOut_out_gridview.CannotWriteToConsoleInputBuffer);
                 this.RunScriptSilentlyAndWithErrorHookup(script);
@@ -181,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_showCommandProxy.ScreenHeight < this.Height)
             {
-                ErrorRecord error = new ErrorRecord(
+                ErrorRecord error = new(
                                     new NotSupportedException(string.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Height", _showCommandProxy.ScreenHeight)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
@@ -191,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_showCommandProxy.ScreenWidth < this.Width)
             {
-                ErrorRecord error = new ErrorRecord(
+                ErrorRecord error = new(
                                     new NotSupportedException(string.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Width", _showCommandProxy.ScreenWidth)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
@@ -225,8 +218,8 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // We wait untill the window is loaded and then activate it
-            // to work arround the console window gaining activation somewhere
+            // We wait until the window is loaded and then activate it
+            // to work around the console window gaining activation somewhere
             // in the end of ProcessRecord, which causes the keyboard focus
             // (and use oif tab key to focus controls) to go away from the window
             _showCommandProxy.WindowLoaded.WaitOne();
@@ -240,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            StringBuilder errorString = new StringBuilder();
+            StringBuilder errorString = new();
 
             for (int i = 0; i < _errors.Count; i++)
             {
@@ -275,12 +268,12 @@ namespace Microsoft.PowerShell.Commands
         private void RunScriptSilentlyAndWithErrorHookup(string script)
         {
             // errors are not created here, because there is a field for it used in the final pop up
-            PSDataCollection<object> output = new PSDataCollection<object>();
+            PSDataCollection<object> output = new();
 
-            output.DataAdded += new EventHandler<DataAddedEventArgs>(this.Output_DataAdded);
-            _errors.DataAdded += new EventHandler<DataAddedEventArgs>(this.Error_DataAdded);
+            output.DataAdded += this.Output_DataAdded;
+            _errors.DataAdded += this.Error_DataAdded;
 
-            PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+            System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
             ps.Streams.Error = _errors;
 
             ps.Commands.AddScript(script);
@@ -293,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void IssueErrorForNoCommand()
         {
-            InvalidOperationException errorException = new InvalidOperationException(
+            InvalidOperationException errorException = new(
                 string.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.CommandNotFound,
@@ -306,7 +299,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void IssueErrorForMoreThanOneCommand()
         {
-            InvalidOperationException errorException = new InvalidOperationException(
+            InvalidOperationException errorException = new(
                 string.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.MoreThanOneCommand,
@@ -376,7 +369,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                _commandViewModelObj = _showCommandProxy.GetCommandViewModel(new ShowCommandCommandInfo(commandInfo), _noCommonParameter.ToBool(), _importedModules, this.Name.IndexOf('\\') != -1);
+                _commandViewModelObj = _showCommandProxy.GetCommandViewModel(new ShowCommandCommandInfo(commandInfo), _noCommonParameter.ToBool(), _importedModules, this.Name.Contains('\\'));
                 _showCommandProxy.ShowCommandWindow(_commandViewModelObj, _passThrough);
             }
             catch (TargetInvocationException ti)
@@ -417,7 +410,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WaitForWindowClosedOrHelpNeeded()
         {
-            do
+            while (true)
             {
                 int which = WaitHandle.WaitAny(new WaitHandle[] { _showCommandProxy.WindowClosed, _showCommandProxy.HelpNeeded, _showCommandProxy.ImportModuleNeeded });
 
@@ -451,7 +444,6 @@ namespace Microsoft.PowerShell.Commands
                 _showCommandProxy.ImportModuleDone(_importedModules, _commands);
                 continue;
             }
-            while (true);
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -11,12 +11,11 @@ namespace System.Management.Automation.Runspaces
         {
             var FileSystemTypes_GroupingFormat = CustomControl.Create()
                     .StartEntry()
-                        .StartFrame(leftIndent: 4)
+                        .StartFrame()
                             .AddText(FileSystemProviderStrings.DirectoryDisplayGrouping)
                             .AddScriptBlockExpressionBinding(@"
                                                   $_.PSParentPath.Replace(""Microsoft.PowerShell.Core\FileSystem::"", """")
                                               ")
-                            .AddNewline()
                         .EndFrame()
                     .EndEntry()
                 .EndControl();
@@ -42,6 +41,27 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_FileSystemTypes(CustomControl[] sharedControls)
         {
+#if UNIX
+            yield return new FormatViewDefinition("childrenWithUnixStat",
+                TableControl.Create()
+                    .GroupByProperty("PSParentPath", customControl: sharedControls[0])
+                    .AddHeader(Alignment.Left, label: "UnixMode", width: 10)
+                    .AddHeader(Alignment.Right, label: "User", width: 10)
+                    .AddHeader(Alignment.Left, label: "Group", width: 10)
+                    .AddHeader(Alignment.Right, label: "LastWriteTime", width: 16)
+                    .AddHeader(Alignment.Right, label: "Size", width: 12)
+                    .AddHeader(Alignment.Left, label: "Name")
+                    .StartRowDefinition(wrap: true)
+                        .AddPropertyColumn("UnixMode")
+                        .AddPropertyColumn("User")
+                        .AddPropertyColumn("Group")
+                        .AddScriptBlockColumn(scriptBlock: @"'{0:d} {0:HH}:{0:mm}' -f $_.LastWriteTime")
+                        .AddPropertyColumn("Size")
+                        .AddPropertyColumn("NameString")
+                    .EndRowDefinition()
+                .EndTable());
+#endif
+
             yield return new FormatViewDefinition("children",
                 TableControl.Create()
                     .GroupByProperty("PSParentPath", customControl: sharedControls[0])

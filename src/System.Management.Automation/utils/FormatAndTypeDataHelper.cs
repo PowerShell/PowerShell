@@ -1,13 +1,11 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using System.Reflection;
 using System.Text;
 
 namespace System.Management.Automation.Runspaces
@@ -75,7 +73,7 @@ namespace System.Management.Automation.Runspaces
 
         private static string GetBaseFolder(Collection<string> independentErrors)
         {
-            return Path.GetDirectoryName(PsUtils.GetMainModule(System.Diagnostics.Process.GetCurrentProcess()).FileName);
+            return Path.GetDirectoryName(Environment.ProcessPath);
         }
 
         private static string GetAndCheckFullFileName(
@@ -173,7 +171,7 @@ namespace System.Management.Automation.Runspaces
             ConcurrentBag<string> errors,
             Category category)
         {
-            if (errors.Count == 0)
+            if (errors.IsEmpty)
             {
                 return;
             }
@@ -210,4 +208,3 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-

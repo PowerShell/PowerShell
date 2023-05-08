@@ -8,7 +8,6 @@
     <file src="__INPATHROOT__\Microsoft.PowerShell.Commands.Utility.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.Commands.Utility.dll" />
     <file src="__INPATHROOT__\Microsoft.PowerShell.ConsoleHost.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.ConsoleHost.dll" />
     <file src="__INPATHROOT__\Microsoft.PowerShell.CoreCLR.Eventing.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.CoreCLR.Eventing.dll" />
-    <file src="__INPATHROOT__\Microsoft.PowerShell.MarkdownRender.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.MarkdownRender.dll" />
     <file src="__INPATHROOT__\Microsoft.PowerShell.GlobalTool.Shim.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.GlobalTool.Shim.dll" />
     <file src="__INPATHROOT__\Microsoft.PowerShell.Security.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.PowerShell.Security.dll" />
     <file src="__INPATHROOT__\Microsoft.WSMan.Management.dll" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Microsoft.WSMan.Management.dll" />
@@ -30,6 +29,7 @@
 
     <file src="__INPATHROOT__\Install-PowerShellRemoting.ps1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Install-PowerShellRemoting.ps1" />
     <file src="__INPATHROOT__\RegisterManifest.ps1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\RegisterManifest.ps1" />
+    <file src="__INPATHROOT__\InstallPSCorePolicyDefinitions.ps1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\InstallPSCorePolicyDefinitions.ps1" />
     <file src="__INPATHROOT__\Modules\CimCmdlets\CimCmdlets.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\CimCmdlets\CimCmdlets.psd1" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Microsoft.PowerShell.Diagnostics.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Microsoft.PowerShell.Diagnostics.psd1" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Host\Microsoft.PowerShell.Host.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Host\Microsoft.PowerShell.Host.psd1" />
@@ -37,7 +37,6 @@
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1" />
     <file src="__INPATHROOT__\Modules\Microsoft.WSMan.Management\Microsoft.WSMan.Management.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.WSMan.Management\Microsoft.WSMan.Management.psd1" />
-    <file src="__INPATHROOT__\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.psm1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.psm1" />
     <file src="__INPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psd1" />
     <file src="__INPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psm1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psm1" />
     <file src="__INPATHROOT__\Modules\Microsoft.WSMan.Management\WSMan.format.ps1xml" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.WSMan.Management\WSMan.format.ps1xml" />

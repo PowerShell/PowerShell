@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Update-TypeData basic functionality" -Tags "CI" {
@@ -291,7 +291,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
     }
 
 # this looks identical to the test directly above
-	It "Update-TypeData with ISS Type Table API Test Add And Remove TypeData should work" -pending {
+	It "Update-TypeData with ISS Type Table API Test Add And Remove TypeData should work" -Pending {
 		try{
 			Update-TypeData -TypeName System.Object[] -MemberType NoteProperty -MemberName TestNote -Value "TestNote"
 			Update-TypeData -TypeName System.Object[] -MemberType AliasProperty -MemberName TestAlias -Value "Length"

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -46,12 +46,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if ((sections & ~AccessControlSections.All) != 0)
             {
-                throw PSTraceSource.NewArgumentException("sections");
+                throw PSTraceSource.NewArgumentException(nameof(sections));
             }
 
             var currentPrivilegeState = new PlatformInvokes.TOKEN_PRIVILEGE();
@@ -103,14 +103,14 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
 
             if (securityDescriptor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("securityDescriptor");
+                throw PSTraceSource.NewArgumentNullException(nameof(securityDescriptor));
             }
 
             if (!File.Exists(path) && !Directory.Exists(path))
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (sd == null)
             {
-                throw PSTraceSource.NewArgumentException("securityDescriptor");
+                throw PSTraceSource.NewArgumentException(nameof(securityDescriptor));
             }
             else
             {
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                 // the solution is to:
                 //
                 //     - First attempt to copy the entire security descriptor as we did in V1.
-                //       This ensures backward compatability for administrator scripts that currently
+                //       This ensures backward compatibility for administrator scripts that currently
                 //       work.
                 //     - If the attempt fails due to a PrivilegeNotHeld exception, try again with
                 //       an estimate of the minimum required subset. This is an estimate, since the
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Transfer it to the new file / directory.
                 // We keep these two code branches so that we can have more
-                // granular information when we ouput the object type via
+                // granular information when we output the object type via
                 // WriteSecurityDescriptorObject.
                 if (Directory.Exists(path))
                 {
@@ -340,4 +340,3 @@ namespace Microsoft.PowerShell.Commands
         #endregion ISecurityDescriptorCmdletProvider members
     }
 }
-

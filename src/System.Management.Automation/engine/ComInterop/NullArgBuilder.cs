@@ -1,12 +1,7 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT
-#if !CLR2
 using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
 
 namespace System.Management.Automation.ComInterop
 {
@@ -23,6 +18,3 @@ namespace System.Management.Automation.ComInterop
         }
     }
 }
-
-#endif
-

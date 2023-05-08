@@ -1,5 +1,8 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
+
 Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
@@ -44,21 +47,27 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
     }
 
     It "Enable-WSManCredSSP works: <description>" -Skip:($NotEnglish -or $IsToBeSkipped) -TestCases @(
-        @{params=@{Role="Client";DelegateComputer="*"};description="client"},
-        @{params=@{Role="Server"};description="server"}
+        @{ params = @{ Role="Client"; DelegateComputer="*" }; description = "client"; expected = "The machine is configured to allow delegating fresh credentials to the following target\(s\):wsman/\*" },
+        @{ params = @{ Role="Server" };                       description = "server"; expected = "This computer is configured to receive credentials from a remote client computer" }
     ) {
-        param ($params)
-        $c = Enable-WSManCredSSP @params -Force
-        $c.CredSSP | Should -Be $true
+        param ($params, $description, $expected)
 
-        $c = Get-WSManCredSSP
+        $c = Enable-WSManCredSSP @params -Force
+        $c.CredSSP | Should -BeTrue
+
         if ($params.Role -eq "Client")
         {
-            $c[0] | Should -Match "The machine is configured to allow delegating fresh credentials to the following target\(s\):wsman/\*"
+            Wait-UntilTrue -IntervalInMilliseconds 500 -sb {
+                $c = Get-WSManCredSSP
+                $c[0] -match $expected
+            } | Should -BeTrue -Because "WSManCredSSP should have been enabled to allow delegating fresh credentials to wsman/*, but it was not."
         }
         else
         {
-            $c[1] | Should -Match "This computer is configured to receive credentials from a remote client computer"
+            Wait-UntilTrue -IntervalInMilliseconds 500 -sb {
+                $c = Get-WSManCredSSP
+                $c[1] -match $expected
+            } | Should -BeTrue -Because "WSManCredSSP should have been enabled to allow receiving credentials from a remote client computer, but it was not."
         }
     }
 
@@ -87,7 +96,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         $credssp.DelegateComputer = "foo", "bar"
         $credssp.DelegateComputer -join ',' | Should -Be "foo,bar"
         $credssp.Force = $true
-        $credssp.Force | Should -Be $true
+        $credssp.Force | Should -BeTrue
 
         $credssp = [Microsoft.WSMan.Management.DisableWSManCredSSPCommand]::new()
         $credssp.Role = "Server"
@@ -104,7 +113,11 @@ Describe "CredSSP cmdlet error cases tests" -Tags 'Feature' {
     ) {
         param ($cmdline, $cmd)
 
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "WSManCredSSP results in InvalidOperationException on ARM64."
+        }
+
         $scriptBlock = [scriptblock]::Create($cmdline)
-        $scriptBlock | should -Throw -ErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.$cmd"
+        $scriptBlock | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.$cmd"
     }
 }

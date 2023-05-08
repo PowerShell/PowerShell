@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -16,14 +16,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("MshResolvedExpressionParameterAssociation", "MshResolvedExpressionParameterAssociation")]
-        internal static PSTraceSource tracer = PSTraceSource.GetTracer("MshResolvedExpressionParameterAssociation",
+        internal static readonly PSTraceSource tracer = PSTraceSource.GetTracer("MshResolvedExpressionParameterAssociation",
                                                 "MshResolvedExpressionParameterAssociation");
         #endregion tracer
 
         internal MshResolvedExpressionParameterAssociation(MshParameter parameter, PSPropertyExpression expression)
         {
             if (expression == null)
-                throw PSTraceSource.NewArgumentNullException("expression");
+                throw PSTraceSource.NewArgumentNullException(nameof(expression));
 
             OriginatingParameter = parameter;
             ResolvedExpression = expression;
@@ -159,9 +159,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             List<MshResolvedExpressionParameterAssociation> retVal = new List<MshResolvedExpressionParameterAssociation>();
             foreach (string property in displayedProperties)
             {
-                if (!duplicatesFinder.ContainsKey(property))
+                if (duplicatesFinder.TryAdd(property, null))
                 {
-                    duplicatesFinder.Add(property, null);
                     PSPropertyExpression expr = new PSPropertyExpression(property, true);
                     retVal.Add(new MshResolvedExpressionParameterAssociation(null, expr));
                 }
@@ -226,4 +225,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 }
-

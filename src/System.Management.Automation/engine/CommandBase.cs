@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -76,7 +76,7 @@ namespace System.Management.Automation.Internal
         /// <value>The invocation object for this command.</value>
         internal InvocationInfo MyInvocation
         {
-            get { return _myInvocation ?? (_myInvocation = new InvocationInfo(this)); }
+            get { return _myInvocation ??= new InvocationInfo(this); }
         }
 
         /// <summary>
@@ -89,7 +89,10 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal PSObject CurrentPipelineObject
         {
-            get { return currentObjectInPipeline; }
+            get
+            {
+                return currentObjectInPipeline;
+            }
 
             set
             {
@@ -155,7 +158,10 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal ExecutionContext Context
         {
-            get { return _context; }
+            get
+            {
+                return _context;
+            }
 
             set
             {
@@ -227,6 +233,13 @@ namespace System.Management.Automation.Internal
         {
         }
 
+        /// <summary>
+        /// When overridden in the derived class, performs clean-up after the command execution.
+        /// </summary>
+        internal virtual void DoCleanResource()
+        {
+        }
+
         #endregion Override
 
         /// <summary>
@@ -266,6 +279,46 @@ namespace System.Management.Automation.Internal
 
 namespace System.Management.Automation
 {
+    #region NativeArgumentPassingStyle
+    /// <summary>
+    /// Defines the different native command argument parsing options.
+    /// </summary>
+    public enum NativeArgumentPassingStyle
+    {
+        /// <summary>Use legacy argument parsing via ProcessStartInfo.Arguments.</summary>
+        Legacy = 0,
+
+        /// <summary>Use new style argument passing via ProcessStartInfo.ArgumentList.</summary>
+        Standard = 1,
+
+        /// <summary>
+        /// Use specific to Windows passing style which is Legacy for selected files on Windows, but
+        /// Standard for everything else. This is the default behavior for Windows.
+        /// </summary>
+        Windows = 2
+    }
+    #endregion NativeArgumentPassingStyle
+
+    #region ErrorView
+    /// <summary>
+    /// Defines the potential ErrorView options.
+    /// </summary>
+    public enum ErrorView
+    {
+        /// <summary>Existing all red multi-line output.</summary>
+        NormalView = 0,
+
+        /// <summary>Only show category information.</summary>
+        CategoryView = 1,
+
+        /// <summary>Concise shows more information on the context of the error or just the message if not a script or parser error.</summary>
+        ConciseView = 2,
+
+        /// <summary>Detailed will leverage Get-Error to get much more detailed information for the error.</summary>
+        DetailedView = 3,
+    }
+    #endregion ErrorView
+
     #region ActionPreference
     /// <summary>
     /// Defines the Action Preference options.  These options determine
@@ -277,18 +330,26 @@ namespace System.Management.Automation
     public enum ActionPreference
     {
         /// <summary>Ignore this event and continue</summary>
-        SilentlyContinue,
+        SilentlyContinue = 0,
+
         /// <summary>Stop the command</summary>
-        Stop,
+        Stop = 1,
+
         /// <summary>Handle this event as normal and continue</summary>
-        Continue,
+        Continue = 2,
+
         /// <summary>Ask whether to stop or continue</summary>
-        Inquire,
+        Inquire = 3,
+
         /// <summary>Ignore the event completely (not even logging it to the target stream)</summary>
-        Ignore,
-        /// <summary>Suspend the command for further diagnosis. Supported only for workflows.</summary>
-        Suspend,
-    }
+        Ignore = 4,
+
+        /// <summary>Reserved for future use.</summary>
+        Suspend = 5,
+
+        /// <summary>Enter the debugger.</summary>
+        Break = 6,
+    } // enum ActionPreference
     #endregion ActionPreference
 
     #region ConfirmImpact
@@ -336,11 +397,11 @@ namespace System.Management.Automation
     /// deriving from the PSCmdlet base class.  The Cmdlet base class is the primary means by
     /// which users create their own Cmdlets.  Extending this class provides support for the most
     /// common functionality, including object output and record processing.
-    /// If your Cmdlet requires access to the MSH Runtime (for example, variables in the session state,
+    /// If your Cmdlet requires access to the PowerShell Runtime (for example, variables in the session state,
     /// access to the host, or information about the current Cmdlet Providers,) then you should instead
     /// derive from the PSCmdlet base class.
     /// The public members defined by the PSCmdlet class are not designed to be overridden; instead, they
-    /// provided access to different aspects of the MSH runtime.
+    /// provided access to different aspects of the PowerShell runtime.
     /// In both cases, users should first develop and implement an object model to accomplish their
     /// task, extending the Cmdlet or PSCmdlet classes only as a thin management layer.
     /// </remarks>
@@ -445,7 +506,7 @@ namespace System.Management.Automation
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this));
+                    return _invokeProvider ??= new ProviderIntrinsics(this);
                 }
             }
         }
@@ -459,7 +520,7 @@ namespace System.Management.Automation
             {
                 if (providerId == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("providerId");
+                    throw PSTraceSource.NewArgumentNullException(nameof(providerId));
                 }
 
                 PathInfo result = SessionState.Path.CurrentProviderLocation(providerId);
@@ -518,7 +579,6 @@ namespace System.Management.Automation
         }
 
         /// <Content contentref="System.Management.Automation.VariableIntrinsics.GetValue" />
-
         public object GetVariableValue(string name, object defaultValue)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -536,4 +596,3 @@ namespace System.Management.Automation
         #endregion public_methods
     }
 }
-

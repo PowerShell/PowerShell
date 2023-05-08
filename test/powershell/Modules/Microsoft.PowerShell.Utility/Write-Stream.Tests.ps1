@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Stream writer tests" -Tags "CI" {
     $targetfile = Join-Path -Path $TestDrive -ChildPath "writeoutput.txt"
@@ -30,7 +30,7 @@ Describe "Stream writer tests" -Tags "CI" {
         It "Should write error messages to the error stream" {
             Write-Error "Testing Error" 2>&1 > $targetfile
             # The contents of the error stream should contain the expected text
-            $targetfile | Should -FileContentMatch ": Testing Error"
+            $targetfile | Should -FileContentMatch "Testing Error"
         }
 
         It "Should write debug messages to the debug stream" {
@@ -47,10 +47,10 @@ Describe "Stream writer tests" -Tags "CI" {
     }
 
     Context "Error automatic variable" {
-        It "Should write error messages to the `$Error automatic variable" {
+        It "Should write error messages to the `$error automatic variable" {
             Write-Error "Test Error Message" -ErrorAction SilentlyContinue
 
-            $Error[0] | Should -Match "Test Error Message"
+            $error[0] | Should -Match "Test Error Message"
         }
     }
 
@@ -80,7 +80,7 @@ Describe "Stream writer tests" -Tags "CI" {
             # redirect the streams is sufficient
             $result = Write-Information "Test Message" *>&1
             $result.NativeThreadId | Should -Not -Be 0
-            $result.ProcessId | Should -Be $pid
+            $result.ProcessId | Should -Be $PID
             $result | Should -BeOfType System.Management.Automation.InformationRecord
 
             # Use Match instead of Be so we can avoid dealing with a potential domain name
@@ -115,7 +115,7 @@ Describe "Stream writer tests" -Tags "CI" {
             (Compare-Object $result $returnValue -SyncWindow 0).length | Should -Be 0
         }
 
-        It "Write-Information accepts `$Null" {
+        It "Write-Information accepts `$null" {
             $streamPath = Join-Path $testdrive information.txt
             $null | Write-Information -Tags myTag -ErrorAction Stop -InformationAction SilentlyContinue -InformationVariable i
             $i.Tags | Should -BeExactly "myTag"

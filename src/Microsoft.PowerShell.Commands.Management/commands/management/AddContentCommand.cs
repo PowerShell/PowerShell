@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -6,15 +6,13 @@ using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
-using Dbg = System.Management.Automation;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// A command that appends the specified content to the item at the specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "Content", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113278")]
+        HelpUri = "https://go.microsoft.com/fwlink/?linkid=2096489")]
     public class AddContentCommand : WriteContentCommandBase
     {
         #region protected members
@@ -42,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
                     catch (Exception e) // Catch-all OK, 3rd party callout
                     {
                         ProviderInvocationException providerException =
-                            new ProviderInvocationException(
+                            new(
                                 "ProviderSeekError",
                                 SessionStateStrings.ProviderSeekError,
                                 holder.PathInfo.Provider,
@@ -84,4 +82,3 @@ namespace Microsoft.PowerShell.Commands
         #endregion protected members
     }
 }
-

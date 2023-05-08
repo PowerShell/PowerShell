@@ -1,7 +1,7 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 3.0
 
 <#
 os_log notes:
@@ -38,7 +38,7 @@ log show ./system.logarchive/ --info --predicate 'process == "pwsh"' >pwsh.log.t
 Parsing Notes:
 * Sample contains 6.0.1 content (which is out of date) revise with 6.1.0 preview
 * Ensure analytic data is considered when parsing; specifically Provider_Lifecycle:ProviderStart.Method.Informational
-* Multi-line output is expected. Parsing needs to detect the timestamp at the begining
+* Multi-line output is expected. Parsing needs to detect the timestamp at the beginning
 of a line and append subsequent lines to the message until the next 'log' line is found.
 * Header lines need to be skipped.
 
@@ -149,7 +149,7 @@ Class OsLogIds
     [int] $Thread = 2;
     [int] $Type = 3;
     [int] $Activity = 4;
-    [int] $Pid = 5;
+    [int] $PID = 5;
     [int] $TTL = 6;
     [int] $ProcessName = 7;
     [int] $Module = 8;
@@ -187,7 +187,7 @@ class PSLogItem
 
     hidden static [int] GetMonth([string] $value)
     {
-        Set-StrictMode -Version Latest
+        Set-StrictMode -Version 3.0
         for ($x = 0; $x -lt [PSLogItem]::monthNames.Count; $x++)
         {
             [string] $monthName = [PSLogItem]::monthNames[$x]
@@ -201,7 +201,7 @@ class PSLogItem
 
     static [PSLogItem] ConvertSysLog([string] $content, [string] $id, [Nullable[DateTime]] $after)
     {
-        Set-StrictMode -Version Latest
+        Set-StrictMode -Version 3.0
         <#
         MMM dd HH:MM:SS machinename id[PID]: (commitid:TID:CHANNEL) [EventName] Message
         Expecting split to return
@@ -302,7 +302,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count)"
+            Write-Warning -Message "Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count) -> $content"
         }
 
         # (commitid:TID:ChannelID)
@@ -317,7 +317,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count)"
+            Write-Warning -Message "Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count) -> $content"
         }
 
         # nameid[PID]
@@ -331,7 +331,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split LogId $($item.LogId) on '[]:' Count:$($subparts.Count)"
+            Write-Warning -Message "Could not split LogId $($item.LogId) on '[]:' Count:$($subparts.Count) -> $content"
         }
 
         return $item
@@ -339,7 +339,7 @@ class PSLogItem
 
     static [object] ConvertOsLog([string] $content, [string] $id, [Nullable[DateTime]] $after)
     {
-        Set-StrictMode -Version Latest
+        Set-StrictMode -Version 3.0
         <#
         Expecting split to return
         0: date                         2018-02-07
@@ -497,11 +497,18 @@ function ConvertFrom-SysLog
     {
         foreach ($line in $Content)
         {
-            [PSLogItem] $item = [PSLogItem]::ConvertSysLog($line, $id, $after)
-            if ($item -ne $null)
+            try
             {
-                $totalWritten++
-                Write-Output $item
+                [PSLogItem] $item = [PSLogItem]::ConvertSysLog($line, $id, $after)
+                if ($item -ne $null)
+                {
+                    $totalWritten++
+                    Write-Output $item
+                }
+            }
+            catch
+            {
+                Write-Warning -Message "Could not convert '$line' to PSLogItem"
             }
         }
     }
@@ -557,7 +564,7 @@ function ConvertFrom-SysLog
     PS> $time = [DateTime]::Parse('1/19/2018 1:26:49 PM')
     PS> Get-PSSysLog -id 'powershell' -logPath '/var/log/syslog' -After $time
 
-    Gets log entries with the id 'powershell' that occured on or after a specific date/time
+    Gets log entries with the id 'powershell' that occurred on or after a specific date/time
 
 .NOTES
     This function reads syslog entries using Get-Content, filters based on the id, and
@@ -615,7 +622,7 @@ function Get-PSSysLog
     else
     {
         [string] $filter = [string]::Format(" {0}[", $id)
-        Get-Content @contentParms -filter {$_.Contains($filter)} | ConvertFrom-SysLog -Id $Id -After $After | Select-Object -First $maxItems
+        Get-Content @contentParms -Filter {$_.Contains($filter)} | ConvertFrom-SysLog -Id $Id -After $After | Select-Object -First $maxItems
     }
 }
 
@@ -811,7 +818,7 @@ function Get-PSOsLog
     {
         [string] $filter = [string]::Format("com.microsoft.powershell.{0}: (", $id)
         Write-Warning "this code path `Get-PSOsLog -TotalCount` should not be used if the message field is needed!"
-        Get-Content @contentParms -filter {$_.Contains($filter)} | Where-Object {![string]::IsNullOrEmpty($_)} | ConvertFrom-OsLog -Id $Id -After $After | Select-Object -First $maxItems
+        Get-Content @contentParms -Filter {$_.Contains($filter)} | Where-Object {![string]::IsNullOrEmpty($_)} | ConvertFrom-OsLog -Id $Id -After $After | Select-Object -First $maxItems
     }
 }
 
@@ -901,7 +908,7 @@ function Export-PSOsLog
             Write-Output $log
         }
         else {
-            throw "did not recieve at least $MinimumCount records but $($logToCount.Count) instead."
+            throw "did not receive at least $MinimumCount records but $($logToCount.Count) instead."
         }
     } -TimeoutInMilliseconds $TimeoutInMilliseconds -IntervalInMilliseconds $IntervalInMilliseconds -LogErrorSb {
         $log = Start-NativeExecution -command {log show --info @extraParams}
@@ -1009,7 +1016,7 @@ function Get-OsLogPersistence
         # Not configured
         # Expecting a format like the following:
         # Mode for 'com.microsoft.powershell'  PERSIST_DEFAULT
-        $result = new-object PSObject -Property @{
+        $result = New-Object PSObject -Property @{
             Level = 'DEFAULT'
             Persist = $parts[$parts.Length- 1]
             Enabled = $false
@@ -1019,7 +1026,7 @@ function Get-OsLogPersistence
     {
         # Expecting a format like the following:
         # Mode for 'com.microsoft.powershell'  INFO PERSIST_INFO
-        $result = new-object PSObject -Property @{
+        $result = New-Object PSObject -Property @{
             Level = $parts[$parts.Length - 2]
             Persist = $parts[$parts.Length -1]
             Enabled = $true
@@ -1068,18 +1075,18 @@ function Wait-PSWinEvent
         $All
     )
 
-    $startTime = [DateTime]::Now
+    $startTime = [DateTime]::Now
     $lastFoundCount = 0;
 
-    do
-    {
-        Start-Sleep -Seconds $pause
+    do
+    {
+        Start-Sleep -Seconds $pause
 
         $recordsToReturn = @()
 
-        foreach ($thisRecord in (get-winevent -FilterHashtable $filterHashtable -Oldest 2> $null))
-        {
-            if($PsCmdlet.ParameterSetName -eq "ByPropertyName")
+        foreach ($thisRecord in (Get-WinEvent -FilterHashtable $filterHashtable -Oldest 2> $null))
+        {
+            if($PSCmdlet.ParameterSetName -eq "ByPropertyName")
             {
                 if ($thisRecord."$propertyName" -like "*$propertyValue*")
                 {
@@ -1094,7 +1101,7 @@ function Wait-PSWinEvent
                 }
             }
 
-            if($PsCmdlet.ParameterSetName -eq "ByPropertyIndex")
+            if($PSCmdlet.ParameterSetName -eq "ByPropertyIndex")
             {
                 if ($thisRecord.Properties[$propertyIndex].Value -eq $propertyValue)
                 {
@@ -1108,7 +1115,7 @@ function Wait-PSWinEvent
                     }
                 }
             }
-        }
+        }
 
         if($recordsToReturn.Count -gt 0)
         {
@@ -1119,7 +1126,7 @@ function Wait-PSWinEvent
 
             $lastFoundCount = $recordsToReturn.Count
         }
-    } while (([DateTime]::Now - $startTime).TotalSeconds -lt $timeout)
+    } while (([DateTime]::Now - $startTime).TotalSeconds -lt $timeout)
 }
 #endregion eventlog support
 

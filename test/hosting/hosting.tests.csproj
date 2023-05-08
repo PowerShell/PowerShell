@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 
   <Import Project="../Test.Common.props"/>
 
   <PropertyGroup>
     <Description>PowerShell hosting SDK xUnit Tests</Description>
     <AssemblyName>powershell-hosting-tests</AssemblyName>
-    <!--RuntimeIdentifiers>win7-x86;win7-x64;osx.10.12-x64;linux-x64</RuntimeIdentifiers-->
+    <!--RuntimeIdentifiers>win7-x86;win7-x64;osx.10.13-x64;linux-x64</RuntimeIdentifiers-->
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,12 +15,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="XunitXml.TestLogger" Version="2.0.0" />
     <!-- The version of Microsoft.PowerShell.SDK should be the version we are releasing, so the tests use the correct SDK before publishing to NuGet.org -->
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.0.0-preview.1" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="$(RELEASE_VERSION)" />
     <PackageReference Include="Xunit.SkippableFact" Version="1.3.6" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -25,13 +25,13 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
-    internal class RemoteDiscoveryHelper
+    internal static class RemoteDiscoveryHelper
     {
         #region PSRP
 
         private static Collection<string> RehydrateHashtableKeys(PSObject pso, string propertyName)
         {
-            var rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
+            const DeserializingTypeConverter.RehydrationFlags rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
                                    DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk;
             Hashtable hashtable = DeserializingTypeConverter.GetPropertyValue<Hashtable>(pso, propertyName, rehydrationFlags);
             if (hashtable == null)
@@ -43,9 +43,9 @@ namespace System.Management.Automation
                 List<string> list = hashtable
                     .Keys
                     .Cast<object>()
-                    .Where(k => k != null)
-                    .Select(k => k.ToString())
-                    .Where(s => s != null)
+                    .Where(static k => k != null)
+                    .Select(static k => k.ToString())
+                    .Where(static s => s != null)
                     .ToList();
                 return new Collection<string>(list);
             }
@@ -53,7 +53,7 @@ namespace System.Management.Automation
 
         internal static PSModuleInfo RehydratePSModuleInfo(PSObject deserializedModuleInfo)
         {
-            var rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
+            const DeserializingTypeConverter.RehydrationFlags rehydrationFlags = DeserializingTypeConverter.RehydrationFlags.NullValueOk |
                                    DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk;
             string name = DeserializingTypeConverter.GetPropertyValue<string>(deserializedModuleInfo, "Name", rehydrationFlags);
             string path = DeserializingTypeConverter.GetPropertyValue<string>(deserializedModuleInfo, "Path", rehydrationFlags);
@@ -82,7 +82,7 @@ namespace System.Management.Automation
             moduleInfo.DeclaredVariableExports = RehydrateHashtableKeys(deserializedModuleInfo, "ExportedVariables");
 
             var compatiblePSEditions = DeserializingTypeConverter.GetPropertyValue<string[]>(deserializedModuleInfo, "CompatiblePSEditions", rehydrationFlags);
-            if (compatiblePSEditions != null && compatiblePSEditions.Any())
+            if (compatiblePSEditions != null && compatiblePSEditions.Length > 0)
             {
                 foreach (var edition in compatiblePSEditions)
                 {
@@ -92,7 +92,7 @@ namespace System.Management.Automation
 
             // PowerShellGet related properties
             var tags = DeserializingTypeConverter.GetPropertyValue<string[]>(deserializedModuleInfo, "Tags", rehydrationFlags);
-            if (tags != null && tags.Any())
+            if (tags != null && tags.Length > 0)
             {
                 foreach (var tag in tags)
                 {
@@ -112,24 +112,24 @@ namespace System.Management.Automation
         private static EventHandler<DataAddedEventArgs> GetStreamForwarder<T>(Action<T> forwardingAction, bool swallowInvalidOperationExceptions = false)
         {
             // TODO/FIXME: ETW event for extended semantics streams
-            return delegate (object sender, DataAddedEventArgs eventArgs)
-                       {
-                           var psDataCollection = (PSDataCollection<T>)sender;
-                           foreach (T t in psDataCollection.ReadAll())
-                           {
-                               try
-                               {
-                                   forwardingAction(t);
-                               }
-                               catch (InvalidOperationException)
-                               {
-                                   if (!swallowInvalidOperationExceptions)
-                                   {
-                                       throw;
-                                   }
-                               }
-                           }
-                       };
+            return (object sender, DataAddedEventArgs eventArgs) =>
+            {
+                var psDataCollection = (PSDataCollection<T>)sender;
+                foreach (T t in psDataCollection.ReadAll())
+                {
+                    try
+                    {
+                        forwardingAction(t);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        if (!swallowInvalidOperationExceptions)
+                        {
+                            throw;
+                        }
+                    }
+                }
+            };
         }
 
         // This is a static field (instead of a constant) to make it possible to set through tests (and/or by customers if needed for a workaround)
@@ -137,10 +137,10 @@ namespace System.Management.Automation
 
         private static IEnumerable<PSObject> InvokeTopLevelPowerShell(
             PowerShell powerShell,
-            CancellationToken cancellationToken,
             PSCmdlet cmdlet,
             PSInvocationSettings invocationSettings,
-            string errorMessageTemplate)
+            string errorMessageTemplate,
+            CancellationToken cancellationToken)
         {
             using (var mergedOutput = new BlockingCollection<Func<PSCmdlet, IEnumerable<PSObject>>>(s_blockingCollectionCapacity))
             {
@@ -151,7 +151,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> errorHandler = GetStreamForwarder<ErrorRecord>(
                     errorRecord => mergedOutput.Add(
-                        delegate (PSCmdlet c)
+                        (PSCmdlet c) =>
                         {
                             errorRecord = GetErrorRecordForRemotePipelineInvocation(errorRecord, errorMessageTemplate);
                             HandleErrorFromPipeline(c, errorRecord, powerShell);
@@ -161,7 +161,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> warningHandler = GetStreamForwarder<WarningRecord>(
                     warningRecord => mergedOutput.Add(
-                        delegate (PSCmdlet c)
+                        (PSCmdlet c) =>
                         {
                             c.WriteWarning(warningRecord.Message);
                             return Enumerable.Empty<PSObject>();
@@ -170,7 +170,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> verboseHandler = GetStreamForwarder<VerboseRecord>(
                     verboseRecord => mergedOutput.Add(
-                        delegate (PSCmdlet c)
+                        (PSCmdlet c) =>
                         {
                             c.WriteVerbose(verboseRecord.Message);
                             return Enumerable.Empty<PSObject>();
@@ -179,7 +179,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> debugHandler = GetStreamForwarder<DebugRecord>(
                     debugRecord => mergedOutput.Add(
-                        delegate (PSCmdlet c)
+                        (PSCmdlet c) =>
                         {
                             c.WriteDebug(debugRecord.Message);
                             return Enumerable.Empty<PSObject>();
@@ -188,7 +188,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> informationHandler = GetStreamForwarder<InformationRecord>(
                     informationRecord => mergedOutput.Add(
-                        delegate (PSCmdlet c)
+                        (PSCmdlet c) =>
                         {
                             c.WriteInformation(informationRecord);
                             return Enumerable.Empty<PSObject>();
@@ -256,13 +256,13 @@ namespace System.Management.Automation
 
         private static IEnumerable<PSObject> InvokeNestedPowerShell(
             PowerShell powerShell,
-            CancellationToken cancellationToken,
             PSCmdlet cmdlet,
             PSInvocationSettings invocationSettings,
-            string errorMessageTemplate)
+            string errorMessageTemplate,
+            CancellationToken cancellationToken)
         {
             EventHandler<DataAddedEventArgs> errorHandler = GetStreamForwarder<ErrorRecord>(
-                delegate (ErrorRecord errorRecord)
+                (ErrorRecord errorRecord) =>
                 {
                     errorRecord = GetErrorRecordForRemotePipelineInvocation(errorRecord, errorMessageTemplate);
                     HandleErrorFromPipeline(cmdlet, errorRecord, powerShell);
@@ -360,7 +360,7 @@ namespace System.Management.Automation
             Exception outerException = new InvalidOperationException(errorMessage, innerException);
 
             RemoteException remoteException = innerException as RemoteException;
-            ErrorRecord remoteErrorRecord = remoteException != null ? remoteException.ErrorRecord : null;
+            ErrorRecord remoteErrorRecord = remoteException?.ErrorRecord;
             string errorId = remoteErrorRecord != null ? remoteErrorRecord.FullyQualifiedErrorId : innerException.GetType().Name;
             ErrorCategory errorCategory = remoteErrorRecord != null ? remoteErrorRecord.CategoryInfo.Category : ErrorCategory.NotSpecified;
             ErrorRecord errorRecord = new ErrorRecord(outerException, errorId, errorCategory, null);
@@ -467,9 +467,9 @@ namespace System.Management.Automation
 
         internal static IEnumerable<PSObject> InvokePowerShell(
             PowerShell powerShell,
-            CancellationToken cancellationToken,
             PSCmdlet cmdlet,
-            string errorMessageTemplate)
+            string errorMessageTemplate,
+            CancellationToken cancellationToken)
         {
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "ErrorAction");
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "WarningAction");
@@ -481,12 +481,12 @@ namespace System.Management.Automation
 
             // TODO/FIXME: ETW events for the output stream
             IEnumerable<PSObject> outputStream = powerShell.IsNested
-                ? InvokeNestedPowerShell(powerShell, cancellationToken, cmdlet, invocationSettings, errorMessageTemplate)
-                : InvokeTopLevelPowerShell(powerShell, cancellationToken, cmdlet, invocationSettings, errorMessageTemplate);
+                ? InvokeNestedPowerShell(powerShell, cmdlet, invocationSettings, errorMessageTemplate, cancellationToken)
+                : InvokeTopLevelPowerShell(powerShell, cmdlet, invocationSettings, errorMessageTemplate, cancellationToken);
 
             return EnumerateWithCatch(
                 outputStream,
-                delegate (Exception exception)
+                (Exception exception) =>
                 {
                     ErrorRecord errorRecord = GetErrorRecordForRemotePipelineInvocation(exception, errorMessageTemplate);
                     HandleErrorFromPipeline(cmdlet, errorRecord, powerShell);
@@ -683,13 +683,13 @@ namespace System.Management.Automation
                     "Dependent",
                     operationOptions);
 
-                IEnumerable<CimModuleFile> associatedFiles = associatedInstances.Select(i => new CimModuleImplementationFile(i));
+                IEnumerable<CimModuleFile> associatedFiles = associatedInstances.Select(static i => new CimModuleImplementationFile(i));
                 _moduleFiles = associatedFiles.ToList();
             }
 
             private List<CimModuleFile> _moduleFiles;
 
-            private class CimModuleManifestFile : CimModuleFile
+            private sealed class CimModuleManifestFile : CimModuleFile
             {
                 internal CimModuleManifestFile(string fileName, byte[] rawFileData)
                 {
@@ -705,7 +705,7 @@ namespace System.Management.Automation
                 internal override byte[] RawFileDataCore { get; }
             }
 
-            private class CimModuleImplementationFile : CimModuleFile
+            private sealed class CimModuleImplementationFile : CimModuleFile
             {
                 private readonly CimInstance _baseObject;
 
@@ -744,7 +744,7 @@ namespace System.Management.Automation
             Cmdlet cmdlet,
             CancellationToken cancellationToken)
         {
-            moduleNamePatterns = moduleNamePatterns ?? new[] { "*" };
+            moduleNamePatterns ??= new[] { "*" };
             HashSet<string> alreadyEmittedNamesOfCimModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             IEnumerable<CimModule> remoteModules = moduleNamePatterns
@@ -795,13 +795,13 @@ namespace System.Management.Automation
                 options);
             // TODO/FIXME: ETW for method results
             IEnumerable<CimModule> cimModules = syncResults
-                .Select(cimInstance => new CimModule(cimInstance))
+                .Select(static cimInstance => new CimModule(cimInstance))
                 .Where(cimModule => wildcardPattern.IsMatch(cimModule.ModuleName));
 
             if (!onlyManifests)
             {
                 cimModules = cimModules.Select(
-                    delegate (CimModule cimModule)
+                    (CimModule cimModule) =>
                     {
                         cimModule.FetchAllModuleFiles(cimSession, cimNamespace, options);
                         return cimModule;
@@ -810,14 +810,15 @@ namespace System.Management.Automation
 
             return EnumerateWithCatch(
                 cimModules,
-                delegate (Exception exception)
+                (Exception exception) =>
                 {
                     ErrorRecord errorRecord = GetErrorRecordForRemoteDiscoveryProvider(exception);
                     if (!cmdlet.MyInvocation.ExpectingInput)
                     {
-                        if (((-1) != errorRecord.FullyQualifiedErrorId.IndexOf(DiscoveryProviderNotFoundErrorId, StringComparison.OrdinalIgnoreCase)) ||
-                            (cancellationToken.IsCancellationRequested || (exception is OperationCanceledException)) ||
-                            (!cimSession.TestConnection()))
+                        if (errorRecord.FullyQualifiedErrorId.Contains(DiscoveryProviderNotFoundErrorId, StringComparison.OrdinalIgnoreCase)
+                            || cancellationToken.IsCancellationRequested
+                            || exception is OperationCanceledException
+                            || !cimSession.TestConnection())
                         {
                             cmdlet.ThrowTerminatingError(errorRecord);
                         }
@@ -841,21 +842,23 @@ namespace System.Management.Automation
             "Description",
             "HelpInfoURI",
         };
+
         private static readonly string[] s_manifestEntriesToKeepAsStringArray = new[] {
             "FunctionsToExport",
             "VariablesToExport",
             "AliasesToExport",
             "CmdletsToExport",
         };
+
         internal static Hashtable RewriteManifest(
             Hashtable originalManifest,
             IEnumerable<string> nestedModules,
             IEnumerable<string> typesToProcess,
             IEnumerable<string> formatsToProcess)
         {
-            nestedModules = nestedModules ?? Array.Empty<string>();
-            typesToProcess = typesToProcess ?? Array.Empty<string>();
-            formatsToProcess = formatsToProcess ?? Array.Empty<string>();
+            nestedModules ??= Array.Empty<string>();
+            typesToProcess ??= Array.Empty<string>();
+            formatsToProcess ??= Array.Empty<string>();
 
             var newManifest = new Hashtable(StringComparer.OrdinalIgnoreCase);
             newManifest["NestedModules"] = nestedModules;
@@ -970,7 +973,7 @@ namespace System.Management.Automation
             }
 
             Dbg.Assert(false, "Unrecognized authentication mechanism [ValidateSet should prevent that from happening]");
-            throw new ArgumentOutOfRangeException("authentication");
+            throw new ArgumentOutOfRangeException(nameof(authentication));
         }
 
         internal static CimSession CreateCimSession(
@@ -978,8 +981,8 @@ namespace System.Management.Automation
             PSCredential credential,
             string authentication,
             bool isLocalHost,
-            CancellationToken cancellationToken,
-            PSCmdlet cmdlet)
+            PSCmdlet cmdlet,
+            CancellationToken cancellationToken)
         {
             if (isLocalHost)
             {
@@ -1035,7 +1038,7 @@ namespace System.Management.Automation
 
         internal static string GetModulePath(string remoteModuleName, Version remoteModuleVersion, string computerName, Runspace localRunspace)
         {
-            computerName = computerName ?? string.Empty;
+            computerName ??= string.Empty;
 
             string sanitizedRemoteModuleName = Regex.Replace(remoteModuleName, "[^a-zA-Z0-9]", string.Empty);
             string sanitizedComputerName = Regex.Replace(computerName, "[^a-zA-Z0-9]", string.Empty);

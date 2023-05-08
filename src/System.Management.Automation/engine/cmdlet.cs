@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -23,14 +23,14 @@ namespace System.Management.Automation
     /// deriving from the PSCmdlet base class.  The Cmdlet base class is the primary means by
     /// which users create their own Cmdlets.  Extending this class provides support for the most
     /// common functionality, including object output and record processing.
-    /// If your Cmdlet requires access to the MSH Runtime (for example, variables in the session state,
+    /// If your Cmdlet requires access to the PowerShell Runtime (for example, variables in the session state,
     /// access to the host, or information about the current Cmdlet Providers,) then you should instead
     /// derive from the PSCmdlet base class.
     /// In both cases, users should first develop and implement an object model to accomplish their
     /// task, extending the Cmdlet or PSCmdlet classes only as a thin management layer.
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Internal.InternalCommand"/>
-    public abstract partial class Cmdlet : InternalCommand
+    public abstract class Cmdlet : InternalCommand
     {
         #region public_properties
 
@@ -46,11 +46,11 @@ namespace System.Management.Automation
             }
         }
 
-        private static Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
+        private static readonly Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
             () =>
             {
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
-                    "Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction",
+                    "Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction", "ProgressAction",
                     "ErrorVariable", "WarningVariable", "OutVariable",
                     "OutBuffer", "PipelineVariable", "InformationVariable" };
             }
@@ -68,7 +68,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static Lazy<HashSet<string>> s_optionalCommonParameters = new Lazy<HashSet<string>>(
+        private static readonly Lazy<HashSet<string>> s_optionalCommonParameters = new Lazy<HashSet<string>>(
             () =>
             {
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
@@ -252,10 +252,10 @@ namespace System.Management.Automation
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 if (string.IsNullOrEmpty(baseName))
-                    throw PSTraceSource.NewArgumentNullException("baseName");
+                    throw PSTraceSource.NewArgumentNullException(nameof(baseName));
 
                 if (string.IsNullOrEmpty(resourceId))
-                    throw PSTraceSource.NewArgumentNullException("resourceId");
+                    throw PSTraceSource.NewArgumentNullException(nameof(resourceId));
 
                 ResourceManager manager = ResourceManagerCache.GetResourceManager(this.GetType().Assembly, baseName);
                 string retValue = null;
@@ -266,12 +266,12 @@ namespace System.Management.Automation
                 }
                 catch (MissingManifestResourceException)
                 {
-                    throw PSTraceSource.NewArgumentException("baseName", GetErrorText.ResourceBaseNameFailure, baseName);
+                    throw PSTraceSource.NewArgumentException(nameof(baseName), GetErrorText.ResourceBaseNameFailure, baseName);
                 }
 
                 if (retValue == null)
                 {
-                    throw PSTraceSource.NewArgumentException("resourceId", GetErrorText.ResourceIdFailure, resourceId);
+                    throw PSTraceSource.NewArgumentException(nameof(resourceId), GetErrorText.ResourceIdFailure, resourceId);
                 }
 
                 return retValue;
@@ -511,7 +511,7 @@ namespace System.Management.Automation
         /// pipeline execution log.
         ///
         /// If LogPipelineExecutionDetail is turned on, this information will be written
-        /// to monad log under log category "Pipeline execution detail"
+        /// to PowerShell log under log category "Pipeline execution detail"
         /// </remarks>
         /// <seealso cref="System.Management.Automation.Cmdlet.WriteDebug(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.WriteVerbose(string)"/>
@@ -674,7 +674,7 @@ namespace System.Management.Automation
         /// but the command failure will ultimately be
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
-        public void WriteInformation(Object messageData, string[] tags)
+        public void WriteInformation(object messageData, string[] tags)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
@@ -801,8 +801,8 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype1")]
         ///             public class RemoveMyObjectType1 : Cmdlet
@@ -824,7 +824,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string,string)"/>
@@ -897,8 +897,8 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype2")]
         ///             public class RemoveMyObjectType2 : Cmdlet
@@ -920,7 +920,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string,string)"/>
@@ -1001,8 +1001,8 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
         ///             public class RemoveMyObjectType3 : Cmdlet
@@ -1018,8 +1018,8 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}?"),
         ///                         "Delete file"))
         ///                     {
         ///                         // delete the object
@@ -1027,7 +1027,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
@@ -1117,8 +1117,8 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
         ///             public class RemoveMyObjectType3 : Cmdlet
@@ -1135,8 +1135,8 @@ namespace System.Management.Automation
         ///                 {
         ///                     ShouldProcessReason shouldProcessReason;
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}?", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}?"),
         ///                         "Delete file",
         ///                         out shouldProcessReason))
         ///                     {
@@ -1145,7 +1145,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
@@ -1233,8 +1233,8 @@ namespace System.Management.Automation
         /// to ShouldProcess for the Cmdlet instance.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
         ///             public class RemoveMyObjectType4 : Cmdlet
@@ -1258,14 +1258,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}"),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format($"File {filename} is read-only.  Are you sure you want to delete read-only file {filename}?"),
         ///                                     "Delete file"))
         ///                                     )
         ///                             {
@@ -1277,7 +1277,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldContinue(string,string,ref bool,ref bool)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
@@ -1362,8 +1362,8 @@ namespace System.Management.Automation
         /// to ShouldProcess for the Cmdlet instance.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
         ///             public class RemoveMyObjectType5 : Cmdlet
@@ -1390,14 +1390,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}"),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format($"File {filename} is read-only.  Are you sure you want to delete read-only file {filename}?"),
         ///                                     "Delete file"),
         ///                                     ref yesToAll,
         ///                                     ref noToAll
@@ -1411,7 +1411,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
@@ -1502,8 +1502,8 @@ namespace System.Management.Automation
         /// to ShouldProcess for the Cmdlet instance.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
-        ///         namespace Microsoft.Samples.MSH.Cmdlet
+        ///     <code>
+        ///         namespace Microsoft.Samples.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
         ///             public class RemoveMyObjectType5 : Cmdlet
@@ -1530,14 +1530,14 @@ namespace System.Management.Automation
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
-        ///                         string.Format("Deleting file {0}",filename),
-        ///                         string.Format("Are you sure you want to delete file {0}", filename),
+        ///                         string.Format($"Deleting file {filename}"),
+        ///                         string.Format($"Are you sure you want to delete file {filename}"),
         ///                         "Delete file"))
         ///                     {
         ///                         if (IsReadOnly(filename))
         ///                         {
         ///                             if (!Force &amp;&amp; !ShouldContinue(
-        ///                                     string.Format("File {0} is read-only.  Are you sure you want to delete read-only file {0}?", filename),
+        ///                                     string.Format($"File {filename} is read-only.  Are you sure you want to delete read-only file {filename}?"),
         ///                                     "Delete file"),
         ///                                     ref yesToAll,
         ///                                     ref noToAll
@@ -1551,7 +1551,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
@@ -1714,12 +1714,12 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.Cmdlet.ProcessRecord"/>.
         /// etc.
         /// </remarks>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (errorRecord == null)
-                    throw new ArgumentNullException("errorRecord");
+                ArgumentNullException.ThrowIfNull(errorRecord);
 
                 if (commandRuntime != null)
                 {
@@ -1823,7 +1823,7 @@ namespace System.Management.Automation
         /// WhatIf behavior was requested.
         /// </summary>
         /// <remarks>
-        /// In the MSH host, WhatIf behavior can be requested explicitly
+        /// In the host, WhatIf behavior can be requested explicitly
         /// for one cmdlet instance using the -WhatIf commandline parameter,
         /// or implicitly for all SupportsShouldProcess cmdlets with $WhatIfPreference.
         /// Other hosts may have other ways to request WhatIf behavior.
@@ -1831,4 +1831,3 @@ namespace System.Management.Automation
         WhatIf = 0x1,
     }
 }
-

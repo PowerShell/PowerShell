@@ -1,0 +1,90 @@
+{
+  "Packages": [
+      {
+          "url": "microsoft-centos8-prod",
+          "distribution": [
+              "centos"
+          ],
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
+      },
+      {
+          "url": "microsoft-rhel8.0-prod",
+          "distribution": [
+              "trusty"
+          ],
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
+      },
+      {
+          "url": "microsoft-rhel7.3-prod",
+          "distribution": [
+              "trusty"
+          ],
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
+      },
+      {
+          "url": "cbl-mariner-2.0-prod-Microsoft-x86_64",
+          "distribution": [
+              "bionic"
+          ],
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.x86_64.rpm",
+          "channel": "stable"
+      },
+      {
+          "url": "cbl-mariner-2.0-preview-Microsoft-x86_64",
+          "distribution": [
+              "bionic"
+          ],
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.x86_64.rpm",
+          "channel": "preview"
+      },
+      {
+          "url": "microsoft-debian-stretch-prod",
+          "distribution": [
+              "stretch"
+          ],
+          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+      },
+      {
+          "url": "microsoft-debian-buster-prod",
+          "distribution": [
+              "buster"
+          ],
+          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+      },
+      {
+          "url": "microsoft-ubuntu-bionic-prod",
+          "distribution": [
+              "bionic"
+          ],
+          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+      },
+      {
+          "url": "microsoft-ubuntu-jammy-prod",
+          "distribution": [
+              "jammy"
+          ],
+          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+      },
+      {
+          "url": "microsoft-ubuntu-focal-prod",
+          "distribution": [
+              "focal"
+          ],
+          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+      },
+      {
+          "url": "microsoft-ubuntu-xenial-prod",
+          "distribution": [
+              "xenial"
+          ],
+          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+      },
+      {
+          "url": "microsoft-debian-bullseye-prod",
+          "distribution": [
+              "bullseye"
+          ],
+          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+      }
+  ]
+}

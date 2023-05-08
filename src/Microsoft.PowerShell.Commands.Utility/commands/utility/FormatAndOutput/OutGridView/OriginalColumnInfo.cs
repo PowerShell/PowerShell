@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -11,8 +11,8 @@ namespace Microsoft.PowerShell.Commands
 {
     internal class OriginalColumnInfo : ColumnInfo
     {
-        private string _liveObjectPropertyName;
-        private OutGridViewCommand _parentCmdlet;
+        private readonly string _liveObjectPropertyName;
+        private readonly OutGridViewCommand _parentCmdlet;
 
         internal OriginalColumnInfo(string staleObjectPropertyName, string displayName, string liveObjectPropertyName, OutGridViewCommand parentCmdlet)
             : base(staleObjectPropertyName, displayName)

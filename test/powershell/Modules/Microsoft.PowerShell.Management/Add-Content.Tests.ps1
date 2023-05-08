@@ -1,10 +1,11 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Add-Content cmdlet tests" -Tags "CI" {
 
   BeforeAll {
     $file1 = "file1.txt"
     Setup -File "$file1"
+    $streamContent = "ShouldWork"
   }
 
   Context "Add-Content should actually add content" {
@@ -45,6 +46,29 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
 
     It "Should throw an error on a directory" {
       { Add-Content -Path . -Value "WriteContainerContentException" -ErrorAction Stop } | Should -Throw -ErrorId "WriteContainerContentException,Microsoft.PowerShell.Commands.AddContentCommand"
+    }
+
+    Context "Add-Content should work with alternate data streams on Windows" {
+      BeforeAll {
+        if (!$isWindows) {
+          return
+        }
+        $ADSTestDir = "addcontentadstest"
+        $ADSTestFile = "addcontentads.txt"
+        $streamContent = "This is a test stream."
+        Setup -Directory "$ADSTestDir"
+        Setup -File "$ADSTestFile"
+      }
+
+      It "Should add an alternate data stream on a directory" -Skip:(!$IsWindows) {
+        Add-Content -Path TestDrive:\$ADSTestDir -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop        
+        Get-Content -Path TestDrive:\$ADSTestDir -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent
+      }
+
+      It "Should add an alternate data stream on a file" -Skip:(!$IsWindows) {
+        Add-Content -Path TestDrive:\$ADSTestFile -Stream Add-Content-Test-Stream -Value $streamContent -ErrorAction Stop        
+        Get-Content -Path TestDrive:\$ADSTestFile -Stream Add-Content-Test-Stream | Should -BeExactly $streamContent
+      }
     }
 
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]

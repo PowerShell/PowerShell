@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Cim
 {
     internal class CimSensitiveValueConverter : IDisposable
     {
-        private class SensitiveString : IDisposable
+        private sealed class SensitiveString : IDisposable
         {
             private GCHandle _gcHandle;
             private string _string;
@@ -52,12 +52,12 @@ namespace Microsoft.PowerShell.Cim
             {
                 if ((offset < 0) || (offset >= _string.Length))
                 {
-                    throw new ArgumentOutOfRangeException("offset");
+                    throw new ArgumentOutOfRangeException(nameof(offset));
                 }
 
                 if (offset + charsToCopy > _string.Length)
                 {
-                    throw new ArgumentOutOfRangeException("charsToCopy");
+                    throw new ArgumentOutOfRangeException(nameof(charsToCopy));
                 }
 
                 fixed (char* target = _string)
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Cim
             }
         }
 
-        private readonly List<IDisposable> _trackedDisposables = new List<IDisposable>();
+        private readonly List<IDisposable> _trackedDisposables = new();
 
         /// <summary>
         /// Releases resources associated with this object.
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Cim
         /// <exception cref="PSInvalidCastException">The only kind of exception this method can throw.</exception>
         internal static object ConvertFromCimToDotNet(object cimObject, Type expectedDotNetType)
         {
-            if (expectedDotNetType == null) { throw new ArgumentNullException("expectedDotNetType"); }
+            ArgumentNullException.ThrowIfNull(expectedDotNetType);
 
             if (cimObject == null)
             {
@@ -399,21 +399,21 @@ namespace Microsoft.PowerShell.Cim
                 return dotNetObject;
             }
 
-            Func<Func<object>, object> exceptionSafeReturn = delegate (Func<object> innerAction)
-                                                                 {
-                                                                     try
-                                                                     {
-                                                                         return innerAction();
-                                                                     }
-                                                                     catch (Exception e)
-                                                                     {
-                                                                         throw CimValueConverter.GetInvalidCastException(
-                                                                             e,
-                                                                             "InvalidCimToDotNetCast",
-                                                                             cimObject,
-                                                                             expectedDotNetType.FullName);
-                                                                     }
-                                                                 };
+            Func<Func<object>, object> exceptionSafeReturn = (Func<object> innerAction) =>
+            {
+                try
+                {
+                    return innerAction();
+                }
+                catch (Exception e)
+                {
+                    throw CimValueConverter.GetInvalidCastException(
+                        e,
+                        "InvalidCimToDotNetCast",
+                        cimObject,
+                        expectedDotNetType.FullName);
+                }
+            };
 
             if (typeof(ObjectSecurity).IsAssignableFrom(expectedDotNetType))
             {
@@ -459,8 +459,8 @@ namespace Microsoft.PowerShell.Cim
                 return exceptionSafeReturn(delegate
                                                {
                                                    int indexOfLastColon = cimIntrinsicValue.LastIndexOf(':');
-                                                   int port = int.Parse(cimIntrinsicValue.Substring(indexOfLastColon + 1), NumberStyles.Integer, CultureInfo.InvariantCulture);
-                                                   IPAddress address = IPAddress.Parse(cimIntrinsicValue.Substring(0, indexOfLastColon));
+                                                   int port = int.Parse(cimIntrinsicValue.AsSpan(indexOfLastColon + 1), NumberStyles.Integer, CultureInfo.InvariantCulture);
+                                                   IPAddress address = IPAddress.Parse(cimIntrinsicValue.AsSpan(0, indexOfLastColon));
                                                    return new IPEndPoint(address, port);
                                                });
             }

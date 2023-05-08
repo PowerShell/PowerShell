@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Runspaces;
@@ -77,7 +77,7 @@ namespace System.Management.Automation
         /// current state.
         /// </exception>
         /// <returns>
-        /// A PSCommand instance with <paramref name="cmdlet"/> added.
+        /// A PSCommand instance with <paramref name="command"/> added.
         /// </returns>
         /// <remarks>
         /// This method is not thread safe.
@@ -89,13 +89,10 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cmdlet");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand = new Command(command, false);
             _commands.Add(_currentCommand);
@@ -133,13 +130,10 @@ namespace System.Management.Automation
         {
             if (cmdlet == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cmdlet");
+                throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand = new Command(cmdlet, false, useLocalScope);
             _commands.Add(_currentCommand);
@@ -151,15 +145,15 @@ namespace System.Management.Automation
         /// Add a piece of script to construct a command pipeline.
         /// For example, to construct a command string "get-process | foreach { $_.Name }"
         ///     <code>
-        ///         PSCommand command = new PSCommand("get-process").
-        ///                                     AddCommand("foreach { $_.Name }", true);
+        ///         PSCommand command = new PSCommand("get-process")
+        ///             .AddScript("foreach { $_.Name }", true);
         ///     </code>
         /// </summary>
         /// <param name="script">
         /// A string representing the script.
         /// </param>
         /// <returns>
-        /// A PSCommand instance with <paramref name="command"/> added.
+        /// A PSCommand instance with <paramref name="script"/> added.
         /// </returns>
         /// <remarks>
         /// This method is not thread-safe.
@@ -175,13 +169,10 @@ namespace System.Management.Automation
         {
             if (script == null)
             {
-                throw PSTraceSource.NewArgumentNullException("script");
+                throw PSTraceSource.NewArgumentNullException(nameof(script));
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand = new Command(script, true);
             _commands.Add(_currentCommand);
@@ -193,8 +184,8 @@ namespace System.Management.Automation
         /// Add a piece of script to construct a command pipeline.
         /// For example, to construct a command string "get-process | foreach { $_.Name }"
         ///     <code>
-        ///         PSCommand command = new PSCommand("get-process").
-        ///                                     AddCommand("foreach { $_.Name }", true);
+        ///         PSCommand command = new PSCommand("get-process")
+        ///             .AddScript("foreach { $_.Name }", true);
         ///     </code>
         /// </summary>
         /// <param name="script">
@@ -204,7 +195,7 @@ namespace System.Management.Automation
         /// if true local scope is used to run the script command.
         /// </param>
         /// <returns>
-        /// A PSCommand instance with <paramref name="command"/> added.
+        /// A PSCommand instance with <paramref name="script"/> added.
         /// </returns>
         /// <remarks>
         /// This method is not thread-safe.
@@ -220,13 +211,10 @@ namespace System.Management.Automation
         {
             if (script == null)
             {
-                throw PSTraceSource.NewArgumentNullException("script");
+                throw PSTraceSource.NewArgumentNullException(nameof(script));
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand = new Command(script, true, useLocalScope);
             _commands.Add(_currentCommand);
@@ -258,13 +246,10 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand = command;
             _commands.Add(_currentCommand);
@@ -276,8 +261,9 @@ namespace System.Management.Automation
         /// Add a parameter to the last added command.
         /// For example, to construct a command string "get-process | select-object -property name"
         ///     <code>
-        ///         PSCommand command = new PSCommand("get-process").
-        ///                                     AddCommand("select-object").AddParameter("property","name");
+        ///         PSCommand command = new PSCommand("get-process")
+        ///             .AddCommand("select-object")
+        ///             .AddParameter("property", "name");
         ///     </code>
         /// </summary>
         /// <param name="parameterName">
@@ -308,10 +294,7 @@ namespace System.Management.Automation
                                                                  new object[] { "PSCommand" });
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand.Parameters.Add(parameterName, value);
             return this;
@@ -321,8 +304,9 @@ namespace System.Management.Automation
         /// Adds a switch parameter to the last added command.
         /// For example, to construct a command string "get-process | sort-object -descending"
         ///     <code>
-        ///         PSCommand command = new PSCommand("get-process").
-        ///                                     AddCommand("sort-object").AddParameter("descending");
+        ///         PSCommand command = new PSCommand("get-process")
+        ///             .AddCommand("sort-object")
+        ///             .AddParameter("descending");
         ///     </code>
         /// </summary>
         /// <param name="parameterName">
@@ -350,12 +334,26 @@ namespace System.Management.Automation
                                                                  new object[] { "PSCommand" });
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand.Parameters.Add(parameterName, true);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a <see cref="CommandParameter"/> instance to the last added command.
+        /// </summary>
+        internal PSCommand AddParameter(CommandParameter parameter)
+        {
+            if (_currentCommand == null)
+            {
+                throw PSTraceSource.NewInvalidOperationException(PSCommandStrings.ParameterRequiresCommand,
+                                                                 new object[] { "PSCommand" });
+            }
+
+            _owner?.AssertChangesAreAccepted();
+
+            _currentCommand.Parameters.Add(parameter);
             return this;
         }
 
@@ -363,8 +361,9 @@ namespace System.Management.Automation
         /// Adds an argument to the last added command.
         /// For example, to construct a command string "get-process | select-object name"
         ///     <code>
-        ///         PSCommand command = new PSCommand("get-process").
-        ///                                     AddCommand("select-object").AddParameter("name");
+        ///         PSCommand command = new PSCommand("get-process")
+        ///             .AddCommand("select-object")
+        ///             .AddArgument("name");
         ///     </code>
         /// This will add the value "name" to the positional parameter list of "select-object"
         /// cmdlet. When the command is invoked, this value will get bound to positional parameter 0
@@ -392,10 +391,7 @@ namespace System.Management.Automation
                                                                  new object[] { "PSCommand" });
             }
 
-            if (_owner != null)
-            {
-                _owner.AssertChangesAreAccepted();
-            }
+            _owner?.AssertChangesAreAccepted();
 
             _currentCommand.Parameters.Add(null, value);
             return this;

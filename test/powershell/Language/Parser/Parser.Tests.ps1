@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" -Tags "CI" {
@@ -22,16 +22,16 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
                 [string]$ReturnType = "default"
             )
 
-            BEGIN {}
+            begin {}
 
-            PROCESS {
+            process {
                 if ( ! $ReturnType ) {
                     $ReturnType = "default"
                 }
 
                 switch ( $ReturnType ) {
                     "default" {
-                        $result = "$Property1;$Property2;$Property3"
+                        $result = "$Property1; $Property2; $Property3"
                         break
                     }
                     "array" {
@@ -66,7 +66,9 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
                 return $result
             }
 
-            END {}
+            end {}
+
+            clean {}
         }
 '@
         $functionDefinition>$functionDefinitionFile
@@ -74,6 +76,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         $PowerShell = [powershell]::Create()
         $PowerShell.AddScript(". $functionDefinitionFile").Invoke()
         $PowerShell.Commands.Clear()
+
         function ExecuteCommand {
             param ([string]$command)
             try {
@@ -89,33 +92,38 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         $shellfile = Join-Path -Path $TestDrive -ChildPath "testfile.cmd"
         $testfolder1 = Join-Path -Path $TestDrive -ChildPath "dir1"
         $testfolder2 = Join-Path -Path $testfolder1 -ChildPath "dir2"
-        if (-Not(Test-Path $testfolder1)) {
+        if (-not(Test-Path $testfolder1)) {
             New-Item $testfolder1 -Type Directory
         }
-        if (-Not(Test-Path $testfolder2)) {
+        if (-not(Test-Path $testfolder2)) {
             New-Item $testfolder2 -Type Directory
         }
         $testdirfile1 = Join-Path -Path $testfolder2 -ChildPath "testdirfile1.txt"
         $testdirfile2 = Join-Path -Path $testfolder2 -ChildPath "testdirfile2.txt"
-        "">$testdirfile1
-        "">$testdirfile2
+        Set-Content -Path $testdirfile1 -Value ""
+        Set-Content -Path $testdirfile2 -Value ""
     }
     AfterEach {
         if (Test-Path $testfile) {
             Remove-Item $testfile
         }
+
         if (Test-Path $shellfile) {
             Remove-Item $shellfile
         }
+
         if (Test-Path $testdirfile1) {
             Remove-Item $testdirfile1
         }
+
         if (Test-Path $testdirfile2) {
             Remove-Item $testdirfile2
         }
+
         if (Test-Path $testfolder2) {
             Remove-Item $testfolder2
         }
+
         if (Test-Path $testfolder1) {
             Remove-Item $testfolder1
         }
@@ -135,8 +143,8 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         { ExecuteCommand "(" } | Should -Throw -ErrorId "IncompleteParseException"
     }
 
-    It "Throws an exception if the the first statement starts with an empty pipe element (line 188)" {
-        { ExecuteCommand "| get-location" } | Should -Throw -ErrorId "ParseException"
+    It "Throws an exception if the first statement starts with an empty pipe element (line 188)" {
+        { ExecuteCommand "| Get-Location" } | Should -Throw -ErrorId "ParseException"
     }
 
     It "Throws an CommandNotFoundException exception if using a label in front of an if statement is not allowed. (line 225)" {
@@ -155,52 +163,51 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     }
 
     It "Throws when you pipe into a value expression (line 238)" {
-        foreach ($command in "1;2;3|3", '1;2;3|$(1+1)', "1;2;3|'abc'") {
-            { ExecuteCommand $command } | Should -Throw -ErrorId "ParseException"
-        }
-    }
+        param($Command)
+
+        { ExecuteCommand $command } | Should -Throw -ErrorId "ParseException"
+    } -TestCases @(
+        @{ Command = '1;2;3|3' }
+        @{ Command = '1;2;3|$(1+1)' }
+        @{ Command = "1;2;3|'abc'" }
+    )
 
     It "Throws an incomplete parse exception when a comma follows an expression (line 247)" {
         { ExecuteCommand "(1+ 1)," } | Should -Throw -ErrorId "IncompleteParseException"
     }
 
     It "Test that invoke has a higher precedence for a script than for an executable. (line 279)" {
-        "1">$testfile
+        Set-Content -Path $testfile -Value "1"
         $result = ExecuteCommand ". $testfile"
         $result | Should -Be 1
     }
 
     It "This test will check that a path is correctly interpreted when using '..' and '.'  (line 364)" {
-        $result = ExecuteCommand "set-location $TestDrive; get-childitem dir1\.\.\.\..\dir1\.\dir2\..\..\dir1\.\dir2"
+        $result = ExecuteCommand "Set-Location $TestDrive; Get-ChildItem dir1\.\.\.\..\dir1\.\dir2\..\..\dir1\.\dir2"
         $result.Count | Should -Be 2
         $result[0].Name | Should -BeExactly "testdirfile1.txt"
         $result[1].Name | Should -BeExactly "testdirfile2.txt"
     }
 
     It "This test will check that the parser can handle a mix of forward slashes and back slashes in the path (line 417)" {
-        $result = ExecuteCommand "get-childitem $TestDrive/dir1/./.\.\../dir1/.\dir2\../..\dir1\.\dir2"
+        $result = ExecuteCommand "Get-ChildItem $TestDrive/dir1/./.\.\../dir1/.\dir2\../..\dir1\.\dir2"
         $result.Count | Should -Be 2
         $result[0].Name | Should -BeExactly "testdirfile1.txt"
         $result[1].Name | Should -BeExactly "testdirfile2.txt"
     }
 
     It "This test checks that the asterisk globs as expected. (line 545)" {
-        $result = ExecuteCommand "get-childitem $TestDrive/dir1\dir2\*.txt"
+        $result = ExecuteCommand "Get-ChildItem $TestDrive/dir1\dir2\*.txt"
         $result.Count | Should -Be 2
         $result[0].Name | Should -BeExactly "testdirfile1.txt"
         $result[1].Name | Should -BeExactly "testdirfile2.txt"
     }
 
     It "This test checks that we can use a range for globbing: [1-2] (line 557)" {
-        $result = ExecuteCommand "get-childitem $TestDrive/dir1\dir2\testdirfile[1-2].txt"
+        $result = ExecuteCommand "Get-ChildItem $TestDrive/dir1\dir2\testdirfile[1-2].txt"
         $result.Count | Should -Be 2
         $result[0].Name | Should -BeExactly "testdirfile1.txt"
         $result[1].Name | Should -BeExactly "testdirfile2.txt"
-    }
-
-    It "This test will check that escaping the $ sigil inside single quotes simply returns the $ character. (line 583)" {
-        $result = ExecuteCommand "'`$'"
-        $result | Should -BeExactly "`$"
     }
 
     It "Test that escaping a space just returns that space. (line 593)" {
@@ -214,8 +221,6 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     }
 
     Context "Test Unicode escape sequences." {
-        # These tests require the file to be saved with a BOM.  Unfortunately when this UTF8 file is read by
-        # PowerShell without a BOM, the file is incorrectly interpreted as ASCII.
         It 'Test that the bracketed Unicode escape sequence `u{0} returns minimum char.' {
             $result = ExecuteCommand '"`u{0}"'
             [int]$result[0] | Should -Be 0
@@ -290,56 +295,68 @@ foo``u{2195}abc
     }
 
     It "Test that escaping any character with no special meaning just returns that char. (line 602)" {
-        $result = ExecuteCommand '"fo`obar"'
-        $result | Should -BeExactly "foobar"
+        $result = ExecuteCommand '"fo`odbar"'
+        $result | Should -BeExactly "foodbar"
     }
 
     Context "Test that we support all of the C# escape sequences. We use the ` instead of \. (line 613)" {
         # the first two sequences are tricky, because we need to provide something to
         # execute without causing an incomplete parse error
-        $tests = @{ sequence = "write-output ""`'"""; expected = ([char]39) },
-        @{ sequence = 'write-output "`""'; expected = ([char]34) },
-        # this is a string, of 2 "\", the initial backtick should essentially be ignored
-        @{ sequence = '"`\\"'; expected = '\\' },
-        # control sequences
-        @{ sequence = '"`0"'; expected = ([char]0) }, # null
-        @{ sequence = '"`a"'; expected = ([char]7) },
-        @{ sequence = '"`b"'; expected = ([char]8) }, # backspace
-        @{ sequence = '"`f"'; expected = ([char]12) }, # form
-        @{ sequence = '"`n"'; expected = ([char]10) }, # newline
-        @{ sequence = '"`r"'; expected = ([char]13) }, # return
-        @{ sequence = '"`t"'; expected = ([char]9) }, # tab
-        @{ sequence = '"`v"'; expected = ([char]11) }
-        It "C# escape sequence <sequence> is supported using `` instead of \. (line 613)" -TestCases $tests {
-            param ( $sequence, $expected )
-            $result = ExecuteCommand $sequence
-            $result | Should -BeExactly $expected
-        }
+        It 'C# escape sequence <sequence> is supported using ` instead of \. (line 613)' {
+            param ( $Sequence, $Expected )
+            $result = ExecuteCommand $Sequence
+            $result | Should -BeExactly $Expected
+        } -TestCases @(
+            @{ Sequence = "write-output ""`'"""; Expected = [char]39 }
+            @{ Sequence = 'write-output "`""'; Expected = [char]34 }
+            # this is a string, of 2 "\", the initial backtick should essentially be ignored
+            @{ Sequence = '"`\\"'; Expected = '\\' }
+            # control sequences
+            @{ Sequence = '"`0"'; Expected = [char]0 } # null
+            @{ Sequence = '"`a"'; Expected = [char]7 }
+            @{ Sequence = '"`b"'; Expected = [char]8 } # backspace
+            @{ Sequence = '"`f"'; Expected = [char]12 } # form
+            @{ Sequence = '"`n"'; Expected = [char]10 } # newline
+            @{ Sequence = '"`r"'; Expected = [char]13 } # return
+            @{ Sequence = '"`t"'; Expected = [char]9 } # tab
+            @{ Sequence = '"`v"'; Expected = [char]11 }
+        )
     }
 
     It "This test checks that array substitution occurs inside double quotes. (line 646)" {
-        $result = ExecuteCommand '$MyArray = "a","b";"Hello $MyArray"'
+        $result = ExecuteCommand '$MyArray = "a","b"; "Hello $MyArray"'
         $result | Should -BeExactly "Hello a b"
     }
 
     It "This tests declaring an array in nested variable tables. (line 761)" {
-        $result = ExecuteCommand "`$Variable:vtbl1:vtbl2:b=@(5,6);`$Variable:vtbl1:vtbl2:b"
+        $result = ExecuteCommand '$Variable:vtbl1:vtbl2:b=@(5,6); $Variable:vtbl1:vtbl2:b'
         $result.Count | Should -Be 2
         $result[0] | Should -Be 5
         $result[1] | Should -Be 6
     }
 
     It "Test a simple multiple assignment. (line 773)" {
-        $result = ExecuteCommand '$one,$two = 1,2,3; "One = $one"; "Two = $two"'
+        $result = ExecuteCommand '$one, $two = 1, 2, 3; "One = $one"; "Two = $two"'
         $result.Count | Should -Be 2
         $result[0] | Should -Be "One = 1"
         $result[1] | Should -Be "Two = 2 3"
     }
 
     It "Tests script, global and local scopes from a function inside a script. (line 824)" {
-        "`$var = 'script';function func { `$var; `$var = 'local'; `$local:var; `$script:var; `$global:var };func;`$var;">$testfile
-        ExecuteCommand "`$var = 'global'"
-        $result = ExecuteCommand "$testfile"
+        @'
+            $var = "script"
+            function func {
+                $var
+                $var = "local"
+                $local:var
+                $script:var
+                $global:var
+            }
+            func
+            $var
+'@ | Set-Content -Path $testfile
+        ExecuteCommand '$var = "global"'
+        $result = ExecuteCommand $testfile
         $result.Count | Should -Be 5
         $result[0] | Should -BeExactly "script"
         $result[1] | Should -BeExactly "local"
@@ -349,64 +366,241 @@ foo``u{2195}abc
     }
 
     It "Use break inside of a loop that is inside another loop. (line 945)" {
-        $commands = " while (1) { 1; while(1) { 2; break; 3; }; 4; break; 5;  } ",
-        " for (;;) { 1; for(;;) { 2; break; 3; }; 4; break; 5; } ",
-        " foreach(`$a in 1,2,3) { 1; foreach( `$b in 1,2,3 ) { 2; break; 3; }; 4; break; 5; } "
-        $results = "1", "2", "4"
-        $i = 0
-        for (; $i -lt $commands.Count; $i++) {
-            $result = ExecuteCommand $commands[$i]
-            $result | Should -Be $results
+        param($Command, $ExpectedResult)
+
+        $result = ExecuteCommand $Command
+        $result | Should -Be $ExpectedResult
+    } -TestCases @(
+        @{
+            Command        = '
+                while ($true) {
+                    1
+
+                    while ($true) {
+                        2; break; 3
+                    }
+
+                    4; break; 5
+                }
+            '
+            ExpectedResult = "1", "2", "4"
         }
-    }
+        @{
+            Command        = '
+                for (;;) {
+                    1
+
+                    for(;;) {
+                        2; break; 3
+                    }
+
+                    4; break; 5
+                }
+            '
+            ExpectedResult = "1", "2", "4"
+        }
+        @{
+            Command        = '
+                foreach ($a in 1..3) {
+                    1
+
+                    foreach ($b in 1..3) {
+                        2; break; 3
+                    }
+
+                    4; break; 5
+                }
+            '
+            ExpectedResult = "1", "2", "4"
+        }
+    )
 
     It "Use break in two loops with same label. (line 967)" {
-        $commands = " :foo while (1) { 1; :foo while(1) { 2; break foo; 3; }; 4; break; 5;  } ",
-        " :foo for (;;) { 1; :foo for(;;) { 2; break foo; 3; }; 4; break; 5; } ",
-        " :foo foreach(`$a in 1,2,3) { 1; :foo foreach( `$b in 1,2,3 ) { 2; break foo; 3; }; 4; break; 5; } "
-        $results = "1", "2", "4"
-        $i = 0
-        for (; $i -lt $commands.Count; $i++) {
-            $result = ExecuteCommand $commands[$i]
-            $result | Should -Be $results
+        param($Command, $ExpectedResult)
+
+        $result = ExecuteCommand $Command
+        $result | Should -Be $ExpectedResult
+    } -TestCases @(
+        @{
+            Command        = '
+                :foo while ($true) {
+                    1
+
+                    :foo while ($true) {
+                        2; break foo; 3
+                    }
+
+                    4; break; 5
+                }
+            '
+            ExpectedResult = "1", "2", "4"
         }
-    }
+        @{
+            Command        = '
+                :foo for (;;) {
+                    1
+
+                    :foo for (;;) {
+                        2; break foo; 3
+                    }
+
+                    4; break; 5
+                }
+            '
+            ExpectedResult = "1", "2", "4"
+        }
+        @{
+            Command        = '
+                :foo foreach($a in 1..3) {
+                    1
+
+                    :foo foreach($b in 1..3) {
+                        2; break foo; 3
+                    }
+
+                    4; break; 5
+                }
+            '
+            ExpectedResult = "1", "2", "4"
+        }
+    )
 
     It "Try continue inside of different loop statements. (line 1039)" {
-        $commands = " `$a = 0; while (`$a -lt 2) { `$a; `$a += 1; continue; 2; } ",
-        " for (`$a = 0;`$a -lt 2; `$a += 1) { 9; continue; 3; } ",
-        " foreach(`$a in 0,1) { `$a; continue; 2; } "
-        $result = ExecuteCommand $commands[0]
-        $result | Should -Be "0", "1"
-        $result = ExecuteCommand $commands[1]
-        $result | Should -Be "9", "9"
-        $result = ExecuteCommand $commands[2]
-        $result | Should -Be "0", "1"
-    }
+        param($Command, $ExpectedResult)
+
+        $result = ExecuteCommand $Command
+        $result | Should -Be $ExpectedResult
+    } -TestCases @(
+        @{
+            Command        = '
+                $a = 0
+                while ($a -lt 2) {
+                    ($a++)
+                    continue
+                    2
+                }
+            '
+            ExpectedResult = "0", "1"
+        }
+        @{
+            Command        = '
+                for ($a = 0; $a -lt 2; $a += 1) {
+                    9; continue; 3
+                }
+            '
+            ExpectedResult = "9", "9"
+        }
+        @{
+            Command        = '
+                foreach ($a in 0, 1) {
+                    $a; continue; 2
+                }
+            '
+            ExpectedResult = "0", "1"
+        }
+    )
 
     It "Use a label to continue an inner loop. (line 1059)" {
-        $commands = " `$x = 0; while (`$x -lt 1) { `$x += 1; `$x; `$a = 0; :foo while(`$a -lt 2) { `$a += 1; `$a; continue foo; 3; }; 4; continue; 5;  } ",
-        " for (`$x = 0;`$x -lt 1;`$x += 1) { 1; :foo for(`$a = 0; `$a -lt 2; `$a += 1) { `$a; continue foo; 3; }; 4; continue; 5; } ",
-        " foreach(`$a in 1) { 1; :foo foreach( `$b in 1,2 ) { `$b; continue foo; 3; }; 4; continue; 5; } "
-        $result = ExecuteCommand $commands[0]
-        $result | Should -Be "1", "1", "2", "4"
-        $result = ExecuteCommand $commands[1]
-        $result | Should -Be "1", "0", "1", "4"
-        $result = ExecuteCommand $commands[2]
-        $result | Should -Be "1", "1", "2", "4"
-    }
+        param($Command, $ExpectedResult)
+
+        $result = ExecuteCommand $Command
+        $result | Should -Be $ExpectedResult
+    } -TestCases @(
+        @{
+            Command        = '
+                $x = 0
+                while ($x -lt 1) {
+                    (++$x); $a = 0
+
+                    :foo while ($a -lt 2) {
+                        $a += 1; $a; continue foo; 3
+                    }
+
+                    4; continue; 5
+                }
+            '
+            ExpectedResult = "1", "1", "2", "4"
+        }
+        @{
+            Command        = '
+                for ($x = 0; $x -lt 1; $x += 1) {
+                    1
+
+                    :foo for ($a = 0; $a -lt 2; $a += 1) {
+                        $a; continue foo; 3
+                    }
+
+                    4; continue; 5
+                }
+            '
+            ExpectedResult = "1", "0", "1", "4"
+        }
+        @{
+            Command        = '
+                foreach ($a in 1) {
+                    1
+
+                    :foo foreach ($b in 1, 2) {
+                        $b; continue foo; 3
+                    }
+
+                    4; continue; 5
+                }
+            '
+            ExpectedResult = "1", "1", "2", "4"
+        }
+    )
 
     It "Use continue with a label on a nested loop. (line 1059)" {
-        $commands = " `$x = 0; :foo while (`$x -lt 2) { `$x; `$x += 1; :bar while(1) { 2; continue foo; 3; }; 4; continue; 5;  } ",
-        " :foo for (`$x = 0;`$x -lt 2;`$x += 1) { 1; :bar for(;;) { 2; continue foo; 3; }; 4; continue; 5; } ",
-        " :foo foreach(`$a in 1,2) { 1; :bar foreach( `$b in 1,2,3 ) { 2; continue foo; 3; }; 4; continue; 5; } "
-        $result = ExecuteCommand $commands[0]
-        $result | Should -Be "0", "2", "1", "2"
-        $result = ExecuteCommand $commands[1]
-        $result | Should -Be "1", "2", "1", "2"
-        $result = ExecuteCommand $commands[2]
-        $result | Should -Be "1", "2", "1", "2"
-    }
+        param($Command, $ExpectedResult)
+
+        $result = ExecuteCommand $Command
+        $result | Should -Be $ExpectedResult
+    } -TestCases @(
+        @{
+            Command        = '
+                $x = 0
+                :foo while ($x -lt 2) {
+                    ($x++)
+
+                    :bar while ($true) {
+                        2; continue foo; 3
+                    }
+
+                    4; continue; 5
+                }
+            '
+            ExpectedResult = "0", "2", "1", "2"
+        }
+        @{
+            Command        = '
+                :foo for ($x = 0; $x -lt 2; $x += 1) {
+                    1
+
+                    :bar for (;;) {
+                        2; continue foo; 3
+                    }
+
+                    4; continue; 5
+                }
+            '
+            ExpectedResult = "1", "2", "1", "2"
+        }
+        @{
+            Command        = '
+                :foo foreach ($a in 1..2) {
+                    1
+
+                    :bar foreach($b in 1..3) {
+                        2; continue foo; 3
+                    }
+
+                    4; continue; 5
+                }
+            '
+            ExpectedResult = "1", "2", "1", "2"
+        }
+    )
 
     It "This test will check that it is a syntax error to use if without a code block. (line 1141)" {
         { ExecuteCommand 'if ("true")' } | Should -Throw -ErrorId "IncompleteParseException"
@@ -429,19 +623,26 @@ foo``u{2195}abc
     }
 
     It "This test will check that the parser throws a syntax error when a foreach loop is not complete. (line 1238)" {
-        { ExecuteCommand '$count=0;$files = $(get-childitem / -filter *.txt );foreach ($i ;$count' } | Should -Throw -ErrorId "ParseException"
+        { ExecuteCommand '$count=0; $files = $(Get-ChildItem / -Filter *.txt ); foreach ($i ; $count' } | Should -Throw -ErrorId "ParseException"
     }
 
     It "This test will check that the parser throws a syntax error if the foreach loop is not complete. (line 1248)" {
-        { ExecuteCommand '$count=0;$files = $(get-childitem / -filter *.txt );foreach ($i in ;$count' } | Should -Throw -ErrorId "ParseException"
+        { ExecuteCommand '$count=0; $files = $(Get-ChildItem / -Filter *.txt ); foreach ($i in ;$count' } | Should -Throw -ErrorId "ParseException"
     }
 
     It "This will test that the parser throws a syntax error if the foreach loop is missing a closing parentheses. (line 1258)" {
-        { ExecuteCommand '$count=0;$files = $(get-childitem / -filter *.txt );foreach ($i in $files ;$count' } | Should -Throw -ErrorId "ParseException"
+        { ExecuteCommand '$count=0; $files = $(Get-ChildItem / -Filter *.txt ); foreach ($i in $files ;$count' } | Should -Throw -ErrorId "ParseException"
     }
 
     It "Test that if an exception is thrown from the try block it will be caught in the appropropriate catch block and that the finally block will run regardless of whether an exception is thrown. (line 1317)" {
-        $result = ExecuteCommand 'try { try { throw (new-object System.ArgumentException) } catch [System.DivideByZeroException] { } finally { "Finally" } } catch { $_.Exception.GetType().FullName }'
+        $result = ExecuteCommand '
+            try {
+                try { throw [ArgumentException]::new() }
+                catch [System.DivideByZeroException] { }
+                finally { "Finally" }
+            }
+            catch { $_.Exception.GetType().FullName }
+        '
         $result | Should -Be "Finally", "System.ArgumentException"
     }
 
@@ -454,31 +655,31 @@ foo``u{2195}abc
     }
 
     It "Test that null can be passed to a method that expects a reference type. (line 1439)" {
-        $result = ExecuteCommand '$test = "String";$test.CompareTo($())'
+        $result = ExecuteCommand '$test = "String"; $test.CompareTo($())'
         $result | Should -Be 1
     }
 
     It "Tests that command expansion operators can be used as a parameter to an object method. (line 1507)" {
-        $result = ExecuteCommand '$test = "String";$test.SubString($("hello" | foreach-object { $_.length - 2 } ))'
+        $result = ExecuteCommand '$test = "String"; $test.SubString($("hello" | foreach-object { $_.length - 2 } ))'
         $result | Should -Be "ing"
     }
 
     It "Test that & can be used as a parameter as long as it is quoted. (line 1606)" {
-        $result = ExecuteCommand 'testcmd-parserbvt `&get-childitem'
-        $result | Should -Be "&get-childitem;unset;unset"
+        $result = ExecuteCommand 'testcmd-parserbvt `&Get-ChildItem'
+        $result | Should -Be "&Get-ChildItem; unset; unset"
         $result = ExecuteCommand 'testcmd-parserbvt `&*'
-        $result | Should -Be "&*;unset;unset"
+        $result | Should -Be "&*; unset; unset"
     }
 
     It "Run a command with parameters. (line 1621)" {
         $result = ExecuteCommand 'testcmd-parserBVT -Property1 set'
-        $result | Should -Be "set;unset;unset"
+        $result | Should -Be "set; unset; unset"
     }
 
     It "Test that typing a number at the command line will return that number. (line 1630)" {
         $result = ExecuteCommand '3'
         $result | Should -Be "3"
-        $result.gettype() | should -Be ([int])
+        $result | Should -BeOfType int
     }
 
     It "This test will check that an msh script can be run without invoking. (line 1641)" {
@@ -489,7 +690,7 @@ foo``u{2195}abc
 
     It "Test that an alias is resolved before a function. (line 1657)" {
         $result = ExecuteCommand 'set-alias parserInvokeTest testcmd-parserBVT;function parserInvokeTest { 3 };parserInvokeTest'
-        $result | Should -Be "unset;unset;unset"
+        $result | Should -Be "unset; unset; unset"
     }
 
     It "Test that functions are resolved before cmdlets. (line 1678)" {
@@ -504,7 +705,7 @@ foo``u{2195}abc
         if ( $IsLinux -or $IsMacOS ) {
             # because we execute on *nix based on executable bit, and the file name doesn't matter
             # so we can use the same filename as for windows, just make sure it's executable with chmod
-            "#!/bin/sh`necho ""Hello World""" | out-file -encoding ASCII $shellfile
+            "#!/bin/sh`necho ""Hello World""" | Out-File -Encoding ASCII $shellfile
             /bin/chmod +x $shellfile
         }
         else {
@@ -542,28 +743,28 @@ foo``u{2195}abc
             @{ Script = 'if (0 -or 1) { $true } else { $false }'; Expected = $true }
             @{ Script = 'if (0 -or 0) { $true } else { $false }'; Expected = $false }
             #-eq
-            @{ Script = 'if ($False -eq $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -eq $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -eq $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -eq $false) { $true } else { $false }'; Expected = $false }
             #-ieq
-            @{ Script = 'if ($False -ieq $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ieq $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -ieq $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -ieq $false) { $true } else { $false }'; Expected = $false }
             #-le
-            @{ Script = 'if ($False -le $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -le $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -le $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -le $false) { $true } else { $false }'; Expected = $false }
             #-ile
-            @{ Script = 'if ($False -ile $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ile $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -ile $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -ile $false) { $true } else { $false }'; Expected = $false }
             #-ge
-            @{ Script = 'if ($False -ge $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ge $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -ge $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -ge $false) { $true } else { $false }'; Expected = $false }
             #-ige
-            @{ Script = 'if ($False -ige $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ige $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -ige $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -ige $false) { $true } else { $false }'; Expected = $false }
             #-like
-            @{ Script = 'if ($False -like $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -like $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -like $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -like $false) { $true } else { $false }'; Expected = $false }
             #!
-            @{ Script = 'if (!$True -and $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if (!$true -and $false) { $true } else { $false }'; Expected = $false }
         )
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
@@ -665,6 +866,7 @@ foo``u{2195}abc
             @{ Script = "0x0"; ExpectedValue = "0"; ExpectedType = [int] }
             @{ Script = "0x12"; ExpectedValue = "18"; ExpectedType = [int] }
             @{ Script = "-0x12"; ExpectedValue = "-18"; ExpectedType = [int] }
+
             @{ Script = "0x80000000"; ExpectedValue = $([int32]::MinValue); ExpectedType = [int] }
             @{ Script = "0x7fffffff"; ExpectedValue = $([int32]::MaxValue); ExpectedType = [int] }
             @{ Script = "0x100000000"; ExpectedValue = [int64]0x100000000; ExpectedType = [long] }
@@ -732,6 +934,7 @@ foo``u{2195}abc
             @{ Script = "0x0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
             @{ Script = "0x41y"; ExpectedValue = "65"; ExpectedType = [sbyte] }
             @{ Script = "-0x41y"; ExpectedValue = "-65"; ExpectedType = [sbyte] }
+            @{ Script = "0xFFy"; ExpectedValue = "-1"; ExpectedType = [sbyte] }
             #Binary
             @{ Script = "0b0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
             @{ Script = "0b10y"; ExpectedValue = "2"; ExpectedType = [sbyte] }
@@ -758,6 +961,7 @@ foo``u{2195}abc
             @{ Script = "0x0s"; ExpectedValue = "0"; ExpectedType = [short] }
             @{ Script = "0x41s"; ExpectedValue = "65"; ExpectedType = [short] }
             @{ Script = "-0x41s"; ExpectedValue = "-65"; ExpectedType = [short] }
+            @{ Script = "0xFFFFs"; ExpectedValue = "-1"; ExpectedType = [short] }
             #Binary
             @{ Script = "0b0s"; ExpectedValue = "0"; ExpectedType = [short] }
             @{ Script = "0b10s"; ExpectedValue = "2"; ExpectedType = [short] }
@@ -786,6 +990,7 @@ foo``u{2195}abc
             @{ Script = "0x0l"; ExpectedValue = "0"; ExpectedType = [long] }
             @{ Script = "0x41l"; ExpectedValue = "65"; ExpectedType = [long] }
             @{ Script = "-0x41l"; ExpectedValue = "-65"; ExpectedType = [long] }
+            @{ Script = "0xFFFFFFFFFFFFFFFFl"; ExpectedValue = "-1"; ExpectedType = [long] }
             #Binary
             @{ Script = "0b0l"; ExpectedValue = "0"; ExpectedType = [long] }
             @{ Script = "0b10l"; ExpectedValue = "2"; ExpectedType = [long] }
@@ -845,6 +1050,7 @@ foo``u{2195}abc
             @{ Script = "0xFFu"; ExpectedValue = "255"; ExpectedType = [uint] }
             @{ Script = "0xFFFFu"; ExpectedValue = "65535"; ExpectedType = [uint] }
             @{ Script = "0xFFFFFFu"; ExpectedValue = "16777215"; ExpectedType = [uint] }
+
             @{ Script = "0xFFFFFFFFu"; ExpectedValue = "$([uint]::MaxValue)"; ExpectedType = [uint] }
             @{ Script = "0xFFFFFFFFFFu"; ExpectedValue = "1099511627775"; ExpectedType = [ulong] }
             @{ Script = "0xFFFFFFFFFFFFu"; ExpectedValue = "281474976710655"; ExpectedType = [ulong] }
@@ -879,6 +1085,7 @@ foo``u{2195}abc
             #Hexadecimal
             @{ Script = "0x0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
             @{ Script = "0x41uy"; ExpectedValue = "65"; ExpectedType = [byte] }
+            @{ Script = "0xFFuy"; ExpectedValue = [byte]::MaxValue; ExpectedType = [byte] }
             #Binary
             @{ Script = "0b0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
             @{ Script = "0b10uy"; ExpectedValue = "2"; ExpectedType = [byte] }
@@ -899,6 +1106,8 @@ foo``u{2195}abc
             #Hexadecimal
             @{ Script = "0x0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
             @{ Script = "0x41us"; ExpectedValue = "65"; ExpectedType = [ushort] }
+            @{ Script = "0x41us"; ExpectedValue = "65"; ExpectedType = [ushort] }
+            @{ Script = "0xFFFFus"; ExpectedValue = [ushort]::MaxValue; ExpectedType = [ushort] }
             #Binary
             @{ Script = "0b0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
             @{ Script = "0b10us"; ExpectedValue = "2"; ExpectedType = [ushort] }
@@ -920,6 +1129,7 @@ foo``u{2195}abc
             #Hexadecimal
             @{ Script = "0x0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
             @{ Script = "0x41ul"; ExpectedValue = "65"; ExpectedType = [ulong] }
+            @{ Script = "0xFFFFFFFFFFFFFFFFul"; ExpectedValue = [ulong]::MaxValue; ExpectedType = [ulong] }
             #Binary
             @{ Script = "0b0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
             @{ Script = "0b10ul"; ExpectedValue = "2"; ExpectedType = [ulong] }
@@ -1020,7 +1230,7 @@ foo``u{2195}abc
         " function func { 'default' }; " +
         " local:func; " +
         " script:func; " +
-        " global:func; ">$testfile
+        " global:func; " | Set-Content -Path $testfile
         $result = ExecuteCommand "function func { 'notcalled' };. $testfile"
         $result -join "" | Should -Be ("default", "default", "global" -join "")
         $result = ExecuteCommand "func"
@@ -1028,7 +1238,7 @@ foo``u{2195}abc
     }
 
     It 'Test piping arguments to a script block. The objects should be accessible from "$input". (line 2870)' {
-        ExecuteCommand '$script = { $input; };$results = @(0,0),-1 | &$script'
+        ExecuteCommand '$script = { $input }; $results = @(0, 0), -1 | & $script'
         $result = ExecuteCommand '$results[0][0]'
         $result | Should -Be "0"
         $result = ExecuteCommand '$results[0][1]'
@@ -1038,9 +1248,9 @@ foo``u{2195}abc
     }
 
     It 'Test piping null into a scriptblock. The script block should not be passed anything. (line 2903)' {
-        $result = ExecuteCommand '$() | &{ $count = 0; foreach ($i in $input) { $count++ }; $count }'
+        $result = ExecuteCommand '$() | & { $count = 0; foreach ($i in $input) { $count++ }; $count }'
         $result | Should -Be "1"
-        $result = ExecuteCommand '$() | &{ $input }'
+        $result = ExecuteCommand '$() | & { $input }'
         $result | Should -BeNullOrEmpty
     }
 
@@ -1050,28 +1260,29 @@ foo``u{2195}abc
     }
 
     Context "Mathematical Operations Tests (starting at line 2975 to line 3036)" {
-        $testData = @(
+        $ArithmeticTests = @(
             @{
                 Script   = '$a=6; $a -= 2;$a'
                 Expected = 4
             }
             @{
                 Script   = "20 %
-                6"
+                    6"
                 Expected = "2"
             }
             @{
                 Script   = "(20 %
-                6 *
-                4  +
-                2 ) /
-                2 -
-                3"
+                    6 *
+                    4  +
+                    2 ) /
+                    2 -
+                    3"
                 Expected = "2"
             }
         )
-        It "<Script> should return <Expected>" -TestCases $testData {
+        It "<Script> should return <Expected>" -TestCases $ArithmeticTests {
             param ( $Script, $Expected )
+
             ExecuteCommand $Script | Should -Be $Expected
         }
     }
@@ -1090,11 +1301,12 @@ foo``u{2195}abc
         { ExecuteCommand "`$herestr=@`"`n'`"'`n`"@" } | Should -Not -Throw
     }
 
-    It "Throw better error when statement should be put in named blocks - <name>" -TestCases @(
+    $TestErrorMisplacedStatement = @(
         @{ script = "Function foo { [CmdletBinding()] param() DynamicParam {} Hi"; name = "function" }
         @{ script = "{ begin {} Hi"; name = "script-block" }
         @{ script = "begin {} Hi"; name = "script-file" }
-    ) {
+    )
+    It "Throw better error when statement should be put in named blocks - <name>" -TestCases $TestErrorMisplacedStatement {
         param($script)
 
         $err = { ExecuteCommand $script } | Should -Throw -ErrorId "ParseException" -PassThru
@@ -1122,14 +1334,14 @@ foo``u{2195}abc
             $ps.Commands.Clear()
         }
 
-        $testCases = @(
+        $TokenResetTests = @(
             @{ script = "#requires"; firstToken = $null; lastToken = $null },
             @{ script = "#requires -Version 5.0`n10"; firstToken = "10"; lastToken = "10" },
             @{ script = "Write-Host 'Hello'`n#requires -Version 5.0`n7"; firstToken = "Write-Host"; lastToken = "7" },
             @{ script = "Write-Host 'Hello'`n#requires -Version 5.0"; firstToken = "Write-Host"; lastToken = "Hello" }
         )
 
-        It "Correctly resets the first and last tokens in the tokenizer after nested scan in script" -TestCases $testCases {
+        It "Correctly resets the first and last tokens in the tokenizer after nested scan in script" -TestCases $TokenResetTests {
             param($script, $firstToken, $lastToken)
 
             $ps.AddScript($script)

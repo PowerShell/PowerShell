@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -12,10 +12,7 @@ namespace Microsoft.PowerShell
 {
     /// <summary>
     /// EngineInstaller is a class for facilitating registry of necessary
-    /// information for monad engine.
-    ///
-    /// This class will be built with monad console host dll
-    /// (System.Management.Automation.dll).
+    /// information for PowerShell engine.
     ///
     /// At install time, installation utilities (like InstallUtil.exe) will
     /// call install this engine assembly based on the implementation in
@@ -54,16 +51,16 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private Dictionary<String, object> _regValues = null;
+        private Dictionary<string, object> _regValues = null;
         /// <summary>
         /// </summary>
-        internal sealed override Dictionary<String, object> RegValues
+        internal sealed override Dictionary<string, object> RegValues
         {
             get
             {
                 if (_regValues == null)
                 {
-                    _regValues = new Dictionary<String, object>();
+                    _regValues = new Dictionary<string, object>();
                     _regValues[RegistryStrings.MonadEngine_MonadVersion] = EngineVersion;
                     _regValues[RegistryStrings.MonadEngine_ApplicationBase] = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                     _regValues[RegistryStrings.MonadEngine_ConsoleHostAssemblyName] = Assembly.GetExecutingAssembly().FullName;

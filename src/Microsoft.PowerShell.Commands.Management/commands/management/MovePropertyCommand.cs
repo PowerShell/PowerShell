@@ -1,10 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
-
-using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -12,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to move a property on an item to another item.
     /// </summary>
     [Cmdlet(VerbsCommon.Move, "ItemProperty", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113351")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096817")]
     public class MoveItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
         #region Parameters
@@ -37,7 +35,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
         {
-            get { return paths; }
+            get
+            {
+                return paths;
+            }
 
             set
             {
@@ -53,14 +54,14 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSProperty")]
         public string[] Name
         {
-            get { return _property; }
+            get
+            {
+                return _property;
+            }
 
             set
             {
-                if (value == null)
-                {
-                    value = Array.Empty<string>();
-                }
+                value ??= Array.Empty<string>();
 
                 _property = value;
             }

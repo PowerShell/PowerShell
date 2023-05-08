@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "LocationGlobber",
              "The location globber converts PowerShell paths with glob characters to zero or more paths.")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("LocationGlobber",
              "The location globber converts PowerShell paths with glob characters to zero or more paths.");
 
@@ -35,7 +35,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "PathResolution",
              "Traces the path resolution algorithm.")]
-        private static Dbg.PSTraceSource s_pathResolutionTracer =
+        private static readonly Dbg.PSTraceSource s_pathResolutionTracer =
             Dbg.PSTraceSource.GetTracer(
                 "PathResolution",
                 "Traces the path resolution algorithm.",
@@ -52,13 +52,13 @@ namespace System.Management.Automation
         /// The instance of session state on which this location globber acts.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="sessionState" /> is null.
+        /// If <paramref name="sessionState"/> is null.
         /// </exception>
         internal LocationGlobber(SessionState sessionState)
         {
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             _sessionState = sessionState;
@@ -174,12 +174,12 @@ namespace System.Management.Automation
             providerInstance = null;
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             Collection<PathInfo> result;
@@ -663,7 +663,7 @@ namespace System.Management.Automation
             providerInstance = null;
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             CmdletProviderContext context =
@@ -738,12 +738,12 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             using (s_pathResolutionTracer.TraceScope("Resolving MSH path \"{0}\" to PROVIDER-INTERNAL path", path))
@@ -849,7 +849,7 @@ namespace System.Management.Automation
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             CmdletProviderContext context =
@@ -935,17 +935,17 @@ namespace System.Management.Automation
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (providerId == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerId");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             using (s_pathResolutionTracer.TraceScope("Resolving PROVIDER-INTERNAL path \"{0}\" to PROVIDER-INTERNAL path", path))
@@ -1057,7 +1057,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             CmdletProviderContext context =
@@ -1129,7 +1129,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             PSDriveInfo drive = null;
@@ -1217,12 +1217,12 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             string result = null;
@@ -1374,7 +1374,7 @@ namespace System.Management.Automation
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             providerId = null;
@@ -1472,7 +1472,7 @@ namespace System.Management.Automation
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             bool result = false;
@@ -1506,7 +1506,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                int index = path.IndexOf(":", StringComparison.Ordinal);
+                int index = path.IndexOf(':');
 
                 if (index == -1)
                 {
@@ -1561,7 +1561,7 @@ namespace System.Management.Automation
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             bool result = false;
@@ -1604,7 +1604,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                int index = path.IndexOf(":", StringComparison.Ordinal);
+                int index = path.IndexOf(':');
 
                 if (index == -1)
                 {
@@ -1654,7 +1654,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The instance of session state on which this globber acts.
         /// </summary>
-        private SessionState _sessionState;
+        private readonly SessionState _sessionState;
 
         /// <summary>
         /// Removes the back tick "`" from any of the glob characters in the path.
@@ -1666,13 +1666,13 @@ namespace System.Management.Automation
         /// The path with the glob characters unescaped.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="path" /> is null.
+        /// If <paramref name="path"/> is null.
         /// </exception>
         private static string RemoveGlobEscaping(string path)
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             string result = WildcardPattern.Unescape(path);
@@ -1699,7 +1699,7 @@ namespace System.Management.Automation
         /// false otherwise.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="driveName" /> is null.
+        /// If <paramref name="driveName"/> is null.
         /// </exception>
         /// <remarks>
         /// The comparison is done using a case-insensitive comparison using the
@@ -1714,25 +1714,25 @@ namespace System.Management.Automation
         {
             if (driveName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("driveName");
+                throw PSTraceSource.NewArgumentNullException(nameof(driveName));
             }
 
             bool result = false;
 
-            if (string.Compare(
+            if (string.Equals(
                     driveName,
                     StringLiterals.Global,
-                    StringComparison.OrdinalIgnoreCase) == 0)
+                    StringComparison.OrdinalIgnoreCase))
             {
                 // It's the global scope.
                 s_tracer.WriteLine("match found: {0}", StringLiterals.Global);
                 result = true;
                 scope = _sessionState.Internal.GlobalScope;
             }
-            else if (string.Compare(
+            else if (string.Equals(
                         driveName,
                         StringLiterals.Local,
-                        StringComparison.OrdinalIgnoreCase) == 0)
+                        StringComparison.OrdinalIgnoreCase))
             {
                 // It's the local scope.
                 s_tracer.WriteLine("match found: {0}", driveName);
@@ -1763,7 +1763,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="workingDriveForPath">
         /// This out parameter returns the drive that was specified
-        /// by the <paramref name="path" />. If <paramref name="path"/> is
+        /// by the <paramref name="path"/>. If <paramref name="path"/> is
         /// an absolute path this value may be something other than
         /// the current working drive.
         ///
@@ -1789,7 +1789,7 @@ namespace System.Management.Automation
         /// This is internal so that it can be called from SessionState
         /// </remarks>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="path" /> is null.
+        /// If <paramref name="path"/> is null.
         /// </exception>
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
@@ -1817,7 +1817,7 @@ namespace System.Management.Automation
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             workingDriveForPath = null;
@@ -1863,15 +1863,13 @@ namespace System.Management.Automation
                     string normalizedRoot = _sessionState.Drive.Current.Root.Replace(
                         StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
-                    if (normalizedRoot.IndexOf(":", StringComparison.Ordinal) >= 0)
+                    if (normalizedRoot.Contains(':'))
                     {
                         string normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
                         if (normalizedPath.StartsWith(normalizedRoot, StringComparison.OrdinalIgnoreCase))
                         {
                             isPathForCurrentDrive = true;
-                            path = path.Substring(normalizedRoot.Length);
-                            path = path.TrimStart(StringLiterals.DefaultPathSeparator);
-                            path = StringLiterals.DefaultPathSeparator + path;
+                            path = string.Concat(StringLiterals.DefaultPathSeparatorString, path.AsSpan(normalizedRoot.Length).TrimStart(StringLiterals.DefaultPathSeparator));
                             workingDriveForPath = _sessionState.Drive.Current;
                         }
                     }
@@ -1969,7 +1967,7 @@ namespace System.Management.Automation
             string driveRoot = drive.Root.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
             driveRoot = driveRoot.TrimEnd(StringLiterals.DefaultPathSeparator);
 
-            // Keep on lopping off children until the the remaining path
+            // Keep on lopping off children until the remaining path
             // is the drive root.
             while ((!string.IsNullOrEmpty(providerPath)) &&
                 (!providerPath.Equals(driveRoot, StringComparison.OrdinalIgnoreCase)))
@@ -2048,12 +2046,12 @@ namespace System.Management.Automation
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             // This string will be filled in with the
@@ -2067,7 +2065,10 @@ namespace System.Management.Automation
                 driveRootRelativeWorkingPath = driveRootRelativeWorkingPath.Substring(drive.Root.Length);
             }
 
-            if (escapeCurrentLocation) { driveRootRelativeWorkingPath = WildcardPattern.Escape(driveRootRelativeWorkingPath); }
+            if (escapeCurrentLocation)
+            {
+                driveRootRelativeWorkingPath = WildcardPattern.Escape(driveRootRelativeWorkingPath);
+            }
 
             // These are static strings that we will parse and
             // interpret if they are leading the path. Otherwise
@@ -2274,7 +2275,7 @@ namespace System.Management.Automation
             return driveRootRelativeWorkingPath;
         }
 
-        private bool HasRelativePathTokens(string path)
+        private static bool HasRelativePathTokens(string path)
         {
             string comparePath = path.Replace('/', '\\');
 
@@ -2287,7 +2288,7 @@ namespace System.Management.Automation
                 comparePath.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
                 comparePath.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
                 comparePath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                comparePath.StartsWith("~", StringComparison.OrdinalIgnoreCase));
+                comparePath.StartsWith('~'));
         }
 
         /// <summary>
@@ -2321,12 +2322,12 @@ namespace System.Management.Automation
         {
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             if (workingPath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("workingPath");
+                throw PSTraceSource.NewArgumentNullException(nameof(workingPath));
             }
 
             // Trace the inputs
@@ -2380,7 +2381,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             int providerIdSeparatorIndex = path.IndexOf(StringLiterals.ProviderPathSeparator, StringComparison.Ordinal);
@@ -2389,7 +2390,7 @@ namespace System.Management.Automation
             {
                 ArgumentException e =
                     PSTraceSource.NewArgumentException(
-                        "path",
+                        nameof(path),
                         SessionStateStrings.NotProviderQualifiedPath);
                 throw e;
             }
@@ -2419,7 +2420,7 @@ namespace System.Management.Automation
         /// paths. Instead an appropriate path will be returned as if it did exist.
         /// </param>
         /// <param name="containerProvider">
-        /// The provider that will be used to glob the <paramref name="path" />.
+        /// The provider that will be used to glob the <paramref name="path"/>.
         /// </param>
         /// <param name="context">
         /// The context under which the command is occurring.
@@ -2459,17 +2460,17 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (containerProvider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("containerProvider");
+                throw PSTraceSource.NewArgumentNullException(nameof(containerProvider));
             }
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             Collection<string> expandedPaths =
@@ -2499,7 +2500,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             return WildcardPattern.ContainsWildcardCharacters(path);
@@ -2636,17 +2637,17 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             s_tracer.WriteLine("path = {0}", path);
@@ -3061,12 +3062,12 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             string result = path;
@@ -3087,8 +3088,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        string possibleDriveName = path.Substring(0, index);
-                        if (string.Equals(possibleDriveName, drive.Name, StringComparison.OrdinalIgnoreCase))
+                        if (path.AsSpan(0, index).Equals(drive.Name, StringComparison.OrdinalIgnoreCase))
                         {
                             treatAsRelative = false;
                         }
@@ -3160,7 +3160,7 @@ namespace System.Management.Automation
 
             // Find the drive separator only if it's before a path separator
 
-            int index = path.IndexOf(":", StringComparison.Ordinal);
+            int index = path.IndexOf(':');
             if (index != -1)
             {
                 int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index);
@@ -3205,12 +3205,12 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             string result = path;
@@ -3276,27 +3276,27 @@ namespace System.Management.Automation
         /// <summary>
         /// Generates a collection of containers and/or leaves that are children of the containers
         /// in the currentDirs parameter and match the glob expression in the
-        /// <paramref name="leafElement" /> parameter.
+        /// <paramref name="leafElement"/> parameter.
         /// </summary>
         /// <param name="currentDirs">
         /// A collection of paths that should be searched for leaves that match the
-        /// <paramref name="leafElement" /> expression.
+        /// <paramref name="leafElement"/> expression.
         /// </param>
         /// <param name="drive">
         /// The drive the Msh path is relative to.
         /// </param>
         /// <param name="leafElement">
         /// A single element of a path that may or may not contain a glob expression. This parameter
-        /// is used to search the containers in <paramref name="currentDirs" /> for children that
+        /// is used to search the containers in <paramref name="currentDirs"/> for children that
         /// match the glob expression.
         /// </param>
         /// <param name="isLastLeaf">
-        /// True if the <paramref name="leafElement" /> is the last element to glob over. If false, we
+        /// True if the <paramref name="leafElement"/> is the last element to glob over. If false, we
         /// need to get all container names from the provider even if they don't match the filter.
         /// </param>
         /// <param name="provider">
         /// The provider associated with the paths that are being passed in the
-        /// <paramref name="currentDirs" /> and <paramref name="leafElement" /> parameters.
+        /// <paramref name="currentDirs"/> and <paramref name="leafElement"/> parameters.
         /// The provider must derive from ContainerCmdletProvider or NavigationCmdletProvider
         /// in order to get globbing.
         /// </param>
@@ -3305,10 +3305,10 @@ namespace System.Management.Automation
         /// </param>
         /// <returns>
         /// A collection of fully qualified namespace paths whose leaf element matches the
-        /// <paramref name="leafElement" /> expression.
+        /// <paramref name="leafElement"/> expression.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="currentDirs" /> or <paramref name="provider" />
+        /// If <paramref name="currentDirs"/> or <paramref name="provider"/>
         /// is null.
         /// </exception>
         /// <exception cref="ProviderInvocationException">
@@ -3345,12 +3345,12 @@ namespace System.Management.Automation
         {
             if (currentDirs == null)
             {
-                throw PSTraceSource.NewArgumentNullException("currentDirs");
+                throw PSTraceSource.NewArgumentNullException(nameof(currentDirs));
             }
 
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             NavigationCmdletProvider navigationProvider = provider as NavigationCmdletProvider;
@@ -3579,12 +3579,12 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             // See if the provider wants to convert the path and filter
@@ -3895,24 +3895,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Generates a collection of containers and/or leaves that are children of the containers
         /// in the currentDirs parameter and match the glob expression in the
-        /// <paramref name="leafElement" /> parameter.
+        /// <paramref name="leafElement"/> parameter.
         /// </summary>
         /// <param name="currentDirs">
         /// A collection of paths that should be searched for leaves that match the
-        /// <paramref name="leafElement" /> expression.
+        /// <paramref name="leafElement"/> expression.
         /// </param>
         /// <param name="leafElement">
         /// A single element of a path that may or may not contain a glob expression. This parameter
-        /// is used to search the containers in <paramref name="currentDirs" /> for children that
+        /// is used to search the containers in <paramref name="currentDirs"/> for children that
         /// match the glob expression.
         /// </param>
         /// <param name="isLastLeaf">
-        /// True if the <paramref name="leafElement" /> is the last element to glob over. If false, we
+        /// True if the <paramref name="leafElement"/> is the last element to glob over. If false, we
         /// need to get all container names from the provider even if they don't match the filter.
         /// </param>
         /// <param name="provider">
         /// The provider associated with the paths that are being passed in the
-        /// <paramref name="currentDirs" /> and <paramref name="leafElement" /> parameters.
+        /// <paramref name="currentDirs"/> and <paramref name="leafElement"/> parameters.
         /// The provider must derive from ContainerCmdletProvider or NavigationCmdletProvider
         /// in order to get globbing.
         /// </param>
@@ -3921,10 +3921,10 @@ namespace System.Management.Automation
         /// </param>
         /// <returns>
         /// A collection of fully qualified namespace paths whose leaf element matches the
-        /// <paramref name="leafElement" /> expression.
+        /// <paramref name="leafElement"/> expression.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="currentDirs" /> or <paramref name="provider" />
+        /// If <paramref name="currentDirs"/> or <paramref name="provider"/>
         /// is null.
         /// </exception>
         /// <exception cref="ProviderInvocationException">
@@ -3951,12 +3951,12 @@ namespace System.Management.Automation
         {
             if (currentDirs == null)
             {
-                throw PSTraceSource.NewArgumentNullException("currentDirs");
+                throw PSTraceSource.NewArgumentNullException(nameof(currentDirs));
             }
 
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             NavigationCmdletProvider navigationProvider = provider as NavigationCmdletProvider;
@@ -4402,7 +4402,7 @@ namespace System.Management.Automation
                 }
             } while (false);
 
-            s_tracer.WriteLine("result = {0}; childName = {1}", result, childName);
+            s_tracer.WriteLine("result = {0}; childName = {1}", result.ToString(), childName);
             return result;
         }
 
@@ -4432,23 +4432,23 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             const char mshEscapeChar = '`';
             const char regexEscapeChar = '\\';
 
-            char[] workerArray = path.ToCharArray();
+            ReadOnlySpan<char> workerArray = path;
 
             StringBuilder result = new StringBuilder();
 
-            for (int index = 0; index < workerArray.GetLength(0); ++index)
+            for (int index = 0; index < workerArray.Length; ++index)
             {
                 // look for an escape character
 
                 if (workerArray[index] == mshEscapeChar)
                 {
-                    if (index + 1 < workerArray.GetLength(0))
+                    if (index + 1 < workerArray.Length)
                     {
                         if (workerArray[index + 1] == mshEscapeChar)
                         {
@@ -4522,7 +4522,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             bool result = false;
@@ -4571,7 +4571,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             return path.StartsWith(StringLiterals.DefaultRemotePathPrefix, StringComparison.Ordinal) ||
@@ -4611,7 +4611,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             string result = path;
@@ -4707,7 +4707,7 @@ namespace System.Management.Automation
                     StringBuilder includeString = new StringBuilder();
                     foreach (string includeFilter in context.Include)
                     {
-                        includeString.AppendFormat("{0} ", includeFilter);
+                        includeString.Append($"{includeFilter} ");
                     }
 
                     s_pathResolutionTracer.WriteLine("Include: {0}", includeString.ToString());
@@ -4719,7 +4719,7 @@ namespace System.Management.Automation
                     StringBuilder excludeString = new StringBuilder();
                     foreach (string excludeFilter in context.Exclude)
                     {
-                        excludeString.AppendFormat("{0} ", excludeFilter);
+                        excludeString.Append($"{excludeFilter} ");
                     }
 
                     s_pathResolutionTracer.WriteLine("Exclude: {0}", excludeString.ToString());

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -28,8 +28,8 @@ namespace Microsoft.WSMan.Management
     /// Invoke-WSManAction -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
-
-    [Cmdlet(VerbsCommon.Get, "WSManInstance", DefaultParameterSetName = "GetInstance", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141444")]
+    [Cmdlet(VerbsCommon.Get, "WSManInstance", DefaultParameterSetName = "GetInstance", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096627")]
+    [OutputType(typeof(XmlElement))]
     public class GetWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
         #region parameter
@@ -41,7 +41,10 @@ namespace Microsoft.WSMan.Management
         [Parameter(ParameterSetName = "Enumerate")]
         public string ApplicationName
         {
-            get { return applicationname; }
+            get
+            {
+                return applicationname;
+            }
 
             set
             {
@@ -61,7 +64,10 @@ namespace Microsoft.WSMan.Management
         [Alias("UBPO", "Base")]
         public SwitchParameter BasePropertiesOnly
         {
-            get { return basepropertiesonly; }
+            get
+            {
+                return basepropertiesonly;
+            }
 
             set
             {
@@ -82,7 +88,10 @@ namespace Microsoft.WSMan.Management
         [Alias("CN")]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -102,7 +111,6 @@ namespace Microsoft.WSMan.Management
         /// remote machine. The format of this string is:
         /// transport://server:port/Prefix.
         /// </summary>
-
         [Parameter(
                   ParameterSetName = "GetInstance")]
         [Parameter(
@@ -111,7 +119,10 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
         public Uri ConnectionURI
         {
-            get { return connectionuri; }
+            get
+            {
+                return connectionuri;
+            }
 
             set
             {
@@ -128,7 +139,10 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         public Uri Dialect
         {
-            get { return dialect; }
+            get
+            {
+                return dialect;
+            }
 
             set
             {
@@ -143,12 +157,14 @@ namespace Microsoft.WSMan.Management
         /// Switch indicates list all instances of a management resource. Equivalent to
         /// WSManagement Enumerate.
         /// </summary>
-
         [Parameter(Mandatory = true,
                   ParameterSetName = "Enumerate")]
         public SwitchParameter Enumerate
         {
-            get { return enumerate; }
+            get
+            {
+                return enumerate;
+            }
 
             set
             {
@@ -166,7 +182,10 @@ namespace Microsoft.WSMan.Management
         [ValidateNotNullOrEmpty]
         public string Filter
         {
-            get { return filter; }
+            get
+            {
+                return filter;
+            }
 
             set
             {
@@ -181,12 +200,14 @@ namespace Microsoft.WSMan.Management
         /// Specifies a section inside the instance that is to be updated or retrieved
         /// for the given operation.
         /// </summary>
-
         [Parameter(ParameterSetName = "GetInstance")]
         [ValidateNotNullOrEmpty]
         public string Fragment
         {
-            get { return fragment; }
+            get
+            {
+                return fragment;
+            }
 
             set
             {
@@ -208,7 +229,10 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Hashtable OptionSet
         {
-            get { return optionset; }
+            get
+            {
+                return optionset;
+            }
 
             set
             {
@@ -224,9 +248,12 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "Enumerate")]
         [Parameter(ParameterSetName = "GetInstance")]
-        public Int32 Port
+        public int Port
         {
-            get { return port; }
+            get
+            {
+                return port;
+            }
 
             set
             {
@@ -234,7 +261,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private Int32 port = 0;
+        private int port = 0;
 
         /// <summary>
         /// The following is the definition of the input parameter "Associations".
@@ -242,11 +269,13 @@ namespace Microsoft.WSMan.Management
         /// associated instances. This can only be used when specifying the Dialect as
         /// Association.
         /// </summary>
-
         [Parameter(ParameterSetName = "Enumerate")]
         public SwitchParameter Associations
         {
-            get { return associations; }
+            get
+            {
+                return associations;
+            }
 
             set
             {
@@ -269,7 +298,10 @@ namespace Microsoft.WSMan.Management
         [Alias("RURI")]
         public Uri ResourceURI
         {
-            get { return resourceuri; }
+            get
+            {
+                return resourceuri;
+            }
 
             set
             {
@@ -298,7 +330,10 @@ namespace Microsoft.WSMan.Management
         [Alias("RT")]
         public string ReturnType
         {
-            get { return returntype; }
+            get
+            {
+                return returntype;
+            }
 
             set
             {
@@ -311,7 +346,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
-        /// management resource if there are are more than 1 instance of the resource
+        /// management resource if there are more than 1 instance of the resource
         /// class.
         /// </summary>
         [Parameter(
@@ -320,7 +355,10 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Hashtable SelectorSet
         {
-            get { return selectorset; }
+            get
+            {
+                return selectorset;
+            }
 
             set
             {
@@ -341,7 +379,10 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public SessionOption SessionOption
         {
-            get { return sessionoption; }
+            get
+            {
+                return sessionoption;
+            }
 
             set
             {
@@ -361,7 +402,10 @@ namespace Microsoft.WSMan.Management
 
         public SwitchParameter Shallow
         {
-            get { return shallow; }
+            get
+            {
+                return shallow;
+            }
 
             set
             {
@@ -384,7 +428,10 @@ namespace Microsoft.WSMan.Management
         [Alias("SSL")]
         public SwitchParameter UseSSL
         {
-            get { return usessl; }
+            get
+            {
+                return usessl;
+            }
 
             set
             {
@@ -396,8 +443,9 @@ namespace Microsoft.WSMan.Management
 
         #endregion parameter
 
-        #  region private
-        WSManHelper helper;
+        #region private
+        private WSManHelper helper;
+
         private string GetFilter()
         {
             string name;
@@ -417,8 +465,8 @@ namespace Microsoft.WSMan.Management
                 filter = filter + "<wsman:Selector Name='" + name + "'>" + value + "</wsman:Selector>";
             }
 
-            filter = filter + "</wsman:SelectorSet>";
-            return (filter.ToString());
+            filter += "</wsman:SelectorSet>";
+            return (filter);
         }
 
         private void ReturnEnumeration(IWSManEx wsmanObject, IWSManResourceLocator wsmanResourceLocator, IWSManSession wsmanSession)
@@ -528,8 +576,8 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     // in the format http(s)://server[:port/applicationname]
-                    string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                    string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                    string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                    string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
                 }
                 catch (IndexOutOfRangeException)
@@ -637,7 +685,8 @@ namespace Microsoft.WSMan.Management
     /// Set-WSManInstance -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141458")]
+    [Cmdlet(VerbsCommon.Set, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096937")]
+    [OutputType(typeof(XmlElement), typeof(string))]
     public class SetWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
         #region Parameters
@@ -666,7 +715,10 @@ namespace Microsoft.WSMan.Management
         [Alias("cn")]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -753,7 +805,6 @@ namespace Microsoft.WSMan.Management
         /// request. These are similar to switches used in command line shells in that
         /// they are service-specific.
         /// </summary>
-
         [Parameter]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [Alias("os")]
@@ -773,21 +824,20 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        [ValidateRange(1, Int32.MaxValue)]
-        public Int32 Port
+        [ValidateRange(1, int.MaxValue)]
+        public int Port
         {
             get { return port; }
 
             set { port = value; }
         }
 
-        private Int32 port = 0;
+        private int port = 0;
 
         /// <summary>
         /// The following is the definition of the input parameter "ResourceURI".
         /// URI of the resource class/instance representation.
         /// </summary>
-
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Resourceuri")]
 
@@ -806,7 +856,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
-        /// management resource if there are are more than 1 instance of the resource
+        /// management resource if there are more than 1 instance of the resource
         /// class.
         /// </summary>
         [Parameter(Position = 1,
@@ -908,8 +958,8 @@ namespace Microsoft.WSMan.Management
                     try
                     {
                         // in the format http(s)://server[:port/applicationname]
-                        string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                        string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                        string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                        string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                         computername = constrsplit1[1].Trim();
                     }
                     catch (IndexOutOfRangeException)
@@ -1009,7 +1059,7 @@ namespace Microsoft.WSMan.Management
     /// Set-WSManInstance -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141453")]
+    [Cmdlet(VerbsCommon.Remove, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096721")]
     public class RemoveWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
         #region Parameters
@@ -1038,7 +1088,10 @@ namespace Microsoft.WSMan.Management
         [Alias("cn")]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -1076,7 +1129,6 @@ namespace Microsoft.WSMan.Management
         /// request. These are similar to switches used in command line shells in that
         /// they are service-specific.
         /// </summary>
-
         [Parameter]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [Alias("os")]
@@ -1096,21 +1148,20 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        [ValidateRange(1, Int32.MaxValue)]
-        public Int32 Port
+        [ValidateRange(1, int.MaxValue)]
+        public int Port
         {
             get { return port; }
 
             set { port = value; }
         }
 
-        private Int32 port = 0;
+        private int port = 0;
 
         /// <summary>
         /// The following is the definition of the input parameter "ResourceURI".
         /// URI of the resource class/instance representation.
         /// </summary>
-
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Resourceuri")]
 
@@ -1129,7 +1180,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
-        /// management resource if there are are more than 1 instance of the resource
+        /// management resource if there are more than 1 instance of the resource
         /// class.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true,
@@ -1202,8 +1253,8 @@ namespace Microsoft.WSMan.Management
                     try
                     {
                         // in the format http(s)://server[:port/applicationname]
-                        string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                        string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                        string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                        string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                         computername = constrsplit1[1].Trim();
                     }
                     catch (IndexOutOfRangeException)
@@ -1274,8 +1325,8 @@ namespace Microsoft.WSMan.Management
     /// Creates an instance of a management resource identified by the resource URI
     /// using specified ValueSet or input File.
     /// </summary>
-
-    [Cmdlet(VerbsCommon.New, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141448")]
+    [Cmdlet(VerbsCommon.New, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096933")]
+    [OutputType(typeof(XmlElement))]
     public class NewWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
         /// <summary>
@@ -1303,7 +1354,10 @@ namespace Microsoft.WSMan.Management
         [Alias("cn")]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -1377,15 +1431,15 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        [ValidateRange(1, Int32.MaxValue)]
-        public Int32 Port
+        [ValidateRange(1, int.MaxValue)]
+        public int Port
         {
             get { return port; }
 
             set { port = value; }
         }
 
-        private Int32 port = 0;
+        private int port = 0;
 
         /// <summary>
         /// The following is the definition of the input parameter "ResourceURI".
@@ -1407,7 +1461,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
         /// SelectorSet is a hash table which helps in identify an instance of the
-        /// management resource if there are are more than 1 instance of the resource
+        /// management resource if there are more than 1 instance of the resource
         /// class.
         /// </summary>
         [Parameter(Mandatory = true, Position = 1,
@@ -1474,9 +1528,9 @@ namespace Microsoft.WSMan.Management
         private Hashtable valueset;
 
         private WSManHelper helper;
-        IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
-        IWSManSession m_session = null;
-        string connectionStr = string.Empty;
+        private readonly IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
+        private IWSManSession m_session = null;
+        private string connectionStr = string.Empty;
 
         /// <summary>
         /// BeginProcessing method.
@@ -1491,8 +1545,8 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     // in the format http(s)://server[:port/applicationname]
-                    string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                    string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                    string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                    string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
                 }
                 catch (IndexOutOfRangeException)

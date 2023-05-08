@@ -1,7 +1,5 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
-#if !SILVERLIGHT // ComObject
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
 using System.Runtime.InteropServices.ComTypes;
@@ -10,7 +8,6 @@ namespace System.Management.Automation.ComInterop
 {
     internal class ComMethodDesc
     {
-        private readonly string _name;
         internal readonly INVOKEKIND InvokeKind;
 
         private ComMethodDesc(int dispId)
@@ -22,7 +19,7 @@ namespace System.Management.Automation.ComInterop
             : this(dispId)
         {
             // no ITypeInfo constructor
-            _name = name;
+            Name = name;
         }
 
         internal ComMethodDesc(string name, int dispId, INVOKEKIND invkind)
@@ -36,9 +33,8 @@ namespace System.Management.Automation.ComInterop
         {
             InvokeKind = funcDesc.invkind;
 
-            int cNames;
             string[] rgNames = new string[1 + funcDesc.cParams];
-            typeInfo.GetNames(DispId, rgNames, rgNames.Length, out cNames);
+            typeInfo.GetNames(DispId, rgNames, rgNames.Length, out int cNames);
 
             bool skipLast = false;
             if (IsPropertyPut && rgNames[rgNames.Length - 1] == null)
@@ -47,24 +43,15 @@ namespace System.Management.Automation.ComInterop
                 cNames++;
                 skipLast = true;
             }
-
             Debug.Assert(cNames == rgNames.Length);
-            _name = rgNames[0];
+            Name = rgNames[0];
 
             ParamCount = funcDesc.cParams;
-
             ReturnType = ComUtil.GetTypeFromTypeDesc(funcDesc.elemdescFunc.tdesc);
             ParameterInformation = ComUtil.GetParameterInformation(funcDesc, skipLast);
         }
 
-        public string Name
-        {
-            get
-            {
-                Debug.Assert(_name != null);
-                return _name;
-            }
-        }
+        public string Name { get; }
 
         public int DispId { get; }
 
@@ -80,13 +67,13 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                // must be regular get
+                //must be regular get
                 if (!IsPropertyGet || DispId == ComDispIds.DISPID_NEWENUM)
                 {
                     return false;
                 }
 
-                // must have no parameters
+                //must have no parameters
                 return ParamCount == 0;
             }
         }
@@ -110,6 +97,7 @@ namespace System.Management.Automation.ComInterop
         internal int ParamCount { get; }
 
         public Type ReturnType { get; set; }
+
         public Type InputType { get; set; }
 
         public ParameterInformation[] ParameterInformation
@@ -119,6 +107,3 @@ namespace System.Management.Automation.ComInterop
         }
     }
 }
-
-#endif
-

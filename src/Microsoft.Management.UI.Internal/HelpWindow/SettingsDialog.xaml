@@ -1,0 +1,63 @@
+<!--=================================================================
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+==================================================================-->
+
+<Window x:Class="Microsoft.Management.UI.SettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:this="clr-namespace:Microsoft.Management.UI.Internal"
+        xmlns:default="clr-namespace:"
+        Title="{x:Static default:HelpWindowResources.SettingsText}" SizeToContent="WidthAndHeight">
+    <Grid x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <GroupBox x:Name="HelpSectionsGroup" Margin="5" Header="{x:Static default:HelpWindowResources.HelpSectionsTitle}" Grid.Row="0" Padding="5">
+            <Grid x:Name="HelpSectionsGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <CheckBox x:Name="Synopsys" Margin="5" Grid.Row="0" Grid.Column="0" Content="{x:Static default:HelpWindowResources.SynopsisTitle}"></CheckBox>
+                <CheckBox x:Name="Syntax" Margin="5" Grid.Row="1" Grid.Column="0" Content="{x:Static default:HelpWindowResources.SyntaxTitle}"></CheckBox>
+                <CheckBox x:Name="Description" Margin="5" Grid.Row="2" Grid.Column="0" Content="{x:Static default:HelpWindowResources.DescriptionTitle}"></CheckBox>
+                <CheckBox x:Name="Parameters" Margin="5" Grid.Row="3" Grid.Column="0" Content="{x:Static default:HelpWindowResources.ParametersTitle}"></CheckBox>
+                <CheckBox x:Name="Inputs" Margin="5" Grid.Row="4" Grid.Column="0" Content="{x:Static default:HelpWindowResources.InputsTitle}"></CheckBox>
+                <CheckBox x:Name="Outputs" Margin="5" Grid.Row="0" Grid.Column="1" Content="{x:Static default:HelpWindowResources.OutputsTitle}"></CheckBox>
+                <CheckBox x:Name="Notes" Margin="5" Grid.Row="1" Grid.Column="1" Content="{x:Static default:HelpWindowResources.NotesTitle}"></CheckBox>
+                <CheckBox x:Name="Examples" Margin="5" Grid.Row="2" Grid.Column="1" Content="{x:Static default:HelpWindowResources.ExamplesTitle}"></CheckBox>
+                <CheckBox x:Name="RelatedLinks" Margin="5" Grid.Row="3" Grid.Column="1" Content="{x:Static default:HelpWindowResources.RelatedLinksTitle}"></CheckBox>
+                <CheckBox x:Name="Remarks" Margin="5" Grid.Row="4" Grid.Column="1" Content="{x:Static default:HelpWindowResources.RemarksTitle}"></CheckBox>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="SearchOptions" Margin="5" Header="{x:Static default:HelpWindowResources.SearchOptionsTitle}" Grid.Row="1" Padding="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                <CheckBox x:Name="CaseSensitive" Margin="5" Grid.Row="0" Grid.Column="0" Content="{x:Static default:HelpWindowResources.CaseSensitiveTitle}"></CheckBox>
+                <CheckBox x:Name="WholeWord" Margin="5" Grid.Row="1" Grid.Column="0" Content="{x:Static default:HelpWindowResources.WholeWordTitle}"></CheckBox>
+            </Grid>
+        </GroupBox>
+        <Grid x:Name="ButtonGrid" Grid.Row="2" Grid.IsSharedSizeScope="True" HorizontalAlignment="Right">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="ButtonSize"></ColumnDefinition>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="ButtonSize"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="OK" Margin="5" Padding="3" Grid.Row="0" Grid.Column="0" IsDefault="True" Click="OK_Click" Content="{x:Static default:HelpWindowResources.OKText}"></Button>
+            <Button x:Name="Cancel" Margin="5" Padding="3" Grid.Row="0" Grid.Column="1" IsCancel="True" Content="{x:Static default:HelpWindowResources.CancelText}"></Button>
+        </Grid>
+    </Grid>
+</Window>

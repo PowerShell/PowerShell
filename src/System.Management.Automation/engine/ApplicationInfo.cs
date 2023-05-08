@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Provides information for applications that are not directly executable by Monad.
+    /// Provides information for applications that are not directly executable by PowerShell.
     /// </summary>
     /// <remarks>
     /// An application is any file that is executable by Windows either directly or through
@@ -39,12 +39,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             Path = path;
@@ -52,7 +52,7 @@ namespace System.Management.Automation
             _context = context;
         }
 
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
         #endregion ctor
 
         /// <summary>
@@ -113,7 +113,10 @@ namespace System.Management.Automation
                 return _context.EngineSessionState.CheckApplicationVisibility(Path);
             }
 
-            set { throw PSTraceSource.NewNotImplementedException(); }
+            set
+            {
+                throw PSTraceSource.NewNotImplementedException();
+            }
         }
 
         /// <summary>

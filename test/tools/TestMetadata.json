@@ -1,6 +1,7 @@
 {
   "ExperimentalFeatures": {
-    "Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints": ["test/powershell/Modules/Microsoft.PowerShell.Utility/New-PSBreakpoint.Tests.ps1"],
-    "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ]
+    "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ],
+    "PSCultureInvariantReplaceOperator": [ "test/powershell/Language/Operators/ReplaceOperator.Tests.ps1" ],
+    "Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace": [ "test/powershell/Modules/Microsoft.PowerShell.Utility/RunspaceBreakpointManagement.Tests.ps1" ]
   }
 }

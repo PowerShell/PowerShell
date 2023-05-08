@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'conversion syntax' -Tags "CI" {
@@ -34,27 +34,30 @@ Describe 'conversion syntax' -Tags "CI" {
                 ## would become `, [List[int]]@(1,2)`, which is more confusing than `$result = [List[int]]@(1,2)`.
                 ## This is why the current form of `$result = [List[int]]@(1,2)` is used intentionally here.
 
-                @{ Command = {$result = [Collections.Generic.List[int]]@(1)};       CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(1) }
-                @{ Command = {$result = [Collections.Generic.List[int]]@(1,2)};     CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(1,2) }
-                @{ Command = {$result = [Collections.Generic.List[int]]"4"};        CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(4) }
-                @{ Command = {$result = [Collections.Generic.List[int]]@("4","5")}; CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(4,5) }
+                @{ Command = { $result = [Collections.Generic.List[int]]@(1) }; CollectionType = 'List`1'; ElementType = "Int32"; Elements = @(1) }
+                @{ Command = { $result = [Collections.Generic.List[int]]@(1, 2) }; CollectionType = 'List`1'; ElementType = "Int32"; Elements = @(1, 2) }
+                @{ Command = { $result = [Collections.Generic.List[int]]"4" }; CollectionType = 'List`1'; ElementType = "Int32"; Elements = @(4) }
+                @{ Command = { $result = [Collections.Generic.List[int]]@("4", "5") }; CollectionType = 'List`1'; ElementType = "Int32"; Elements = @(4, 5) }
 
-                @{ Command = {$result = [Collections.Generic.List[string]]@(1)};    CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
-                @{ Command = {$result = [Collections.Generic.List[string]]@(1,2)};  CollectionType = 'List`1'; ElementType = "String"; Elements = @("1","2") }
-                @{ Command = {$result = [Collections.Generic.List[string]]1};       CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
-                @{ Command = {$result = [Collections.Generic.List[string]]@("4")};  CollectionType = 'List`1'; ElementType = "String"; Elements = @("4") }
+                @{ Command = { $result = [Collections.Generic.List[string]]@(1) }; CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
+                @{ Command = { $result = [Collections.Generic.List[string]]@(1, 2) }; CollectionType = 'List`1'; ElementType = "String"; Elements = @("1", "2") }
+                @{ Command = { $result = [Collections.Generic.List[string]]1 }; CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
+                @{ Command = { $result = [Collections.Generic.List[string]]@("4") }; CollectionType = 'List`1'; ElementType = "String"; Elements = @("4") }
 
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1)};       CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1) }
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1,2)};     CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1,2) }
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]"4"};        CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4) }
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@("4","5")}; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4,5) }
+                @{ Command = { $result = [System.Collections.ObjectModel.Collection[int]]@(1) }; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1) }
+                @{ Command = { $result = [System.Collections.ObjectModel.Collection[int]]@(1, 2) }; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1, 2) }
+                @{ Command = { $result = [System.Collections.ObjectModel.Collection[int]]"4" }; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4) }
+                @{ Command = { $result = [System.Collections.ObjectModel.Collection[int]]@("4", "5") }; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4, 5) }
 
-                @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile')};
-                    CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile') }
-                @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile1', 'TestFile2')};
-                    CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile1', 'TestFile2') }
-                @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]'TestFile'};
-                    CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile') }
+                @{ Command = { $result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile') };
+                    CollectionType = 'List`1'; ElementType = "FileInfo"; Elements = @('TestFile')
+                }
+                @{ Command = { $result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile1', 'TestFile2') };
+                    CollectionType = 'List`1'; ElementType = "FileInfo"; Elements = @('TestFile1', 'TestFile2')
+                }
+                @{ Command = { $result = [Collections.Generic.List[System.IO.FileInfo]]'TestFile' };
+                    CollectionType = 'List`1'; ElementType = "FileInfo"; Elements = @('TestFile')
+                }
             )
         }
 
@@ -106,12 +109,12 @@ namespace TestTypeResolution {
 }
 '@
 
-        $cmdletDllDir  = Join-Path $TestDrive "cmdlet"
+        $cmdletDllDir = Join-Path $TestDrive "cmdlet"
         $dupTypeDllDir = Join-Path $TestDrive "dupType"
 
         $null = New-Item -Path $cmdletDllDir, $dupTypeDllDir -ItemType Directory -Force
 
-        $cmdletDllPath  = Join-Path $cmdletDllDir "TestCmdlet.dll"
+        $cmdletDllPath = Join-Path $cmdletDllDir "TestCmdlet.dll"
         $dupTypeDllPath = Join-Path $dupTypeDllDir "TestType.dll"
 
         Add-Type $cmdletCode -OutputAssembly $cmdletDllPath
@@ -147,82 +150,82 @@ Describe 'method conversion' -Tags 'CI' {
         }
 
         # check that we can handle at least 72 overloads
-        static [char]     Foo([char] $i) {return $i}
-        static [char]     Foo([char] $i, [char] $j) {return $i}
-        static [char]     Foo([char] $i, [char] $j, [char] $k) {return $i}
-        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l) {return $i}
-        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l, [char] $m) {return $i}
-        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l, [char] $m, [char] $n) {return $i}
-        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l, [char] $m, [char] $n, [char] $o) {return $i}
-        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l, [char] $m, [char] $n, [char] $o, [char] $p) {return $i}
-        static [int16]    Foo([int16] $i) {return $i}
-        static [int16]    Foo([int16] $i, [int16] $j) {return $i}
-        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k) {return $i}
-        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l) {return $i}
-        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l, [int16] $m) {return $i}
-        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l, [int16] $m, [int16] $n) {return $i}
-        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l, [int16] $m, [int16] $n, [int16] $o) {return $i}
-        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l, [int16] $m, [int16] $n, [int16] $o, [int16] $p) {return $i}
-        static [int]      Foo([int] $i) {return $i}
-        static [int]      Foo([int] $i, [int] $j) {return $i}
-        static [int]      Foo([int] $i, [int] $j, [int] $k) {return $i}
-        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l) {return $i}
-        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l, [int] $m) {return $i}
-        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l, [int] $m, [int] $n) {return $i}
-        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l, [int] $m, [int] $n, [int] $o) {return $i}
-        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l, [int] $m, [int] $n, [int] $o, [int] $p) {return $i}
-        static [UInt32]   Foo([UInt32] $i) {return $i}
-        static [UInt32]   Foo([UInt32] $i, [UInt32] $j) {return $i}
-        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k) {return $i}
-        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l) {return $i}
-        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l, [UInt32] $m) {return $i}
-        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l, [UInt32] $m, [UInt32] $n) {return $i}
-        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l, [UInt32] $m, [UInt32] $n, [UInt32] $o) {return $i}
-        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l, [UInt32] $m, [UInt32] $n, [UInt32] $o, [UInt32] $p) {return $i}
-        static [UInt64]   Foo([UInt64] $i) {return $i}
-        static [UInt64]   Foo([UInt64] $i, [UInt64] $j) {return $i}
-        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k) {return $i}
-        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l) {return $i}
-        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l, [UInt64] $m) {return $i}
-        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l, [UInt64] $m, [UInt64] $n) {return $i}
-        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l, [UInt64] $m, [UInt64] $n, [UInt64] $o) {return $i}
-        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l, [UInt64] $m, [UInt64] $n, [UInt64] $o, [UInt64] $p) {return $i}
-        static [float]    Foo([float] $i) {return $i}
-        static [float]    Foo([float] $i, [float] $j) {return $i}
-        static [float]    Foo([float] $i, [float] $j, [float] $k) {return $i}
-        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l) {return $i}
-        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l, [float] $m) {return $i}
-        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l, [float] $m, [float] $n) {return $i}
-        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l, [float] $m, [float] $n, [float] $o) {return $i}
-        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l, [float] $m, [float] $n, [float] $o, [float] $p) {return $i}
-        static [double]   Foo([double] $i) {return $i}
-        static [double]   Foo([double] $i, [double] $j) {return $i}
-        static [double]   Foo([double] $i, [double] $j, [double] $k) {return $i}
-        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l) {return $i}
-        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l, [double] $m) {return $i}
-        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l, [double] $m, [double] $n) {return $i}
-        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l, [double] $m, [double] $n, [double] $o) {return $i}
-        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l, [double] $m, [double] $n, [double] $o, [double] $p) {return $i}
-        static [IntPtr]   Foo([IntPtr] $i) {return $i}
-        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j) {return $i}
-        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k) {return $i}
-        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l) {return $i}
-        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l, [IntPtr] $m) {return $i}
-        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l, [IntPtr] $m, [IntPtr] $n) {return $i}
-        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l, [IntPtr] $m, [IntPtr] $n, [IntPtr] $o) {return $i}
-        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l, [IntPtr] $m, [IntPtr] $n, [IntPtr] $o, [IntPtr] $p) {return $i}
-        static [timespan] Foo([timespan] $i) {return $i}
-        static [timespan] Foo([timespan] $i, [timespan] $j) {return $i}
-        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k) {return $i}
-        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l) {return $i}
-        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m) {return $i}
-        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m, [timespan] $n) {return $i}
-        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m, [timespan] $n, [timespan] $o) {return $i}
-        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m, [timespan] $n, [timespan] $o, [timespan] $p) {return $i}
+        static [char]     Foo([char] $i) { return $i }
+        static [char]     Foo([char] $i, [char] $j) { return $i }
+        static [char]     Foo([char] $i, [char] $j, [char] $k) { return $i }
+        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l) { return $i }
+        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l, [char] $m) { return $i }
+        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l, [char] $m, [char] $n) { return $i }
+        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l, [char] $m, [char] $n, [char] $o) { return $i }
+        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l, [char] $m, [char] $n, [char] $o, [char] $p) { return $i }
+        static [int16]    Foo([int16] $i) { return $i }
+        static [int16]    Foo([int16] $i, [int16] $j) { return $i }
+        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k) { return $i }
+        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l) { return $i }
+        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l, [int16] $m) { return $i }
+        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l, [int16] $m, [int16] $n) { return $i }
+        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l, [int16] $m, [int16] $n, [int16] $o) { return $i }
+        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l, [int16] $m, [int16] $n, [int16] $o, [int16] $p) { return $i }
+        static [int]      Foo([int] $i) { return $i }
+        static [int]      Foo([int] $i, [int] $j) { return $i }
+        static [int]      Foo([int] $i, [int] $j, [int] $k) { return $i }
+        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l) { return $i }
+        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l, [int] $m) { return $i }
+        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l, [int] $m, [int] $n) { return $i }
+        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l, [int] $m, [int] $n, [int] $o) { return $i }
+        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l, [int] $m, [int] $n, [int] $o, [int] $p) { return $i }
+        static [UInt32]   Foo([UInt32] $i) { return $i }
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j) { return $i }
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k) { return $i }
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l) { return $i }
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l, [UInt32] $m) { return $i }
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l, [UInt32] $m, [UInt32] $n) { return $i }
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l, [UInt32] $m, [UInt32] $n, [UInt32] $o) { return $i }
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l, [UInt32] $m, [UInt32] $n, [UInt32] $o, [UInt32] $p) { return $i }
+        static [UInt64]   Foo([UInt64] $i) { return $i }
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j) { return $i }
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k) { return $i }
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l) { return $i }
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l, [UInt64] $m) { return $i }
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l, [UInt64] $m, [UInt64] $n) { return $i }
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l, [UInt64] $m, [UInt64] $n, [UInt64] $o) { return $i }
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l, [UInt64] $m, [UInt64] $n, [UInt64] $o, [UInt64] $p) { return $i }
+        static [float]    Foo([float] $i) { return $i }
+        static [float]    Foo([float] $i, [float] $j) { return $i }
+        static [float]    Foo([float] $i, [float] $j, [float] $k) { return $i }
+        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l) { return $i }
+        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l, [float] $m) { return $i }
+        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l, [float] $m, [float] $n) { return $i }
+        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l, [float] $m, [float] $n, [float] $o) { return $i }
+        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l, [float] $m, [float] $n, [float] $o, [float] $p) { return $i }
+        static [double]   Foo([double] $i) { return $i }
+        static [double]   Foo([double] $i, [double] $j) { return $i }
+        static [double]   Foo([double] $i, [double] $j, [double] $k) { return $i }
+        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l) { return $i }
+        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l, [double] $m) { return $i }
+        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l, [double] $m, [double] $n) { return $i }
+        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l, [double] $m, [double] $n, [double] $o) { return $i }
+        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l, [double] $m, [double] $n, [double] $o, [double] $p) { return $i }
+        static [IntPtr]   Foo([IntPtr] $i) { return $i }
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j) { return $i }
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k) { return $i }
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l) { return $i }
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l, [IntPtr] $m) { return $i }
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l, [IntPtr] $m, [IntPtr] $n) { return $i }
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l, [IntPtr] $m, [IntPtr] $n, [IntPtr] $o) { return $i }
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l, [IntPtr] $m, [IntPtr] $n, [IntPtr] $o, [IntPtr] $p) { return $i }
+        static [timespan] Foo([timespan] $i) { return $i }
+        static [timespan] Foo([timespan] $i, [timespan] $j) { return $i }
+        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k) { return $i }
+        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l) { return $i }
+        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m) { return $i }
+        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m, [timespan] $n) { return $i }
+        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m, [timespan] $n, [timespan] $o) { return $i }
+        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m, [timespan] $n, [timespan] $o, [timespan] $p) { return $i }
     }
 
     It 'converts static method as Func does not throw' {
-        {[Func[int, int]] [M]::Thrice} | Should -Not -Throw
+        { [Func[int, int]] [M]::Thrice } | Should -Not -Throw
     }
 
     It 'converts static method as Func is non null' {
@@ -245,7 +248,7 @@ Describe 'method conversion' -Tags 'CI' {
 
     It 'converts instance psmethodinfo to Func' {
         $m = [M]::new()
-        {[Func[int, int]] $m.Twice} | Should -Not -Throw
+        { [Func[int, int]] $m.Twice } | Should -Not -Throw
 
         $f = [Func[int, int16, int]] [M]::Add
         $f.Invoke(2, 6) | Should -Be 8
@@ -409,32 +412,32 @@ Describe 'method conversion' -Tags 'CI' {
 
         ## Different methods with same overload signatures.
         ## The second and third overloads match the target delegate with variance.
-        [string] GetA([int] $i, [string] $s)                           { return "GetA-int-string-string" }
+        [string] GetA([int] $i, [string] $s) { return "GetA-int-string-string" }
         [string] GetA([System.IO.FileSystemInfo] $fsinfo, [object] $o) { return "GetA-filesysteminfo-object-string" }
-        [string] GetA([System.IO.FileInfo] $finfo, [object] $o)        { return "GetA-fileinfo-object-string" }
+        [string] GetA([System.IO.FileInfo] $finfo, [object] $o) { return "GetA-fileinfo-object-string" }
 
-        [string] GetAPrime([int] $i, [string] $s)                           { return "GetAPrime-int-string-string" }
+        [string] GetAPrime([int] $i, [string] $s) { return "GetAPrime-int-string-string" }
         [string] GetAPrime([System.IO.FileSystemInfo] $fsinfo, [object] $o) { return "GetAPrime-filesysteminfo-object-string" }
-        [string] GetAPrime([System.IO.FileInfo] $finfo, [object] $o)        { return "GetAPrime-fileinfo-object-string" }
+        [string] GetAPrime([System.IO.FileInfo] $finfo, [object] $o) { return "GetAPrime-fileinfo-object-string" }
 
-        static [string] GetAStatic([int] $i, [string] $s)                           { return "GetAStatic-int-string-string" }
+        static [string] GetAStatic([int] $i, [string] $s) { return "GetAStatic-int-string-string" }
         static [string] GetAStatic([System.IO.FileSystemInfo] $fsinfo, [object] $o) { return "GetAStatic-filesysteminfo-object-string" }
-        static [string] GetAStatic([System.IO.FileInfo] $finfo, [object] $o)        { return "GetAStatic-fileinfo-object-string" }
+        static [string] GetAStatic([System.IO.FileInfo] $finfo, [object] $o) { return "GetAStatic-fileinfo-object-string" }
 
         ## Different methods with same overload signatures.
         ## The first overload matches the target delegate with variance,
         ## while the second overload matches the target delegate exactly.
         [string] GetB([System.IO.FileSystemInfo] $fsinfo, [object] $o) { return "GetB-filesysteminfo-object-string" }
-        [object] GetB([System.IO.FileInfo] $finfo, [string] $s)        { return "GetB-fileinfo-string-object" }
-        [string] GetB([datetime] $d)                                   { return "GetB-datetime-string" }
+        [object] GetB([System.IO.FileInfo] $finfo, [string] $s) { return "GetB-fileinfo-string-object" }
+        [string] GetB([datetime] $d) { return "GetB-datetime-string" }
 
         [string] GetBPrime([System.IO.FileSystemInfo] $fsinfo, [object] $o) { return "GetBPrime-filesysteminfo-object-string" }
-        [object] GetBPrime([System.IO.FileInfo] $finfo, [string] $s)        { return "GetBPrime-fileinfo-string-object" }
-        [string] GetBPrime([datetime] $d)                                   { return "GetBPrime-datetime-string" }
+        [object] GetBPrime([System.IO.FileInfo] $finfo, [string] $s) { return "GetBPrime-fileinfo-string-object" }
+        [string] GetBPrime([datetime] $d) { return "GetBPrime-datetime-string" }
 
         static [string] GetBStatic([System.IO.FileSystemInfo] $fsinfo, [object] $o) { return "GetBStatic-filesysteminfo-object-string" }
-        static [object] GetBStatic([System.IO.FileInfo] $finfo, [string] $s)        { return "GetBStatic-fileinfo-string-object" }
-        static [string] GetBStatic([datetime] $d)                                   { return "GetBStatic-datetime-string" }
+        static [object] GetBStatic([System.IO.FileInfo] $finfo, [string] $s) { return "GetBStatic-fileinfo-string-object" }
+        static [string] GetBStatic([datetime] $d) { return "GetBStatic-datetime-string" }
 
         ## Test enum parameter type
         [object] GetC([E] $e) { return $e.ToString() }
@@ -497,6 +500,8 @@ Describe 'method conversion' -Tags 'CI' {
         @{ Number = "127d"; Value = "127"; Type = [byte] }
         @{ Number = "127s"; Value = "127"; Type = [sbyte] }
         @{ Number = "127y"; Value = "127"; Type = [uint] }
+        @{ Number = "100n"; Value = "100"; Type = [int] }
+        @{ Number = "1234s"; Value = "1234"; Type = [bigint] }
     )
     It "Correctly casts <Number> to value <Value> as type <Type>" -TestCases $TestCases {
         param($Number, $Value, $Type)
@@ -521,15 +526,15 @@ Describe 'method conversion' -Tags 'CI' {
 }
 
 Describe 'float/double precision when converting to string' -Tags "CI" {
-    It "<SourceType>-to-[string] conversion in PowerShell should use the precision specifier <Format>" -TestCases @(
+    It "<SourceType>-to-[string] conversion in PowerShell should use the precision specifier <Format> (<ToStringResult>)" -TestCases @(
         @{ SourceType = [double]; Format = "G15"; ValueScript = { 1.1 * 3 }; StringConversionResult = "3.3"; ToStringResult = "3.3000000000000003" }
         @{ SourceType = [double]; Format = "G15"; ValueScript = { 1.1 * 6 }; StringConversionResult = "6.6"; ToStringResult = "6.6000000000000005" }
         @{ SourceType = [double]; Format = "G15"; ValueScript = { [System.Math]::E }; StringConversionResult = [System.Math]::E.ToString("G15"); ToStringResult = [System.Math]::E.ToString() }
         @{ SourceType = [double]; Format = "G15"; ValueScript = { [System.Math]::PI }; StringConversionResult = [System.Math]::PI.ToString("G15"); ToStringResult = [System.Math]::PI.ToString() }
-        @{ SourceType = [float];  Format = "G7";  ValueScript = { [float]$f = 1.1; ($f * 3).ToSingle([cultureinfo]::InvariantCulture) }; StringConversionResult = "3.3"; ToStringResult = "3.3000002" }
-        @{ SourceType = [float];  Format = "G7";  ValueScript = { [float]$f = 1.1; ($f * 6).ToSingle([cultureinfo]::InvariantCulture) }; StringConversionResult = "6.6"; ToStringResult = "6.6000004" }
-        @{ SourceType = [float];  Format = "G7";  ValueScript = { [float]::MaxValue }; StringConversionResult = [float]::MaxValue.ToString("G7"); ToStringResult = [float]::MaxValue.ToString() }
-        @{ SourceType = [float];  Format = "G7";  ValueScript = { [float]::MinValue }; StringConversionResult = [float]::MinValue.ToString("G7"); ToStringResult = [float]::MinValue.ToString() }
+        @{ SourceType = [float]; Format = "G7"; ValueScript = { [float]$f = 1.1; ($f * 3).ToSingle([cultureinfo]::InvariantCulture) }; StringConversionResult = "3.3"; ToStringResult = "3.3000002" }
+        @{ SourceType = [float]; Format = "G7"; ValueScript = { [float]$f = 1.1; ($f * 6).ToSingle([cultureinfo]::InvariantCulture) }; StringConversionResult = "6.6"; ToStringResult = "6.6000004" }
+        @{ SourceType = [float]; Format = "G7"; ValueScript = { [float]::MaxValue }; StringConversionResult = [float]::MaxValue.ToString("G7"); ToStringResult = [float]::MaxValue.ToString() }
+        @{ SourceType = [float]; Format = "G7"; ValueScript = { [float]::MinValue }; StringConversionResult = [float]::MinValue.ToString("G7"); ToStringResult = [float]::MinValue.ToString() }
     ) {
         param($SourceType, $ValueScript, $StringConversionResult, $ToStringResult)
 
@@ -542,5 +547,68 @@ Describe 'float/double precision when converting to string' -Tags "CI" {
         [System.Management.Automation.LanguagePrimitives]::ConvertTo($value, [string]) | Should -BeExactly $StringConversionResult
         "$value" | Should -BeExactly $StringConversionResult
         $value | Out-String | ForEach-Object -MemberName Trim | Should -BeExactly $StringConversionResult
+    }
+}
+
+Describe 'Casting Behaviour of Boolean/Null to Numeral' -Tags CI {
+
+    BeforeAll {
+        $NullToNumeral = @(
+            @{ Type = [sbyte]; ExpectedResult = 0y }
+            @{ Type = [byte]; ExpectedResult = 0uy }
+            @{ Type = [short]; ExpectedResult = 0s }
+            @{ Type = [ushort]; ExpectedResult = 0us }
+            @{ Type = [int]; ExpectedResult = 0 }
+            @{ Type = [uint]; ExpectedResult = 0u }
+            @{ Type = [long]; ExpectedResult = 0l }
+            @{ Type = [ulong]; ExpectedResult = 0ul }
+            @{ Type = [decimal]; ExpectedResult = 0d }
+            @{ Type = [float]; ExpectedResult = [float]0 }
+            @{ Type = [double]; ExpectedResult = 0.0 }
+            @{ Type = [bigint]; ExpectedResult = 0n }
+        )
+
+        $BoolToNumeral = @(
+            @{ Type = [sbyte]; Value = $true; ExpectedResult = 1y }
+            @{ Type = [sbyte]; Value = $false; ExpectedResult = 0y }
+            @{ Type = [byte]; Value = $true; ExpectedResult = 1uy }
+            @{ Type = [byte]; Value = $false; ExpectedResult = 0uy }
+            @{ Type = [short]; Value = $true; ExpectedResult = 1s }
+            @{ Type = [short]; Value = $false; ExpectedResult = 0s }
+            @{ Type = [ushort]; Value = $true; ExpectedResult = 1us }
+            @{ Type = [ushort]; Value = $false; ExpectedResult = 0us }
+            @{ Type = [int]; Value = $true; ExpectedResult = 1 }
+            @{ Type = [int]; Value = $false; ExpectedResult = 0 }
+            @{ Type = [uint]; Value = $true; ExpectedResult = 1u }
+            @{ Type = [uint]; Value = $false; ExpectedResult = 0u }
+            @{ Type = [long]; Value = $true; ExpectedResult = 1l }
+            @{ Type = [long]; Value = $false; ExpectedResult = 0l }
+            @{ Type = [ulong]; Value = $true; ExpectedResult = 1ul }
+            @{ Type = [ulong]; Value = $false; ExpectedResult = 0ul }
+            @{ Type = [decimal]; Value = $true; ExpectedResult = 1d }
+            @{ Type = [decimal]; Value = $false; ExpectedResult = 0d }
+            @{ Type = [float]; Value = $true; ExpectedResult = [float]1 }
+            @{ Type = [float]; Value = $false; ExpectedResult = [float]0 }
+            @{ Type = [double]; Value = $true; ExpectedResult = 1.0 }
+            @{ Type = [double]; Value = $false; ExpectedResult = 0.0 }
+            @{ Type = [bigint]; Value = $true; ExpectedResult = 1n }
+            @{ Type = [bigint]; Value = $false; ExpectedResult = 0n }
+        )
+    }
+
+    It 'should correctly convert $null to <Type> as <ExpectedResult>' -TestCases $NullToNumeral {
+        param($Type, $ExpectedResult)
+
+        $result = $null -as $Type
+        $result | Should -Be $ExpectedResult
+        $result | Should -BeOfType $Type
+    }
+
+    It 'should correctly convert <Value> to <Type> as <ExpectedResult>' -TestCases $BoolToNumeral {
+        param($Type, $Value, $ExpectedResult)
+
+        $result = $Value -as $Type
+        $result | Should -Be $ExpectedResult
+        $result | Should -BeOfType $Type
     }
 }

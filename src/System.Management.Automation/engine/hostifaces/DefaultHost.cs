@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -14,7 +14,6 @@ namespace Microsoft.PowerShell
     /// This is the default host implementing PSHost offering minimal host capabilities.
     /// Runspace is the primary user of this class.
     /// </summary>
-
     internal class DefaultHost : PSHost
     {
         #region ctor
@@ -25,7 +24,6 @@ namespace Microsoft.PowerShell
         /// <param name="currentCulture">Current culture for this host.</param>
         /// <param name="currentUICulture">Current UI culture for this host.</param>
         /// <exception/>
-
         internal DefaultHost(CultureInfo currentCulture, CultureInfo currentUICulture)
         {
             CurrentCulture = currentCulture;
@@ -70,7 +68,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override
         void
         SetShouldExit(int exitCode)
@@ -85,7 +82,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="NotSupportedException">
         /// On calling this method
         /// </exception>
-
         public override
         void
         EnterNestedPrompt()
@@ -112,7 +108,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override
         void
         NotifyBeginApplication()
@@ -125,7 +120,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override
         void
         NotifyEndApplication()
@@ -139,4 +133,3 @@ namespace Microsoft.PowerShell
         #endregion private fields
     }
 }
-

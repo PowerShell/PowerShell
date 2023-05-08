@@ -1,0 +1,75 @@
+name: Bug report 🐛
+description: Report errors or unexpected behavior 🤔
+labels: Needs-Triage
+body:
+- type: markdown
+  attributes:
+    value: >
+      For Windows PowerShell 5.1 issues, suggestions, or feature requests please use the
+      [Feedback Hub app](https://support.microsoft.com/windows/send-feedback-to-microsoft-with-the-feedback-hub-app-f59187f8-8739-22d6-ba93-f66612949332)
+
+      This repository is **ONLY** for PowerShell Core 6 and PowerShell 7+ issues.
+- type: checkboxes
+  attributes:
+    label: Prerequisites
+    options:
+    - label: Write a descriptive title.
+      required: true
+    - label: Make sure you are able to repro it on the [latest released version](https://github.com/PowerShell/PowerShell/releases)
+      required: true
+    - label: Search the existing issues.
+      required: true
+    - label: Refer to the [FAQ](https://github.com/PowerShell/PowerShell/blob/master/docs/FAQ.md).
+      required: true
+    - label: Refer to [Differences between Windows PowerShell 5.1 and PowerShell](https://docs.microsoft.com/powershell/scripting/whats-new/differences-from-windows-powershell).
+      required: true
+- type: textarea
+  attributes:
+    label: Steps to reproduce
+    description: >
+      List of steps, sample code, failing test or link to a project that reproduces the behavior.
+      Make sure you place a stack trace inside a code (```) block to avoid linking unrelated issues.
+    placeholder: >
+      I am experiencing a problem with X.
+      I think Y should be happening but Z is actually happening.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Expected behavior
+    render: console
+    placeholder: |
+      PS> 2 + 2
+      4
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Actual behavior
+    render: console
+    placeholder: |
+      PS> 2 + 2
+      5
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Error details
+    description: Paste verbatim output from `Get-Error` if PowerShell return an error.
+    render: console
+    placeholder: PS> Get-Error
+- type: textarea
+  attributes:
+    label: Environment data
+    description: Paste verbatim output from `$PSVersionTable` below.
+    render: powershell
+    placeholder: PS> $PSVersionTable
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Visuals
+    description: >
+      Please upload images or animations that can be used to reproduce issues in the area below.
+      Try the [Steps Recorder](https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47)
+      on Windows or [Screenshot](https://support.apple.com/en-us/HT208721) on macOS.

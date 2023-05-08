@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\PowerShell.Common.props"/>
 
@@ -8,6 +8,7 @@
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>
     <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
+    <TieredCompilationQuickJitForLoops>true</TieredCompilationQuickJitForLoops>
     <RuntimeIdentifiers>linux-x64;osx-x64;</RuntimeIdentifiers>
   </PropertyGroup>
 
@@ -31,15 +32,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Include="..\..\assets\default.help.txt">
+      <Link>en-US\default.help.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.PowerShell.SDK\Microsoft.PowerShell.SDK.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="PSDesiredStateConfiguration" Version="6.0.0-beta.8" />
-    <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
   </ItemGroup>
 
  </Project>

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Globalization;
@@ -98,7 +98,7 @@ namespace System.Management.Automation
 
         #region Basic Help Properties
 
-        private PSObject _fullHelpObject;
+        private readonly PSObject _fullHelpObject;
 
         /// <summary>
         /// Full help object for this help item.
@@ -343,7 +343,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            // I think every cmdlet description should atleast have 400 characters...
+            // I think every cmdlet description should at least have 400 characters...
             // so starting with this assumption..I did an average of all the cmdlet
             // help content available at the time of writing this code and came up
             // with this number.
@@ -441,7 +441,7 @@ namespace System.Management.Automation
         internal MamlCommandHelpInfo Copy(HelpCategory newCategoryToUse)
         {
             MamlCommandHelpInfo result = new MamlCommandHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);
-            result.FullHelp.Properties["Category"].Value = newCategoryToUse;
+            result.FullHelp.Properties["Category"].Value = newCategoryToUse.ToString();
             return result;
         }
 

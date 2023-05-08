@@ -1,16 +1,13 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT // ComObject
+using System;
 
 namespace System.Management.Automation.ComInterop
 {
     internal class ComEventDesc
     {
-        internal Guid sourceIID;
-        internal int dispid;
-    };
+        public Guid SourceIID;
+        public int Dispid;
+    }
 }
-
-#endif
-

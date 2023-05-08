@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -37,7 +37,7 @@ namespace System.Management.Automation
         {
             if (runtimeDefinedParameter == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runtimeDefinedParameter");
+                throw PSTraceSource.NewArgumentNullException(nameof(runtimeDefinedParameter));
             }
 
             this.Name = runtimeDefinedParameter.Name;
@@ -69,7 +69,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (!(attribute is ArgumentTypeConverterAttribute))
+                if (attribute is not ArgumentTypeConverterAttribute)
                 {
                     ProcessAttribute(runtimeDefinedParameter.Name, attribute, ref validationAttributes, ref argTransformationAttributes, ref aliases);
                 }
@@ -123,7 +123,7 @@ namespace System.Management.Automation
         {
             if (member == null)
             {
-                throw PSTraceSource.NewArgumentNullException("member");
+                throw PSTraceSource.NewArgumentNullException(nameof(member));
             }
 
             this.Name = member.Name;
@@ -146,7 +146,7 @@ namespace System.Management.Automation
                 {
                     ArgumentException e =
                     PSTraceSource.NewArgumentException(
-                        "member",
+                        nameof(member),
                         DiscoveryExceptions.CompiledCommandParameterMemberMustBeFieldOrProperty);
 
                     throw e;
@@ -193,7 +193,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the parameter.
         /// </summary>
-        internal string Name { get; private set; }
+        internal string Name { get; }
 
         /// <summary>
         /// The PSTypeName from a PSTypeNameAttribute.
@@ -203,38 +203,38 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the Type information of the attribute.
         /// </summary>
-        internal Type Type { get; private set; }
+        internal Type Type { get; }
 
         /// <summary>
         /// Gets the Type information of the attribute.
         /// </summary>
-        internal Type DeclaringType { get; private set; }
+        internal Type DeclaringType { get; }
 
         /// <summary>
         /// Gets whether the parameter is a dynamic parameter or not.
         /// </summary>
-        internal bool IsDynamic { get; private set; }
+        internal bool IsDynamic { get; }
 
         /// <summary>
         /// Gets the parameter collection type information.
         /// </summary>
-        internal ParameterCollectionTypeInformation CollectionTypeInformation { get; private set; }
+        internal ParameterCollectionTypeInformation CollectionTypeInformation { get; }
 
         /// <summary>
         /// A collection of the attributes found on the member. The attributes have been compiled into
         /// a format that easier to digest by the metadata processor.
         /// </summary>
-        internal Collection<Attribute> CompiledAttributes { get; private set; }
+        internal Collection<Attribute> CompiledAttributes { get; }
 
         /// <summary>
         /// Gets the collection of data generation attributes on this parameter.
         /// </summary>
-        internal ArgumentTransformationAttribute[] ArgumentTransformationAttributes { get; private set; }
+        internal ArgumentTransformationAttribute[] ArgumentTransformationAttributes { get; }
 
         /// <summary>
         /// Gets the collection of data validation attributes on this parameter.
         /// </summary>
-        internal ValidateArgumentsAttribute[] ValidationAttributes { get; private set; }
+        internal ValidateArgumentsAttribute[] ValidationAttributes { get; }
 
         /// <summary>
         /// Get and private set the obsolete attribute on this parameter.
@@ -299,12 +299,12 @@ namespace System.Management.Automation
         /// <summary>
         /// A dictionary of the parameter sets and the parameter set specific data for this parameter.
         /// </summary>
-        internal Dictionary<string, ParameterSetSpecificMetadata> ParameterSetData { get; private set; }
+        internal Dictionary<string, ParameterSetSpecificMetadata> ParameterSetData { get; }
 
         /// <summary>
         /// The alias names for this parameter.
         /// </summary>
-        internal string[] Aliases { get; private set; }
+        internal string[] Aliases { get; }
 
         /// <summary>
         /// Determines if this parameter takes pipeline input for any of the specified
@@ -440,8 +440,7 @@ namespace System.Management.Automation
             ValidateArgumentsAttribute validateAttr = attribute as ValidateArgumentsAttribute;
             if (validateAttr != null)
             {
-                if (validationAttributes == null)
-                    validationAttributes = new Collection<ValidateArgumentsAttribute>();
+                validationAttributes ??= new Collection<ValidateArgumentsAttribute>();
                 validationAttributes.Add(validateAttr);
                 if ((attribute is ValidateNotNullAttribute) || (attribute is ValidateNotNullOrEmptyAttribute))
                 {
@@ -473,8 +472,7 @@ namespace System.Management.Automation
             ArgumentTransformationAttribute argumentAttr = attribute as ArgumentTransformationAttribute;
             if (argumentAttr != null)
             {
-                if (argTransformationAttributes == null)
-                    argTransformationAttributes = new Collection<ArgumentTransformationAttribute>();
+                argTransformationAttributes ??= new Collection<ArgumentTransformationAttribute>();
                 argTransformationAttributes.Add(argumentAttr);
                 return;
             }
@@ -625,7 +623,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            bool implementsIList = (type.GetInterface(typeof(IList).Name) != null);
+            bool implementsIList = (type.GetInterface(nameof(IList)) != null);
 
             // Look for class Collection<T>.  Collection<T> implements IList, and also IList
             // is more efficient to bind than ICollection<T>.  This optimization
@@ -649,7 +647,7 @@ namespace System.Management.Automation
             // to an ICollection<T> is via reflected calls to Add(T),
             // but the advantage over plain IList is that we can typecast the elements.
             Type interfaceICollection =
-                interfaces.FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
+                Array.Find(interfaces, static i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
             if (interfaceICollection != null)
             {
                 // We only deal with the first type for which ICollection<T> is implemented
@@ -675,11 +673,11 @@ namespace System.Management.Automation
         /// <summary>
         /// The collection type of the parameter.
         /// </summary>
-        internal ParameterCollectionType ParameterCollectionType { get; private set; }
+        internal ParameterCollectionType ParameterCollectionType { get; }
 
         /// <summary>
         /// The type of the elements in the collection.
         /// </summary>
-        internal Type ElementType { get; private set; }
+        internal Type ElementType { get; }
     }
 }

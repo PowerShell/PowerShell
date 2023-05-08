@@ -1,14 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.Commands.Utility project</Description>
-    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <NoWarn>$(NoWarn);CS1570;CA1416</NoWarn>
     <AssemblyName>Microsoft.PowerShell.Commands.Utility</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-    <ProjectReference Include="..\Microsoft.PowerShell.MarkdownRender\Microsoft.PowerShell.MarkdownRender.csproj" />
+    <PackageReference Include="Markdig.Signed" Version="0.31.0" />
+    <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.0" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -16,38 +17,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\ColumnInfo.cs" />
-    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\ExpressionColumnInfo.cs" />
-    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\HeaderInfo.cs" />
-    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\OriginalColumnInfo.cs" />
-    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\OutGridViewCommand.cs" />
-    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\OutWindowProxy.cs" />
-    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\ScalarTypeColumnInfo.cs" />
-    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\TableView.cs" />
-    <Compile Remove="commands\utility\FormatAndOutput\out-printer\PrinterLineOutput.cs" />
-    <Compile Remove="commands\utility\FormatAndOutput\out-printer\Out-Printer.cs" />
-    <Compile Remove="commands\utility\ShowCommand\ShowCommand.cs" />
-    <Compile Remove="commands\utility\ShowCommand\ShowCommandCommandInfo.cs" />
-    <Compile Remove="commands\utility\ShowCommand\ShowCommandModuleInfo.cs" />
-    <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterInfo.cs" />
-    <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterSetInfo.cs" />
-    <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterType.cs" />
-    <Compile Remove="commands\utility\ShowCommand\ShowCommandProxy.cs" />
-    <Compile Remove="commands\utility\Update-List.cs" />
     <Compile Remove="singleshell\installer\MshUtilityMshSnapin.cs" />
-    <Compile Remove="gen\FormatAndOut_out_gridview.cs" />
     <Compile Remove="gen\UtilityMshSnapinResources.cs" />
-    <Compile Remove="gen\OutPrinterDisplayStrings.cs" />
-    <Compile Remove="gen\UpdateListStrings.cs" />
     <Compile Remove="gen\ConvertFromStringResources.cs" />
     <Compile Remove="gen\ConvertStringResources.cs" />
     <Compile Remove="gen\FlashExtractStrings.cs" />
     <Compile Remove="gen\ImmutableStrings.cs" />
 
-    <EmbeddedResource Remove="resources\FormatAndOut_out_gridview.resx" />
     <EmbeddedResource Remove="resources\UtilityMshSnapinResources.resx" />
-    <EmbeddedResource Remove="resources\OutPrinterDisplayStrings.resx" />
-    <EmbeddedResource Remove="resources\UpdateListStrings.resx" />
     <EmbeddedResource Remove="resources\ConvertFromStringResources.resx" />
     <EmbeddedResource Remove="resources\ConvertStringResources.resx" />
     <EmbeddedResource Remove="resources\FlashExtractStrings.resx" />
@@ -55,9 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.1.0" />
-    <PackageReference Include="System.Threading.AccessControl" Version="4.5.0" />
-    <PackageReference Include="NJsonSchema" Version="10.0.20" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.6.0-1.final" />
+    <PackageReference Include="System.Threading.AccessControl" Version="8.0.0-preview.3.23174.8" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0-preview.2.23128.3" />
+    <PackageReference Include="JsonSchema.Net" Version="4.1.1" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -85,7 +85,7 @@ namespace System.Management.Automation
                 }
                 // No special cases match, throw error for multiple matches.
                 StringBuilder matchListSB = new StringBuilder(namesWithMatchingPrefix[0]);
-                string separator = ", ";
+                const string separator = ", ";
                 for (int i = 1; i < namesWithMatchingPrefix.Count; i++)
                 {
                     matchListSB.Append(separator);
@@ -106,7 +106,7 @@ namespace System.Management.Automation
         internal static string EnumAllValues(Type enumType)
         {
             string[] names = Enum.GetNames(enumType);
-            string separator = ", ";
+            const string separator = ", ";
             StringBuilder returnValue = new StringBuilder();
             if (names.Length != 0)
             {
@@ -122,6 +122,6 @@ namespace System.Management.Automation
             return returnValue.ToString();
         }
 
-        private static Dictionary<Type, string[]> s_specialDisambiguateCases = new Dictionary<Type, string[]>();
+        private static readonly Dictionary<Type, string[]> s_specialDisambiguateCases = new Dictionary<Type, string[]>();
     }
 }

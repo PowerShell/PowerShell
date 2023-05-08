@@ -1,11 +1,11 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !CLR2
+#nullable enable
+
+using System;
 using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
+using System.Runtime.CompilerServices;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -19,8 +19,35 @@ namespace System.Management.Automation.ComInterop
                 return expression;
             }
 
+            if (expression.Type == typeof(void))
+            {
+                return Expression.Block(expression, Expression.Default(type));
+            }
+
+            if (type == typeof(void))
+            {
+                return Expression.Block(expression, Expression.Empty());
+            }
+
             return Expression.Convert(expression, type);
         }
     }
-}
 
+    internal static class Requires
+    {
+        [System.Diagnostics.Conditional("DEBUG")]
+        internal static void NotNull(object value, [CallerArgumentExpression("value")] string? paramName = null)
+        {
+            ArgumentNullException.ThrowIfNull(value, paramName);
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        internal static void Condition(bool precondition, string paramName)
+        {
+            if (!precondition)
+            {
+                throw new ArgumentException(paramName);
+            }
+        }
+    }
+}

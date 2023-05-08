@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -74,7 +74,7 @@ namespace System.Management.Automation
             _xmlNode = xmlNode;
         }
 
-        private XmlNode _xmlNode;
+        private readonly XmlNode _xmlNode;
 
         /// <summary>
         /// Underline xmlNode for this MamlNode object.
@@ -123,7 +123,7 @@ namespace System.Management.Automation
         ///         </atomicXml>
         ///        In this case, an PSObject that wraps string "atomic xml text" will be returned with following properties
         ///             attribute => name
-        ///     3. Composite xml, which is an xmlNode with structured child nodes, but not a special case for Maml formating.
+        ///     3. Composite xml, which is an xmlNode with structured child nodes, but not a special case for Maml formatting.
         ///         <compositeXml attribute="attribute">
         ///             <singleChildNode>
         ///                 single child node text
@@ -209,14 +209,14 @@ namespace System.Management.Automation
             {
                 mshObject = new PSObject(GetInsidePSObject(xmlNode));
                 // Add typeNames to this MSHObject and create views so that
-                // the ouput is readable. This is done only for complex nodes.
+                // the output is readable. This is done only for complex nodes.
                 mshObject.TypeNames.Clear();
 
                 if (xmlNode.Attributes["type"] != null)
                 {
-                    if (string.Compare(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Equals(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase))
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#field");
-                    else if (string.Compare(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase) == 0)
+                    else if (string.Equals(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase))
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#method");
                 }
 
@@ -646,7 +646,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="nodes"></param>
         /// <returns></returns>
-        private int GetParaMamlNodeCount(XmlNodeList nodes)
+        private static int GetParaMamlNodeCount(XmlNodeList nodes)
         {
             int i = 0;
 
@@ -1109,7 +1109,7 @@ namespace System.Management.Automation
             // It is discouraged to use tab in preformatted text.
 
             string noTabText = text.Replace("\t", "    ");
-            string[] lines = noTabText.Split(Utils.Separators.Newline);
+            string[] lines = noTabText.Split('\n');
             string[] trimedLines = TrimLines(lines);
 
             if (trimedLines == null || trimedLines.Length == 0)
@@ -1212,7 +1212,7 @@ namespace System.Management.Automation
             if (IsEmptyLine(line))
                 return 0;
 
-            string leftTrimedLine = line.TrimStart(Utils.Separators.Space);
+            string leftTrimedLine = line.TrimStart(' ');
 
             return line.Length - leftTrimedLine.Length;
         }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     ///     - culture by name
     ///     - list of all supported cultures.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Culture", DefaultParameterSetName = CurrentCultureParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113312")]
+    [Cmdlet(VerbsCommon.Get, "Culture", DefaultParameterSetName = CurrentCultureParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097017")]
     [OutputType(typeof(System.Globalization.CultureInfo))]
     public sealed class GetCultureCommand : PSCmdlet
     {

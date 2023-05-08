@@ -1,10 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
 namespace System.Management.Automation.Provider
 {
     #region IDynamicPropertyCmdletProvider
-
     /// <summary>
     /// An interface that can be implemented on a Cmdlet provider to expose the dynamic
     /// manipulation of properties.
@@ -61,7 +61,7 @@ namespace System.Management.Automation.Provider
             string path,
             string propertyName,
             string propertyTypeName,
-            object value);
+            object? value);
 
         /// <summary>
         /// Gives the provider an opportunity to attach additional parameters to the
@@ -87,11 +87,11 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        object NewPropertyDynamicParameters(
+        object? NewPropertyDynamicParameters(
             string path,
             string propertyName,
             string propertyTypeName,
-            object value);
+            object? value);
 
         /// <summary>
         /// Removes a property on the item specified by the path.
@@ -196,7 +196,7 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        object RenamePropertyDynamicParameters(
+        object? RenamePropertyDynamicParameters(
             string path,
             string sourceProperty,
             string destinationProperty);
@@ -262,7 +262,7 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        object CopyPropertyDynamicParameters(
+        object? CopyPropertyDynamicParameters(
             string sourcePath,
             string sourceProperty,
             string destinationPath,
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Provider
         ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
-        object MovePropertyDynamicParameters(
+        object? MovePropertyDynamicParameters(
             string sourcePath,
             string sourceProperty,
             string destinationPath,
@@ -337,4 +337,3 @@ namespace System.Management.Automation.Provider
 
     #endregion IDynamicPropertyCmdletProvider
 }
-

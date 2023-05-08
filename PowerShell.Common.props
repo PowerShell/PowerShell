@@ -1,4 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project=".\Analyzers.props" />
 
   <!--
       The 'version' property is populated with the default value in 'Microsoft.NET.DefaultAssemblyInfo.targets'
@@ -22,11 +23,46 @@
     </Exec>
 
     <PropertyGroup Condition = "'$(ReleaseTag)' != ''">
+      <!--
+         DO NOT UPDATE without reviewing with the Microsoft update plan.
+
+         7.2.0-preview.1
+         __a__.__b____.c
+
+        a = Version part and is group 1 of the regex
+        b = the Semantic version prerelease name.  This is optional.
+        c = The semantic version prerelease iteration.  This is optional and only allowed of the prerelease name is present.
+
+        Our version will become the version part with the prerelease iteration being the revision (the 4th part of the version).
+        For RCs, we will increment the iteration from 100.
+
+        Examples
+        7.2.0 becomes 7.2.0
+        7.2.0-preview.1 becomes 7.2.0.1
+        7.2.0-rc.1 becomes 7.2.0.101
+      -->
+
+      <!-- parse the release tag into the parts we need -->
+      <RegexReleaseTag>^((\d+).(\d+).(\d+))(-(\w+)(.(\d+))?)?$</RegexReleaseTag>
+      <ReleaseTagVersionPart>$([System.Text.RegularExpressions.Regex]::Match($(ReleaseTag), $(RegexReleaseTag)).Groups[1].Value)</ReleaseTagVersionPart>
+      <ReleaseTagSemVersionPart>$([System.Text.RegularExpressions.Regex]::Match($(ReleaseTag), $(RegexReleaseTag)).Groups[8].Value)</ReleaseTagSemVersionPart>
+      <ReleaseTagSemVersionPrereleaseNamePart>$([System.Text.RegularExpressions.Regex]::Match($(ReleaseTag), $(RegexReleaseTag)).Groups[6].Value)</ReleaseTagSemVersionPrereleaseNamePart>
+      <!-- Increment revision 100 for rc releases -->
+      <RCIncrementValue>100</RCIncrementValue>
+      <!-- Increment revision 500 for GA releases -->
+      <GAIncrementValue>500</GAIncrementValue>
+      <ReleaseTagSemVersionPart Condition = "'$(ReleaseTagSemVersionPrereleaseNamePart)' == 'rc'">$([MSBuild]::Add($(ReleaseTagSemVersionPart), $(RCIncrementValue)))</ReleaseTagSemVersionPart>
+      <!-- Create the internal version -->
       <PSCoreBuildVersion>$(ReleaseTag)</PSCoreBuildVersion>
+      <!-- Create the version if we have a pre-release -->
+      <PSCoreFileVersion Condition = "'$(ReleaseTagSemVersionPart)' != ''">$(ReleaseTagVersionPart).$(ReleaseTagSemVersionPart)</PSCoreFileVersion>
+      <!-- Create the version if we have a release build -->
+      <PSCoreFileVersion Condition = "'$(PSCoreFileVersion)' == ''">$(ReleaseTagVersionPart).$(GAIncrementValue)</PSCoreFileVersion>
     </PropertyGroup>
 
     <PropertyGroup>
       <RegexGitVersion>^v(.+)-(\d+)-g(.+)</RegexGitVersion>
+      <PSCoreFileVersion Condition = "'$(PSCoreFileVersion)' == ''">$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[1].Value)</PSCoreFileVersion>
       <PSCoreBuildVersion Condition = "'$(PSCoreBuildVersion)' == ''">$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[1].Value)</PSCoreBuildVersion>
       <PSCoreAdditionalCommits>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[2].Value)</PSCoreAdditionalCommits>
       <PSCoreCommitSHA>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[3].Value)</PSCoreCommitSHA>
@@ -51,27 +87,34 @@
             Here we define explicitly 'Version' to set 'FileVersion' and 'AssemblyVersion' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
             Here we define explicitly 'InformationalVersion' because by default it is defined as 'Version' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
       -->
-      <Version>$(PSCoreBuildVersion)</Version>
+      <Version>$(PSCoreFileVersion)</Version>
       <InformationalVersion>$(PSCoreFormattedVersion)</InformationalVersion>
       <ProductVersion>$(PSCoreFormattedVersion)</ProductVersion>
 
       <!--
-            We have explicitly assign 'PackageVersion'
-            because there is a bug: 'PackageVersion' is correctly assigned as 'Version' in 'NuGet.targets'
-            but then immediately redefined as '1.0.0'.
-            Tracking Issue https://github.com/dotnet/sdk/issues/1557
+        We have to explicitly assign 'PackageVersion' here because we're changing 'Version' in a target.
+        Before any targets have run (during static evaluation), 'Version' will have defaulted to '1.0.0' and PackageVersion will have defaulted to 'Version'.
+        See https://github.com/dotnet/sdk/issues/1557
       -->
       <PackageVersion>$(PSCoreBuildVersion)</PackageVersion>
+
       <ApplicationIcon Condition="$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_av_colors.ico</ApplicationIcon>
-      <ApplicationIcon Condition="!$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_black.ico</ApplicationIcon>
+      <ApplicationIcon Condition="$(ProductVersion.Contains('daily'))">..\..\assets\Powershell_avatar.ico</ApplicationIcon>
+      <ApplicationIcon Condition="!$(ProductVersion.Contains('preview')) And !$(ProductVersion.Contains('daily'))">..\..\assets\Powershell_black.ico</ApplicationIcon>
 
     </PropertyGroup>
+
+    <!-- Remove existing generated files by source generators because new source code will soon be generated when the build starts -->
+    <RemoveDir Directories="gen\SourceGenerated" Condition="Exists('gen\SourceGenerated')" />
 
     <!-- Output For Debugging
       <WriteLinesToFile File="targetfile1.txt"
         Lines="ReleaseTag=$(ReleaseTag);
-               PowerShellVersion=$(PowerShellVersion);
+               PowerShellVersion = $(PowerShellVersion);
                PSCoreBuildVersion = $(PSCoreBuildVersion);
+               PSCoreFileVersion = $(PSCoreFileVersion);
+               ReleaseTagVersionPart = $(ReleaseTagVersionPart);
+               ReleaseTagSemVersionPart = $(ReleaseTagSemVersionPart);
                PSCoreAdditionalCommits = $(PSCoreAdditionalCommits);
                PSCoreCommitSHA = $(PSCoreCommitSHA);
                PSCoreMajorVersion = $(PSCoreMajorVersion);
@@ -93,16 +136,18 @@
   <PropertyGroup>
     <Product>PowerShell</Product>
     <Company>Microsoft Corporation</Company>
-    <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
+    <Copyright>(c) Microsoft Corporation.</Copyright>
 
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-    <LangVersion>8.0</LangVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>11.0</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <DisableImplicitNamespaceImports_DotNet>true</DisableImplicitNamespaceImports_DotNet>
 
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
@@ -127,11 +172,14 @@
 
   <!-- Define all OS, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
     <Optimize>true</Optimize>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
-  <!-- Define windows, release configuration properties -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' == 'true' ">
+  <!-- Define all OS, release configuration properties -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'StaticAnalysis' ">
     <Optimize>true</Optimize>
     <!-- This is required to be full for compliance tools !-->
     <DebugType>full</DebugType>
@@ -143,12 +191,13 @@
          Debugging the issues resolves the problem
      -->
     <Optimize>false</Optimize>
-    <DebugType>portable</DebugType>
   </PropertyGroup>
 
-  <!-- Define all OS, CodeCoverage configuration properties -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <!-- This is required to be portable to Coverlet tool !-->
-    <DebugType>portable</DebugType>
+  <PropertyGroup>
+    <Features>strict</Features>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 </Project>

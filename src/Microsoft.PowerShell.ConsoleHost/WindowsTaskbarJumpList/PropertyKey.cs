@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell
     /// Defines a unique key for a Shell Property.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    internal struct PropertyKey : IEquatable<PropertyKey>
+    internal readonly struct PropertyKey : IEquatable<PropertyKey>
     {
         #region Public Properties
         /// <summary>
@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Property identifier (PID)
         /// </summary>
-        public Int32 PropertyId { get; }
+        public int PropertyId { get; }
 
         #endregion
 
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="formatId">A unique GUID for the property.</param>
         /// <param name="propertyId">Property identifier (PID).</param>
-        internal PropertyKey(Guid formatId, Int32 propertyId)
+        internal PropertyKey(Guid formatId, int propertyId)
         {
             this.FormatId = formatId;
             this.PropertyId = propertyId;
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell
             if (obj == null)
                 return false;
 
-            if (!(obj is PropertyKey))
+            if (obj is not PropertyKey)
                 return false;
 
             PropertyKey other = (PropertyKey)obj;

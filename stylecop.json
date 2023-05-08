@@ -25,7 +25,7 @@
         },
         "namingRules" : {
             "allowCommonHungarianPrefixes" : true,
-            "allowedHungarianPrefixes" : [ "n", "r", "l", "i", "io", "is", "fs", "lp", "dw", "h", "rs", "ps", "op" ]
+            "allowedHungarianPrefixes" : [ "n", "r", "l", "i", "io", "is", "fs", "lp", "dw", "h", "rs", "ps", "op", "sb", "my", "vt" ]
         },
         "maintainabilityRules" : {
             "topLevelTypes" : [
@@ -38,7 +38,7 @@
             "allowConsecutiveUsings" : false
         },
         "documentationRules" : {
-            "copyrightText" : "Copyright (c) Microsoft Corporation. All rights reserved.\nLicensed under the MIT License.",
+            "copyrightText" : "Copyright (c) Microsoft Corporation.\nLicensed under the MIT License.",
             "xmlHeader" : false,
             "documentInterfaces" : true,
             "documentExposedElements" : true,

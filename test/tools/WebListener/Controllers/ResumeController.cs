@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -19,7 +19,7 @@ namespace mvc.Controllers
 {
     public class ResumeController : Controller
     {
-        private static byte[] FileBytes = new byte[] { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 };
+        private static readonly byte[] FileBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
 
         public async void Index()
         {
@@ -30,12 +30,12 @@ namespace mvc.Controllers
             if (TryGetRangeHeader(out rangeHeader))
             {
                 var range = GetRange(rangeHeader);
-                if(range.From != null)
+                if (range.From != null)
                 {
                     from = (int)range.From;
                 }
 
-                if(range.To != null)
+                if (range.To != null)
                 {
                     to = (int)range.To;
                 }
@@ -49,7 +49,7 @@ namespace mvc.Controllers
                 return;
             }
 
-            if(to >= FileBytes.Length || from >= FileBytes.Length)
+            if (to >= FileBytes.Length || from >= FileBytes.Length)
             {
                 Response.StatusCode = StatusCodes.Status416RequestedRangeNotSatisfiable;
                 Response.Headers[HeaderNames.ContentRange] = $"bytes */{FileBytes.Length}";
@@ -91,7 +91,7 @@ namespace mvc.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private RangeItemHeaderValue GetRange(string rangeHeader)
+        private static RangeItemHeaderValue GetRange(string rangeHeader)
         {
             return RangeHeaderValue.Parse(rangeHeader).Ranges.FirstOrDefault();
         }
@@ -113,7 +113,7 @@ namespace mvc.Controllers
         private bool TryGetRangeHeader(out string rangeHeader)
         {
             var rangeHeaderSv = new StringValues();
-            if(Request.Headers.TryGetValue("Range", out rangeHeaderSv))
+            if (Request.Headers.TryGetValue("Range", out rangeHeaderSv))
             {
                 rangeHeader = rangeHeaderSv.FirstOrDefault();
                 return true;

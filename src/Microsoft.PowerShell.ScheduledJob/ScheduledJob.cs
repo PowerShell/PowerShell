@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -387,7 +387,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="info">SerializationInfo.</param>
         /// <param name="context">StreamingContext.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private ScheduledJob(
             SerializationInfo info,
             StreamingContext context)
@@ -407,7 +406,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="info">SerializationInfo.</param>
         /// <param name="context">StreamingContext.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(
             SerializationInfo info,
             StreamingContext context)
@@ -928,7 +926,10 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private void AddSetShouldExitToHost()
         {
-            if (!_allowSetShouldExit || _host == null) { return; }
+            if (!_allowSetShouldExit || _host == null)
+            {
+                return;
+            }
 
             PSObject hostPrivateData = _host.PrivateData as PSObject;
             if (hostPrivateData != null)
@@ -940,7 +941,10 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private void RemoveSetShouldExitFromHost()
         {
-            if (!_allowSetShouldExit || _host == null) { return; }
+            if (!_allowSetShouldExit || _host == null)
+            {
+                return;
+            }
 
             PSObject hostPrivateData = _host.PrivateData as PSObject;
             if (hostPrivateData != null)
@@ -955,7 +959,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         #region Private ResultsInfo class
 
         [Serializable]
-        private class ResultsInfo : ISerializable
+        private sealed class ResultsInfo : ISerializable
         {
             // Private Members
             private Collection<PSObject> _output;
@@ -1058,7 +1062,6 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
 
             // ISerializable
-            [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
             private ResultsInfo(
                 SerializationInfo info,
                 StreamingContext context)
@@ -1086,7 +1089,6 @@ namespace Microsoft.PowerShell.ScheduledJob
                 }
             }
 
-            [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
             public void GetObjectData(
                 SerializationInfo info,
                 StreamingContext context)
@@ -1208,7 +1210,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         // ISerializable
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private StatusInfo(
             SerializationInfo info,
             StreamingContext context)
@@ -1248,7 +1249,6 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
         }
 
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(
             SerializationInfo info,
             StreamingContext context)

@@ -1,20 +1,18 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 
-using Dbg = System.Management.Automation;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to resolve MSH paths containing glob characters to
-    /// MSH paths that match the glob strings.
+    /// A command to resolve PowerShell paths containing glob characters to
+    /// PowerShell paths that match the glob strings.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Resolve, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113384")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097143")]
     public class ResolvePathCommand : CoreCommandWithCredentialsBase
     {
         #region Parameters
@@ -23,6 +21,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the path parameter to the command.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
+                   Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = "PathWithRelativeBase",
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
@@ -41,6 +41,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
+                   Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = "LiteralPathWithRelativeBase",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
@@ -61,7 +63,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the value that determines if the resolved path should
         /// be resolved to its relative version.
         /// </summary>
-        [Parameter()]
+        [Parameter(ParameterSetName = "Path")]
+        [Parameter(ParameterSetName = "LiteralPath")]
         public SwitchParameter Relative
         {
             get
@@ -77,6 +80,25 @@ namespace Microsoft.PowerShell.Commands
 
         private SwitchParameter _relative;
 
+        /// <summary>
+        /// Gets or sets the path the resolved relative path should be based off.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "PathWithRelativeBase")]
+        [Parameter(Mandatory = true, ParameterSetName = "LiteralPathWithRelativeBase")]
+        public string RelativeBasePath
+        { 
+            get
+            {
+                return _relativeBasePath;
+            }
+
+            set
+            {
+                _relative = true;
+                _relativeBasePath = value;
+            }
+        }
+
         #endregion Parameters
 
         #region parameter data
@@ -86,12 +108,70 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private string[] _paths;
 
+        private PSDriveInfo _relativeDrive;
+        private string _relativeBasePath;
+
         #endregion parameter data
 
         #region Command code
 
         /// <summary>
-        /// Resolves the path containing glob characters to the MSH paths that it
+        /// Finds the path and drive that should be used for relative path resolution
+        /// represents.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            if (_relative)
+            {
+                if (!string.IsNullOrEmpty(RelativeBasePath))
+                {
+                    try
+                    {
+                        _relativeBasePath = SessionState.Internal.Globber.GetProviderPath(RelativeBasePath, CmdletProviderContext, out _, out _relativeDrive);
+                    }
+                    catch (ProviderNotFoundException providerNotFound)
+                    {
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                providerNotFound.ErrorRecord,
+                                providerNotFound));
+                    }
+                    catch (DriveNotFoundException driveNotFound)
+                    {
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                driveNotFound.ErrorRecord,
+                                driveNotFound));
+                    }
+                    catch (ProviderInvocationException providerInvocation)
+                    {
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                providerInvocation.ErrorRecord,
+                                providerInvocation));
+                    }
+                    catch (NotSupportedException notSupported)
+                    {
+                        ThrowTerminatingError(
+                            new ErrorRecord(notSupported, "ProviderIsNotNavigationCmdletProvider", ErrorCategory.InvalidArgument, RelativeBasePath));
+                    }
+                    catch (InvalidOperationException invalidOperation)
+                    {
+                        ThrowTerminatingError(
+                            new ErrorRecord(invalidOperation, "InvalidHomeLocation", ErrorCategory.InvalidOperation, RelativeBasePath));
+                    }
+
+                    return;
+                }
+
+                _relativeDrive = SessionState.Path.CurrentLocation.Drive;
+                _relativeBasePath = SessionState.Path.CurrentLocation.ProviderPath;
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Resolves the path containing glob characters to the PowerShell paths that it
         /// represents.
         /// </summary>
         protected override void ProcessRecord()
@@ -105,28 +185,41 @@ namespace Microsoft.PowerShell.Commands
 
                     if (_relative)
                     {
+                        ReadOnlySpan<char> baseCache = null;
+                        ReadOnlySpan<char> adjustedBaseCache = null;
                         foreach (PathInfo currentPath in result)
                         {
                             // When result path and base path is on different PSDrive
                             // (../)*path should not go beyond the root of base path
-                            if (currentPath.Drive != SessionState.Path.CurrentLocation.Drive &&
-                                SessionState.Path.CurrentLocation.Drive != null &&
-                                !currentPath.ProviderPath.StartsWith(
-                                    SessionState.Path.CurrentLocation.Drive.Root, StringComparison.OrdinalIgnoreCase))
+                            if (currentPath.Drive != _relativeDrive &&
+                                _relativeDrive != null &&
+                                !currentPath.ProviderPath.StartsWith(_relativeDrive.Root, StringComparison.OrdinalIgnoreCase))
                             {
                                 WriteObject(currentPath.Path, enumerateCollection: false);
                                 continue;
                             }
 
-                            string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path,
-                                SessionState.Path.CurrentLocation.ProviderPath);
+                            int leafIndex = currentPath.Path.LastIndexOf(currentPath.Provider.ItemSeparator);
+                            var basePath = currentPath.Path.AsSpan(0, leafIndex);
+                            if (basePath == baseCache)
+                            {
+                                WriteObject(string.Concat(adjustedBaseCache, currentPath.Path.AsSpan(leafIndex + 1)), enumerateCollection: false);
+                                continue;
+                            }
+
+                            baseCache = basePath;
+                            string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path, _relativeBasePath);
+
                             // Do not insert './' if result path is not relative
                             if (!adjustedPath.StartsWith(
                                     currentPath.Drive?.Root ?? currentPath.Path, StringComparison.OrdinalIgnoreCase) &&
-                                !adjustedPath.StartsWith(".", StringComparison.OrdinalIgnoreCase))
+                                !adjustedPath.StartsWith('.'))
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }
+
+                            leafIndex = adjustedPath.LastIndexOf(currentPath.Provider.ItemSeparator);
+                            adjustedBaseCache = adjustedPath.AsSpan(0, leafIndex + 1);
 
                             WriteObject(adjustedPath, enumerateCollection: false);
                         }
@@ -175,4 +268,3 @@ namespace Microsoft.PowerShell.Commands
 
     }
 }
-

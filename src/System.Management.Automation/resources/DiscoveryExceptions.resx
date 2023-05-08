@@ -133,7 +133,7 @@
     <value>Cannot process the cmdlet. A cmdlet name must consist of a verb and noun pair separated by '-'.</value>
   </data>
   <data name="CommandNotFoundException" xml:space="preserve">
-    <value>The term '{0}' is not recognized as the name of a cmdlet, function, script file, or operable program.
+    <value>The term '{0}' is not recognized as a name of a cmdlet, function, script file, or executable program.
 Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
   </data>
   <data name="CmdletNotFoundException" xml:space="preserve">
@@ -143,7 +143,7 @@ Check the spelling of the name, or if a path was included, verify that the path 
     <value>The argument '{0}' is not recognized as a cmdlet, possibly because it does not derive from the Cmdlet or PSCmdlet classes: {1}</value>
   </data>
   <data name="AliasNotResolvedException" xml:space="preserve">
-    <value>Cannot resolve alias '{0}' because it refers to term '{1}', which is not recognized as a cmdlet, function, operable program, or script file. Verify the term and try again.</value>
+    <value>Cannot resolve alias '{0}' because it refers to term '{1}', which is not recognized as a cmdlet, function, executable program, or script file. Verify the term and try again.</value>
   </data>
   <data name="CommandNameNotCmdlet" xml:space="preserve">
     <value>Parameter '{0}' with value '{1}' cannot be processed because it is not a cmdlet and cannot be processed by the CommandProcessor.</value>
@@ -205,6 +205,10 @@ The #requires statement must be in one of the following formats:
   </data>
   <data name="CouldNotAutoImportMatchingModule" xml:space="preserve">
     <value>The '{0}' command was found in the module '{1}', but the module could not be loaded. For more information, run 'Import-Module {1}'.</value>
+  </data>
+  <data name="CouldNotAutoImportMatchingModuleWithErrorMessage" xml:space="preserve">
+    <value>The '{0}' command was found in the module '{1}', but the module could not be loaded due to the following error: [{2}]
+For more information, run 'Import-Module {1}'.</value>
   </data>
   <data name="CouldNotAutoImportModule" xml:space="preserve">
     <value>The module '{0}' could not be loaded. For more information, run 'Import-Module {0}'.</value>

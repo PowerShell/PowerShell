@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -15,13 +15,12 @@ using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
-#if !UNIX
     /// <summary>
     /// New-PSSessionConfigurationFile command implementation
     ///
     /// See Declarative Initial Session State (DISC)
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSSessionConfigurationFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217036")]
+    [Cmdlet(VerbsCommon.New, "PSSessionConfigurationFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096791")]
     public class NewPSSessionConfigurationFileCommand : PSCmdlet
     {
         #region Parameters
@@ -857,7 +856,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (Full)
                     {
-                        string exampleModulesToImport = "'MyCustomModule', @{ ModuleName = 'MyCustomModule'; ModuleVersion = '1.0.0.0'; GUID = '4d30d5f0-cb16-4898-812d-f20a6c596bdf' }";
+                        const string exampleModulesToImport = "'MyCustomModule', @{ ModuleName = 'MyCustomModule'; ModuleVersion = '1.0.0.0'; GUID = '4d30d5f0-cb16-4898-812d-f20a6c596bdf' }";
                         result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ModulesToImport, RemotingErrorIdStrings.DISCModulesToImportComment, exampleModulesToImport, streamWriter, true));
                     }
                 }
@@ -967,7 +966,7 @@ namespace Microsoft.PowerShell.Commands
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
-                            if ((hashtable[ConfigFileConstants.FunctionValueToken] as ScriptBlock) == null)
+                            if (hashtable[ConfigFileConstants.FunctionValueToken] is not ScriptBlock)
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
                                     ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, _path));
@@ -1105,7 +1104,7 @@ namespace Microsoft.PowerShell.Commands
                         SessionConfigurationUtils.CombineStringArray(_assembliesToLoad), streamWriter, isExample));
                 }
 
-                result.Append("}");
+                result.Append('}');
 
                 streamWriter.Write(result.ToString());
             }
@@ -1126,7 +1125,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
     }
-#endif
 
     /// <summary>
     /// New-PSRoleCapabilityFile command implementation
@@ -1621,7 +1619,7 @@ namespace Microsoft.PowerShell.Commands
                 // Modules to import
                 if (_modulesToImport == null)
                 {
-                    string exampleModulesToImport = "'MyCustomModule', @{ ModuleName = 'MyCustomModule'; ModuleVersion = '1.0.0.0'; GUID = '4d30d5f0-cb16-4898-812d-f20a6c596bdf' }";
+                    const string exampleModulesToImport = "'MyCustomModule', @{ ModuleName = 'MyCustomModule'; ModuleVersion = '1.0.0.0'; GUID = '4d30d5f0-cb16-4898-812d-f20a6c596bdf' }";
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ModulesToImport, RemotingErrorIdStrings.DISCModulesToImportComment, exampleModulesToImport, streamWriter, true));
                 }
                 else
@@ -1714,7 +1712,7 @@ namespace Microsoft.PowerShell.Commands
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
-                            if ((hashtable[ConfigFileConstants.FunctionValueToken] as ScriptBlock) == null)
+                            if (hashtable[ConfigFileConstants.FunctionValueToken] is not ScriptBlock)
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
                                     ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, _path));
@@ -1837,7 +1835,7 @@ namespace Microsoft.PowerShell.Commands
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.AssembliesToLoad, RemotingErrorIdStrings.DISCAssembliesToLoadComment,
                     SessionConfigurationUtils.CombineStringArray(_assembliesToLoad), streamWriter, isExample));
 
-                result.Append("}");
+                result.Append('}');
 
                 streamWriter.Write(result.ToString());
             }
@@ -1855,7 +1853,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Utility methods for configuration file commands.
     /// </summary>
-    internal class SessionConfigurationUtils
+    internal static class SessionConfigurationUtils
     {
         /// <summary>
         /// This routine builds a fragment of the config file
@@ -1868,12 +1866,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (isExample)
             {
-                return string.Format(CultureInfo.InvariantCulture, "# {0}{1}# {2:19} = {3}{4}{5}",
-                    resourceString, nl, key, value, nl, nl);
+                return string.Format(CultureInfo.InvariantCulture, "# {0}{1}# {2:19} = {3}{4}{5}", resourceString, nl, key, value, nl, nl);
             }
 
-            return string.Format(CultureInfo.InvariantCulture, "# {0}{1}{2:19} = {3}{4}{5}",
-                resourceString, nl, key, value, nl, nl);
+            return string.Format(CultureInfo.InvariantCulture, "# {0}{1}{2:19} = {3}{4}{5}", resourceString, nl, key, value, nl, nl);
         }
 
         /// <summary>
@@ -1884,7 +1880,10 @@ namespace Microsoft.PowerShell.Commands
         internal static string QuoteName(object name)
         {
             if (name == null)
+            {
                 return "''";
+            }
+
             return "'" + System.Management.Automation.Language.CodeGeneration.EscapeSingleQuotedStringContent(name.ToString()) + "'";
         }
 
@@ -1944,14 +1943,14 @@ namespace Microsoft.PowerShell.Commands
 
             sb.Append("@{");
 
-            var keys = table.Keys.Cast<string>().OrderBy(x => x);
+            var keys = table.Keys.Cast<string>().Order();
             foreach (var key in keys)
             {
                 sb.Append(writer.NewLine);
                 sb.AppendFormat("{0," + (4 * (indent + 1)) + "}", string.Empty);
                 sb.Append(QuoteName(key));
                 sb.Append(" = ");
-                if ((table[key] as ScriptBlock) != null)
+                if (table[key] is ScriptBlock)
                 {
                     sb.Append(WrapScriptBlock(table[key].ToString()));
                     continue;

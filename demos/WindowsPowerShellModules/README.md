@@ -3,7 +3,7 @@
 ## Windows PowerShell vs PowerShell Core
 
 Existing Windows PowerShell users are familiar with the large number of modules available, however, they are not necessarily compatible with PowerShell Core.
-More information regarding compatibility is in a [blog post](https://blogs.msdn.microsoft.com/powershell/2017/07/14/powershell-6-0-roadmap-coreclr-backwards-compatibility-and-more/).
+More information regarding compatibility is in a [blog post](https://devblogs.microsoft.com/powershell/powershell-6-0-roadmap-coreclr-backwards-compatibility-and-more/).
 
 Windows PowerShell 5.1 is based on .Net Framework 4.6.1, while PowerShell Core is based on .Net Core 2.x.
 Although both adhere to .Net Standard 2.0 and can be compatible, some modules may be using APIs or cmdlets not supported on CoreCLR or using APIs from Windows PowerShell that have been deprecated and removed from PowerShell Core (for example, PSSnapins).

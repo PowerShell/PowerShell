@@ -1,0 +1,76 @@
+<!--=================================================================
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+==================================================================-->
+
+<Window x:Class="Microsoft.Management.UI.HelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:this="clr-namespace:Microsoft.Management.UI.Internal"
+        xmlns:default="clr-namespace:"
+        xmlns:ui="clr-namespace:Microsoft.Management.UI"
+        Height="400"
+        Width="600"
+        Title="{Binding HelpTitle}"
+        AutomationProperties.AutomationId="HelpWindow"
+        FocusManager.FocusedElement="{Binding ElementName=HelpText}">
+    <Grid x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Grid x:Name="HeaderGrid"  Grid.Row="0" Grid.IsSharedSizeScope="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="HeaderButtons"></ColumnDefinition>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="HeaderButtons"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto" SharedSizeGroup="HeaderButtons"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="FindLabelAndTextGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="FindLabel" Margin="0,5,0,5" Grid.Column="0" Content="{x:Static default:HelpWindowResources.FindText}"></Label>
+                <TextBox x:Name="Find" Margin="5" Grid.Column="1" Text="{Binding FindText, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{x:Static default:HelpWindowResources.FindText}"></TextBox>
+            </Grid>
+            <Button x:Name="PreviousMatch" Margin="5" Padding="3" Grid.Column="1"
+                    IsEnabled="{Binding CanGoToNextOrPrevious}"
+                    Content="{x:Static default:HelpWindowResources.PreviousText}" Click="PreviousMatch_Click"></Button>
+            <Button x:Name="NextMatch" Margin="5" Padding="3" Grid.Column="2"
+                    IsEnabled="{Binding CanGoToNextOrPrevious}"
+                    Content="{x:Static default:HelpWindowResources.NextText}" Click="NextMatch_Click"></Button>
+            <Label x:Name="MatchCountLabel" Margin="5" MinWidth="100" Grid.Column="3" Content="{Binding MatchesLabel}"></Label>
+            <Button x:Name="Settings" Margin="5" Padding="3" Grid.Column="4" Click="Settings_Click"  Content="{x:Static default:HelpWindowResources.SettingsText}"></Button>
+        </Grid>
+
+        <ScrollViewer x:Name="Scroll" HorizontalAlignment="Stretch" Grid.Row="1" AutomationProperties.Name="{Binding HelpTitle}">
+            <RichTextBox x:Name="HelpText" FontFamily="Consolas" VerticalScrollBarVisibility="Disabled" BorderThickness="0" IsReadOnly="True" IsReadOnlyCaretVisible="True" AutomationProperties.Name="{Binding HelpTitle}">
+                <RichTextBox.LayoutTransform>
+                    <ScaleTransform ScaleX="{Binding Path=ZoomLevel}" ScaleY="{Binding Path=ZoomLevel}"/>
+                </RichTextBox.LayoutTransform>
+                <RichTextBox.Document>
+                    <FlowDocument>
+                        <Paragraph x:Name="DocumentParagraph"></Paragraph>
+                    </FlowDocument>
+                </RichTextBox.Document>
+            </RichTextBox>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2" HorizontalAlignment="Right">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding ZoomLabel}" VerticalAlignment="Center"></TextBlock>
+            <Slider Grid.Column="1" x:Name="ZoomSlider" Margin="5"  Value="{Binding Zoom}" Minimum="{x:Static ui:HelpWindow.MinimumZoom}" Maximum="{x:Static ui:HelpWindow.MaximumZoom}" TickFrequency="{x:Static ui:HelpWindow.ZoomInterval}" TickPlacement="None" IsSnapToTickEnabled="True"  Width="110" ToolTip="{x:Static default:HelpWindowResources.ZoomSlider}" AutomationProperties.Name="{x:Static default:HelpWindowResources.ZoomSlider}"></Slider>
+        </Grid>
+
+    </Grid>
+</Window>

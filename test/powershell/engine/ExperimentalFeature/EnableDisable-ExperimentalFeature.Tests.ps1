@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
@@ -6,6 +6,7 @@ Import-Module HelpersCommon
 Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
+        $pwsh = "$PSHOME/pwsh"
         $systemConfigPath = "$PSHOME/powershell.config.json"
         if ($IsWindows) {
             $userConfigPath = "~/Documents/powershell/powershell.config.json"
@@ -58,11 +59,11 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
             return
         }
 
-        $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
+        $feature = & $pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
         $feature.Enabled | Should -BeFalse -Because "All Experimental Features disabled when no config file"
-        $feature = pwsh -noprofile -output xml -command Enable-ExperimentalFeature ExpTest.FeatureOne -Scope $scope -WarningAction SilentlyContinue
+        $feature = & $pwsh -noprofile -output xml -command Enable-ExperimentalFeature ExpTest.FeatureOne -Scope $scope -WarningAction SilentlyContinue
         $feature | Should -BeNullOrEmpty -Because "No object is output to pipeline on success"
-        $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
+        $feature = & $pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
         $feature.Enabled | Should -BeTrue -Because "The experimental feature is now enabled"
     }
 
@@ -77,11 +78,11 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         }
 
         '{"ExperimentalFeatures":["ExpTest.FeatureOne"]}' > $configPath
-        $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
+        $feature = & $pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
         $feature.Enabled | Should -BeTrue -Because "Test config should enable ExpTest.FeatureOne"
-        $feature = pwsh -noprofile -output xml -command Disable-ExperimentalFeature ExpTest.FeatureOne -Scope $scope -WarningAction SilentlyContinue
+        $feature = & $pwsh -noprofile -output xml -command Disable-ExperimentalFeature ExpTest.FeatureOne -Scope $scope -WarningAction SilentlyContinue
         $feature | Should -BeNullOrEmpty -Because "No object is output to pipeline on success"
-        $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
+        $feature = & $pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
         $feature.Enabled | Should -BeFalse -Because "The experimental feature is now disabled"
     }
 

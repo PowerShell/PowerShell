@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # This is a short example of the Docker-PowerShell module. The same cmdlets may be used to manage both local & remote machines, including both Windows & Linux hosts
@@ -20,10 +20,10 @@ Run-ContainerImage hello-world # Linux
 cls
 
 # List all containers that have exited
-Get-Container | Where-Object State -eq "exited"
+Get-Container | Where-Object State -EQ "exited"
 
 # That found the right one, so go ahead and remove it
-Get-Container | Where-Object State -eq "exited" | Remove-Container
+Get-Container | Where-Object State -EQ "exited" | Remove-Container
 
 # Now remove the container image
 Remove-ContainerImage hello-world

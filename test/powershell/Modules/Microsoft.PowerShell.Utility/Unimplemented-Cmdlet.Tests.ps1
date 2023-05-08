@@ -1,9 +1,8 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Unimplemented Utility Cmdlet Tests" -Tags "CI" {
 
     $Commands = @(
-        "Unblock-File",
         "ConvertFrom-SddlString"
     )
 

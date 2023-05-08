@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-Uptime" -Tags "CI" {
     BeforeAll {
@@ -19,11 +19,11 @@ Describe "Get-Uptime" -Tags "CI" {
     }
     It "Get-Uptime return timespan (default -Timespan)" {
         $upt = Get-Uptime
-        $upt | Should -BeOfType "Timespan"
+        $upt | Should -BeOfType Timespan
     }
     It "Get-Uptime -Since return DateTime" {
         $upt = Get-Uptime -Since
-        $upt | Should -BeOfType "DateTime"
+        $upt | Should -BeOfType DateTime
     }
     It "Get-Uptime throw if IsHighResolution == false" {
         # Enable the test hook

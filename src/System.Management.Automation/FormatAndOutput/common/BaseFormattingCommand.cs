@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -262,6 +262,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else if (transition == GroupTransition.startNew)
             {
+                // Add newline before each group except first
+                WriteNewLineObject();
+
                 // double transition
                 PopGroup(); // exit the current one
                 PushGroup(so); // start a sibling group
@@ -271,6 +274,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 this.WritePayloadObject(so);
             }
+        }
+
+        private void WriteNewLineObject()
+        {
+            FormatEntryData fed = new FormatEntryData();
+            fed.outOfBand = true;
+
+            ComplexViewEntry cve = new ComplexViewEntry();
+            FormatEntry fe = new FormatEntry();
+            cve.formatValueList.Add(fe);
+
+            // Formating system writes newline before each object
+            // so no need to add newline here like:
+            //     fe.formatValueList.Add(new FormatNewLine());
+            fed.formatEntryInfo = cve;
+
+            this.WriteObject(fed);
         }
 
         private bool ShouldProcessOutOfBand
@@ -497,7 +517,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// The formatting shape this formatter emits.
         /// </summary>
-        private FormatShape _shape;
+        private readonly FormatShape _shape;
 
         #region expression factory
 
@@ -517,7 +537,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private TypeInfoDataBase _typeInfoDataBase = null;
 
         private FormattingCommandLineParameters _parameters = null;
-        private FormatViewManager _viewManager = new FormatViewManager();
+        private readonly FormatViewManager _viewManager = new FormatViewManager();
 
         private int _enumerationLimit = InitialSessionState.DefaultFormatEnumerationLimit;
     }
@@ -556,7 +576,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            set { showErrorsAsMessages = value; }
+            set
+            {
+                showErrorsAsMessages = value;
+            }
         }
 
         internal bool? showErrorsAsMessages = null;
@@ -575,7 +598,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            set { showErrorsInFormattedOutput = value; }
+            set
+            {
+                showErrorsInFormattedOutput = value;
+            }
         }
 
         internal bool? showErrorsInFormattedOutput = null;
@@ -772,7 +798,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            set { _autosize = value; }
+            set
+            {
+                _autosize = value;
+            }
         }
 
         private bool? _autosize = null;
@@ -797,7 +826,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            set { _hideHeaders = value; }
+            set
+            {
+                _hideHeaders = value;
+            }
         }
 
         private bool? _hideHeaders = null;
@@ -816,7 +848,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            set { _multiLine = value; }
+            set
+            {
+                _multiLine = value;
+            }
         }
 
         private bool? _multiLine = null;
@@ -862,4 +897,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 }
-

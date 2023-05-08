@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
     ///              not PSRemotingJob.
     /// </summary>
     [Cmdlet(VerbsCommunications.Receive, "Job", DefaultParameterSetName = ReceiveJobCommand.LocationParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113372", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096965", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class ReceiveJobCommand : JobCmdletBase, IDisposable
     {
         #region Properties
@@ -281,7 +281,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter WriteEvents
         {
-            get { return _writeStateChangedEvents; }
+            get
+            {
+                return _writeStateChangedEvents;
+            }
 
             set
             {
@@ -294,7 +297,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter WriteJobInResults
         {
-            get { return _outputJobFirst; }
+            get
+            {
+                return _outputJobFirst;
+            }
 
             set
             {
@@ -768,7 +774,7 @@ namespace Microsoft.PowerShell.Commands
             // There is a bug in V2 that only remoting jobs work
             // with Receive-Job. This is being fixed
 
-            if (!(job is Job2) && job.UsesResultsCollection)
+            if (job is not Job2 && job.UsesResultsCollection)
             {
                 // extract results and handle them
                 Collection<PSStreamObject> results = ReadAll<PSStreamObject>(job.Results);
@@ -817,10 +823,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (v == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
-                    {
-                        mshCommandRuntime.WriteVerbose(v, true);
-                    }
+                    mshCommandRuntime?.WriteVerbose(v, true);
                 }
 
                 Collection<DebugRecord> debugRecords = ReadAll(job.Debug);
@@ -829,10 +832,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (d == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
-                    {
-                        mshCommandRuntime.WriteDebug(d, true);
-                    }
+                    mshCommandRuntime?.WriteDebug(d, true);
                 }
 
                 Collection<WarningRecord> warningRecords = ReadAll(job.Warning);
@@ -841,10 +841,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (w == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
-                    {
-                        mshCommandRuntime.WriteWarning(w, true);
-                    }
+                    mshCommandRuntime?.WriteWarning(w, true);
                 }
 
                 Collection<ProgressRecord> progressRecords = ReadAll(job.Progress);
@@ -853,10 +850,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (p == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
-                    {
-                        mshCommandRuntime.WriteProgress(p, true);
-                    }
+                    mshCommandRuntime?.WriteProgress(p, true);
                 }
 
                 Collection<InformationRecord> informationRecords = ReadAll(job.Information);
@@ -865,10 +859,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (p == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
-                    {
-                        mshCommandRuntime.WriteInformation(p, true);
-                    }
+                    mshCommandRuntime?.WriteInformation(p, true);
                 }
             }
 
@@ -1059,10 +1050,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lock (_syncObject)
                     {
-                        if (_outputProcessingNotification == null)
-                        {
-                            _outputProcessingNotification = new OutputProcessingState();
-                        }
+                        _outputProcessingNotification ??= new OutputProcessingState();
                     }
                 }
 
@@ -1175,14 +1163,21 @@ namespace Microsoft.PowerShell.Commands
         {
             lock (_syncObject)
             {
-                if (_isDisposed) return;
+                if (_isDisposed)
+                {
+                    return;
+                }
             }
 
             _writeExistingData.WaitOne();
             _resultsReaderWriterLock.EnterReadLock();
             try
             {
-                if (!_results.IsOpen) return;
+                if (!_results.IsOpen)
+                {
+                    return;
+                }
+
                 PSDataCollection<ErrorRecord> errorRecords = sender as PSDataCollection<ErrorRecord>;
                 Diagnostics.Assert(errorRecords != null, "PSDataCollection is raising an inappropriate event");
                 ErrorRecord errorRecord = GetData(errorRecords, e.Index);
@@ -1467,16 +1462,6 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (Job job in jobs)
             {
-                if (JobManager.IsJobFromAdapter(job.InstanceId, "PSWorkflowJob") &&
-                    job.JobStateInfo.State == JobState.Stopped)
-                {
-                    MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
-                    {
-                        mshCommandRuntime.WriteWarning(new WarningRecord(StringUtil.Format(RemotingErrorIdStrings.JobWasStopped, job.Name)), true);
-                    }
-                }
-
                 if (checkForRecurse && _recurse)
                 {
                     WriteJobResultsRecursively(job, registerInsteadOfWrite);
@@ -1503,6 +1488,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private readonly Dictionary<Guid, bool> _eventArgsWritten = new Dictionary<Guid, bool>();
+
         private void WriteJobStateInformation(Job job, JobStateEventArgs args = null)
         {
             // at any point there will be only one thread which will have

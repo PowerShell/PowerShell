@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -10,7 +10,7 @@ namespace System.Management.Automation
     /// Class ProviderHelpInfo keeps track of help information to be returned by
     /// command help provider.
     /// </summary>
-    internal class ProviderHelpInfo : HelpInfo
+    internal sealed class ProviderHelpInfo : HelpInfo
     {
         /// <summary>
         /// Constructor for HelpProvider.
@@ -101,7 +101,7 @@ namespace System.Management.Automation
                     return string.Empty;
                 }
 
-                // I think every provider description should atleast have 400 characters...
+                // I think every provider description should at least have 400 characters...
                 // so starting with this assumption..I did an average of all the help content
                 // available at the time of writing this code and came up with this number.
                 Text.StringBuilder result = new Text.StringBuilder(400);
@@ -136,7 +136,7 @@ namespace System.Management.Automation
             }
         }
 
-        private PSObject _fullHelpObject;
+        private readonly PSObject _fullHelpObject;
 
         /// <summary>
         /// Full help object for this provider help info.
@@ -167,15 +167,9 @@ namespace System.Management.Automation
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (synopsis == null)
-            {
-                synopsis = string.Empty;
-            }
+            synopsis ??= string.Empty;
 
-            if (detailedDescription == null)
-            {
-                detailedDescription = string.Empty;
-            }
+            detailedDescription ??= string.Empty;
 
             return pattern.IsMatch(synopsis) || pattern.IsMatch(detailedDescription);
         }

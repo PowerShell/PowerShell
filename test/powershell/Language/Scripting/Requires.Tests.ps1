@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Requires tests" -Tags "CI" {
     Context "Parser error" {
@@ -34,6 +34,60 @@ Describe "Requires tests" -Tags "CI" {
             $settings.AddToHistory = $true
 
             { $ps.AddScript("#requires").Invoke(@(), $settings) } | Should -Not -Throw
+        }
+    }
+
+    Context "Version checks" {
+        BeforeAll {
+            $currentVersion = $PSVersionTable.PSVersion
+
+            $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0", "7.1", "7.2", "7.3", "7.4"
+            $latestVersion = [version]($powerShellVersions | Sort-Object -Descending -Top 1)
+            $nonExistingMinor = "$($latestVersion.Major).$($latestVersion.Minor + 1)"
+            $nonExistingMajor = "$($latestVersion.Major + 1).0"
+
+            foreach ($version in ($powerShellVersions + $nonExistingMinor + $nonExistingMajor)) {
+                $filePath = Join-Path -Path $TestDrive -ChildPath "$version.ps1"
+                $null = New-Item -Path $filePath -Value "#requires -version $version"
+            }
+
+            $filesSuccessTestCase = foreach ($version in $powerShellVersions) {
+                @{
+                    Name = "Check for version $version"
+                    File = Join-Path -Path $TestDrive -ChildPath "$version.ps1"
+                    Version = $version
+                }
+            }
+
+            $filesFailTestCase = foreach ($version in @($nonExistingMinor) + @($nonExistingMajor)) {
+                @{
+                    Name = "Check for version $version"
+                    File = Join-Path -Path $TestDrive -ChildPath "$version.ps1"
+                }
+            }
+        }
+
+        It "<Name>" -TestCase $filesSuccessTestCase {
+            param(
+                $Name,
+                $File,
+                $Version
+            )
+
+            if ($currentVersion -notmatch '^7' -and $Version -match '^7') {
+                Set-ItResult -Skipped -Because "Test not valid for current version - $currentVersion and test version = $Version"
+            }
+
+            { . $File } | Should -Not -Throw
+        }
+
+        It "<Name>" -TestCase $filesFailTestCase {
+            param(
+                $Name,
+                $File
+            )
+
+            { . $File } | Should -Throw -ExceptionType ([System.Management.Automation.ScriptRequiresException])
         }
     }
 }

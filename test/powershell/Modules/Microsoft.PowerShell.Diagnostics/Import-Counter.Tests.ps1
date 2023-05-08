@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 <############################################################################################
  # File: Import-Counter.Tests.ps1
@@ -8,7 +8,7 @@
  # Counter CmdLets are removed see issue #4272
  # Tests are disabled
  return
- 
+
 $cmdletName = "Import-Counter"
 
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
@@ -31,7 +31,7 @@ if ( ! $SkipTests )
         Processor = (TranslateCounterName "processor")
         }
 }
-else 
+else
 {
     $counterPaths = @()
     $setNames = @{}
@@ -359,7 +359,7 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
             foreach ($err in $errVar)
             {
                 $err.CategoryInfo.Category | Should -BeExactly "InvalidResult"
-                $err.FullyQualifiedErrorId | SHould -BeExactly "CounterApiError,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                $err.FullyQualifiedErrorId | Should -BeExactly "CounterApiError,Microsoft.PowerShell.Commands.ImportCounterCommand"
             }
         }
     }

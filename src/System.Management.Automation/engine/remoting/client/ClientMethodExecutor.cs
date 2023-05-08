@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Host;
@@ -13,32 +13,32 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// Executes methods on the client.
     /// </summary>
-    internal class ClientMethodExecutor
+    internal sealed class ClientMethodExecutor
     {
         /// <summary>
         /// Transport manager.
         /// </summary>
-        private BaseClientTransportManager _transportManager;
+        private readonly BaseClientTransportManager _transportManager;
 
         /// <summary>
         /// Client host.
         /// </summary>
-        private PSHost _clientHost;
+        private readonly PSHost _clientHost;
 
         /// <summary>
         /// Client runspace pool id.
         /// </summary>
-        private Guid _clientRunspacePoolId;
+        private readonly Guid _clientRunspacePoolId;
 
         /// <summary>
         /// Client power shell id.
         /// </summary>
-        private Guid _clientPowerShellId;
+        private readonly Guid _clientPowerShellId;
 
         /// <summary>
         /// Remote host call.
         /// </summary>
-        private RemoteHostCall _remoteHostCall;
+        private readonly RemoteHostCall _remoteHostCall;
 
         /// <summary>
         /// Remote host call.
@@ -98,8 +98,7 @@ namespace System.Management.Automation.Remoting
                 if (hostPrivateData != null)
                 {
                     PSNoteProperty allowSetShouldExit = hostPrivateData.Properties["AllowSetShouldExitFromRemote"] as PSNoteProperty;
-                    hostAllowSetShouldExit = (allowSetShouldExit != null && allowSetShouldExit.Value is bool) ?
-                        (bool)allowSetShouldExit.Value : false;
+                    hostAllowSetShouldExit = allowSetShouldExit != null && allowSetShouldExit.Value is bool && (bool)allowSetShouldExit.Value;
                 }
             }
 
@@ -132,10 +131,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Is runspace pushed.
         /// </summary>
-        private bool IsRunspacePushed(PSHost host)
+        private static bool IsRunspacePushed(PSHost host)
         {
-            IHostSupportsInteractiveSession host2 = host as IHostSupportsInteractiveSession;
-            if (host2 == null) { return false; }
+            if (!(host is IHostSupportsInteractiveSession host2))
+            {
+                return false;
+            }
 
             // IsRunspacePushed can throw (not implemented exception)
             try
@@ -157,14 +158,11 @@ namespace System.Management.Automation.Remoting
             // If error-stream is null or we are in pushed-runspace - then write error directly to console.
             if (errorStream == null || IsRunspacePushed(_clientHost))
             {
-                writeErrorAction = delegate (ErrorRecord errorRecord)
+                writeErrorAction = (ErrorRecord errorRecord) =>
                 {
                     try
                     {
-                        if (_clientHost.UI != null)
-                        {
-                            _clientHost.UI.WriteErrorLine(errorRecord.ToString());
-                        }
+                        _clientHost.UI?.WriteErrorLine(errorRecord.ToString());
                     }
                     catch (Exception)
                     {
@@ -176,10 +174,7 @@ namespace System.Management.Automation.Remoting
             // Otherwise write it to error-stream.
             else
             {
-                writeErrorAction = delegate (ErrorRecord errorRecord)
-                {
-                    errorStream.Write(errorRecord);
-                };
+                writeErrorAction = (ErrorRecord errorRecord) => errorStream.Write(errorRecord);
             }
 
             this.Execute(writeErrorAction);
@@ -238,7 +233,7 @@ namespace System.Management.Automation.Remoting
                 // Create an error record and write it to the stream.
                 ErrorRecord errorRecord = new ErrorRecord(
                     exception,
-                    PSRemotingErrorId.RemoteHostCallFailed.ToString(),
+                    nameof(PSRemotingErrorId.RemoteHostCallFailed),
                     ErrorCategory.InvalidArgument,
                     _remoteHostCall.MethodName);
                 writeErrorAction(errorRecord);

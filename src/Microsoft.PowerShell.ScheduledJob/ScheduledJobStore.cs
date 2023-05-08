@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -109,13 +109,12 @@ namespace Microsoft.PowerShell.ScheduledJob
                 throw new PSArgumentException("definitionPath");
             }
 
-            string filePathName = string.Format(CultureInfo.InvariantCulture, @"{0}\{1}\{2}.xml",
-                definitionPath, definitionName, DefinitionFileName);
+            string filePathName = string.Create(CultureInfo.InvariantCulture, $@"{definitionPath}\{definitionName}\{DefinitionFileName}.xml");
             return File.Open(filePathName, fileMode, fileAccess, fileShare);
         }
 
         /// <summary>
-        /// Checks the provided path against the the default path of scheduled jobs
+        /// Checks the provided path against the default path of scheduled jobs
         /// for the current user.
         /// </summary>
         /// <param name="definitionPath">Path for scheduled job definitions.</param>
@@ -483,7 +482,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             Directory.CreateDirectory(filePath);
             Directory.CreateDirectory(outputPath);
-            return string.Format(CultureInfo.InstalledUICulture, @"{0}\{1}.xml", filePath, fileName);
+            return string.Create(CultureInfo.InstalledUICulture, $@"{filePath}\{fileName}.xml");
         }
 
         /// <summary>
@@ -495,7 +494,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private static string GetFilePathName(string definitionName, string fileName)
         {
             string filePath = GetJobDefinitionPath(definitionName);
-            return string.Format(CultureInfo.InvariantCulture, @"{0}\{1}.xml", filePath, fileName);
+            return string.Create(CultureInfo.InvariantCulture, $@"{filePath}\{fileName}.xml");
         }
 
         /// <summary>
@@ -525,8 +524,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             DateTime runStart)
         {
             string directoryPath = GetJobRunOutputDirectory(definitionName);
-            return string.Format(CultureInfo.InvariantCulture, @"{0}\{1}", directoryPath,
-                ConvertDateTimeToJobRunName(runStart));
+            return string.Create(CultureInfo.InvariantCulture, $@"{directoryPath}\{ConvertDateTimeToJobRunName(runStart)}");
         }
 
         /// <summary>
@@ -540,8 +538,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             string definitionOutputPath,
             DateTime runStart)
         {
-            return string.Format(CultureInfo.InvariantCulture, @"{0}\{1}",
-                definitionOutputPath, ConvertDateTimeToJobRunName(runStart));
+            return string.Create(CultureInfo.InvariantCulture, $@"{definitionOutputPath}\{ConvertDateTimeToJobRunName(runStart)}");
         }
 
         /// <summary>
@@ -558,11 +555,9 @@ namespace Microsoft.PowerShell.ScheduledJob
             DateTime runStart)
         {
             string directoryPath = GetJobRunOutputDirectory(definitionName);
-            string jobRunPath = string.Format(CultureInfo.InvariantCulture, @"{0}\{1}",
-                directoryPath, ConvertDateTimeToJobRunName(runStart));
+            string jobRunPath = string.Create(CultureInfo.InvariantCulture, $@"{directoryPath}\{ConvertDateTimeToJobRunName(runStart)}");
 
-            return string.Format(CultureInfo.InvariantCulture, @"{0}\{1}.xml", jobRunPath,
-                runItem.ToString());
+            return string.Create(CultureInfo.InvariantCulture, $@"{jobRunPath}\{runItem}.xml");
         }
 
         /// <summary>
@@ -579,8 +574,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             JobRunItem runItem,
             DateTime runStart)
         {
-            string jobRunPath = string.Format(CultureInfo.InvariantCulture, @"{0}\{1}",
-                outputPath, ConvertDateTimeToJobRunName(runStart));
+            string jobRunPath = string.Create(CultureInfo.InvariantCulture, $@"{outputPath}\{ConvertDateTimeToJobRunName(runStart)}");
 
             if (!Directory.Exists(jobRunPath))
             {
@@ -588,8 +582,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 Directory.CreateDirectory(jobRunPath);
             }
 
-            return string.Format(CultureInfo.InvariantCulture, @"{0}\{1}.xml", jobRunPath,
-                runItem.ToString());
+            return string.Create(CultureInfo.InvariantCulture, $@"{jobRunPath}\{runItem}.xml");
         }
 
         private static void AddFullAccessToDirectory(

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-FileHash" -Tags "CI" {
 
@@ -18,9 +18,22 @@ Describe "Get-FileHash" -Tags "CI" {
     Context "Default result tests" {
         It "Should default to correct algorithm, hash and path" {
             $result = Get-FileHash $testDocument
-            $result.Algorithm | Should Be "SHA256"
+            $result.Algorithm | Should -Be "SHA256"
             $result.Hash | Should -Be "41620f6c9f3531722efe90aed9abbc1d1b31788aa9141982030d3dde199f770c"
             $result.Path | Should -Be $testDocument
+        }
+
+        It "Should write non-terminating error if argument is a folder" {
+            $result = $PSHOME, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable -ErrorAction SilentlyContinue
+            $result.Count | Should -Be 1
+            $errorVariable.FullyQualifiedErrorId | Should -BeExactly "UnauthorizedAccessError,Microsoft.PowerShell.Commands.GetFileHashCommand"
+        }
+
+        It "Should write non-terminating error if a file is locked" -Skip:(-not $IsWindows) {
+            $pagefilePath = (Get-CimInstance -ClassName Win32_PageFileusage).Name
+            $result = $pagefilePath, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable -ErrorAction SilentlyContinue
+            $result.Count | Should -Be 1
+            $errorVariable.FullyQualifiedErrorId | Should -BeExactly "FileReadError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
     }
 
@@ -62,6 +75,21 @@ Describe "Get-FileHash" -Tags "CI" {
         It "With '-LiteralPath': file exist" {
             $result = Get-FileHash -LiteralPath $testDocument
             $result.Path | Should -Be $testDocument
+        }
+    }
+
+    Context "File should be closed before Get-FileHash writes pipeline output" {
+        It "Should be able to edit the file without 'file is in use' exceptions" {
+            # This test runs against a copy of the document
+            # because it involves renaming it,
+            # and that might break tests added later on.
+            $testDocumentCopy = "${testDocument}-copy"
+            Copy-Item -Path $testdocument -Destination $testDocumentCopy
+
+            $newPath = Get-FileHash -Path $testDocumentCopy | Rename-Item -NewName {$_.Hash} -PassThru
+            $newPath.FullName | Should -Exist
+
+            Remove-Item -Path $testDocumentCopy -Force -ErrorAction SilentlyContinue
         }
     }
 }

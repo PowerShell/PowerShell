@@ -180,7 +180,7 @@ namespace System.Management.Automation.Language {
                     break;
                 case Flow.NewLine:
                     WriteLine();
-                    Write(new String(' ', Depth));
+                    Write(new string(' ', Depth));
                     break;
             }
 
@@ -470,7 +470,7 @@ namespace System.Management.Automation.Language {
         private static bool IsSimpleExpression(Expression node) {
             var binary = node as BinaryExpression;
             if (binary != null) {
-                return !(binary.Left is BinaryExpression || binary.Right is BinaryExpression);
+                return binary.Left is not BinaryExpression && binary.Right is not BinaryExpression;
             }
 
             return false;
@@ -548,7 +548,7 @@ namespace System.Management.Automation.Language {
                 return "UL";
             }
 
-            if (type == typeof(Double)) {
+            if (type == typeof(double)) {
                 return "D";
             }
 
@@ -556,7 +556,7 @@ namespace System.Management.Automation.Language {
                 return "F";
             }
 
-            if (type == typeof(Decimal)) {
+            if (type == typeof(decimal)) {
                 return "M";
             }
 
@@ -985,7 +985,7 @@ namespace System.Management.Automation.Language {
             // Display <type> if the type of the BlockExpression is different from the
             // last expression's type in the block.
             if (node.Type != node.Expressions[node.Expressions.Count - 1].Type) {
-                Out(string.Format(CultureInfo.CurrentCulture, "<{0}>", node.Type.ToString()));
+                Out(string.Create(CultureInfo.CurrentCulture, $"<{node.Type}>"));
             }
 
             VisitDeclarations(node.Variables);
@@ -1124,7 +1124,7 @@ namespace System.Management.Automation.Language {
         }
 
         protected override Expression VisitExtension(Expression node) {
-            Out(string.Format(CultureInfo.CurrentCulture, ".Extension<{0}>", node.GetType().ToString()));
+            Out(string.Create(CultureInfo.CurrentCulture, $".Extension<{node.GetType()}>"));
 
             if (node.CanReduce) {
                 Out(Flow.Space, "{", Flow.NewLine);
@@ -1151,13 +1151,13 @@ namespace System.Management.Automation.Language {
         }
 
         private void DumpLabel(LabelTarget target) {
-            Out(string.Format(CultureInfo.CurrentCulture, ".LabelTarget {0}:", GetLabelTargetName(target)));
+            Out(string.Create(CultureInfo.CurrentCulture, $".LabelTarget {GetLabelTargetName(target)}:"));
         }
 
         private string GetLabelTargetName(LabelTarget target) {
             if (string.IsNullOrEmpty(target.Name)) {
                 // Create the label target name as #Label1, #Label2, etc.
-                return string.Format(CultureInfo.CurrentCulture, "#Label{0}", GetLabelTargetId(target));
+                return string.Create(CultureInfo.CurrentCulture, $"#Label{GetLabelTargetId(target)}");
             } else {
                 return GetDisplayName(target.Name);
             }
@@ -1165,11 +1165,7 @@ namespace System.Management.Automation.Language {
 
         private void WriteLambda(LambdaExpression lambda) {
             Out(
-                string.Format(
-                    CultureInfo.CurrentCulture,
-                    ".Lambda {0}<{1}>",
-                    GetLambdaName(lambda),
-                    lambda.Type.ToString())
+                string.Create(CultureInfo.CurrentCulture, $".Lambda {GetLambdaName(lambda)}<{lambda.Type}>")
             );
 
             VisitDeclarations(lambda.Parameters);
@@ -1205,7 +1201,7 @@ namespace System.Management.Automation.Language {
         }
 
         private static string QuoteName(string name) {
-            return string.Format(CultureInfo.CurrentCulture, "'{0}'", name);
+            return string.Create(CultureInfo.CurrentCulture, $"'{name}'");
         }
 
         private static string GetDisplayName(string name) {

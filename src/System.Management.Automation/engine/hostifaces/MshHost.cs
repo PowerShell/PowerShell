@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -7,7 +7,7 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation.Host
 {
     /// <summary>
-    /// Defines the properties and facilities providing by an application hosting an MSH <see
+    /// Defines the properties and facilities providing by an application hosting PowerShell <see
     /// cref="System.Management.Automation.Runspaces.Runspace"/>.
     /// </summary>
     /// <remarks>
@@ -15,7 +15,7 @@ namespace System.Management.Automation.Host
     /// overrides the abstract methods and properties.  The hosting application creates an instance of its derived class and
     /// passes it to the <see cref="System.Management.Automation.Runspaces.RunspaceFactory"/> CreateRunspace method.
     ///
-    /// From the moment that the instance of the derived class (the "host class") is passed to CreateRunspace, the MSH runtime
+    /// From the moment that the instance of the derived class (the "host class") is passed to CreateRunspace, the PowerShell runtime
     /// can call any of the methods of that class.  The instance must not be destroyed until after the Runspace is closed.
     ///
     /// There is a 1:1 relationship between the instance of the host class and the Runspace instance to which it is passed.  In
@@ -34,19 +34,18 @@ namespace System.Management.Automation.Host
     /// <seealso cref="System.Management.Automation.Runspaces.Runspace"/>
     /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface"/>
     /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface"/>
-
     public abstract class PSHost
     {
         /// <summary>
         /// The powershell spec states that 128 is the maximum nesting depth.
         /// </summary>
         internal const int MaximumNestedPromptLevel = 128;
+
         internal static bool IsStdOutputRedirected;
 
         /// <summary>
         /// Protected constructor which does nothing.  Provided per .Net design guidelines section 4.3.1.
         /// </summary>
-
         protected PSHost()
         {
             // do nothing
@@ -65,11 +64,10 @@ namespace System.Management.Automation.Host
         /// The name identifier of the hosting application.
         /// </value>
         /// <example>
-        ///     <MSH>
+        ///     <code>
         ///         if ($Host.Name -ieq "ConsoleHost") { write-host "I'm running in the Console Host" }
-        ///     </MSH>
+        ///     </code>
         /// </example>
-
         public abstract string Name
         {
             get;
@@ -81,12 +79,11 @@ namespace System.Management.Automation.Host
         /// </summary>
         /// <remarks>
         /// When implementing this member, it should return the product version number for the product
-        /// that is hosting the Monad engine.
+        /// that is hosting the PowerShell engine.
         /// </remarks>
         /// <value>
         /// The version number of the hosting application.
         /// </value>
-
         public abstract System.Version Version
         {
             get;
@@ -96,7 +93,6 @@ namespace System.Management.Automation.Host
         /// Gets a GUID that uniquely identifies this instance of the host.  The value should remain invariant for the lifetime of
         /// this instance.
         /// </summary>
-
         public abstract System.Guid InstanceId
         {
             get;
@@ -117,7 +113,6 @@ namespace System.Management.Automation.Host
         /// implementation of PSHostUserInterface for this application. As an alternative,
         /// for simple scenarios, just returning null is sufficient.
         /// </remarks>
-
         public abstract System.Management.Automation.Host.PSHostUserInterface UI
         {
             get;
@@ -133,7 +128,6 @@ namespace System.Management.Automation.Host
         /// The runspace will set the thread current culture to this value each time it starts a pipeline. Thus, cmdlets are
         /// encouraged to use Thread.CurrentThread.CurrentCulture.
         /// </remarks>
-
         public abstract System.Globalization.CultureInfo CurrentCulture
         {
             get;
@@ -147,7 +141,6 @@ namespace System.Management.Automation.Host
         /// <value>
         /// A CultureInfo object representing the host's current UI culture.  Returning null is not allowed.
         /// </value>
-
         public abstract System.Globalization.CultureInfo CurrentUICulture
         {
             get;
@@ -166,7 +159,6 @@ namespace System.Management.Automation.Host
         /// The exit code accompanying the exit keyword. Typically, after exiting a runspace, a host will also terminate. The
         /// exitCode parameter can be used to set the host's process exit code.
         /// </param>
-
         public abstract void SetShouldExit(int exitCode);
 
         /// <summary>
@@ -187,7 +179,6 @@ namespace System.Management.Automation.Host
         /// evaluates other commands.  It does not create a truly new engine instance with new session state.-->
         /// </remarks>
         /// <seealso cref="System.Management.Automation.Host.PSHost.ExitNestedPrompt"/>
-
         public abstract void EnterNestedPrompt();
 
         /// <summary>
@@ -203,7 +194,6 @@ namespace System.Management.Automation.Host
         /// If the UI Property returns a null, the engine should not call this method.
         /// </remarks>
         /// <seealso cref="EnterNestedPrompt"/>
-
         public abstract void ExitNestedPrompt();
 
         /// <summary>
@@ -229,7 +219,6 @@ namespace System.Management.Automation.Host
         /// change will not be visible to the host if the host is in another process.  Therefore, the implementation of
         /// get for this property should always return a unique instance.
         /// </remarks>
-
         public virtual PSObject PrivateData
         {
             get
@@ -269,14 +258,12 @@ namespace System.Management.Automation.Host
         /// NotifyBeginApplication.
         /// </remarks>
         /// <seealso cref="System.Management.Automation.Host.PSHost.NotifyEndApplication"/>
-
         public abstract void NotifyBeginApplication();
 
         /// <summary>
         /// Called by the engine to notify the host that the execution of a legacy command has completed.
         /// </summary>
         /// <seealso cref="System.Management.Automation.Host.PSHost.NotifyBeginApplication"/>
-
         public abstract void NotifyEndApplication();
 
         /// <summary>
@@ -303,6 +290,7 @@ namespace System.Management.Automation.Host
     /// This interface needs to be implemented by PSHost objects that want to support the PushRunspace
     /// and PopRunspace functionality.
     /// </summary>
+#nullable enable
     public interface IHostSupportsInteractiveSession
     {
         /// <summary>
@@ -330,6 +318,6 @@ namespace System.Management.Automation.Host
         /// Returns the current runspace associated with this host.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
-        Runspace Runspace { get; }
+        Runspace? Runspace { get; }
     }
 }

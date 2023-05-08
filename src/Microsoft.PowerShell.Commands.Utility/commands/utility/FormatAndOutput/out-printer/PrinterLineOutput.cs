@@ -1,10 +1,12 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -62,14 +64,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void WriteLine(string s)
         {
             CheckStopProcessing();
-            // delegate the action to the helper,
-            // that will properly break the string into
-            // screen lines
-            _writeLineHelper.WriteLine(s, this.ColumnNumber);
+
+            // Remove all ANSI escape sequences before sending out to the printer.
+            s = new ValueStringDecorated(s).ToString(OutputRendering.PlainText);
+            WriteRawText(s);
         }
+
+        /// <summary>
+        /// Write a raw text by delegating to the writer underneath, with no change to the text.
+        /// For example, keeping VT escape sequences intact in it.
+        /// </summary>
+        /// <param name="s">The raw text to be written to the device.</param>
+        internal override void WriteRawText(string s)
+        {
+            CheckStopProcessing();
+
+            // Delegate the action to the helper, that will properly break the string into screen lines.
+            _writeLineHelper.WriteLine(s, ColumnNumber);
+        }
+
         #endregion
 
         /// <summary>
+        /// Initializes static members of the <see cref="PrinterLineOutput"/> class.
         /// Used for static initializations like DefaultPrintFontName.
         /// </summary>
         static PrinterLineOutput()
@@ -81,7 +98,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Constructor for the class.
+        /// Initializes a new instance of the <see cref="PrinterLineOutput"/> class.
         /// </summary>
         /// <param name="printerName">Name of printer, if null use default printer.</param>
         internal PrinterLineOutput(string printerName)
@@ -89,8 +106,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _printerName = printerName;
 
             // instantiate the helper to do the line processing when LineOutput.WriteXXX() is called
-            WriteLineHelper.WriteCallback wl = new WriteLineHelper.WriteCallback(this.OnWriteLine);
-            WriteLineHelper.WriteCallback w = new WriteLineHelper.WriteCallback(this.OnWrite);
+            WriteLineHelper.WriteCallback wl = new(this.OnWriteLine);
+            WriteLineHelper.WriteCallback w = new(this.OnWrite);
 
             _writeLineHelper = new WriteLineHelper(true, wl, w, this.DisplayCells);
         }
@@ -123,7 +140,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             try
             {
                 // create a new print document object and set the printer name, if available
-                PrintDocument pd = new PrintDocument();
+                PrintDocument pd = new();
 
                 if (!string.IsNullOrEmpty(_printerName))
                 {
@@ -131,7 +148,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // set up the callback mechanism
-                pd.PrintPage += new PrintPageEventHandler(this.pd_PrintPage);
+                pd.PrintPage += this.pd_PrintPage;
 
                 // start printing
                 pd.Print();
@@ -187,9 +204,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we compute the length of two strings, one made of "large" characters
             // one made of "narrow" ones. If they are the same length, we assume that
             // the font is fixed pitch.
-            string large = "ABCDEF";
+            const string large = "ABCDEF";
             float wLarge = g.MeasureString(large, _printFont).Width / large.Length;
-            string narrow = ".;'}l|";
+            const string narrow = ".;'}l|";
             float wNarrow = g.MeasureString(narrow, _printFont).Width / narrow.Length;
 
             if (Math.Abs((float)(wLarge - wNarrow)) < 0.001F)
@@ -229,7 +246,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // on the first page we have to initialize the metrics for LineOutput
 
                 // work out the number of columns per page assuming fixed pitch font
-                string s = "ABCDEF";
+                const string s = "ABCDEF";
                 float w = ev.Graphics.MeasureString(s, _printFont).Width / s.Length;
                 float columnsPerPage = ev.MarginBounds.Width / w;
 
@@ -276,7 +293,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Name of the printer to print to. Null means default printer.
         /// </summary>
-        private string _printerName = null;
+        private readonly string _printerName = null;
 
         /// <summary>
         /// Name of the font to use, if null the default is used.
@@ -315,13 +332,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Text lines ready to print (after output cache playback).
         /// </summary>
-        private Queue<string> _lines = new Queue<string>();
+        private readonly Queue<string> _lines = new();
 
         /// <summary>
         /// Cached font object.
         /// </summary>
         private Font _printFont = null;
 
-        private WriteLineHelper _writeLineHelper;
+        private readonly WriteLineHelper _writeLineHelper;
     }
 }

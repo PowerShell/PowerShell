@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -88,7 +88,7 @@ namespace System.Management.Automation
         {
             if (hash == null)
             {
-                throw PSTraceSource.NewArgumentNullException("hash");
+                throw PSTraceSource.NewArgumentNullException(nameof(hash));
             }
 
             _itemsToAdd = new Collection<object>();
@@ -106,7 +106,7 @@ namespace System.Management.Automation
 
                     if (!isAdd && !isRemove && !isReplace)
                     {
-                        throw PSTraceSource.NewArgumentException("hash", PSListModifierStrings.ListModifierDisallowedKey, key);
+                        throw PSTraceSource.NewArgumentException(nameof(hash), PSListModifierStrings.ListModifierDisallowedKey, key);
                     }
 
                     Collection<object> collection;
@@ -138,7 +138,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentException("hash", PSListModifierStrings.ListModifierDisallowedKey, entry.Key);
+                    throw PSTraceSource.NewArgumentException(nameof(hash), PSListModifierStrings.ListModifierDisallowedKey, entry.Key);
                 }
             }
         }
@@ -151,7 +151,7 @@ namespace System.Management.Automation
             get { return _itemsToAdd; }
         }
 
-        private Collection<object> _itemsToAdd;
+        private readonly Collection<object> _itemsToAdd;
 
         /// <summary>
         /// The list of items to remove when AppyTo is called.
@@ -161,7 +161,7 @@ namespace System.Management.Automation
             get { return _itemsToRemove; }
         }
 
-        private Collection<object> _itemsToRemove;
+        private readonly Collection<object> _itemsToRemove;
 
         /// <summary>
         /// The list of items to replace an existing list with.
@@ -171,7 +171,7 @@ namespace System.Management.Automation
             get { return _replacementItems; }
         }
 
-        private Collection<Object> _replacementItems;
+        private readonly Collection<object> _replacementItems;
 
         /// <summary>
         /// Update the given collection with the items in Add and Remove.
@@ -181,7 +181,7 @@ namespace System.Management.Automation
         {
             if (collectionToUpdate == null)
             {
-                throw PSTraceSource.NewArgumentNullException("collectionToUpdate");
+                throw PSTraceSource.NewArgumentNullException(nameof(collectionToUpdate));
             }
 
             if (_replacementItems.Count > 0)
@@ -212,15 +212,11 @@ namespace System.Management.Automation
         /// <param name="collectionToUpdate">The collection to update.</param>
         public void ApplyTo(object collectionToUpdate)
         {
-            if (collectionToUpdate == null)
-            {
-                throw new ArgumentNullException("collectionToUpdate");
-            }
+            ArgumentNullException.ThrowIfNull(collectionToUpdate);
 
             collectionToUpdate = PSObject.Base(collectionToUpdate);
 
-            IList list = collectionToUpdate as IList;
-            if (list == null)
+            if (!(collectionToUpdate is IList list))
             {
                 throw PSTraceSource.NewInvalidOperationException(PSListModifierStrings.UpdateFailed);
             }

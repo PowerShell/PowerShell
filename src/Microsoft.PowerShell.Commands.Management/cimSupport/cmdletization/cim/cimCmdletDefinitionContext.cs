@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -26,18 +26,20 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             _privateData = privateData;
         }
 
-        public string CmdletizationClassName { get; private set; }
+        public string CmdletizationClassName { get; }
 
-        public string CmdletizationClassVersion { get; private set; }
+        public string CmdletizationClassVersion { get; }
 
-        public Version CmdletizationModuleVersion { get; private set; }
+        public Version CmdletizationModuleVersion { get; }
 
-        public bool SupportsShouldProcess { get; private set; }
+        public bool SupportsShouldProcess { get; }
 
         private readonly IDictionary<string, string> _privateData;
 
         private const string QueryLanguageKey = "QueryDialect";
+
         private bool? _useEnumerateInstancesInsteadOfWql;
+
         public bool UseEnumerateInstancesInsteadOfWql
         {
             get
@@ -112,6 +114,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private Uri _resourceUri;
         private bool _resourceUriHasBeenCalculated;
+
         public Uri ResourceUri
         {
             get
@@ -140,6 +143,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         private CimOperationFlags? _schemaConformanceLevel;
+
         public CimOperationFlags SchemaConformanceLevel
         {
             get

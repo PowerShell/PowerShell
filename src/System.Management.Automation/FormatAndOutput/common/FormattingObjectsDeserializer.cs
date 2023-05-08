@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed class FormatObjectDeserializer
     {
-        internal TerminatingErrorContext TerminatingErrorContext { get; private set; }
+        internal TerminatingErrorContext TerminatingErrorContext { get; }
 
         /// <summary>
         /// Expansion of TAB character to the following string.
@@ -55,9 +55,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            string classId = GetProperty(so, FormatInfoData.classidProperty) as string;
-
-            if (classId == null)
+            if (!(GetProperty(so, FormatInfoData.classidProperty) is string classId))
             {
                 // it's not one of the objects derived from FormatInfoData
                 return false;
@@ -113,9 +111,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return so;
             }
 
-            string classId = GetProperty(so, FormatInfoData.classidProperty) as string;
-
-            if (classId == null)
+            if (!(GetProperty(so, FormatInfoData.classidProperty) is string classId))
             {
                 // it's not one of the objects derived from FormatInfoData,
                 // just return it as is
@@ -142,7 +138,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_ClassIdInvalid, classId);
 
             ErrorRecord errorRecord = new ErrorRecord(
-                                            PSTraceSource.NewArgumentException("classId"),
+                                            PSTraceSource.NewArgumentException(nameof(classId)),
                                             errorId,
                                             ErrorCategory.InvalidData,
                                             obj);
@@ -154,7 +150,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region Helper Methods
         private static bool IsClass(string x, string y)
         {
-            return string.Compare(x, y, StringComparison.OrdinalIgnoreCase) == 0;
+            return string.Equals(x, y, StringComparison.OrdinalIgnoreCase);
         }
 
 #if _UNUSED
@@ -217,7 +213,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_RecursiveProperty, property);
 
                 ErrorRecord errorRecord = new ErrorRecord(
-                                PSTraceSource.NewArgumentException("property"),
+                                PSTraceSource.NewArgumentException(nameof(property)),
                                 "FormatObjectDeserializerRecursiveProperty",
                                 ErrorCategory.InvalidData,
                                 so);
@@ -247,7 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_InvalidPropertyType, t.Name, property);
 
                 ErrorRecord errorRecord = new ErrorRecord(
-                                PSTraceSource.NewArgumentException("property"),
+                                PSTraceSource.NewArgumentException(nameof(property)),
                                 "FormatObjectDeserializerInvalidPropertyType",
                                 ErrorCategory.InvalidData,
                                 so);
@@ -294,7 +290,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal bool DeserializeBoolMemberVariable(PSObject so, string property, bool cannotBeNull = true)
         {
             var val = DeserializeMemberVariable(so, property, typeof(bool), cannotBeNull);
-            return (val == null) ? false : (bool)val;
+            return val != null && (bool)val;
         }
 
         internal WriteStreamType DeserializeWriteStreamTypeMemberVariable(PSObject so)
@@ -329,9 +325,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal FormatInfoData DeserializeObject(PSObject so)
         {
             FormatInfoData fid = FormatInfoDataClassFactory.CreateInstance(so, this);
-
-            if (fid != null)
-                fid.Deserialize(so, this);
+            fid?.Deserialize(so, this);
             return fid;
         }
 
@@ -359,31 +353,31 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             s_constructors = new Dictionary<string, Func<FormatInfoData>>
             {
-                {FormatStartData.CLSID,       () => new FormatStartData()},
-                {FormatEndData.CLSID,         () => new FormatEndData()},
-                {GroupStartData.CLSID,        () => new GroupStartData()},
-                {GroupEndData.CLSID,          () => new GroupEndData()},
-                {FormatEntryData.CLSID,       () => new FormatEntryData()},
-                {WideViewHeaderInfo.CLSID,    () => new WideViewHeaderInfo()},
-                {TableHeaderInfo.CLSID,       () => new TableHeaderInfo()},
-                {TableColumnInfo.CLSID,       () => new TableColumnInfo()},
-                {ListViewHeaderInfo.CLSID,    () => new ListViewHeaderInfo()},
-                {ListViewEntry.CLSID,         () => new ListViewEntry()},
-                {ListViewField.CLSID,         () => new ListViewField()},
-                {TableRowEntry.CLSID,         () => new TableRowEntry()},
-                {WideViewEntry.CLSID,         () => new WideViewEntry()},
-                {ComplexViewHeaderInfo.CLSID, () => new ComplexViewHeaderInfo()},
-                {ComplexViewEntry.CLSID,      () => new ComplexViewEntry()},
-                {GroupingEntry.CLSID,         () => new GroupingEntry()},
-                {PageHeaderEntry.CLSID,       () => new PageHeaderEntry()},
-                {PageFooterEntry.CLSID,       () => new PageFooterEntry()},
-                {AutosizeInfo.CLSID,          () => new AutosizeInfo()},
-                {FormatNewLine.CLSID,         () => new FormatNewLine()},
-                {FrameInfo.CLSID,             () => new FrameInfo()},
-                {FormatTextField.CLSID,       () => new FormatTextField()},
-                {FormatPropertyField.CLSID,   () => new FormatPropertyField()},
-                {FormatEntry.CLSID,           () => new FormatEntry()},
-                {RawTextFormatEntry.CLSID,    () => new RawTextFormatEntry()}
+                {FormatStartData.CLSID,       static () => new FormatStartData()},
+                {FormatEndData.CLSID,         static () => new FormatEndData()},
+                {GroupStartData.CLSID,        static () => new GroupStartData()},
+                {GroupEndData.CLSID,          static () => new GroupEndData()},
+                {FormatEntryData.CLSID,       static () => new FormatEntryData()},
+                {WideViewHeaderInfo.CLSID,    static () => new WideViewHeaderInfo()},
+                {TableHeaderInfo.CLSID,       static () => new TableHeaderInfo()},
+                {TableColumnInfo.CLSID,       static () => new TableColumnInfo()},
+                {ListViewHeaderInfo.CLSID,    static () => new ListViewHeaderInfo()},
+                {ListViewEntry.CLSID,         static () => new ListViewEntry()},
+                {ListViewField.CLSID,         static () => new ListViewField()},
+                {TableRowEntry.CLSID,         static () => new TableRowEntry()},
+                {WideViewEntry.CLSID,         static () => new WideViewEntry()},
+                {ComplexViewHeaderInfo.CLSID, static () => new ComplexViewHeaderInfo()},
+                {ComplexViewEntry.CLSID,      static () => new ComplexViewEntry()},
+                {GroupingEntry.CLSID,         static () => new GroupingEntry()},
+                {PageHeaderEntry.CLSID,       static () => new PageHeaderEntry()},
+                {PageFooterEntry.CLSID,       static () => new PageFooterEntry()},
+                {AutosizeInfo.CLSID,          static () => new AutosizeInfo()},
+                {FormatNewLine.CLSID,         static () => new FormatNewLine()},
+                {FrameInfo.CLSID,             static () => new FrameInfo()},
+                {FormatTextField.CLSID,       static () => new FormatTextField()},
+                {FormatPropertyField.CLSID,   static () => new FormatPropertyField()},
+                {FormatEntry.CLSID,           static () => new FormatEntry()},
+                {RawTextFormatEntry.CLSID,    static () => new RawTextFormatEntry()}
             };
         }
 
@@ -392,7 +386,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (so == null)
             {
-                throw PSTraceSource.NewArgumentNullException("so");
+                throw PSTraceSource.NewArgumentNullException(nameof(so));
             }
 
             // look for the property that defines the type of object
@@ -421,7 +415,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             Func<FormatInfoData> ctor;
             if (!s_constructors.TryGetValue(clsid, out ctor))
             {
-                CreateInstanceError(PSTraceSource.NewArgumentException("clsid"), clsid, deserializer);
+                CreateInstanceError(PSTraceSource.NewArgumentException(nameof(clsid)), clsid, deserializer);
                 return null;
             }
 
@@ -504,7 +498,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (lst == null)
             {
-                throw PSTraceSource.NewArgumentNullException("lst");
+                throw PSTraceSource.NewArgumentNullException(nameof(lst));
             }
 
             object memberRaw = FormatObjectDeserializer.GetProperty(so, property);
@@ -706,4 +700,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
     #endregion
 }
-

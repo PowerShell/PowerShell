@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Function GetFileMock () {
     $objs = @( [pscustomobject]@{ Size=4533816; Mode="-a---l"; LastWriteTime="9/1/2015  11:15 PM"; Name="explorer.exe" },

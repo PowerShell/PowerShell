@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -13,21 +13,45 @@ namespace System.Management.Automation.Internal
 {
     internal static class ModuleUtils
     {
+        // These are documented members FILE_ATTRIBUTE, they just have not yet been
+        // added to System.IO.FileAttributes yet.
+        private const int FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS = 0x400000;
+
+        private const int FILE_ATTRIBUTE_RECALL_ON_OPEN = 0x40000;
+
         // Default option for local file system enumeration:
         //  - Ignore files/directories when access is denied;
         //  - Search top directory only.
         private static readonly System.IO.EnumerationOptions s_defaultEnumerationOptions =
-                                        new System.IO.EnumerationOptions() { AttributesToSkip = FileAttributes.Hidden };
+                                        new System.IO.EnumerationOptions() { AttributesToSkip = FileAttributesToSkip };
+
+        private static readonly FileAttributes FileAttributesToSkip;
 
         // Default option for UNC path enumeration. Same as above plus a large buffer size.
         // For network shares, a large buffer may result in better performance as more results can be batched over the wire.
         // The buffer size 16K is recommended in the comment of the 'BufferSize' property:
         //    "A "large" buffer, for example, would be 16K. Typical is 4K."
         private static readonly System.IO.EnumerationOptions s_uncPathEnumerationOptions =
-                                        new System.IO.EnumerationOptions() { AttributesToSkip = FileAttributes.Hidden, BufferSize = 16384 };
+                                        new System.IO.EnumerationOptions() { AttributesToSkip = FileAttributesToSkip, BufferSize = 16384 };
 
         private static readonly string EnCulturePath = Path.DirectorySeparatorChar + "en";
         private static readonly string EnUsCulturePath = Path.DirectorySeparatorChar + "en-us";
+
+        static ModuleUtils()
+        {
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSModuleAutoLoadSkipOfflineFilesFeatureName))
+            {
+                FileAttributesToSkip = FileAttributes.Hidden
+                    // Skip OneDrive files/directories that are not fully on disk.
+                    | FileAttributes.Offline
+                    | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS
+                    | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_OPEN;
+
+                return;
+            }
+
+            FileAttributesToSkip = FileAttributes.Hidden;
+        }
 
         /// <summary>
         /// Check if a directory is likely a localized resources folder.
@@ -81,8 +105,7 @@ namespace System.Management.Automation.Internal
                 string directoryToCheck = directoriesToCheck.Dequeue();
                 try
                 {
-                    string[] subDirectories = Directory.GetDirectories(directoryToCheck, "*", options);
-                    foreach (string toAdd in subDirectories)
+                    foreach (string toAdd in Directory.EnumerateDirectories(directoryToCheck, "*", options))
                     {
                         if (firstSubDirs || !IsPossibleResourceDirectory(toAdd))
                         {
@@ -94,8 +117,7 @@ namespace System.Management.Automation.Internal
                 catch (UnauthorizedAccessException) { }
 
                 firstSubDirs = false;
-                string[] files = Directory.GetFiles(directoryToCheck, "*", options);
-                foreach (string moduleFile in files)
+                foreach (string moduleFile in Directory.EnumerateFiles(directoryToCheck, "*", options))
                 {
                     foreach (string ext in ModuleIntrinsics.PSModuleExtensions)
                     {
@@ -123,7 +145,7 @@ namespace System.Management.Automation.Internal
 #if UNIX
             return true;
 #else
-            if (!ModuleUtils.IsOnSystem32ModulePath(moduleManifestPath))
+            if (!IsOnSystem32ModulePath(moduleManifestPath))
             {
                 return true;
             }
@@ -278,6 +300,11 @@ namespace System.Management.Automation.Internal
                     manifestPath += StringLiterals.PowerShellDataFileExtension;
                     if (File.Exists(manifestPath))
                     {
+                        if (HasSkippedFileAttribute(manifestPath))
+                        {
+                            continue;
+                        }
+
                         isModuleDirectory = true;
                         yield return manifestPath;
                     }
@@ -290,6 +317,11 @@ namespace System.Management.Automation.Internal
                         string moduleFile = Path.Combine(directoryToCheck, proposedModuleName) + ext;
                         if (File.Exists(moduleFile))
                         {
+                            if (HasSkippedFileAttribute(moduleFile))
+                            {
+                                continue;
+                            }
+
                             isModuleDirectory = true;
                             yield return moduleFile;
 
@@ -332,14 +364,33 @@ namespace System.Management.Automation.Internal
             if (!string.IsNullOrWhiteSpace(moduleBase) && Directory.Exists(moduleBase))
             {
                 var options = Utils.PathIsUnc(moduleBase) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
-                string[] subdirectories = Directory.GetDirectories(moduleBase, "*", options);
+                IEnumerable<string> subdirectories = Directory.EnumerateDirectories(moduleBase, "*", options);
                 ProcessPossibleVersionSubdirectories(subdirectories, versionFolders);
             }
 
             return versionFolders;
         }
 
-        private static void ProcessPossibleVersionSubdirectories(string[] subdirectories, List<Version> versionFolders)
+        private static bool HasSkippedFileAttribute(string path)
+        {
+            try
+            {
+                FileAttributes attributes = File.GetAttributes(path);
+                if ((attributes & FileAttributesToSkip) is not 0)
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                // Ignore failures so that we keep the current behavior of failing
+                // later in the search.
+            }
+
+            return false;
+        }
+
+        private static void ProcessPossibleVersionSubdirectories(IEnumerable<string> subdirectories, List<Version> versionFolders)
         {
             foreach (string subdir in subdirectories)
             {
@@ -352,7 +403,7 @@ namespace System.Management.Automation.Internal
 
             if (versionFolders.Count > 1)
             {
-                versionFolders.Sort((x, y) => y.CompareTo(x));
+                versionFolders.Sort(static (x, y) => y.CompareTo(x));
             }
         }
 
@@ -387,15 +438,15 @@ namespace System.Management.Automation.Internal
         /// <param name="pattern">Command pattern.</param>
         /// <param name="context">Execution context.</param>
         /// <param name="commandOrigin">Command origin.</param>
+        /// <param name="fuzzyMatcher">Fuzzy matcher to use.</param>
         /// <param name="rediscoverImportedModules">If true, rediscovers imported modules.</param>
         /// <param name="moduleVersionRequired">Specific module version to be required.</param>
         /// <returns>IEnumerable tuple containing the CommandInfo and the match score.</returns>
-        internal static IEnumerable<CommandScore> GetFuzzyMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false)
+        internal static IEnumerable<CommandScore> GetFuzzyMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, FuzzyMatcher fuzzyMatcher, bool rediscoverImportedModules = false, bool moduleVersionRequired = false)
         {
-            foreach (CommandInfo command in GetMatchingCommands(pattern, context, commandOrigin, rediscoverImportedModules, moduleVersionRequired, useFuzzyMatching: true))
+            foreach (CommandInfo command in GetMatchingCommands(pattern, context, commandOrigin, rediscoverImportedModules, moduleVersionRequired, fuzzyMatcher: fuzzyMatcher))
             {
-                int score = FuzzyMatcher.GetDamerauLevenshteinDistance(command.Name, pattern);
-                if (score <= FuzzyMatcher.MinimumDistance)
+                if (fuzzyMatcher.IsFuzzyMatch(command.Name, pattern, out int score))
                 {
                     yield return new CommandScore(command, score);
                 }
@@ -410,10 +461,10 @@ namespace System.Management.Automation.Internal
         /// <param name="commandOrigin">Command origin.</param>
         /// <param name="rediscoverImportedModules">If true, rediscovers imported modules.</param>
         /// <param name="moduleVersionRequired">Specific module version to be required.</param>
-        /// <param name="useFuzzyMatching">Use fuzzy matching.</param>
+        /// <param name="fuzzyMatcher">Fuzzy matcher for fuzzy searching.</param>
         /// <param name="useAbbreviationExpansion">Use abbreviation expansion for matching.</param>
         /// <returns>Returns matching CommandInfo IEnumerable.</returns>
-        internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false, bool useFuzzyMatching = false, bool useAbbreviationExpansion = false)
+        internal static IEnumerable<CommandInfo> GetMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, bool rediscoverImportedModules = false, bool moduleVersionRequired = false, FuzzyMatcher fuzzyMatcher = null, bool useAbbreviationExpansion = false)
         {
             // Otherwise, if it had wildcards, just return the "AvailableCommand"
             // type of command info.
@@ -437,7 +488,7 @@ namespace System.Management.Automation.Internal
                         // 1. We continue to the next module path if we don't want to re-discover those imported modules
                         // 2. If we want to re-discover the imported modules, but one or more commands from the module were made private,
                         //    then we don't do re-discovery
-                        if (!rediscoverImportedModules || modules.Exists(module => module.ModuleHasPrivateMembers))
+                        if (!rediscoverImportedModules || modules.Exists(static module => module.ModuleHasPrivateMembers))
                         {
                             continue;
                         }
@@ -451,7 +502,7 @@ namespace System.Management.Automation.Internal
                             foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
                                 if (commandPattern.IsMatch(entry.Value.Name) ||
-                                    (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)) ||
+                                    (fuzzyMatcher is not null && fuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)) ||
                                     (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(entry.Value.Name), StringComparison.OrdinalIgnoreCase)))
                                 {
                                     CommandInfo current = null;
@@ -511,7 +562,7 @@ namespace System.Management.Automation.Internal
                         CommandTypes commandTypes = pair.Value;
 
                         if (commandPattern.IsMatch(commandName) ||
-                            (useFuzzyMatching && FuzzyMatcher.IsFuzzyMatch(commandName, pattern)) ||
+                            (fuzzyMatcher is not null && fuzzyMatcher.IsFuzzyMatch(commandName, pattern)) ||
                             (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(commandName), StringComparison.OrdinalIgnoreCase)))
                         {
                             bool shouldExportCommand = true;
@@ -615,4 +666,3 @@ namespace System.Management.Automation.Internal
         public int Score;
     }
 }
-

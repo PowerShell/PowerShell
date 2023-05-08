@@ -1,0 +1,51 @@
+jobs:
+- job: DeleteBlob
+  variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: Azure Blob variable group
+  displayName: Delete blob is exists
+  pool:
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
+  steps:
+  - checkout: self
+    clean: true
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: yes
+      UseJson: no
+
+  - task: AzurePowerShell@4
+    displayName: Check if blob exists and delete if specified
+    inputs:
+      azureSubscription: '$(AzureFileCopySubscription)'
+      scriptType: inlineScript
+      azurePowerShellVersion: latestVersion
+      inline: |
+        try {
+            $container = Get-AzStorageContainer -Container '$(AzureVersion)' -Context (New-AzStorageContext -StorageAccountName '$(StorageAccount)') -ErrorAction Stop
+
+            if ($container -ne $null -and '$(ForceAzureBlobDelete)' -eq 'false') {
+                throw 'Azure blob container $(AzureVersion) already exists. To overwrite, use ForceAzureBlobDelete parameter'
+            }
+            elseif ($container -ne $null -and '$(ForceAzureBlobDelete)' -eq 'true') {
+                Write-Verbose -Verbose 'Removing container $(AzureVersion) due to ForceAzureBlobDelete parameter'
+                Remove-AzStorageContainer -Name '$(AzureVersion)' -Context (New-AzStorageContext -StorageAccountName '$(StorageAccount)') -Force
+            }
+        }
+        catch {
+            if ($_.FullyQualifiedErrorId -eq 'ResourceNotFoundException,Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet.GetAzureStorageContainerCommand') {
+                Write-Verbose -Verbose 'Container "$(AzureVersion)" does not exists.'
+            }
+            else {
+                throw $_
+            }
+        }
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

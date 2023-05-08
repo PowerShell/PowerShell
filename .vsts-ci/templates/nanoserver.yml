@@ -1,0 +1,61 @@
+parameters:
+  vmImage: 'windows-latest'
+  jobName: 'Nanoserver_Tests'
+  continueOnError: false
+
+jobs:
+
+- job: ${{ parameters.jobName }}
+  variables:
+    scriptName: ${{ parameters.scriptName }}
+
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+
+  displayName: ${{ parameters.jobName }}
+
+  steps:
+  - script: |
+      set
+    displayName: Capture Environment
+    condition: succeededOrFailed()
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download Build Artifacts'
+    inputs:
+      downloadType: specific
+      itemPattern: |
+        build/**/*
+      downloadPath: '$(System.ArtifactsDirectory)'
+
+  - pwsh: |
+      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+    displayName: 'Capture Artifacts Directory'
+    continueOnError: true
+
+  - pwsh: |
+      Install-module Pester -Scope CurrentUser -Force -MaximumVersion 4.99
+    displayName: 'Install Pester'
+    continueOnError: true
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+      $options = (Get-PSOptions)
+      $path = split-path -path $options.Output
+      Write-Verbose "Path: '$path'" -Verbose
+      $rootPath = split-Path -path $path
+      Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
+      Invoke-Pester -Path ./test/nanoserver -OutputFormat NUnitXml -OutputFile ./test-nanoserver.xml
+    displayName: Test
+    condition: succeeded()
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    displayName: Publish Nanoserver Test Results **\test*.xml
+    inputs:
+      testRunner: NUnit
+      testResultsFiles: '**\test*.xml'
+      testRunTitle: nanoserver
+      mergeTestResults: true
+      failTaskOnFailedTests: true

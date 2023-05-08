@@ -126,18 +126,13 @@
   <data name="RedirectedException" xml:space="preserve">
     <value>Object "{0}" is reported as an error.</value>
   </data>
-  <data name="SuspendActionPreferenceErrorActionOnly" xml:space="preserve">
-    <value>The action preference of "Suspend" is supported only for ErrorAction.</value>
-    <comment>"Suspend" and ErrorAction should not be localized</comment>
-  </data>
-  <data name="SuspendActionPreferenceSupportedOnlyOnWorkflow" xml:space="preserve">
-    <value>The error action preference of "Suspend" is supported only on workflows.</value>
-    <comment>"Suspend" should not be localized - it is a literal.</comment>
-  </data>
   <data name="UnsupportedPreferenceError" xml:space="preserve">
     <value>The value {0} is not supported for an ActionPreference variable. The provided value should be used only as a value for a preference parameter, and has been replaced by the default value. For more information, see the Help topic, "about_Preference_Variables."</value>
   </data>
-  <data name="UnsupportedPreferenceVariable" xml:space="preserve">
-    <value>The value {0} is not supported for an ActionPreference variable. The provided value should be used only as a value for a preference parameter. For more information, see the Help topic, "about_Preference_Variables."</value>
+  <data name="ActionPreferenceReservedForFutureUseError" xml:space="preserve">
+    <value>The {0} ActionPreference value is reserved for future use and is not supported at this time. For more information about preference variables, see the Help topic, "about_Preference_Variables."</value>
+  </data>
+  <data name="ReservedActionPreferenceReplacedError" xml:space="preserve">
+    <value>The {0} ActionPreference value is reserved for future use and is not supported at this time. It has been replaced in your {1} variable by the default value of {2}. For more information about preference variables, see the Help topic, "about_Preference_Variables."</value>
   </data>
 </root>

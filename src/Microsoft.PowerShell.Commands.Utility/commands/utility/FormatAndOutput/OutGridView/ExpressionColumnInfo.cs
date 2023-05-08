@@ -1,17 +1,14 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-
-using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
     internal class ExpressionColumnInfo : ColumnInfo
     {
-        private PSPropertyExpression _expression;
+        private readonly PSPropertyExpression _expression;
 
         internal ExpressionColumnInfo(string staleObjectPropertyName, string displayName, PSPropertyExpression expression)
             : base(staleObjectPropertyName, displayName)

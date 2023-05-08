@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Host;
@@ -35,10 +35,7 @@ namespace System.Management.Automation
         /// </exception>
         internal EngineIntrinsics(ExecutionContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
+            ArgumentNullException.ThrowIfNull(context);
 
             _context = context;
             _host = context.EngineHostInterface;
@@ -101,17 +98,16 @@ namespace System.Management.Automation
         /// </summary>
         public CommandInvocationIntrinsics InvokeCommand
         {
-            get { return _invokeCommand ?? (_invokeCommand = new CommandInvocationIntrinsics(_context)); }
+            get { return _invokeCommand ??= new CommandInvocationIntrinsics(_context); }
         }
 
         #endregion Public methods
 
         #region private data
 
-        private ExecutionContext _context;
-        private PSHost _host;
+        private readonly ExecutionContext _context;
+        private readonly PSHost _host;
         private CommandInvocationIntrinsics _invokeCommand;
         #endregion private data
     }
 }
-

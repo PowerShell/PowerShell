@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace System.Management.Automation
             _context = context;
         }
 
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
 
         /// <summary>
         /// The name of the command we're looking for.
@@ -55,7 +55,7 @@ namespace System.Management.Automation
         public bool StopSearch { get; set; }
 
         /// <summary>
-        /// The CommandInfo obejct for the command that was found.
+        /// The CommandInfo object for the command that was found.
         /// </summary>
         public CommandInfo Command { get; set; }
 
@@ -65,7 +65,10 @@ namespace System.Management.Automation
         /// </summary>
         public ScriptBlock CommandScriptBlock
         {
-            get { return _scriptBlock; }
+            get
+            {
+                return _scriptBlock;
+            }
 
             set
             {
@@ -115,7 +118,7 @@ namespace System.Management.Automation
     internal class CommandDiscovery
     {
         [TraceSource("CommandDiscovery", "Traces the discovery of cmdlets, scripts, functions, applications, etc.")]
-        internal static PSTraceSource discoveryTracer =
+        internal static readonly PSTraceSource discoveryTracer =
             PSTraceSource.GetTracer(
                 "CommandDiscovery",
                 "Traces the discovery of cmdlets, scripts, functions, applications, etc.",
@@ -133,7 +136,7 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             Context = context;
@@ -149,7 +152,7 @@ namespace System.Management.Automation
         /// <returns>
         /// True if the cmdlet is a special cmdlet that shouldn't be part of the discovery list. Or false otherwise.
         /// </returns>
-        private bool IsSpecialCmdlet(Type implementingType)
+        private static bool IsSpecialCmdlet(Type implementingType)
         {
             // These commands should never be put in the discovery list.  They are an internal implementation
             // detail of the formatting and output component. That component uses these cmdlets by creating
@@ -202,7 +205,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (newCmdletInfo == null)
@@ -313,100 +316,23 @@ namespace System.Management.Automation
             }
         }
 
-        private static Collection<string> GetPSSnapinNames(IEnumerable<PSSnapInSpecification> PSSnapins)
-        {
-            Collection<string> result = new Collection<string>();
-
-            foreach (var PSSnapin in PSSnapins)
-            {
-                result.Add(BuildPSSnapInDisplayName(PSSnapin));
-            }
-
-            return result;
-        }
-
         private CommandProcessorBase CreateScriptProcessorForSingleShell(ExternalScriptInfo scriptInfo, ExecutionContext context, bool useLocalScope, SessionStateInternal sessionState)
         {
             VerifyScriptRequirements(scriptInfo, Context);
 
-            IEnumerable<PSSnapInSpecification> requiresPSSnapIns = scriptInfo.RequiresPSSnapIns;
-            if (requiresPSSnapIns != null && requiresPSSnapIns.Any())
+            if (!string.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
             {
-                Collection<string> requiresMissingPSSnapIns = null;
-                VerifyRequiredSnapins(requiresPSSnapIns, context, out requiresMissingPSSnapIns);
-                if (requiresMissingPSSnapIns != null)
-                {
-                    ScriptRequiresException scriptRequiresException =
-                        new ScriptRequiresException(
-                            scriptInfo.Name,
-                            requiresMissingPSSnapIns,
-                            "ScriptRequiresMissingPSSnapIns",
-                            true);
-                    throw scriptRequiresException;
-                }
-            }
-            else
-            {
-                // If there were no PSSnapins required but there is a shellID required, then we need
-                // to error
+                ScriptRequiresException sre =
+                    new ScriptRequiresException(
+                        scriptInfo.Name,
+                        string.Empty,
+                        string.Empty,
+                        "RequiresShellIDInvalidForSingleShell");
 
-                if (!string.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
-                {
-                    ScriptRequiresException sre =
-                      new ScriptRequiresException(
-                          scriptInfo.Name,
-                          string.Empty,
-                          string.Empty,
-                          "RequiresShellIDInvalidForSingleShell");
-
-                    throw sre;
-                }
+                throw sre;
             }
 
             return CreateCommandProcessorForScript(scriptInfo, Context, useLocalScope, sessionState);
-        }
-
-        private static void VerifyRequiredSnapins(IEnumerable<PSSnapInSpecification> requiresPSSnapIns, ExecutionContext context, out Collection<string> requiresMissingPSSnapIns)
-        {
-            requiresMissingPSSnapIns = null;
-            Dbg.Assert(context.InitialSessionState != null, "PowerShell should be hosted with InitialSessionState");
-
-            foreach (var requiresPSSnapIn in requiresPSSnapIns)
-            {
-                IEnumerable<PSSnapInInfo> loadedPSSnapIns = null;
-                loadedPSSnapIns = context.InitialSessionState.GetPSSnapIn(requiresPSSnapIn.Name);
-                if (loadedPSSnapIns == null || loadedPSSnapIns.Count() == 0)
-                {
-                    if (requiresMissingPSSnapIns == null)
-                    {
-                        requiresMissingPSSnapIns = new Collection<string>();
-                    }
-
-                    requiresMissingPSSnapIns.Add(BuildPSSnapInDisplayName(requiresPSSnapIn));
-                }
-                else
-                {
-                    // the requires PSSnapin is loaded. now check the PSSnapin version
-                    PSSnapInInfo loadedPSSnapIn = loadedPSSnapIns.First();
-                    Diagnostics.Assert(loadedPSSnapIn.Version != null,
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "Version is null for loaded PSSnapin {0}.", loadedPSSnapIn));
-                    if (requiresPSSnapIn.Version != null)
-                    {
-                        if (!AreInstalledRequiresVersionsCompatible(
-                            requiresPSSnapIn.Version, loadedPSSnapIn.Version))
-                        {
-                            if (requiresMissingPSSnapIns == null)
-                            {
-                                requiresMissingPSSnapIns = new Collection<string>();
-                            }
-
-                            requiresMissingPSSnapIns.Add(BuildPSSnapInDisplayName(requiresPSSnapIn));
-                        }
-                    }
-                }
-            }
         }
 
         // This method verifies the following 3 elements of #Requires statement
@@ -428,7 +354,7 @@ namespace System.Management.Automation
             // in single shell mode
             if (requiresPSVersion != null)
             {
-                if (!Utils.IsPSVersionSupported(requiresPSVersion))
+                if (!PSVersionInfo.IsValidPSVersion(requiresPSVersion))
                 {
                     ScriptRequiresException scriptRequiresException =
                         new ScriptRequiresException(
@@ -461,11 +387,11 @@ namespace System.Management.Automation
                 //
                 if (isRequiresPSEditionSpecified && !isCurrentEditionListed)
                 {
-                    var specifiedEditionsString = string.Join(",", scriptInfo.RequiresPSEditions);
+                    var specifiedEditionsString = string.Join(',', scriptInfo.RequiresPSEditions);
                     var message = StringUtil.Format(DiscoveryExceptions.RequiresPSEditionNotCompatible,
                         scriptInfo.Name,
                         specifiedEditionsString,
-                        PSVersionInfo.PSEdition);
+                        PSVersionInfo.PSEditionValue);
                     var ex = new RuntimeException(message);
                     ex.SetErrorId("ScriptRequiresUnmatchedPSEdition");
                     ex.SetTargetObject(scriptInfo.Name);
@@ -486,32 +412,6 @@ namespace System.Management.Automation
                             "ScriptRequiresElevation");
                 throw scriptRequiresException;
             }
-        }
-
-        /// <summary>
-        /// Used to determine compatibility between the versions in the requires statement and
-        /// the installed version. The version can be PSSnapin or msh.
-        /// </summary>
-        /// <param name="requires">Versions in the requires statement.</param>
-        /// <param name="installed">Version installed.</param>
-        /// <returns>
-        /// true if requires and installed's major version match and requires' minor version
-        /// is smaller than or equal to installed's
-        /// </returns>
-        /// <remarks>
-        /// In PowerShell V2, script requiring PowerShell 1.0 will fail.
-        /// </remarks>
-        private static bool AreInstalledRequiresVersionsCompatible(Version requires, Version installed)
-        {
-            return requires.Major == installed.Major && requires.Minor <= installed.Minor;
-        }
-
-        private static string BuildPSSnapInDisplayName(PSSnapInSpecification PSSnapin)
-        {
-            return PSSnapin.Version == null ?
-                PSSnapin.Name :
-                StringUtil.Format(DiscoveryExceptions.PSSnapInNameVersion,
-                        PSSnapin.Name, PSSnapin.Version);
         }
 
         /// <summary>
@@ -652,7 +552,7 @@ namespace System.Management.Automation
 
         private static CommandProcessorBase CreateCommandProcessorForScript(ScriptInfo scriptInfo, ExecutionContext context, bool useNewScope, SessionStateInternal sessionState)
         {
-            sessionState = sessionState ?? scriptInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
+            sessionState ??= scriptInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
             CommandProcessorBase scriptAsCmdletProcessor = GetScriptAsCmdletProcessor(scriptInfo, context, useNewScope, true, sessionState);
             if (scriptAsCmdletProcessor != null)
             {
@@ -664,7 +564,7 @@ namespace System.Management.Automation
 
         private static CommandProcessorBase CreateCommandProcessorForScript(ExternalScriptInfo scriptInfo, ExecutionContext context, bool useNewScope, SessionStateInternal sessionState)
         {
-            sessionState = sessionState ?? scriptInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
+            sessionState ??= scriptInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
             CommandProcessorBase scriptAsCmdletProcessor = GetScriptAsCmdletProcessor(scriptInfo, context, useNewScope, true, sessionState);
             if (scriptAsCmdletProcessor != null)
             {
@@ -676,7 +576,7 @@ namespace System.Management.Automation
 
         internal static CommandProcessorBase CreateCommandProcessorForScript(FunctionInfo functionInfo, ExecutionContext context, bool useNewScope, SessionStateInternal sessionState)
         {
-            sessionState = sessionState ?? functionInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
+            sessionState ??= functionInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
             CommandProcessorBase scriptAsCmdletProcessor = GetScriptAsCmdletProcessor(functionInfo, context, useNewScope, false, sessionState);
             if (scriptAsCmdletProcessor != null)
             {
@@ -688,7 +588,7 @@ namespace System.Management.Automation
 
         internal static CommandProcessorBase CreateCommandProcessorForScript(ScriptBlock scriptblock, ExecutionContext context, bool useNewScope, SessionStateInternal sessionState)
         {
-            sessionState = sessionState ?? scriptblock.SessionStateInternal ?? context.EngineSessionState;
+            sessionState ??= scriptblock.SessionStateInternal ?? context.EngineSessionState;
 
             if (scriptblock.UsesCmdletBinding)
             {
@@ -706,7 +606,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            sessionState = sessionState ?? scriptCommandInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
+            sessionState ??= scriptCommandInfo.ScriptBlock.SessionStateInternal ?? context.EngineSessionState;
 
             return new CommandProcessor(scriptCommandInfo, context, useNewScope, fromScriptFile, sessionState);
         }
@@ -784,7 +684,7 @@ namespace System.Management.Automation
             // Check the module auto-loading preference
             PSModuleAutoLoadingPreference moduleAutoLoadingPreference = GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
 
-            if (eventArgs == null || eventArgs.StopSearch != true)
+            if (eventArgs == null || !eventArgs.StopSearch)
             {
                 do
                 {
@@ -816,10 +716,7 @@ namespace System.Management.Automation
                     }
 
                     // Otherwise, invoke the CommandNotFound handler
-                    if (result == null)
-                    {
-                        result = InvokeCommandNotFoundHandler(commandName, context, originalCommandName, commandOrigin);
-                    }
+                    result ??= InvokeCommandNotFoundHandler(commandName, context, originalCommandName, commandOrigin);
                 } while (false);
             }
             else
@@ -865,7 +762,7 @@ namespace System.Management.Automation
             if (result == null)
             {
                 discoveryTracer.TraceError(
-                    "'{0}' is not recognized as a cmdlet, function, operable program or script file.",
+                    "'{0}' is not recognized as a cmdlet, function, executable program or script file.",
                     commandName);
 
                 CommandNotFoundException e =
@@ -884,6 +781,11 @@ namespace System.Management.Automation
 
         internal static void AutoloadModulesWithJobSourceAdapters(System.Management.Automation.ExecutionContext context, CommandOrigin commandOrigin)
         {
+            /* This function is used by *-Job cmdlets (JobCmdletBase.BeginProcessing(), StartJobCommand.BeginProcessing())
+            It attempts to load modules from a fixed ModulesWithJobSourceAdapters list that currently has only `PSScheduledJob` module that is not PS-Core compatible.
+            Because this function does not check the result of a (currently failing) `PSScheduledJob` module autoload, it provides no value.
+            After discussion it was decided to comment out this code as it may be useful if ModulesWithJobSourceAdapters list changes in the future.
+
             if (!context.IsModuleWithJobSourceAdapterLoaded)
             {
                 PSModuleAutoLoadingPreference moduleAutoLoadingPreference = GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
@@ -906,7 +808,7 @@ namespace System.Management.Automation
                         context.IsModuleWithJobSourceAdapterLoaded = true;
                     }
                 }
-            }
+            }*/
         }
 
         internal static Collection<PSModuleInfo> AutoloadSpecifiedModule(string moduleName, ExecutionContext context, SessionStateEntryVisibility visibility, out Exception exception)
@@ -989,7 +891,7 @@ namespace System.Management.Automation
             {
                 if (!searcher.MoveNext())
                 {
-                    if (!commandName.Contains("-") && !commandName.Contains("\\"))
+                    if (!commandName.Contains('-') && !commandName.Contains('\\'))
                     {
                         discoveryTracer.WriteLine(
                             "The command [{0}] was not found, trying again with get- prepended",
@@ -1045,30 +947,25 @@ namespace System.Management.Automation
             if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleAutoDiscoveryStart(commandName);
 
             CommandInfo result = null;
-            bool cleanupModuleAnalysisAppDomain = false;
             try
             {
                 // If commandName had a slash, it was module-qualified or path-qualified.
                 // In that case, we should not return anything (module-qualified is handled
                 // by the previous call to TryModuleAutoLoading().
-                int colonOrBackslash = commandName.IndexOfAny(Utils.Separators.ColonOrBackslash);
+                int colonOrBackslash = commandName.AsSpan().IndexOfAny('\\', ':');
                 if (colonOrBackslash != -1)
                     return null;
 
                 CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Get-Module");
-                if ((commandOrigin == CommandOrigin.Internal) ||
-                    ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public)))
+                if (commandOrigin == CommandOrigin.Internal || cmdletInfo?.Visibility == SessionStateEntryVisibility.Public)
                 {
                     // Search for a module with a matching command, as long as the user would have the ability to
                     // import the module.
                     cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
-                    if (((commandOrigin == CommandOrigin.Internal) ||
-                         ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public))))
+                    if (commandOrigin == CommandOrigin.Internal || cmdletInfo?.Visibility == SessionStateEntryVisibility.Public)
                     {
                         discoveryTracer.WriteLine("Executing non module-qualified search: {0}", commandName);
                         context.CommandDiscovery.RegisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
-
-                        cleanupModuleAnalysisAppDomain = context.TakeResponsibilityForModuleAnalysisAppDomain();
 
                         // Get the available module files, preferring modules from $PSHOME so that user modules don't
                         // override system modules during auto-loading
@@ -1080,30 +977,33 @@ namespace System.Management.Automation
                         {
                             // WinBlue:69141 - We need to get the full path here because the module path might be C:\Users\User1\DOCUME~1
                             // While the exportedCommands are cached, they are cached with the full path
-                            string expandedModulePath = IO.Path.GetFullPath(modulePath);
-                            string moduleShortName = System.IO.Path.GetFileNameWithoutExtension(expandedModulePath);
+                            string expandedModulePath = Path.GetFullPath(modulePath);
+                            string moduleShortName = Path.GetFileNameWithoutExtension(expandedModulePath);
                             var exportedCommands = AnalysisCache.GetExportedCommands(expandedModulePath, false, context);
 
                             if (exportedCommands == null) { continue; }
 
-                            CommandTypes exportedCommandTypes;
                             // Skip if module only has class or other types and no commands.
-                            if (exportedCommands.TryGetValue(commandName, out exportedCommandTypes))
+                            if (exportedCommands.TryGetValue(commandName, out CommandTypes exportedCommandTypes))
                             {
-                                Exception exception;
                                 discoveryTracer.WriteLine("Found in module: {0}", expandedModulePath);
-                                Collection<PSModuleInfo> matchingModule = AutoloadSpecifiedModule(expandedModulePath, context,
+                                Collection<PSModuleInfo> matchingModule = AutoloadSpecifiedModule(
+                                    expandedModulePath,
+                                    context,
                                     cmdletInfo != null ? cmdletInfo.Visibility : SessionStateEntryVisibility.Private,
-                                        out exception);
-                                lastError = exception;
-                                if ((matchingModule == null) || (matchingModule.Count == 0))
+                                    out lastError);
+
+                                if (matchingModule is null || matchingModule.Count == 0)
                                 {
-                                    string error = StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportMatchingModule, commandName, moduleShortName);
-                                    CommandNotFoundException commandNotFound = new CommandNotFoundException(
+                                    string errorMessage = lastError is null
+                                        ? StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportMatchingModule, commandName, moduleShortName)
+                                        : StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportMatchingModuleWithErrorMessage, commandName, moduleShortName, lastError.Message);
+
+                                    throw new CommandNotFoundException(
                                         originalCommandName,
                                         lastError,
-                                        "CouldNotAutoloadMatchingModule", error);
-                                    throw commandNotFound;
+                                        "CouldNotAutoloadMatchingModule",
+                                        errorMessage);
                                 }
 
                                 result = LookupCommandInfo(commandName, commandTypes, searchResolutionOptions, commandOrigin, context);
@@ -1134,10 +1034,6 @@ namespace System.Management.Automation
             finally
             {
                 context.CommandDiscovery.UnregisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
-                if (cleanupModuleAnalysisAppDomain)
-                {
-                    context.ReleaseResponsibilityForModuleAnalysisAppDomain();
-                }
             }
 
             if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleAutoDiscoveryStop(commandName);
@@ -1150,7 +1046,7 @@ namespace System.Management.Automation
             CommandInfo result = null;
 
             // If commandName was module-qualified. In that case, we should load the module.
-            var colonOrBackslash = commandName.IndexOfAny(Utils.Separators.ColonOrBackslash);
+            var colonOrBackslash = commandName.AsSpan().IndexOfAny('\\', ':');
 
             // If we don't see '\', there is no module specified, so no module to load.
             // If we see ':' before '\', then we probably have a drive qualified path, not a module name
@@ -1161,7 +1057,7 @@ namespace System.Management.Automation
             string moduleName;
 
             // Now we check if there exists the second '\'
-            var secondBackslash = moduleCommandName.IndexOfAny(Utils.Separators.Backslash);
+            var secondBackslash = moduleCommandName.IndexOf('\\');
             if (secondBackslash == -1)
             {
                 moduleName = commandName.Substring(0, colonOrBackslash);
@@ -1182,7 +1078,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (string.IsNullOrEmpty(moduleName) || string.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith(".", StringComparison.Ordinal))
+            if (string.IsNullOrEmpty(moduleName) || string.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith('.'))
                 return null;
 
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
@@ -1276,31 +1172,10 @@ namespace System.Management.Automation
                 currentActionSet.Remove(command);
         }
 
-        private HashSet<string> _activePreLookup = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private HashSet<string> _activeModuleSearch = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private HashSet<string> _activeCommandNotFound = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private HashSet<string> _activePostCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-        /// <summary>
-        /// Gets a CommandPathSearch constructed with the specified patterns and
-        /// using the PATH as the lookup directories.
-        /// </summary>
-        /// <param name="patterns">
-        /// The patterns to search for. These patterns must be in the form taken
-        /// by DirectoryInfo.GetFiles().
-        /// </param>
-        /// <returns>
-        /// An instance of CommandPathSearch that is initialized with the specified
-        /// patterns and using the PATH as the lookup directories.
-        /// </returns>
-        internal IEnumerable<string> GetCommandPathSearcher(IEnumerable<string> patterns)
-        {
-            // Get the PATH environment variable
-            IEnumerable<string> lookupPathArray = GetLookupDirectoryPaths();
-
-            // Construct the CommandPathSearch object and return it.
-            return new CommandPathSearch(patterns, lookupPathArray, Context);
-        }
+        private readonly HashSet<string> _activePreLookup = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _activeModuleSearch = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _activeCommandNotFound = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _activePostCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets the resolved paths contained in the PATH environment
@@ -1312,7 +1187,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// The result is an ordered list of paths with paths starting with "." unresolved until lookup time.
         /// </remarks>
-        internal IEnumerable<string> GetLookupDirectoryPaths()
+        internal LookupPathCollection GetLookupDirectoryPaths()
         {
             LookupPathCollection result = new LookupPathCollection();
 
@@ -1338,12 +1213,21 @@ namespace System.Management.Automation
 
                 if (_pathCacheKey != null)
                 {
-                    string[] tokenizedPath = _pathCacheKey.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
+                    string[] tokenizedPath = _pathCacheKey.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
                     _cachedPath = new Collection<string>();
 
                     foreach (string directory in tokenizedPath)
                     {
                         string tempDir = directory.TrimStart();
+                        if (tempDir.EqualsOrdinalIgnoreCase("~"))
+                        {
+                            tempDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                        }
+                        else if (tempDir.StartsWith("~" + Path.DirectorySeparatorChar))
+                        {
+                            tempDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + Path.DirectorySeparatorChar + tempDir.Substring(2);
+                        }
+
                         _cachedPath.Add(tempDir);
                         result.Add(tempDir);
                     }
@@ -1355,7 +1239,7 @@ namespace System.Management.Automation
             }
 
             // Cache the new lookup paths
-            return _cachedLookupPaths ?? (_cachedLookupPaths = result);
+            return _cachedLookupPaths ??= result;
         }
 
         /// <summary>
@@ -1421,7 +1305,7 @@ namespace System.Management.Automation
             lock (s_lockObject)
             {
                 s_cachedPathExtCollection = pathExt != null
-                    ? pathExt.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
+                    ? pathExt.ToLower().Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
                     : Array.Empty<string>();
                 s_cachedPathExtCollectionWithPs1 = new string[s_cachedPathExtCollection.Length + 1];
                 s_cachedPathExtCollectionWithPs1[0] = StringLiterals.PowerShellScriptFileExtension;
@@ -1435,7 +1319,7 @@ namespace System.Management.Automation
 
         #region private members
 
-        private static object s_lockObject = new object();
+        private static readonly object s_lockObject = new object();
         private static string s_pathExtCacheKey;
         private static string[] s_cachedPathExtCollection;
         private static string[] s_cachedPathExtCollectionWithPs1;
@@ -1493,7 +1377,7 @@ namespace System.Management.Automation
                         }
                         // The engine cmdlets get imported (via Import-Module) once when PowerShell starts and the cmdletInfo is added to PSSnapinHelpers._cmdletcache(static) with ModuleName
                         // as "System.Management.Automation.dll" instead of the actual snapin name. The next time we load something in an InitialSessionState, we look at this _cmdletcache and
-                        // if the the assembly is already loaded, we just return the cmdlets back. So, the CmdletInfo has moduleName has "System.Management.Automation.dll". So, when M3P Activity
+                        // if the assembly is already loaded, we just return the cmdlets back. So, the CmdletInfo has moduleName has "System.Management.Automation.dll". So, when M3P Activity
                         // tries to access Microsoft.PowerShell.Core\\Get-Command, it cannot. So, adding an additional check to return the correct cmdletInfo for cmdlets from core modules.
                         else if (InitialSessionState.IsEngineModule(cmdletInfo.ModuleName))
                         {
@@ -1532,7 +1416,7 @@ namespace System.Management.Automation
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             // check the PSVariable
@@ -1668,7 +1552,7 @@ namespace System.Management.Automation
             {
                 string path = this[index];
                 if (!string.IsNullOrEmpty(path) &&
-                    path.StartsWith(".", StringComparison.Ordinal))
+                    path.StartsWith('.'))
                 {
                     result.Add(index);
                 }
@@ -1694,7 +1578,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(item))
             {
-                throw PSTraceSource.NewArgumentException("item");
+                throw PSTraceSource.NewArgumentException(nameof(item));
             }
 
             int result = -1;
@@ -1717,7 +1601,7 @@ namespace System.Management.Automation
     [EventSource(Name = "Microsoft-PowerShell-CommandDiscovery")]
     internal class CommandDiscoveryEventSource : EventSource
     {
-        internal static CommandDiscoveryEventSource Log = new CommandDiscoveryEventSource();
+        internal static readonly CommandDiscoveryEventSource Log = new CommandDiscoveryEventSource();
 
         public void CommandLookupStart(string CommandName) { WriteEvent(1, CommandName); }
 
@@ -1744,4 +1628,3 @@ namespace System.Management.Automation
         public void ModuleManifestAnalysisException(string ModulePath, string Exception) { WriteEvent(12, ModulePath, Exception); }
     }
 }
-

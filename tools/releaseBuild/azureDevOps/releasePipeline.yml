@@ -1,0 +1,617 @@
+trigger: none
+
+# needed to disable CI trigger and allow manual trigger
+# when the branch is same as pipline source, the latest build from the source is used.
+# all environment used are for manual tasks and approvals.
+
+resources:
+  pipelines:
+  - pipeline: releasePipeline
+    source: 'Coordinated Packages'
+    trigger:
+      branches:
+      - release/*
+
+  repositories:
+  - repository: Internal-PowerShellTeam-Tools
+    type: git
+    trigger: none
+    name: Internal-PowerShellTeam-Tools
+    ref: master
+
+variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: skipComponentGovernanceDetection
+    value: true
+  - name: BUILDSECMON_OPT_IN
+    value: true
+  - group: ReleasePipelineSecrets
+
+stages:
+- stage: MSIXBundle
+  displayName: Create MSIX Bundle package
+  dependsOn: []
+  jobs:
+  - template: templates/release-MsixBundle.yml
+
+- stage: ValidateSDK
+  displayName: Validate SDK
+  dependsOn: []
+  jobs:
+  - template: templates/release-SDKTests.yml
+    parameters:
+      jobName: WinSDK
+      displayName: Windows SDK Test
+      imageName: windows-latest
+
+  - template: templates/release-SDKTests.yml
+    parameters:
+      jobName: LinuxSDK
+      displayName: Linux SDK Test
+      imageName: ubuntu-latest
+
+  - template: templates/release-SDKTests.yml
+    parameters:
+      jobName: macOSSDK
+      displayName: macOS SDK Test
+      imageName: macOS-latest
+
+- stage: PRCreation
+  displayName: Create PR in GH Master
+  dependsOn: []
+  jobs:
+  - deployment: CreatePRInMaster
+    displayName: Update README.md and metadata.json
+    pool: server
+    environment: PSReleaseCreatePR
+
+- stage: ValidateGlobalTool
+  displayName: Validate Global Tool
+  dependsOn: []
+  jobs:
+  - template: templates/release-GlobalToolTest.yml
+    parameters:
+      jobName: WinGblTool
+      displayName: Global Tool Test Windows
+      imageName: windows-latest
+      globalToolExeName: 'pwsh.exe'
+      globalToolPackageName: 'PowerShell.Windows.x64'
+
+  - template: templates/release-GlobalToolTest.yml
+    parameters:
+      jobName: LinuxWinGblTool
+      displayName: Global Tool Test Linux
+      imageName: ubuntu-latest
+      globalToolExeName: 'pwsh'
+      globalToolPackageName: 'PowerShell.Linux.x64'
+
+- stage: ValidateFxdPackage
+  displayName: Validate Fxd Package
+  dependsOn: []
+  jobs:
+  - template: templates/release-ValidateFxdPackage.yml
+    parameters:
+      jobName: WinFxdPackage
+      displayName: Fxd Package Test Win
+      imageName: windows-latest
+      packageNamePattern: '**/*win-fxdependent.zip'
+
+  - template: templates/release-ValidateFxdPackage.yml
+    parameters:
+      jobName: FxdPackageWindDesktop
+      displayName: Fxd Package Test WinDesktop
+      imageName: windows-latest
+      packageNamePattern: '**/*win-fxdependentWinDesktop.zip'
+
+  - template: templates/release-ValidateFxdPackage.yml
+    parameters:
+      jobName: FxdPackageLinux
+      displayName: Fxd Package Test Linux
+      imageName: ubuntu-latest
+      packageNamePattern: '**/*fxdependent.tar.gz'
+
+  - template: templates/release-ValidateFxdPackage.yml
+    parameters:
+      jobName: FxdPackageLinuxonARM
+      displayName: Fxd Package Test Linux ARM64
+      imageName: 'PSMMSUbuntu20.04-ARM64-secure'
+      packageNamePattern: '**/*fxdependent.tar.gz'
+      use1ES: true
+
+- stage: StaticPkgValidation
+  dependsOn: []
+  displayName: Static package validation
+  jobs:
+  - job: ValidatePkgNames
+    displayName: Validate Package Names
+    pool:
+      # testing
+      vmImage: windows-latest
+    variables:
+    - group: 'Azure Blob variable group'
+    steps:
+      - template: templates/release-ValidatePackageNames.yml
+  - job: ValidatePkgBOM
+    displayName: Validate Package BOM
+    pool:
+      # testing
+      vmImage: ubuntu-latest
+    steps:
+      - template: templates/release-ValidatePackageBOM.yml
+
+- stage: StartDocker
+  dependsOn: []
+  displayName: Kick Off Docker Staging build
+  jobs:
+  - deployment: PSDockerKickOff
+    displayName: Start Docker build
+    pool: server
+    environment: PSReleaseDockerKickOff
+
+- stage: ManualValidation
+  dependsOn: []
+  displayName: Manual Validation
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Validate Windows Packages
+      jobName: ValidateWinPkg
+      instructions: |
+        Validate zip and msipackages on Windows Server 2012 R2
+
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Validate OSX Packages
+      jobName: ValidateOsxPkg
+      instructions: |
+        Validate tar.gz package on osx-arm64
+
+- stage: ReleaseAutomation
+  displayName: Release Automation
+  dependsOn: []
+  jobs:
+  - job: KickOffRA
+    displayName: Kickoff Release Automation
+    timeoutInMinutes: 240
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    steps:
+    - checkout: Internal-PowerShellTeam-Tools
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        source: specific
+        project: PowerShellCore
+        pipeline: '696'
+        preferTriggeringPipeline: true
+        runVersion: latestFromBranch
+        runBranch: '$(Build.SourceBranch)'
+        artifact: metadata
+        path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+
+    - pwsh: |
+        Get-ChildItem -Path $(Build.SourcesDirectory)
+        Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
+        Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
+        Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName Release-Automation
+        $packageBuildID = $(resources.pipeline.releasePipeline.runID)
+        $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
+        $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 10 -BuildArguments @{ POWERSHELL_PACKAGE_BUILD_BUILDID = $packageBuildID } -Tag $metadata.ReleaseVersion, 'InProgress' -PassThru
+        Write-Verbose -Verbose "Kicked off release automation:`n$($buildInvocationInfo | Out-String)"
+        $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -timeoutMinutes 240
+        if ($status.result -ne 'Succeeded') {
+          Write-Verbose "There are errors in release automation tests. Please triage failures."
+        }
+
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Triage Release Automation Results
+      jobName: TriageRA
+      dependsOnJob: KickOffRA
+      instructions: |
+        Validate all the test failures and continue when signed off
+
+  - job: MarkRASignOff
+    displayName: Mark release automation signoff
+    dependsOn: TriageRA
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    steps:
+    - checkout: Internal-PowerShellTeam-Tools
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        source: specific
+        project: PowerShellCore
+        pipeline: '696'
+        preferTriggeringPipeline: true
+        runVersion: latestFromBranch
+        runBranch: '$(Build.SourceBranch)'
+        artifact: metadata
+        path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+
+    - pwsh: |
+        Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
+        Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
+        Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName Release-Automation
+        $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
+        $azDOBuild = Get-AzDOBuild -buildDefinitionId 10 -MaximumResult 100  | Where-Object { $_.tags -in $metadata.ReleaseVersion }
+        $azDoBuild | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -tag 'SignedOff'
+      displayName: Signoff Release-Automation run
+
+- stage: UpdateChangeLog
+  displayName: Update the changelog
+  # do not include stages that are likely to fail in dependency as there is no way to force deploy.
+  dependsOn:
+  - MSIXBundle
+  - ValidateSDK
+  - PRCreation
+  - StaticPkgValidation
+  - StartDocker
+  - ManualValidation
+  - ValidateFxdPackage
+  - ValidateGlobalTool
+
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Make sure the changelog is updated
+      jobName: MergeChangeLog
+      instructions: |
+        Update and merge the changelog for the release.
+        This step is required for creating GitHub draft release.
+
+- stage: GitHubDraftRelease
+  displayName: Create GitHub draft release
+  # do not include stages that are likely to fail in dependency as there is no way to force deploy.
+  dependsOn: UpdateChangeLog
+
+  # The environment here is used for approval.
+  jobs:
+  - deployment: AzureBlobPublic
+    displayName: Make Azure Blob Public
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    variables:
+    - group: 'Staging_ACR'
+    environment: PSReleaseAzureBlobPublic
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: templates/release-MakeContainerPublic.yml
+
+  - job: GitHubDraft
+    displayName: Create GitHub Draft release
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    variables:
+    - group: 'Azure Blob variable group'
+    - group: 'AzDevOpsArtifacts'
+    - group: ReleasePipelineSecrets
+    dependsOn: AzureBlobPublic
+    steps:
+    - template: templates/release-CreateGitHubDraft.yml
+
+- stage: GitHubManualTasks
+  displayName: GitHub manual tasks
+  dependsOn: GitHubDraftRelease
+  jobs:
+  - deployment: PushTag
+    displayName: Push Git Tag
+    pool : server
+    environment: PSReleasePushTag
+
+  - deployment: MakeDraftPublic
+    displayName: Make GitHub Draft public
+    pool : server
+    environment: PSReleaseDraftPublic
+    dependsOn: PushTag
+
+- stage: PublishPackages
+  displayName: Publish packages
+  dependsOn: GitHubManualTasks
+  jobs:
+  - job: PublishNuget
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    steps:
+    - template: templates/release-ReleaseToNuGet.yml
+
+  - job: PublishPkgsMsftCom
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMSUbuntu20.04-Secure
+
+    variables:
+    - group: 'AzDevOpsArtifacts'
+    - group: 'packages.microsoft.com'
+    steps:
+    - template: templates/release-PublishPackageMsftCom.yml
+
+- stage: PublishSymbols
+  displayName: Publish symbols
+  dependsOn: PublishPackages
+  jobs:
+  - job: PublishSymbol
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    steps:
+    - template: templates/release-PublishSymbols.yml
+
+- stage: ChangesToMaster
+  displayName: Ensure changes are in GH master
+  dependsOn: PublishPackages
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Make sure changes are in master
+      jobName: MergeToMaster
+      instructions: |
+        Make sure that changes README.md and metadata.json are merged into master on GitHub.
+
+- stage: ReleaseDocker
+  displayName: Release Docker
+  dependsOn:
+    - GitHubManualTasks
+  jobs:
+  - deployment: ReleaseDocker
+    displayName: Release Docker
+    pool: server
+    environment: PSReleaseDockerRelease
+
+- stage: ReleaseSnap
+  displayName: Release Snap
+  dependsOn:
+    - PublishPackages
+    - ChangesToMaster
+  variables:
+    # adds newPwshOrgName (exists in new and old org)
+    - group: PowerShellRelease
+  jobs:
+  - job: KickoffSnap
+    displayName: Kickoff Snap build
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    steps:
+    - checkout: Internal-PowerShellTeam-Tools
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        source: specific
+        project: PowerShellCore
+        pipeline: '696'
+        preferTriggeringPipeline: true
+        runVersion: latestFromBranch
+        runBranch: '$(Build.SourceBranch)'
+        artifact: metadata
+        path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+    - pwsh: |
+        Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
+        Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
+        Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName PowerShell
+        $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
+        $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 49 -Tag $metadata.ReleaseVersion, 'InProgress' -PassThru
+        Write-Verbose -Verbose "Kicked off snap build: $($buildInvocationInfo.WebUrl)"
+        $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -timeoutMinutes 60
+        if ($status.result -ne 'Succeeded') {
+          throw "There are errors in snap build!!"
+        }
+
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Approve the release
+      jobName: SnapEnd
+      dependsOnJob: KickoffSnap
+      instructions: |
+        Once the build is finished, approve the release of all channels.
+
+  - job: MarkSnapSignOff
+    displayName: Mark release automation signoff
+    dependsOn: SnapEnd
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    steps:
+    - checkout: Internal-PowerShellTeam-Tools
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        source: specific
+        project: PowerShellCore
+        pipeline: '696'
+        preferTriggeringPipeline: true
+        runVersion: latestFromBranch
+        runBranch: '$(Build.SourceBranch)'
+        artifact: metadata
+        path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+    - pwsh: |
+        Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
+        Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
+        Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName PowerShell
+        $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
+        $azDOBuild = Get-AzDOBuild -buildDefinitionId 49 -MaximumResult 100  | Where-Object { $_.tags -in $metadata.ReleaseVersion }
+        $azDoBuild | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -tag 'SignedOff'
+      displayName: Signoff Release-Automation run
+
+- stage: ReleaseToMU
+  displayName: Release to MU
+  dependsOn:
+    - PublishPackages
+    - ChangesToMaster
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Release to MU
+      instructions: |
+        Notify the PM team to start the process of releasing to MU.
+
+- stage: UpdateDotnetDocker
+  dependsOn: GitHubManualTasks
+  displayName: Update DotNet SDK Docker images
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Update .NET SDK docker images
+      jobName: DotnetDocker
+      instructions: |
+        Create PR for updating dotnet-docker images to use latest PowerShell version.
+        1. Fork and clone https://github.com/dotnet/dotnet-docker.git
+        2. git checkout upstream/nightly -b updatePS
+        3. dotnet run --project .\eng\update-dependencies\ -- <dotnetversion> --product-version powershell=<powershellversion> --compute-shas
+        4. create PR targeting nightly branch
+
+- stage: UpdateWinGet
+  dependsOn: GitHubManualTasks
+  displayName: Add manifest entry to winget
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Add manifest entry to winget
+      jobName: UpdateWinGet
+      instructions: |
+        This is typically done by the community 1-2 days after the release.
+
+- stage: PublishMsix
+  dependsOn: GitHubManualTasks
+  displayName: Publish MSIX to store
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Publish the MSIX Bundle package to store
+      jobName: PublishMsix
+      instructions: |
+        Ask Steve to release MSIX bundle package to Store
+
+- stage: BuildInfoJson
+  dependsOn: GitHubManualTasks
+  displayName: Upload BuildInfoJson
+  jobs:
+  - deployment: UploadJson
+    displayName: Upload BuildInfoJson
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    variables:
+    - group: 'Azure Blob variable group'
+    environment: PSReleaseBuildInfoJson
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: templates/release-BuildJson.yml
+
+- stage: ReleaseVPack
+  dependsOn: GitHubManualTasks
+  displayName: Release VPack
+  jobs:
+  - job: KickoffvPack
+    displayName: Kickoff vPack build
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    steps:
+    - checkout: Internal-PowerShellTeam-Tools
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        source: specific
+        project: PowerShellCore
+        pipeline: '696'
+        preferTriggeringPipeline: true
+        runVersion: latestFromBranch
+        runBranch: '$(Build.SourceBranch)'
+        artifact: metadata
+        path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+
+    - pwsh: |
+        Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
+        Set-AzDoAuthToken -Token $(MSCODEHUBPAT)
+        Set-AzDoProjectInfo -ProjectOwner mscodehub -ProjectName PowerShellCore
+        $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
+        $releaseVersion = $metadata.ReleaseVersion -replace '^v',''
+        $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
+        $isPreview = $semanticVersion.PreReleaseLabel -ne $null
+
+        if (-not $isPreview) {
+          $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 1238  -Branch '$(Build.SourceBranch)' -Tag $metadata.ReleaseVersion, 'InProgress' -PassThru
+          Write-Verbose -Verbose "Kicked off vPack build: $($buildInvocationInfo.WebUrl)"
+          $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -timeoutMinutes 60
+          if ($status.result -ne 'Succeeded') {
+            throw "There are errors in snap build!!"
+          }
+          else {
+            $buildInvocationInfo | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -tag 'SignedOff'
+          }
+        }
+        else {
+          Write-Verbose -Verbose "This is a preview release with version: $semanticVersion skipping releasing vPack"
+        }
+
+- stage: ReleaseDeps
+  dependsOn: GitHubManualTasks
+  displayName: Update pwsh.deps.json links
+  jobs:
+  - template: templates/release-UpdateDepsJson.yml
+
+- stage: ReleaseClose
+  displayName: Finish Release
+  dependsOn:
+  - ReleaseVPack
+  - BuildInfoJson
+  - UpdateDotnetDocker
+  - ReleaseDocker
+  - ReleaseSnap
+  - ChangesToMaster
+  - ReleaseDeps
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Retain Build
+      jobName: RetainBuild
+      instructions: |
+        Retain the build
+
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Delete release branch
+      jobName: DeleteBranch
+      instructions: |
+        Delete release

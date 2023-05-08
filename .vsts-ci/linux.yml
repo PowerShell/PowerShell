@@ -1,3 +1,12 @@
+parameters:
+  - name: ContainerPattern
+    displayName: |
+      Pattern to match JobName of the container.
+      Update this to force a container.
+      `.` will match everything
+    type: string
+    default: .
+
 name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
 trigger:
   # Batch merge builds together while a merge build is running
@@ -11,10 +20,10 @@ trigger:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/**/*
-    - /.vsts-ci/misc-analysis.yml
-    - /.github/ISSUE_TEMPLATE/*
-    - /.dependabot/config.yml
+    - .vsts-ci/misc-analysis.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .dependabot/config.yml
+    - test/perf/*
 pr:
   branches:
     include:
@@ -25,73 +34,137 @@ pr:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/**/*
-    - /.vsts-ci/misc-analysis.yml
-    - /.github/ISSUE_TEMPLATE/*
-    - /.dependabot/config.yml
+    - .dependabot/config.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .vsts-ci/misc-analysis.yml
+    - .vsts-ci/windows.yml
+    - .vsts-ci/windows/*
+    - tools/cgmanifest.json
+    - LICENSE.txt
+    - test/common/markdown/*
+    - test/perf/*
+    - tools/releaseBuild/*
+    - tools/install*
+    - tools/releaseBuild/azureDevOps/templates/*
+    - README.md
+    - .spelling
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
   # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  __SuppressAnsiEscapeSequences: 1
 
 resources:
-- repo: self
-  clean: true
-jobs:
-- template: templates/ci-build.yml
-  parameters:
-    pool: Hosted Ubuntu 1604
-    jobName: linux_build
-    displayName: linux Build
+  repositories:
+    - repository: Docker
+      type: github
+      endpoint: PowerShell
+      name: PowerShell/PowerShell-Docker
+      ref: master
 
-- template: templates/nix-test.yml
-  parameters:
-    name: Linux
-    pool: Hosted Ubuntu 1604
-    purpose: UnelevatedPesterTests
-    tagSet: CI
-    parentJobs:
-      - linux_build
+stages:
+- stage: BuildLinuxStage
+  displayName: Build for Linux
+  jobs:
+  - template: templates/ci-build.yml
+    parameters:
+      pool: ubuntu-20.04
+      jobName: linux_build
+      displayName: linux Build
 
-- template: templates/nix-test.yml
-  parameters:
-    name: Linux
-    pool: Hosted Ubuntu 1604
-    purpose: ElevatedPesterTests
-    tagSet: CI
-    parentJobs:
-      - linux_build
+- stage: TestUbuntu
+  displayName: Test for Ubuntu
+  dependsOn: [BuildLinuxStage]
+  jobs:
+  - template: templates/nix-test.yml
+    parameters:
+      name: Ubuntu
+      pool: ubuntu-20.04
+      purpose: UnelevatedPesterTests
+      tagSet: CI
 
-- template: templates/nix-test.yml
-  parameters:
-    name: Linux
-    pool: Hosted Ubuntu 1604
-    purpose: UnelevatedPesterTests
-    tagSet: Others
-    parentJobs:
-      - linux_build
+  - template: templates/nix-test.yml
+    parameters:
+      name: Ubuntu
+      pool: ubuntu-20.04
+      purpose: ElevatedPesterTests
+      tagSet: CI
 
-- template: templates/nix-test.yml
-  parameters:
-    name: Linux
-    pool: Hosted Ubuntu 1604
-    purpose: ElevatedPesterTests
-    tagSet: Others
-    parentJobs:
-      - linux_build
+  - template: templates/nix-test.yml
+    parameters:
+      name: Ubuntu
+      pool: ubuntu-20.04
+      purpose: UnelevatedPesterTests
+      tagSet: Others
 
-- template: templates/verify-xunit.yml
-  parameters:
-    pool: Hosted Ubuntu 1604
-    parentJobs:
-      - linux_build
+  - template: templates/nix-test.yml
+    parameters:
+      name: Ubuntu
+      pool: ubuntu-20.04
+      purpose: ElevatedPesterTests
+      tagSet: Others
 
-- job: CodeCovTestPackage
-  displayName: CodeCoverage and Test Packages
-  steps:
-  - powershell: |
-      Import-Module .\tools\ci.psm1
-      New-CodeCoverageAndTestPackage
-    displayName: CodeCoverage and Test Package
+  - template: templates/verify-xunit.yml
+    parameters:
+      pool: ubuntu-20.04
+
+- stage: TestContainer
+  displayName: Test in a container
+  dependsOn: [BuildLinuxStage]
+  jobs:
+  - job: getContainerJob
+    displayName: Choose a container
+    pool:
+      vmImage: ubuntu-20.04
+    steps:
+    - checkout: self
+      clean: true
+
+    - checkout: Docker
+      clean: true
+
+    - pwsh: |
+        # Initialize container test stage
+        Import-Module ./PowerShell/tools/ci.psm1
+        Invoke-InitializeContainerStage -ContainerPattern '${{ parameters.ContainerPattern }}'
+      name: getContainerTask
+      displayName: Initialize Container Stage
+      continueOnError: true
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: UnelevatedPesterTests
+      tagSet: CI
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: ElevatedPesterTests
+      tagSet: CI
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: UnelevatedPesterTests
+      tagSet: Others
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: ElevatedPesterTests
+      tagSet: Others
+
+- stage: PackageLinux
+  displayName: Package Linux
+  dependsOn: ["BuildLinuxStage"]
+  jobs:
+  - template: linux/templates/packaging.yml
+    parameters:
+      pool: ubuntu-20.04

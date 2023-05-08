@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -34,7 +34,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
         {
-            get { return Path; }
+            get
+            {
+                return Path;
+            }
 
             set
             {
@@ -108,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
         /// An array of content holder objects that contain the path information
         /// and content readers/writers for the item represented by the path information.
         /// </summary>
-        internal List<ContentHolder> contentStreams = new List<ContentHolder>();
+        internal List<ContentHolder> contentStreams = new();
 
         /// <summary>
         /// Wraps the content into a PSObject and adds context information as notes.
@@ -150,13 +153,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (_currentContentItem != null &&
                 ((_currentContentItem.PathInfo == pathInfo) ||
-                 (
-                    string.Compare(
+                    string.Equals(
                         pathInfo.Path,
                         _currentContentItem.PathInfo.Path,
-                        StringComparison.OrdinalIgnoreCase) == 0)
-                    )
-                )
+                        StringComparison.OrdinalIgnoreCase)))
             {
                 result = _currentContentItem.AttachNotes(result);
             }
@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Construct a provider qualified path as the Path note
 
-                PSNoteProperty note = new PSNoteProperty("PSPath", PSPath);
+                PSNoteProperty note = new("PSPath", PSPath);
                 content.Properties.Add(note, true);
                 tracer.WriteLine("Attaching {0} = {1}", "PSPath", PSPath);
 
@@ -339,7 +339,7 @@ namespace Microsoft.PowerShell.Commands
         /// A struct to hold the path information and the content readers/writers
         /// for an item.
         /// </summary>
-        internal struct ContentHolder
+        internal readonly struct ContentHolder
         {
             internal ContentHolder(
                 PathInfo pathInfo,
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (pathInfo == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("pathInfo");
+                    throw PSTraceSource.NewArgumentNullException(nameof(pathInfo));
                 }
 
                 PathInfo = pathInfo;
@@ -370,17 +370,14 @@ namespace Microsoft.PowerShell.Commands
         {
             if (contentHolders == null)
             {
-                throw PSTraceSource.NewArgumentNullException("contentHolders");
+                throw PSTraceSource.NewArgumentNullException(nameof(contentHolders));
             }
 
             foreach (ContentHolder holder in contentHolders)
             {
                 try
                 {
-                    if (holder.Writer != null)
-                    {
-                        holder.Writer.Close();
-                    }
+                    holder.Writer?.Close();
                 }
                 catch (Exception e) // Catch-all OK. 3rd party callout
                 {
@@ -388,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
                     // and write out an error.
 
                     ProviderInvocationException providerException =
-                        new ProviderInvocationException(
+                        new(
                             "ProviderContentCloseError",
                             SessionStateStrings.ProviderContentCloseError,
                             holder.PathInfo.Provider,
@@ -414,10 +411,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (holder.Reader != null)
-                    {
-                        holder.Reader.Close();
-                    }
+                    holder.Reader?.Close();
                 }
                 catch (Exception e) // Catch-all OK. 3rd party callout
                 {
@@ -425,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
                     // and write out an error.
 
                     ProviderInvocationException providerException =
-                        new ProviderInvocationException(
+                        new(
                             "ProviderContentCloseError",
                             SessionStateStrings.ProviderContentCloseError,
                             holder.PathInfo.Provider,
@@ -483,7 +477,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Create the results array
 
-            List<ContentHolder> results = new List<ContentHolder>();
+            List<ContentHolder> results = new();
 
             foreach (PathInfo pathInfo in pathInfos)
             {
@@ -541,7 +535,7 @@ namespace Microsoft.PowerShell.Commands
                     if (readers.Count == 1 && readers[0] != null)
                     {
                         ContentHolder holder =
-                            new ContentHolder(pathInfo, readers[0], null);
+                            new(pathInfo, readers[0], null);
 
                         results.Add(holder);
                     }
@@ -576,7 +570,7 @@ namespace Microsoft.PowerShell.Commands
             bool allowEmptyResult,
             CmdletProviderContext currentCommandContext)
         {
-            Collection<PathInfo> results = new Collection<PathInfo>();
+            Collection<PathInfo> results = new();
 
             foreach (string path in pathsToResolve)
             {
@@ -656,7 +650,7 @@ namespace Microsoft.PowerShell.Commands
                                 out drive);
 
                         PathInfo pathInfo =
-                            new PathInfo(
+                            new(
                                 drive,
                                 provider,
                                 unresolvedPath,
@@ -669,7 +663,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Detect if the path resolution failed to resolve to a file.
                             string error = StringUtil.Format(NavigationResources.ItemNotFound, Path);
-                            Exception e = new Exception(error);
+                            Exception e = new(error);
 
                             pathNotFoundErrorRecord = new ErrorRecord(
                                 e,
@@ -708,14 +702,6 @@ namespace Microsoft.PowerShell.Commands
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Finalizer.
-        /// </summary>
-        ~ContentCommandBase()
-        {
-            Dispose(false);
-        }
         #endregion IDisposable
-
     }
 }

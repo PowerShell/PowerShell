@@ -1,5 +1,5 @@
 #!/usr/bin/env powershell
 
-get-process
-get-module
+Get-Process
+Get-Module
 

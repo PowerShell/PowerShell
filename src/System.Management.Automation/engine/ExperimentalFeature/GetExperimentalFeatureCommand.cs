@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -13,7 +13,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Get-ExperimentalFeature cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ExperimentalFeature", HelpUri = "https://go.microsoft.com/fwlink/?linkid=2007351")]
+    [Cmdlet(VerbsCommon.Get, "ExperimentalFeature", HelpUri = "https://go.microsoft.com/fwlink/?linkid=2096786")]
+    [OutputType(typeof(ExperimentalFeature))]
     public class GetExperimentalFeatureCommand : PSCmdlet
     {
         /// <summary>
@@ -87,17 +88,26 @@ namespace Microsoft.PowerShell.Commands
             foreach (string path in ModuleIntrinsics.GetModulePath(includeSystemModulePath: false, Context))
             {
                 string uniquePath = path.TrimEnd(Utils.Separators.Directory);
-                if (!modulePaths.Add(uniquePath)) { continue; }
+                if (!modulePaths.Add(uniquePath))
+                {
+                    continue;
+                }
 
                 foreach (string moduleFile in ModuleUtils.GetDefaultAvailableModuleFiles(uniquePath))
                 {
                     // We only care about module manifest files because that's where experimental features are declared.
-                    if (!moduleFile.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase)) { continue; }
+                    if (!moduleFile.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
 
                     if (moduleNamesToFind != null)
                     {
                         string currentModuleName = ModuleIntrinsics.GetModuleName(moduleFile);
-                        if (!moduleNamesToFind.Contains(currentModuleName)) { continue; }
+                        if (!moduleNamesToFind.Contains(currentModuleName))
+                        {
+                            continue;
+                        }
                     }
 
                     yield return moduleFile;

@@ -1,13 +1,24 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
+        $pendingTest = (Test-IsWinWow64)
+        $skipTest = !$IsWindows
 
-        if (!$IsWindows)
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        if ($pendingTest -or $skipTest)
         {
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
+            if ($skipTest)
+            {
+                $PSDefaultParameterValues["it:skip"] = $true
+            }
+            elseif ($pendingTest)
+            {
+                $PSDefaultParameterValues["it:pending"] = $true
+            }
+
             return
         }
 
@@ -18,7 +29,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     AfterAll {
 
-        if (!$IsWindows)
+        if ($pendingTest -or $skipTest)
         {
             $global:PSDefaultParameterValues = $originalDefaultParameterValues
             return
@@ -49,7 +60,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
         }
         $modules = Get-Module @parameters
         $modules | Should -Not -BeNullOrEmpty
-        $modules[0] | Should -BeOfType "System.Management.Automation.PSModuleInfo"
+        $modules[0] | Should -BeOfType System.Management.Automation.PSModuleInfo
     }
 
     It "Get-Module can be called as an API with '<parameter>' = '<value>'" -TestCases @(
@@ -74,7 +85,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
         $getModuleCommand = [Microsoft.PowerShell.Commands.GetModuleCommand]::new()
         $getModuleCommand.$parameter = $value
         if ($parameter -eq "FullyQualifiedName") {
-            $getModuleCommand.FullyQualifiedName | Should -BeOfType "Microsoft.PowerShell.Commands.ModuleSpecification"
+            $getModuleCommand.FullyQualifiedName | Should -BeOfType Microsoft.PowerShell.Commands.ModuleSpecification
             $getModuleCommand.FullyQualifiedName.Name | Should -BeExactly "foo"
             $getModuleCommand.FullyQualifiedName.Version | Should -Be "1.2.3"
         } else {

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 [cmdletbinding(DefaultParameterSetName='default')]
 # PowerShell Script to clone, build and package PowerShell from specified fork and branch
@@ -7,25 +7,27 @@ param (
 
     [string] $branch = 'master',
 
-    [string] $location = "$pwd\powershell",
+    [string] $location = "$PWD\powershell",
 
     [string] $destination = "$env:WORKSPACE",
 
-    [ValidateSet("win7-x64", "win7-x86", "win-arm", "win-arm64", "fxdependent")]
-    [string]$Runtime = 'win7-x64',
+    [ValidateSet("win7-x64", "win7-x86", "win-arm", "win-arm64", "fxdependent", "fxdependent-win-desktop")]
+    [string] $Runtime = 'win7-x64',
+
+    [switch] $ForMinimalSize,
 
     [switch] $Wait,
 
-    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
     [ValidateNotNullOrEmpty()]
-    [string]$ReleaseTag,
+    [string] $ReleaseTag,
 
     [Parameter(Mandatory,ParameterSetName='IncludeSymbols')]
     [switch] $Symbols,
 
     [Parameter(Mandatory,ParameterSetName='packageSigned')]
     [ValidatePattern("-signed.zip$")]
-    [string]$BuildZip,
+    [string] $BuildZip,
 
     [Parameter(Mandatory,ParameterSetName='ComponentRegistration')]
     [switch] $ComponentRegistration
@@ -63,23 +65,24 @@ if ($memoryMB -lt $requiredMemoryMB)
 }
 Write-Verbose "Running with $memoryMB MB memory." -Verbose
 
-try{
+try
+{
     Set-Location $location
 
     Import-Module "$location\build.psm1" -Force
     Import-Module "$location\tools\packaging" -Force
     $env:platform = $null
 
-    Write-Verbose "Sync'ing Tags..." -verbose
+    Write-Verbose "Sync'ing Tags..." -Verbose
     Sync-PSTags -AddRemoteIfMissing
 
-    Write-Verbose "Bootstrapping powershell build..." -verbose
-    Start-PSBootstrap -Force -Package
+    Write-Verbose "Bootstrapping powershell build..." -Verbose
+    Start-PSBootstrap -Force -Package -ErrorAction Stop
 
     if ($PSCmdlet.ParameterSetName -eq 'packageSigned')
     {
-        Write-Verbose "Expanding signed build..." -verbose
-        if($Runtime -eq 'fxdependent')
+        Write-Verbose "Expanding signed build..." -Verbose
+        if($Runtime -like 'fxdependent*')
         {
             Expand-PSSignedBuild -BuildZip $BuildZip -SkipPwshExeCheck
         }
@@ -92,10 +95,12 @@ try{
     }
     else
     {
-        Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -verbose
-        $buildParams = @{'CrossGen'= $Runtime -notmatch "arm" -and $Runtime -ne "fxdependent"}
+        Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -Verbose
+        $buildParams = @{
+            ForMinimalSize = $ForMinimalSize
+        }
 
-        if($Symbols.IsPresent)
+        if($Symbols)
         {
             $buildParams['NoPSModuleRestore'] = $true
         }
@@ -107,59 +112,9 @@ try{
         Start-PSBuild -Clean -Runtime $Runtime -Configuration Release @releaseTagParam @buildParams
     }
 
-    if ($Runtime -eq 'fxdependent')
+    if ($ComponentRegistration)
     {
-        $pspackageParams = @{'Type'='fxdependent'}
-    }
-    else
-    {
-        $pspackageParams = @{'Type'='msi'; 'WindowsRuntime'=$Runtime}
-    }
-
-    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch 'arm' -and $Runtime -ne 'fxdependent')
-    {
-        Write-Verbose "Starting powershell packaging(msi)..." -verbose
-        Start-PSPackage @pspackageParams @releaseTagParam
-    }
-
-    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notin 'win7-x86','fxdependent')
-    {
-        $pspackageParams['Type']='msix'
-        Write-Verbose "Starting powershell packaging(msix)..." -verbose
-        Start-PSPackage @pspackageParams @releaseTagParam
-    }
-
-    if (!$ComponentRegistration.IsPresent -and $Runtime -ne 'fxdependent')
-    {
-        $pspackageParams['Type']='zip'
-        $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
-        Write-Verbose "Starting powershell packaging(zip)..." -verbose
-        Start-PSPackage @pspackageParams @releaseTagParam
-
-        Write-Verbose "Exporting packages ..." -verbose
-
-        Get-ChildItem $location\*.msi,$location\*.zip,$location\*.wixpdb,$location\*.msix | ForEach-Object {
-            $file = $_.FullName
-            Write-Verbose "Copying $file to $destination" -verbose
-            Copy-Item -Path $file -Destination "$destination\" -Force
-        }
-    }
-    elseif (!$ComponentRegistration.IsPresent -and $Runtime -eq 'fxdependent')
-    {
-        ## Add symbols for just like zip package.
-        $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
-        Start-PSPackage @pspackageParams @releaseTagParam
-
-        ## Copy the fxdependent Zip package to destination.
-        Get-ChildItem $location\PowerShell-*.zip | ForEach-Object {
-            $file = $_.FullName
-            Write-Verbose "Copying $file to $destination" -verbose
-            Copy-Item -Path $file -Destination "$destination\" -Force
-        }
-    }
-    else
-    {
-        Write-Verbose "Exporting project.assets files ..." -verbose
+        Write-Verbose "Exporting project.assets files ..." -Verbose
 
         $projectAssetsCounter = 1
         $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
@@ -168,22 +123,86 @@ try{
             $subfolder = $_.FullName.Replace($location,'')
             $subfolder.Replace('project.assets.json','')
             $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $subfolder
-                    New-Item -Path $itemDestination -ItemType Directory -Force
+            New-Item -Path $itemDestination -ItemType Directory -Force > $null
             $file = $_.FullName
-            Write-Verbose "Copying $file to $itemDestination" -verbose
+            Write-Verbose "Copying $file to $itemDestination" -Verbose
             Copy-Item -Path $file -Destination "$itemDestination\" -Force
             $projectAssetsCounter++
         }
 
         Compress-Archive -Path $projectAssetsFolder -DestinationPath $projectAssetsZip
         Remove-Item -Path $projectAssetsFolder -Recurse -Force -ErrorAction SilentlyContinue
+
+        return
     }
 
+    if ($Runtime -like 'fxdependent*')
+    {
+        $pspackageParams = @{'Type' = $Runtime}
+    }
+    else
+    {
+        ## Set the default package type.
+        $pspackageParams = @{'Type' = 'msi'; 'WindowsRuntime' = $Runtime}
+        if ($ForMinimalSize)
+        {
+            ## Special case for the minimal size self-contained package.
+            $pspackageParams['Type'] = 'min-size'
+        }
+    }
+
+    if (!$Symbols -and $Runtime -notlike 'fxdependent*' -and !$ForMinimalSize)
+    {
+        if ($Runtime -notmatch 'arm')
+        {
+            Write-Verbose "Starting powershell packaging(msi)..." -Verbose
+            Start-PSPackage @pspackageParams @releaseTagParam
+        }
+
+        $pspackageParams['Type']='msix'
+        Write-Verbose "Starting powershell packaging(msix)..." -Verbose
+        Start-PSPackage @pspackageParams @releaseTagParam
+    }
+
+    if ($Runtime -like 'fxdependent*' -or $ForMinimalSize)
+    {
+        ## Add symbols for just like zip package.
+        $pspackageParams['IncludeSymbols']=$Symbols
+        Start-PSPackage @pspackageParams @releaseTagParam
+
+        ## Copy the fxdependent Zip package to destination.
+        Get-ChildItem $location\PowerShell-*.zip | ForEach-Object {
+            $file = $_.FullName
+            Write-Verbose "Copying $file to $destination" -Verbose
+            Copy-Item -Path $file -Destination "$destination\" -Force
+        }
+    }
+    else
+    {
+        if (!$Symbols) {
+            $pspackageParams['Type'] = 'zip-pdb'
+            Write-Verbose "Starting powershell symbols packaging(zip)..." -Verbose
+            Start-PSPackage @pspackageParams @releaseTagParam
+        }
+
+        $pspackageParams['Type']='zip'
+        $pspackageParams['IncludeSymbols']=$Symbols
+        Write-Verbose "Starting powershell packaging(zip)..." -Verbose
+        Start-PSPackage @pspackageParams @releaseTagParam
+
+        Write-Verbose "Exporting packages ..." -Verbose
+
+        Get-ChildItem $location\*.msi,$location\*.zip,$location\*.wixpdb,$location\*.msix,$location\*.exe | ForEach-Object {
+            $file = $_.FullName
+            Write-Verbose "Copying $file to $destination" -Verbose
+            Copy-Item -Path $file -Destination "$destination\" -Force
+        }
+    }
 }
 finally
 {
-    Write-Verbose "Beginning build clean-up..." -verbose
-    if ($Wait.IsPresent)
+    Write-Verbose "Beginning build clean-up..." -Verbose
+    if ($Wait)
     {
         $path = Join-Path $PSScriptRoot -ChildPath 'delete-to-continue.txt'
         $null = New-Item -Path $path -ItemType File

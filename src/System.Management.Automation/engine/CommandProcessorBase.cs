@@ -1,12 +1,11 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-
-using Dbg = System.Management.Automation.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace System.Management.Automation
 {
@@ -35,7 +34,7 @@ namespace System.Management.Automation
         {
             if (commandInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
 
             if (commandInfo is IScriptCommandInfo scriptCommand)
@@ -46,6 +45,7 @@ namespace System.Management.Automation
                     string errorTemplate = expAttribute.ExperimentAction == ExperimentAction.Hide
                         ? DiscoveryExceptions.ScriptDisabledWhenFeatureOn
                         : DiscoveryExceptions.ScriptDisabledWhenFeatureOff;
+
                     string errorMsg = StringUtil.Format(errorTemplate, expAttribute.ExperimentName);
                     ErrorRecord errorRecord = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
@@ -54,6 +54,8 @@ namespace System.Management.Automation
                         commandInfo);
                     throw new CmdletInvocationException(errorRecord);
                 }
+
+                HasCleanBlock = scriptCommand.ScriptBlock.HasCleanBlock;
             }
 
             CommandInfo = commandInfo;
@@ -86,6 +88,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <value></value>
         internal CommandInfo CommandInfo { get; set; }
+
+        /// <summary>
+        /// Gets whether the command has a 'Clean' block defined.
+        /// </summary>
+        internal bool HasCleanBlock { get; }
 
         /// <summary>
         /// This indicates whether this command processor is created from
@@ -121,7 +128,10 @@ namespace System.Management.Automation
         /// </summary>
         internal InternalCommand Command
         {
-            get { return _command; }
+            get
+            {
+                return _command;
+            }
 
             set
             {
@@ -149,6 +159,7 @@ namespace System.Management.Automation
         {
             get { return null; }
         }
+
         // Full Qualified ID for the obsolete command warning
         private const string FQIDCommandObsolete = "CommandObsolete";
 
@@ -156,6 +167,7 @@ namespace System.Management.Automation
         /// The command runtime used for this instance of a command processor.
         /// </summary>
         protected MshCommandRuntime commandRuntime;
+
         internal MshCommandRuntime CommandRuntime
         {
             get { return commandRuntime; }
@@ -230,6 +242,7 @@ namespace System.Management.Automation
         /// The execution context used by the system.
         /// </summary>
         protected ExecutionContext _context;
+
         internal ExecutionContext Context
         {
             get { return _context; }
@@ -254,7 +267,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpTarget">Help target to request.</param>
         /// <param name="helpCategory">Help category to request.</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if user requested help; <see langword="false"/> otherwise.</returns>
         internal virtual bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             // by default we don't handle "-?" parameter at all
@@ -278,12 +291,12 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             if (string.IsNullOrEmpty(helpTarget))
             {
-                throw PSTraceSource.NewArgumentNullException("helpTarget");
+                throw PSTraceSource.NewArgumentNullException(nameof(helpTarget));
             }
 
             CommandProcessorBase helpCommandProcessor = context.CreateCommand("get-help", false);
@@ -339,10 +352,7 @@ namespace System.Management.Automation
             // Make sure we have a session state instance for this command.
             // If one hasn't been explicitly set, then use the session state
             // available on the engine execution context...
-            if (CommandSessionState == null)
-            {
-                CommandSessionState = Context.EngineSessionState;
-            }
+            CommandSessionState ??= Context.EngineSessionState;
 
             // Store off the current scope
             _previousScope = CommandSessionState.CurrentScope;
@@ -365,13 +375,10 @@ namespace System.Management.Automation
 
             Context.EngineSessionState = _previousCommandSessionState;
 
-            if (_previousScope != null)
-            {
-                // Restore the scope but use the same session state instance we
-                // got it from because the command may have changed the execution context
-                // session state...
-                CommandSessionState.CurrentScope = _previousScope;
-            }
+            // Restore the scope but use the same session state instance we
+            // got it from because the command may have changed the execution context
+            // session state...
+            CommandSessionState.CurrentScope = _previousScope;
         }
 
         private SessionStateScope _previousScope;
@@ -446,16 +453,14 @@ namespace System.Management.Automation
                     HandleObsoleteCommand(ObsoleteAttribute);
                 }
             }
-            catch (Exception)
+            catch (InvalidComObjectException e)
             {
-                if (_useLocalScope)
-                {
-                    // If we had an exception during Prepare, we're done trying to execute the command
-                    // so the scope we created needs to release any resources it hold.s
-                    CommandSessionState.RemoveScope(CommandScope);
-                }
+                // This type of exception could be thrown from parameter binding.
+                string msg = StringUtil.Format(ParserStrings.InvalidComObjectException, e.Message);
+                var newEx = new RuntimeException(msg, e);
 
-                throw;
+                newEx.SetErrorId("InvalidComObjectException");
+                throw newEx;
             }
             finally
             {
@@ -502,26 +507,23 @@ namespace System.Management.Automation
                     // The RedirectShellErrorOutputPipe flag is used by the V2 hosting API to force the
                     // redirection.
                     //
-                    if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe != null)
+                    if (RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe is not null)
                     {
-                        _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
+                        _context.ShellFunctionErrorOutputPipe = commandRuntime.ErrorOutputPipe;
                     }
 
                     _context.CurrentCommandProcessor = this;
+                    SetCurrentScopeToExecutionScope();
+
                     using (commandRuntime.AllowThisCommandToWrite(true))
+                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING BeginProcessing"))
                     {
-                        using (ParameterBinderBase.bindingTracer.TraceScope(
-                            "CALLING BeginProcessing"))
+                        if (Context._debuggingMode > 0 && Command is not PSScriptCmdlet)
                         {
-                            SetCurrentScopeToExecutionScope();
-
-                            if (Context._debuggingMode > 0 && !(Command is PSScriptCmdlet))
-                            {
-                                Context.Debugger.CheckCommand(this.Command.MyInvocation);
-                            }
-
-                            Command.DoBeginProcessing();
+                            Context.Debugger.CheckCommand(Command.MyInvocation);
                         }
+
+                        Command.DoBeginProcessing();
                     }
                 }
                 catch (Exception e)
@@ -583,20 +585,14 @@ namespace System.Management.Automation
             try
             {
                 using (commandRuntime.AllowThisCommandToWrite(true))
+                using (ParameterBinderBase.bindingTracer.TraceScope("CALLING EndProcessing"))
                 {
-                    using (ParameterBinderBase.bindingTracer.TraceScope(
-                        "CALLING EndProcessing"))
-                    {
-                        this.Command.DoEndProcessing();
-                    }
+                    this.Command.DoEndProcessing();
                 }
             }
-            // 2004/03/18-JonN This is understood to be
-            // an FXCOP violation, cleared by KCwalina.
             catch (Exception e)
             {
-                // This cmdlet threw an exception, so
-                // wrap it and bubble it up.
+                // This cmdlet threw an exception, wrap it as needed and bubble it up.
                 throw ManageInvocationException(e);
             }
         }
@@ -625,44 +621,119 @@ namespace System.Management.Automation
                 // The RedirectShellErrorOutputPipe flag is used by the V2 hosting API to force the
                 // redirection.
                 //
-                if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe != null)
+                if (RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe is not null)
                 {
-                    _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
+                    _context.ShellFunctionErrorOutputPipe = commandRuntime.ErrorOutputPipe;
                 }
 
                 _context.CurrentCommandProcessor = this;
-
                 SetCurrentScopeToExecutionScope();
                 Complete();
             }
             finally
             {
-                OnRestorePreviousScope();
-
                 _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
                 _context.CurrentCommandProcessor = oldCurrentCommandProcessor;
 
-                // Destroy the local scope at this point if there is one...
-                if (_useLocalScope && CommandScope != null)
-                {
-                    CommandSessionState.RemoveScope(CommandScope);
-                }
+                RestorePreviousScope();
+            }
+        }
 
-                // and the previous scope...
-                if (_previousScope != null)
+        protected virtual void CleanResource()
+        {
+            try
+            {
+                using (commandRuntime.AllowThisCommandToWrite(permittedToWriteToPipeline: true))
+                using (ParameterBinderBase.bindingTracer.TraceScope("CALLING CleanResource"))
                 {
-                    // Restore the scope but use the same session state instance we
-                    // got it from because the command may have changed the execution context
-                    // session state...
-                    CommandSessionState.CurrentScope = _previousScope;
-                }
-
-                // Restore the previous session state
-                if (_previousCommandSessionState != null)
-                {
-                    Context.EngineSessionState = _previousCommandSessionState;
+                    Command.DoCleanResource();
                 }
             }
+            catch (HaltCommandException)
+            {
+                throw;
+            }
+            catch (FlowControlException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                // This cmdlet threw an exception, so wrap it and bubble it up.
+                throw ManageInvocationException(e);
+            }
+        }
+
+        internal void DoCleanup()
+        {
+            // The property 'PropagateExceptionsToEnclosingStatementBlock' controls whether a general exception
+            // (an exception thrown from a .NET method invocation, or an expression like '1/0') will be turned
+            // into a terminating error, which will be propagated up and thus stop the rest of the running script.
+            // It is usually used by TryStatement and TrapStatement, which makes the general exception catch-able.
+            //
+            // For the 'Clean' block, we don't want to bubble up the general exception when the command is enclosed
+            // in a TryStatement or has TrapStatement accompanying, because no exception can escape from 'Clean' and
+            // thus it's pointless to bubble up the general exception in this case.
+            //
+            // Therefore we set this property to 'false' here to mask off the previous setting that could be from a
+            // TryStatement or TrapStatement. Example:
+            //   PS:1> function b { end {} clean { 1/0; Write-Host 'clean' } }
+            //   PS:2> b
+            //   RuntimeException: Attempted to divide by zero.
+            //   clean
+            //   ## Note that, outer 'try/trap' doesn't affect the general exception happens in 'Clean' block.
+            //   ## so its behavior is consistent regardless of whether the command is enclosed by 'try/catch' or not.
+            //   PS:3> try { b } catch { 'outer catch' }
+            //   RuntimeException: Attempted to divide by zero.
+            //   clean
+            //
+            // Be noted that, this doesn't affect the TryStatement/TrapStatement within the 'Clean' block. Example:
+            //   ## 'try/trap' within 'Clean' block makes the general exception catch-able.
+            //   PS:3> function a { end {} clean { try { 1/0; Write-Host 'clean' } catch { Write-Host "caught: $_" } } }
+            //   PS:4> a
+            //   caught: Attempted to divide by zero.
+            bool oldExceptionPropagationState = _context.PropagateExceptionsToEnclosingStatementBlock;
+            _context.PropagateExceptionsToEnclosingStatementBlock = false;
+
+            Pipe oldErrorOutputPipe = _context.ShellFunctionErrorOutputPipe;
+            CommandProcessorBase oldCurrentCommandProcessor = _context.CurrentCommandProcessor;
+
+            try
+            {
+                if (RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe is not null)
+                {
+                    _context.ShellFunctionErrorOutputPipe = commandRuntime.ErrorOutputPipe;
+                }
+
+                _context.CurrentCommandProcessor = this;
+                SetCurrentScopeToExecutionScope();
+                CleanResource();
+            }
+            finally
+            {
+                _context.PropagateExceptionsToEnclosingStatementBlock = oldExceptionPropagationState;
+                _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
+                _context.CurrentCommandProcessor = oldCurrentCommandProcessor;
+
+                RestorePreviousScope();
+            }
+        }
+
+        internal void ReportCleanupError(Exception exception)
+        {
+            var error = exception is IContainsErrorRecord icer
+                ? icer.ErrorRecord
+                : new ErrorRecord(exception, "Clean.ReportException", ErrorCategory.NotSpecified, targetObject: null);
+
+            PSObject errorWrap = PSObject.AsPSObject(error);
+            errorWrap.WriteStream = WriteStreamType.Error;
+
+            var errorPipe = commandRuntime.ErrorMergeTo == MshCommandRuntime.MergeDataStream.Output
+                ? commandRuntime.OutputPipe
+                : commandRuntime.ErrorOutputPipe;
+
+            errorPipe.Add(errorWrap);
+            _context.QuestionMarkVariableValue = false;
         }
 
         /// <summary>
@@ -771,23 +842,16 @@ namespace System.Management.Automation
                 {
                     do // false loop
                     {
-                        ProviderInvocationException pie = e as ProviderInvocationException;
-                        if (pie != null)
+                        if (e is ProviderInvocationException pie)
                         {
-                            // If a ProviderInvocationException occurred,
-                            // discard the ProviderInvocationException and
-                            // re-wrap in CmdletProviderInvocationException
-                            e = new CmdletProviderInvocationException(
-                                pie,
-                                Command.MyInvocation);
+                            // If a ProviderInvocationException occurred, discard the ProviderInvocationException
+                            // and re-wrap it in CmdletProviderInvocationException.
+                            e = new CmdletProviderInvocationException(pie, Command.MyInvocation);
                             break;
                         }
 
-                        // 1021203-2005/05/09-JonN
-                        // HaltCommandException will cause the command
-                        // to stop, but not be reported as an error.
-                        // 906445-2005/05/16-JonN
-                        // FlowControlException should not be wrapped
+                        // HaltCommandException will cause the command to stop, but not be reported as an error.
+                        // FlowControlException should not be wrapped.
                         if (e is PipelineStoppedException
                             || e is CmdletInvocationException
                             || e is ActionPreferenceStopException
@@ -807,9 +871,7 @@ namespace System.Management.Automation
                         }
 
                         // wrap all other exceptions
-                        e = new CmdletInvocationException(
-                                    e,
-                                    Command.MyInvocation);
+                        e = new CmdletInvocationException(e, Command.MyInvocation);
                     } while (false);
 
                     // commandRuntime.ManageException will always throw PipelineStoppedException
@@ -894,7 +956,7 @@ namespace System.Management.Automation
 
                 // An explicit throw is written to $error as an ErrorRecord, so we
                 // skip adding what is more or less a duplicate.
-                if (!(e is PipelineStoppedException) && !e.WasThrownFromThrowStatement)
+                if (e is not PipelineStoppedException && !e.WasThrownFromThrowStatement)
                     commandRuntime.AppendErrorToVariables(e);
             }
             // Upstream cmdlets see only that execution stopped
@@ -937,29 +999,33 @@ namespace System.Management.Automation
         private void Dispose(bool disposing)
         {
             if (_disposed)
+            {
                 return;
+            }
 
             if (disposing)
             {
-                // 2004/03/05-JonN Look into using metadata to check
-                // whether IDisposable is implemented, in order to avoid
-                // this expensive reflection cast.
-                IDisposable id = Command as IDisposable;
-                if (id != null)
+                if (UseLocalScope)
+                {
+                    // Clean up the PS drives that are associated with this local scope.
+                    // This operation may be needed at multiple stages depending on whether the 'clean' block is declared:
+                    //  1. when there is a 'clean' block, it needs to be done only after 'clean' block runs, because the scope
+                    //     needs to be preserved until the 'clean' block finish execution.
+                    //  2. when there is no 'clean' block, it needs to be done when
+                    //      (1) there is any exception thrown from 'DoPrepare()', 'DoBegin()', 'DoExecute()', or 'DoComplete';
+                    //      (2) OR, the command runs to the end successfully;
+                    // Doing this cleanup at those multiple stages is cumbersome. Since we will always dispose the command in
+                    // the end, doing this cleanup here will cover all the above cases.
+                    CommandSessionState.RemoveScope(CommandScope);
+                }
+
+                if (Command is IDisposable id)
                 {
                     id.Dispose();
                 }
             }
 
             _disposed = true;
-        }
-
-        /// <summary>
-        /// Finalizer for class CommandProcessorBase.
-        /// </summary>
-        ~CommandProcessorBase()
-        {
-            Dispose(false);
         }
 
         #endregion IDispose

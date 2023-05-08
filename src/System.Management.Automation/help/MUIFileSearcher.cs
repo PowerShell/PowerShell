@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace System.Management.Automation
 {
-    internal class MUIFileSearcher
+    internal sealed class MUIFileSearcher
     {
         /// <summary>
         /// Constructor. It is private so that MUIFileSearcher is used only internal for this class.
@@ -57,6 +57,14 @@ namespace System.Management.Automation
         /// </summary>
         internal SearchMode SearchMode { get; } = SearchMode.Unique;
 
+        private static readonly System.IO.EnumerationOptions _enumerationOptions = new()
+        {
+            IgnoreInaccessible = false,
+            AttributesToSkip = 0,
+            MatchType = MatchType.Win32,
+            MatchCasing = MatchCasing.CaseInsensitive,
+        };
+
         private Collection<string> _result = null;
 
         /// <summary>
@@ -86,7 +94,7 @@ namespace System.Management.Automation
         /// _uniqueMatches is used to track matches already found during the search process.
         /// This is useful for ignoring duplicates in the case of unique search.
         /// </summary>
-        private Hashtable _uniqueMatches = new Hashtable(StringComparer.OrdinalIgnoreCase);
+        private readonly Hashtable _uniqueMatches = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Search for files using the target, searchPaths member of this class.
@@ -113,52 +121,11 @@ namespace System.Management.Automation
             }
         }
 
-        private string[] GetFiles(string path, string pattern)
-        {
-#if UNIX
-            // On Linux, file names are case sensitive, so we need to add
-            // extra logic to select the files that match the given pattern.
-            ArrayList result = new ArrayList();
-            string[] files = Directory.GetFiles(path);
-
-            var wildcardPattern = WildcardPattern.ContainsWildcardCharacters(pattern)
-                ? WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase)
-                : null;
-
-            foreach (string filePath in files)
-            {
-                if (filePath.IndexOf(pattern, StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    result.Add(filePath);
-                    break;
-                }
-
-                if (wildcardPattern != null)
-                {
-                    string fileName = Path.GetFileName(filePath);
-                    if (wildcardPattern.IsMatch(fileName))
-                    {
-                        result.Add(filePath);
-                    }
-                }
-            }
-
-            return (string[])result.ToArray(typeof(string));
-#else
-            return Directory.GetFiles(path, pattern);
-#endif
-        }
-
         private void AddFiles(string muiDirectory, string directory, string pattern)
         {
             if (Directory.Exists(muiDirectory))
             {
-                string[] files = GetFiles(muiDirectory, pattern);
-
-                if (files == null)
-                    return;
-
-                foreach (string file in files)
+                foreach (string file in Directory.EnumerateFiles(muiDirectory, pattern, _enumerationOptions))
                 {
                     string path = Path.Combine(muiDirectory, file);
 
@@ -372,4 +339,3 @@ namespace System.Management.Automation
         Unique
     }
 }
-

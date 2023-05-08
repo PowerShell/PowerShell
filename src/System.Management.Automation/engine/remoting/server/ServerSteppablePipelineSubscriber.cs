@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -29,7 +29,7 @@ namespace System.Management.Automation
     {
         #region Private data
 
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
         private bool _initialized = false;
         private PSLocalEventManager _eventManager;
         private PSEventSubscriber _startSubscriber;
@@ -62,6 +62,7 @@ namespace System.Management.Automation
         #region Events and Handlers
 
         public event EventHandler<EventArgs> StartSteppablePipeline;
+
         public event EventHandler<EventArgs> RunProcessRecord;
 
         /// <summary>
@@ -161,7 +162,7 @@ namespace System.Management.Automation
                             if (!driver.NoInput || isProcessCalled)
                             {
                                 // if there is noInput then we
-                                // need to call process atleast once
+                                // need to call process at least once
                                 break;
                             }
                         }
@@ -273,11 +274,8 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                if (_eventManager != null)
-                {
-                    _eventManager.GenerateEvent(_startSubscriber.SourceIdentifier, this,
-                        new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
-                }
+                _eventManager?.GenerateEvent(_startSubscriber.SourceIdentifier, this,
+                    new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
             }
         }
 
@@ -289,11 +287,8 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                if (_eventManager != null)
-                {
-                    _eventManager.GenerateEvent(_processSubscriber.SourceIdentifier, this,
-                        new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
-                }
+                _eventManager?.GenerateEvent(_processSubscriber.SourceIdentifier, this,
+                    new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
             }
         }
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name of the class.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
         /// Collection of members of the class.
@@ -61,8 +61,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSClassMemberInfo(string name, string memberType, string defaultValue)
         {
-            if (string.IsNullOrEmpty(name))
-                throw new ArgumentNullException("name");
+            ArgumentException.ThrowIfNullOrEmpty(name);
 
             this.Name = name;
             this.TypeName = memberType;
@@ -72,16 +71,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets name of the member.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
         /// Gets or sets type of the member.
         /// </summary>
-        public string TypeName { get; private set; }
+        public string TypeName { get; }
 
         /// <summary>
         /// Default value of the Field.
         /// </summary>
-        public string DefaultValue { get; private set; }
+        public string DefaultValue { get; }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -44,12 +44,10 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleName">The module name.</param>
         public ModuleSpecification(string moduleName)
         {
-            if (string.IsNullOrEmpty(moduleName))
-            {
-                throw new ArgumentNullException(nameof(moduleName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(moduleName);
 
             this.Name = moduleName;
+
             // Alias name of miniumVersion
             this.Version = null;
             this.RequiredVersion = null;
@@ -67,10 +65,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleSpecification">The module specification as a hashtable.</param>
         public ModuleSpecification(Hashtable moduleSpecification)
         {
-            if (moduleSpecification == null)
-            {
-                throw new ArgumentNullException(nameof(moduleSpecification));
-            }
+            ArgumentNullException.ThrowIfNull(moduleSpecification);
 
             var exception = ModuleSpecificationInitHelper(this, moduleSpecification);
             if (exception != null)
@@ -123,14 +118,14 @@ namespace Microsoft.PowerShell.Commands
                             badKeys.Append(", ");
                         }
 
-                        badKeys.Append("'");
+                        badKeys.Append('\'');
                         badKeys.Append(entry.Key.ToString());
-                        badKeys.Append("'");
+                        badKeys.Append('\'');
                     }
                 }
             }
             // catch all exceptions here, we are going to report them via return value.
-            // Example of catched exception: one of conversions to Version failed.
+            // Example of caught exception: one of conversions to Version failed.
             catch (Exception e)
             {
                 return e;
@@ -172,10 +167,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal ModuleSpecification(PSModuleInfo moduleInfo)
         {
-            if (moduleInfo == null)
-            {
-                throw new ArgumentNullException(nameof(moduleInfo));
-            }
+            ArgumentNullException.ThrowIfNull(moduleInfo);
 
             this.Name = moduleInfo.Name;
             this.Version = moduleInfo.Version;
@@ -197,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
 
             var moduleSpecBuilder = new StringBuilder();
 
-            moduleSpecBuilder.Append("@{ ModuleName = '").Append(Name).Append("'");
+            moduleSpecBuilder.Append("@{ ModuleName = '").Append(Name).Append('\'');
 
             if (Guid != null)
             {
@@ -206,18 +198,18 @@ namespace Microsoft.PowerShell.Commands
 
             if (RequiredVersion != null)
             {
-                moduleSpecBuilder.Append("; RequiredVersion = '").Append(RequiredVersion).Append("'");
+                moduleSpecBuilder.Append("; RequiredVersion = '").Append(RequiredVersion).Append('\'');
             }
             else
             {
                 if (Version != null)
                 {
-                    moduleSpecBuilder.Append("; ModuleVersion = '").Append(Version).Append("'");
+                    moduleSpecBuilder.Append("; ModuleVersion = '").Append(Version).Append('\'');
                 }
 
                 if (MaximumVersion != null)
                 {
-                    moduleSpecBuilder.Append("; MaximumVersion = '").Append(MaximumVersion).Append("'");
+                    moduleSpecBuilder.Append("; MaximumVersion = '").Append(MaximumVersion).Append('\'');
                 }
             }
 

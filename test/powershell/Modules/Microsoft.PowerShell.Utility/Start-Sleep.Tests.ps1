@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
 
@@ -23,6 +23,15 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
         $watch.ElapsedMilliseconds | Should -BeLessThan $maxTime
     }
 
+    It "Should work properly when sleeping with a [TimeSpan]" {
+        $duration = [timespan]::FromMilliseconds(1500)
+        $watch = [System.Diagnostics.Stopwatch]::StartNew()
+        Start-Sleep -Duration $duration
+        $watch.Stop()
+        $watch.ElapsedMilliseconds | Should -BeGreaterThan $minTime
+        $watch.ElapsedMilliseconds | Should -BeLessThan $maxTime
+    }
+
     It "Should work properly when sleeping with ms alias" {
         $watch = [System.Diagnostics.Stopwatch]::StartNew()
         Start-Sleep -ms 1500
@@ -37,6 +46,21 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
         $watch.Stop()
         $watch.ElapsedMilliseconds | Should -BeGreaterThan $minTime
         $watch.ElapsedMilliseconds | Should -BeLessThan $maxTime
+    }
+
+    It "Should work properly when sleeping without parameters from [timespan]" {
+        $duration = [timespan]::FromMilliseconds(1500)
+        $watch = [System.Diagnostics.Stopwatch]::StartNew()
+        Start-Sleep $duration
+        $watch.Stop()
+        $watch.ElapsedMilliseconds | Should -BeGreaterThan $minTime
+        $watch.ElapsedMilliseconds | Should -BeLessThan $maxTime
+    }
+
+    It "Should validate [timespan] parameter values" {
+        { Start-Sleep -Duration    '0:00:01' } | Should -Not -Throw
+        { Start-Sleep -Duration   '-0:00:01' } | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartSleepCommand'
+        { Start-Sleep -Duration '30.0:00:00' } | Should -Throw -ErrorId 'MaximumDurationExceeded,Microsoft.PowerShell.Commands.StartSleepCommand'
     }
 }
 

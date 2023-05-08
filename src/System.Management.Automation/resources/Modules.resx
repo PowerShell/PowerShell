@@ -141,15 +141,6 @@
   <data name="ManifestMemberNotFound" xml:space="preserve">
     <value>The module to process '{0}', listed in field '{1}' of module manifest '{2}' was not processed because no valid module was found in any module directory.</value>
   </data>
-  <data name="ScriptsFileNotFound" xml:space="preserve">
-    <value>The specified script file '{0}' could not be processed because the file was not found. Verify that you have provided the correct path name for the script, and then try again.</value>
-  </data>
-  <data name="TypesFileNotFound" xml:space="preserve">
-    <value>The specified type data file '{0}' could not be processed because the file was not found. Verify that you have provided the correct path name for the type data file, and then try again.</value>
-  </data>
-  <data name="FormatsFileNotFound" xml:space="preserve">
-    <value>The specified format data file '{0}' could not be processed because the file was not found. Verify that you have provided the correct path name for the format data file, and then try again.</value>
-  </data>
   <data name="CantUseAsCustomObjectWithBinaryModule" xml:space="preserve">
     <value>No custom object was returned for module '{0}' because the -AsCustomObject parameter can only be used with script modules.</value>
   </data>
@@ -259,7 +250,7 @@
     <value>The Export-ModuleMember cmdlet can only be called from inside a module.</value>
   </data>
   <data name="InvalidModuleExtension" xml:space="preserve">
-    <value>The extension '{0}' is not a valid module extension. The supported module extensions are '.dll', '.ps1', '.psm1', '.psd1', '.cdxml' and '.xaml'. Correct the extension then try adding the file '{1}' again.</value>
+    <value>The extension '{0}' is not a valid module extension. The supported module extensions are '.dll', '.ps1', '.psm1', '.psd1' and '.cdxml'. Correct the extension then try adding the file '{1}' again.</value>
   </data>
   <data name="InvalidOperationOnBinaryModule" xml:space="preserve">
     <value>This operation cannot be performed on a binary module. It can only be performed on a script module.</value>
@@ -354,9 +345,6 @@
   <data name="ManifestHeaderLine3" xml:space="preserve">
     <value>Generated on: {0}</value>
   </data>
-  <data name="ModuleToProcess" xml:space="preserve">
-    <value>Script module or binary module file associated with this manifest</value>
-  </data>
   <data name="RootModule" xml:space="preserve">
     <value>Script module or binary module file associated with this manifest.</value>
   </data>
@@ -407,9 +395,6 @@
   </data>
   <data name="PrivateData" xml:space="preserve">
     <value>Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.</value>
-  </data>
-  <data name="PSData" xml:space="preserve">
-    <value>PSData data to pass to the Publish-Module cmdlet</value>
   </data>
   <data name="Tags" xml:space="preserve">
     <value>Tags applied to this module. These help with module discovery in online galleries.</value>
@@ -483,12 +468,6 @@
   <data name="HelpInfoURI" xml:space="preserve">
     <value>HelpInfo URI of this module</value>
   </data>
-  <data name="IncludedItemPathFallsOutsideSaveTree" xml:space="preserve">
-    <value>The item {0} that resolves to {1} is not located in the same directory as the module manifest or any of its subdirectories. PowerShell looks for items referenced in the manifest only in paths relative to the manifest location. To fix this problem, move the item, and use a relative path to identify its location.</value>
-  </data>
-  <data name="InvalidWorkflowExtension" xml:space="preserve">
-    <value>The workflow file name is not valid because it does not have the required .XAML file name extension. Run the New-ModuleManifest command again specifying a value for the WorkflowsToProcess parameter with this extension.</value>
-  </data>
   <data name="ModuleDriveInUse" xml:space="preserve">
     <value>Because the {0} module is providing the PSDrive in the current PowerShell session, no modules were removed. Change the current PSDrive provider, and then try removing modules again.</value>
   </data>
@@ -530,6 +509,15 @@
   </data>
   <data name="MixedModuleOverCimSessionWarning" xml:space="preserve">
     <value>Some commands from module {0} cannot be imported over a CimSession. To get all the commands, verify that the remote server has PowerShell remote management enabled, and then try adding the PSSession parameter to an Import-Module cmdlet.</value>
+  </data>
+  <data name="WinCompatModuleWarning" xml:space="preserve">
+    <value>Module {0} is loaded in Windows PowerShell using {1} remoting session; please note that all input and output of commands from this module will be deserialized objects. If you want to load this module into PowerShell please use 'Import-Module -SkipEditionCheck' syntax.</value>
+  </data>
+  <data name="WinCompatRequredVersionError" xml:space="preserve">
+    <value>Detected Windows PowerShell version {0}. Windows PowerShell 5.1 is required to load modules using Windows PowerShell compatibility feature. Install Windows Management Framework (WMF) 5.1 from https://aka.ms/WMF5Download to enable this feature.</value>
+  </data>
+  <data name="WinCompatModuleInDenyList" xml:space="preserve">
+    <value>Module '{0}' is blocked from loading using Windows PowerShell compatibility feature by a 'WindowsPowerShellCompatibilityModuleDenyList' setting in PowerShell configuration file.</value>
   </data>
   <data name="PsModuleOverCimSessionError" xml:space="preserve">
     <value>The module {0} cannot be imported over a CimSession. Try using the PSSession parameter of the Import-Module cmdlet.</value>
@@ -597,9 +585,6 @@
   <data name="ModuleNotFoundForGetModule" xml:space="preserve">
     <value>The specified module '{0}' was not found. Update the Name parameter to point to a valid path, and then try again. </value>
   </data>
-  <data name="WorkflowModuleNotSupported" xml:space="preserve">
-    <value>Cannot load the workflow module '{0}'. Workflow is not supported in PowerShell 6+.</value>
-  </data>
   <data name="PopulatingRepositorySourceLocation" xml:space="preserve">
     <value>Populating RepositorySourceLocation property for module {0}.</value>
   </data>
@@ -611,6 +596,9 @@
   </data>
   <data name="PSEditionNotSupported" xml:space="preserve">
     <value>Module '{0}' does not support current PowerShell edition '{1}'. Its supported editions are '{2}'. Use 'Import-Module -SkipEditionCheck' to ignore the compatibility of this module.</value>
+  </data>
+  <data name="ImplicitWinCompatDisabled" xml:space="preserve">
+    <value>Module '{0}' supports PowerShell edition '{1}' and cannot be loaded implicitly using the Windows Compatibility feature because it is disabled in the settings file. Use 'Import-Module -UseWindowsPowerShell' to load this module with Windows PowerShell or 'Import-Module -SkipEditionCheck' to try to load the module with the current PowerShell.</value>
   </data>
   <data name="ExperimentalFeatureNameMissingOrEmpty" xml:space="preserve">
     <value>A non-empty string value should be specified for an experimental feature declared in the module manifest.</value>
@@ -635,5 +623,8 @@
   </data>
   <data name="CannotCreateModuleWithScriptBlock" xml:space="preserve">
     <value>Cannot create new module while the session is in ConstrainedLanguage mode.</value>
+  </data>
+  <data name="CannotFindCoreCompatibleBuiltInModule" xml:space="preserve">
+    <value>Cannot find the built-in module '{0}' that is compatible with the 'Core' edition. Please make sure the PowerShell built-in modules are available. They usually come with the PowerShell package under the $PSHOME module path, and are required for PowerShell to function properly.</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Internal;
@@ -10,7 +10,6 @@ namespace System.Management.Automation.Host
     /// Defines the exception thrown when the Host cannot complete an operation
     /// such as checking whether there is any input available.
     /// </summary>
-
     [Serializable]
     public
     class HostException : RuntimeException
@@ -19,10 +18,9 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// Initializes a new instance of the HostException class.
         /// </summary>
-
         public
-        HostException() : base(
-            StringUtil.Format(HostInterfaceExceptionsStrings.DefaultCtorMessageTemplate, typeof(HostException).FullName))
+        HostException()
+            : base(StringUtil.Format(HostInterfaceExceptionsStrings.DefaultCtorMessageTemplate, typeof(HostException).FullName))
         {
             SetDefaultErrorRecord();
         }
@@ -33,9 +31,9 @@ namespace System.Management.Automation.Host
         /// <param name="message">
         /// The error message that explains the reason for the exception.
         /// </param>
-
         public
-        HostException(string message) : base(message)
+        HostException(string message)
+            : base(message)
         {
             SetDefaultErrorRecord();
         }
@@ -52,7 +50,6 @@ namespace System.Management.Automation.Host
         /// parameter is not a null reference, the current exception is raised in a catch
         /// block that handles the inner exception.
         /// </param>
-
         public
         HostException(string message, Exception innerException)
             : base(message, innerException)
@@ -82,10 +79,13 @@ namespace System.Management.Automation.Host
         /// <remarks>
         /// Intentionally public, third-party hosts can call this
         /// </remarks>
-
         public
-        HostException(string message, Exception innerException, string errorId, ErrorCategory errorCategory) :
-            base(message, innerException)
+        HostException(
+            string message,
+            Exception innerException,
+            string errorId,
+            ErrorCategory errorCategory)
+            : base(message, innerException)
         {
             SetErrorId(errorId);
             SetErrorCategory(errorCategory);
@@ -101,12 +101,12 @@ namespace System.Management.Automation.Host
         /// <param name="context">
         /// The contextual information about the source or destination.
         /// </param>
-
         protected
         HostException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
+
         #endregion
         #region private
         private void SetDefaultErrorRecord()
@@ -121,7 +121,6 @@ namespace System.Management.Automation.Host
     /// <summary>
     /// Defines the exception thrown when an error occurs from prompting for a command parameter.
     /// </summary>
-
     [Serializable]
     public
     class PromptingException : HostException
@@ -130,9 +129,9 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// Initializes a new instance of the PromptingException class.
         /// </summary>
-
         public
-        PromptingException() : base(StringUtil.Format(HostInterfaceExceptionsStrings.DefaultCtorMessageTemplate, typeof(PromptingException).FullName))
+        PromptingException()
+            : base(StringUtil.Format(HostInterfaceExceptionsStrings.DefaultCtorMessageTemplate, typeof(PromptingException).FullName))
         {
             SetDefaultErrorRecord();
         }
@@ -143,9 +142,9 @@ namespace System.Management.Automation.Host
         /// <param name="message">
         /// The error message that explains the reason for the exception.
         /// </param>
-
         public
-        PromptingException(string message) : base(message)
+        PromptingException(string message)
+            : base(message)
         {
             SetDefaultErrorRecord();
         }
@@ -162,7 +161,6 @@ namespace System.Management.Automation.Host
         /// parameter is not a null reference, the current exception is raised in a catch
         /// block that handles the inner exception.
         /// </param>
-
         public
         PromptingException(string message, Exception innerException)
             : base(message, innerException)
@@ -192,10 +190,13 @@ namespace System.Management.Automation.Host
         /// <remarks>
         /// Intentionally public, third-party hosts can call this
         /// </remarks>
-
         public
-        PromptingException(string message, Exception innerException, string errorId, ErrorCategory errorCategory) :
-            base(message, innerException, errorId, errorCategory)
+        PromptingException(
+            string message,
+            Exception innerException,
+            string errorId,
+            ErrorCategory errorCategory)
+            : base(message, innerException, errorId, errorCategory)
         {
         }
 
@@ -209,7 +210,6 @@ namespace System.Management.Automation.Host
         /// <param name="context">
         /// The contextual information about the source or destination.
         /// </param>
-
         protected
         PromptingException(SerializationInfo info, StreamingContext context)
             : base(info, context)

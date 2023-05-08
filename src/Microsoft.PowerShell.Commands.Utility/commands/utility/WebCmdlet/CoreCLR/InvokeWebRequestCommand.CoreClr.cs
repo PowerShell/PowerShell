@@ -1,5 +1,7 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
+#nullable enable
 
 using System;
 using System.IO;
@@ -12,17 +14,18 @@ namespace Microsoft.PowerShell.Commands
     /// The Invoke-WebRequest command.
     /// This command makes an HTTP or HTTPS request to a web server and returns the results.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Invoke, "WebRequest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217035", DefaultParameterSetName = "StandardMethod")]
+    [Cmdlet(VerbsLifecycle.Invoke, "WebRequest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097126", DefaultParameterSetName = "StandardMethod")]
+    [OutputType(typeof(BasicHtmlWebResponseObject))]
     public class InvokeWebRequestCommand : WebRequestPSCmdlet
     {
         #region Virtual Method Overrides
 
         /// <summary>
-        /// Default constructor for InvokeWebRequestCommand.
+        /// Initializes a new instance of the <see cref="InvokeWebRequestCommand"/> class.
         /// </summary>
         public InvokeWebRequestCommand() : base()
         {
-            this._parseRelLink = true;
+            _parseRelLink = true;
         }
 
         /// <summary>
@@ -31,18 +34,23 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="response"></param>
         internal override void ProcessResponse(HttpResponseMessage response)
         {
-            if (response == null) { throw new ArgumentNullException("response"); }
+            ArgumentNullException.ThrowIfNull(response);
 
-            Stream responseStream = StreamHelper.GetResponseStream(response);
+            Stream responseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
             if (ShouldWriteToPipeline)
             {
-                // creating a MemoryStream wrapper to response stream here to support IsStopping.
-                responseStream = new WebResponseContentMemoryStream(responseStream, StreamHelper.ChunkSize, this);
-                WebResponseObject ro = WebResponseObjectFactory.GetResponseObject(response, responseStream, this.Context);
+                // Creating a MemoryStream wrapper to response stream here to support IsStopping.
+                responseStream = new WebResponseContentMemoryStream(
+                    responseStream,
+                    StreamHelper.ChunkSize,
+                    this,
+                    response.Content.Headers.ContentLength.GetValueOrDefault(),
+                    _cancelToken.Token);
+                WebResponseObject ro = WebResponseHelper.IsText(response) ? new BasicHtmlWebResponseObject(response, responseStream, _cancelToken.Token) : new WebResponseObject(response, responseStream, _cancelToken.Token);
                 ro.RelationLink = _relationLink;
                 WriteObject(ro);
 
-                // use the rawcontent stream from WebResponseObject for further
+                // Use the rawcontent stream from WebResponseObject for further
                 // processing of the stream. This is need because WebResponse's
                 // stream can be used only once.
                 responseStream = ro.RawContentStream;
@@ -51,7 +59,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldSaveToOutFile)
             {
-                StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this);
+                string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
+
+                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
+
+                StreamHelper.SaveStreamToFile(responseStream, outFilePath, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
         }
 

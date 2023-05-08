@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -185,10 +185,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Disposes the PSTransaction object, which disposes the
         /// underlying transaction.
+        /// </summary>
         /// <param name="disposing">
         /// Whether to actually dispose the object.
         /// </param>
-        /// </summary>
         public void Dispose(bool disposing)
         {
             if (disposing)
@@ -237,10 +237,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Disposes the PSTransactionContext object, which resets the
         /// active PSTransaction.
+        /// </summary>
         /// <param name="disposing">
         /// Whether to actually dispose the object.
         /// </param>
-        /// </summary>
         private void Dispose(bool disposing)
         {
             if (disposing)
@@ -682,10 +682,10 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Disposes the PSTransactionContext object, which resets the
         /// active PSTransaction.
+        /// </summary>
         /// <param name="disposing">
         /// Whether to actually dispose the object.
         /// </param>
-        /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "baseTransaction", Justification = "baseTransaction should not be disposed since we do not own it - it belongs to the caller")]
         public void Dispose(bool disposing)
         {

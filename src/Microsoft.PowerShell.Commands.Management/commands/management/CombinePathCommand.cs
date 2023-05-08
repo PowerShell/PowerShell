@@ -1,10 +1,9 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
-using System.Text;
 
 using Dbg = System.Management.Automation;
 
@@ -14,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command that adds the parent and child parts of a path together
     /// with the appropriate path separator.
     /// </summary>
-    [Cmdlet(VerbsCommon.Join, "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113347")]
+    [Cmdlet(VerbsCommon.Join, "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096811")]
     [OutputType(typeof(string))]
     public class JoinPathCommand : CoreCommandWithCredentialsBase
     {
@@ -219,4 +218,3 @@ namespace Microsoft.PowerShell.Commands
 
     }
 }
-

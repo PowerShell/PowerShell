@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implementation for the Send-MailMessage command.
     /// </summary>
     [Obsolete("This cmdlet does not guarantee secure connections to SMTP servers. While there is no immediate replacement available in PowerShell, we recommend you do not use Send-MailMessage at this time. See https://aka.ms/SendMailMessage for more information.")]
-    [Cmdlet(VerbsCommunications.Send, "MailMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135256")]
+    [Cmdlet(VerbsCommunications.Send, "MailMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097115")]
     public sealed class SendMailMessage : PSCmdlet
     {
         #region Command Line Parameters
@@ -63,7 +63,21 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [ArgumentEncodingCompletionsAttribute]
         [ArgumentToEncodingTransformationAttribute]
-        public Encoding Encoding { get; set; } = Encoding.ASCII;
+        public Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+
+            set
+            {
+                EncodingConversion.WarnIfObsolete(this, value);
+                _encoding = value;
+            }
+        }
+
+        private Encoding _encoding = Encoding.ASCII;
 
         /// <summary>
         /// Gets or sets the address collection that contains the
@@ -151,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         /// Value must be greater than zero.
         /// </remarks>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public int Port { get; set; }
 
         #endregion
@@ -159,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
         #region Private variables and methods
 
         // Instantiate a new instance of MailMessage
-        private MailMessage _mMailMessage = new MailMessage();
+        private readonly MailMessage _mMailMessage = new();
 
         private SmtpClient _mSmtpClient = null;
 
@@ -202,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (FormatException e)
                 {
-                    ErrorRecord er = new ErrorRecord(e, "FormatException", ErrorCategory.InvalidType, null);
+                    ErrorRecord er = new(e, "FormatException", ErrorCategory.InvalidType, null);
                     WriteError(er);
                     continue;
                 }
@@ -225,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (FormatException e)
             {
-                ErrorRecord er = new ErrorRecord(e, "FormatException", ErrorCategory.InvalidType, From);
+                ErrorRecord er = new(e, "FormatException", ErrorCategory.InvalidType, From);
                 ThrowTerminatingError(er);
             }
 
@@ -280,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(SmtpServer))
             {
-                ErrorRecord er = new ErrorRecord(new InvalidOperationException(SendMailMessageStrings.HostNameValue), null, ErrorCategory.InvalidArgument, null);
+                ErrorRecord er = new(new InvalidOperationException(SendMailMessageStrings.HostNameValue), null, ErrorCategory.InvalidArgument, null);
                 this.ThrowTerminatingError(er);
             }
 
@@ -330,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
                         PathUtils.ReportFileOpenFailure(this, filepath, e);
                     }
 
-                    Attachment mailAttachment = new Attachment(filepath);
+                    Attachment mailAttachment = new(filepath);
                     _mMailMessage.Attachments.Add(mailAttachment);
                 }
             }
@@ -348,35 +362,39 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (SmtpFailedRecipientsException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "SmtpFailedRecipientsException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                ErrorRecord er = new(ex, "SmtpFailedRecipientsException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
             catch (SmtpException ex)
             {
                 if (ex.InnerException != null)
                 {
-                    ErrorRecord er = new ErrorRecord(new SmtpException(ex.InnerException.Message), "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                    ErrorRecord er = new(new SmtpException(ex.InnerException.Message), "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
                     WriteError(er);
                 }
                 else
                 {
-                    ErrorRecord er = new ErrorRecord(ex, "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                    ErrorRecord er = new(ex, "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
                     WriteError(er);
                 }
             }
             catch (InvalidOperationException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                ErrorRecord er = new(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
             catch (System.Security.Authentication.AuthenticationException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "AuthenticationException", ErrorCategory.InvalidOperation, _mSmtpClient);
+                ErrorRecord er = new(ex, "AuthenticationException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
+            finally
+            {
+                _mSmtpClient.Dispose();
 
-            // If we don't dispose the attachments, the sender can't modify or use the files sent.
-            _mMailMessage.Attachments.Dispose();
+                // If we don't dispose the attachments, the sender can't modify or use the files sent.
+                _mMailMessage.Attachments.Dispose();
+            }
         }
 
         #endregion

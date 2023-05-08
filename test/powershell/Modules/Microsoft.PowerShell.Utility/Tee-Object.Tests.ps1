@@ -1,24 +1,60 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Tee-Object" -Tags "CI" {
 
     Context "Validate Tee-Object is correctly forking output" {
 
-	$testfile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath testfile.txt
+        BeforeAll {
+            $testfile = Join-Path $TestDrive -ChildPath "testfile.txt"
+            $testvalue = "ф"
+            if ($IsWindows) {
+                # Expected bytes: 244 - 'ф', 13  - '`r', 10  - '`n'.
+                $expectedBytes = 244,13,10 -join "-"
+            } else {
+                $expectedBytes = 244,10 -join "-"
+            }
+        }
 
-	    It "Should return the output to the screen and to the variable" {
-	        $teefile = $testfile
-	        Write-Output teeobjecttest1 | Tee-Object -variable teeresults
-	        $teeresults         | Should -BeExactly "teeobjecttest1"
-	        Remove-Item $teefile -ErrorAction SilentlyContinue
-	    }
+        BeforeEach {
+            Remove-Item -Path $testfile -ErrorAction SilentlyContinue -Force
+        }
 
-	    It "Should tee the output to a file" {
-	        $teefile = $testfile
-	        Write-Output teeobjecttest3  | Tee-Object $teefile
-	        Get-Content $teefile | Should -BeExactly "teeobjecttest3"
-	        Remove-Item $teefile -ErrorAction SilentlyContinue
-	    }
+        It "Should return the output to the screen and to the variable" {
+            Write-Output teeobjecttest1 | Tee-Object -Variable teeresults
+            $teeresults | Should -BeExactly "teeobjecttest1"
+        }
+
+        It "Should tee the output to a file" {
+            $teefile = $testfile
+            Write-Output teeobjecttest3  | Tee-Object $teefile
+            Get-Content $teefile | Should -BeExactly "teeobjecttest3"
+        }
+
+        $unicodeTestString = "A1£ę௸🤔"
+        It "Should tee output to file using <encoding> encoding when selected" -TestCases @(
+            @{ Encoding = "ascii"; Content = "teeobjecttest1"},
+            @{ Encoding = "bigendianunicode"; Content = $unicodeTestString  },
+            @{ Encoding = "default"; Content = $unicodeTestString },
+            @{ Encoding = "latin1"; Content = "téèõbjêcttëst1" },
+            @{ Encoding = "unicode"; Content = $unicodeTestString },
+            @{ Encoding = "utf32"; Content = $unicodeTestString },
+            @{ Encoding = "utf7"; Content = $unicodeTestString},
+            @{ Encoding = "utf8"; Content = $unicodeTestString}
+        ) {
+            param($Encoding, $Content)
+            $teefile = $testfile
+            Write-Output -InputObject $content  | Tee-Object -FilePath $teefile -Encoding $Encoding
+            Get-Content -Path $teefile -Encoding $Encoding | Should -BeExactly $content
+            Remove-Item -Path $teefile -ErrorAction SilentlyContinue
+        }
+
+        It "Parameter 'Encoding' should accept encoding" {
+            $teefile = $testfile
+            $encoding = 1251
+            $testvalue | Tee-Object -Encoding $encoding $teefile
+            Get-Content $teefile -Encoding $encoding | Should -BeExactly $testvalue
+            (Get-Content $teefile -AsByteStream) -join "-" | Should -BeExactly $expectedBytes
+        }
     }
 }
 

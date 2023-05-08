@@ -1,16 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
-#if !SILVERLIGHT // ComObject
-
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Dynamic;
-//using AstUtils = Microsoft.Scripting.Ast.Utils;
+using System.Linq.Expressions;
 using AstUtils = System.Management.Automation.Interpreter.Utils;
 
 namespace System.Management.Automation.ComInterop
@@ -27,7 +19,7 @@ namespace System.Management.Automation.ComInterop
             return new DynamicMetaObject(
                 Expression.Call(
                     AstUtils.Convert(Expression, typeof(ComTypeClassDesc)),
-                    typeof(ComTypeClassDesc).GetMethod("CreateInstance")
+                    typeof(ComTypeClassDesc).GetMethod(nameof(ComTypeClassDesc.CreateInstance))
                 ),
                 BindingRestrictions.Combine(args).Merge(
                     BindingRestrictions.GetTypeRestriction(Expression, typeof(ComTypeClassDesc))
@@ -36,6 +28,3 @@ namespace System.Management.Automation.ComInterop
         }
     }
 }
-
-#endif
-

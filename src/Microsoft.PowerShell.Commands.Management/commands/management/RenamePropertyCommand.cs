@@ -1,9 +1,7 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation;
-
-using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -11,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to rename a property of an item at a specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113383")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097152")]
     public class RenameItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
         #region Parameters

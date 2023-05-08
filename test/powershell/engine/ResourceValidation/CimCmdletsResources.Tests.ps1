@@ -1,6 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-. "$psscriptroot/TestRunner.ps1"
+. "$PSScriptRoot/TestRunner.ps1"
 
 $assemblyName = "Microsoft.Management.Infrastructure.CimCmdlets"
 
@@ -10,7 +10,7 @@ $excludeList = @()
 # load the module since it isn't there by default
 if ( $IsWindows )
 {
-    import-module CimCmdlets
+    Import-Module CimCmdlets
 }
 
 # run the tests

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project ToolsVersion="15.0">
 
 <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
@@ -6,6 +6,13 @@
     <AssemblyName>Microsoft.PowerShell.GlobalTool.Shim</AssemblyName>
     <OutputType>EXE</OutputType>
     <RootNamespace>Microsoft.PowerShell.GlobalTool.Shim</RootNamespace>
+    <UseAppHost>False</UseAppHost>
   </PropertyGroup>
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' " />
 
 </Project>

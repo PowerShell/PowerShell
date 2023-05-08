@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet takes a module manifest and validates the contents...
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "ModuleManifest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141557")]
+    [Cmdlet(VerbsDiagnostic.Test, "ModuleManifest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096900")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class TestModuleManifestCommand : ModuleCmdletBase
     {
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
                                     && !IsValidGacAssembly(nestedModule.Name))
                                 {
                                     Collection<PSModuleInfo> modules = GetModuleIfAvailable(nestedModule);
-                                    if (0 == modules.Count)
+                                    if (modules.Count == 0)
                                     {
                                         string errorMsg = StringUtil.Format(Modules.InvalidNestedModuleinModuleManifest, nestedModule.Name, filePath);
                                         var errorRecord = new ErrorRecord(new DirectoryNotFoundException(errorMsg), "Modules_InvalidNestedModuleinModuleManifest",
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
 
         // All module extensions except ".psd1" are valid RootModule extensions
         private static readonly IReadOnlyList<string> s_validRootModuleExtensions = ModuleIntrinsics.PSModuleExtensions
-            .Where(ext => !string.Equals(ext, StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
+            .Where(static ext => !string.Equals(ext, StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
             .ToArray();
 
         /// <summary>
@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="assemblyName"></param>
         /// <returns></returns>
-        private bool IsValidGacAssembly(string assemblyName)
+        private static bool IsValidGacAssembly(string assemblyName)
         {
 #if UNIX
             return false;
@@ -420,23 +420,13 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                var allFiles = Directory.GetFiles(gacPath, assemblyFile, SearchOption.AllDirectories);
-
-                if (allFiles.Length == 0)
-                {
-                    var allNgenFiles = Directory.GetFiles(gacPath, ngenAssemblyFile, SearchOption.AllDirectories);
-                    if (allNgenFiles.Length == 0)
-                    {
-                        return false;
-                    }
-                }
+                return Directory.EnumerateFiles(gacPath, assemblyFile, SearchOption.AllDirectories).Any()
+                    || Directory.EnumerateFiles(gacPath, ngenAssemblyFile, SearchOption.AllDirectories).Any();
             }
             catch
             {
                 return false;
             }
-
-            return true;
 #endif
         }
     }

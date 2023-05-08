@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Runspaces;
 using System.Reflection;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -47,7 +48,7 @@ namespace System.Management.Automation
         protected bool _dontUseScopeCommandOrigin;
 
         /// <summary>
-        /// If true, then an exit exception will be rethrown to instead of caught and processed...
+        /// If true, then an exit exception will be rethrown instead of caught and processed...
         /// </summary>
         protected bool _rethrowExitException;
 
@@ -66,6 +67,7 @@ namespace System.Management.Automation
         protected ScriptBlock _scriptBlock;
 
         private ScriptParameterBinderController _scriptParameterBinderController;
+
         internal ScriptParameterBinderController ScriptParameterBinderController
         {
             get
@@ -130,7 +132,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpTarget">Help target to request.</param>
         /// <param name="helpCategory">Help category to request.</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if user requested help; <see langword="false"/> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             if (arguments != null && CommandInfo != null && !string.IsNullOrEmpty(CommandInfo.Name) && _scriptBlock != null)
@@ -141,9 +143,8 @@ namespace System.Management.Automation
                     if (parameter.IsDashQuestion())
                     {
                         Dictionary<Ast, Token[]> scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
-                        string unused;
                         HelpInfo helpInfo = _scriptBlock.GetHelpInfo(context: Context, commandInfo: CommandInfo,
-                            dontSearchOnRemoteComputer: false, scriptBlockTokenCache: scriptBlockTokenCache, helpFile: out unused, helpUriFromDotLink: out unused);
+                            dontSearchOnRemoteComputer: false, scriptBlockTokenCache: scriptBlockTokenCache, helpFile: out _, helpUriFromDotLink: out _);
                         if (helpInfo == null)
                         {
                             break;
@@ -230,12 +231,21 @@ namespace System.Management.Automation
     /// </remarks>
     internal sealed class DlrScriptCommandProcessor : ScriptCommandProcessorBase
     {
-        private new ScriptBlock _scriptBlock;
         private readonly ArrayList _input = new ArrayList();
+        private readonly object _dollarUnderbar = AutomationNull.Value;
+        private new ScriptBlock _scriptBlock;
         private MutableTuple _localsTuple;
         private bool _runOptimizedCode;
         private bool _argsBound;
+        private bool _anyClauseExecuted;
         private FunctionContext _functionContext;
+
+        internal DlrScriptCommandProcessor(ScriptBlock scriptBlock, ExecutionContext context, bool useNewScope, CommandOrigin origin, SessionStateInternal sessionState, object dollarUnderbar)
+            : base(scriptBlock, context, useNewScope, origin, sessionState)
+        {
+            Init();
+            _dollarUnderbar = dollarUnderbar;
+        }
 
         internal DlrScriptCommandProcessor(ScriptBlock scriptBlock, ExecutionContext context, bool useNewScope, CommandOrigin origin, SessionStateInternal sessionState)
             : base(scriptBlock, context, useNewScope, origin, sessionState)
@@ -265,7 +275,7 @@ namespace System.Management.Automation
         {
             _scriptBlock = base._scriptBlock;
             _obsoleteAttribute = _scriptBlock.ObsoleteAttribute;
-            _runOptimizedCode = _scriptBlock.Compile(optimized: _context._debuggingMode > 0 ? false : UseLocalScope);
+            _runOptimizedCode = _scriptBlock.Compile(optimized: _context._debuggingMode <= 0 && UseLocalScope);
             _localsTuple = _scriptBlock.MakeLocalsTuple(_runOptimizedCode);
 
             if (UseLocalScope)
@@ -318,8 +328,7 @@ namespace System.Management.Automation
 
                 ScriptBlock.LogScriptBlockStart(_scriptBlock, Context.CurrentRunspace.InstanceId);
 
-                // Even if there is no begin, we need to set up the execution scope for this
-                // script...
+                // Even if there is no begin, we need to set up the execution scope for this script...
                 SetCurrentScopeToExecutionScope();
                 CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
                 try
@@ -401,6 +410,7 @@ namespace System.Management.Automation
                 if (_scriptBlock.HasEndBlock)
                 {
                     var endBlock = _runOptimizedCode ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock;
+
                     if (this.CommandRuntime.InputPipe.ExternalReader == null)
                     {
                         if (IsPipelineInputExpected())
@@ -424,7 +434,33 @@ namespace System.Management.Automation
             }
             finally
             {
-                ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
+                if (!_scriptBlock.HasCleanBlock)
+                {
+                    ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
+                }
+            }
+        }
+
+        protected override void CleanResource()
+        {
+            if (_scriptBlock.HasCleanBlock && _anyClauseExecuted)
+            {
+                // The 'Clean' block doesn't write to pipeline.
+                Pipe oldOutputPipe = _functionContext._outputPipe;
+                _functionContext._outputPipe = new Pipe { NullPipe = true };
+
+                try
+                {
+                    RunClause(
+                        clause: _runOptimizedCode ? _scriptBlock.CleanBlock : _scriptBlock.UnoptimizedCleanBlock,
+                        dollarUnderbar: AutomationNull.Value,
+                        inputToProcess: AutomationNull.Value);
+                }
+                finally
+                {
+                    _functionContext._outputPipe = oldOutputPipe;
+                    ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
+                }
             }
         }
 
@@ -450,6 +486,7 @@ namespace System.Management.Automation
         {
             ExecutionContext.CheckStackDepth();
 
+            _anyClauseExecuted = true;
             Pipe oldErrorOutputPipe = this.Context.ShellFunctionErrorOutputPipe;
 
             // If the script block has a different language mode than the current,
@@ -513,6 +550,10 @@ namespace System.Management.Automation
                     {
                         _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, dollarUnderbar, _context);
                     }
+                    else if (_dollarUnderbar != AutomationNull.Value)
+                    {
+                        _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, _dollarUnderbar, _context);
+                    }
 
                     if (inputToProcess != AutomationNull.Value)
                     {
@@ -540,7 +581,7 @@ namespace System.Management.Automation
                 }
                 finally
                 {
-                    this.Context.RestoreErrorPipe(oldErrorOutputPipe);
+                    Context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
 
                     if (oldLanguageMode.HasValue)
                     {
@@ -571,15 +612,12 @@ namespace System.Management.Automation
             }
             catch (RuntimeException e)
             {
-                ManageScriptException(e); // always throws
-                // This quiets the compiler which wants to see a return value
-                // in all codepaths.
-                throw;
+                // This method always throws.
+                ManageScriptException(e);
             }
             catch (Exception e)
             {
-                // This cmdlet threw an exception, so
-                // wrap it and bubble it up.
+                // This cmdlet threw an exception, so wrap it and bubble it up.
                 throw ManageInvocationException(e);
             }
         }

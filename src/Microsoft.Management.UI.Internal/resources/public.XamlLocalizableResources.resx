@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AutoResXGen_ColumnPicker_AutomationPropertiesName_49" xml:space="preserve">
+    <value>Available Columns</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_AutomationPropertiesName_75" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_AutomationPropertiesName_86" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_AutomationPropertiesName_104" xml:space="preserve">
+    <value>Selected Columns</value>
+  </data>
+  <data name="AutoResXGen_BackForwardHistory_AutomationPropertiesName_613" xml:space="preserve">
+    <value>Back</value>
+    <comment>Localizable AutomationName for control that is used by accessibility screen readers.</comment>
+  </data>
+  <data name="AutoResXGen_BackForwardHistory_AutomationPropertiesName_619" xml:space="preserve">
+    <value>Forward</value>
+    <comment>Localizable AutomationName for control that is used by accessibility screen readers.</comment>
+  </data>
+  <data name="AutoResXGen_BreadcrumbItem_Text_144" xml:space="preserve">
+    <value>Find in this column</value>
+    <comment>Background text shown in the search box.</comment>
+  </data>
+  <data name="AutoResXGen_DesignerStyleResources_Tooltip_148" xml:space="preserve">
+    <value>Expand</value>
+  </data>
+  <data name="AutoResXGen_ListOrganizer_AutomationPropertiesName_95" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="AutoResXGen_ManagementList_Text_602" xml:space="preserve">
+    <value>New Query</value>
+  </data>
+  <data name="AutoResXGen_TaskPane_Text_74" xml:space="preserve">
+    <value>Tasks</value>
+    <comment>This is the title string for the Task Pane.</comment>
+  </data>
+  <data name="AutoResXGen_Tile_AutomationPropertiesName_674" xml:space="preserve">
+    <value>Tasks</value>
+    <comment>AutomationProperties.Name of a SeparatedList.</comment>
+  </data>
+  <data name="AutoResXGen_WaitingRing_AutomationPropertiesName_74" xml:space="preserve">
+    <value>Indeterminate Progress Icon</value>
+  </data>
+  <data name="AutoResXGen_ManagementList2_Text_124" xml:space="preserve">
+    <value>Add criteria</value>
+  </data>
+  <data name="AutoResXGen_ManagementList2_Text_166" xml:space="preserve">
+    <value>Overwrite the existing query or type a different name to save a new query. Each query consists of criteria, sorting, and column customizations.</value>
+  </data>
+  <data name="AutoResXGen_ManagementList2_Content_186" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="AutoResXGen_ManagementList2_Content_196" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="AutoResXGen_ManagementList2_AutomationPropertiesName_314" xml:space="preserve">
+    <value>Click to save a search query</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Content_42" xml:space="preserve">
+    <value>Available columns</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Content_73" xml:space="preserve">
+    <value>&gt;&gt;</value>
+    <comment>The contents of a button which indicates that items will move from the left column to right column</comment>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Content_84" xml:space="preserve">
+    <value>&lt;&lt;</value>
+    <comment>The contents of a button which indicates that items will move from the right column to left column</comment>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Content_127" xml:space="preserve">
+    <value>Move up</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Content_134" xml:space="preserve">
+    <value>Move down</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Content_189" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Content_199" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Content_5" xml:space="preserve">
+    <value>Select columns</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Tooltip_76" xml:space="preserve">
+    <value>Move selected column to list of visible columns</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Tooltip_84" xml:space="preserve">
+    <value>Move selected column to list of hidden columns</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Text_142" xml:space="preserve">
+    <value>This column may not be removed.</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Text_152" xml:space="preserve">
+    <value>The list must always display at least one column.</value>
+  </data>
+  <data name="AutoResXGen_ColumnPicker_Content_93" xml:space="preserve">
+    <value>Selected columns</value>
+  </data>
+  <data name="ColumnsExplorer_Column_FindTextBox_BackgroundText" xml:space="preserve">
+    <value>Find in this column</value>
+  </data>
+  <data name="AutoResXGen_DesignerStyleResources_ToolTip_97" xml:space="preserve">
+    <value>Expand</value>
+  </data>
+  <data name="AutoResXGen_ManagementList2_ToolTip_104" xml:space="preserve">
+    <value>Click to clear all filter criteria.</value>
+  </data>
+  <data name="AutoResXGen_ManagementList2_ToolTip_132" xml:space="preserve">
+    <value>Click to add search criteria.</value>
+  </data>
+  <data name="AutoResXGen_ManagementList2_ToolTip_32" xml:space="preserve">
+    <value>Click to expand search criteria.</value>
+  </data>
+  <data name="AutoResXGen_ManagementList2_NoItemsText_50" xml:space="preserve">
+    <value>There are currently no saved queries.</value>
+  </data>
+  <data name="AutoResXGen_ManagementList2_AutomationPropertiesName_52" xml:space="preserve">
+    <value>Queries</value>
+  </data>
+  <data name="AutoResXGen_ListOrganizer_AutomationPropertiesName_47" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="AutoResXGen_ListOrganizer_AutomationPropertiesName_72" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="FilterRule_AccessibleName" xml:space="preserve">
+    <value>{0} rule</value>
+    <comment>The text representation of a rule in the filter panel, displayed to accessibility clients. {0} will be the name of the rule.</comment>
+  </data>
+  <data name="AutoResXGen_AddFilterRulePicker_Content_214" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AutoResXGen_AddFilterRulePicker_Content_223" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="AutoResXGen_AddFilterRulePicker_AutomationPropertiesName_293" xml:space="preserve">
+    <value>Add Filter Criteria</value>
+  </data>
+  <data name="AutoResXGen_FilterRulePanel_AutomationPropertiesName_199" xml:space="preserve">
+    <value>Value</value>
+    <comment>The name for text input fields</comment>
+  </data>
+  <data name="AutoResXGen_FilterRulePanel_BackgroundText_200" xml:space="preserve">
+    <value>&lt;Empty&gt;</value>
+  </data>
+  <data name="AutoResXGen_FilterRulePanel_AutomationPropertiesName_257" xml:space="preserve">
+    <value>Rules</value>
+    <comment>The name of the panel which contains the filter rules</comment>
+  </data>
+  <data name="AutoResXGen_ManagementList_AutomationPropertiesName_302" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="AutoResXGen_ManagementList2_Content_19" xml:space="preserve">
+    <value>Query</value>
+  </data>
+  <data name="AutoResXGen_ManagementList2_Content_33" xml:space="preserve">
+    <value>Queries</value>
+  </data>
+  <data name="AutoResXGen_SearchBox_AutomationPropertiesName_75" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="ManagementListTitle_ListStatus_FilterApplied" xml:space="preserve">
+    <value>({0} of {1})</value>
+    <comment>The text displayed in the management list title when the list has a filter applied. {0} will be the number of items shown in the list. {1} will be the total number of items in the list before filtering.</comment>
+  </data>
+  <data name="ManagementListTitle_ListStatus_FilterInProgress" xml:space="preserve">
+    <value>Searching...</value>
+    <comment>The text displayed in the management list title when the list is processing a filter.</comment>
+  </data>
+  <data name="ManagementListTitle_ListStatus_FilterNotApplied" xml:space="preserve">
+    <value>({0})</value>
+    <comment>The text displayed in the management list title when the list does not have a filter applied. {0} will be the number of items shown in the list.</comment>
+  </data>
+  <data name="AutoResXGen_BreadcrumbItem_AutomationPropertiesName_142" xml:space="preserve">
+    <value>Filter</value>
+    <comment>Localizable AutomationName for control that is used by accessibility screen readers.</comment>
+  </data>
+  <data name="ColumnsExplorer_Column_FindTextBox_AutomationName" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="AutoResXGen_AddFilterRulePicker_AutomationPropertiesName_157" xml:space="preserve">
+    <value>Shortcut Rules</value>
+    <comment>The name used to indicate custom filter rules which are specific to a particular application.</comment>
+  </data>
+  <data name="AutoResXGen_AddFilterRulePicker_AutomationPropertiesName_180" xml:space="preserve">
+    <value>Columns Rules</value>
+    <comment>The name used to indicate filter rules that are based upon the properties of the items in the list.</comment>
+  </data>
+  <data name="ManagementList_SortGlyph_Ascending_AutomationName" xml:space="preserve">
+    <value>Sort Glyph</value>
+  </data>
+  <data name="ManagementList_SortGlyph_Descending_AutomationName" xml:space="preserve">
+    <value>Sort Glyph</value>
+  </data>
+  <data name="AutoResXGen_DesignerStyleResources_ToolTip_119" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="AutoResXGen_DesignerStyleResources_ToolTip_160" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="InnerList_GridViewColumnHeader_ItemStatus_Ascending" xml:space="preserve">
+    <value>Sorted ascending</value>
+    <comment>The text used for the accessible ItemStatus property when a column is sorted ascending.</comment>
+  </data>
+  <data name="InnerList_GridViewColumnHeader_ItemStatus_Descending" xml:space="preserve">
+    <value>Sorted descending</value>
+    <comment>The text used for the accessible ItemStatus property when a column is sorted descending.</comment>
+  </data>
+  <data name="CollapsingTabControl_ExpandButton_AutomationName" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="CollapsingTabControl_CollapseButton_AutomationName" xml:space="preserve">
+    <value>Expand</value>
+  </data>
+  <data name="AutoResXGen_ManagementList_TextBlock_83" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="AutoResXGen_ManagementList_TextBlock_106" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="AutoResXGen_ManagementList_TextBlock_129" xml:space="preserve">
+    <value>Clear All</value>
+  </data>
+  <data name="AutoResXGen_ManagementList_AutomationPropertiesName_395" xml:space="preserve">
+    <value>Clear All</value>
+  </data>
+  <data name="AutoResXGen_SearchBox_AutomationPropertiesName_85" xml:space="preserve">
+    <value>Clear Search Text</value>
+  </data>
+  <data name="AutoResXGen_TaskPane_AutomationPropertiesName_133" xml:space="preserve">
+    <value>Tasks</value>
+  </data>
+  <data name="ManagementList_StartFilterButton_AutomationName" xml:space="preserve">
+    <value>Search</value>
+    <comment>The accessible name of the Search button in the filter panel.</comment>
+  </data>
+  <data name="ManagementList_StopFilterButton_AutomationName" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>The accessible name of the Stop Search button in the filter panel.</comment>
+  </data>
+  <data name="ManagementList_ToggleFilterPanelButton_AutomationName" xml:space="preserve">
+    <value>Expand or Collapse Filter Panel</value>
+    <comment>The accessible name of the button that expands/collapses the filter panel.</comment>
+  </data>
+  <data name="ManagementList_SearchBox_BackgroundText_Live" xml:space="preserve">
+    <value>Filter</value>
+    <comment>The background text of the list's search box when filtering is immediate.</comment>
+  </data>
+  <data name="AutoResXGen_ManagementList_ToolTip_314" xml:space="preserve">
+    <value>Click to display saved search queries.</value>
+  </data>
+  <data name="AutoResXGen_ManagementList_Text_392" xml:space="preserve">
+    <value>Filter applied.</value>
+  </data>
+  <data name="FilterRulePanel_LogicalOperatorText_FirstHeader" xml:space="preserve">
+    <value>and</value>
+    <comment>The first header operator indicates that it is the first item in the list of filter rules. The AND value is used to indicate that it is and'ed with the above SearchBox.</comment>
+  </data>
+  <data name="FilterRulePanel_LogicalOperatorText_Header" xml:space="preserve">
+    <value>and</value>
+    <comment>The header operator indicates that it is the first item in a group of filter rules which are the same. The AND value is used to indicate that it is and'ed with the other groups in the panel.</comment>
+  </data>
+  <data name="FilterRulePanel_LogicalOperatorText_Item" xml:space="preserve">
+    <value>or</value>
+    <comment>The Item operator indicates that it is NOT the first item in a group of filter rules which are the same. The OR value is used to indicate that it is or'ed with the other items in the same group.</comment>
+  </data>
+  <data name="ManagementList_NoMatchesFound_Message" xml:space="preserve">
+    <value>No matches found.</value>
+    <comment>The text displayed in the ManagementList when the filter has been applied but matching items were found.</comment>
+  </data>
+  <data name="CollapsingTabControl_CollapseButton_ToolTip" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="CollapsingTabControl_ExpandButton_ToolTip" xml:space="preserve">
+    <value>Expand</value>
+  </data>
+  <data name="NavigationList_ShownChildrenButton_ToolTip" xml:space="preserve">
+    <value>Show Children</value>
+  </data>
+  <data name="NavigationList_ShownChildrenButton_AutomationName" xml:space="preserve">
+    <value>Show Children</value>
+  </data>
+  <data name="ManagementListTitle_Title_WithViewName" xml:space="preserve">
+    <value>{0}: {1}</value>
+    <comment>The format string used for the ManagementList title when query has been applied. For example, "Users: My Fancy Query"</comment>
+  </data>
+  <data name="OutGridView_Button_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="OutGridView_Button_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+</root>

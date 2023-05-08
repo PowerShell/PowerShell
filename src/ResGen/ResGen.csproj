@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Generates C# typed bindings for .resx files</Description>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>resgen</AssemblyName>
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>

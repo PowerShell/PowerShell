@@ -1,16 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT
-
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
-using System.Linq;
-using System.Dynamic;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Management.Automation.Language;
 
 namespace System.Management.Automation.ComInterop
@@ -39,11 +33,10 @@ namespace System.Management.Automation.ComInterop
 
         private DynamicMetaObject BindGetOrInvoke(DynamicMetaObject[] args, CallInfo callInfo)
         {
-            ComMethodDesc method;
-            var target = _callable.DispatchComObject;
-            var name = _callable.MemberName;
+            IDispatchComObject target = _callable.DispatchComObject;
+            string name = _callable.MemberName;
 
-            if (target.TryGetMemberMethod(name, out method) ||
+            if (target.TryGetMemberMethod(name, out ComMethodDesc method) ||
                 target.TryGetMemberMethodExplicit(name, out method))
             {
                 List<ParameterExpression> temps = new List<ParameterExpression>();
@@ -52,18 +45,16 @@ namespace System.Management.Automation.ComInterop
                 bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(method, ref args, temps, initTemps);
                 return BindComInvoke(method, args, callInfo, isByRef, temps, initTemps);
             }
-
             return null;
         }
 
         public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
         {
-            ComMethodDesc method;
-            var target = _callable.DispatchComObject;
-            var name = _callable.MemberName;
+            IDispatchComObject target = _callable.DispatchComObject;
+            string name = _callable.MemberName;
 
             bool holdsNull = value.Value == null && value.HasValue;
-            if (target.TryGetPropertySetter(name, out method, value.LimitType, holdsNull) ||
+            if (target.TryGetPropertySetter(name, out ComMethodDesc method, value.LimitType, holdsNull) ||
                 target.TryGetPropertySetterExplicit(name, out method, value.LimitType, holdsNull))
             {
                 List<ParameterExpression> temps = new List<ParameterExpression>();
@@ -71,14 +62,16 @@ namespace System.Management.Automation.ComInterop
 
                 bool[] isByRef = ComBinderHelpers.ProcessArgumentsForCom(method, ref indexes, temps, initTemps);
                 isByRef = isByRef.AddLast(false);
-
                 // Convert the value to the target type
-                DynamicMetaObject updatedValue = new DynamicMetaObject(value.CastOrConvertMethodArgument(
-                                value.LimitType,
-                                name,
-                                "SetIndex",
-                                temps,
-                                initTemps), value.Restrictions);
+                DynamicMetaObject updatedValue = new DynamicMetaObject(
+                    value.CastOrConvertMethodArgument(
+                        value.LimitType,
+                        name,
+                        "SetIndex",
+                        allowCastingToByRefLikeType: false,
+                        temps,
+                        initTemps),
+                    value.Restrictions);
 
                 var result = BindComInvoke(method, indexes.AddLast(updatedValue), binder.CallInfo, isByRef, temps, initTemps);
 
@@ -95,8 +88,8 @@ namespace System.Management.Automation.ComInterop
         private DynamicMetaObject BindComInvoke(ComMethodDesc method, DynamicMetaObject[] indexes, CallInfo callInfo, bool[] isByRef,
             List<ParameterExpression> temps, List<Expression> initTemps)
         {
-            var callable = Expression;
-            var dispCall = Helpers.Convert(callable, typeof(DispCallable));
+            Expression callable = Expression;
+            Expression dispCall = Helpers.Convert(callable, typeof(DispCallable));
 
             DynamicMetaObject invoke = new ComInvokeBinder(
                 callInfo,
@@ -106,12 +99,12 @@ namespace System.Management.Automation.ComInterop
                 Expression.Constant(method),
                 Expression.Property(
                     dispCall,
-                    typeof(DispCallable).GetProperty("DispatchObject")
+                    typeof(DispCallable).GetProperty(nameof(DispCallable.DispatchObject))
                 ),
                 method
             ).Invoke();
 
-            if ((temps != null) && (temps.Any()))
+            if (temps != null && temps.Count > 0)
             {
                 Expression invokeExpression = invoke.Expression;
                 Expression call = Expression.Block(invokeExpression.Type, temps, initTemps.Append(invokeExpression));
@@ -123,15 +116,15 @@ namespace System.Management.Automation.ComInterop
 
         private BindingRestrictions DispCallableRestrictions()
         {
-            var callable = Expression;
+            Expression callable = Expression;
 
-            var callableTypeRestrictions = BindingRestrictions.GetTypeRestriction(callable, typeof(DispCallable));
-            var dispCall = Helpers.Convert(callable, typeof(DispCallable));
-            var dispatch = Expression.Property(dispCall, typeof(DispCallable).GetProperty("DispatchComObject"));
-            var dispId = Expression.Property(dispCall, typeof(DispCallable).GetProperty("DispId"));
+            BindingRestrictions callableTypeRestrictions = BindingRestrictions.GetTypeRestriction(callable, typeof(DispCallable));
+            Expression dispCall = Helpers.Convert(callable, typeof(DispCallable));
+            MemberExpression dispatch = Expression.Property(dispCall, typeof(DispCallable).GetProperty(nameof(DispCallable.DispatchComObject)));
+            MemberExpression dispId = Expression.Property(dispCall, typeof(DispCallable).GetProperty(nameof(DispCallable.DispId)));
 
-            var dispatchRestriction = IDispatchMetaObject.IDispatchRestriction(dispatch, _callable.DispatchComObject.ComTypeDesc);
-            var memberRestriction = BindingRestrictions.GetExpressionRestriction(
+            BindingRestrictions dispatchRestriction = IDispatchMetaObject.IDispatchRestriction(dispatch, _callable.DispatchComObject.ComTypeDesc);
+            BindingRestrictions memberRestriction = BindingRestrictions.GetExpressionRestriction(
                 Expression.Equal(dispId, Expression.Constant(_callable.DispId))
             );
 
@@ -139,6 +132,3 @@ namespace System.Management.Automation.ComInterop
         }
     }
 }
-
-#endif
-

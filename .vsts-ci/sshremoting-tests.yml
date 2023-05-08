@@ -1,0 +1,98 @@
+name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  # Batch merge builds together while a merge build is running
+  batch: true
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - '/src/System.Management.Automation/engine/*'
+    - '/test/SSHRemoting/*'
+pr:
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - '/src/System.Management.Automation/engine/*'
+    - '/test/SSHRemoting/*'
+
+variables:
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+  # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - name:  __SuppressAnsiEscapeSequences
+    value: 1
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+# Prevents auto-injection of nuget-security-analysis@0
+  - name: skipNugetSecurityAnalysis
+    value: true
+
+
+resources:
+- repo: self
+  clean: true
+jobs:
+- job: SSHRemotingTests
+  pool:
+    vmImage: ubuntu-20.04
+  container: mcr.microsoft.com/powershell/test-deps:ubuntu-18.04
+  displayName: SSH Remoting Tests
+
+  steps:
+  - pwsh: |
+      Get-ChildItem -Path env:
+    displayName: Capture Environment
+    condition: succeededOrFailed()
+
+  - pwsh:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
+    displayName: Set Build Name for Non-PR
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+
+  - pwsh: |
+      sudo apt-get update
+      sudo apt-get install -y git
+    displayName: Install Github
+    condition: succeeded()
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Invoke-CIInstall -SkipUser
+    displayName: Bootstrap
+    condition: succeededOrFailed()
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Invoke-CIBuild
+    displayName: Build
+    condition: succeeded()
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Restore-PSOptions
+      $options = (Get-PSOptions)
+      Import-Module .\test\tools\Modules\HelpersRemoting
+      Install-SSHRemoting -PowerShellFilePath $options.Output
+    displayName: Install SSH Remoting
+    condition: succeeded()
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Restore-PSOptions
+      $options = (Get-PSOptions)
+      Import-Module .\build.psm1
+      Start-PSPester -Path test/SSHRemoting -powershell $options.Output -OutputFile "$PWD/sshTestResults.xml"
+    displayName: Test
+    condition: succeeded()

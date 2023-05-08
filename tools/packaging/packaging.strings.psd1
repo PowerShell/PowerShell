@@ -1,4 +1,4 @@
-﻿@{
+@{
     Description = @'
 PowerShell is an automation and configuration management platform.
 It consists of a cross-platform command-line shell and associated scripting language.
@@ -11,6 +11,14 @@ if [ ! -f /etc/shells ] ; then
 else
     grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
 fi
+if [ -f /lib64/libssl.so.1.1 ] ; then
+    ln -f -s /lib64/libssl.so.1.1 {1}/libssl.so.1.0.0
+    ln -f -s /lib64/libcrypto.so.1.1.1 {1}/libcrypto.so.1.0.0
+else
+    ln -f -s /lib64/libssl.so.10 {1}/libssl.so.1.0.0
+    ln -f -s /lib64/libcrypto.so.10 {1}/libcrypto.so.1.0.0
+fi
+
 '@
 
     RedHatAfterRemoveScript = @'
@@ -20,6 +28,8 @@ if [ "$1" = 0 ] ; then
         grep -v '^{0}$' /etc/shells > $TmpFile
         cp -f $TmpFile /etc/shells
         rm -f $TmpFile
+        rm -f {1}/libssl.so.1.0.0
+        rm -f {1}/libcrypto.so.1.0.0
     fi
 fi
 '@
@@ -38,6 +48,18 @@ case "$1" in
         exit 0
     ;;
 esac
+
+if [ -f /usr/lib/x86_64-linux-gnu/libssl.so.1.1 ] ; then
+    ln -f -s /usr/lib/x86_64-linux-gnu/libssl.so.1.1 {1}/libssl.so.1.0.0
+    ln -f -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 {1}/libcrypto.so.1.0.0
+elif [ -f /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 ] ; then
+    ln -f -s /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 {1}/libssl.so.1.0.0
+    ln -f -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2 {1}/libcrypto.so.1.0.0
+else
+    ln -f -s /lib64/libssl.so.10 {1}/libssl.so.1.0.0
+    ln -f -s /lib64/libcrypto.so.10 {1}/libcrypto.so.1.0.0
+fi
+
 '@
 
     UbuntuAfterRemoveScript = @'
@@ -46,8 +68,20 @@ set -e
 case "$1" in
         (remove)
         remove-shell "{0}"
+        rm -f {1}/libssl.so.1.0.0
+        rm -f {1}/libcrypto.so.1.0.0
         ;;
 esac
+'@
+
+    MacOSAfterInstallScript = @'
+#!/bin/bash
+
+if [ ! -f /etc/shells ] ; then
+    echo "{0}" > /etc/shells
+else
+    grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
+fi
 '@
 
     MacOSLauncherScript = @'
@@ -91,7 +125,7 @@ open {0}
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <installer-gui-script minSpecVersion="1">
     <title>{0}</title>
-    <options hostArchitectures="x86_64"/>
+    <options hostArchitectures="{5}"/>
     <options customize="never" rootVolumeOnly="true"/>
     <background file="macDialog.png" scaling="tofit" alignment="bottomleft"/>
     <allowed-os-versions>
@@ -120,32 +154,22 @@ open {0}
         <version>{1}</version>
         <authors>Microsoft</authors>
         <owners>Microsoft,PowerShell</owners>
-        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Runtime for hosting PowerShell</description>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
-        <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
-        <licenseUrl>https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt</licenseUrl>
+        <icon>{2}</icon>
+        <license type="expression">MIT</license>
         <tags>PowerShell</tags>
         <language>en-US</language>
-        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
         <contentFiles>
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework=".netcoreapp3.0"></group>
+            <group targetFramework="net8.0"></group>
         </dependencies>
     </metadata>
 </package>
-'@
-
-    NuGetConfigFile = @'
-<configuration>
-  <packageSources>
-    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-    <add key="dotnet-core" value="https://dotnet.myget.org/F/dotnet-core/api/v3/index.json" />
-    <add key="powershell-core" value="https://powershell.myget.org/F/powershell-core/api/v3/index.json" />
-  </packageSources>
-</configuration>
 '@
 
     GlobalToolNuSpec = @'
@@ -157,13 +181,13 @@ open {0}
         <authors>Microsoft</authors>
         <owners>Microsoft,PowerShell</owners>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
-        <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
+        <icon>{2}</icon>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>PowerShell global tool</description>
         <license type="expression">MIT</license>
         <tags>PowerShell</tags>
         <language>en-US</language>
-        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
         <packageTypes>
             <packageType name="DotnetTool" />
         </packageTypes>

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 // The define below is only valid for this file. It allows the methods
@@ -11,6 +11,7 @@
 #define DEBUG
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace System.Management.Automation
@@ -71,7 +72,7 @@ namespace System.Management.Automation
             return frameString.ToString();
         }
 
-        private static object s_throwInsteadOfAssertLock = 1;
+        private static readonly object s_throwInsteadOfAssertLock = 1;
 
         private static bool s_throwInsteadOfAssert = false;
         /// <summary>
@@ -126,6 +127,7 @@ namespace System.Management.Automation
 #if RESHARPER_ATTRIBUTES
             [JetBrains.Annotations.AssertionCondition(JetBrains.Annotations.AssertionConditionType.IS_TRUE)]
 #endif
+            [DoesNotReturnIf(false)]
             bool condition,
             string whyThisShouldNeverHappen)
         {
@@ -159,11 +161,15 @@ namespace System.Management.Automation
 #if RESHARPER_ATTRIBUTES
             [JetBrains.Annotations.AssertionCondition(JetBrains.Annotations.AssertionConditionType.IS_TRUE)]
 #endif
+            [DoesNotReturnIf(false)]
             bool condition,
             string whyThisShouldNeverHappen, string detailMessage)
         {
             // Early out avoids some slower code below (mostly the locking done in ThrowInsteadOfAssert).
-            if (condition) return;
+            if (condition)
+            {
+                return;
+            }
 
 #if ASSERTIONS_TRACE
             if (!condition)
@@ -201,4 +207,3 @@ namespace System.Management.Automation
         }
     }
 }
-

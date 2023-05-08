@@ -19,7 +19,7 @@ using System.Globalization;
 
 namespace System.Management.Automation.Interpreter
 {
-    internal struct RuntimeLabel
+    internal readonly struct RuntimeLabel
     {
         public readonly int Index;
         public readonly int StackDepth;
@@ -110,10 +110,7 @@ namespace System.Management.Automation.Interpreter
 
             if (_targetIndex == UnknownIndex)
             {
-                if (_forwardBranchFixups == null)
-                {
-                    _forwardBranchFixups = new List<int>();
-                }
+                _forwardBranchFixups ??= new List<int>();
 
                 _forwardBranchFixups.Add(branchIndex);
             }

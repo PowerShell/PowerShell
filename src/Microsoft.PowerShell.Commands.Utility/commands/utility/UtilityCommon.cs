@@ -1,14 +1,13 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
 using System.Text;
 
-[module: SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Scope = "type", Target = "Microsoft.PowerShell.Commands.ByteCollection")]
+[module: SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Scope = "type", Target = "~T:Microsoft.PowerShell.Commands.ByteCollection")]
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -44,6 +43,11 @@ namespace Microsoft.PowerShell.Commands
         BigEndianUnicode,
 
         /// <summary>
+        /// Big Endian UTF32 encoding.
+        /// </summary>
+        BigEndianUTF32,
+
+        /// <summary>
         /// UTF8 encoding.
         /// </summary>
         Utf8,
@@ -74,14 +78,9 @@ namespace Microsoft.PowerShell.Commands
         public static string FileReadError { get { return UtilityCommonStrings.FileReadError; } }
 
         /// <summary>
-        /// The resource string used to indicate 'PATH:' in the formating header.
+        /// The resource string used to indicate 'PATH:' in the formatting header.
         /// </summary>
         public static string FormatHexPathPrefix { get { return UtilityCommonStrings.FormatHexPathPrefix; } }
-
-        /// <summary>
-        /// Error message to indicate that requested algorithm is not supported on the target platform.
-        /// </summary>
-        public static string AlgorithmTypeNotSupported { get { return UtilityCommonStrings.AlgorithmTypeNotSupported; } }
 
         /// <summary>
         /// The file '{0}' could not be parsed as a PowerShell Data File.
@@ -95,64 +94,57 @@ namespace Microsoft.PowerShell.Commands
     public class ByteCollection
     {
         /// <summary>
-        /// ByteCollection constructor.
+        /// Initializes a new instance of the <see cref="ByteCollection"/> class.
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
         /// <param name="path">Indicates the path of the file whose contents are wrapped in the ByteCollection.</param>
         [Obsolete("The constructor is deprecated.", true)]
-        public ByteCollection(UInt32 offset, byte[] value, string path)
+        public ByteCollection(uint offset, byte[] value, string path)
+            : this((ulong)offset, value, path)
         {
-            Offset64 = offset;
-            Bytes = value;
-            Path = path;
         }
 
         /// <summary>
-        /// Initializes a new instance of ByteCollection.
+        /// Initializes a new instance of the <see cref="ByteCollection"/> class.
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
         /// <param name="path">Indicates the path of the file whose contents are wrapped in the ByteCollection.</param>
-        public ByteCollection(UInt64 offset, byte[] value, string path)
+        public ByteCollection(ulong offset, byte[] value, string path)
         {
             if (value == null)
             {
-                throw PSTraceSource.NewArgumentNullException("value");
+                throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
             Offset64 = offset;
             Bytes = value;
             Path = path;
+            Label = path;
         }
 
         /// <summary>
-        /// ByteCollection constructor.
+        /// Initializes a new instance of the <see cref="ByteCollection"/> class.
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
         [Obsolete("The constructor is deprecated.", true)]
-        public ByteCollection(UInt32 offset, byte[] value)
+        public ByteCollection(uint offset, byte[] value)
+            : this((ulong)offset, value)
         {
-            if (value == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("value");
-            }
-
-            Offset64 = offset;
-            Bytes = value;
         }
 
         /// <summary>
-        /// ByteCollection constructor.
+        /// Initializes a new instance of the <see cref="ByteCollection"/> class.
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
-        public ByteCollection(UInt64 offset, byte[] value)
+        public ByteCollection(ulong offset, byte[] value)
         {
             if (value == null)
             {
-                throw PSTraceSource.NewArgumentNullException("value");
+                throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
             Offset64 = offset;
@@ -160,14 +152,28 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ByteCollection constructor.
+        /// Initializes a new instance of the <see cref="ByteCollection"/> class.
+        /// </summary>
+        /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
+        /// <param name="label">
+        /// The label for the byte group. This may be a file path or a formatted identifying string for the group.
+        /// </param>
+        /// <param name="value">Underlying bytes stored in the collection.</param>
+        public ByteCollection(ulong offset, string label, byte[] value)
+            : this(offset, value)
+        {
+            Label = label;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ByteCollection"/> class.
         /// </summary>
         /// <param name="value">Underlying bytes stored in the collection.</param>
         public ByteCollection(byte[] value)
         {
             if (value == null)
             {
-                throw PSTraceSource.NewArgumentNullException("value");
+                throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
             Bytes = value;
@@ -177,11 +183,11 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the Offset address to be used while displaying the bytes in the collection.
         /// </summary>
         [Obsolete("The property is deprecated, please use Offset64 instead.", true)]
-        public UInt32 Offset
+        public uint Offset
         {
             get
             {
-                return (UInt32)Offset64;
+                return (uint)Offset64;
             }
 
             private set
@@ -193,18 +199,94 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the Offset address to be used while displaying the bytes in the collection.
         /// </summary>
-        public UInt64 Offset64 { get; private set; }
+        public ulong Offset64 { get; private set; }
 
         /// <summary>
         /// Gets underlying bytes stored in the collection.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public byte[] Bytes { get; private set; }
+        public byte[] Bytes { get; }
 
         /// <summary>
         /// Gets the path of the file whose contents are wrapped in the ByteCollection.
         /// </summary>
-        public string Path { get; private set; }
+        public string Path { get; }
+
+        /// <summary>
+        /// Gets the hexadecimal representation of the <see cref="Offset64"/> value.
+        /// </summary>
+        public string HexOffset => string.Create(CultureInfo.CurrentCulture, $"{Offset64:X16}");
+
+        /// <summary>
+        /// Gets the type of the input objects used to create the <see cref="ByteCollection"/>.
+        /// </summary>
+        public string Label { get; }
+
+        private const int BytesPerLine = 16;
+
+        private string _hexBytes = string.Empty;
+
+        /// <summary>
+        /// Gets a space-delimited string of the <see cref="Bytes"/> in this <see cref="ByteCollection"/>
+        /// in hexadecimal format.
+        /// </summary>
+        public string HexBytes
+        {
+            get
+            {
+                if (_hexBytes == string.Empty)
+                {
+                    StringBuilder line = new(BytesPerLine * 3);
+
+                    foreach (var currentByte in Bytes)
+                    {
+                        line.AppendFormat(CultureInfo.CurrentCulture, "{0:X2} ", currentByte);
+                    }
+
+                    _hexBytes = line.ToString().Trim();
+                }
+
+                return _hexBytes;
+            }
+        }
+
+        private string _ascii = string.Empty;
+
+        /// <summary>
+        /// Gets the ASCII string representation of the <see cref="Bytes"/> in this <see cref="ByteCollection"/>.
+        /// </summary>
+        /// <value></value>
+        public string Ascii
+        {
+            get
+            {
+                if (_ascii == string.Empty)
+                {
+                    StringBuilder ascii = new(BytesPerLine);
+
+                    foreach (var currentByte in Bytes)
+                    {
+                        var currentChar = (char)currentByte;
+                        if (currentChar == 0x0)
+                        {
+                            ascii.Append(' ');
+                        }
+                        else if (char.IsControl(currentChar))
+                        {
+                            ascii.Append((char)0xFFFD);
+                        }
+                        else
+                        {
+                            ascii.Append(currentChar);
+                        }
+                    }
+
+                    _ascii = ascii.ToString();
+                }
+
+                return _ascii;
+            }
+        }
 
         /// <summary>
         /// Displays the hexadecimal format of the bytes stored in the collection.
@@ -213,22 +295,20 @@ namespace Microsoft.PowerShell.Commands
         public override string ToString()
         {
             const int BytesPerLine = 16;
-            const string LineFormat = "{0:X20}   ";
+            const string LineFormat = "{0:X16}   ";
 
-            // '20 + 3' comes from format "{0:X20}   ".
-            // '20' comes from '[Uint64]::MaxValue.ToString().Length'.
-            StringBuilder nextLine = new StringBuilder(20 + 3 + (BytesPerLine * 3));
-            StringBuilder asciiEnd = new StringBuilder(BytesPerLine);
+            // '16 + 3' comes from format "{0:X16}   ".
+            // '16' comes from '[Uint64]::MaxValue.ToString("X").Length'.
+            StringBuilder nextLine = new(16 + 3 + (BytesPerLine * 3));
+            StringBuilder asciiEnd = new(BytesPerLine);
 
             // '+1' comes from 'result.Append(nextLine.ToString() + " " + asciiEnd.ToString());' below.
-            StringBuilder result = new StringBuilder(nextLine.Capacity + asciiEnd.Capacity + 1);
+            StringBuilder result = new(nextLine.Capacity + asciiEnd.Capacity + 1);
 
             if (Bytes.Length > 0)
             {
-                Int64 charCounter = 0;
+                long charCounter = 0;
 
-                // ToString() in invoked thrice by the F&O for the same content.
-                // Hence making sure that Offset is not getting incremented thrice for the same bytes being displayed.
                 var currentOffset = Offset64;
 
                 nextLine.AppendFormat(CultureInfo.InvariantCulture, LineFormat, currentOffset);
@@ -240,13 +320,18 @@ namespace Microsoft.PowerShell.Commands
 
                     // If the character is printable, add its ascii representation to
                     // the right-hand side.  Otherwise, add a dot to the right hand side.
-                    if ((currentByte >= 0x20) && (currentByte <= 0xFE))
+                    var currentChar = (char)currentByte;
+                    if (currentChar == 0x0)
                     {
-                        asciiEnd.Append((char)currentByte);
+                        asciiEnd.Append(' ');
+                    }
+                    else if (char.IsControl(currentChar))
+                    {
+                        asciiEnd.Append((char)0xFFFD);
                     }
                     else
                     {
-                        asciiEnd.Append('.');
+                        asciiEnd.Append(currentChar);
                     }
 
                     charCounter++;
@@ -262,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
                         nextLine.AppendFormat(CultureInfo.InvariantCulture, LineFormat, currentOffset);
 
                         // Adding a newline to support long inputs strings flowing through InputObject parameterset.
-                        if ((charCounter <= Bytes.Length) && string.IsNullOrEmpty(this.Path))
+                        if ((charCounter <= Bytes.Length) && string.IsNullOrEmpty(Path))
                         {
                             result.AppendLine();
                         }

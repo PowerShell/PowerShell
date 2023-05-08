@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 
@@ -32,7 +32,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 	}
 
     AfterEach {
-		remove-item $testfile -Force -ErrorAction SilentlyContinue
+		Remove-Item $testfile -Force -ErrorAction SilentlyContinue
     }
 
  	It "Import with CliXml directive should work" {
@@ -51,6 +51,183 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$results.Property1 | Should -Be $property1
 		$results.Property2 | Should -Be $property2
     }
+
+	It "Import Hashtable from exported non-ordered dictionary object should create non-ordered dictionary object" {
+		$dict = @{}
+		$dict['Larry'] = 'Poik!'
+		$dict['Curly'] = 'Nyuk!'
+		$dict['Moe'] = 'Wise guy!'
+		$dict['larry'] = 'poik!'
+		$dict['curly'] = 'nyuk!'
+		$dict['moe'] = 'wise guy!'
+		$dict.Count | Should -Be 3
+		$dict | Export-Clixml $testfile
+		$results = Import-Clixml $testfile
+		$results.GetType().Name | Should -BeExactly  "Hashtable"
+		$results.Count | Should -Be 3
+    }
+
+	It "Import OrderedDictionary from exported ordered dictionary object should create ordered dictionary object" {
+		$dict = [ordered]@{}
+		$dict['Larry'] = 'Poik!'
+		$dict['Curly'] = 'Nyuk!'
+		$dict['Moe'] = 'Wise guy!'
+		$dict['larry'] = 'poik!'
+		$dict['curly'] = 'nyuk!'
+		$dict['moe'] = 'wise guy!'
+		$dict.Count | Should -Be 3
+		$dict | Export-Clixml $testfile
+		$results = Import-Clixml $testfile
+		$results.GetType().Name | Should -BeExactly  "OrderedDictionary"
+		$results.Count | Should -Be 3
+		$results[0] | Should -BeExactly $dict[0]
+		$results[1] | Should -BeExactly $dict[1]
+		$results[2] | Should -BeExactly $dict[2]
+    }
+
+	It "Import Hashtable from exported non-ordered case-sentitive dictionary object" {
+		$dict = New-Object hashtable
+		$dict['Larry'] = 'Poik!'
+		$dict['Curly'] = 'Nyuk!'
+		$dict['Moe'] = 'Wise guy!'
+		$dict['larry'] = 'poik!'
+		$dict['curly'] = 'nyuk!'
+		$dict['moe'] = 'wise guy!'
+		$dict.Count | Should -Be 6
+		$dict | Export-Clixml $testfile
+		$results = Import-Clixml $testfile
+		$results.GetType().Name | Should -BeExactly  "Hashtable"
+		$results.Count | Should -Be 6
+	}
+
+	It "Import OrderedDictionary from XML with case-sensitive duplicate keys" {
+		$dupKeysXml =
+		'<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+				<Obj RefId="0">
+					<TN RefId="0">
+					<T>System.Collections.Specialized.OrderedDictionary</T>
+					<T>System.Object</T>
+					</TN>
+					<DCT>
+					<En>
+						<S N="Key">Larry</S>
+						<S N="Value">Poik!</S>
+					</En>
+					<En>
+						<S N="Key">Moe</S>
+						<S N="Value">Wise guy!</S>
+					</En>
+					<En>
+						<S N="Key">Curly</S>
+						<S N="Value">Nyuk!</S>
+					</En>
+					<En>
+						<S N="Key">larry</S>
+						<S N="Value">poik!</S>
+					</En>
+					<En>
+						<S N="Key">moe</S>
+						<S N="Value">wise guy!</S>
+					</En>
+					<En>
+						<S N="Key">curly</S>
+						<S N="Value">nyuk!</S>
+					</En>
+					</DCT>
+				</Obj>
+			</Objs>
+			'
+		$dupKeysXml | Out-File -FilePath $testfile
+		$results = Import-Clixml $testfile
+		$results.GetType().Name | Should -BeExactly  "OrderedDictionary"
+		$results.Count | Should -Be 6
+	}
+
+	It "Import Hashtable from XML with duplicate keys" {
+		$dupKeysXml =
+			'<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+				<Obj RefId="0">
+					<TN RefId="0">
+					<T>System.Collections.Hashtable</T>
+					<T>System.Object</T>
+					</TN>
+					<DCT>
+					<En>
+						<S N="Key">Larry</S>
+						<S N="Value">Poik!</S>
+					</En>
+					<En>
+						<S N="Key">Moe</S>
+						<S N="Value">Wise guy!</S>
+					</En>
+					<En>
+						<S N="Key">Curly</S>
+						<S N="Value">Nyuk!</S>
+					</En>
+					<En>
+						<S N="Key">Larry</S>
+						<S N="Value">Poik!</S>
+					</En>
+					<En>
+						<S N="Key">Moe</S>
+						<S N="Value">Wise guy!</S>
+					</En>
+					<En>
+						<S N="Key">Curly</S>
+						<S N="Value">Nyuk!</S>
+					</En>
+					</DCT>
+				</Obj>
+			</Objs>
+			'
+		$dupKeysXml | Out-File -FilePath $testfile
+		$results = Import-Clixml $testfile
+		$results.GetType().Name | Should -BeExactly  "Hashtable"
+		$results.Count | Should -Be 6
+	}
+
+	It "Import OrderedDictionary from XML with duplicate keys" {
+		$dupKeysXml =
+			'<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+				<Obj RefId="0">
+					<TN RefId="0">
+					<T>System.Collections.Specialized.OrderedDictionary</T>
+					<T>System.Object</T>
+					</TN>
+					<DCT>
+					<En>
+						<S N="Key">Larry</S>
+						<S N="Value">Poik!</S>
+					</En>
+					<En>
+						<S N="Key">Moe</S>
+						<S N="Value">Wise guy!</S>
+					</En>
+					<En>
+						<S N="Key">Curly</S>
+						<S N="Value">Nyuk!</S>
+					</En>
+					<En>
+						<S N="Key">Larry</S>
+						<S N="Value">Poik!</S>
+					</En>
+					<En>
+						<S N="Key">Moe</S>
+						<S N="Value">Wise guy!</S>
+					</En>
+					<En>
+						<S N="Key">Curly</S>
+						<S N="Value">Nyuk!</S>
+					</En>
+					</DCT>
+				</Obj>
+			</Objs>
+			'
+		$dupKeysXml | Out-File -FilePath $testfile
+		$results = Import-Clixml $testfile
+		$results.GetType().Name | Should -BeExactly  "OrderedDictionary"
+		$results.Count | Should -Be 6
+	}
 
 	It "Export-Clixml StopProcessing should succeed" {
         $ps = [PowerShell]::Create()
@@ -106,7 +283,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 
 	It "Import-Clixml should work with XML serialization from pwsh.exe" {
 		# need to create separate process so that current powershell doesn't interpret clixml output
-		Start-Process -FilePath $pshome\pwsh -RedirectStandardOutput $testfile -Args "-noprofile -nologo -outputformat xml -command get-command import-clixml" -Wait
+		Start-Process -FilePath $PSHOME\pwsh -RedirectStandardOutput $testfile -Args "-noprofile -nologo -outputformat xml -command get-command import-clixml" -Wait
 		$out = Import-Clixml -Path $testfile
 		$out.Name | Should -Be "Import-CliXml"
 		$out.CommandType.ToString() | Should -Be "Cmdlet"

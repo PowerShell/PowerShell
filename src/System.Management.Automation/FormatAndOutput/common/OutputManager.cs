@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("format_out_OutputManagerInner", "OutputManagerInner")]
-        internal static PSTraceSource tracer = PSTraceSource.GetTracer("format_out_OutputManagerInner", "OutputManagerInner");
+        internal static readonly PSTraceSource tracer = PSTraceSource.GetTracer("format_out_OutputManagerInner", "OutputManagerInner");
         #endregion tracer
 
         #region LineOutput
@@ -92,19 +92,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void EndProcessing()
         {
             // shut down only if we ever processed a pipeline object
-            if (_mgr != null)
-                _mgr.ShutDown();
+            _mgr?.ShutDown();
         }
 
         internal override void StopProcessing()
         {
             lock (_syncRoot)
             {
-                if (_lo != null)
-                {
-                    _lo.StopProcessing();
-                }
-
+                _lo?.StopProcessing();
                 _isStopped = true;
             }
         }
@@ -135,7 +130,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Lock object.
         /// </summary>
-        private object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
     }
 
     /// <summary>
@@ -185,7 +180,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Ordered list of ETS type names this object is handling.
             /// </summary>
-            private StringCollection _applicableTypes = new StringCollection();
+            private readonly StringCollection _applicableTypes = new StringCollection();
         }
 
         /// <summary>
@@ -213,10 +208,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             additional types. Adding a handler here would cause a new sub-pipeline
             to be created.
 
-            For example, the following line would add a new handler named "out-foobar"
-            to be invoked when the incoming object type is "MyNamespace.Whatever.FooBar"
+            For example, the following line would add a new handler named "out-example"
+            to be invoked when the incoming object type is "MyNamespace.Whatever.Example"
 
-            RegisterCommandForTypes (context, "out-foobar", new string[] { "MyNamespace.Whatever.FooBar" });
+            RegisterCommandForTypes (context, "out-example", new string[] { "MyNamespace.Whatever.Example" });
 
             And the method can be like this:
             private void RegisterCommandForTypes (ExecutionContext context, string commandName, Type commandType, string[] types)
@@ -322,7 +317,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// List of command entries, each with a set of applicable types.
         /// </summary>
-        private List<CommandEntry> _commandEntryList = new List<CommandEntry>();
+        private readonly List<CommandEntry> _commandEntryList = new List<CommandEntry>();
 
         /// <summary>
         /// Default command entry to be executed when all type matches fail.

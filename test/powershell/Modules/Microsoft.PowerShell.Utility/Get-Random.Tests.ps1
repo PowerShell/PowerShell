@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-Random DRT Unit Tests" -Tags "CI" {
     $testData = @(
@@ -90,8 +90,8 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
     }
 
     It "Tests for setting the seed" {
-        $result1 = (get-random -SetSeed 123), (get-random)
-        $result2 = (get-random -SetSeed 123), (get-random)
+        $result1 = (Get-Random -SetSeed 123), (Get-Random)
+        $result2 = (Get-Random -SetSeed 123), (Get-Random)
         $result1 | Should -Be $result2
     }
 }
@@ -132,7 +132,7 @@ Describe "Get-Random" -Tags "CI" {
     It "Should return an array " {
         $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count 3
         $randomNumber.Count | Should -Be 3
-        ,$randomNumber | Should -BeOfType "System.Array"
+        ,$randomNumber | Should -BeOfType System.Array
     }
 
     It "Should return three random numbers for array of 1,2,3,5,8,13 " {
@@ -156,6 +156,12 @@ Describe "Get-Random" -Tags "CI" {
         $randomNumber[6] | Should -BeNullOrEmpty
     }
 
+    It "Should return all the numbers for array of 1,2,3,5,8,13 in randomized order when the Shuffle switch is used" {
+        $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Shuffle
+        $randomNumber.Count | Should -Be 6
+        $randomNumber | Should -BeIn 1, 2, 3, 5, 8, 13
+    }
+
     It "Should return for a string collection " {
         $randomNumber = Get-Random -InputObject "red", "yellow", "blue"
         $randomNumber | Should -Be ("red" -or "yellow" -or "blue")
@@ -173,7 +179,7 @@ Describe "Get-Random" -Tags "CI" {
         $firstRandomNumber | Should -Not -Be $secondRandomNumber
     }
 
-    It "Should return the same number for hexadecimal number and regular number when the switch SetSeed it used " {
+    It "Should return the same number for hexadecimal number and regular number when the switch SetSeed is used " {
         $firstRandomNumber = Get-Random 0x07FFFFFFFF -SetSeed 20
         $secondRandomNumber = Get-Random 34359738367 -SetSeed 20
         $firstRandomNumber | Should -Be @secondRandomNumber
@@ -181,5 +187,17 @@ Describe "Get-Random" -Tags "CI" {
 
     It "Should throw an error because the hexadecimal number is to large " {
         { Get-Random 0x07FFFFFFFFFFFFFFFF } | Should -Throw "Value was either too large or too small for a UInt32"
+    }
+
+    It "Should accept collection containing empty string for -InputObject" {
+        1..10 | ForEach-Object {
+            Get-Random -InputObject @('a','b','') | Should -BeIn 'a','b',''
+        }
+    }
+
+    It "Should accept `$null in collection for -InputObject" {
+        1..10 | ForEach-Object {
+            Get-Random -InputObject @('a','b',$null) | Should -BeIn 'a','b',$null
+        }
     }
 }

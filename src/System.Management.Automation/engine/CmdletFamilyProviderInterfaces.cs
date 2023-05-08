@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Internal;
@@ -38,7 +38,7 @@ namespace System.Management.Automation
         {
             if (cmdlet == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cmdlet");
+                throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
             }
 
             _cmdlet = cmdlet;
@@ -59,7 +59,7 @@ namespace System.Management.Automation
         {
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             Item = new ItemCmdletProviderIntrinsics(sessionState);
@@ -102,9 +102,8 @@ namespace System.Management.Automation
 
         #region private data
 
-        private InternalCommand _cmdlet;
+        private readonly InternalCommand _cmdlet;
 
         #endregion private data
     }
 }
-

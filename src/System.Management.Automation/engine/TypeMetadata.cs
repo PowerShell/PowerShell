@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -51,7 +51,7 @@ namespace System.Management.Automation
         {
             if (other == null)
             {
-                throw PSTraceSource.NewArgumentNullException("other");
+                throw PSTraceSource.NewArgumentNullException(nameof(other));
             }
 
             _helpMessage = other._helpMessage;
@@ -265,23 +265,23 @@ namespace System.Management.Automation
             get
             {
                 ParameterFlags flags = 0;
-                if (IsMandatory) { flags = flags | ParameterFlags.Mandatory; }
+                if (IsMandatory) { flags |= ParameterFlags.Mandatory; }
 
-                if (ValueFromPipeline) { flags = flags | ParameterFlags.ValueFromPipeline; }
+                if (ValueFromPipeline) { flags |= ParameterFlags.ValueFromPipeline; }
 
-                if (ValueFromPipelineByPropertyName) { flags = flags | ParameterFlags.ValueFromPipelineByPropertyName; }
+                if (ValueFromPipelineByPropertyName) { flags |= ParameterFlags.ValueFromPipelineByPropertyName; }
 
-                if (ValueFromRemainingArguments) { flags = flags | ParameterFlags.ValueFromRemainingArguments; }
+                if (ValueFromRemainingArguments) { flags |= ParameterFlags.ValueFromRemainingArguments; }
 
                 return flags;
             }
 
             set
             {
-                this.IsMandatory = (ParameterFlags.Mandatory == (value & ParameterFlags.Mandatory));
-                this.ValueFromPipeline = (ParameterFlags.ValueFromPipeline == (value & ParameterFlags.ValueFromPipeline));
-                this.ValueFromPipelineByPropertyName = (ParameterFlags.ValueFromPipelineByPropertyName == (value & ParameterFlags.ValueFromPipelineByPropertyName));
-                this.ValueFromRemainingArguments = (ParameterFlags.ValueFromRemainingArguments == (value & ParameterFlags.ValueFromRemainingArguments));
+                this.IsMandatory = ((value & ParameterFlags.Mandatory) == ParameterFlags.Mandatory);
+                this.ValueFromPipeline = ((value & ParameterFlags.ValueFromPipeline) == ParameterFlags.ValueFromPipeline);
+                this.ValueFromPipelineByPropertyName = ((value & ParameterFlags.ValueFromPipelineByPropertyName) == ParameterFlags.ValueFromPipelineByPropertyName);
+                this.ValueFromRemainingArguments = ((value & ParameterFlags.ValueFromRemainingArguments) == ParameterFlags.ValueFromRemainingArguments);
             }
         }
 
@@ -411,7 +411,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             _name = name;
@@ -431,7 +431,7 @@ namespace System.Management.Automation
         {
             if (other == null)
             {
-                throw PSTraceSource.NewArgumentNullException("other");
+                throw PSTraceSource.NewArgumentNullException(nameof(other));
             }
 
             _isDynamic = other._isDynamic;
@@ -625,7 +625,7 @@ namespace System.Management.Automation
         {
             if (type == null)
             {
-                throw PSTraceSource.NewArgumentNullException("type");
+                throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             CommandMetadata cmdMetaData = new CommandMetadata(type);
@@ -761,6 +761,7 @@ namespace System.Management.Automation
         private const string AliasesFormat = @"{0}[Alias({1})]";
         private const string ValidateLengthFormat = @"{0}[ValidateLength({1}, {2})]";
         private const string ValidateRangeRangeKindFormat = @"{0}[ValidateRange([System.Management.Automation.ValidateRangeKind]::{1})]";
+        private const string ValidateRangeEnumFormat = @"{0}[ValidateRange([{3}]::{1}, [{3}]::{2})]";
         private const string ValidateRangeFloatFormat = @"{0}[ValidateRange({1:R}, {2:R})]";
         private const string ValidateRangeFormat = @"{0}[ValidateRange({1}, {2})]";
         private const string ValidatePatternFormat = "{0}[ValidatePattern('{1}')]";
@@ -769,6 +770,7 @@ namespace System.Management.Automation
         private const string ValidateSetFormat = @"{0}[ValidateSet({1})]";
         private const string ValidateNotNullFormat = @"{0}[ValidateNotNull()]";
         private const string ValidateNotNullOrEmptyFormat = @"{0}[ValidateNotNullOrEmpty()]";
+        private const string ValidateNotNullOrWhiteSpaceFormat = @"{0}[ValidateNotNullOrWhiteSpace()]";
         private const string AllowNullFormat = @"{0}[AllowNull()]";
         private const string AllowEmptyStringFormat = @"{0}[AllowEmptyString()]";
         private const string AllowEmptyCollectionFormat = @"{0}[AllowEmptyCollection()]";
@@ -895,7 +897,7 @@ namespace System.Management.Automation
         /// <returns>
         /// Attribute's proxy string.
         /// </returns>
-        private string GetProxyAttributeData(Attribute attrib, string prefix)
+        private static string GetProxyAttributeData(Attribute attrib, string prefix)
         {
             string result;
 
@@ -931,6 +933,10 @@ namespace System.Management.Automation
                     {
                         format = ValidateRangeFloatFormat;
                     }
+                    else if (rangeType.IsEnum)
+                    {
+                        format = ValidateRangeEnumFormat;
+                    }
                     else
                     {
                         format = ValidateRangeFormat;
@@ -941,7 +947,8 @@ namespace System.Management.Automation
                         format,
                         prefix,
                         validRangeAttrib.MinRange,
-                        validRangeAttrib.MaxRange);
+                        validRangeAttrib.MaxRange,
+                        rangeType.FullName);
                     return result;
                 }
             }
@@ -976,9 +983,9 @@ namespace System.Management.Automation
                 /* TODO: Validate Pattern dont support Options in ScriptCmdletText.
                 StringBuilder regexOps = new System.Text.StringBuilder();
                 string or = string.Empty;
-                string[] regexOptionEnumValues = Enum.GetNames(typeof(System.Text.RegularExpressions.RegexOptions));
+                string[] regexOptionEnumValues = Enum.GetNames<System.Text.RegularExpressions.RegexOptions>();
 
-                foreach(string regexOption in regexOptionEnumValues)
+                foreach (string regexOption in regexOptionEnumValues)
                 {
                     System.Text.RegularExpressions.RegexOptions option = (System.Text.RegularExpressions.RegexOptions) Enum.Parse(
                         typeof(System.Text.RegularExpressions.RegexOptions),
@@ -1022,6 +1029,14 @@ namespace System.Management.Automation
             {
                 result = string.Format(CultureInfo.InvariantCulture,
                     ValidateNotNullOrEmptyFormat, prefix);
+                return result;
+            }
+
+            ValidateNotNullOrWhiteSpaceAttribute notNullWhiteSpaceAttrib = attrib as ValidateNotNullOrWhiteSpaceAttribute;
+            if (notNullWhiteSpaceAttrib != null)
+            {
+                result = string.Format(CultureInfo.InvariantCulture,
+                    ValidateNotNullOrWhiteSpaceFormat, prefix);
                 return result;
             }
 
@@ -1165,7 +1180,7 @@ namespace System.Management.Automation
         {
             if (type == null)
             {
-                throw PSTraceSource.NewArgumentNullException("type");
+                throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             InternalParameterMetadata result;
@@ -1208,7 +1223,7 @@ namespace System.Management.Automation
         {
             if (runtimeDefinedParameters == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runtimeDefinedParameters");
+                throw PSTraceSource.NewArgumentNullException(nameof(runtimeDefinedParameters));
             }
 
             ConstructCompiledParametersUsingRuntimeDefinedParameters(runtimeDefinedParameters, processingDynamicParameters, checkNames);
@@ -1236,7 +1251,7 @@ namespace System.Management.Automation
         {
             if (type == null)
             {
-                throw PSTraceSource.NewArgumentNullException("type");
+                throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             _type = type;
@@ -1274,7 +1289,7 @@ namespace System.Management.Automation
         /// This member is null in all cases except when constructed with using reflection
         /// against the Type.
         /// </summary>
-        private Type _type;
+        private readonly Type _type;
 
         /// <summary>
         /// The flags used when reflecting against the object to create the metadata.
@@ -1367,7 +1382,7 @@ namespace System.Management.Automation
             }
         }
 
-        private void CheckForReservedParameter(string name)
+        private static void CheckForReservedParameter(string name)
         {
             if (name.Equals("SelectProperty", StringComparison.OrdinalIgnoreCase)
                 ||
@@ -1544,10 +1559,9 @@ namespace System.Management.Automation
         /// The cache of the type metadata. The key for the cache is the Type.FullName.
         /// Note, this is a case-sensitive dictionary because Type names are case sensitive.
         /// </summary>
-        private static System.Collections.Concurrent.ConcurrentDictionary<string, InternalParameterMetadata> s_parameterMetadataCache =
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, InternalParameterMetadata> s_parameterMetadataCache =
             new System.Collections.Concurrent.ConcurrentDictionary<string, InternalParameterMetadata>(StringComparer.Ordinal);
 
         #endregion Metadata cache
     }
 }
-

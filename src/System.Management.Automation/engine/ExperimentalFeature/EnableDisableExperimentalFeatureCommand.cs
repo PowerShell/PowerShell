@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    internal class ExperimentalFeatureConfigHelper
+    internal static class ExperimentalFeatureConfigHelper
     {
         internal static void UpdateConfig(PSCmdlet cmdlet, string[] name, ConfigScope scope, bool enable)
         {
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
                 names.Add(result.Name);
             }
 
-            return names.OrderBy(name => name).Select(name => new CompletionResult(name, name, CompletionResultType.Text, name));
+            return names.Order().Select(static name => new CompletionResult(name, name, CompletionResultType.Text, name));
         }
     }
 }

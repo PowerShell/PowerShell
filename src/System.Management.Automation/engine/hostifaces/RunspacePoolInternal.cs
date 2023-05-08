@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         private static readonly TimeSpan s_defaultCleanupPeriod = new TimeSpan(0, 15, 0);   // 15 minutes.
         private TimeSpan _cleanupInterval;
-        private Timer _cleanupTimer;
+        private readonly Timer _cleanupTimer;
 
         #endregion
 
@@ -76,7 +76,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             this.host = host;
@@ -121,21 +121,18 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             _initialSessionState = initialSessionState.Clone();
             this.host = host;
             ThreadOptions = initialSessionState.ThreadOptions;
-#if !CORECLR
-            // No ApartmentState In CoreCLR
             this.ApartmentState = initialSessionState.ApartmentState;
-#endif
             pool = new Stack<Runspace>();
             runspaceRequestQueue = new Queue<GetRunspaceAsyncResult>();
             ultimateRequestQueue = new Queue<GetRunspaceAsyncResult>();
@@ -157,17 +154,17 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (maxRunspaces < 1)
             {
-                throw PSTraceSource.NewArgumentException("maxRunspaces", RunspacePoolStrings.MaxPoolLessThan1);
+                throw PSTraceSource.NewArgumentException(nameof(maxRunspaces), RunspacePoolStrings.MaxPoolLessThan1);
             }
 
             if (minRunspaces < 1)
             {
-                throw PSTraceSource.NewArgumentException("minRunspaces", RunspacePoolStrings.MinPoolLessThan1);
+                throw PSTraceSource.NewArgumentException(nameof(minRunspaces), RunspacePoolStrings.MinPoolLessThan1);
             }
 
             if (minRunspaces > maxRunspaces)
             {
-                throw PSTraceSource.NewArgumentException("minRunspaces", RunspacePoolStrings.MinPoolGreaterThanMaxPool);
+                throw PSTraceSource.NewArgumentException(nameof(minRunspaces), RunspacePoolStrings.MinPoolGreaterThanMaxPool);
             }
 
             maxPoolSz = maxRunspaces;
@@ -234,10 +231,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 lock (this.syncObject)
                 {
-                    if (_applicationPrivateData == null)
-                    {
-                        _applicationPrivateData = new PSPrimitiveDictionary();
-                    }
+                    _applicationPrivateData ??= new PSPrimitiveDictionary();
                 }
             }
 
@@ -279,7 +273,10 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         public TimeSpan CleanupInterval
         {
-            get { return _cleanupInterval; }
+            get
+            {
+                return _cleanupInterval;
+            }
 
             set
             {
@@ -621,7 +618,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
@@ -630,7 +627,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (!rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginOpen");
@@ -688,7 +685,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
@@ -697,7 +694,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginClose");
@@ -757,7 +754,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (runspace == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runspace");
+                throw PSTraceSource.NewArgumentNullException(nameof(runspace));
             }
 
             AssertPoolIsOpen();
@@ -851,7 +848,6 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         internal PSThreadOptions ThreadOptions { get; set; } = PSThreadOptions.Default;
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// The value of this property is propagated to all the Runspaces in this pool.
         /// </summary>
@@ -859,7 +855,6 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Any updates to the value of this property must be done before the RunspacePool is opened
         /// </remarks>
         internal ApartmentState ApartmentState { get; set; } = Runspace.DefaultApartmentState;
-#endif
 
         /// <summary>
         /// Gets Runspace asynchronously from the runspace pool. The caller
@@ -898,7 +893,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             GetRunspaceAsyncResult grsAsyncResult =
@@ -906,7 +901,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginGetRunspace");
@@ -937,7 +932,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             GetRunspaceAsyncResult grsAsyncResult =
@@ -945,7 +940,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginGetRunspace");
@@ -1257,9 +1252,7 @@ namespace System.Management.Automation.Runspaces.Internal
             Runspace result = RunspaceFactory.CreateRunspaceFromSessionStateNoClone(host, _initialSessionState);
 
             result.ThreadOptions = this.ThreadOptions == PSThreadOptions.Default ? PSThreadOptions.ReuseThread : this.ThreadOptions;
-#if !CORECLR // No ApartmentState In CoreCLR
             result.ApartmentState = this.ApartmentState;
-#endif
 
             this.PropagateApplicationPrivateData(result);
 
@@ -1310,7 +1303,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Cleans the pool closing the runspaces that are idle.
         /// This method is called as part of a timer callback.
-        /// This method will make sure atleast minPoolSz number
+        /// This method will make sure at least minPoolSz number
         /// of Runspaces are active.
         /// </summary>
         /// <param name="state"></param>
@@ -1339,7 +1332,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 Runspace runspaceToDestroy = null;
                 lock (pool)
                 {
-                    if (pool.Count <= 0)
+                    if (pool.Count == 0)
                     {
                         break; // break from while
                     }
@@ -1517,7 +1510,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             try
             {
-                do
+                while (true)
                 {
                     lock (ultimateRequestQueue)
                     {
@@ -1598,7 +1591,7 @@ namespace System.Management.Automation.Runspaces.Internal
                             ultimateRequestQueue.Enqueue(runspaceRequestQueue.Dequeue());
                         }
                     }
-                } while (true);
+                }
             endOuterWhile:;
             }
             finally
@@ -1647,12 +1640,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         protected virtual void OnForwardEvent(PSEventArgs e)
         {
-            EventHandler<PSEventArgs> eh = this.ForwardEvent;
-
-            if (eh != null)
-            {
-                eh(this, e);
-            }
+            this.ForwardEvent?.Invoke(this, e);
         }
 
         /// <summary>

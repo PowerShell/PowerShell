@@ -1,9 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 #if !UNIX
 using System.DirectoryServices;
 #endif
@@ -53,9 +54,9 @@ namespace System.Management.Automation.Language
         /// </summary>
         internal class AmbiguousTypeException : InvalidCastException
         {
-            public string[] Candidates { private set; get; }
+            public string[] Candidates { get; }
 
-            public TypeName TypeName { private set; get; }
+            public TypeName TypeName { get; }
 
             public AmbiguousTypeException(TypeName typeName, IEnumerable<string> candidates)
             {
@@ -79,7 +80,10 @@ namespace System.Management.Automation.Language
             foreach (Assembly assembly in assemblies)
             {
                 // Skip the assemblies that we already searched and found no matching type.
-                if (searchedAssemblies.Contains(assembly)) { continue; }
+                if (searchedAssemblies.Contains(assembly))
+                {
+                    continue;
+                }
 
                 try
                 {
@@ -221,7 +225,7 @@ namespace System.Management.Automation.Language
         /// This set should be used directly only in the method CallResolveTypeNameWorkerHelper.
         /// </remarks>
         [ThreadStatic]
-        private static HashSet<Assembly> s_searchedAssemblies = null;
+        private static HashSet<Assembly> t_searchedAssemblies = null;
 
         /// <summary>
         /// A helper method to call ResolveTypeNameWorker in steps.
@@ -233,21 +237,21 @@ namespace System.Management.Automation.Language
                                                             TypeResolutionState typeResolutionState,
                                                             out Exception exception)
         {
-            if (s_searchedAssemblies == null)
+            if (t_searchedAssemblies == null)
             {
-                s_searchedAssemblies = new HashSet<Assembly>();
+                t_searchedAssemblies = new HashSet<Assembly>();
             }
             else
             {
                 // Clear the set before starting a full search to make sure we have a clean start.
-                s_searchedAssemblies.Clear();
+                t_searchedAssemblies.Clear();
             }
 
             try
             {
                 exception = null;
-                var currentScope = context != null ? context.EngineSessionState.CurrentScope : null;
-                Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, s_searchedAssemblies, typeResolutionState,
+                var currentScope = context?.EngineSessionState.CurrentScope;
+                Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, t_searchedAssemblies, typeResolutionState,
                                                     /*onlySearchInGivenAssemblies*/ false, /* reportAmbiguousException */ true, out exception);
                 if (exception == null && result == null)
                 {
@@ -256,14 +260,14 @@ namespace System.Management.Automation.Language
                         // If the assemblies to search from is not specified by the caller of 'ResolveTypeNameWithContext',
                         // then we search our assembly cache first, so as to give preference to resolving the type against
                         // assemblies explicitly loaded by powershell, for example, via importing module/snapin.
-                        result = ResolveTypeNameWorker(typeName, currentScope, context.AssemblyCache.Values, s_searchedAssemblies, typeResolutionState,
+                        result = ResolveTypeNameWorker(typeName, currentScope, context.AssemblyCache.Values, t_searchedAssemblies, typeResolutionState,
                                                     /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
                     }
 
                     if (result == null)
                     {
                         // Search from the assembly list passed in.
-                        result = ResolveTypeNameWorker(typeName, currentScope, assemblies, s_searchedAssemblies, typeResolutionState,
+                        result = ResolveTypeNameWorker(typeName, currentScope, assemblies, t_searchedAssemblies, typeResolutionState,
                                                     /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
                     }
                 }
@@ -273,7 +277,7 @@ namespace System.Management.Automation.Language
             finally
             {
                 // Clear the set after a full search, so dynamic assemblies can get reclaimed as needed.
-                s_searchedAssemblies.Clear();
+                t_searchedAssemblies.Clear();
             }
         }
 
@@ -370,10 +374,7 @@ namespace System.Management.Automation.Language
                 return typeName._typeDefinitionAst.Type;
             }
 
-            if (context == null)
-            {
-                context = LocalPipeline.GetExecutionContextFromTLS();
-            }
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
 
             // Use the explicitly passed-in assembly list when it's specified by the caller.
             // Otherwise, retrieve all currently loaded assemblies.
@@ -582,10 +583,7 @@ namespace System.Management.Automation.Language
 
         internal static TypeResolutionState GetDefaultUsingState(ExecutionContext context)
         {
-            if (context == null)
-            {
-                context = LocalPipeline.GetExecutionContextFromTLS();
-            }
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
 
             if (context != null)
             {
@@ -615,9 +613,7 @@ namespace System.Management.Automation.Language
             if (object.ReferenceEquals(this, obj))
                 return true;
 
-            var other = obj as TypeResolutionState;
-
-            if (other == null)
+            if (!(obj is TypeResolutionState other))
                 return false;
 
             if (this.attribute != other.attribute)
@@ -673,9 +669,9 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class TypeCache
+    internal static class TypeCache
     {
-        private class KeyComparer : IEqualityComparer<Tuple<ITypeName, TypeResolutionState>>
+        private sealed class KeyComparer : IEqualityComparer<Tuple<ITypeName, TypeResolutionState>>
         {
             public bool Equals(Tuple<ITypeName, TypeResolutionState> x,
                                Tuple<ITypeName, TypeResolutionState> y)
@@ -723,7 +719,7 @@ namespace System.Management.Automation
         // expose the ability to corrupt or escape PowerShell's environment. The following operations must
         // be safe: type conversion, all constructors, all methods (instance and static), and
         // and properties (instance and static).
-        internal static Lazy<Dictionary<Type, string[]>> Items = new Lazy<Dictionary<Type, string[]>>(
+        internal static readonly Lazy<Dictionary<Type, string[]>> Items = new Lazy<Dictionary<Type, string[]>>(
             () =>
                 new Dictionary<Type, string[]>
                 {
@@ -757,10 +753,12 @@ namespace System.Management.Automation
                     { typeof(CimConverter),                                new[] { "cimconverter" } },
                     { typeof(ModuleSpecification),                         null },
                     { typeof(IPEndPoint),                                  new[] { "IPEndpoint" } },
+                    { typeof(NoRunspaceAffinityAttribute),                 new[] { "NoRunspaceAffinity" } },
                     { typeof(NullString),                                  new[] { "NullString" } },
                     { typeof(OutputTypeAttribute),                         new[] { "OutputType" } },
-                    { typeof(Object[]),                                    null },
+                    { typeof(object[]),                                    null },
                     { typeof(ObjectSecurity),                              new[] { "ObjectSecurity" } },
+                    { typeof(OrderedDictionary),                           new[] { "ordered" } },
                     { typeof(ParameterAttribute),                          new[] { "Parameter" } },
                     { typeof(PhysicalAddress),                             new[] { "PhysicalAddress" } },
                     { typeof(PSCredential),                                new[] { "pscredential" } },
@@ -772,7 +770,7 @@ namespace System.Management.Automation
                     { typeof(PSTypeNameAttribute),                         new[] { "PSTypeNameAttribute" } },
                     { typeof(Regex),                                       new[] { "regex" } },
                     { typeof(DscPropertyAttribute),                        new[] { "DscProperty" } },
-                    { typeof(SByte),                                       new[] { "sbyte" } },
+                    { typeof(sbyte),                                       new[] { "sbyte" } },
                     { typeof(string),                                      new[] { "string" } },
                     { typeof(SupportsWildcardsAttribute),                  new[] { "SupportsWildcards" } },
                     { typeof(SwitchParameter),                             new[] { "switch" } },
@@ -789,6 +787,7 @@ namespace System.Management.Automation
                     { typeof(ValidateLengthAttribute),                     new[] { "ValidateLength" } },
                     { typeof(ValidateNotNullAttribute),                    new[] { "ValidateNotNull" } },
                     { typeof(ValidateNotNullOrEmptyAttribute),             new[] { "ValidateNotNullOrEmpty" } },
+                    { typeof(ValidateNotNullOrWhiteSpaceAttribute),        new[] { "ValidateNotNullOrWhiteSpace" } },
                     { typeof(ValidatePatternAttribute),                    new[] { "ValidatePattern" } },
                     { typeof(ValidateRangeAttribute),                      new[] { "ValidateRange" } },
                     { typeof(ValidateScriptAttribute),                     new[] { "ValidateScript" } },
@@ -845,11 +844,11 @@ namespace System.Management.Automation
     internal static class TypeAccelerators
     {
         // builtins are not exposed publicly in a direct manner so they can't be changed at all
-        internal static Dictionary<string, Type> builtinTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
+        internal static readonly Dictionary<string, Type> builtinTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
 
         // users can add to user added accelerators (but not currently remove any.)  Keeping a separate
         // list allows us to add removing in the future w/o worrying about breaking the builtins.
-        internal static Dictionary<string, Type> userTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
+        internal static readonly Dictionary<string, Type> userTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
 
         // We expose this one publicly for programmatic access to our type accelerator table, but it is
         // otherwise unused (so changes to this dictionary don't affect internals.)
@@ -935,10 +934,7 @@ namespace System.Management.Automation
         public static bool Remove(string typeName)
         {
             userTypeAccelerators.Remove(typeName);
-            if (s_allTypeAccelerators != null)
-            {
-                s_allTypeAccelerators.Remove(typeName);
-            }
+            s_allTypeAccelerators?.Remove(typeName);
 
             return true;
         }

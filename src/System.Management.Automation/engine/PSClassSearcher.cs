@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -33,14 +33,14 @@ namespace System.Management.Automation
 
         #region private properties
 
-        private string _className = null;
-        private ExecutionContext _context = null;
+        private readonly string _className = null;
+        private readonly ExecutionContext _context = null;
         private PSClassInfo _currentMatch = null;
         private IEnumerator<PSClassInfo> _matchingClass = null;
         private Collection<PSClassInfo> _matchingClassList = null;
-        private bool _useWildCards = false;
-        private Dictionary<string, PSModuleInfo> _moduleInfoCache = null;
-        private object _lockObject = new Object();
+        private readonly bool _useWildCards = false;
+        private readonly Dictionary<string, PSModuleInfo> _moduleInfoCache = null;
+        private readonly object _lockObject = new object();
 
         #endregion
 
@@ -288,7 +288,7 @@ namespace System.Management.Automation
             return modules;
         }
 
-        private PSClassInfo ConvertToClassInfo(PSModuleInfo module, ScriptBlockAst ast, TypeDefinitionAst statement)
+        private static PSClassInfo ConvertToClassInfo(PSModuleInfo module, ScriptBlockAst ast, TypeDefinitionAst statement)
         {
             PSClassInfo classInfo = new PSClassInfo(statement.Name);
             Dbg.Assert(statement.Name != null, "statement should have a name.");

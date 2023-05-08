@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #if UNIX
 
 using System;
@@ -79,12 +80,12 @@ namespace System.Management.Automation.Tracing
     internal class SysLogProvider
     {
         // Ensure the string pointer is not garbage collected.
-        static IntPtr _nativeSyslogIdent = IntPtr.Zero;
-        static NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
+        private static IntPtr _nativeSyslogIdent = IntPtr.Zero;
+        private static readonly NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
 
-        byte _channelFilter;
-        ulong _keywordFilter;
-        byte _levelFilter;
+        private readonly byte _channelFilter;
+        private readonly ulong _keywordFilter;
+        private readonly byte _levelFilter;
 
         /// <summary>
         /// Initializes a new instance of this class.
@@ -102,16 +103,16 @@ namespace System.Management.Automation.Tracing
             _nativeSyslogIdent = Marshal.StringToHGlobalAnsi(applicationId);
             NativeMethods.OpenLog(_nativeSyslogIdent, _facility);
             _keywordFilter = (ulong)keywords;
-            _levelFilter = (byte) level;
-            _channelFilter = (byte) channels;
-            if ((_channelFilter & (ulong) PSChannel.Operational) != 0)
+            _levelFilter = (byte)level;
+            _channelFilter = (byte)channels;
+            if ((_channelFilter & (ulong)PSChannel.Operational) != 0)
             {
-                _keywordFilter |= (ulong) PSKeyword.UseAlwaysOperational;
+                _keywordFilter |= (ulong)PSKeyword.UseAlwaysOperational;
             }
 
-            if ((_channelFilter & (ulong) PSChannel.Analytic) != 0)
+            if ((_channelFilter & (ulong)PSChannel.Analytic) != 0)
             {
-                _keywordFilter |= (ulong) PSKeyword.UseAlwaysAnalytic;
+                _keywordFilter |= (ulong)PSKeyword.UseAlwaysAnalytic;
             }
         }
 
@@ -123,19 +124,16 @@ namespace System.Management.Automation.Tracing
         /// property to ensure correct thread initialization; otherwise, a null reference can occur.
         /// </remarks>
         [ThreadStatic]
-        private static StringBuilder _messageBuilder;
+        private static StringBuilder t_messageBuilder;
 
         private static StringBuilder MessageBuilder
         {
             get
             {
-                if (_messageBuilder == null)
-                {
-                    // NOTE: Thread static fields must be explicitly initialized for each thread.
-                    _messageBuilder = new StringBuilder(200);
-                }
+                // NOTE: Thread static fields must be explicitly initialized for each thread.
+                t_messageBuilder ??= new StringBuilder(200);
 
-                return _messageBuilder;
+                return t_messageBuilder;
             }
         }
 
@@ -147,24 +145,24 @@ namespace System.Management.Automation.Tracing
         /// to ensure correct thread initialization.
         /// </remarks>
         [ThreadStatic]
-        static Guid? _activity;
+        private static Guid? t_activity;
 
         private static Guid Activity
         {
             get
             {
-                if (_activity.HasValue == false)
+                if (!t_activity.HasValue)
                 {
                     // NOTE: Thread static fields must be explicitly initialized for each thread.
-                    _activity = Guid.NewGuid();
+                    t_activity = Guid.NewGuid();
                 }
 
-                return _activity.Value;
+                return t_activity.Value;
             }
 
             set
             {
-                _activity = value;
+                t_activity = value;
             }
         }
 
@@ -176,8 +174,8 @@ namespace System.Management.Automation.Tracing
         /// <returns>True if the specified level and keywords are enabled for logging.</returns>
         internal bool IsEnabled(PSLevel level, PSKeyword keywords)
         {
-            return ( ((ulong) keywords & _keywordFilter) != 0 &&
-                     ((int) level <= _levelFilter) );
+            return ((ulong)keywords & _keywordFilter) != 0
+                && ((int)level <= _levelFilter);
         }
 
         // NOTE: There are a number of places where PowerShell code sends analytic events
@@ -187,8 +185,8 @@ namespace System.Management.Automation.Tracing
         // filtering is performed to suppress analytic events.
         private bool ShouldLog(PSLevel level, PSKeyword keywords, PSChannel channel)
         {
-            return ((_channelFilter & (ulong)channel) != 0 &&
-                    IsEnabled(level, keywords));
+            return (_channelFilter & (ulong)channel) != 0
+                && IsEnabled(level, keywords);
         }
 
 #region resource manager
@@ -200,10 +198,7 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                if (object.ReferenceEquals(_resourceManager, null))
-                {
-                    _resourceManager = new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).Assembly);
-                }
+                _resourceManager ??= new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).Assembly);
 
                 return _resourceManager;
             }
@@ -232,7 +227,7 @@ namespace System.Management.Automation.Tracing
             string value = ResourceManager.GetString(resourceName, Culture);
             if (string.IsNullOrEmpty(value))
             {
-                value = string.Format(CultureInfo.InvariantCulture, "Unknown resource: {0}", resourceName);
+                value = string.Create(CultureInfo.InvariantCulture, $"Unknown resource: {resourceName}");
                 Diagnostics.Assert(false, value);
             }
 
@@ -250,7 +245,7 @@ namespace System.Management.Automation.Tracing
         private static void GetEventMessage(StringBuilder sb, PSEventId eventId, params object[] args )
         {
             int parameterCount;
-            string resourceName = EventResource.GetMessage((int) eventId, out parameterCount);
+            string resourceName = EventResource.GetMessage((int)eventId, out parameterCount);
 
             if (resourceName == null)
             {
@@ -275,7 +270,7 @@ namespace System.Management.Automation.Tracing
 #region logging
 
         // maps a LogLevel to an associated SysLogPriority.
-        static NativeMethods.SysLogPriority[] _levels =
+        private static readonly NativeMethods.SysLogPriority[] _levels =
         {
             NativeMethods.SysLogPriority.Info,
             NativeMethods.SysLogPriority.Critical,
@@ -292,7 +287,7 @@ namespace System.Management.Automation.Tracing
         public void LogTransfer(Guid parentActivityId)
         {
             // NOTE: always log
-            int threadId = Thread.CurrentThread.ManagedThreadId;
+            int threadId = Environment.CurrentManagedThreadId;
             string message = string.Format(CultureInfo.InvariantCulture,
                                            "({0}:{1:X}:{2:X}) [Transfer]:{3} {4}",
                                            PSVersionInfo.GitCommitId, threadId, PSChannel.Operational,
@@ -308,7 +303,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="activity">The Guid activity identifier.</param>
         public void SetActivity(Guid activity)
         {
-            int threadId = Thread.CurrentThread.ManagedThreadId;
+            int threadId = Environment.CurrentManagedThreadId;
             Activity = activity;
 
             // NOTE: always log
@@ -332,7 +327,7 @@ namespace System.Management.Automation.Tracing
         {
             if (ShouldLog(level, keyword, channel))
             {
-                int threadId = Thread.CurrentThread.ManagedThreadId;
+                int threadId = Environment.CurrentManagedThreadId;
 
                 StringBuilder sb = MessageBuilder;
                 sb.Clear();
@@ -346,7 +341,7 @@ namespace System.Management.Automation.Tracing
                 GetEventMessage(sb, eventId, args);
 
                 NativeMethods.SysLogPriority priority;
-                if ((int) level <= _levels.Length)
+                if ((int)level <= _levels.Length)
                 {
                     priority = _levels[(int)level];
                 }
@@ -374,13 +369,13 @@ namespace System.Management.Automation.Tracing
 
     internal static class NativeMethods
     {
-        const string libpslnative = "libpsl-native";
+        private const string libpslnative = "libpsl-native";
         /// <summary>
         /// Write a message to the system logger, which in turn writes the message to the system console, log files, etc.
         /// See man 3 syslog for more info.
         /// </summary>
         /// <param name="priority">
-        /// The OR of a priority and facility in the SysLogPriority enum indicating the the priority and facility of the log entry.
+        /// The OR of a priority and facility in the SysLogPriority enum indicating the priority and facility of the log entry.
         /// </param>
         /// <param name="message">The message to put in the log entry.</param>
         [DllImport(libpslnative, CharSet = CharSet.Ansi, EntryPoint = "Native_SysLog")]
@@ -442,97 +437,97 @@ namespace System.Management.Automation.Tracing
             /// <summary>
             /// Kernel messages.
             /// </summary>
-            Kernel          = (0<<3),
+            Kernel          = (0 << 3),
 
             /// <summary>
             /// Random user-level messages.
             /// </summary>
-            User            = (1<<3),
+            User            = (1 << 3),
 
             /// <summary>
             /// Mail system.
             /// </summary>
-            Mail            = (2<<3),
+            Mail            = (2 << 3),
 
             /// <summary>
             /// System daemons.
             /// </summary>
-            Daemon          = (3<<3),
+            Daemon          = (3 << 3),
 
             /// <summary>
             /// Authorization messages.
             /// </summary>
-            Authorization   = (4<<3),
+            Authorization   = (4 << 3),
 
             /// <summary>
             /// Messages generated internally by syslogd.
             /// </summary>
-            Syslog          = (5<<3),
+            Syslog          = (5 << 3),
 
             /// <summary>
             /// Line printer subsystem.
             /// </summary>
-            Lpr             = (6<<3),
+            Lpr             = (6 << 3),
 
             /// <summary>
             /// Network news subsystem.
             /// </summary>
-            News            = (7<<3),
+            News            = (7 << 3),
 
             /// <summary>
             /// UUCP subsystem.
             /// </summary>
-            Uucp            = (8<<3),
+            Uucp            = (8 << 3),
 
             /// <summary>
             /// Clock daemon.
             /// </summary>
-            Cron            = (9<<3),
+            Cron            = (9 << 3),
 
             /// <summary>
             /// Security/authorization messages (private)
             /// </summary>
-            Authpriv        = (10<<3),
+            Authpriv        = (10 << 3),
 
             /// <summary>
             /// FTP daemon.
             /// </summary>
-            Ftp             = (11<<3),
+            Ftp             = (11 << 3),
 
             // Reserved for system use
 
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local0          = (16<<3),
+            Local0          = (16 << 3),
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local1          = (17<<3),
+            Local1          = (17 << 3),
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local2          = (18<<3),
+            Local2          = (18 << 3),
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local3          = (19<<3),
+            Local3          = (19 << 3),
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local4          = (20<<3),
+            Local4          = (20 << 3),
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local5          = (21<<3),
+            Local5          = (21 << 3),
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local6          = (22<<3),
+            Local6          = (22 << 3),
             /// <summary>
             /// Reserved for local use.
             /// </summary>
-            Local7          = (23<<3),
+            Local7          = (23 << 3),
         }
     }
 }

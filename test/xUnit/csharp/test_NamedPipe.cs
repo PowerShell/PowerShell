@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -10,7 +10,7 @@ using Xunit;
 namespace PSTests.Parallel
 {
     public class NamedPipeTests
-    {        
+    {
         [Fact]
         public void TestCustomPipeNameCreation()
         {
@@ -31,11 +31,11 @@ namespace PSTests.Parallel
         [Fact]
         public void TestCustomPipeNameCreationTooLongOnNonWindows()
         {
-            var longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy";
+            const string longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy";
 
             if (!Platform.IsWindows)
             {
-                Assert.Throws<InvalidOperationException>(() => 
+                Assert.Throws<InvalidOperationException>(() =>
                     RemoteSessionNamedPipeServer.CreateCustomNamedPipeServer(longPipeName));
             }
             else

@@ -11,9 +11,10 @@ trigger:
     include:
     - '*'
     exclude:
-    - /.vsts-ci/misc-analysis.yml
-    - /.github/ISSUE_TEMPLATE/*
-    - /.dependabot/config.yml
+    - .vsts-ci/misc-analysis.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .dependabot/config.yml
+    - test/perf/*
 pr:
   branches:
     include:
@@ -24,9 +25,18 @@ pr:
     include:
     - '*'
     exclude:
-    - /.vsts-ci/misc-analysis.yml
-    - /.github/ISSUE_TEMPLATE/*
-    - /.dependabot/config.yml
+    - .dependabot/config.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .vsts-ci/misc-analysis.yml
+    - tools/cgmanifest.json
+    - LICENSE.txt
+    - test/common/markdown/*
+    - test/perf/*
+    - tools/packaging/*
+    - tools/releaseBuild/*
+    - tools/releaseBuild/azureDevOps/templates/*
+    - README.md
+    - .spelling
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
@@ -34,7 +44,8 @@ variables:
   POWERSHELL_TELEMETRY_OPTOUT: 1
   # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-  SYSTEM.DisableZipDownload: true
+  __SuppressAnsiEscapeSequences: 1
+  NugetSecurityAnalysisWarningLevel: none
 
 resources:
 - repo: self
@@ -70,13 +81,3 @@ stages:
       tagSet: Others
 
   - template: templates/verify-xunit.yml
-    parameters:
-      pool: 'Hosted VS2017'
-
-- stage: PackagingWin
-  displayName: Packaging for Windows
-  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
-  jobs:
-  # Unlike daily builds, we do not upload nuget package to MyGet so we do not wait on tests to finish.
-  - template: templates/windows-packaging.yml
-

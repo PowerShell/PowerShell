@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="HostDoesNotSupportTranscript" xml:space="preserve">
-    <value>This host does not support transcription.</value>
-  </data>
   <data name="TranscriptionStarted" xml:space="preserve">
     <value>Transcript started, output file is {0}</value>
   </data>

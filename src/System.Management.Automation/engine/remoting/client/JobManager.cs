@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -81,51 +81,43 @@ namespace System.Management.Automation
             Dbg.Assert(jobSourceAdapterType != null, "JobSourceAdapterType should never be called with null value.");
             object instance = null;
 
-            if (jobSourceAdapterType.FullName != null && jobSourceAdapterType.FullName.EndsWith("WorkflowJobSourceAdapter", StringComparison.OrdinalIgnoreCase))
+            ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(Type.EmptyTypes);
+            if (!constructor.IsPublic)
             {
-                MethodInfo method = jobSourceAdapterType.GetMethod("GetInstance");
-                instance = method.Invoke(null, null);
+                string message = string.Format(CultureInfo.CurrentCulture,
+                                                RemotingErrorIdStrings.JobManagerRegistrationConstructorError,
+                                                jobSourceAdapterType.FullName);
+                throw new InvalidOperationException(message);
             }
-            else
-            {
-                ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(Type.EmptyTypes);
-                if (!constructor.IsPublic)
-                {
-                    string message = string.Format(CultureInfo.CurrentCulture,
-                                                   RemotingErrorIdStrings.JobManagerRegistrationConstructorError,
-                                                   jobSourceAdapterType.FullName);
-                    throw new InvalidOperationException(message);
-                }
 
-                try
-                {
-                    instance = constructor.Invoke(null);
-                }
-                catch (MemberAccessException exception)
-                {
-                    _tracer.TraceException(exception);
-                    throw;
-                }
-                catch (TargetInvocationException exception)
-                {
-                    _tracer.TraceException(exception);
-                    throw;
-                }
-                catch (TargetParameterCountException exception)
-                {
-                    _tracer.TraceException(exception);
-                    throw;
-                }
-                catch (NotSupportedException exception)
-                {
-                    _tracer.TraceException(exception);
-                    throw;
-                }
-                catch (SecurityException exception)
-                {
-                    _tracer.TraceException(exception);
-                    throw;
-                }
+            try
+            {
+                instance = constructor.Invoke(null);
+            }
+            catch (MemberAccessException exception)
+            {
+                _tracer.TraceException(exception);
+                throw;
+            }
+            catch (TargetInvocationException exception)
+            {
+                _tracer.TraceException(exception);
+                throw;
+            }
+            catch (TargetParameterCountException exception)
+            {
+                _tracer.TraceException(exception);
+                throw;
+            }
+            catch (NotSupportedException exception)
+            {
+                _tracer.TraceException(exception);
+                throw;
+            }
+            catch (SecurityException exception)
+            {
+                _tracer.TraceException(exception);
+                throw;
             }
 
             if (instance != null)
@@ -166,7 +158,11 @@ namespace System.Management.Automation
         {
             lock (s_syncObject)
             {
-                if (s_jobIdsForReuse.ContainsKey(instanceId)) return;
+                if (s_jobIdsForReuse.ContainsKey(instanceId))
+                {
+                    return;
+                }
+
                 s_jobIdsForReuse.Add(instanceId, new KeyValuePair<int, string>(id, typeName));
             }
         }
@@ -184,10 +180,7 @@ namespace System.Management.Automation
         /// </exception>
         public Job2 NewJob(JobDefinition definition)
         {
-            if (definition == null)
-            {
-                throw new ArgumentNullException("definition");
-            }
+            ArgumentNullException.ThrowIfNull(definition);
 
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(definition);
             Job2 newJob;
@@ -224,14 +217,11 @@ namespace System.Management.Automation
         /// </exception>
         public Job2 NewJob(JobInvocationInfo specification)
         {
-            if (specification == null)
-            {
-                throw new ArgumentNullException("specification");
-            }
+            ArgumentNullException.ThrowIfNull(specification);
 
             if (specification.Definition == null)
             {
-                throw new ArgumentException(RemotingErrorIdStrings.NewJobSpecificationError, "specification");
+                throw new ArgumentException(RemotingErrorIdStrings.NewJobSpecificationError, nameof(specification));
             }
 
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(specification.Definition);
@@ -271,12 +261,12 @@ namespace System.Management.Automation
         {
             if (job == null)
             {
-                throw new PSArgumentNullException("job");
+                throw new PSArgumentNullException(nameof(job));
             }
 
             if (definition == null)
             {
-                throw new PSArgumentNullException("definition");
+                throw new PSArgumentNullException(nameof(definition));
             }
 
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(definition);
@@ -388,10 +378,6 @@ namespace System.Management.Automation
                         ex = e;
                     }
                     catch (SecurityException e)
-                    {
-                        ex = e;
-                    }
-                    catch (ThreadAbortException e)
                     {
                         ex = e;
                     }
@@ -605,7 +591,11 @@ namespace System.Management.Automation
                     }
 #pragma warning restore 56500
 
-                    if (jobs == null) continue;
+                    if (jobs == null)
+                    {
+                        continue;
+                    }
+
                     allJobs.AddRange(jobs);
                 }
             }
@@ -628,7 +618,7 @@ namespace System.Management.Automation
         /// <param name="sourceAdapter"></param>
         /// <param name="jobSourceAdapterTypes"></param>
         /// <returns></returns>
-        private bool CheckTypeNames(JobSourceAdapter sourceAdapter, string[] jobSourceAdapterTypes)
+        private static bool CheckTypeNames(JobSourceAdapter sourceAdapter, string[] jobSourceAdapterTypes)
         {
             // If no type names were specified then allow all adapter types.
             if (jobSourceAdapterTypes == null ||
@@ -653,9 +643,9 @@ namespace System.Management.Automation
             return false;
         }
 
-        private string GetAdapterName(JobSourceAdapter sourceAdapter)
+        private static string GetAdapterName(JobSourceAdapter sourceAdapter)
         {
-            return (string.IsNullOrEmpty(sourceAdapter.Name) == false ?
+            return (!string.IsNullOrEmpty(sourceAdapter.Name) ?
                 sourceAdapter.Name :
                 sourceAdapter.GetType().ToString());
         }
@@ -770,7 +760,10 @@ namespace System.Management.Automation
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobByInstanceIdError", sourceAdapter);
                     }
 
-                    if (job == null) continue;
+                    if (job == null)
+                    {
+                        continue;
+                    }
 
                     if (writeObject)
                     {
@@ -946,12 +939,20 @@ namespace System.Management.Automation
 
                         // sourceAdapter.GetJobByInstanceId() threw unknown exception.
                         _tracer.TraceException(exception);
-                        if (throwExceptions) throw;
+                        if (throwExceptions)
+                        {
+                            throw;
+                        }
+
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobError", sourceAdapter);
                     }
 #pragma warning restore 56500
 
-                    if (foundJob == null) continue;
+                    if (foundJob == null)
+                    {
+                        continue;
+                    }
+
                     jobFound = true;
                     RemoveJobIdForReuse(foundJob);
 
@@ -969,7 +970,11 @@ namespace System.Management.Automation
                         // sourceAdapter.RemoveJob() threw unknown exception.
 
                         _tracer.TraceException(exception);
-                        if (throwExceptions) throw;
+                        if (throwExceptions)
+                        {
+                            throw;
+                        }
+
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterRemoveJobError", sourceAdapter);
                     }
 #pragma warning restore 56500

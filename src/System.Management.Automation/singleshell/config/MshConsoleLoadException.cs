@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -78,7 +78,7 @@ namespace System.Management.Automation.Runspaces
             {
                 foreach (PSSnapInException e in PSSnapInExceptions)
                 {
-                    sb.Append("\n");
+                    sb.Append('\n');
                     sb.Append(e.Message);
                 }
             }
@@ -86,7 +86,8 @@ namespace System.Management.Automation.Runspaces
             _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(this), "ConsoleLoadFailure", ErrorCategory.ResourceUnavailable, null);
         }
 
-        private Collection<PSSnapInException> _PSSnapInExceptions = new Collection<PSSnapInException>();
+        private readonly Collection<PSSnapInException> _PSSnapInExceptions = new Collection<PSSnapInException>();
+
         internal Collection<PSSnapInException> PSSnapInExceptions
         {
             get
@@ -114,4 +115,3 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-

@@ -1,65 +1,56 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT // ComObject
-
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
-using ComTypes = System.Runtime.InteropServices.ComTypes;
 
 namespace System.Management.Automation.ComInterop
 {
-    internal class ComTypeDesc : ComTypeLibMemberDesc
+    internal class ComTypeDesc
     {
-        private string _typeName;
-        private string _documentation;
-        // Hashtable is threadsafe for multiple readers single writer.
-        // Enumerating and writing is mutually exclusive so require locking.
-        private Hashtable _putRefs;
+        private readonly string _typeName;
+        private readonly string _documentation;
         private ComMethodDesc _getItem;
         private ComMethodDesc _setItem;
 
-        internal ComTypeDesc(ITypeInfo typeInfo, ComType memberType, ComTypeLibDesc typeLibDesc) : base(memberType)
+        internal ComTypeDesc(ITypeInfo typeInfo, ComTypeLibDesc typeLibDesc)
         {
             if (typeInfo != null)
             {
                 ComRuntimeHelpers.GetInfoFromType(typeInfo, out _typeName, out _documentation);
             }
-
             TypeLib = typeLibDesc;
         }
 
-        internal static ComTypeDesc FromITypeInfo(ComTypes.ITypeInfo typeInfo, ComTypes.TYPEATTR typeAttr)
+        internal static ComTypeDesc FromITypeInfo(ITypeInfo typeInfo, TYPEATTR typeAttr)
         {
-            if (typeAttr.typekind == ComTypes.TYPEKIND.TKIND_COCLASS)
+            switch (typeAttr.typekind)
             {
-                return new ComTypeClassDesc(typeInfo, null);
-            }
-            else if (typeAttr.typekind == ComTypes.TYPEKIND.TKIND_ENUM)
-            {
-                return new ComTypeEnumDesc(typeInfo, null);
-            }
-            else if ((typeAttr.typekind == ComTypes.TYPEKIND.TKIND_DISPATCH) ||
-                (typeAttr.typekind == ComTypes.TYPEKIND.TKIND_INTERFACE))
-            {
-                ComTypeDesc typeDesc = new ComTypeDesc(typeInfo, ComType.Interface, null);
-                return typeDesc;
-            }
-            else
-            {
-                throw new InvalidOperationException("Attempting to wrap an unsupported enum type.");
+                case TYPEKIND.TKIND_COCLASS:
+                    return new ComTypeClassDesc(typeInfo, null);
+                case TYPEKIND.TKIND_ENUM:
+                    return new ComTypeEnumDesc(typeInfo, null);
+                case TYPEKIND.TKIND_DISPATCH:
+                case TYPEKIND.TKIND_INTERFACE:
+                    ComTypeDesc typeDesc = new ComTypeDesc(typeInfo, null);
+                    return typeDesc;
+                default:
+                    throw new InvalidOperationException("Attempting to wrap an unsupported enum type.");
             }
         }
 
         internal static ComTypeDesc CreateEmptyTypeDesc()
         {
-            ComTypeDesc typeDesc = new ComTypeDesc(null, ComType.Interface, null);
-            typeDesc.Funcs = new Hashtable();
-            typeDesc.Puts = new Hashtable();
-            typeDesc._putRefs = new Hashtable();
-            typeDesc.Events = EmptyEvents;
+            ComTypeDesc typeDesc = new ComTypeDesc(null, null)
+            {
+                Funcs = new Hashtable(),
+                Puts = new Hashtable(),
+                PutRefs = new Hashtable(),
+                Events = EmptyEvents
+            };
 
             return typeDesc;
         }
@@ -70,10 +61,7 @@ namespace System.Management.Automation.ComInterop
 
         internal Hashtable Puts { get; set; }
 
-        internal Hashtable PutRefs
-        {
-            set { _putRefs = value; }
-        }
+        internal Hashtable PutRefs { get; set; }
 
         internal Dictionary<string, ComEventDesc> Events { get; set; }
 
@@ -85,7 +73,6 @@ namespace System.Management.Automation.ComInterop
                 method = Funcs[name] as ComMethodDesc;
                 return true;
             }
-
             method = null;
             return false;
         }
@@ -107,7 +94,6 @@ namespace System.Management.Automation.ComInterop
                 method = Puts[name] as ComMethodDesc;
                 return true;
             }
-
             method = null;
             return false;
         }
@@ -124,12 +110,11 @@ namespace System.Management.Automation.ComInterop
         internal bool TryGetPutRef(string name, out ComMethodDesc method)
         {
             name = name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
-            if (_putRefs.ContainsKey(name))
+            if (PutRefs.ContainsKey(name))
             {
-                method = _putRefs[name] as ComMethodDesc;
+                method = PutRefs[name] as ComMethodDesc;
                 return true;
             }
-
             method = null;
             return false;
         }
@@ -137,9 +122,9 @@ namespace System.Management.Automation.ComInterop
         internal void AddPutRef(string name, ComMethodDesc method)
         {
             name = name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
-            lock (_putRefs)
+            lock (PutRefs)
             {
-                _putRefs[name] = method;
+                PutRefs[name] = method;
             }
         }
 
@@ -177,9 +162,9 @@ namespace System.Management.Automation.ComInterop
                     }
                 }
 
-                lock (_putRefs)
+                lock (PutRefs)
                 {
-                    foreach (ComMethodDesc func in _putRefs.Values)
+                    foreach (ComMethodDesc func in PutRefs.Values)
                     {
                         if (!names.ContainsKey(func.Name))
                         {
@@ -200,42 +185,27 @@ namespace System.Management.Automation.ComInterop
                 }
             }
 
-            var keys = names.Keys;
-            string[] result = new string[keys.Count];
-            keys.CopyTo(result, 0);
+            string[] result = new string[names.Keys.Count];
+            names.Keys.CopyTo(result, 0);
             return result;
         }
 
-        // this property is public - accessed by an AST
-        public string TypeName
-        {
-            get { return _typeName; }
-        }
+        public string TypeName => _typeName;
 
-        internal string Documentation
-        {
-            get { return _documentation; }
-        }
+        internal string Documentation => _documentation;
 
-        // this property is public - accessed by an AST
         public ComTypeLibDesc TypeLib { get; }
 
         internal Guid Guid { get; set; }
 
-        internal ComMethodDesc GetItem
-        {
-            get { return _getItem; }
-        }
+        internal ComMethodDesc GetItem => _getItem;
 
         internal void EnsureGetItem(ComMethodDesc candidate)
         {
             Interlocked.CompareExchange(ref _getItem, candidate, null);
         }
 
-        internal ComMethodDesc SetItem
-        {
-            get { return _setItem; }
-        }
+        internal ComMethodDesc SetItem => _setItem;
 
         internal void EnsureSetItem(ComMethodDesc candidate)
         {
@@ -243,6 +213,3 @@ namespace System.Management.Automation.ComInterop
         }
     }
 }
-
-#endif
-

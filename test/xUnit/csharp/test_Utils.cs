@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -20,6 +20,23 @@ namespace PSTests.Parallel
         {
             Skip.IfNot(Platform.IsWindows);
             Assert.False(Utils.IsWinPEHost());
+        }
+
+        [Theory]
+        [InlineData(long.MinValue, "0 Bytes")]
+        [InlineData(-1, "0 Bytes")]
+        [InlineData(0, "0 Bytes")]
+        [InlineData(1, "1 Bytes")]
+        [InlineData(1024, "1.0 KB")]
+        [InlineData(3000, "2.9 KB")]
+        [InlineData(1024 * 1024, "1.0 MB")]
+        [InlineData(1024 * 1024 * 1024, "1.000 GB")]
+        [InlineData((long)(1024 * 1024 * 1024) * 1024, "1.00000 TB")]
+        [InlineData((long)(1024 * 1024 * 1024) * 1024 * 1024, "1.0000000 PB")]
+        [InlineData(long.MaxValue, "8.000000000 EB")]
+        public static void DisplayHumanReadableFileSize(long bytes, string expected)
+        {
+            Assert.Equal(expected, Utils.DisplayHumanReadableFileSize(bytes));
         }
 
         [Fact]
@@ -59,7 +76,7 @@ namespace PSTests.Parallel
         [Fact]
         public static void TestBoundedStack()
         {
-            uint capacity = 20;
+            const int capacity = 20;
             var boundedStack = new BoundedStack<string>(capacity);
             Assert.Throws<InvalidOperationException>(() => boundedStack.Pop());
 
@@ -116,7 +133,7 @@ namespace PSTests.Parallel
         public static void TestConvertToJsonWithoutCompress()
         {
             var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: true, compressOutput: false);
-            string expected = @"{
+            const string expected = @"{
   ""type"": ""Alias""
 }";
             Hashtable hash = new Hashtable {
@@ -134,9 +151,9 @@ namespace PSTests.Parallel
                 maxDepth: 1,
                 enumsAsStrings: true,
                 compressOutput: false,
-                source.Token,
                 Newtonsoft.Json.StringEscapeHandling.Default,
-                targetCmdlet: null);
+                targetCmdlet: null,
+                source.Token);
 
             source.Cancel();
             Hashtable hash = new Hashtable {

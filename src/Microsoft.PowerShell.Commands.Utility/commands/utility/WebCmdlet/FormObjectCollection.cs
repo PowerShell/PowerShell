@@ -1,5 +1,7 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
+#nullable enable
 
 using System;
 using System.Collections.ObjectModel;
@@ -16,11 +18,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public FormObject this[string key]
+        public FormObject? this[string key]
         {
             get
             {
-                FormObject form = null;
+                FormObject? form = null;
                 foreach (FormObject f in this)
                 {
                     if (string.Equals(key, f.Id, StringComparison.OrdinalIgnoreCase))
@@ -30,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                return (form);
+                return form;
             }
         }
     }

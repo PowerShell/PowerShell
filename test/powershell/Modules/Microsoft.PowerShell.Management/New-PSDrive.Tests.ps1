@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Tests for New-PSDrive cmdlet." -Tag "CI","RequireAdminOnWindows" {
@@ -17,11 +17,11 @@ Describe "Tests for New-PSDrive cmdlet." -Tag "CI","RequireAdminOnWindows" {
             { New-PSDrive -Name $PSDriveName -PSProvider FileSystem -Root $RemoteShare -Persist -ErrorAction Stop } | Should -Not -Throw
         }
 
-        it "Should throw exception if root is not a remote share." -Skip:(-not $IsWindows) {
+        It "Should throw exception if root is not a remote share." -Skip:(-not $IsWindows) {
             { New-PSDrive -Name $PSDriveName -PSProvider FileSystem -Root "TestDrive:\" -Persist -ErrorAction Stop } | Should -Throw -ErrorId 'DriveRootNotNetworkPath'
         }
 
-        it "Should throw exception if PSDrive is not a drive letter supported by operating system." -Skip:(-not $IsWindows) {
+        It "Should throw exception if PSDrive is not a drive letter supported by operating system." -Skip:(-not $IsWindows) {
             $PSDriveName = 'AB'
             { New-PSDrive -Name $PSDriveName -PSProvider FileSystem -Root $RemoteShare -Persist -ErrorAction Stop } | Should -Throw -ErrorId 'DriveNameNotSupportedForPersistence'
         }

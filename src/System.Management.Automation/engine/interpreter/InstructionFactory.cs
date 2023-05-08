@@ -53,11 +53,17 @@ namespace System.Management.Automation.Interpreter
         }
 
         protected internal abstract Instruction GetArrayItem();
+
         protected internal abstract Instruction SetArrayItem();
+
         protected internal abstract Instruction TypeIs();
+
         protected internal abstract Instruction TypeAs();
+
         protected internal abstract Instruction DefaultValue();
+
         protected internal abstract Instruction NewArray();
+
         protected internal abstract Instruction NewArrayInit(int elementCount);
     }
 
@@ -81,42 +87,39 @@ namespace System.Management.Automation.Interpreter
 
         protected internal override Instruction GetArrayItem()
         {
-            return _getArrayItem ?? (_getArrayItem = new GetArrayItemInstruction<T>());
+            return _getArrayItem ??= new GetArrayItemInstruction<T>();
         }
 
         protected internal override Instruction SetArrayItem()
         {
-            return _setArrayItem ?? (_setArrayItem = new SetArrayItemInstruction<T>());
+            return _setArrayItem ??= new SetArrayItemInstruction<T>();
         }
 
         protected internal override Instruction TypeIs()
         {
-            return _typeIs ?? (_typeIs = new TypeIsInstruction<T>());
+            return _typeIs ??= new TypeIsInstruction<T>();
         }
 
         protected internal override Instruction TypeAs()
         {
-            return _typeAs ?? (_typeAs = new TypeAsInstruction<T>());
+            return _typeAs ??= new TypeAsInstruction<T>();
         }
 
         protected internal override Instruction DefaultValue()
         {
-            return _defaultValue ?? (_defaultValue = new DefaultValueInstruction<T>());
+            return _defaultValue ??= new DefaultValueInstruction<T>();
         }
 
         protected internal override Instruction NewArray()
         {
-            return _newArray ?? (_newArray = new NewArrayInstruction<T>());
+            return _newArray ??= new NewArrayInstruction<T>();
         }
 
         protected internal override Instruction NewArrayInit(int elementCount)
         {
             if (elementCount < MaxArrayInitElementCountCache)
             {
-                if (_newArrayInit == null)
-                {
-                    _newArrayInit = new Instruction[MaxArrayInitElementCountCache];
-                }
+                _newArrayInit ??= new Instruction[MaxArrayInitElementCountCache];
 
                 return _newArrayInit[elementCount] ?? (_newArrayInit[elementCount] = new NewArrayInitInstruction<T>(elementCount));
             }

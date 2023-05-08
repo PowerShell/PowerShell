@@ -1,0 +1,90 @@
+name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  # Batch merge builds together while a merge build is running
+  batch: true
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    exclude:
+      - tests/*
+      - docs/*
+      - demos/*
+      - CHANGELOG/*
+      - .devcontainer/*
+      - .github/*
+      - .poshchan/*
+      - .vscode/*
+      - code-server/*
+      - docker/*
+
+pr:
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - .vsts-ci/windows/*.yml
+    - assets/wix/*
+    - build.psm1
+    - global.json
+    - nuget.config
+    - PowerShell.Common.props
+    - src/*.csproj
+    - test/packaging/windows/*
+    - tools/ci.psm1
+    - tools/packaging/*
+
+variables:
+  - name: GIT_CONFIG_PARAMETERS
+    value: "'core.autocrlf=false'"
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+  # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - name: __SuppressAnsiEscapeSequences
+    value: 1
+  - group: fakeNugetKey
+  - name: SBOMGenerator_Formats
+    value: spdx:2.2
+
+resources:
+  repositories:
+    - repository: ComplianceRepo
+      type: github
+      endpoint: PowerShell
+      name: PowerShell/compliance
+      ref: master
+
+stages:
+- stage: PackagingWin
+  displayName: Packaging for Windows
+  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
+  jobs:
+  # Unlike daily builds, we do not upload nuget package to MyGet so we do not wait on tests to finish.
+  - template: templates/windows-packaging.yml
+  - template: templates/windows-packaging.yml
+    parameters:
+      channel: stable
+      architecture: x86
+  - template: templates/windows-packaging.yml
+    parameters:
+      channel: preview
+      architecture: x86
+  - template: templates/windows-packaging.yml
+    parameters:
+      channel: preview
+      architecture: arm
+      runtimePrefix: win
+  - template: templates/windows-packaging.yml
+    parameters:
+      channel: preview
+      architecture: arm64
+      runtimePrefix: win

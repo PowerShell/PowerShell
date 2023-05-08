@@ -1,10 +1,10 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 [cmdletbinding(DefaultParameterSetName='Build')]
 param(
     [Parameter(ParameterSetName='packageSigned')]
     [Parameter(ParameterSetName='Build')]
-    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
     [string]$ReleaseTag,
 
     # full paths to files to add to container to run the build
@@ -21,7 +21,7 @@ DynamicParam {
     # Add a dynamic parameter '-Name' which specifies the name of the build to run
 
     # Get the names of the builds.
-    $buildJsonPath = (Join-Path -path $PSScriptRoot -ChildPath 'build.json')
+    $buildJsonPath = (Join-Path -Path $PSScriptRoot -ChildPath 'build.json')
     $build = Get-Content -Path $buildJsonPath | ConvertFrom-Json
     $names = @($build.Windows.Name)
     foreach($name in $build.Linux.Name)
@@ -55,8 +55,8 @@ End {
     # If specified, Add package file to container
     if ($BuildPath)
     {
-        Import-Module (Join-Path -path $PSScriptRoot -childpath '..\..\build.psm1')
-        Import-Module (Join-Path -path $PSScriptRoot -childpath '..\packaging')
+        Import-Module (Join-Path -Path $PSScriptRoot -ChildPath '..\..\build.psm1')
+        Import-Module (Join-Path -Path $PSScriptRoot -ChildPath '..\packaging')
 
         # Use temp as destination if not running in VSTS
         $destFolder = $env:temp
@@ -87,7 +87,7 @@ End {
         throw "Git is required to proceed. Install from 'https://git-scm.com/download/win'"
     }
 
-    Write-Verbose "cloning -b $psReleaseBranch --quiet https://github.com/$psReleaseFork/PSRelease.git" -verbose
+    Write-Verbose "cloning -b $psReleaseBranch --quiet https://github.com/$psReleaseFork/PSRelease.git" -Verbose
     & $gitBinFullPath clone -b $psReleaseBranch --quiet https://github.com/$psReleaseFork/PSRelease.git $location
 
     Push-Location -Path $PWD.Path

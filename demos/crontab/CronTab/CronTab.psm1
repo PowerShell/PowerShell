@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 using namespace System.Collections.Generic
@@ -56,7 +56,7 @@ function Invoke-CronTab ([String] $user, [String[]] $arguments, [Switch] $noThro
 
     Write-Verbose "Running: $crontabcmd $arguments"
     $output = & $crontabcmd @arguments 2>&1
-    if ($LastExitCode -ne 0 -and -not $noThrow) {
+    if ($LASTEXITCODE -ne 0 -and -not $noThrow) {
         $e = New-Object System.InvalidOperationException -ArgumentList $output.Exception.Message
         throw $e
     } else {
@@ -77,16 +77,22 @@ function Remove-CronJob {
 <#
 .SYNOPSIS
   Removes the exactly matching cron job from the cron table
+
 .DESCRIPTION
   Removes the exactly matching cron job from the cron table
+
 .EXAMPLE
   Get-CronJob | Where-Object {%_.Command -like 'foo *'} | Remove-CronJob
+
 .RETURNVALUE
   None
+
 .PARAMETER UserName
   Optional parameter to specify a specific user's cron table
+
 .PARAMETER Job
   Cron job object returned from Get-CronJob
+
 .PARAMETER Force
   Don't prompt when removing the cron job
 #>
@@ -125,7 +131,7 @@ function Remove-CronJob {
             $e = New-Object System.Exception -ArgumentList "Job not found"
             throw $e
         }
-        if ($Force -or $pscmdlet.ShouldProcess($Job.Command,"Remove")) {
+        if ($Force -or $PSCmdlet.ShouldProcess($Job.Command,"Remove")) {
             Import-CronTab -user $UserName -crontab $newcrontab
         }
     }
@@ -143,20 +149,28 @@ function New-CronJob {
   0-23/2 or */2.
 .EXAMPLE
   New-CronJob -Minute 10-30 -Hour 10-20/2 -DayOfMonth */2 -Command "/bin/bash -c 'echo hello' > ~/hello"
+
 .RETURNVALUE
   If successful, an object representing the cron job is returned
+
 .PARAMETER UserName
   Optional parameter to specify a specific user's cron table
+
 .PARAMETER Minute
   Valid values are 0 to 59.  If not specified, defaults to *.
+
 .PARAMETER Hour
   Valid values are 0-23.  If not specified, defaults to *.
+
 .PARAMETER DayOfMonth
   Valid values are 1-31.  If not specified, defaults to *.
+
 .PARAMETER Month
   Valid values are 1-12.  If not specified, defaults to *.
+
 .PARAMETER DayOfWeek
   Valid values are 0-7.  0 and 7 are both Sunday.  If not specified, defaults to *.
+
 .PARAMETER Command
   Command to execute at the scheduled time and day.
 #>
@@ -190,12 +204,16 @@ function Get-CronJob {
 <#
 .SYNOPSIS
   Returns the current cron jobs from the cron table
+
 .DESCRIPTION
   Returns the current cron jobs from the cron table
+
 .EXAMPLE
   Get-CronJob -UserName Steve
+
 .RETURNVALUE
   CronJob objects
+  
 .PARAMETER UserName
   Optional parameter to specify a specific user's cron table
 #>

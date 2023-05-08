@@ -1,16 +1,13 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Dynamic;
+using System.Linq.Expressions;
+using System.Management.Automation.InteropServices;
+using System.Runtime.InteropServices;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 
 namespace System.Management.Automation.ComInterop
@@ -43,23 +40,22 @@ namespace System.Management.Automation.ComInterop
         private ParameterExpression _propertyPutDispId;
 
         internal ComInvokeBinder(
-                CallInfo callInfo,
-                DynamicMetaObject[] args,
-                bool[] isByRef,
-                BindingRestrictions restrictions,
-                Expression method,
-                Expression dispatch,
-                ComMethodDesc methodDesc
-                )
+            CallInfo callInfo,
+            DynamicMetaObject[] args,
+            bool[] isByRef,
+            BindingRestrictions restrictions,
+            Expression method,
+            Expression dispatch,
+            ComMethodDesc methodDesc)
         {
-            Debug.Assert(callInfo != null, "arguments");
-            Debug.Assert(args != null, "args");
-            Debug.Assert(isByRef != null, "isByRef");
-            Debug.Assert(method != null, "method");
-            Debug.Assert(dispatch != null, "dispatch");
+            Debug.Assert(callInfo != null, nameof(callInfo));
+            Debug.Assert(args != null, nameof(args));
+            Debug.Assert(isByRef != null, nameof(isByRef));
+            Debug.Assert(method != null, nameof(method));
+            Debug.Assert(dispatch != null, nameof(dispatch));
 
-            Debug.Assert(TypeUtils.AreReferenceAssignable(typeof(ComMethodDesc), method.Type), "method");
-            Debug.Assert(TypeUtils.AreReferenceAssignable(typeof(IDispatch), dispatch.Type), "dispatch");
+            Debug.Assert(TypeUtils.AreReferenceAssignable(typeof(ComMethodDesc), method.Type), "method type");
+            Debug.Assert(TypeUtils.AreReferenceAssignable(typeof(IDispatch), dispatch.Type), "dispatch type");
 
             _method = method;
             _dispatch = dispatch;
@@ -116,9 +112,10 @@ namespace System.Management.Automation.ComInterop
 
         private ParameterExpression ParamVariantsVariable
         {
-            get {
-                return _paramVariants ??
-                       (_paramVariants = Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants"));
+            get
+            {
+                _paramVariants ??= Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants");
+                return _paramVariants;
             }
         }
 
@@ -128,7 +125,6 @@ namespace System.Management.Automation.ComInterop
             {
                 return var;
             }
-
             return var = Expression.Variable(type, name);
         }
 
@@ -141,14 +137,9 @@ namespace System.Management.Automation.ComInterop
             if (isByRef)
             {
                 // Null just means that null was supplied.
-                if (marshalType == null)
-                {
-                    marshalType = mo.Expression.Type;
-                }
-
+                marshalType ??= mo.Expression.Type;
                 marshalType = marshalType.MakeByRefType();
             }
-
             return marshalType;
         }
 
@@ -176,7 +167,10 @@ namespace System.Management.Automation.ComInterop
 
         private static void AddNotNull(List<ParameterExpression> list, ParameterExpression var)
         {
-            if (var != null) list.Add(var);
+            if (var != null)
+            {
+                list.Add(var);
+            }
         }
 
         private Expression CreateScope(Expression expression)
@@ -204,7 +198,6 @@ namespace System.Management.Automation.ComInterop
             ParameterExpression hresult = Expression.Variable(typeof(int), "hresult");
 
             List<Expression> tryStatements = new List<Expression>();
-            Expression expr;
 
             if (_keywordArgNames.Length > 0)
             {
@@ -214,9 +207,9 @@ namespace System.Management.Automation.ComInterop
                     Expression.Assign(
                         Expression.Field(
                             DispParamsVariable,
-                            typeof(ComTypes.DISPPARAMS).GetField("rgdispidNamedArgs")
+                            typeof(ComTypes.DISPPARAMS).GetField(nameof(ComTypes.DISPPARAMS.rgdispidNamedArgs))
                         ),
-                        Expression.Call(typeof(UnsafeMethods).GetMethod("GetIdsOfNamedParameters"),
+                        Expression.Call(typeof(UnsafeMethods).GetMethod(nameof(UnsafeMethods.GetIdsOfNamedParameters)),
                             DispatchObjectVariable,
                             Expression.Constant(names),
                             DispIdVariable,
@@ -254,7 +247,6 @@ namespace System.Management.Automation.ComInterop
                     // Positional arguments are in reverse order at the tail of rgArgs
                     variantIndex = reverseIndex;
                 }
-
                 VariantBuilder variantBuilder = _varEnumSelector.VariantBuilders[i];
 
                 Expression marshal = variantBuilder.InitializeArgumentVariant(
@@ -291,7 +283,7 @@ namespace System.Management.Automation.ComInterop
             }
 
             MethodCallExpression invoke = Expression.Call(
-                typeof(UnsafeMethods).GetMethod("IDispatchInvoke"),
+                typeof(UnsafeMethods).GetMethod(nameof(UnsafeMethods.IDispatchInvoke)),
                 DispatchPointerVariable,
                 DispIdVariable,
                 Expression.Constant(invokeKind),
@@ -301,11 +293,11 @@ namespace System.Management.Automation.ComInterop
                 argErr
             );
 
-            expr = Expression.Assign(hresult, invoke);
+            Expression expr = Expression.Assign(hresult, invoke);
             tryStatements.Add(expr);
 
             //
-            // ComRuntimeHelpers.CheckThrowException(int hresult, ref ExcepInfo excepInfo, ComMethodDesc method, object args, uint argErr)
+            // ComRuntimeHelpers.CheckThrowException(int hresult, ref ExcepInfo excepInfo, ComMethodDesc method, object[] args, uint argErr)
             List<Expression> args = new List<Expression>();
             foreach (Expression parameter in parameters)
             {
@@ -313,7 +305,7 @@ namespace System.Management.Automation.ComInterop
             }
 
             expr = Expression.Call(
-                typeof(ComRuntimeHelpers).GetMethod("CheckThrowException"),
+                typeof(ComRuntimeHelpers).GetMethod(nameof(ComRuntimeHelpers.CheckThrowException)),
                 hresult,
                 excepInfo,
                 Expression.Constant(_methodDesc, typeof(ComMethodDesc)),
@@ -328,7 +320,7 @@ namespace System.Management.Automation.ComInterop
             Expression invokeResultObject =
                 Expression.Call(
                     InvokeResultVariable,
-                    typeof(Variant).GetMethod("ToObject"));
+                    typeof(Variant).GetMethod(nameof(Variant.ToObject)));
 
             VariantBuilder[] variants = _varEnumSelector.VariantBuilders;
 
@@ -351,17 +343,16 @@ namespace System.Management.Automation.ComInterop
 
         private Expression GenerateFinallyBlock()
         {
-            List<Expression> finallyStatements = new List<Expression>();
-
-            //
-            // UnsafeMethods.IUnknownRelease(dispatchPointer);
-            //
-            finallyStatements.Add(
+            List<Expression> finallyStatements = new List<Expression>
+            {
+                //
+                // UnsafeMethods.IUnknownRelease(dispatchPointer);
+                //
                 Expression.Call(
-                    typeof(UnsafeMethods).GetMethod("IUnknownRelease"),
+                    typeof(UnsafeMethods).GetMethod(nameof(UnsafeMethods.IUnknownRelease)),
                     DispatchPointerVariable
                 )
-            );
+            };
 
             //
             // Clear memory allocated for marshalling
@@ -382,7 +373,7 @@ namespace System.Management.Automation.ComInterop
             finallyStatements.Add(
                 Expression.Call(
                     InvokeResultVariable,
-                    typeof(Variant).GetMethod("Clear")
+                    typeof(Variant).GetMethod(nameof(Variant.Clear))
                 )
             );
 
@@ -394,7 +385,7 @@ namespace System.Management.Automation.ComInterop
                 finallyStatements.Add(
                     Expression.Call(
                         DispIdsOfKeywordArgsPinnedVariable,
-                        typeof(GCHandle).GetMethod("Free")
+                        typeof(GCHandle).GetMethod(nameof(GCHandle.Free))
                     )
                 );
             }
@@ -404,24 +395,23 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// Create a stub for the target of the optimized lopop.
+        /// Create a stub for the target of the optimized loop.
         /// </summary>
         /// <returns></returns>
         private Expression MakeIDispatchInvokeTarget()
         {
             Debug.Assert(_varEnumSelector.VariantBuilders.Length == _totalExplicitArgs);
 
-            List<Expression> exprs = new List<Expression>();
-
-            //
-            // _dispId = ((DispCallable)this).ComMethodDesc.DispId;
-            //
-            exprs.Add(
+            List<Expression> exprs = new List<Expression>
+            {
+                //
+                // _dispId = ((DispCallable)this).ComMethodDesc.DispId;
+                //
                 Expression.Assign(
                     DispIdVariable,
-                    Expression.Property(_method, typeof(ComMethodDesc).GetProperty("DispId"))
+                    Expression.Property(_method, typeof(ComMethodDesc).GetProperty(nameof(ComMethodDesc.DispId)))
                 )
-            );
+            };
 
             //
             // _dispParams.rgvararg = RuntimeHelpers.UnsafeMethods.ConvertVariantByrefToPtr(ref _paramVariants._element0)
@@ -432,10 +422,10 @@ namespace System.Management.Automation.ComInterop
                     Expression.Assign(
                         Expression.Field(
                             DispParamsVariable,
-                            typeof(ComTypes.DISPPARAMS).GetField("rgvarg")
+                            typeof(ComTypes.DISPPARAMS).GetField(nameof(ComTypes.DISPPARAMS.rgvarg))
                         ),
                         Expression.Call(
-                            typeof(UnsafeMethods).GetMethod("ConvertVariantByrefToPtr"),
+                            typeof(UnsafeMethods).GetMethod(nameof(UnsafeMethods.ConvertVariantByrefToPtr)),
                             VariantArray.GetStructField(ParamVariantsVariable, 0)
                         )
                     )
@@ -449,7 +439,7 @@ namespace System.Management.Automation.ComInterop
                 Expression.Assign(
                     Expression.Field(
                         DispParamsVariable,
-                        typeof(ComTypes.DISPPARAMS).GetField("cArgs")
+                        typeof(ComTypes.DISPPARAMS).GetField(nameof(ComTypes.DISPPARAMS.cArgs))
                     ),
                     Expression.Constant(_totalExplicitArgs)
                 )
@@ -465,7 +455,7 @@ namespace System.Management.Automation.ComInterop
                     Expression.Assign(
                         Expression.Field(
                             DispParamsVariable,
-                            typeof(ComTypes.DISPPARAMS).GetField("cNamedArgs")
+                            typeof(ComTypes.DISPPARAMS).GetField(nameof(ComTypes.DISPPARAMS.cNamedArgs))
                         ),
                         Expression.Constant(1)
                     )
@@ -482,10 +472,10 @@ namespace System.Management.Automation.ComInterop
                     Expression.Assign(
                         Expression.Field(
                             DispParamsVariable,
-                            typeof(ComTypes.DISPPARAMS).GetField("rgdispidNamedArgs")
+                            typeof(ComTypes.DISPPARAMS).GetField(nameof(ComTypes.DISPPARAMS.rgdispidNamedArgs))
                         ),
                         Expression.Call(
-                            typeof(UnsafeMethods).GetMethod("ConvertInt32ByrefToPtr"),
+                            typeof(UnsafeMethods).GetMethod(nameof(UnsafeMethods.ConvertInt32ByrefToPtr)),
                             PropertyPutDispIdVariable
                         )
                     )
@@ -500,7 +490,7 @@ namespace System.Management.Automation.ComInterop
                     Expression.Assign(
                         Expression.Field(
                             DispParamsVariable,
-                            typeof(ComTypes.DISPPARAMS).GetField("cNamedArgs")
+                            typeof(ComTypes.DISPPARAMS).GetField(nameof(ComTypes.DISPPARAMS.cNamedArgs))
                         ),
                         Expression.Constant(_keywordArgNames.Length)
                     )
@@ -518,7 +508,7 @@ namespace System.Management.Automation.ComInterop
                 Expression.Assign(
                     DispatchPointerVariable,
                     Expression.Call(
-                        typeof(Marshal).GetMethod("GetIDispatchForObject"),
+                        typeof(Marshal).GetMethod(nameof(Marshal.GetIDispatchForObject)),
                         DispatchObjectVariable
                     )
                 )
@@ -531,7 +521,7 @@ namespace System.Management.Automation.ComInterop
 
             exprs.Add(ReturnValueVariable);
             var vars = new List<ParameterExpression>();
-            foreach (var variant in _varEnumSelector.VariantBuilders)
+            foreach (VariantBuilder variant in _varEnumSelector.VariantBuilders)
             {
                 if (variant.TempVariable != null)
                 {
@@ -545,7 +535,7 @@ namespace System.Management.Automation.ComInterop
                 exprs.Add(System.Management.Automation.Language.ExpressionCache.AutomationNullConstant);
             }
 
-            return Expression.Block(vars, exprs); ;
+            return Expression.Block(vars, exprs);
         }
 
         /// <summary>
@@ -569,11 +559,7 @@ namespace System.Management.Automation.ComInterop
             {
                 res[copy++] = _args[i].Expression;
             }
-
             return res;
         }
     }
 }
-
-#endif
-

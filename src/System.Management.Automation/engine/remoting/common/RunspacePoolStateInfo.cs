@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Runspaces;
@@ -17,7 +17,7 @@ namespace System.Management.Automation
     public sealed class RunspacePoolStateInfo
     {
         /// <summary>
-        /// State of the runspace pool when this event occured.
+        /// State of the runspace pool when this event occurred.
         /// </summary>
         public RunspacePoolState State { get; }
 

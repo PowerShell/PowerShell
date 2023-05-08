@@ -68,7 +68,10 @@ namespace System.Management.Automation.Interpreter
 
         public bool IsBetterThan(ExceptionHandler other)
         {
-            if (other == null) return true;
+            if (other == null)
+            {
+                return true;
+            }
 
             Debug.Assert(StartIndex == other.StartIndex && EndIndex == other.EndIndex, "we only need to compare handlers for the same try block");
             return HandlerStartIndex < other.HandlerStartIndex;
@@ -92,11 +95,14 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0} [{1}-{2}] [{3}->{4}]",
-                (IsFault ? "fault" : "catch(" + ExceptionType.Name + ")"),
-                StartIndex, EndIndex,
-                HandlerStartIndex, HandlerEndIndex
-            );
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0} [{1}-{2}] [{3}->{4}]",
+                IsFault ? "fault" : "catch(" + ExceptionType.Name + ")",
+                StartIndex,
+                EndIndex,
+                HandlerStartIndex,
+                HandlerEndIndex);
         }
     }
 
@@ -167,7 +173,7 @@ namespace System.Management.Automation.Interpreter
         internal int GotoHandler(InterpretedFrame frame, object exception, out ExceptionHandler handler)
         {
             Debug.Assert(_handlers != null, "we should have at least one handler if the method gets called");
-            handler = _handlers.FirstOrDefault(t => t.Matches(exception.GetType()));
+            handler = Array.Find(_handlers, t => t.Matches(exception.GetType()));
             if (handler == null) { return 0; }
 
             return frame.Goto(handler.LabelIndex, exception, gotoExceptionHandler: true);
@@ -192,7 +198,7 @@ namespace System.Management.Automation.Interpreter
         public bool IsClear;
         private static readonly DebugInfoComparer s_debugComparer = new DebugInfoComparer();
 
-        private class DebugInfoComparer : IComparer<DebugInfo>
+        private sealed class DebugInfoComparer : IComparer<DebugInfo>
         {
             // We allow comparison between int and DebugInfo here
             int IComparer<DebugInfo>.Compare(DebugInfo d1, DebugInfo d2)
@@ -221,7 +227,7 @@ namespace System.Management.Automation.Interpreter
                     return null;
                 }
                 // return the last one that is smaller
-                i = i - 1;
+                i -= 1;
             }
 
             return debugInfos[i];
@@ -243,7 +249,7 @@ namespace System.Management.Automation.Interpreter
     // TODO:
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
     [Serializable]
-    internal struct InterpretedFrameInfo
+    internal readonly struct InterpretedFrameInfo
     {
         public readonly string MethodName;
 
@@ -288,7 +294,7 @@ namespace System.Management.Automation.Interpreter
 
         private readonly LightCompiler _parent;
 
-        private static LocalDefinition[] s_emptyLocals = Array.Empty<LocalDefinition>();
+        private static readonly LocalDefinition[] s_emptyLocals = Array.Empty<LocalDefinition>();
 
         public LightCompiler(int compilationThreshold)
         {
@@ -1025,7 +1031,7 @@ namespace System.Management.Automation.Interpreter
 
         #region Loops
 
-        private void CompileLoopExpression(Expression expr)
+        private static void CompileLoopExpression(Expression expr)
         {
             //    var node = (LoopExpression)expr;
             //    var enterLoop = new EnterLoopInstruction(node, _locals, _compilationThreshold, _instructions.Count);
@@ -1063,7 +1069,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             // Test values must be constant
-            if (!node.Cases.All(c => c.TestValues.All(t => t is ConstantExpression)))
+            if (!node.Cases.All(static c => c.TestValues.All(t => t is ConstantExpression)))
             {
                 throw new NotImplementedException();
             }
@@ -1132,10 +1138,7 @@ namespace System.Management.Automation.Interpreter
                 Debug.Assert(label != null);
             }
 
-            if (label == null)
-            {
-                label = DefineLabel(node.Target);
-            }
+            label ??= DefineLabel(node.Target);
 
             if (node.DefaultValue != null)
             {
@@ -1297,8 +1300,7 @@ namespace System.Management.Automation.Interpreter
 
         private void DefineBlockLabels(Expression node)
         {
-            var block = node as BlockExpression;
-            if (block == null)
+            if (!(node is BlockExpression block))
             {
                 return;
             }
@@ -1532,7 +1534,7 @@ namespace System.Management.Automation.Interpreter
                 enterTryInstr.SetTryHandler(
                     new TryCatchFinallyHandler(tryStart, tryEnd, gotoEnd.TargetIndex,
                         startOfFinally.TargetIndex, _instructions.Count,
-                        exHandlers != null ? exHandlers.ToArray() : null));
+                        exHandlers?.ToArray()));
                 PopLabelBlock(LabelScopeKind.Finally);
             }
             else
@@ -1574,7 +1576,7 @@ namespace System.Management.Automation.Interpreter
             // also could be a mutable value type, Delegate.CreateDelegate and MethodInfo.Invoke both can't handle this, we
             // need to generate code.
             var declaringType = node.Method.DeclaringType;
-            if (!parameters.TrueForAll(p => !p.ParameterType.IsByRef) ||
+            if (!parameters.TrueForAll(static p => !p.ParameterType.IsByRef) ||
                 (!node.Method.IsStatic && declaringType.IsValueType && !declaringType.IsPrimitive))
             {
                 _forceCompile = true;
@@ -1601,7 +1603,7 @@ namespace System.Management.Automation.Interpreter
             if (node.Constructor != null)
             {
                 var parameters = node.Constructor.GetParameters();
-                if (!parameters.TrueForAll(p => !p.ParameterType.IsByRef))
+                if (!parameters.TrueForAll(static p => !p.ParameterType.IsByRef))
                 {
                     _forceCompile = true;
                 }
@@ -2005,7 +2007,8 @@ namespace System.Management.Automation.Interpreter
                 case ExpressionType.Index: CompileIndexExpression(expr); break;
                 case ExpressionType.Label: CompileLabelExpression(expr); break;
                 case ExpressionType.RuntimeVariables: CompileRuntimeVariablesExpression(expr); break;
-                case ExpressionType.Loop: CompileLoopExpression(expr); break;
+                case ExpressionType.Loop:
+                    CompileLoopExpression(expr); break;
                 case ExpressionType.Switch: CompileSwitchExpression(expr); break;
                 case ExpressionType.Throw: CompileThrowUnaryExpression(expr, expr.Type == typeof(void)); break;
                 case ExpressionType.Try: CompileTryExpression(expr); break;
@@ -2034,7 +2037,7 @@ namespace System.Management.Automation.Interpreter
                 case ExpressionType.PostDecrementAssign:
                     CompileReducibleExpression(expr); break;
                 default: throw Assert.Unreachable;
-            };
+            }
             Debug.Assert(_instructions.CurrentStackDepth == startingStackDepth + (expr.Type == typeof(void) ? 0 : 1));
         }
 

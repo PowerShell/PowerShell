@@ -1,10 +1,14 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Write-Debug tests" -Tags "CI" {
     It "Should not have added line breaks" {
         $text = "0123456789"
-        while ($text.Length -lt [Console]::WindowWidth) {
-            $text += $text
+        try {
+            while ($text.Length -lt [Console]::WindowWidth) {
+                $text += $text
+            }
+        } catch {
+            # Ignore errors if the console doesn't support WindowWidth
         }
         $origDebugPref = $DebugPreference
         $DebugPreference = "Continue"

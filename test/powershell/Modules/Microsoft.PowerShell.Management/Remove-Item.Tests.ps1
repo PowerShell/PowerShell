@@ -1,141 +1,195 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "Remove-Item" -Tags "CI" {
-    $testpath = $TestDrive
-    $testfile = "testfile.txt"
-    $testfilepath = Join-Path -Path $testpath -ChildPath $testfile
+    BeforeAll {
+        $testpath = $TestDrive
+        $testfile = "testfile.txt"
+        $testfilepath = Join-Path -Path $testpath -ChildPath $testfile
+    }
+
     Context "File removal Tests" {
-	BeforeEach {
-	    New-Item -Name $testfile -Path $testpath -ItemType "file" -Value "lorem ipsum" -Force
+        BeforeEach {
+            New-Item -Name $testfile -Path $testpath -ItemType "file" -Value "lorem ipsum" -Force
+            Test-Path $testfilepath | Should -BeTrue
+        }
 
-	    Test-Path $testfilepath | Should -BeTrue
+        It "Should be able to be called on a regular file without error using the Path parameter" {
+            { Remove-Item -Path $testfilepath } | Should -Not -Throw
 
-	}
+            Test-Path $testfilepath | Should -BeFalse
+        }
 
-	It "Should be able to be called on a regular file without error using the Path switch" {
-	    { Remove-Item -Path $testfilepath } | Should -Not -Throw
+        It "Should be able to be called on a file without the Path parameter" {
+            { Remove-Item $testfilepath } | Should -Not -Throw
 
-	    Test-Path $testfilepath | Should -BeFalse
-	}
+            Test-Path $testfilepath | Should -BeFalse
+        }
 
-	It "Should be able to be called on a file without the Path switch" {
-	    { Remove-Item $testfilepath } | Should -Not -Throw
+        It "Should be able to call the rm alias" {
+            { rm $testfilepath } | Should -Not -Throw
 
-	    Test-Path $testfilepath | Should -BeFalse
-	}
+            Test-Path $testfilepath | Should -BeFalse
+        }
 
-	It "Should be able to call the rm alias" {
-	    { rm $testfilepath } | Should -Not -Throw
+        It "Should be able to call the del alias" {
+            { del $testfilepath } | Should -Not -Throw
 
-	    Test-Path $testfilepath | Should -BeFalse
-	}
+            Test-Path $testfilepath | Should -BeFalse
+        }
 
-	It "Should be able to call the del alias" {
-	    { del $testfilepath } | Should -Not -Throw
+        It "Should be able to call the erase alias" {
+            { erase $testfilepath } | Should -Not -Throw
 
-	    Test-Path $testfilepath | Should -BeFalse
-	}
+            Test-Path $testfilepath | Should -BeFalse
+        }
 
-	It "Should be able to call the erase alias" {
-	    { erase $testfilepath } | Should -Not -Throw
+        It "Should be able to call the ri alias" {
+            { ri $testfilepath } | Should -Not -Throw
 
-	    Test-Path $testfilepath | Should -BeFalse
-	}
+            Test-Path $testfilepath | Should -BeFalse
+        }
 
-	It "Should be able to call the ri alias" {
-	    { ri $testfilepath } | Should -Not -Throw
+        It "Should not be able to remove a read-only document without using the force switch" {
+            # Set to read only
+            Set-ItemProperty -Path $testfilepath -Name IsReadOnly -Value $true
 
-	    Test-Path $testfilepath | Should -BeFalse
-	}
+            # attempt to remove the file
+            { Remove-Item $testfilepath -ErrorAction SilentlyContinue } | Should -Not -Throw
 
-	It "Should not be able to remove a read-only document without using the force switch" {
-	    # Set to read only
-	    Set-ItemProperty -Path $testfilepath -Name IsReadOnly -Value $true
+            # validate
+            Test-Path $testfilepath | Should -BeTrue
 
-	    # attempt to remove the file
-	    { Remove-Item $testfilepath -ErrorAction SilentlyContinue } | Should -Not -Throw
+            # remove using the -force switch on the readonly object
+            Remove-Item  $testfilepath -Force
 
-	    # validate
-	    Test-Path $testfilepath | Should -BeTrue
+            # Validate
+            Test-Path $testfilepath | Should -BeFalse
+        }
 
-	    # remove using the -force switch on the readonly object
-	    Remove-Item  $testfilepath -Force
+        It "Should be able to remove all files matching a regular expression with the include parameter" {
+            # Create multiple files with specific string
+            New-Item -Name file1.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            New-Item -Name file2.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            New-Item -Name file3.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            # Create a single file that does not match that string - already done in BeforeEach
 
-	    # Validate
-	    Test-Path $testfilepath | Should -BeFalse
-	}
+            # Delete the specific string
+            Remove-Item (Join-Path -Path $testpath -ChildPath "*") -Include file*.txt
+            # validate that the string under test was deleted, and the nonmatching strings still exist
+            Test-Path (Join-Path -Path $testpath -ChildPath file1.txt) | Should -BeFalse
+            Test-Path (Join-Path -Path $testpath -ChildPath file2.txt) | Should -BeFalse
+            Test-Path (Join-Path -Path $testpath -ChildPath file3.txt) | Should -BeFalse
+            Test-Path $testfilepath  | Should -BeTrue
 
-	It "Should be able to remove all files matching a regular expression with the include switch" {
-	    # Create multiple files with specific string
-	    New-Item -Name file1.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
-	    New-Item -Name file2.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
-	    New-Item -Name file3.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
-	    # Create a single file that does not match that string - already done in BeforeEach
+            # Delete the non-matching strings
+            Remove-Item $testfilepath
 
-	    # Delete the specific string
-	    Remove-Item (Join-Path -Path $testpath -ChildPath "*") -Include file*.txt
-	    # validate that the string under test was deleted, and the nonmatching strings still exist
-	    Test-path (Join-Path -Path $testpath -ChildPath file1.txt) | Should -BeFalse
-	    Test-path (Join-Path -Path $testpath -ChildPath file2.txt) | Should -BeFalse
-	    Test-path (Join-Path -Path $testpath -ChildPath file3.txt) | Should -BeFalse
-	    Test-Path $testfilepath  | Should -BeTrue
+            Test-Path $testfilepath  | Should -BeFalse
+        }
 
-	    # Delete the non-matching strings
-	    Remove-Item $testfilepath
+        It "Should be able to not remove any files matching a regular expression with the exclude parameter" {
+            # Create multiple files with specific string
+            New-Item -Name file1.wav -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            New-Item -Name file2.wav -Path $testpath -ItemType "file" -Value "lorem ipsum"
 
-	    Test-Path $testfilepath  | Should -BeFalse
-	}
+            # Create a single file that does not match that string
+            New-Item -Name file1.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
 
-	It "Should be able to not remove any files matching a regular expression with the exclude switch" {
-	    # Create multiple files with specific string
-	    New-Item -Name file1.wav -Path $testpath -ItemType "file" -Value "lorem ipsum"
-	    New-Item -Name file2.wav -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            # Delete the specific string
+            Remove-Item (Join-Path -Path $testpath -ChildPath "file*") -Exclude *.wav -Include *.txt
 
-	    # Create a single file that does not match that string
-	    New-Item -Name file1.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            # validate that the string under test was deleted, and the nonmatching strings still exist
+            Test-Path (Join-Path -Path $testpath -ChildPath file1.wav) | Should -BeTrue
+            Test-Path (Join-Path -Path $testpath -ChildPath file2.wav) | Should -BeTrue
+            Test-Path (Join-Path -Path $testpath -ChildPath file1.txt) | Should -BeFalse
 
-	    # Delete the specific string
-	    Remove-Item (Join-Path -Path $testpath -ChildPath "file*") -Exclude *.wav -Include *.txt
+            # Delete the non-matching strings
+            Remove-Item (Join-Path -Path $testpath -ChildPath file1.wav)
+            Remove-Item (Join-Path -Path $testpath -ChildPath file2.wav)
 
-	    # validate that the string under test was deleted, and the nonmatching strings still exist
-	    Test-Path (Join-Path -Path $testpath -ChildPath file1.wav) | Should -BeTrue
-	    Test-Path (Join-Path -Path $testpath -ChildPath file2.wav) | Should -BeTrue
-	    Test-Path (Join-Path -Path $testpath -ChildPath file1.txt) | Should -BeFalse
-
-	    # Delete the non-matching strings
-	    Remove-Item (Join-Path -Path $testpath -ChildPath file1.wav)
-	    Remove-Item (Join-Path -Path $testpath -ChildPath file2.wav)
-
-	    Test-Path (Join-Path -Path $testpath -ChildPath file1.wav) | Should -BeFalse
-	    Test-Path (Join-Path -Path $testpath -ChildPath file2.wav) | Should -BeFalse
-	}
+            Test-Path (Join-Path -Path $testpath -ChildPath file1.wav) | Should -BeFalse
+            Test-Path (Join-Path -Path $testpath -ChildPath file2.wav) | Should -BeFalse
+        }
     }
 
     Context "Directory Removal Tests" {
-	$testdirectory = Join-Path -Path $testpath -ChildPath testdir
-	$testsubdirectory = Join-Path -Path $testdirectory -ChildPath subd
-	BeforeEach {
-	    New-Item -Name "testdir" -Path $testpath -ItemType "directory" -Force
+        BeforeAll {
+            $testdirectory = Join-Path -Path $testpath -ChildPath testdir
+            $testsubdirectory = Join-Path -Path $testdirectory -ChildPath subd
+        }
 
-	    Test-Path $testdirectory | Should -BeTrue
-	}
+        BeforeEach {
+            New-Item -Name "testdir" -Path $testpath -ItemType "directory" -Force
 
-	It "Should be able to remove a directory" {
-	    { Remove-Item $testdirectory } | Should -Not -Throw
+            Test-Path $testdirectory | Should -BeTrue
+        }
 
-	    Test-Path $testdirectory | Should -BeFalse
-	}
+        It "Should be able to remove a directory" {
+            { Remove-Item $testdirectory -ErrorAction Stop } | Should -Not -Throw
 
-	It "Should be able to recursively delete subfolders" {
-	    New-Item -Name "subd" -Path $testdirectory -ItemType "directory"
-	    New-Item -Name $testfile -Path $testsubdirectory -ItemType "file" -Value "lorem ipsum"
+            Test-Path $testdirectory | Should -BeFalse
+        }
 
-	    $complexDirectory = Join-Path -Path $testsubdirectory -ChildPath $testfile
-	    test-path $complexDirectory | Should -BeTrue
+        It "Should be able to recursively delete subfolders" {
+            New-Item -Name "subd" -Path $testdirectory -ItemType "directory"
+            New-Item -Name $testfile -Path $testsubdirectory -ItemType "file" -Value "lorem ipsum"
 
-	    { Remove-Item $testdirectory -Recurse} | Should -Not -Throw
+            $complexDirectory = Join-Path -Path $testsubdirectory -ChildPath $testfile
+            Test-Path $complexDirectory | Should -BeTrue
 
-	    Test-Path $testdirectory | Should -BeFalse
-	}
+            { Remove-Item $testdirectory -Recurse -ErrorAction Stop } | Should -Not -Throw
+
+            Test-Path $testdirectory | Should -BeFalse
+        }
+
+        It "Should be able to recursively delete a directory with a trailing backslash" {
+            New-Item -Name "subd" -Path $testdirectory -ItemType "directory"
+            New-Item -Name $testfile -Path $testsubdirectory -ItemType "file" -Value "lorem ipsum"
+
+            $complexDirectory = Join-Path -Path $testsubdirectory -ChildPath $testfile
+            Test-Path $complexDirectory | Should -BeTrue
+
+            $testdirectoryWithBackSlash = Join-Path -Path $testdirectory -ChildPath ([IO.Path]::DirectorySeparatorChar)
+            Test-Path $testdirectoryWithBackSlash | Should -BeTrue
+
+            { Remove-Item $testdirectoryWithBackSlash -Recurse -ErrorAction Stop } | Should -Not -Throw
+
+            Test-Path $testdirectoryWithBackSlash | Should -BeFalse
+            Test-Path $testdirectory | Should -BeFalse
+        }
+    }
+
+    Context "Alternate Data Streams should be supported on Windows" {
+        BeforeAll {
+            if (!$IsWindows) {
+                return
+            }
+            $fileName = "ADStest.txt"
+            $streamName = "teststream"
+            $dirName = "ADStestdir"
+            $fileContent =" This is file content."
+            $streamContent = "datastream content here"
+            $streamfile = Join-Path -Path $testpath -ChildPath $fileName
+            $streamdir = Join-Path -Path $testpath -ChildPath $dirName
+
+            $null = New-Item -Path $streamfile -ItemType "File" -force
+            Add-Content -Path $streamfile -Value $fileContent
+            Add-Content -Path $streamfile -Stream $streamName -Value $streamContent
+            $null = New-Item -Path $streamdir -ItemType "Directory" -Force
+            Add-Content -Path $streamdir -Stream $streamName -Value $streamContent
+        }
+
+        It "Should completely remove a datastream from a file" -Skip:(!$IsWindows) {
+            Get-Item -Path $streamfile -Stream $streamName | Should -Not -BeNullOrEmpty
+            Remove-Item -Path $streamfile -Stream $streamName
+            Get-Item -Path $streamfile -Stream $streamName -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+        }
+
+        It "Should completely remove a datastream from a directory" -Skip:(!$IsWindows) {
+            Get-Item -Path $streamdir -Stream $streamName | Should -Not -BeNullOrEmpty
+            Remove-Item -Path $streamdir -Stream $streamName
+            Get-Item -Path $streamdir -Stream $streamname -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+        }
     }
 }

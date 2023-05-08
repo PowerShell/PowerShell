@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// using "NavigationCommands" as the category.
         /// </summary>
         [Dbg.TraceSourceAttribute("NavigationCommands", "The namespace navigation tracer")]
-        internal static Dbg.PSTraceSource tracer = Dbg.PSTraceSource.GetTracer("NavigationCommands", "The namespace navigation tracer");
+        internal static readonly Dbg.PSTraceSource tracer = Dbg.PSTraceSource.GetTracer("NavigationCommands", "The namespace navigation tracer");
 
         #endregion Tracer
 
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                CmdletProviderContext coreCommandContext = new CmdletProviderContext(this);
+                CmdletProviderContext coreCommandContext = new(this);
 
                 coreCommandContext.Force = Force;
 
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
             // may be getting piped in.
             bool result = true;
 
-            if (paths != null && paths.Length >= 0)
+            if (paths != null)
             {
                 foreach (string path in paths)
                 {
@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         internal Collection<CmdletProviderContext> stopContextCollection =
-            new Collection<CmdletProviderContext>();
+            new();
 
         /// <summary>
         /// Gets or sets the filter property.
@@ -301,7 +301,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                CmdletProviderContext coreCommandContext = new CmdletProviderContext(this, Credential);
+                CmdletProviderContext coreCommandContext = new(this, Credential);
                 coreCommandContext.Force = Force;
 
                 Collection<string> includeFilter =
@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     /// <remarks>
     /// </remarks>
-    [Cmdlet(VerbsCommon.Get, "Location", DefaultParameterSetName = LocationParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113321")]
+    [Cmdlet(VerbsCommon.Get, "Location", DefaultParameterSetName = LocationParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096495")]
     [OutputType(typeof(PathInfo), ParameterSetName = new string[] { LocationParameterSet })]
     [OutputType(typeof(PathInfoStack), ParameterSetName = new string[] { StackParameterSet })]
     public class GetLocationCommand : DriveMatchingCoreCommandBase
@@ -447,7 +447,7 @@ namespace Microsoft.PowerShell.Commands
                             catch (DriveNotFoundException e)
                             {
                                 ErrorRecord errorRecord =
-                                    new ErrorRecord(
+                                    new(
                                         e,
                                         "GetLocationNoMatchingDrive",
                                         ErrorCategory.ObjectNotFound,
@@ -458,7 +458,7 @@ namespace Microsoft.PowerShell.Commands
                             catch (ProviderNotFoundException e)
                             {
                                 ErrorRecord errorRecord =
-                                    new ErrorRecord(
+                                    new(
                                         e,
                                         "GetLocationNoMatchingProvider",
                                         ErrorCategory.ObjectNotFound,
@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.Commands
                             catch (ArgumentException argException)
                             {
                                 ErrorRecord errorRecord =
-                                    new ErrorRecord(
+                                    new(
                                         argException,
                                         "GetLocationNoMatchingDrive",
                                         ErrorCategory.ObjectNotFound,
@@ -523,7 +523,7 @@ namespace Microsoft.PowerShell.Commands
                                 catch (ProviderNotFoundException e)
                                 {
                                     ErrorRecord errorRecord =
-                                        new ErrorRecord(
+                                        new(
                                             e,
                                             "GetLocationNoMatchingProvider",
                                             ErrorCategory.ObjectNotFound,
@@ -618,7 +618,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    Dbg.Diagnostics.Assert(false, string.Format(System.Globalization.CultureInfo.InvariantCulture, "One of the predefined parameter sets should have been specified, instead we got: {0}", ParameterSetName));
+                    Dbg.Diagnostics.Assert(false, string.Create(System.Globalization.CultureInfo.InvariantCulture, $"One of the predefined parameter sets should have been specified, instead we got: {ParameterSetName}"));
                     break;
             }
         }
@@ -633,7 +633,7 @@ namespace Microsoft.PowerShell.Commands
     /// The core command for setting/changing location.
     /// This is the equivalent of cd command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "Location", DefaultParameterSetName = PathParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113397")]
+    [Cmdlet(VerbsCommon.Set, "Location", DefaultParameterSetName = PathParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097049")]
     [OutputType(typeof(PathInfo), typeof(PathInfoStack))]
     public class SetLocationCommand : CoreCommandBase
     {
@@ -654,7 +654,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the path path property, when bound from the pipeline.
+        /// Gets or sets the path property, when bound from the pipeline.
         /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
@@ -809,7 +809,7 @@ namespace Microsoft.PowerShell.Commands
     /// The core command for setting/changing location and pushing it onto a location stack.
     /// This is the equivalent of the pushd command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Push, "Location", DefaultParameterSetName = PathParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113370")]
+    [Cmdlet(VerbsCommon.Push, "Location", DefaultParameterSetName = PathParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097105")]
     public class PushLocationCommand : CoreCommandBase
     {
         #region Command parameters
@@ -967,7 +967,7 @@ namespace Microsoft.PowerShell.Commands
     /// The core command for pop-location.  This is the equivalent of the popd command.
     /// It pops a container from the stack and sets the current location to that container.
     /// </summary>
-    [Cmdlet(VerbsCommon.Pop, "Location", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113369")]
+    [Cmdlet(VerbsCommon.Pop, "Location", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096907")]
     public class PopLocationCommand : CoreCommandBase
     {
         #region Command parameters
@@ -1075,10 +1075,10 @@ namespace Microsoft.PowerShell.Commands
     #region NewPSDriveCommand
 
     /// <summary>
-    /// Mounts a drive in the Monad namespace.
+    /// Mounts a drive in PowerShell runspace.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSDrive", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
-        SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113357")]
+        SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096815")]
     public class NewPSDriveCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -1237,7 +1237,7 @@ namespace Microsoft.PowerShell.Commands
                     // -Persist switch parameter is supported only for FileSystem provider.
                     if (Persist && !provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                     {
-                        ErrorRecord er = new ErrorRecord(new NotSupportedException(FileSystemProviderStrings.PersistNotSupported), "DriveRootNotNetworkPath", ErrorCategory.InvalidArgument, this);
+                        ErrorRecord er = new(new NotSupportedException(FileSystemProviderStrings.PersistNotSupported), "DriveRootNotNetworkPath", ErrorCategory.InvalidArgument, this);
                         ThrowTerminatingError(er);
                     }
 
@@ -1249,7 +1249,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Create the new drive
                     PSDriveInfo newDrive =
-                        new PSDriveInfo(
+                        new(
                             Name,
                             provider,
                             Root,
@@ -1368,7 +1368,7 @@ namespace Microsoft.PowerShell.Commands
             string[] providerNames,
             string scope)
         {
-            List<PSDriveInfo> results = new List<PSDriveInfo>();
+            List<PSDriveInfo> results = new();
 
             if (providerNames == null || providerNames.Length == 0)
             {
@@ -1477,10 +1477,10 @@ namespace Microsoft.PowerShell.Commands
     #region RemovePSDriveCommand
 
     /// <summary>
-    /// Removes a drive that is mounted in the Monad namespace.
+    /// Removes a drive that is mounted in the PowerShell runspace.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "PSDrive", DefaultParameterSetName = NameParameterSet, SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113376")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097050")]
     public class RemovePSDriveCommand : DriveMatchingCoreCommandBase
     {
         #region Command parameters
@@ -1609,8 +1609,7 @@ namespace Microsoft.PowerShell.Commands
                             if (!Force && drive == SessionState.Drive.Current)
                             {
                                 PSInvalidOperationException invalidOperation =
-                                    (PSInvalidOperationException)
-                                    PSTraceSource.NewInvalidOperationException(
+                                    (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                                         NavigationResources.RemoveDriveInUse,
                                         drive.Name);
 
@@ -1637,7 +1636,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (verifyMatch && !foundMatch)
                 {
-                    DriveNotFoundException e = new DriveNotFoundException(
+                    DriveNotFoundException e = new(
                         driveName,
                         "DriveNotFound",
                         SessionStateStrings.DriveNotFound);
@@ -1654,10 +1653,10 @@ namespace Microsoft.PowerShell.Commands
     #region GetPSDriveCommand
 
     /// <summary>
-    /// Gets a specified or listing of drives that are mounted in the Monad
+    /// Gets a specified or listing of drives that are mounted in PowerShell
     /// namespace.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSDrive", DefaultParameterSetName = NameParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113327")]
+    [Cmdlet(VerbsCommon.Get, "PSDrive", DefaultParameterSetName = NameParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096494")]
     [OutputType(typeof(PSDriveInfo))]
     public class GetPSDriveCommand : DriveMatchingCoreCommandBase
     {
@@ -1776,7 +1775,7 @@ namespace Microsoft.PowerShell.Commands
                         if (!WildcardPattern.ContainsWildcardCharacters(driveName))
                         {
                             DriveNotFoundException driveNotFound =
-                                new DriveNotFoundException(
+                                new(
                                     driveName,
                                     "DriveNotFound",
                                     SessionStateStrings.DriveNotFound);
@@ -1793,7 +1792,7 @@ namespace Microsoft.PowerShell.Commands
                 catch (DriveNotFoundException driveNotFound)
                 {
                     ErrorRecord errorRecord =
-                        new ErrorRecord(
+                        new(
                             driveNotFound,
                             "GetLocationNoMatchingDrive",
                             ErrorCategory.ObjectNotFound,
@@ -1803,7 +1802,7 @@ namespace Microsoft.PowerShell.Commands
                 catch (ProviderNotFoundException providerNotFound)
                 {
                     ErrorRecord errorRecord =
-                        new ErrorRecord(
+                        new(
                             providerNotFound,
                             "GetLocationNoMatchingDrive",
                             ErrorCategory.ObjectNotFound,
@@ -1841,7 +1840,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Gets the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Item", DefaultParameterSetName = PathParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113319")]
+    [Cmdlet(VerbsCommon.Get, "Item", DefaultParameterSetName = PathParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096812")]
     public class GetItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -2010,7 +2009,7 @@ namespace Microsoft.PowerShell.Commands
     /// Creates the specified item using the namespace providers.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "Item", DefaultParameterSetName = PathParameterSet, SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113353")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096592")]
     public class NewItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -2161,7 +2160,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Sets the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "Item", SupportsShouldProcess = true, DefaultParameterSetName = PathParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113395")]
+    [Cmdlet(VerbsCommon.Set, "Item", SupportsShouldProcess = true, DefaultParameterSetName = PathParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097055")]
     public class SetItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -2364,7 +2363,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Removes the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Item", SupportsShouldProcess = true, DefaultParameterSetName = PathParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113373")]
+    [Cmdlet(VerbsCommon.Remove, "Item", SupportsShouldProcess = true, DefaultParameterSetName = PathParameterSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097103")]
     public class RemoveItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -2536,10 +2535,10 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         resolvedPSPaths = SessionState.Path.GetResolvedPSPathFromPSPath(path, currentContext);
-                        if (true == SuppressWildcardExpansion && 0 == resolvedPSPaths.Count)
+                        if (SuppressWildcardExpansion == true && resolvedPSPaths.Count == 0)
                         {
                             ItemNotFoundException pathNotFound =
-                                new ItemNotFoundException(
+                                new(
                                     path,
                                     "PathNotFound",
                                     SessionStateStrings.PathNotFound);
@@ -2637,8 +2636,7 @@ namespace Microsoft.PowerShell.Commands
                     if (isCurrentLocationOrAncestor)
                     {
                         PSInvalidOperationException invalidOperation =
-                            (PSInvalidOperationException)
-                            PSTraceSource.NewInvalidOperationException(
+                            (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                                 NavigationResources.RemoveItemInUse,
                                 resolvedPath.Path);
 
@@ -2700,8 +2698,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(providerPath);
-                            if (di != null && (di.Attributes & System.IO.FileAttributes.ReparsePoint) != 0)
+                            System.IO.DirectoryInfo di = new(providerPath);
+                            if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(di))
                             {
                                 shouldRecurse = false;
                                 treatAsFile = true;
@@ -2792,7 +2790,7 @@ namespace Microsoft.PowerShell.Commands
     /// the namespace providers.
     /// </summary>
     [Cmdlet(VerbsCommon.Move, "Item", DefaultParameterSetName = PathParameterSet, SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113350")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096591")]
     public class MoveItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -2941,7 +2939,7 @@ namespace Microsoft.PowerShell.Commands
 
         private Collection<PathInfo> GetResolvedPaths(string path)
         {
-            Collection<PathInfo> results = new Collection<PathInfo>();
+            Collection<PathInfo> results = new();
             try
             {
                 results = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
@@ -3012,8 +3010,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!InvokeProvider.Item.Exists(path, currentContext))
                 {
                     PSInvalidOperationException invalidOperation =
-                        (PSInvalidOperationException)
-                        PSTraceSource.NewInvalidOperationException(
+                        (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                             NavigationResources.MoveItemDoesntExist,
                             path);
 
@@ -3099,8 +3096,7 @@ namespace Microsoft.PowerShell.Commands
             if (isCurrentLocationOrAncestor)
             {
                 PSInvalidOperationException invalidOperation =
-                    (PSInvalidOperationException)
-                    PSTraceSource.NewInvalidOperationException(
+                    (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                         NavigationResources.MoveItemInUse,
                         path);
 
@@ -3168,7 +3164,7 @@ namespace Microsoft.PowerShell.Commands
     /// Renames a specified item to a new name using the namespace providers.
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "Item", SupportsShouldProcess = true, SupportsTransactions = true, DefaultParameterSetName = ByPathParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113382")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097153")]
     public class RenameItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -3354,8 +3350,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!InvokeProvider.Item.Exists(path, currentContext))
                 {
                     PSInvalidOperationException invalidOperation =
-                        (PSInvalidOperationException)
-                        PSTraceSource.NewInvalidOperationException(
+                        (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                             NavigationResources.RenameItemDoesntExist,
                             path);
 
@@ -3441,8 +3436,7 @@ namespace Microsoft.PowerShell.Commands
             if (isCurrentLocationOrAncestor)
             {
                 PSInvalidOperationException invalidOperation =
-                    (PSInvalidOperationException)
-                    PSTraceSource.NewInvalidOperationException(
+                    (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                         NavigationResources.RenamedItemInUse,
                         path);
 
@@ -3509,7 +3503,7 @@ namespace Microsoft.PowerShell.Commands
     /// Copies a specified item to a new location using the namespace providers.
     /// </summary>
     [Cmdlet(VerbsCommon.Copy, "Item", DefaultParameterSetName = PathParameterSet, SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113292")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096990")]
     public class CopyItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -3768,7 +3762,7 @@ namespace Microsoft.PowerShell.Commands
     /// Clears an item at the specified location.
     /// </summary>
     [Cmdlet(VerbsCommon.Clear, "Item", DefaultParameterSetName = PathParameterSet, SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113283")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096491")]
     public class ClearItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -3957,7 +3951,7 @@ namespace Microsoft.PowerShell.Commands
     /// Invokes an item at the specified location.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "Item", DefaultParameterSetName = PathParameterSet, SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113345")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096590")]
     public class InvokeItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -4124,7 +4118,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Gets a core command provider by name.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSProvider", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113329")]
+    [Cmdlet(VerbsCommon.Get, "PSProvider", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096816")]
     [OutputType(typeof(ProviderInfo))]
     public class GetPSProviderCommand : CoreCommandBase
     {

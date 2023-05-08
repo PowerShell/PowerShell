@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             thread.IsBackground = true;
-            // thread.SetApartmentState( ApartmentState.STA);
+            thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
         }
 
@@ -182,9 +182,9 @@ namespace Microsoft.PowerShell.Commands
             OperationComplete.SafeInvoke(this, operationStateEventArgs);
         }
 
-        ///<summary>
+        /// <summary>
         /// Raise WMI state changed event
-        ///</summary>
+        /// </summary>
         internal void RaiseWmiOperationState(EventArgs baseEventArgs, WmiState state)
         {
             WmiJobStateEventArgs wmiJobStateEventArgs = new WmiJobStateEventArgs();
@@ -992,16 +992,16 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    ///<summary>
+    /// <summary>
     /// Event which will be triggered when WMI state is changed.
     /// Currently it is to notify Jobs that state has changed to running.
     /// Other states are notified via OperationComplete.
-    ///</summary>
+    /// </summary>
     internal sealed class WmiJobStateEventArgs : EventArgs
     {
-        ///<summary>
+        /// <summary>
         /// WMI state
-        ///</summary>
+        /// </summary>
         internal WmiState WmiState { get; set; }
     }
 
@@ -1042,7 +1042,7 @@ namespace Microsoft.PowerShell.Commands
         {
             StringBuilder returnValue = new StringBuilder("\\\\");
             returnValue.Append(computer);
-            returnValue.Append("\\");
+            returnValue.Append('\\');
             returnValue.Append(namespaceParameter);
             return returnValue.ToString();
         }
@@ -1659,7 +1659,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (PSWmiChildJob job in ChildJobs)
             {
                 location.Append(job.Location);
-                location.Append(",");
+                location.Append(',');
             }
 
             location.Remove(location.Length - 1, 1);

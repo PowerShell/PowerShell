@@ -1,23 +1,20 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
-
+using System.Management.Automation.Internal;
 using Microsoft.Win32;
-using Microsoft.Win32.SafeHandles;
 
 namespace System.Management.Automation
 {
     /// <summary>
     /// These are platform abstractions and platform specific implementations.
     /// </summary>
-    public static class Platform
+    public static partial class Platform
     {
-        private static string _tempDirectory = null;
-
         /// <summary>
         /// True if the current platform is Linux.
         /// </summary>
@@ -25,7 +22,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+                return OperatingSystem.IsLinux();
             }
         }
 
@@ -36,7 +33,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+                return OperatingSystem.IsMacOS();
             }
         }
 
@@ -47,7 +44,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+                return OperatingSystem.IsWindows();
             }
         }
 
@@ -72,7 +69,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isNanoServer.HasValue) { return _isNanoServer.Value; }
+                if (_isNanoServer.HasValue)
+                {
+                    return _isNanoServer.Value;
+                }
 
                 _isNanoServer = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels"))
@@ -102,7 +102,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isIoT.HasValue) { return _isIoT.Value; }
+                if (_isIoT.HasValue)
+                {
+                    return _isIoT.Value;
+                }
 
                 _isIoT = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion"))
@@ -132,7 +135,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isWindowsDesktop.HasValue) { return _isWindowsDesktop.Value; }
+                if (_isWindowsDesktop.HasValue)
+                {
+                    return _isWindowsDesktop.Value;
+                }
 
                 _isWindowsDesktop = !IsNanoServer && !IsIoT;
                 return _isWindowsDesktop.Value;
@@ -140,27 +146,64 @@ namespace System.Management.Automation
             }
         }
 
-#if !UNIX
+        /// <summary>
+        /// Gets a value indicating whether the underlying system supports single-threaded apartment.
+        /// </summary>
+        public static bool IsStaSupported
+        {
+            get
+            {
+#if UNIX
+                return false;
+#else
+                return _isStaSupported.Value;
+#endif
+            }
+        }
+
+#if UNIX
+        // Gets the location for cache and config folders.
+        internal static readonly string CacheDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
+        internal static readonly string ConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
+#else
+        // Gets the location for cache and config folders.
+        internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
+        internal static readonly string ConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
+
+        private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
+        {
+            int result = Interop.Windows.CoInitializeEx(IntPtr.Zero, Interop.Windows.COINIT_APARTMENTTHREADED);
+
+            // If 0 is returned the thread has been initialized for the first time
+            // as an STA and thus supported and needs to be uninitialized.
+            if (result > 0)
+            {
+                Interop.Windows.CoUninitialize();
+            }
+
+            return result != Interop.Windows.E_NOTIMPL;
+        });
+
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
         private static bool? _isWindowsDesktop = null;
 #endif
 
         // format files
-        internal static List<string> FormatFileNames = new List<string>
-            {
-                "Certificate.format.ps1xml",
-                "Diagnostics.format.ps1xml",
-                "DotNetTypes.format.ps1xml",
-                "Event.format.ps1xml",
-                "FileSystem.format.ps1xml",
-                "Help.format.ps1xml",
-                "HelpV3.format.ps1xml",
-                "PowerShellCore.format.ps1xml",
-                "PowerShellTrace.format.ps1xml",
-                "Registry.format.ps1xml",
-                "WSMan.format.ps1xml"
-            };
+        internal static readonly string[] FormatFileNames = new string[]
+        {
+            "Certificate.format.ps1xml",
+            "Diagnostics.format.ps1xml",
+            "DotNetTypes.format.ps1xml",
+            "Event.format.ps1xml",
+            "FileSystem.format.ps1xml",
+            "Help.format.ps1xml",
+            "HelpV3.format.ps1xml",
+            "PowerShellCore.format.ps1xml",
+            "PowerShellTrace.format.ps1xml",
+            "Registry.format.ps1xml",
+            "WSMan.format.ps1xml"
+        };
 
         /// <summary>
         /// Some common environment variables used in PS have different
@@ -175,43 +218,37 @@ namespace System.Management.Automation
 #endif
         }
 
+#if UNIX
+        private static string s_tempHome = null;
+
         /// <summary>
-        /// Remove the temporary directory created for the current process.
+        /// Get the 'HOME' environment variable or create a temporary home directory if the environment variable is not set.
         /// </summary>
-        internal static void RemoveTemporaryDirectory()
+        private static string GetHomeOrCreateTempHome()
         {
-            if (_tempDirectory == null)
+            const string tempHomeFolderName = "pwsh-{0}-98288ff9-5712-4a14-9a11-23693b9cd91a";
+
+            string envHome = Environment.GetEnvironmentVariable("HOME") ?? s_tempHome;
+            if (envHome is not null)
             {
-                return;
+                return envHome;
             }
 
             try
             {
-                Directory.Delete(_tempDirectory, true);
+                s_tempHome = Path.Combine(Path.GetTempPath(), StringUtil.Format(tempHomeFolderName, Environment.UserName));
+                Directory.CreateDirectory(s_tempHome);
             }
-            catch
+            catch (UnauthorizedAccessException)
             {
-                // ignore if there is a failure
+                // Directory creation may fail if the account doesn't have filesystem permission such as some service accounts.
+                // Return an empty string in this case so the process working directory will be used.
+                s_tempHome = string.Empty;
             }
 
-            _tempDirectory = null;
+            return s_tempHome;
         }
 
-        /// <summary>
-        /// Get a temporary directory to use for the current process.
-        /// </summary>
-        internal static string GetTemporaryDirectory()
-        {
-            if (_tempDirectory != null)
-            {
-                return _tempDirectory;
-            }
-
-            _tempDirectory = PsUtils.GetTemporaryDirectory();
-            return _tempDirectory;
-        }
-
-#if UNIX
         /// <summary>
         /// X Desktop Group configuration type enum.
         /// </summary>
@@ -234,225 +271,97 @@ namespace System.Management.Automation
         /// <summary>
         /// Function for choosing directory location of PowerShell for profile loading.
         /// </summary>
-        public static string SelectProductNameForDirectory(Platform.XDG_Type dirpath)
+        public static string SelectProductNameForDirectory(XDG_Type dirpath)
         {
             // TODO: XDG_DATA_DIRS implementation as per GitHub issue #1060
 
-            string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
-            string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
-            string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
-            string envHome = System.Environment.GetEnvironmentVariable(CommonEnvVariableNames.Home);
-            if (envHome == null)
-            {
-                envHome = GetTemporaryDirectory();
-            }
+            string xdgconfighome = Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
+            string xdgdatahome = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+            string xdgcachehome = Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
+            string envHome = GetHomeOrCreateTempHome();
 
             string xdgConfigHomeDefault = Path.Combine(envHome, ".config", "powershell");
             string xdgDataHomeDefault = Path.Combine(envHome, ".local", "share", "powershell");
             string xdgModuleDefault = Path.Combine(xdgDataHomeDefault, "Modules");
             string xdgCacheDefault = Path.Combine(envHome, ".cache", "powershell");
 
-            switch (dirpath)
+            try
             {
-                case Platform.XDG_Type.CONFIG:
-                    // the user has set XDG_CONFIG_HOME corresponding to profile path
-                    if (string.IsNullOrEmpty(xdgconfighome))
-                    {
-                        // xdg values have not been set
-                        return xdgConfigHomeDefault;
-                    }
+                switch (dirpath)
+                {
+                    case XDG_Type.CONFIG:
+                        // Use 'XDG_CONFIG_HOME' if it's set, otherwise use the default path.
+                        return string.IsNullOrEmpty(xdgconfighome)
+                            ? xdgConfigHomeDefault
+                            : Path.Combine(xdgconfighome, "powershell");
 
-                    else
-                    {
-                        return Path.Combine(xdgconfighome, "powershell");
-                    }
-
-                case Platform.XDG_Type.DATA:
-                    // the user has set XDG_DATA_HOME corresponding to module path
-                    if (string.IsNullOrEmpty(xdgdatahome))
-                    {
-                        // create the xdg folder if needed
-                        if (!Directory.Exists(xdgDataHomeDefault))
+                    case XDG_Type.DATA:
+                        // Use 'XDG_DATA_HOME' if it's set, otherwise use the default path.
+                        if (string.IsNullOrEmpty(xdgdatahome))
                         {
-                            try
-                            {
-                                Directory.CreateDirectory(xdgDataHomeDefault);
-                            }
-                            catch (UnauthorizedAccessException)
-                            {
-                                // service accounts won't have permission to create user folder
-                                return GetTemporaryDirectory();
-                            }
+                            // Create the default data directory if it doesn't exist.
+                            Directory.CreateDirectory(xdgDataHomeDefault);
+                            return xdgDataHomeDefault;
                         }
-
-                        return xdgDataHomeDefault;
-                    }
-                    else
-                    {
                         return Path.Combine(xdgdatahome, "powershell");
-                    }
 
-                case Platform.XDG_Type.USER_MODULES:
-                    // the user has set XDG_DATA_HOME corresponding to module path
-                    if (string.IsNullOrEmpty(xdgdatahome))
-                    {
-                        // xdg values have not been set
-                        if (!Directory.Exists(xdgModuleDefault)) // module folder not always guaranteed to exist
+                    case XDG_Type.USER_MODULES:
+                        // Use 'XDG_DATA_HOME' if it's set, otherwise use the default path.
+                        if (string.IsNullOrEmpty(xdgdatahome))
                         {
-                            try
-                            {
-                                Directory.CreateDirectory(xdgModuleDefault);
-                            }
-                            catch (UnauthorizedAccessException)
-                            {
-                                // service accounts won't have permission to create user folder
-                                return GetTemporaryDirectory();
-                            }
+                            Directory.CreateDirectory(xdgModuleDefault);
+                            return xdgModuleDefault;
                         }
-
-                        return xdgModuleDefault;
-                    }
-                    else
-                    {
                         return Path.Combine(xdgdatahome, "powershell", "Modules");
-                    }
 
-                case Platform.XDG_Type.SHARED_MODULES:
-                    return "/usr/local/share/powershell/Modules";
+                    case XDG_Type.SHARED_MODULES:
+                        return "/usr/local/share/powershell/Modules";
 
-                case Platform.XDG_Type.CACHE:
-                    // the user has set XDG_CACHE_HOME
-                    if (string.IsNullOrEmpty(xdgcachehome))
-                    {
-                        // xdg values have not been set
-                        if (!Directory.Exists(xdgCacheDefault)) // module folder not always guaranteed to exist
+                    case XDG_Type.CACHE:
+                        // Use 'XDG_CACHE_HOME' if it's set, otherwise use the default path.
+                        if (string.IsNullOrEmpty(xdgcachehome))
                         {
-                            try
-                            {
-                                Directory.CreateDirectory(xdgCacheDefault);
-                            }
-                            catch (UnauthorizedAccessException)
-                            {
-                                // service accounts won't have permission to create user folder
-                                return GetTemporaryDirectory();
-                            }
+                            Directory.CreateDirectory(xdgCacheDefault);
+                            return xdgCacheDefault;
                         }
 
-                        return xdgCacheDefault;
-                    }
+                        string cachePath = Path.Combine(xdgcachehome, "powershell");
+                        Directory.CreateDirectory(cachePath);
+                        return cachePath;
 
-                    else
-                    {
-                        if (!Directory.Exists(Path.Combine(xdgcachehome, "powershell")))
-                        {
-                            try
-                            {
-                                Directory.CreateDirectory(Path.Combine(xdgcachehome, "powershell"));
-                            }
-                            catch (UnauthorizedAccessException)
-                            {
-                                // service accounts won't have permission to create user folder
-                                return GetTemporaryDirectory();
-                            }
-                        }
+                    case XDG_Type.DEFAULT:
+                        // Use 'xdgConfigHomeDefault' for 'XDG_Type.DEFAULT' and create the directory if it doesn't exist.
+                        Directory.CreateDirectory(xdgConfigHomeDefault);
+                        return xdgConfigHomeDefault;
 
-                        return Path.Combine(xdgcachehome, "powershell");
-                    }
-
-                case Platform.XDG_Type.DEFAULT:
-                    // default for profile location
-                    return xdgConfigHomeDefault;
-
-                default:
-                    // xdgConfigHomeDefault needs to be created in the edge case that we do not have the folder or it was deleted
-                    // This folder is the default in the event of all other failures for data storage
-                    if (!Directory.Exists(xdgConfigHomeDefault))
-                    {
-                        try
-                        {
-                            Directory.CreateDirectory(xdgConfigHomeDefault);
-                        }
-                        catch
-                        {
-                            Console.Error.WriteLine("Failed to create default data directory: " + xdgConfigHomeDefault);
-                        }
-                    }
-
-                    return xdgConfigHomeDefault;
+                    default:
+                        throw new InvalidOperationException("Unreachable code.");
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Directory creation may fail if the account doesn't have filesystem permission such as some service accounts.
+                // Return an empty string in this case so the process working directory will be used.
+                return string.Empty;
             }
         }
 #endif
 
         /// <summary>
-        /// The code is copied from the .NET implementation.
+        /// Mimic 'Environment.GetFolderPath(folder)' on Unix.
         /// </summary>
-        internal static string GetFolderPath(System.Environment.SpecialFolder folder)
+        internal static string GetFolderPath(Environment.SpecialFolder folder)
         {
-            return InternalGetFolderPath(folder);
-        }
-
-        /// <summary>
-        /// The API set 'api-ms-win-shell-shellfolders-l1-1-0.dll' was removed from NanoServer, so we cannot depend on 'SHGetFolderPathW'
-        /// to get the special folder paths. Instead, we need to rely on the basic environment variables to get the special folder paths.
-        /// </summary>
-        /// <returns>
-        /// The path to the specified system special folder, if that folder physically exists on your computer.
-        /// Otherwise, an empty string (string.Empty).
-        /// </returns>
-        private static string InternalGetFolderPath(System.Environment.SpecialFolder folder)
-        {
-            string folderPath = null;
 #if UNIX
-            string envHome = System.Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
-            if (envHome == null)
+            return folder switch
             {
-                envHome = Platform.GetTemporaryDirectory();
-            }
-
-            switch (folder)
-            {
-                case System.Environment.SpecialFolder.ProgramFiles:
-                    folderPath = "/bin";
-                    if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
-
-                    break;
-                case System.Environment.SpecialFolder.ProgramFilesX86:
-                    folderPath = "/usr/bin";
-                    if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
-
-                    break;
-                case System.Environment.SpecialFolder.System:
-                case System.Environment.SpecialFolder.SystemX86:
-                    folderPath = "/sbin";
-                    if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
-
-                    break;
-                case System.Environment.SpecialFolder.Personal:
-                    folderPath = envHome;
-                    break;
-                case System.Environment.SpecialFolder.LocalApplicationData:
-                    folderPath = System.IO.Path.Combine(envHome, ".config");
-                    if (!System.IO.Directory.Exists(folderPath))
-                    {
-                        try
-                        {
-                            System.IO.Directory.CreateDirectory(folderPath);
-                        }
-                        catch (UnauthorizedAccessException)
-                        {
-                            // directory creation may fail if the account doesn't have filesystem permission such as some service accounts
-                            folderPath = string.Empty;
-                        }
-                    }
-
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
+                Environment.SpecialFolder.ProgramFiles => Directory.Exists("/bin") ? "/bin" : string.Empty,
+                Environment.SpecialFolder.MyDocuments => GetHomeOrCreateTempHome(),
+                _ => throw new NotSupportedException()
+            };
 #else
-            folderPath = System.Environment.GetFolderPath(folder);
+            return Environment.GetFolderPath(folder);
 #endif
-            return folderPath ?? string.Empty;
         }
 
         // Platform methods prefixed NonWindows are:
@@ -465,19 +374,9 @@ namespace System.Management.Automation
         // - only to be used with the IsWindows feature query, and only if
         //   no other more specific feature query makes sense
 
-        internal static bool NonWindowsIsHardLink(ref IntPtr handle)
-        {
-            return Unix.IsHardLink(ref handle);
-        }
-
         internal static bool NonWindowsIsHardLink(FileSystemInfo fileInfo)
         {
             return Unix.IsHardLink(fileInfo);
-        }
-
-        internal static string NonWindowsInternalGetTarget(string path)
-        {
-            return Unix.NativeMethods.FollowSymLink(path);
         }
 
         internal static string NonWindowsGetUserFromPid(int path)
@@ -522,11 +421,9 @@ namespace System.Management.Automation
             return Unix.NativeMethods.IsSameFileSystemItem(pathOne, pathTwo);
         }
 
-        internal static bool NonWindowsGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
+        internal static bool NonWindowsGetInodeData(string path, out ValueTuple<ulong, ulong> inodeData)
         {
-            UInt64 device = 0UL;
-            UInt64 inode = 0UL;
-            var result = Unix.NativeMethods.GetInodeData(path, out device, out inode);
+            var result = Unix.NativeMethods.GetInodeData(path, out ulong device, out ulong inode);
 
             inodeData = (device, inode);
             return result == 0;
@@ -547,27 +444,285 @@ namespace System.Management.Automation
             return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
-        // Unix specific implementations of required functionality
-        //
+        internal static bool NonWindowsKillProcess(int pid)
+        {
+            return Unix.NativeMethods.KillProcess(pid);
+        }
+
+        internal static int NonWindowsWaitPid(int pid, bool nohang)
+        {
+            return Unix.NativeMethods.WaitPid(pid, nohang);
+        }
+
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
         // works *correctly* on Linux in that it creates an exception with
         // the string perror would give you for the last set value of errno.
         // No manual mapping is required. .NET Core maps the Linux errno
         // to a PAL value and calls strerror_r underneath to generate the message.
-        internal static class Unix
+
+        /// <summary>Unix specific implementations of required functionality.</summary>
+        internal static partial class Unix
         {
+            private static readonly Dictionary<int, string> usernameCache = new();
+            private static readonly Dictionary<int, string> groupnameCache = new();
+
+            /// <summary>The type of a Unix file system item.</summary>
+            public enum ItemType
+            {
+                /// <summary>The item is a Directory.</summary>
+                Directory,
+
+                /// <summary>The item is a File.</summary>
+                File,
+
+                /// <summary>The item is a Symbolic Link.</summary>
+                SymbolicLink,
+
+                /// <summary>The item is a Block Device.</summary>
+                BlockDevice,
+
+                /// <summary>The item is a Character Device.</summary>
+                CharacterDevice,
+
+                /// <summary>The item is a Named Pipe.</summary>
+                NamedPipe,
+
+                /// <summary>The item is a Socket.</summary>
+                Socket,
+            }
+
+            /// <summary>The mask to use to retrieve specific mode bits from the mode value in the stat class.</summary>
+            public enum StatMask
+            {
+                /// <summary>The mask to collect the owner mode.</summary>
+                OwnerModeMask = 0x1C0,
+
+                /// <summary>The mask to get the owners read bit.</summary>
+                OwnerRead = 0x100,
+
+                /// <summary>The mask to get the owners write bit.</summary>
+                OwnerWrite = 0x080,
+
+                /// <summary>The mask to get the owners execute bit.</summary>
+                OwnerExecute = 0x040,
+
+                /// <summary>The mask to get the group mode.</summary>
+                GroupModeMask = 0x038,
+
+                /// <summary>The mask to get the group mode.</summary>
+                GroupRead = 0x20,
+
+                /// <summary>The mask to get the group mode.</summary>
+                GroupWrite = 0x10,
+
+                /// <summary>The mask to get the group mode.</summary>
+                GroupExecute = 0x8,
+
+                /// <summary>The mask to get the "other" mode.</summary>
+                OtherModeMask = 0x007,
+
+                /// <summary>The mask to get the "other" read bit.</summary>
+                OtherRead = 0x004,
+
+                /// <summary>The mask to get the "other" write bit.</summary>
+                OtherWrite = 0x002,
+
+                /// <summary>The mask to get the "other" execute bit.</summary>
+                OtherExecute = 0x001,
+
+                /// <summary>The mask to retrieve the sticky bit.</summary>
+                SetStickyMask = 0x200,
+
+                /// <summary>The mask to retrieve the setgid bit.</summary>
+                SetGidMask = 0x400,
+
+                /// <summary>The mask to retrieve the setuid bit.</summary>
+                SetUidMask = 0x800,
+            }
+
+            /// <summary>The Common Stat class.</summary>
+            public class CommonStat
+            {
+                /// <summary>The inode of the filesystem item.</summary>
+                public long Inode;
+
+                /// <summary>The Mode of the filesystem item.</summary>
+                public int Mode;
+
+                /// <summary>The user id of the filesystem item.</summary>
+                public int UserId;
+
+                /// <summary>The group id of the filesystem item.</summary>
+                public int GroupId;
+
+                /// <summary>The number of hard links for the filesystem item.</summary>
+                public int HardlinkCount;
+
+                /// <summary>The size in bytes of the filesystem item.</summary>
+                public long Size;
+
+                /// <summary>The last access time of the filesystem item.</summary>
+                public DateTime AccessTime;
+
+                /// <summary>The last modified time for the filesystem item.</summary>
+                public DateTime ModifiedTime;
+
+                /// <summary>The last time the status changes for the filesystem item.</summary>
+                public DateTime StatusChangeTime;
+
+                /// <summary>The block size of the filesystem.</summary>
+                public long BlockSize;
+
+                /// <summary>The device id of the filesystem item.</summary>
+                public int DeviceId;
+
+                /// <summary>The number of blocks used by the filesystem item.</summary>
+                public int NumberOfBlocks;
+
+                /// <summary>The type of the filesystem item.</summary>
+                public ItemType ItemType;
+
+                /// <summary>Whether the filesystem item has the setuid bit enabled.</summary>
+                public bool IsSetUid;
+
+                /// <summary>Whether the filesystem item has the setgid bit enabled.</summary>
+                public bool IsSetGid;
+
+                /// <summary>Whether the filesystem item has the sticky bit enabled. This is only available for directories.</summary>
+                public bool IsSticky;
+
+                private const char CanRead = 'r';
+                private const char CanWrite = 'w';
+                private const char CanExecute = 'x';
+
+                // helper for getting unix mode
+                private readonly Dictionary<StatMask, char> modeMap = new()
+                {
+                        { StatMask.OwnerRead, CanRead },
+                        { StatMask.OwnerWrite, CanWrite },
+                        { StatMask.OwnerExecute, CanExecute },
+                        { StatMask.GroupRead, CanRead },
+                        { StatMask.GroupWrite, CanWrite },
+                        { StatMask.GroupExecute, CanExecute },
+                        { StatMask.OtherRead, CanRead },
+                        { StatMask.OtherWrite, CanWrite },
+                        { StatMask.OtherExecute, CanExecute },
+                };
+
+                private readonly StatMask[] permissions = new StatMask[]
+                {
+                    StatMask.OwnerRead,
+                    StatMask.OwnerWrite,
+                    StatMask.OwnerExecute,
+                    StatMask.GroupRead,
+                    StatMask.GroupWrite,
+                    StatMask.GroupExecute,
+                    StatMask.OtherRead,
+                    StatMask.OtherWrite,
+                    StatMask.OtherExecute
+                };
+
+                // The item type and the character representation for the first element in the stat string
+                private readonly Dictionary<ItemType, char> itemTypeTable = new()
+                {
+                    { ItemType.BlockDevice, 'b' },
+                    { ItemType.CharacterDevice, 'c' },
+                    { ItemType.Directory, 'd' },
+                    { ItemType.File, '-' },
+                    { ItemType.NamedPipe, 'p' },
+                    { ItemType.Socket, 's' },
+                    { ItemType.SymbolicLink, 'l' },
+                };
+
+                /// <summary>Convert the mode to a string which is usable in our formatting.</summary>
+                /// <returns>The mode converted into a Unix style string similar to the output of ls.</returns>
+                public string GetModeString()
+                {
+                    int offset = 0;
+                    char[] modeCharacters = new char[10];
+                    modeCharacters[offset++] = itemTypeTable[ItemType];
+
+                    foreach (StatMask permission in permissions)
+                    {
+                        // determine whether we are setuid, sticky, or the usual rwx.
+                        if ((Mode & (int)permission) == (int)permission)
+                        {
+                            if ((permission == StatMask.OwnerExecute && IsSetUid) || (permission == StatMask.GroupExecute && IsSetGid))
+                            {
+                                // Check for setuid and add 's'
+                                modeCharacters[offset] = 's';
+                            }
+                            else if (permission == StatMask.OtherExecute && IsSticky && (ItemType == ItemType.Directory))
+                            {
+                                // Directories are sticky, rather than setuid
+                                modeCharacters[offset] = 't';
+                            }
+                            else
+                            {
+                                modeCharacters[offset] = modeMap[permission];
+                            }
+                        }
+                        else
+                        {
+                            modeCharacters[offset] = '-';
+                        }
+
+                        offset++;
+                    }
+
+                    return new string(modeCharacters);
+                }
+
+                /// <summary>
+                /// Get the user name. This is used in formatting, but we shouldn't
+                /// do the pinvoke this unless we're going to use it.
+                /// </summary>
+                /// <returns>The user name.</returns>
+                public string GetUserName()
+                {
+                    if (usernameCache.TryGetValue(UserId, out string username))
+                    {
+                        return username;
+                    }
+
+                    // Get and add the user name to the cache so we don't need to
+                    // have a pinvoke for each file.
+                    username = NativeMethods.GetPwUid(UserId);
+                    usernameCache.Add(UserId, username);
+
+                    return username;
+                }
+
+                /// <summary>
+                /// Get the group name. This is used in formatting, but we shouldn't
+                /// do the pinvoke this unless we're going to use it.
+                /// </summary>
+                /// <returns>The name of the group.</returns>
+                public string GetGroupName()
+                {
+                    if (groupnameCache.TryGetValue(GroupId, out string groupname))
+                    {
+                        return groupname;
+                    }
+
+                    // Get and add the group name to the cache so we don't need to
+                    // have a pinvoke for each file.
+                    groupname = NativeMethods.GetGrGid(GroupId);
+                    groupnameCache.Add(GroupId, groupname);
+
+                    return groupname;
+                }
+            }
+
             // This is a helper that attempts to map errno into a PowerShell ErrorCategory
             internal static ErrorCategory GetErrorCategory(int errno)
             {
                 return (ErrorCategory)Unix.NativeMethods.GetErrorCategory(errno);
             }
 
-            public static bool IsHardLink(ref IntPtr handle)
-            {
-                // TODO:PSL implement using fstat to query inode refcount to see if it is a hard link
-                return false;
-            }
-
+            /// <summary>Determine if the item is a hardlink.</summary>
+            /// <param name="fs">A FileSystemInfo to check to determine if it is a hardlink.</param>
+            /// <returns>A boolean that represents whether the item is a hardlink.</returns>
             public static bool IsHardLink(FileSystemInfo fs)
             {
                 if (!fs.Exists || (fs.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
@@ -582,30 +737,163 @@ namespace System.Management.Automation
                 {
                     return count > 1;
                 }
-                else
-                {
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
-                }
+
+                throw new Win32Exception(Marshal.GetLastWin32Error());
             }
 
+            /// <summary>
+            /// Create a managed replica of the native stat structure.
+            /// </summary>
+            /// <param name="css">The common stat structure from which we copy.</param>
+            /// <returns>A managed common stat class instance.</returns>
+            private static CommonStat CopyStatStruct(NativeMethods.CommonStatStruct css)
+            {
+                CommonStat cs = new();
+                cs.Inode = css.Inode;
+                cs.Mode = css.Mode;
+                cs.UserId = css.UserId;
+                cs.GroupId = css.GroupId;
+                cs.HardlinkCount = css.HardlinkCount;
+                cs.Size = css.Size;
+
+                // These can sometime throw if we get too large a number back (seen on Raspbian).
+                // As a fallback, set the time to UnixEpoch.
+                try
+                {
+                    cs.AccessTime = DateTime.UnixEpoch.AddSeconds(css.AccessTime).ToLocalTime();
+                }
+                catch
+                {
+                    cs.AccessTime = DateTime.UnixEpoch.ToLocalTime();
+                }
+
+                try
+                {
+                    cs.ModifiedTime = DateTime.UnixEpoch.AddSeconds(css.ModifiedTime).ToLocalTime();
+                }
+                catch
+                {
+                    cs.ModifiedTime = DateTime.UnixEpoch.ToLocalTime();
+                }
+
+                try
+                {
+                    cs.StatusChangeTime = DateTime.UnixEpoch.AddSeconds(css.StatusChangeTime).ToLocalTime();
+                }
+                catch
+                {
+                    cs.StatusChangeTime = DateTime.UnixEpoch.ToLocalTime();
+                }
+
+                cs.BlockSize = css.BlockSize;
+                cs.DeviceId = css.DeviceId;
+                cs.NumberOfBlocks = css.NumberOfBlocks;
+
+                if (css.IsDirectory == 1)
+                {
+                    cs.ItemType = ItemType.Directory;
+                }
+                else if (css.IsFile == 1)
+                {
+                    cs.ItemType = ItemType.File;
+                }
+                else if (css.IsSymbolicLink == 1)
+                {
+                    cs.ItemType = ItemType.SymbolicLink;
+                }
+                else if (css.IsBlockDevice == 1)
+                {
+                    cs.ItemType = ItemType.BlockDevice;
+                }
+                else if (css.IsCharacterDevice == 1)
+                {
+                    cs.ItemType = ItemType.CharacterDevice;
+                }
+                else if (css.IsNamedPipe == 1)
+                {
+                    cs.ItemType = ItemType.NamedPipe;
+                }
+                else
+                {
+                    cs.ItemType = ItemType.Socket;
+                }
+
+                cs.IsSetUid = css.IsSetUid == 1;
+                cs.IsSetGid = css.IsSetGid == 1;
+                cs.IsSticky = css.IsSticky == 1;
+
+                return cs;
+            }
+
+            /// <summary>Get the lstat info from a path.</summary>
+            /// <param name="path">The path to the lstat information.</param>
+            /// <returns>An instance of the CommonStat for the path.</returns>
+            public static CommonStat GetLStat(string path)
+            {
+                NativeMethods.CommonStatStruct css;
+                if (NativeMethods.GetCommonLStat(path, out css) == 0)
+                {
+                    return CopyStatStruct(css);
+                }
+
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+            }
+
+            /// <summary>Get the stat info from a path.</summary>
+            /// <param name="path">The path to the stat information.</param>
+            /// <returns>An instance of the CommonStat for the path.</returns>
+            public static CommonStat GetStat(string path)
+            {
+                NativeMethods.CommonStatStruct css;
+                if (NativeMethods.GetCommonStat(path, out css) == 0)
+                {
+                    return CopyStatStruct(css);
+                }
+
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+            }
+
+            /// <summary>Read the /proc file system for information about the parent.</summary>
+            /// <param name="pid">The process id used to get the parent process.</param>
+            /// <returns>The process id.</returns>
             public static int GetProcFSParentPid(int pid)
             {
                 const int invalidPid = -1;
-                // read /proc/<pid>/stat
-                // 4th column will contain the ppid, 92 in the example below
-                // ex: 93 (bash) S 92 93 2 4294967295 ...
 
-                var path = $"/proc/{pid}/stat";
+                // read /proc/<pid>/status
+                // Row beginning with PPid: \d is the parent process id.
+                // This used to check /proc/<pid>/stat but that file was meant
+                // to be a space delimited line but it contains a value which
+                // could contain spaces itself. Using the status file is a lot
+                // simpler because each line contains a record with a simple
+                // label.
+                // https://github.com/PowerShell/PowerShell/issues/17541#issuecomment-1159911577
+                var path = $"/proc/{pid}/status";
                 try
                 {
-                    var stat = System.IO.File.ReadAllText(path);
-                    var parts = stat.Split(new[] { ' ' }, 5);
-                    if (parts.Length < 5)
+                    using FileStream fs = File.OpenRead(path);
+                    using StreamReader sr = new(fs);
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
                     {
-                        return invalidPid;
+                        if (!line.StartsWith("PPid:\t", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        string[] lineSplit = line.Split('\t', 2, StringSplitOptions.RemoveEmptyEntries);
+                        if (lineSplit.Length != 2)
+                        {
+                            continue;
+                        }
+
+                        if (int.TryParse(lineSplit[1].Trim(), out var ppid))
+                        {
+                            return ppid;
+                        }
                     }
 
-                    return Int32.Parse(parts[3]);
+                    return invalidPid;
                 }
                 catch (Exception)
                 {
@@ -613,45 +901,70 @@ namespace System.Management.Automation
                 }
             }
 
-            internal static class NativeMethods
+            /// <summary>The native methods class.</summary>
+            internal static partial class NativeMethods
             {
                 private const string psLib = "libpsl-native";
 
                 // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
+                // C bools are 1 byte and so must be marshalled as I1
 
-                // C bools are 1 byte and so must be marshaled as I1
+                [LibraryImport(psLib)]
+                internal static partial int GetErrorCategory(int errno);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi)]
-                internal static extern int GetErrorCategory(int errno);
+                [LibraryImport(psLib)]
+                internal static partial int GetPPid(int pid);
 
-                [DllImport(psLib)]
-                internal static extern int GetPPid(int pid);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                internal static partial int GetLinkCount(string filePath, out int linkCount);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)]string filePath, out int linkCount);
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)]string filePath);
+                internal static partial bool IsExecutable(string filePath);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi)]
-                internal static extern uint GetCurrentThreadId();
+                [LibraryImport(psLib)]
+                internal static partial uint GetCurrentThreadId();
 
-                // This is a struct tm from <time.h>
+                [LibraryImport(psLib)]
+                [return: MarshalAs(UnmanagedType.Bool)]
+                internal static partial bool KillProcess(int pid);
+
+                [LibraryImport(psLib)]
+                internal static partial int WaitPid(int pid, [MarshalAs(UnmanagedType.Bool)] bool nohang);
+
+                // This is a struct tm from <time.h>.
                 [StructLayout(LayoutKind.Sequential)]
                 internal unsafe struct UnixTm
                 {
-                    public int tm_sec;    /* Seconds (0-60) */
-                    public int tm_min;    /* Minutes (0-59) */
-                    public int tm_hour;   /* Hours (0-23) */
-                    public int tm_mday;   /* Day of the month (1-31) */
-                    public int tm_mon;    /* Month (0-11) */
-                    public int tm_year;   /* Year - 1900 */
-                    public int tm_wday;   /* Day of the week (0-6, Sunday = 0) */
-                    public int tm_yday;   /* Day in the year (0-365, 1 Jan = 0) */
-                    public int tm_isdst;  /* Daylight saving time */
+                    /// <summary>Seconds (0-60).</summary>
+                    internal int tm_sec;
+
+                    /// <summary>Minutes (0-59).</summary>
+                    internal int tm_min;
+
+                    /// <summary>Hours (0-23).</summary>
+                    internal int tm_hour;
+
+                    /// <summary>Day of the month (1-31).</summary>
+                    internal int tm_mday;
+
+                    /// <summary>Month (0-11).</summary>
+                    internal int tm_mon;
+
+                    /// <summary>The year - 1900.</summary>
+                    internal int tm_year;
+
+                    /// <summary>Day of the week (0-6, Sunday = 0).</summary>
+                    internal int tm_wday;
+
+                    /// <summary>Day in the year (0-365, 1 Jan = 0).</summary>
+                    internal int tm_yday;
+
+                    /// <summary>Daylight saving time.</summary>
+                    internal int tm_isdst;
                 }
 
+                // We need a way to convert a DateTime to a unix date.
                 internal static UnixTm DateTimeToUnixTm(DateTime date)
                 {
                     UnixTm tm;
@@ -667,33 +980,113 @@ namespace System.Management.Automation
                     return tm;
                 }
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern unsafe int SetDate(UnixTm* tm);
+                [LibraryImport(psLib)]
+                internal static unsafe partial int SetDate(UnixTm* tm);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
-                                                         [MarshalAs(UnmanagedType.LPStr)]string target);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int CreateSymLink(string filePath, string target);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
-                                                          [MarshalAs(UnmanagedType.LPStr)]string target);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int CreateHardLink(string filePath, string target);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [LibraryImport(psLib)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string FollowSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
+                internal static partial string GetUserFromPid(int pid);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string GetUserFromPid(int pid);
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
                 [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsSameFileSystemItem([MarshalAs(UnmanagedType.LPStr)]string filePathOne,
-                                                                 [MarshalAs(UnmanagedType.LPStr)]string filePathTwo);
+                internal static partial bool IsSameFileSystemItem(string filePathOne, string filePathTwo);
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int GetInodeData([MarshalAs(UnmanagedType.LPStr)]string path,
-                                                        out UInt64 device, out UInt64 inode);
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial int GetInodeData(string path, out ulong device, out ulong inode);
+
+                /// <summary>
+                /// This is a struct from getcommonstat.h in the native library.
+                /// It presents each member of the stat structure as the largest type of that member across
+                /// all stat structures on the platforms we support. This allows us to present a common
+                /// stat structure for all our platforms.
+                /// </summary>
+                [StructLayout(LayoutKind.Sequential)]
+                internal struct CommonStatStruct
+                {
+                    /// <summary>The inode of the filesystem item.</summary>
+                    internal long Inode;
+
+                    /// <summary>The mode of the filesystem item.</summary>
+                    internal int Mode;
+
+                    /// <summary>The user id of the filesystem item.</summary>
+                    internal int UserId;
+
+                    /// <summary>The group id of the filesystem item.</summary>
+                    internal int GroupId;
+
+                    /// <summary>The number of hard links to the filesystem item.</summary>
+                    internal int HardlinkCount;
+
+                    /// <summary>The size in bytes of the filesystem item.</summary>
+                    internal long Size;
+
+                    /// <summary>The time of the last access for the filesystem item.</summary>
+                    internal long AccessTime;
+
+                    /// <summary>The time of the last modification for the filesystem item.</summary>
+                    internal long ModifiedTime;
+
+                    /// <summary>The time of the last status change for the filesystem item.</summary>
+                    internal long StatusChangeTime;
+
+                    /// <summary>The size in bytes of the file system.</summary>
+                    internal long BlockSize;
+
+                    /// <summary>The device id for the filesystem item.</summary>
+                    internal int DeviceId;
+
+                    /// <summary>The number of filesystem blocks that the filesystem item uses.</summary>
+                    internal int NumberOfBlocks;
+
+                    /// <summary>This filesystem item is a directory.</summary>
+                    internal int IsDirectory;
+
+                    /// <summary>This filesystem item is a file.</summary>
+                    internal int IsFile;
+
+                    /// <summary>This filesystem item is a symbolic link.</summary>
+                    internal int IsSymbolicLink;
+
+                    /// <summary>This filesystem item is a block device.</summary>
+                    internal int IsBlockDevice;
+
+                    /// <summary>This filesystem item is a character device.</summary>
+                    internal int IsCharacterDevice;
+
+                    /// <summary>This filesystem item is a named pipe.</summary>
+                    internal int IsNamedPipe;
+
+                    /// <summary>This filesystem item is a socket.</summary>
+                    internal int IsSocket;
+
+                    /// <summary>This filesystem item will run as the owner if executed.</summary>
+                    internal int IsSetUid;
+
+                    /// <summary>This filesystem item will run as the group if executed.</summary>
+                    internal int IsSetGid;
+
+                    /// <summary>Whether the sticky bit is set on the filesystem item.</summary>
+                    internal int IsSticky;
+                }
+
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                internal static unsafe partial int GetCommonLStat(string filePath, out CommonStatStruct cs);
+
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8, SetLastError = true)]
+                internal static unsafe partial int GetCommonStat(string filePath, out CommonStatStruct cs);
+
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial string GetPwUid(int id);
+
+                [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]
+                internal static partial string GetGrGid(int id);
             }
         }
     }

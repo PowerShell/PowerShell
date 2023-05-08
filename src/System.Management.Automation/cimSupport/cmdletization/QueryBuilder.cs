@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -52,8 +52,8 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="propertyName">Property name to query on.</param>
         /// <param name="allowedPropertyValues">Property values to accept in the query.</param>
         /// <param name="wildcardsEnabled">
-        /// <c>true</c> if <paramref name="allowedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
-        /// <c>false otherwise</c>
+        /// <see langword="true"/> if <paramref name="allowedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
+        /// <see langword="false"/> otherwise.
         /// </param>
         /// <param name="behaviorOnNoMatch">
         /// Describes how to handle filters that didn't match any objects
@@ -69,8 +69,8 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="propertyName">Property name to query on.</param>
         /// <param name="excludedPropertyValues">Property values to reject in the query.</param>
         /// <param name="wildcardsEnabled">
-        /// <c>true</c> if <paramref name="excludedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
-        /// <c>false otherwise</c>
+        /// <see langword="true"/> if <paramref name="excludedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
+        /// <see langword="false"/> otherwise.
         /// </param>
         /// <param name="behaviorOnNoMatch">
         /// Describes how to handle filters that didn't match any objects

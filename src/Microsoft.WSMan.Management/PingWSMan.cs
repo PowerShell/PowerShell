@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -22,8 +22,8 @@ namespace Microsoft.WSMan.Management
     /// Issues an operation against the remote machine to ensure that the wsman
     /// service is running.
     /// </summary>
-
-    [Cmdlet(VerbsDiagnostic.Test, "WSMan", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141464")]
+    [Cmdlet(VerbsDiagnostic.Test, "WSMan", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097114")]
+    [OutputType(typeof(XmlElement))]
     public class TestWSManCommand : AuthenticatingWSManCommand, IDisposable
     {
         /// <summary>
@@ -36,7 +36,10 @@ namespace Microsoft.WSMan.Management
         [Alias("cn")]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -73,7 +76,10 @@ namespace Microsoft.WSMan.Management
         [Alias("auth", "am")]
         public override AuthenticationMechanism Authentication
         {
-            get { return authentication; }
+            get
+            {
+                return authentication;
+            }
 
             set
             {
@@ -90,15 +96,15 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
-        [ValidateRange(1, Int32.MaxValue)]
-        public Int32 Port
+        [ValidateRange(1, int.MaxValue)]
+        public int Port
         {
             get { return port; }
 
             set { port = value; }
         }
 
-        private Int32 port = 0;
+        private int port = 0;
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".

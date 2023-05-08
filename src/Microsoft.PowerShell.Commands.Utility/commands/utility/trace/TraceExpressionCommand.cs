@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -10,15 +10,13 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Threading;
 
-using Dbg = System.Management.Automation.Diagnostics;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// A cmdlet that traces the specified categories and flags for the duration of the
     /// specified expression.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Trace, "Command", DefaultParameterSetName = "expressionSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113419")]
+    [Cmdlet(VerbsDiagnostic.Trace, "Command", DefaultParameterSetName = "expressionSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097136")]
     public class TraceCommandCommand : TraceListenerCommandBase, IDisposable
     {
         #region Parameters
@@ -27,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// The TraceSource parameter determines which TraceSource categories the
@@ -48,7 +46,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 2)]
         public PSTraceSourceOptions Option
         {
-            get { return base.OptionsInternal; }
+            get
+            {
+                return base.OptionsInternal;
+            }
 
             set
             {
@@ -84,7 +85,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public TraceOptions ListenerOption
         {
-            get { return base.ListenerOptionsInternal; }
+            get
+            {
+                return base.ListenerOptionsInternal;
+            }
 
             set
             {
@@ -245,13 +249,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Ensures that the sub-pipeline we created gets stopped as well.
         /// </summary>
-        protected override void StopProcessing()
-        {
-            if (_pipeline != null)
-            {
-                _pipeline.Stop();
-            }
-        }
+        protected override void StopProcessing() => _pipeline?.Stop();
 
         #endregion Cmdlet code
 
@@ -332,15 +330,8 @@ namespace Microsoft.PowerShell.Commands
             bool writeError,
             Collection<PSTraceSource> matchingSources)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException("cmdlet");
-            }
-
-            if (matchingSources == null)
-            {
-                throw new ArgumentNullException("matchingSources");
-            }
+            ArgumentNullException.ThrowIfNull(cmdlet); 
+            ArgumentNullException.ThrowIfNull(matchingSources);
 
             _cmdlet = cmdlet;
             _writeError = writeError;
@@ -525,7 +516,7 @@ namespace Microsoft.PowerShell.Commands
             if (mshobj != null)
             {
                 object baseObject = mshobj.BaseObject;
-                if (!(baseObject is PSCustomObject))
+                if (baseObject is not PSCustomObject)
                 {
                     obj = baseObject;
                 }
@@ -540,9 +531,9 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private TraceListenerCommandBase _cmdlet;
-        private bool _writeError;
+        private readonly TraceListenerCommandBase _cmdlet;
+        private readonly bool _writeError;
         private bool _isOpen = true;
-        private Collection<PSTraceSource> _matchingSources = new Collection<PSTraceSource>();
+        private readonly Collection<PSTraceSource> _matchingSources = new();
     }
 }

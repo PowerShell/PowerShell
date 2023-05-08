@@ -1,10 +1,9 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 using System.Text;
 
 namespace System.Management.Automation
@@ -50,7 +49,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a CommandNotFoundException.
         /// </summary>
-        public CommandNotFoundException() : base() {; }
+        public CommandNotFoundException() : base() { }
 
         /// <summary>
         /// Constructs a CommandNotFoundException.
@@ -58,7 +57,7 @@ namespace System.Management.Automation
         /// <param name="message">
         /// The message used in the exception.
         /// </param>
-        public CommandNotFoundException(string message) : base(message) {; }
+        public CommandNotFoundException(string message) : base(message) { }
 
         /// <summary>
         /// Constructs a CommandNotFoundException.
@@ -69,7 +68,7 @@ namespace System.Management.Automation
         /// <param name="innerException">
         /// An exception that led to this exception.
         /// </param>
-        public CommandNotFoundException(string message, Exception innerException) : base(message, innerException) {; }
+        public CommandNotFoundException(string message, Exception innerException) : base(message, innerException) { }
 
         #region Serialization
         /// <summary>
@@ -87,7 +86,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             _commandName = info.GetString("CommandName");
@@ -102,12 +101,11 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -123,14 +121,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        _errorId,
-                        _errorCategory,
-                        _commandName);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    _errorId,
+                    _errorCategory,
+                    _commandName);
 
                 return _errorRecord;
             }
@@ -153,8 +148,8 @@ namespace System.Management.Automation
         #endregion Properties
 
         #region Private
-        private string _errorId = "CommandNotFoundException";
-        private ErrorCategory _errorCategory = ErrorCategory.ObjectNotFound;
+        private readonly string _errorId = "CommandNotFoundException";
+        private readonly ErrorCategory _errorCategory = ErrorCategory.ObjectNotFound;
 
         private static string BuildMessage(
             string commandName,
@@ -163,7 +158,7 @@ namespace System.Management.Automation
             )
         {
             object[] a;
-            if (messageArgs != null && 0 < messageArgs.Length)
+            if (messageArgs != null && messageArgs.Length > 0)
             {
                 a = new object[messageArgs.Length + 1];
                 a[0] = commandName;
@@ -339,7 +334,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs an PSVersionNotCompatibleException.
         /// </summary>
-        public ScriptRequiresException() : base() {; }
+        public ScriptRequiresException() : base() { }
 
         /// <summary>
         /// Constructs an PSVersionNotCompatibleException.
@@ -347,7 +342,7 @@ namespace System.Management.Automation
         /// <param name="message">
         /// The message used in the exception.
         /// </param>
-        public ScriptRequiresException(string message) : base(message) {; }
+        public ScriptRequiresException(string message) : base(message) { }
 
         /// <summary>
         /// Constructs an PSVersionNotCompatibleException.
@@ -358,7 +353,7 @@ namespace System.Management.Automation
         /// <param name="innerException">
         /// The exception that led to this exception.
         /// </param>
-        public ScriptRequiresException(string message, Exception innerException) : base(message, innerException) {; }
+        public ScriptRequiresException(string message, Exception innerException) : base(message, innerException) { }
 
         #region Serialization
         /// <summary>
@@ -389,12 +384,11 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -416,7 +410,7 @@ namespace System.Management.Automation
             get { return _commandName; }
         }
 
-        private string _commandName = string.Empty;
+        private readonly string _commandName = string.Empty;
 
         /// <summary>
         /// Gets the PSVersion that the script requires.
@@ -426,7 +420,7 @@ namespace System.Management.Automation
             get { return _requiresPSVersion; }
         }
 
-        private Version _requiresPSVersion;
+        private readonly Version _requiresPSVersion;
 
         /// <summary>
         /// Gets the missing snap-ins that the script requires.
@@ -436,7 +430,7 @@ namespace System.Management.Automation
             get { return _missingPSSnapIns; }
         }
 
-        private ReadOnlyCollection<string> _missingPSSnapIns = new ReadOnlyCollection<string>(Array.Empty<string>());
+        private readonly ReadOnlyCollection<string> _missingPSSnapIns = new ReadOnlyCollection<string>(Array.Empty<string>());
 
         /// <summary>
         /// Gets or sets the ID of the shell.
@@ -446,7 +440,7 @@ namespace System.Management.Automation
             get { return _requiresShellId; }
         }
 
-        private string _requiresShellId;
+        private readonly string _requiresShellId;
 
         /// <summary>
         /// Gets or sets the path to the incompatible shell.
@@ -456,7 +450,7 @@ namespace System.Management.Automation
             get { return _requiresShellPath; }
         }
 
-        private string _requiresShellPath;
+        private readonly string _requiresShellPath;
 
         #endregion Properties
 
@@ -470,7 +464,7 @@ namespace System.Management.Automation
             StringBuilder sb = new StringBuilder();
             if (missingItems == null)
             {
-                throw PSTraceSource.NewArgumentNullException("missingItems");
+                throw PSTraceSource.NewArgumentNullException(nameof(missingItems));
             }
 
             foreach (string missingItem in missingItems)
@@ -536,4 +530,3 @@ namespace System.Management.Automation
         #endregion Private
     }
 }
-

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -12,9 +12,6 @@ using System.Security.Principal;
 #endif
 using System.Threading;
 using Microsoft.PowerShell.Commands;
-using Microsoft.Win32;
-
-using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Runspaces
 {
@@ -179,8 +176,7 @@ namespace System.Management.Automation.Runspaces
                         // and support impersonation flow as needed (Windows only).
                         Thread invokeThread = new Thread(new ThreadStart(invokeThreadProcDelegate), DefaultPipelineStackSize);
                         SetupInvokeThread(invokeThread, true);
-#if !CORECLR
-                        // No ApartmentState in CoreCLR
+
                         ApartmentState apartmentState;
 
                         if (InvocationSettings != null && InvocationSettings.ApartmentState != ApartmentState.Unknown)
@@ -192,11 +188,13 @@ namespace System.Management.Automation.Runspaces
                             apartmentState = this.LocalRunspace.ApartmentState; // use the Runspace apartment state
                         }
 
-                        if (apartmentState != ApartmentState.Unknown)
+#if !UNIX
+                        if (apartmentState != ApartmentState.Unknown && Platform.IsStaSupported)
                         {
                             invokeThread.SetApartmentState(apartmentState);
                         }
 #endif
+
                         invokeThread.Start();
 
                         break;
@@ -248,7 +246,7 @@ namespace System.Management.Automation.Runspaces
                     }
 
                 default:
-                    Debug.Assert(false);
+                    Debug.Fail(string.Empty);
                     break;
             }
         }
@@ -271,61 +269,60 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        ///<summary>
+        /// <summary>
         /// Helper method for asynchronous invoke
-        ///<returns>Unhandled FlowControl exception if InvocationSettings.ExposeFlowControlExceptions is true.</returns>
-        ///</summary>
+        /// </summary>
+        /// <returns>Unhandled FlowControl exception if InvocationSettings.ExposeFlowControlExceptions is true.</returns>
         private FlowControlException InvokeHelper()
         {
             FlowControlException flowControlException = null;
-
             PipelineProcessor pipelineProcessor = null;
+
             try
             {
-#if TRANSACTIONS_SUPPORTED
-                // 2004/11/08-JeffJon
-                // Transactions will not be supported for the Exchange release
-
-                // Add the transaction to this thread
-                System.Transactions.Transaction.Current = this.LocalRunspace.ExecutionContext.CurrentTransaction;
-#endif
                 // Raise the event for Pipeline.Running
                 RaisePipelineStateEvents();
 
                 // Add this pipeline to history
                 RecordPipelineStartTime();
 
-                // Add automatic transcription, but don't transcribe nested commands
-                if (this.AddToHistory || !IsNested)
+                // Add automatic transcription when it's NOT a pulse pipeline, but don't transcribe nested commands.
+                if (!IsPulsePipeline && (AddToHistory || !IsNested))
                 {
-                    bool needToAddOutDefault = true;
-                    CommandInfo outDefaultCommandInfo = new CmdletInfo("Out-Default", typeof(Microsoft.PowerShell.Commands.OutDefaultCommand), null, null, null);
-
-                    foreach (Command command in this.Commands)
+                    foreach (Command command in Commands)
                     {
-                        if (command.IsScript && (!this.IsPulsePipeline))
+                        if (command.IsScript)
                         {
                             // Transcribe scripts, unless they are the pulse pipeline.
-                            this.Runspace.GetExecutionContext.EngineHostInterface.UI.TranscribeCommand(command.CommandText, null);
-                        }
-
-                        // Don't need to add Out-Default if the pipeline already has it, or we've got a pipeline evaluating
-                        // the PSConsoleHostReadLine command.
-                        if (
-                            string.Equals(outDefaultCommandInfo.Name, command.CommandText, StringComparison.OrdinalIgnoreCase) ||
-                            string.Equals("PSConsoleHostReadLine", command.CommandText, StringComparison.OrdinalIgnoreCase) ||
-                            string.Equals("TabExpansion2", command.CommandText, StringComparison.OrdinalIgnoreCase) ||
-                            this.IsPulsePipeline)
-                        {
-                            needToAddOutDefault = false;
+                            Runspace.GetExecutionContext.EngineHostInterface.UI.TranscribeCommand(command.CommandText, invocation: null);
                         }
                     }
 
-                    if (this.Runspace.GetExecutionContext.EngineHostInterface.UI.IsTranscribing)
+                    if (Runspace.GetExecutionContext.EngineHostInterface.UI.IsTranscribing)
                     {
+                        bool needToAddOutDefault = true;
+                        Command lastCommand = Commands[Commands.Count - 1];
+
+                        // Don't need to add Out-Default if the pipeline already has it, or we've got a pipeline evaluating
+                        // the PSConsoleHostReadLine or the TabExpansion2 commands.
+                        if (string.Equals("Out-Default", lastCommand.CommandText, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals("PSConsoleHostReadLine", lastCommand.CommandText, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals("TabExpansion2", lastCommand.CommandText, StringComparison.OrdinalIgnoreCase) ||
+                            (lastCommand.CommandInfo is CmdletInfo cmdlet && cmdlet.ImplementingType == typeof(OutDefaultCommand)))
+                        {
+                            needToAddOutDefault = false;
+                        }
+
                         if (needToAddOutDefault)
                         {
-                            Command outDefaultCommand = new Command(outDefaultCommandInfo);
+                            var outDefaultCommand = new Command(
+                                new CmdletInfo(
+                                    "Out-Default",
+                                    typeof(OutDefaultCommand),
+                                    helpFile: null,
+                                    PSSnapin: null,
+                                    context: null));
+
                             outDefaultCommand.Parameters.Add(new CommandParameter("Transcript", true));
                             outDefaultCommand.Parameters.Add(new CommandParameter("OutVariable", null));
 
@@ -490,10 +487,7 @@ namespace System.Management.Automation.Runspaces
                     }
 
                     PSLocalEventManager eventManager = LocalRunspace.Events as PSLocalEventManager;
-                    if (eventManager != null)
-                    {
-                        eventManager.ProcessPendingActions();
-                    }
+                    eventManager?.ProcessPendingActions();
 
                     // restore the trap state...
                     this.LocalRunspace.ExecutionContext.PropagateExceptionsToEnclosingStatementBlock = oldTrapState;
@@ -624,18 +618,11 @@ namespace System.Management.Automation.Runspaces
                 SetPipelineState(PipelineState.Failed, ex);
                 SetHadErrors(true);
             }
-#if !CORECLR // No ThreadAbortException In CoreCLR
-            catch (ThreadAbortException ex)
-            {
-                SetPipelineState(PipelineState.Failed, ex);
-                SetHadErrors(true);
-            }
-#endif
-            // 1021203-2005/05/09-JonN
-            // HaltCommandException will cause the command
-            // to stop, but not be reported as an error.
             catch (HaltCommandException)
             {
+                // 1021203-2005/05/09-JonN
+                // HaltCommandException will cause the command
+                // to stop, but not be reported as an error.
                 SetPipelineState(PipelineState.Completed);
             }
             finally
@@ -743,7 +730,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Stop the running pipeline.
         /// </summary>
-        /// <param name="syncCall">If true pipeline is stoped synchronously
+        /// <param name="syncCall">If true pipeline is stopped synchronously
         /// else asynchronously.</param>
         protected override void ImplementStop(bool syncCall)
         {
@@ -766,7 +753,7 @@ namespace System.Management.Automation.Runspaces
             StopHelper();
         }
 
-        private PipelineStopper _stopper;
+        private readonly PipelineStopper _stopper;
 
         /// <summary>
         /// Gets PipelineStopper object which maintains stack of PipelineProcessor
@@ -982,7 +969,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// This method sets streams to their orignal states from execution context.
+        /// This method sets streams to their original states from execution context.
         /// This is done when Pipeline is completed/failed/stopped ie., termination state.
         /// </summary>
         private void ClearStreams()
@@ -1120,31 +1107,6 @@ namespace System.Management.Automation.Runspaces
 
         #endregion private_fields
 
-        #region invoke_loop_detection
-
-        /// <summary>
-        /// This is list of HistoryInfo ids which have been executed in
-        /// this pipeline.
-        /// </summary>
-        private List<long> _invokeHistoryIds = new List<long>();
-
-        internal bool PresentInInvokeHistoryEntryList(HistoryInfo entry)
-        {
-            return _invokeHistoryIds.Contains(entry.Id);
-        }
-
-        internal void AddToInvokeHistoryEntryList(HistoryInfo entry)
-        {
-            _invokeHistoryIds.Add(entry.Id);
-        }
-
-        internal void RemoveFromInvokeHistoryEntryList(HistoryInfo entry)
-        {
-            _invokeHistoryIds.Remove(entry.Id);
-        }
-
-        #endregion invoke_loop_detection
-
         #region IDisposable Members
 
         /// <summary>
@@ -1162,7 +1124,7 @@ namespace System.Management.Automation.Runspaces
         {
             try
             {
-                if (_disposed == false)
+                if (!_disposed)
                 {
                     _disposed = true;
                     if (disposing)
@@ -1188,15 +1150,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates the worker thread and waits for it to be ready.
         /// </summary>
-#if CORECLR
-        internal PipelineThread()
-        {
-            _worker = new Thread(WorkerProc, LocalPipeline.DefaultPipelineStackSize);
-            _workItem = null;
-            _workItemReady = new AutoResetEvent(false);
-            _closed = false;
-        }
-#else
         internal PipelineThread(ApartmentState apartmentState)
         {
             _worker = new Thread(WorkerProc, LocalPipeline.DefaultPipelineStackSize);
@@ -1204,12 +1157,13 @@ namespace System.Management.Automation.Runspaces
             _workItemReady = new AutoResetEvent(false);
             _closed = false;
 
-            if (apartmentState != ApartmentState.Unknown)
+#if !UNIX
+            if (apartmentState != ApartmentState.Unknown && Platform.IsStaSupported)
             {
                 _worker.SetApartmentState(apartmentState);
             }
-        }
 #endif
+        }
 
         /// <summary>
         /// Returns the worker thread.
@@ -1290,16 +1244,16 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Ensure we release the worker thread.
+        /// Finalizes an instance of the <see cref="PipelineThread"/> class.
         /// </summary>
         ~PipelineThread()
         {
             Dispose();
         }
 
-        private Thread _worker;
+        private readonly Thread _worker;
         private ThreadStart _workItem;
-        private AutoResetEvent _workItemReady;
+        private readonly AutoResetEvent _workItemReady;
         private bool _closed;
     }
 
@@ -1314,13 +1268,13 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Stack of current executing pipeline processor.
         /// </summary>
-        private Stack<PipelineProcessor> _stack = new Stack<PipelineProcessor>();
+        private readonly Stack<PipelineProcessor> _stack = new Stack<PipelineProcessor>();
 
         /// <summary>
         /// Object used for synchronization.
         /// </summary>
-        private object _syncRoot = new object();
-        private LocalPipeline _localPipeline;
+        private readonly object _syncRoot = new object();
+        private readonly LocalPipeline _localPipeline;
 
         /// <summary>
         /// Default constructor.
@@ -1334,6 +1288,7 @@ namespace System.Management.Automation.Runspaces
         /// This is set true when stop is called.
         /// </summary>
         private bool _stopping;
+
         internal bool IsStopping
         {
             get
@@ -1355,7 +1310,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (item == null)
             {
-                throw PSTraceSource.NewArgumentNullException("item");
+                throw PSTraceSource.NewArgumentNullException(nameof(item));
             }
 
             lock (_syncRoot)
@@ -1408,7 +1363,7 @@ namespace System.Management.Automation.Runspaces
             PipelineProcessor[] copyStack;
             lock (_syncRoot)
             {
-                if (_stopping == true)
+                if (_stopping)
                 {
                     return;
                 }
@@ -1443,4 +1398,3 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-

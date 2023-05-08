@@ -1,11 +1,11 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # Ensure that terminating errors terminate when importing the module.
 trap {throw $_}
 
 # Strict mode FTW.
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 3.0
 
 # Enable explicit export so that there are no surprises with commands exported from the module.
 Export-ModuleMember
@@ -30,14 +30,19 @@ $debuggerStopHandler = {
             $stringDbgCommand = $script:dbgCmdQueue.Dequeue()
         }
         $dbgCmd = [System.Management.Automation.PSCommand]::new()
-        $dbgCmd.AddCommand($stringDbgCommand)
+        $dbgCmd.AddScript($stringDbgCommand) > $null
         $output = [System.Management.Automation.PSDataCollection[PSObject]]::new()
         $result = $Host.Runspace.Debugger.ProcessCommand($dbgCmd, $output)
+        if ($stringDbgCommand -eq '$?' -and $output.Count -eq 1) {
+            $output[0] = $PSDebugContext.Trigger -isnot [System.Management.Automation.ErrorRecord]
+        }
         $script:dbgResults += [pscustomobject]@{
-            PSTypeName = 'DebuggerCommandResult'
-            Command = $stringDbgCommand
-            Context = $PSDebugContext
-            Output  = $output
+            PSTypeName          = 'DebuggerCommandResult'
+            Command             = $stringDbgCommand
+            Context             = $PSDebugContext
+            Output              = $output
+            EvaluatedByDebugger = $result.EvaluatedByDebugger
+            ResumeAction        = $result.ResumeAction
         }
     } while ($result -eq $null -or $result.ResumeAction -eq $null)
     $e.ResumeAction = $result.ResumeAction
@@ -55,8 +60,8 @@ function Register-DebuggerHandler {
         # We disable debugger interactivity so that all debugger events go through
         # the DebuggerStop event only (i.e. breakpoints don't actually generate a
         # prompt for user interaction)
-        $host.DebuggerEnabled = $false
-        $host.Runspace.Debugger.add_DebuggerStop($script:debuggerStopHandler)
+        $Host.DebuggerEnabled = $false
+        $Host.Runspace.Debugger.add_DebuggerStop($script:debuggerStopHandler)
         $script:debuggerStopHandlerRegistered = $true
     } catch {
         Write-Error -ErrorRecord $_ -ErrorAction $callerEAP
@@ -70,8 +75,8 @@ function Unregister-DebuggerHandler {
     param()
     try {
         $callerEAP = $ErrorActionPreference
-        $host.Runspace.Debugger.remove_DebuggerStop($script:debuggerStopHandler)
-        $host.DebuggerEnabled = $true
+        $Host.Runspace.Debugger.remove_DebuggerStop($script:debuggerStopHandler)
+        $Host.DebuggerEnabled = $true
         $script:debuggerStopHandlerRegistered = $false
     } catch {
         Write-Error -ErrorRecord $_ -ErrorAction $callerEAP
@@ -97,7 +102,7 @@ function Test-Debugger {
     try {
         $callerEAP = $ErrorActionPreference
         #  If the debugger is not set up properly, notify the user with an error message
-        if (-not $script:debuggerStopHandlerRegistered -or $host.DebuggerEnabled) {
+        if (-not $script:debuggerStopHandlerRegistered -or $Host.DebuggerEnabled) {
             $message = 'You must invoke Register-DebuggerHandler before invoking Test-Debugger, and Unregister-DebuggerHandler after invoking Test-Debugger. As a best practice, invoke Register-DebuggerHandler in the BeforeAll block and Unregister-DebuggerHandler in the AfterAll block of your test script.'
             $exception = [System.InvalidOperationException]::new($message)
             $errorRecord = [System.Management.Automation.ErrorRecord]::new($exception, $exception.GetType().Name, 'InvalidOperation', $null)

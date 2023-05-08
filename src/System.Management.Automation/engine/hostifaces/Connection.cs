@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -226,7 +226,7 @@ namespace System.Management.Automation.Runspaces
         /// This option is not valid for asynchronous calls
         /// </remarks>
         UseCurrentThread = 3
-    };
+    }
 
     /// <summary>
     /// Defines type which has information about RunspaceState and
@@ -333,7 +333,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (runspaceStateInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runspaceStateInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(runspaceStateInfo));
             }
 
             RunspaceStateInfo = runspaceStateInfo;
@@ -414,7 +414,7 @@ namespace System.Management.Automation.Runspaces
     public enum RunspaceCapability
     {
         /// <summary>
-        /// No additional capabilities beyond a default runspace.
+        /// Legacy capabilities for WinRM only, from Win7 timeframe.
         /// </summary>
         Default = 0x0,
 
@@ -436,13 +436,18 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Runspace is based on SSH transport.
         /// </summary>
-        SSHTransport = 0x8
+        SSHTransport = 0x8,
+
+        /// <summary>
+        /// Runspace is based on open custom connection/transport support.
+        /// </summary>
+        CustomTransport = 0x100
     }
 
     #endregion
 
     /// <summary>
-    /// Public interface to Msh Runtime. Provides APIs for creating pipelines,
+    /// Public interface to PowerShell Runtime. Provides APIs for creating pipelines,
     /// access session state etc.
     /// </summary>
     public abstract class Runspace : IDisposable
@@ -450,9 +455,9 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private static int s_globalId;
-        private Stack<PowerShell> _runningPowerShells;
+        private readonly Stack<PowerShell> _runningPowerShells;
         private PowerShell _baseRunningPowerShell;
-        private object _syncObject;
+        private readonly object _syncObject;
 
         #endregion
 
@@ -574,7 +579,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         return
                             (localPipeline.NestedPipelineExecutionThread.ManagedThreadId
-                            == Threading.Thread.CurrentThread.ManagedThreadId);
+                            == Environment.CurrentManagedThreadId);
                     }
                 }
 
@@ -582,7 +587,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-#if !CORECLR // No ApartmentState In CoreCLR
         internal const ApartmentState DefaultApartmentState = ApartmentState.Unknown;
 
         /// <summary>
@@ -613,7 +617,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         private ApartmentState apartmentState = Runspace.DefaultApartmentState;
-#endif
 
         /// <summary>
         /// This property determines whether a new thread is create for each invocation.
@@ -652,7 +655,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return !(this is LocalRunspace || ConnectionInfo == null);
+                return this is not LocalRunspace && ConnectionInfo != null;
             }
         }
 
@@ -700,7 +703,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <exception cref="InvalidRunspaceStateException">Runspace is not opened.
         /// </exception>
-        internal System.Management.Automation.ExecutionContext ExecutionContext
+        internal ExecutionContext ExecutionContext
         {
             get
             {
@@ -760,11 +763,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the Runspace Id.
         /// </summary>
-        public int Id
-        {
-            get;
-            private set;
-        }
+        public int Id { get; }
 
         /// <summary>
         /// Returns protocol version that the remote server uses for PS remoting.
@@ -807,8 +806,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private static SortedDictionary<int, WeakReference<Runspace>> s_runspaceDictionary;
-        private static object s_syncObject;
+        private static readonly SortedDictionary<int, WeakReference<Runspace>> s_runspaceDictionary;
+        private static readonly object s_syncObject;
 
         /// <summary>
         /// Returns a read only list of runspaces.
@@ -949,7 +948,8 @@ namespace System.Management.Automation.Runspaces
                         case PipelineState.Completed:
                         case PipelineState.Stopped:
                         case PipelineState.Failed:
-                            if (this.InNestedPrompt || !(this is RemoteRunspace) && this.Debugger.InBreakpoint)
+                            if (this.InNestedPrompt
+                                || (this is not RemoteRunspace && this.Debugger.InBreakpoint))
                             {
                                 this.RunspaceAvailability = RunspaceAvailability.AvailableForNestedCommand;
                             }
@@ -957,7 +957,7 @@ namespace System.Management.Automation.Runspaces
                             {
                                 RemoteRunspace remoteRunspace = this as RemoteRunspace;
                                 RemoteDebugger remoteDebugger = (remoteRunspace != null) ? remoteRunspace.Debugger as RemoteDebugger : null;
-                                Internal.ConnectCommandInfo remoteCommand = (remoteRunspace != null) ? remoteRunspace.RemoteCommand : null;
+                                Internal.ConnectCommandInfo remoteCommand = remoteRunspace?.RemoteCommand;
                                 if (((pipelineState == PipelineState.Completed) || (pipelineState == PipelineState.Failed) ||
                                     ((pipelineState == PipelineState.Stopped) && (this.RunspaceStateInfo.State == RunspaceState.Opened)))
                                     && (remoteCommand != null) && (cmdInstanceId != null) && (remoteCommand.CommandId == cmdInstanceId))
@@ -1513,7 +1513,10 @@ namespace System.Management.Automation.Runspaces
 
                 if (count > 0)
                 {
-                    if (count == 1) { _baseRunningPowerShell = null; }
+                    if (count == 1)
+                    {
+                        _baseRunningPowerShell = null;
+                    }
 
                     return _runningPowerShells.Pop();
                 }
@@ -1574,7 +1577,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the execution context.
         /// </summary>
-        internal abstract System.Management.Automation.ExecutionContext GetExecutionContext
+        internal abstract ExecutionContext GetExecutionContext
         {
             get;
         }
@@ -1595,7 +1598,7 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 var context = GetExecutionContext;
-                return (context != null) ? context.Debugger : null;
+                return context?.Debugger;
             }
         }
 
@@ -1620,8 +1623,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the base transaction for the runspace; any transactions created on this runspace will be nested to this instance.
         /// </summary>
-        ///<param name="transaction">The base transaction</param>
-        ///<remarks>This overload uses RollbackSeverity.Error; i.e. the transaction will be rolled back automatically on a non-terminating error or worse</remarks>
+        /// <param name="transaction">The base transaction</param>
+        /// <remarks>This overload uses RollbackSeverity.Error; i.e. the transaction will be rolled back automatically on a non-terminating error or worse</remarks>
         public void SetBaseTransaction(System.Transactions.CommittableTransaction transaction)
         {
             this.ExecutionContext.TransactionManager.SetBaseTransaction(transaction, RollbackSeverity.Error);
@@ -1630,8 +1633,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Sets the base transaction for the runspace; any transactions created on this runspace will be nested to this instance.
         /// </summary>
-        ///<param name="transaction">The base transaction</param>
-        ///<param name="severity">The severity of error that causes PowerShell to automatically rollback the transaction</param>
+        /// <param name="transaction">The base transaction</param>
+        /// <param name="severity">The severity of error that causes PowerShell to automatically rollback the transaction</param>
         public void SetBaseTransaction(System.Transactions.CommittableTransaction transaction, RollbackSeverity severity)
         {
             this.ExecutionContext.TransactionManager.SetBaseTransaction(transaction, severity);
@@ -1656,6 +1659,7 @@ namespace System.Management.Automation.Runspaces
 
         // Used for pipeline id generation.
         private long _pipelineIdSeed;
+
         // Generate pipeline id unique to this runspace
         internal long GeneratePipelineId()
         {
@@ -1673,7 +1677,8 @@ namespace System.Management.Automation.Runspaces
         {
         }
 
-        private RunspaceBase _runspace;
+        private readonly RunspaceBase _runspace;
+
         internal SessionStateProxy(RunspaceBase runspace)
         {
             Dbg.Assert(runspace != null, "Caller should validate the parameter");
@@ -1702,7 +1707,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             _runspace.SetVariable(name, value);
@@ -1730,7 +1735,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             if (name.Equals(string.Empty))

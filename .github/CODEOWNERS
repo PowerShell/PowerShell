@@ -11,6 +11,7 @@
 
 # Area: Security
 # @TravisEz13 @PaulHigin
+src/System.Management.Automation/security/wldpNativeMethods.cs @TravisEz13 @PaulHigin
 
 # Area: Documentation
 .github/    @joeyaiello @TravisEz13
@@ -32,7 +33,7 @@ src/Microsoft.PowerShell.Commands.Management/      @daxian-dbw @adityapatwardhan
 src/Microsoft.PowerShell.Commands.Utility/         @JamesWTruher @PaulHigin
 
 # Area: Console
-src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @anmenaga
+src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @anmenaga @TylerLeonhardt
 
 # Area: Demos
 demos/                                             @joeyaiello @SteveL-MSFT @HemantMahawar

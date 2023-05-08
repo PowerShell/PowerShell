@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -25,14 +25,15 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private OriginInfo _originInfo;
+        private readonly OriginInfo _originInfo;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="errorRecord">The error record that is wrapped.</param>
         /// <param name="originInfo">Origin information.</param>
-        public RemotingErrorRecord(ErrorRecord errorRecord, OriginInfo originInfo) : this(errorRecord, originInfo, null) { }
+        public RemotingErrorRecord(ErrorRecord errorRecord, OriginInfo originInfo)
+            : this(errorRecord, originInfo, null) { }
 
         /// <summary>
         /// Constructor that is used to wrap an error record.
@@ -40,8 +41,11 @@ namespace System.Management.Automation.Runspaces
         /// <param name="errorRecord"></param>
         /// <param name="originInfo"></param>
         /// <param name="replaceParentContainsErrorRecordException"></param>
-        private RemotingErrorRecord(ErrorRecord errorRecord, OriginInfo originInfo, Exception replaceParentContainsErrorRecordException) :
-            base(errorRecord, replaceParentContainsErrorRecordException)
+        private RemotingErrorRecord(
+            ErrorRecord errorRecord,
+            OriginInfo originInfo,
+            Exception replaceParentContainsErrorRecordException)
+            : base(errorRecord, replaceParentContainsErrorRecordException)
         {
             if (errorRecord != null)
             {
@@ -58,12 +62,11 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serializer information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -124,8 +127,11 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="progressRecord">The progress record that is wrapped.</param>
         /// <param name="originInfo">Origin information.</param>
-        public RemotingProgressRecord(ProgressRecord progressRecord, OriginInfo originInfo) :
-            base(Validate(progressRecord).ActivityId, Validate(progressRecord).Activity, Validate(progressRecord).StatusDescription)
+        public RemotingProgressRecord(ProgressRecord progressRecord, OriginInfo originInfo)
+            : base(
+                  Validate(progressRecord).ActivityId,
+                  Validate(progressRecord).Activity,
+                  Validate(progressRecord).StatusDescription)
         {
             _originInfo = originInfo;
             if (progressRecord != null)
@@ -143,7 +149,7 @@ namespace System.Management.Automation.Runspaces
 
         private static ProgressRecord Validate(ProgressRecord progressRecord)
         {
-            if (progressRecord == null) throw new ArgumentNullException("progressRecord");
+            ArgumentNullException.ThrowIfNull(progressRecord);
             return progressRecord;
         }
     }
@@ -170,7 +176,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="message">The warning message that is wrapped.</param>
         /// <param name="originInfo">The origin information.</param>
-        public RemotingWarningRecord(string message, OriginInfo originInfo) : base(message)
+        public RemotingWarningRecord(string message, OriginInfo originInfo)
+            : base(message)
         {
             _originInfo = originInfo;
         }
@@ -211,7 +218,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="message">The debug message that is wrapped.</param>
         /// <param name="originInfo">The origin information.</param>
-        public RemotingDebugRecord(string message, OriginInfo originInfo) : base(message)
+        public RemotingDebugRecord(string message, OriginInfo originInfo)
+            : base(message)
         {
             _originInfo = originInfo;
         }
@@ -239,7 +247,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="message">The verbose message that is wrapped.</param>
         /// <param name="originInfo">The origin information.</param>
-        public RemotingVerboseRecord(string message, OriginInfo originInfo) : base(message)
+        public RemotingVerboseRecord(string message, OriginInfo originInfo)
+            : base(message)
         {
             _originInfo = originInfo;
         }
@@ -303,7 +312,7 @@ namespace System.Management.Automation.Remoting
         }
 
         [DataMemberAttribute()]
-        private string _computerName;
+        private readonly string _computerName;
 
         /// <summary>
         /// Runspace instance ID.
@@ -318,7 +327,7 @@ namespace System.Management.Automation.Remoting
         }
 
         [DataMemberAttribute()]
-        private Guid _runspaceID;
+        private readonly Guid _runspaceID;
 
         /// <summary>
         /// Error record source instance ID.
@@ -374,4 +383,3 @@ namespace System.Management.Automation.Remoting
         }
     }
 }
-

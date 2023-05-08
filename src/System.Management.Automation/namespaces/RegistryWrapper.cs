@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 /*
@@ -17,28 +17,45 @@ using Microsoft.PowerShell.Commands.Internal;
 
 namespace Microsoft.PowerShell.Commands
 {
+
+#nullable enable
     internal interface IRegistryWrapper
     {
-        void SetValue(string name, object value);
-        void SetValue(string name, object value, RegistryValueKind valueKind);
+        void SetValue(string? name, object value);
+
+        void SetValue(string? name, object value, RegistryValueKind valueKind);
+
         string[] GetValueNames();
+
         void DeleteValue(string name);
+
         string[] GetSubKeyNames();
-        IRegistryWrapper CreateSubKey(string subkey);
-        IRegistryWrapper OpenSubKey(string name, bool writable);
+
+        IRegistryWrapper? CreateSubKey(string subkey);
+
+        IRegistryWrapper? OpenSubKey(string name, bool writable);
+
         void DeleteSubKeyTree(string subkey);
-        object GetValue(string name);
-        object GetValue(string name, object defaultValue, RegistryValueOptions options);
-        RegistryValueKind GetValueKind(string name);
+
+        object? GetValue(string? name);
+
+        object? GetValue(string? name, object? defaultValue, RegistryValueOptions options);
+
+        RegistryValueKind GetValueKind(string? name);
+
         object RegistryKey { get; }
 
         void SetAccessControl(ObjectSecurity securityDescriptor);
+
         ObjectSecurity GetAccessControl(AccessControlSections includeSections);
+
         void Close();
+
         string Name { get; }
 
         int SubKeyCount { get; }
     }
+#nullable restore
 
     internal static class RegistryWrapperUtils
     {
@@ -112,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
 
     internal class RegistryWrapper : IRegistryWrapper
     {
-        private RegistryKey _regKey;
+        private readonly RegistryKey _regKey;
 
         internal RegistryWrapper(RegistryKey regKey)
         {
@@ -244,8 +261,8 @@ namespace Microsoft.PowerShell.Commands
 
     internal class TransactedRegistryWrapper : IRegistryWrapper
     {
-        private TransactedRegistryKey _txRegKey;
-        private CmdletProvider _provider;
+        private readonly TransactedRegistryKey _txRegKey;
+        private readonly CmdletProvider _provider;
 
         internal TransactedRegistryWrapper(TransactedRegistryKey txRegKey, CmdletProvider provider)
         {

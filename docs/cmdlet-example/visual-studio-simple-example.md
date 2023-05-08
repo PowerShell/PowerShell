@@ -10,7 +10,7 @@ This document describes steps for building a C# Cmdlet with Visual Studio in 2 w
 This demonstrates how to build your own C# cmdlet for PowerShell Core with Visual Studio.
 Targeting for PowerShell Core means that the cmdlet may not work against Windows PowerShell if you take dependencies on new APIs introduced in PowerShell Core.
 
-We will use the free [Visual Studio Community 2017](https://www.visualstudio.com/downloads).
+We will use the free [Visual Studio Community 2017](https://visualstudio.microsoft.com/vs/).
 
 1. When installing Visual Studio 2017 select `.NET Core cross-platform development` under `Other Toolsets`
   ![Step1](./Images/Step1.png)
@@ -45,7 +45,7 @@ Add another package source with name `powershell-core` and source `https://power
             [Parameter(Mandatory = true)]
             public string Name { get; set; }
 
-            // Overide the ProcessRecord method to process
+            // Override the ProcessRecord method to process
             // the supplied user name and write out a
             // greeting to the user by calling the WriteObject
             // method.
@@ -74,7 +74,7 @@ Steps below show how to build your own C# cmdlet for PowerShell Standard 3.0 wit
 Targeting PowerShell Standard 3.0 means that the same module will work against PowerShell Core as well as Windows PowerShell v3 and newer,
 however, you are limited to a subset of the available PowerShell APIs.
 
-We will use the free [Visual Studio Community 2017](https://www.visualstudio.com/downloads).
+We will use the free [Visual Studio Community 2017](https://visualstudio.microsoft.com/vs/).
 
 1. When installing Visual Studio 2017 select `.NET Core cross-platform development` under `Other Toolsets`
   ![StdImage1](./Images/Step1.png)
@@ -107,7 +107,7 @@ It should find `PowerShellStandard.Library` package, select it and it will show 
             [Parameter(Mandatory = true)]
             public string Name { get; set; }
 
-            // Overide the ProcessRecord method to process
+            // Override the ProcessRecord method to process
             // the supplied user name and write out a
             // greeting to the user by calling the WriteObject
             // method.

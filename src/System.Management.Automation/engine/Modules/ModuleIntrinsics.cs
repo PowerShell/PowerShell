@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 
 using Microsoft.PowerShell.Commands;
+using Microsoft.Win32;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -31,7 +32,7 @@ namespace System.Management.Automation
         /// Tracer for module analysis.
         /// </summary>
         [TraceSource("Modules", "Module loading and analysis")]
-        internal static PSTraceSource Tracer = PSTraceSource.GetTracer("Modules", "Module loading and analysis");
+        internal static readonly PSTraceSource Tracer = PSTraceSource.GetTracer("Modules", "Module loading and analysis");
 
         // The %WINDIR%\System32\WindowsPowerShell\v1.0\Modules module path,
         // to load forward compatible Windows PowerShell modules from
@@ -52,15 +53,6 @@ namespace System.Management.Automation
         internal Dictionary<string, PSModuleInfo> ModuleTable { get; } = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
 
         private const int MaxModuleNestingDepth = 10;
-
-        /// <summary>
-        /// Gets and sets boolean that indicates when an implicit remoting module is loaded.
-        /// </summary>
-        internal bool IsImplicitRemotingModuleLoaded
-        {
-            get;
-            set;
-        }
 
         internal void IncrementModuleNestingDepth(PSCmdlet cmdlet, string path)
         {
@@ -149,10 +141,7 @@ namespace System.Management.Automation
             // script scope for the ss.
 
             // Allocate the session state instance for this module.
-            if (ss == null)
-            {
-                ss = new SessionState(_context, true, true);
-            }
+            ss ??= new SessionState(_context, true, true);
 
             // Now set up the module's session state to be the current session state
             SessionStateInternal oldSessionState = _context.EngineSessionState;
@@ -278,7 +267,7 @@ namespace System.Management.Automation
 
         internal List<PSModuleInfo> GetExactMatchModules(string moduleName, bool all, bool exactMatch)
         {
-            if (moduleName == null) { moduleName = string.Empty; }
+            moduleName ??= string.Empty;
 
             return GetModuleCore(new string[] { moduleName }, all, exactMatch);
         }
@@ -295,10 +284,7 @@ namespace System.Management.Automation
             }
             else
             {
-                if (patterns == null)
-                {
-                    patterns = new string[] { "*" };
-                }
+                patterns ??= new string[] { "*" };
 
                 foreach (string pattern in patterns)
                 {
@@ -357,7 +343,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return modulesMatched.OrderBy(m => m.Name).ToList();
+            return modulesMatched.OrderBy(static m => m.Name).ToList();
         }
 
         internal List<PSModuleInfo> GetModules(ModuleSpecification[] fullyQualifiedName, bool all)
@@ -416,9 +402,8 @@ namespace System.Management.Automation
                 }
             }
 
-            return modulesMatched.OrderBy(m => m.Name).ToList();
+            return modulesMatched.OrderBy(static m => m.Name).ToList();
         }
-
 
         /// <summary>
         /// Check if a given module info object matches a given module specification.
@@ -703,9 +688,9 @@ namespace System.Management.Automation
             }
 
 #if UNIX
-            StringComparison strcmp = StringComparison.Ordinal;
+            const StringComparison strcmp = StringComparison.Ordinal;
 #else
-            StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
+            const StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
 #endif
 
             // We must check modulePath (e.g. /path/to/module/module.psd1) against several possibilities:
@@ -730,7 +715,7 @@ namespace System.Management.Automation
             string moduleDirPath = Path.GetDirectoryName(modulePath);
 
             // The module itself may be in a versioned directory (case 3)
-            if (Version.TryParse(Path.GetFileName(moduleDirPath), out Version unused))
+            if (Version.TryParse(Path.GetFileName(moduleDirPath), out _))
             {
                 moduleDirPath = Path.GetDirectoryName(moduleDirPath);
             }
@@ -874,7 +859,10 @@ namespace System.Management.Automation
                         foreach (Hashtable feature in features)
                         {
                             string featureName = feature["Name"] as string;
-                            if (string.IsNullOrEmpty(featureName)) { continue; }
+                            if (string.IsNullOrEmpty(featureName))
+                            {
+                                continue;
+                            }
 
                             if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
                             {
@@ -894,27 +882,35 @@ namespace System.Management.Automation
         }
 
         // The extensions of all of the files that can be processed with Import-Module, put the ni.dll in front of .dll to have higher priority to be loaded.
-        internal static string[] PSModuleProcessableExtensions = new string[] {
-                            StringLiterals.PowerShellDataFileExtension,
-                            StringLiterals.PowerShellScriptFileExtension,
-                            StringLiterals.PowerShellModuleFileExtension,
-                            StringLiterals.PowerShellCmdletizationFileExtension,
-                            StringLiterals.WorkflowFileExtension,
-                            StringLiterals.PowerShellNgenAssemblyExtension,
-                            StringLiterals.PowerShellILAssemblyExtension,
-                            StringLiterals.PowerShellILExecutableExtension,
-                        };
+        internal static readonly string[] PSModuleProcessableExtensions = new string[]
+        {
+            StringLiterals.PowerShellDataFileExtension,
+            StringLiterals.PowerShellScriptFileExtension,
+            StringLiterals.PowerShellModuleFileExtension,
+            StringLiterals.PowerShellCmdletizationFileExtension,
+            StringLiterals.PowerShellNgenAssemblyExtension,
+            StringLiterals.PowerShellILAssemblyExtension,
+            StringLiterals.PowerShellILExecutableExtension,
+        };
 
         // A list of the extensions to check for implicit module loading and discovery, put the ni.dll in front of .dll to have higher priority to be loaded.
-        internal static string[] PSModuleExtensions = new string[] {
-                            StringLiterals.PowerShellDataFileExtension,
-                            StringLiterals.PowerShellModuleFileExtension,
-                            StringLiterals.PowerShellCmdletizationFileExtension,
-                            StringLiterals.WorkflowFileExtension,
-                            StringLiterals.PowerShellNgenAssemblyExtension,
-                            StringLiterals.PowerShellILAssemblyExtension,
-                            StringLiterals.PowerShellILExecutableExtension,
-                        };
+        internal static readonly string[] PSModuleExtensions = new string[]
+        {
+            StringLiterals.PowerShellDataFileExtension,
+            StringLiterals.PowerShellModuleFileExtension,
+            StringLiterals.PowerShellCmdletizationFileExtension,
+            StringLiterals.PowerShellNgenAssemblyExtension,
+            StringLiterals.PowerShellILAssemblyExtension,
+            StringLiterals.PowerShellILExecutableExtension,
+        };
+
+        // A list of the extensions to check for required assemblies.
+        internal static readonly string[] ProcessableAssemblyExtensions = new string[]
+        {
+            StringLiterals.PowerShellNgenAssemblyExtension,
+            StringLiterals.PowerShellILAssemblyExtension,
+            StringLiterals.PowerShellILExecutableExtension
+        };
 
         /// <summary>
         /// Returns true if the extension is one of the module extensions...
@@ -926,7 +922,9 @@ namespace System.Management.Automation
             foreach (string ext in PSModuleProcessableExtensions)
             {
                 if (extension.Equals(ext, StringComparison.OrdinalIgnoreCase))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -969,7 +967,8 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Utils.ModuleDirectory);
+            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
 #endif
         }
 
@@ -987,20 +986,17 @@ namespace System.Management.Automation
             try
             {
                 string psHome = Utils.DefaultPowerShellAppBase;
-                if (!string.IsNullOrEmpty(psHome))
-                {
-                    // Win8: 584267 Powershell Modules are listed twice in x86, and cannot be removed
-                    // This happens because ModuleTable uses Path as the key and CBS installer
-                    // expands the path to include "SysWOW64" (for
-                    // HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\PowerShell\3\PowerShellEngine ApplicationBase).
-                    // Because of this, the module that is getting loaded during startup (through LocalRunspace)
-                    // is using "SysWow64" in the key. Later, when Import-Module is called, it loads the
-                    // module using ""System32" in the key.
 #if !UNIX
-                    psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
+                // Win8: 584267 Powershell Modules are listed twice in x86, and cannot be removed.
+                // This happens because 'ModuleTable' uses Path as the key and x86 WinPS has "SysWOW64" in its $PSHOME.
+                // Because of this, the module that is getting loaded during startup (through LocalRunspace) is using
+                // "SysWow64" in the key. Later, when 'Import-Module' is called, it loads the module using ""System32"
+                // in the key.
+                // For the cross-platform PowerShell, a user can choose to install it under "C:\Windows\SysWOW64", and
+                // thus it may have the same problem as described above. So we keep this line of code.
+                psHome = psHome.ToLowerInvariant().Replace(@"\syswow64\", @"\system32\");
 #endif
-                    Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
-                }
+                Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
             }
             catch (System.Security.SecurityException)
             {
@@ -1016,7 +1012,7 @@ namespace System.Management.Automation
         /// It's known as "Program Files" module path in windows powershell.
         /// </summary>
         /// <returns></returns>
-        private static string GetSharedModulePath()
+        internal static string GetSharedModulePath()
         {
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.SHARED_MODULES);
@@ -1099,7 +1095,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(pathToLookFor != null, "pathToLookFor should not be null according to contract of the function");
 
             int pos = 0; // position of the current substring in pathToScan
-            string[] substrings = pathToScan.Split(Utils.Separators.PathSeparator, StringSplitOptions.None); // we want to process empty entries
+            string[] substrings = pathToScan.Split(Path.PathSeparator, StringSplitOptions.None); // we want to process empty entries
             string goodPathToLookFor = pathToLookFor.Trim().TrimEnd(Path.DirectorySeparatorChar); // trailing backslashes and white-spaces will mess up equality comparison
             foreach (string substring in substrings)
             {
@@ -1138,20 +1134,32 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(pathToAdd)) // we don't want to append empty paths
             {
-                foreach (string subPathToAdd in pathToAdd.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)) // in case pathToAdd is a 'combined path' (semicolon-separated)
+                foreach (string subPathToAdd in pathToAdd.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)) // in case pathToAdd is a 'combined path' (semicolon-separated)
                 {
                     int position = PathContainsSubstring(result.ToString(), subPathToAdd); // searching in effective 'result' value ensures that possible duplicates in pathsToAdd are handled correctly
                     if (position == -1) // subPathToAdd not found - add it
                     {
-                        if (insertPosition == -1) // append subPathToAdd to the end
+                        if (insertPosition == -1 || insertPosition > basePath.Length) // append subPathToAdd to the end
                         {
                             bool endsWithPathSeparator = false;
-                            if (result.Length > 0) endsWithPathSeparator = (result[result.Length - 1] == Path.PathSeparator);
+                            if (result.Length > 0)
+                            {
+                                endsWithPathSeparator = (result[result.Length - 1] == Path.PathSeparator);
+                            }
 
                             if (endsWithPathSeparator)
+                            {
                                 result.Append(subPathToAdd);
+                            }
                             else
+                            {
                                 result.Append(Path.PathSeparator + subPathToAdd);
+                            }
+                        }
+                        else if (insertPosition > result.Length)
+                        {
+                            // handle case where path is a singleton with no path separator already
+                            result.Append(Path.PathSeparator).Append(subPathToAdd);
                         }
                         else // insert at the requested location (this is used by DSC (<Program Files> location) and by 'user-specific location' (SpecialFolder.MyDocuments or EVT.User))
                         {
@@ -1165,111 +1173,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Check if the current powershell is likely running in following scenarios:
-        ///  - PSCore started on windows [machine-wide env:PSModulePath will influence]
-        ///  - PSCore started from full ps
-        ///  - PSCore started from inbox nano/iot ps
-        /// If it's likely one of them, then we need to clear the current process module path.
-        /// </summary>
-        private static bool NeedToClearProcessModulePath(string currentProcessModulePath, string personalModulePath, string sharedModulePath)
-        {
-#if UNIX
-            return false;
-#else
-            Dbg.Assert(!string.IsNullOrEmpty(personalModulePath), "caller makes sure personalModulePath not null or empty");
-            Dbg.Assert(sharedModulePath != null, "caller makes sure sharedModulePath is not null");
-
-            const string winSxSModuleDirectory = @"PowerShell\Modules";
-            const string winLegacyModuleDirectory = @"WindowsPowerShell\Modules";
-
-            // The machine-wide and user-wide environment variables are only meaningful for full ps,
-            // so if the current process module path contains any of them, it's likely that the sxs
-            // ps was started directly on windows, or from full ps. The same goes for the legacy personal
-            // and shared module paths.
-            string hklmModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
-            string hkcuModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.User);
-            string legacyPersonalModulePath = personalModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
-            string legacyProgramFilesModulePath = sharedModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
-
-            return (!string.IsNullOrEmpty(hklmModulePath) && currentProcessModulePath.IndexOf(hklmModulePath, StringComparison.OrdinalIgnoreCase) != -1) ||
-                   (!string.IsNullOrEmpty(hkcuModulePath) && currentProcessModulePath.IndexOf(hkcuModulePath, StringComparison.OrdinalIgnoreCase) != -1) ||
-                   currentProcessModulePath.IndexOf(legacyPersonalModulePath, StringComparison.OrdinalIgnoreCase) != -1 ||
-                   currentProcessModulePath.IndexOf(legacyProgramFilesModulePath, StringComparison.OrdinalIgnoreCase) != -1;
-#endif
-        }
-
-        /// <summary>
-        /// When sxs ps instance B got started from sxs ps instance A, A's pshome module path might
-        /// show up in current process module path. It doesn't make sense for B to load modules from
-        /// A's pshome module path, so remove it in such case.
-        /// </summary>
-        private static string RemoveSxSPsHomeModulePath(string currentProcessModulePath, string personalModulePath, string sharedModulePath, string psHomeModulePath)
-        {
-#if UNIX
-            const string powershellExeName = "pwsh";
-#else
-            const string powershellExeName = "pwsh.exe";
-#endif
-            const string powershellDepsName = "pwsh.deps.json";
-
-            StringBuilder modulePathString = new StringBuilder(currentProcessModulePath.Length);
-            char[] invalidPathChars = Path.GetInvalidPathChars();
-
-            foreach (var path in currentProcessModulePath.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
-            {
-                string trimedPath = path.Trim().TrimEnd(Path.DirectorySeparatorChar);
-                if (trimedPath.IndexOfAny(invalidPathChars) != -1 || !Path.IsPathRooted(trimedPath))
-                {
-                    // Path contains invalid characters or it's not an absolute path. Ignore it.
-                    continue;
-                }
-
-                if (!trimedPath.Equals(personalModulePath, StringComparison.OrdinalIgnoreCase) &&
-                    !trimedPath.Equals(sharedModulePath, StringComparison.OrdinalIgnoreCase) &&
-                    !trimedPath.Equals(psHomeModulePath, StringComparison.OrdinalIgnoreCase) &&
-                    trimedPath.EndsWith("Modules", StringComparison.OrdinalIgnoreCase))
-                {
-                    string parentDir = Path.GetDirectoryName(trimedPath);
-                    string psExePath = Path.Combine(parentDir, powershellExeName);
-                    string psDepsPath = Path.Combine(parentDir, powershellDepsName);
-                    if ((File.Exists(psExePath) && File.Exists(psDepsPath)))
-                    {
-                        // Path is a PSHome module path from a different PowerShell instance. Ignore it.
-                        continue;
-                    }
-                }
-
-                if (modulePathString.Length > 0)
-                {
-                    modulePathString.Append(Path.PathSeparator);
-                }
-
-                modulePathString.Append(trimedPath);
-            }
-
-            return modulePathString.ToString();
-        }
-
-        /// <summary>
-        /// Checks the various PSModulePath environment string and returns PSModulePath string as appropriate. Note - because these
-        /// strings go through the provider, we need to escape any wildcards before passing them
-        /// along.
+        /// Checks the various PSModulePath environment string and returns PSModulePath string as appropriate.
         /// </summary>
         public static string GetModulePath(string currentProcessModulePath, string hklmMachineModulePath, string hkcuUserModulePath)
         {
             string personalModulePath = GetPersonalModulePath();
             string sharedModulePath = GetSharedModulePath(); // aka <Program Files> location
             string psHomeModulePath = GetPSHomeModulePath(); // $PSHome\Modules location
-
-            if (!string.IsNullOrEmpty(currentProcessModulePath) &&
-                NeedToClearProcessModulePath(currentProcessModulePath, personalModulePath, sharedModulePath))
-            {
-                // Clear the current process module path in the following cases
-                //  - start PSCore on windows [machine-wide env:PSModulePath will influence]
-                //  - start PSCore from full ps
-                //  - start PSCore from inbox nano/iot ps
-                currentProcessModulePath = null;
-            }
 
             // If the variable isn't set, then set it to the default value
             if (currentProcessModulePath == null)  // EVT.Process does Not exist - really corner case
@@ -1284,7 +1194,15 @@ namespace System.Management.Automation
                     currentProcessModulePath = hkcuUserModulePath; // = EVT.User
                 }
 
-                currentProcessModulePath += Path.PathSeparator;
+                if (string.IsNullOrEmpty(currentProcessModulePath))
+                {
+                    currentProcessModulePath ??= string.Empty;
+                }
+                else
+                {
+                    currentProcessModulePath += Path.PathSeparator;
+                }
+
                 if (string.IsNullOrEmpty(hklmMachineModulePath)) // EVT.Machine does Not exist
                 {
                     currentProcessModulePath += CombineSystemModulePaths(); // += (SharedModulePath + $PSHome\Modules)
@@ -1298,33 +1216,31 @@ namespace System.Management.Automation
             // Now handle the case where the environment variable is already set.
             else
             {
-                // When SxS PS instance A starts SxS PS instance B, A's PSHome module path might be inherited by B. We need to remove that path from B
-                currentProcessModulePath = RemoveSxSPsHomeModulePath(currentProcessModulePath, personalModulePath, sharedModulePath, psHomeModulePath);
-
                 string personalModulePathToUse = string.IsNullOrEmpty(hkcuUserModulePath) ? personalModulePath : hkcuUserModulePath;
                 string systemModulePathToUse = string.IsNullOrEmpty(hklmMachineModulePath) ? psHomeModulePath : hklmMachineModulePath;
 
+                // Maintain order of the paths, but ahead of any existing paths:
+                // personalModulePath
+                // sharedModulePath
+                // systemModulePath
                 currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, 0);
+                int insertIndex = currentProcessModulePath.IndexOf(Path.PathSeparator, PathContainsSubstring(currentProcessModulePath, personalModulePathToUse));
+                if (insertIndex != -1)
+                {
+                    // advance past the path separator
+                    insertIndex++;
+                }
 
-                int insertIndex = -1;
-#if !UNIX
-                string windowsPowerShellModulePath = GetWindowsPowerShellPSHomeModulePath();
-                // If the Windows PowerShell Module path is already present, insert the system module path
-                // ($PSHOME/Modules) before it.
-                insertIndex = PathContainsSubstring(currentProcessModulePath, windowsPowerShellModulePath);
-#endif
+                currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
+                insertIndex = currentProcessModulePath.IndexOf(Path.PathSeparator, PathContainsSubstring(currentProcessModulePath, sharedModulePath));
+                if (insertIndex != -1)
+                {
+                    // advance past the path separator
+                    insertIndex++;
+                }
+
                 currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
             }
-
-            // if we reached this point - always add <Program Files> location to EVT.Process
-            // everything below is the same behaviour as WMF 4 code
-
-            // index of $PSHome\Modules in currentProcessModulePath
-            int indexOfPSHomeModulePath = PathContainsSubstring(currentProcessModulePath, psHomeModulePath);
-
-            // if $PSHome\Modules not found (psHomePosition == -1) - append <Program Files> location to the end;
-            // if $PSHome\Modules IS found (psHomePosition >= 0) - insert <Program Files> location before $PSHome\Modules
-            currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, indexOfPSHomeModulePath);
 
             return currentProcessModulePath;
         }
@@ -1340,6 +1256,59 @@ namespace System.Management.Automation
             return currentModulePath;
         }
 
+#if !UNIX
+        /// <summary>
+        /// Returns a PSModulePath suitable for Windows PowerShell by removing PowerShell's specific
+        /// paths from current PSModulePath.
+        /// </summary>
+        /// <returns>
+        /// Returns appropriate PSModulePath for Windows PowerShell.
+        /// </returns>
+        internal static string GetWindowsPowerShellModulePath()
+        {
+            string currentModulePath = GetModulePath();
+
+            if (currentModulePath == null)
+            {
+                return null;
+            }
+
+            // PowerShell specific paths including if set in powershell.config.json file we want to exclude
+            var excludeModulePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+                GetPersonalModulePath(),
+                GetSharedModulePath(),
+                GetPSHomeModulePath(),
+                PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers),
+                PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser)
+            };
+
+            var modulePathList = new List<string>();
+            foreach (var path in currentModulePath.Split(';', StringSplitOptions.TrimEntries))
+            {
+                if (!excludeModulePaths.Contains(path))
+                {
+                    // make sure this module path is Not part of other PS Core installation
+                    var possiblePwshDir = Path.GetDirectoryName(path);
+
+                    if (string.IsNullOrEmpty(possiblePwshDir))
+                    {
+                        // i.e. module dir is in the drive root
+                        modulePathList.Add(path);
+                    }
+                    else
+                    {
+                        if (!File.Exists(Path.Combine(possiblePwshDir, "pwsh.dll")))
+                        {
+                            modulePathList.Add(path);
+                        }
+                    }
+                }
+            }
+
+            return string.Join(Path.PathSeparator, modulePathList);
+        }
+#endif
+
         /// <summary>
         /// Checks if $env:PSModulePath is not set and sets it as appropriate. Note - because these
         /// strings go through the provider, we need to escape any wildcards before passing them
@@ -1348,24 +1317,20 @@ namespace System.Management.Automation
         private static string SetModulePath()
         {
             string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
+#if !UNIX
+            // if the current process and user env vars are the same, it means we need to append the machine one as it's incomplete
+            // otherwise, the user modified it and we should use the process one
+            if (string.CompareOrdinal(GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.User), currentModulePath) == 0)
+            {
+                currentModulePath = currentModulePath + Path.PathSeparator + GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
+            }
+#endif
             string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
             string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser);
-
             string newModulePathString = GetModulePath(currentModulePath, allUsersModulePath, personalModulePath);
 
             if (!string.IsNullOrEmpty(newModulePathString))
             {
-#if !UNIX
-                // If on Windows, we want to add the System32 Windows PowerShell module directory
-                // so that Windows modules are discoverable
-                string windowsPowerShellModulePath = GetWindowsPowerShellPSHomeModulePath();
-                if (!newModulePathString.Contains(windowsPowerShellModulePath, StringComparison.OrdinalIgnoreCase))
-                {
-                    newModulePathString += Path.PathSeparator + windowsPowerShellModulePath;
-                }
-#endif
-
-                // Set the environment variable...
                 Environment.SetEnvironmentVariable(Constants.PSModulePathEnvVar, newModulePathString);
             }
 
@@ -1395,7 +1360,7 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrWhiteSpace(modulePathString))
             {
-                foreach (string envPath in modulePathString.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+                foreach (string envPath in modulePathString.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
                 {
                     var processedPath = ProcessOneModulePath(context, envPath, processedPathSet);
                     if (processedPath != null)
@@ -1491,25 +1456,16 @@ namespace System.Management.Automation
             if ((input == null) || (input.Count == 0))
             { return; }
 
-            List<FunctionInfo> output = new List<FunctionInfo>(input.Count);
-            foreach (var fnInfo in input)
-            {
-                if (module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase))
-                {
-                    output.Add(fnInfo);
-                }
-            }
-
-            input.Clear();
-            input.AddRange(output);
+            input.RemoveAll(fnInfo => !module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase));
         }
 
+#nullable enable
         private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
         {
-            Dbg.Assert(input != null, "Caller should verify that input != null");
+            Dbg.Assert(input is not null, "Caller should verify that input != null");
 
             input.Sort(
-                delegate (T x, T y)
+                (T x, T y) =>
                 {
                     string kx = keyGetter(x);
                     string ky = keyGetter(y);
@@ -1517,24 +1473,19 @@ namespace System.Management.Automation
                 }
             );
 
-            bool firstItem = true;
-            string previousKey = null;
-            List<T> output = new List<T>(input.Count);
-            foreach (T item in input)
+            string? previousKey = null;
+            input.RemoveAll(ShouldRemove);
+
+            bool ShouldRemove(T item)
             {
                 string currentKey = keyGetter(item);
-                if ((firstItem) || !currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase))
-                {
-                    output.Add(item);
-                }
-
+                bool match = previousKey is not null
+                    && currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase);
                 previousKey = currentKey;
-                firstItem = false;
+                return match;
             }
-
-            input.Clear();
-            input.AddRange(output);
         }
+#nullable restore
 
         /// <summary>
         /// Mark stuff to be exported from the current environment using the various patterns.
@@ -1586,7 +1537,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedFunctions, delegate (FunctionInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedFunctions, static (FunctionInfo ci) => ci.Name);
             }
 
             if (cmdletPatterns != null)
@@ -1641,7 +1592,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, delegate (CmdletInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, static (CmdletInfo ci) => ci.Name);
             }
 
             if (variablePatterns != null)
@@ -1664,7 +1615,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedVariables, delegate (PSVariable v) { return v.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedVariables, static (PSVariable v) => v.Name);
             }
 
             if (aliasPatterns != null)
@@ -1704,7 +1655,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedAliases, delegate (AliasInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedAliases, static (AliasInfo ci) => ci.Name);
             }
         }
 
@@ -1770,14 +1721,16 @@ namespace System.Management.Automation
         /// <summary>Module version was greater than the maximum version.</summary>
         MaximumVersion,
 
-        /// <summary>The module specifcation passed in was null.</summary>
+        /// <summary>The module specification passed in was null.</summary>
         NullModuleSpecification,
     }
 
+#nullable enable
     /// <summary>
     /// Used by Modules/Snapins to provide a hook to the engine for startup initialization
     /// w.r.t compiled assembly loading.
     /// </summary>
+#nullable enable
     public interface IModuleAssemblyInitializer
     {
         /// <summary>

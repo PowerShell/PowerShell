@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -30,9 +30,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Member variables.
         /// </summary>
-        private Dictionary<string, ComProperty> _properties = null;
-        private Dictionary<string, ComMethod> _methods = null;
-        private COM.ITypeInfo _typeinfo = null;
+        private readonly Dictionary<string, ComProperty> _properties = null;
+        private readonly Dictionary<string, ComMethod> _methods = null;
+        private readonly COM.ITypeInfo _typeinfo = null;
         private Guid _guid = Guid.Empty;
 
         /// <summary>
@@ -105,7 +105,10 @@ namespace System.Management.Automation
                 for (int i = 0; i < typeattr.cFuncs; i++)
                 {
                     COM.FUNCDESC funcdesc = GetFuncDesc(_typeinfo, i);
-                    if (funcdesc.memid == DISPID_NEWENUM) { NewEnumInvokeKind = funcdesc.invkind; }
+                    if (funcdesc.memid == DISPID_NEWENUM)
+                    {
+                        NewEnumInvokeKind = funcdesc.invkind;
+                    }
 
                     if ((funcdesc.wFuncFlags & 0x1) == 0x1)
                     {
@@ -183,10 +186,7 @@ namespace System.Management.Automation
                 _properties[strName] = prop;
             }
 
-            if (prop != null)
-            {
-                prop.UpdateFuncDesc(funcdesc, index);
-            }
+            prop?.UpdateFuncDesc(funcdesc, index);
         }
 
         private void AddMethod(string strName, int index)
@@ -198,10 +198,7 @@ namespace System.Management.Automation
                 _methods[strName] = method;
             }
 
-            if (method != null)
-            {
-                method.AddFuncDesc(index);
-            }
+            method?.AddFuncDesc(index);
         }
 
         /// <summary>
@@ -209,7 +206,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="typeinfo">Reference to ITypeInfo from which to get TypeAttr.</param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         internal static COM.TYPEATTR GetTypeAttr(COM.ITypeInfo typeinfo)
         {
             IntPtr pTypeAttr;
@@ -224,7 +220,6 @@ namespace System.Management.Automation
         /// <param name="typeinfo"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         internal static COM.FUNCDESC GetFuncDesc(COM.ITypeInfo typeinfo, int index)
         {
             IntPtr pFuncDesc;
@@ -307,4 +302,3 @@ namespace System.Management.Automation
         }
     }
 }
-

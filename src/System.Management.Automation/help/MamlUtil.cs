@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The MamlUtil class.
     /// </summary>
-    internal class MamlUtil
+    internal static class MamlUtil
     {
         /// <summary>
         /// Takes Name value from maml2 and overrides it in maml1.
@@ -192,7 +192,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static PSPropertyInfo GetPropertyInfo(PSObject psObject, string[] path)
         {
-            if (path.Length <= 0)
+            if (path.Length == 0)
             {
                 return null;
             }
@@ -206,7 +206,7 @@ namespace System.Management.Automation
                     return propertyInfo;
                 }
 
-                if (propertyInfo == null || !(propertyInfo.Value is PSObject))
+                if (propertyInfo == null || propertyInfo.Value is not PSObject)
                 {
                     return null;
                 }
@@ -290,7 +290,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static void EnsurePropertyInfoPathExists(PSObject psObject, string[] path)
         {
-            if (path.Length <= 0)
+            if (path.Length == 0)
             {
                 return;
             }
@@ -317,7 +317,7 @@ namespace System.Management.Automation
                 }
 
                 // If we are not on the last path element, let's make sure we can extend the path.
-                if (propertyInfo.Value == null || !(propertyInfo.Value is PSObject))
+                if (propertyInfo.Value == null || propertyInfo.Value is not PSObject)
                 {
                     propertyInfo.Value = new PSObject();
                 }

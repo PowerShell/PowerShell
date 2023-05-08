@@ -1,23 +1,50 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-using System;
-using System.Collections;
-using System.Collections.Generic;
+
 using System.Diagnostics;
-using System.Linq;
+using System.IO;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.Extensions;
 using mvc.Models;
+using System.IO.Compression;
 
 namespace mvc.Controllers
 {
     public class DelayController : Controller
     {
+        private static readonly byte[] GenericBytes = "Hello worldHello world"u8.ToArray();
+
+        private static readonly byte[] JsonBytes = """
+            {"name1":"value1","name2":"value2","name3":"value3"}
+            """u8.ToArray();
+
+        private static readonly byte[] AtomFeed = """
+            <?xml version="1.0" encoding="utf-8"?>
+            <feed xmlns="http://www.w3.org/2005/Atom">
+            <title>Example Feed</title>
+            <link href="http://example.org/"/>
+            <updated>2003-12-13T18:30:02Z</updated>
+            <author>
+                <name>John Doe</name>
+            </author>
+            <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+            <entry>
+                <title>Atom-Powered Robots Run Amok</title>
+                <link href="http://example.org/2003/12/13/atom03"/>
+                <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+                <updated>2003-12-13T18:30:02Z</updated>
+                <summary>Some text.</summary>
+            </entry>
+            </feed>
+            """u8.ToArray();
+
         public JsonResult Index(int seconds)
         {
-            if (seconds > 0){
+            if (seconds > 0)
+            {
                 int milliseconds = seconds * 1000;
                 Thread.Sleep(milliseconds);
             }
@@ -27,9 +54,90 @@ namespace mvc.Controllers
             return getController.Index();
         }
 
+        public async Task Stall(int seconds, string contentType, CancellationToken cancellationToken)
+        {
+            await WriteStallResponse(seconds, contentType, null, null, cancellationToken);
+        }
+
+        public async Task StallBrotli(int seconds, string contentType, CancellationToken cancellationToken)
+        {
+            using var memStream = new MemoryStream();
+            using var compressedStream = new BrotliStream(memStream, CompressionLevel.Fastest);
+            Response.Headers.ContentEncoding = "br";
+            await WriteStallResponse(seconds, contentType, compressedStream, memStream, cancellationToken);
+        }
+
+        public async Task StallDeflate(int seconds, string contentType, CancellationToken cancellationToken)
+        {
+            using var memStream = new MemoryStream();
+            using var compressedStream = new DeflateStream(memStream, CompressionLevel.Fastest);
+            Response.Headers.ContentEncoding = "deflate";
+            await WriteStallResponse(seconds, contentType, compressedStream, memStream, cancellationToken);
+        }
+
+        public async Task StallGZip(int seconds, string contentType, CancellationToken cancellationToken)
+        {
+            using var memStream = new MemoryStream();
+            using var compressedStream = new GZipStream(memStream, CompressionLevel.Fastest);
+            Response.Headers.ContentEncoding = "gzip";
+            await WriteStallResponse(seconds, contentType, compressedStream, memStream, cancellationToken);
+        }
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private async Task WriteStallResponse(int seconds, string contentType, Stream stream, MemoryStream memStream, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                contentType = "text/plain";
+            }
+            else
+            {
+                contentType = WebUtility.UrlDecode(contentType);
+            }
+
+            Response.ContentType = contentType;
+            Response.StatusCode = StatusCodes.Status200OK;
+            byte[] response;
+
+            if (contentType.Contains("json"))
+            {
+                response = JsonBytes;
+            }
+            else if (contentType.Contains("xml"))
+            {
+                response = AtomFeed;
+            }
+            else
+            {
+                response = GenericBytes;
+            }
+
+            if (stream is not null && memStream is not null)
+            {
+                // Generate the compressed data for sending on the response stream
+                stream.Write(response);
+                stream.Flush();
+                stream.Close();
+                response = memStream.ToArray();
+            }
+            int midPoint = response.Length / 2;
+
+            // Start writing approx half the content, including headers and then delay before writing the rest.
+            await Response.Body.WriteAsync(response, 0, midPoint, cancellationToken);
+            await Response.Body.FlushAsync(cancellationToken);
+
+            if (seconds > 0)
+            {
+                int milliseconds = seconds * 1000;
+                await Task.Delay(milliseconds);
+            }
+
+            await Response.Body.WriteAsync(response, midPoint, response.Length - midPoint, cancellationToken);
+            await Response.Body.FlushAsync(cancellationToken);
         }
     }
 }

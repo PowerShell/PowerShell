@@ -8,16 +8,34 @@ jobs:
     ${{ parameters.parentJobs }}
   condition: succeeded()
   pool:
-    name: Package ES CodeHub Lab E
+    name: $(windowsPool)
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
   variables:
-    BuildConfiguration: release
-    BuildPlatform: any cpu
+    - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+      value: 1
+    - group: ESRP
+    - name: repoFolder
+      value: PowerShell
+    - name: repoRoot
+      value: $(Agent.BuildDirectory)\$(repoFolder)
+    - name: complianceRepoFolder
+      value: compliance
 
   steps:
+  - checkout: self
+    clean: true
+    path: $(repoFolder)
+
+  - checkout: ComplianceRepo
+    clean: true
+    path: $(complianceRepoFolder)
 
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: shouldSign.yml
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download artifacts'
@@ -33,42 +51,49 @@ jobs:
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
 
-  - powershell: |
-      $authenticodefiles = @(
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi"
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi"
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msix"
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.msix"
-        "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.msix"
-      )
-      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml"
-    displayName: 'Generate Package Signing Xml'
+  - template: EsrpSign.yml@ComplianceRepo
+    parameters:
+        buildOutputPath: $(System.ArtifactsDirectory)\signed
+        signOutputPath: $(Build.StagingDirectory)\signedPackages
+        certificateId: $(MSIX_CERT)
+        pattern: |
+          **\*.msix
+        useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
+        displayName: Sign msix
+
+  - template: EsrpSign.yml@ComplianceRepo
+    parameters:
+        buildOutputPath: $(System.ArtifactsDirectory)\signed
+        signOutputPath: $(Build.StagingDirectory)\signedPackages
+        certificateId: $(AUTHENTICODE_CERT)
+        pattern: |
+          **\*.exe
+        useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
+        displayName: Sign exe
 
   - powershell: |
-      Get-Content "$(System.ArtifactsDirectory)\package.xml"
-    displayName: 'Capture signing xml'
+      new-item -itemtype Directory -path '$(Build.StagingDirectory)\signedPackages'
+      Get-ChildItem "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-*.msi*" | copy-item -Destination '$(Build.StagingDirectory)\signedPackages'
+    displayName: 'Fake msi* Signing'
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
-  - task: PkgESCodeSign@10
-    displayName: 'CodeSign $(System.ArtifactsDirectory)\package.xml'
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    inputs:
-      signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
-      outPathRoot: '$(Build.StagingDirectory)\signedPackages'
-      binVersion: $(SigingVersion)
-      binVersionOverride: $(SigningVersionOverride)
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+  - pwsh: |
+      Get-ChildItem "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-*.exe" | copy-item -Destination '$(Build.StagingDirectory)\signedPackages'
+    displayName: 'Fake exe Signing'
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
   - template: upload.yml
     parameters:
       architecture: x86
       version: $(version)
-      msix: no
 
   - template: upload.yml
     parameters:
       architecture: x64
       version: $(version)
+      pdb: yes
 
   - template: upload.yml
     parameters:
@@ -89,11 +114,25 @@ jobs:
       msi: no
       msix: no
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
-    displayName: 'Run Defender Scan'
+  - template: upload.yml
+    parameters:
+      architecture: fxdependentWinDesktop
+      version: $(version)
+      msi: no
+      msix: no
+
+  - template: EsrpScan.yml@ComplianceRepo
+    parameters:
+        scanPath: $(Build.StagingDirectory)
+        pattern: |
+          **\*.msix
+          **\*.msi
+          **\*.zip
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
+      sourceScanPath: '$(repoRoot)\tools'
       snapshotForceEnabled: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

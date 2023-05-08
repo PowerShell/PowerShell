@@ -24,7 +24,7 @@ namespace System.Management.Automation.Interpreter
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
     [DebuggerTypeProxy(typeof(InstructionArray.DebugView))]
-    internal struct InstructionArray
+    internal readonly struct InstructionArray
     {
         internal readonly int MaxStackDepth;
         internal readonly int MaxContinuationDepth;
@@ -95,7 +95,9 @@ namespace System.Management.Automation.Interpreter
         private List<BranchLabel> _labels;
 
         // list of (instruction index, cookie) sorted by instruction index:
+#pragma warning disable IDE0044 // Add readonly modifier
         private List<KeyValuePair<int, object>> _debugCookies = null;
+#pragma warning restore IDE0044 // Variable is assigned when DEBUG is defined.
 
         #region Debug View
 
@@ -156,7 +158,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             [DebuggerDisplay("{GetValue(),nq}", Name = "{GetName(),nq}", Type = "{GetDisplayType(), nq}")]
-            internal struct InstructionView
+            internal readonly struct InstructionView
             {
                 private readonly int _index;
                 private readonly int _stackDepth;
@@ -231,10 +233,7 @@ namespace System.Management.Automation.Interpreter
         public void SetDebugCookie(object cookie)
         {
 #if DEBUG
-            if (_debugCookies == null)
-            {
-                _debugCookies = new List<KeyValuePair<int, object>>();
-            }
+            _debugCookies ??= new List<KeyValuePair<int, object>>();
 
             Debug.Assert(Count > 0);
             _debugCookies.Add(new KeyValuePair<int, object>(Count - 1, cookie));
@@ -273,7 +272,7 @@ namespace System.Management.Automation.Interpreter
         static InstructionList() {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler((_, __) => {
                 PerfTrack.DumpHistogram(_executedInstructions);
-                Console.WriteLine("-- Total executed: {0}", _executedInstructions.Values.Aggregate(0, (sum, value) => sum + value));
+                Console.WriteLine("-- Total executed: {0}", _executedInstructions.Values.Aggregate(0, static (sum, value) => sum + value));
                 Console.WriteLine("-----");
 
                 var referenced = new Dictionary<string, int>();
@@ -312,7 +311,7 @@ namespace System.Management.Automation.Interpreter
                 _maxStackDepth,
                 _maxContinuationDepth,
                 _instructions.ToArray(),
-                (_objects != null) ? _objects.ToArray() : null,
+                _objects?.ToArray(),
                 BuildRuntimeLabels(),
                 _debugCookies
             );
@@ -341,11 +340,11 @@ namespace System.Management.Automation.Interpreter
         {
             if ((bool)value)
             {
-                Emit(s_true ?? (s_true = new LoadObjectInstruction(value)));
+                Emit(s_true ??= new LoadObjectInstruction(value));
             }
             else
             {
-                Emit(s_false ?? (s_false = new LoadObjectInstruction(value)));
+                Emit(s_false ??= new LoadObjectInstruction(value));
             }
         }
 
@@ -353,7 +352,7 @@ namespace System.Management.Automation.Interpreter
         {
             if (value == null)
             {
-                Emit(s_null ?? (s_null = new LoadObjectInstruction(null)));
+                Emit(s_null ??= new LoadObjectInstruction(null));
                 return;
             }
 
@@ -370,10 +369,7 @@ namespace System.Management.Automation.Interpreter
                     int i = (int)value;
                     if (i >= PushIntMinCachedValue && i <= PushIntMaxCachedValue)
                     {
-                        if (s_ints == null)
-                        {
-                            s_ints = new Instruction[PushIntMaxCachedValue - PushIntMinCachedValue + 1];
-                        }
+                        s_ints ??= new Instruction[PushIntMaxCachedValue - PushIntMinCachedValue + 1];
 
                         i -= PushIntMinCachedValue;
                         Emit(s_ints[i] ?? (s_ints[i] = new LoadObjectInstruction(value)));
@@ -385,10 +381,7 @@ namespace System.Management.Automation.Interpreter
             if (_objects == null)
             {
                 _objects = new List<object>();
-                if (s_loadObjectCached == null)
-                {
-                    s_loadObjectCached = new Instruction[CachedObjectCount];
-                }
+                s_loadObjectCached ??= new Instruction[CachedObjectCount];
             }
 
             if (_objects.Count < s_loadObjectCached.Length)
@@ -449,10 +442,7 @@ namespace System.Management.Automation.Interpreter
 
         public void EmitLoadLocal(int index)
         {
-            if (s_loadLocal == null)
-            {
-                s_loadLocal = new Instruction[LocalInstrCacheSize];
-            }
+            s_loadLocal ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_loadLocal.Length)
             {
@@ -471,10 +461,7 @@ namespace System.Management.Automation.Interpreter
 
         internal static Instruction LoadLocalBoxed(int index)
         {
-            if (s_loadLocalBoxed == null)
-            {
-                s_loadLocalBoxed = new Instruction[LocalInstrCacheSize];
-            }
+            s_loadLocalBoxed ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_loadLocalBoxed.Length)
             {
@@ -488,10 +475,7 @@ namespace System.Management.Automation.Interpreter
 
         public void EmitLoadLocalFromClosure(int index)
         {
-            if (s_loadLocalFromClosure == null)
-            {
-                s_loadLocalFromClosure = new Instruction[LocalInstrCacheSize];
-            }
+            s_loadLocalFromClosure ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_loadLocalFromClosure.Length)
             {
@@ -505,10 +489,7 @@ namespace System.Management.Automation.Interpreter
 
         public void EmitLoadLocalFromClosureBoxed(int index)
         {
-            if (s_loadLocalFromClosureBoxed == null)
-            {
-                s_loadLocalFromClosureBoxed = new Instruction[LocalInstrCacheSize];
-            }
+            s_loadLocalFromClosureBoxed ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_loadLocalFromClosureBoxed.Length)
             {
@@ -522,10 +503,7 @@ namespace System.Management.Automation.Interpreter
 
         public void EmitAssignLocal(int index)
         {
-            if (s_assignLocal == null)
-            {
-                s_assignLocal = new Instruction[LocalInstrCacheSize];
-            }
+            s_assignLocal ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_assignLocal.Length)
             {
@@ -539,10 +517,7 @@ namespace System.Management.Automation.Interpreter
 
         public void EmitStoreLocal(int index)
         {
-            if (s_storeLocal == null)
-            {
-                s_storeLocal = new Instruction[LocalInstrCacheSize];
-            }
+            s_storeLocal ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_storeLocal.Length)
             {
@@ -561,10 +536,7 @@ namespace System.Management.Automation.Interpreter
 
         internal static Instruction AssignLocalBoxed(int index)
         {
-            if (s_assignLocalBoxed == null)
-            {
-                s_assignLocalBoxed = new Instruction[LocalInstrCacheSize];
-            }
+            s_assignLocalBoxed ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_assignLocalBoxed.Length)
             {
@@ -583,10 +555,7 @@ namespace System.Management.Automation.Interpreter
 
         internal static Instruction StoreLocalBoxed(int index)
         {
-            if (s_storeLocalBoxed == null)
-            {
-                s_storeLocalBoxed = new Instruction[LocalInstrCacheSize];
-            }
+            s_storeLocalBoxed ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_storeLocalBoxed.Length)
             {
@@ -600,10 +569,7 @@ namespace System.Management.Automation.Interpreter
 
         public void EmitAssignLocalToClosure(int index)
         {
-            if (s_assignLocalToClosure == null)
-            {
-                s_assignLocalToClosure = new Instruction[LocalInstrCacheSize];
-            }
+            s_assignLocalToClosure ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_assignLocalToClosure.Length)
             {
@@ -645,10 +611,7 @@ namespace System.Management.Automation.Interpreter
 
         internal static Instruction Parameter(int index)
         {
-            if (s_parameter == null)
-            {
-                s_parameter = new Instruction[LocalInstrCacheSize];
-            }
+            s_parameter ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_parameter.Length)
             {
@@ -660,10 +623,7 @@ namespace System.Management.Automation.Interpreter
 
         internal static Instruction ParameterBox(int index)
         {
-            if (s_parameterBox == null)
-            {
-                s_parameterBox = new Instruction[LocalInstrCacheSize];
-            }
+            s_parameterBox ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_parameterBox.Length)
             {
@@ -675,10 +635,7 @@ namespace System.Management.Automation.Interpreter
 
         internal static Instruction InitReference(int index)
         {
-            if (s_initReference == null)
-            {
-                s_initReference = new Instruction[LocalInstrCacheSize];
-            }
+            s_initReference ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_initReference.Length)
             {
@@ -690,10 +647,7 @@ namespace System.Management.Automation.Interpreter
 
         internal static Instruction InitImmutableRefBox(int index)
         {
-            if (s_initImmutableRefBox == null)
-            {
-                s_initImmutableRefBox = new Instruction[LocalInstrCacheSize];
-            }
+            s_initImmutableRefBox ??= new Instruction[LocalInstrCacheSize];
 
             if (index < s_initImmutableRefBox.Length)
             {
@@ -925,7 +879,7 @@ namespace System.Management.Automation.Interpreter
             Emit(GetLoadField(field));
         }
 
-        private Instruction GetLoadField(FieldInfo field)
+        private static Instruction GetLoadField(FieldInfo field)
         {
             lock (s_loadFields)
             {
@@ -1063,7 +1017,7 @@ namespace System.Management.Automation.Interpreter
 
         #endregion
 
-        private static Dictionary<Type, Func<CallSiteBinder, Instruction>> s_factories =
+        private static readonly Dictionary<Type, Func<CallSiteBinder, Instruction>> s_factories =
             new Dictionary<Type, Func<CallSiteBinder, Instruction>>();
 
         internal static Instruction CreateDynamicInstruction(Type delegateType, CallSiteBinder binder)
@@ -1086,9 +1040,9 @@ namespace System.Management.Automation.Interpreter
                         return new DynamicInstructionN(delegateType, CallSite.Create(delegateType, binder));
                     }
 
-                    factory =
-                        (Func<CallSiteBinder, Instruction>)
-                        instructionType.GetMethod("Factory").CreateDelegate(typeof(Func<CallSiteBinder, Instruction>));
+                    factory = (Func<CallSiteBinder, Instruction>)instructionType
+                        .GetMethod("Factory")
+                        .CreateDelegate(typeof(Func<CallSiteBinder, Instruction>));
 
                     s_factories[delegateType] = factory;
                 }
@@ -1125,10 +1079,7 @@ namespace System.Management.Automation.Interpreter
 
         public BranchLabel MakeLabel()
         {
-            if (_labels == null)
-            {
-                _labels = new List<BranchLabel>();
-            }
+            _labels ??= new List<BranchLabel>();
 
             var label = new BranchLabel();
             _labels.Add(label);

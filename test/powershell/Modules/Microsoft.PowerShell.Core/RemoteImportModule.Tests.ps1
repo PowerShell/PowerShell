@@ -1,15 +1,21 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $modulePath = "$testdrive\Modules\TestImport"
-        if (!$IsWindows) {
+
+        $pendingTest = (Test-IsWinWow64)
+        $skipTest = !$IsWindows
+
+        if ($skipTest) {
             $PSDefaultParameterValues["it:skip"] = $true
+        } elseif ($pendingTest) {
+            $PSDefaultParameterValues["it:pending"] = $true
         } else {
             $pssession = New-RemoteSession
-            Invoke-Command -Session $pssession -ScriptBlock { $env:PSModulePath += ";${using:testdrive}" }
+            Invoke-Command -Session $pssession -Scriptblock { $env:PSModulePath += ";${using:testdrive}" }
             # pending https://github.com/PowerShell/PowerShell/issues/4819
             # $cimsession = New-RemoteSession -CimSession
             $null = New-Item -ItemType Directory -Path $modulePath
@@ -21,9 +27,11 @@ Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
-        if ($IsWindows) {
+        if ($IsWindows -and !$pendingTest -and !$skipTest) {
             $pssession | Remove-PSSession -ErrorAction SilentlyContinue
         }
+
+        Remove-Module TestImport -Force -ErrorAction SilentlyContinue
     }
 
     BeforeEach {
@@ -71,7 +79,7 @@ Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
         $importModuleCommand.$parameter = $value
         if ($parameter -eq "FullyQualifiedName") {
             $importModuleCommand.FullyQualifiedName.Count | Should -BeExactly 2
-            $importModuleCommand.FullyQualifiedName | Should -BeOfType "Microsoft.PowerShell.Commands.ModuleSpecification"
+            $importModuleCommand.FullyQualifiedName | Should -BeOfType Microsoft.PowerShell.Commands.ModuleSpecification
             $importModuleCommand.FullyQualifiedName[0].Name | Should -BeExactly "foo"
             $importModuleCommand.FullyQualifiedName[0].RequiredVersion | Should -Be "0.0"
             $importModuleCommand.FullyQualifiedName[1].Name | Should -BeExactly "bar"

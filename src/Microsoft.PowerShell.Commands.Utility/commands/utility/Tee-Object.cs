@@ -1,8 +1,9 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
+using System.Text;
 
 using Microsoft.PowerShell.Commands.Internal.Format;
 
@@ -11,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class for Tee-object implementation.
     /// </summary>
-    [Cmdlet("Tee", "Object", DefaultParameterSetName = "File", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113417")]
+    [Cmdlet("Tee", "Object", DefaultParameterSetName = "File", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097034")]
     public sealed class TeeObjectCommand : PSCmdlet, IDisposable
     {
         /// <summary>
@@ -73,6 +74,16 @@ namespace Microsoft.PowerShell.Commands
         private bool _append;
 
         /// <summary>
+        /// Gets or sets the Encoding.
+        /// </summary>
+        [Parameter(ParameterSetName = "File")]
+        [Parameter(ParameterSetName = "LiteralFile")]
+        [ArgumentToEncodingTransformationAttribute]
+        [ArgumentEncodingCompletionsAttribute]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = Encoding.Default;
+
+        /// <summary>
         /// Variable parameter.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Variable")]
@@ -95,12 +106,14 @@ namespace Microsoft.PowerShell.Commands
                 _commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
                 _commandWrapper.AddNamedParameter("filepath", _fileName);
                 _commandWrapper.AddNamedParameter("append", _append);
+                _commandWrapper.AddNamedParameter("encoding", Encoding);
             }
             else if (string.Equals(ParameterSetName, "LiteralFile", StringComparison.OrdinalIgnoreCase))
             {
                 _commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
                 _commandWrapper.AddNamedParameter("LiteralPath", _fileName);
                 _commandWrapper.AddNamedParameter("append", _append);
+                _commandWrapper.AddNamedParameter("encoding", Encoding);
             }
             else
             {
@@ -111,6 +124,7 @@ namespace Microsoft.PowerShell.Commands
                 // the values to be written
             }
         }
+
         /// <summary>
         /// </summary>
         protected override void ProcessRecord()
@@ -148,13 +162,6 @@ namespace Microsoft.PowerShell.Commands
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Finalizer.
-        /// </summary>
-        ~TeeObjectCommand()
-        {
-            Dispose(false);
-        }
         #region private
         private CommandWrapper _commandWrapper;
         private bool _alreadyDisposed;

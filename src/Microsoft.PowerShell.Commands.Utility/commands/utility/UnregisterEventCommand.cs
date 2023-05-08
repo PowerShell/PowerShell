@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Unregisters from an event on an object.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Unregister, "Event", SupportsShouldProcess = true, DefaultParameterSetName = "BySource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135269")]
+    [Cmdlet(VerbsLifecycle.Unregister, "Event", SupportsShouldProcess = true, DefaultParameterSetName = "BySource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097037")]
     public class UnregisterEventCommand : PSCmdlet
     {
         #region parameters
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier)) &&
                (!_foundMatch))
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new ArgumentException(
                         string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
             else if ((SubscriptionId >= 0) &&
                (!_foundMatch))
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new ArgumentException(
                         string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,

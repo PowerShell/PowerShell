@@ -1,0 +1,83 @@
+parameters:
+  - name: parentJobs
+    type: jobList
+
+jobs:
+- job: compliance
+  variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+
+  # Defines the variables APIScanClient, APIScanTenant and APIScanSecret
+  - group: PS-PS-APIScan
+
+  displayName: Compliance
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  pool:
+    name: $(windowsPool)
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
+
+  # APIScan can take a long time
+  timeoutInMinutes: 180
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@3
+    displayName: 'Run CredScan'
+    inputs:
+      suppressionsFile: tools/credScan/suppress.json
+      debugMode: false
+    continueOnError: true
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@2
+    displayName: 'Run PoliCheck'
+    inputs:
+      # targetType F means file or folder and is the only applicable value and the default
+      targetType: F
+      # 1 to enable source code comment scanning, which is what we should do for open source
+      optionsFC: 1
+      # recurse
+      optionsXS: 1
+      # run for severity 1, 2, 3 and 4 issues
+      optionsPE: '1|2|3|4'
+      # disable history management
+      optionsHMENABLE: 0
+      # Excluclusion access database
+      optionsRulesDBPath: '$(Build.SourcesDirectory)\tools\terms\PowerShell-Terms-Rules.mdb'
+      # Terms Exclusion xml file
+      optionsUEPath: $(Build.SourcesDirectory)\tools\terms\TermsExclusion.xml
+    continueOnError: true
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
+    displayName: 'Publish Security Analysis Logs to Build Artifacts'
+    continueOnError: true
+
+  - task: TSAUpload@2
+    displayName: 'TSA upload'
+    inputs:
+      GdnPublishTsaOnboard: false
+      GdnPublishTsaConfigFile: '$(Build.SourcesDirectory)\tools\guardian\tsaconfig-others.json'
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-report.SdtReport@1
+    displayName: 'Create Security Analysis Report'
+    inputs:
+      TsvFile: false
+      APIScan: false
+      BinSkim: false
+      CredScan: true
+      PoliCheck: true
+      PoliCheckBreakOn: Severity2Above
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)\tools'
+      snapshotForceEnabled: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

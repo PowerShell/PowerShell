@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     /// state and returns those PS session objects in the Opened state.  One or more
     /// session objects can be specified for connecting, or a remote computer name can
     /// be specified and in this case all disconnected remote runspaces found on the
-    /// remote computer will be be connected and PSSession objects created on the local
+    /// remote computer will be connected and PSSession objects created on the local
     /// machine.
     ///
     /// The cmdlet can be used in the following ways:
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Connect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ConnectPSSessionCommand.NameParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210604", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096694", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
     public class ConnectPSSessionCommand : PSRunspaceCmdlet, IDisposable
     {
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
-        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
+        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If that's
         /// not specified as well, then "WSMAN" will be used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -92,7 +92,10 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
         public string ApplicationName
         {
-            get { return _appName; }
+            get
+            {
+                return _appName;
+            }
 
             set
             {
@@ -117,7 +120,10 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         public string ConfigurationName
         {
-            get { return _shell; }
+            get
+            {
+                return _shell;
+            }
 
             set
             {
@@ -202,7 +208,10 @@ namespace Microsoft.PowerShell.Commands
         [Credential()]
         public PSCredential Credential
         {
-            get { return _psCredential; }
+            get
+            {
+                return _psCredential;
+            }
 
             set
             {
@@ -223,7 +232,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         public AuthenticationMechanism Authentication
         {
-            get { return _authentication; }
+            get
+            {
+                return _authentication;
+            }
 
             set
             {
@@ -245,7 +257,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         public string CertificateThumbprint
         {
-            get { return _thumbprint; }
+            get
+            {
+                return _thumbprint;
+            }
 
             set
             {
@@ -354,7 +369,7 @@ namespace Microsoft.PowerShell.Commands
             base.BeginProcessing();
 
             _throttleManager.ThrottleLimit = ThrottleLimit;
-            _throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleConnectComplete);
+            _throttleManager.ThrottleComplete += HandleThrottleConnectComplete;
         }
 
         /// <summary>
@@ -472,15 +487,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Throttle class to perform a remoterunspace connect operation.
         /// </summary>
-        private class ConnectRunspaceOperation : IThrottleOperation
+        private sealed class ConnectRunspaceOperation : IThrottleOperation
         {
             private PSSession _session;
             private PSSession _oldSession;
-            private ObjectStream _writeStream;
-            private Collection<PSSession> _retryList;
-            private PSHost _host;
-            private QueryRunspaces _queryRunspaces;
-            private static object s_LockObject = new object();
+            private readonly ObjectStream _writeStream;
+            private readonly Collection<PSSession> _retryList;
+            private readonly PSHost _host;
+            private readonly QueryRunspaces _queryRunspaces;
+            private static readonly object s_LockObject = new object();
 
             internal ConnectRunspaceOperation(
                 PSSession session,
@@ -554,10 +569,7 @@ namespace Microsoft.PowerShell.Commands
 
             internal override void StopOperation()
             {
-                if (_queryRunspaces != null)
-                {
-                    _queryRunspaces.StopAllOperations();
-                }
+                _queryRunspaces?.StopAllOperations();
 
                 _session.Runspace.StateChanged -= StateCallBackHandler;
                 SendStopComplete();
@@ -691,10 +703,7 @@ namespace Microsoft.PowerShell.Commands
                     // and this particular method may be called on a thread that
                     // is different from Pipeline Execution Thread. Hence using
                     // a delegate to perform the WriteObject.
-                    Action<Cmdlet> outputWriter = delegate (Cmdlet cmdlet)
-                    {
-                        cmdlet.WriteObject(outSession);
-                    };
+                    Action<Cmdlet> outputWriter = (Cmdlet cmdlet) => cmdlet.WriteObject(outSession);
                     _writeStream.ObjectWriter.Write(outputWriter);
                 }
             }
@@ -728,10 +737,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, null);
-                    Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
-                    {
-                        cmdlet.WriteError(errorRecord);
-                    };
+                    Action<Cmdlet> errorWriter = (Cmdlet cmdlet) => cmdlet.WriteError(errorRecord);
                     _writeStream.ObjectWriter.Write(errorWriter);
                 }
             }
@@ -1072,7 +1078,7 @@ namespace Microsoft.PowerShell.Commands
                 _operationsComplete.WaitOne();
                 _operationsComplete.Dispose();
 
-                _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleConnectComplete);
+                _throttleManager.ThrottleComplete -= HandleThrottleConnectComplete;
                 _retryThrottleManager.Dispose();
 
                 _stream.Dispose();
@@ -1084,24 +1090,24 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         // Collection of PSSessions to be connected.
-        private Collection<PSSession> _allSessions = new Collection<PSSession>();
+        private readonly Collection<PSSession> _allSessions = new Collection<PSSession>();
 
         // Object used to perform network disconnect operations in a limited manner.
-        private ThrottleManager _throttleManager = new ThrottleManager();
+        private readonly ThrottleManager _throttleManager = new ThrottleManager();
 
         // Event indicating that all disconnect operations through the ThrottleManager
         // are complete.
-        private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
+        private readonly ManualResetEvent _operationsComplete = new ManualResetEvent(true);
 
         // Object used for querying remote runspaces.
-        private QueryRunspaces _queryRunspaces = new QueryRunspaces();
+        private readonly QueryRunspaces _queryRunspaces = new QueryRunspaces();
 
         // Object to collect output data from multiple threads.
-        private ObjectStream _stream = new ObjectStream();
+        private readonly ObjectStream _stream = new ObjectStream();
 
         // Support for connection retry on failure.
-        private ThrottleManager _retryThrottleManager = new ThrottleManager();
-        private Collection<PSSession> _failedSessions = new Collection<PSSession>();
+        private readonly ThrottleManager _retryThrottleManager = new ThrottleManager();
+        private readonly Collection<PSSession> _failedSessions = new Collection<PSSession>();
 
         #endregion
     }

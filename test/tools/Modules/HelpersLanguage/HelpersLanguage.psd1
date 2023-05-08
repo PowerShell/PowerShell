@@ -12,7 +12,7 @@ GUID = 'a575af5e-2bd1-427f-b966-48640788896b'
 
 CompanyName = 'Microsoft Corporation'
 
-Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
+Copyright = 'Copyright (c) Microsoft Corporation.'
 
 Description = 'Temporary module for language tests'
 

@@ -1,9 +1,7 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation;
-
-using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -11,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command that appends the specified content to the item at the specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Clear, "Content", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113282")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096807")]
     public class ClearContentCommand : ContentCommandBase
     {
         #region Command code
@@ -101,4 +99,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

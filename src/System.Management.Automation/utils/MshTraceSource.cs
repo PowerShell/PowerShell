@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #define TRACE
@@ -10,14 +10,14 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// An PSTraceSource is a representation of a System.Diagnostics.TraceSource instance
-    /// that is used the the Monad components to produce trace output.
+    /// that is used in the PowerShell components to produce trace output.
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="PSTraceSource"/>
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
     /// <!--
-    /// IF YOU ARE NOT PART OF THE MONAD DEVELOPMENT TEAM PLEASE
+    /// IF YOU ARE NOT PART OF THE PowerShell DEVELOPMENT TEAM PLEASE
     /// DO NOT USE THIS CLASS!!!!!
     ///
     /// The PSTraceSource class is derived from Switch to provide granular
@@ -49,7 +49,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Lock object for the GetTracer method.
         /// </summary>
-        private static object s_getTracerLock = new object();
+        private static readonly object s_getTracerLock = new object();
 
         /// <summary>
         /// A helper to get an instance of the PSTraceSource class.
@@ -98,13 +98,7 @@ namespace System.Management.Automation
             string description,
             bool traceHeaders)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                // 2005/04/13-JonN In theory this should be ArgumentException,
-                // but I don't want to deal with loading the string in this
-                // low-level code.
-                throw new ArgumentNullException("name");
-            }
+            ArgumentException.ThrowIfNullOrEmpty(name);
 
             lock (PSTraceSource.s_getTracerLock)
             {
@@ -182,13 +176,9 @@ namespace System.Management.Automation
             string description,
             bool traceHeaders)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                // Note, all callers should have already verified the name before calling this
-                // API, so this exception should never be exposed to an end-user.
-
-                throw new ArgumentException("name");
-            }
+            // Note, all callers should have already verified the name before calling this
+            // API, so this exception should never be exposed to an end-user.
+            ArgumentException.ThrowIfNullOrEmpty(name);
 
             // Keep the fullName as it was passed, but truncate or pad
             // the category name to 16 characters.  This allows for
@@ -228,10 +218,7 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentNullException NewArgumentNullException(string paramName)
         {
-            if (string.IsNullOrEmpty(paramName))
-            {
-                throw new ArgumentNullException("paramName");
-            }
+            ArgumentException.ThrowIfNullOrEmpty(paramName);
 
             string message = StringUtil.Format(AutomationExceptions.ArgumentNull, paramName);
             var e = new PSArgumentNullException(paramName, message);
@@ -259,12 +246,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(paramName))
             {
-                throw NewArgumentNullException("paramName");
+                throw NewArgumentNullException(nameof(paramName));
             }
 
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw NewArgumentNullException("resourceString");
+                throw NewArgumentNullException(nameof(resourceString));
             }
 
             string message = StringUtil.Format(resourceString, args);
@@ -287,12 +274,10 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentException NewArgumentException(string paramName)
         {
-            if (string.IsNullOrEmpty(paramName))
-            {
-                throw new ArgumentNullException("paramName");
-            }
+            ArgumentException.ThrowIfNullOrEmpty(paramName);
 
             string message = StringUtil.Format(AutomationExceptions.Argument, paramName);
+
             // Note that the message param comes first
             var e = new PSArgumentException(message, paramName);
 
@@ -319,12 +304,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(paramName))
             {
-                throw NewArgumentNullException("paramName");
+                throw NewArgumentNullException(nameof(paramName));
             }
 
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw NewArgumentNullException("resourceString");
+                throw NewArgumentNullException(nameof(resourceString));
             }
 
             string message = StringUtil.Format(resourceString, args);
@@ -366,7 +351,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw NewArgumentNullException("resourceString");
+                throw NewArgumentNullException(nameof(resourceString));
             }
 
             string message = StringUtil.Format(resourceString, args);
@@ -396,7 +381,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw NewArgumentNullException("resourceString");
+                throw NewArgumentNullException(nameof(resourceString));
             }
 
             string message = StringUtil.Format(resourceString, args);
@@ -438,7 +423,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw NewArgumentNullException("resourceString");
+                throw NewArgumentNullException(nameof(resourceString));
             }
 
             string message = StringUtil.Format(resourceString, args);
@@ -477,10 +462,7 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentOutOfRangeException NewArgumentOutOfRangeException(string paramName, object actualValue)
         {
-            if (string.IsNullOrEmpty(paramName))
-            {
-                throw new ArgumentNullException("paramName");
-            }
+            ArgumentException.ThrowIfNullOrEmpty(paramName);
 
             string message = StringUtil.Format(AutomationExceptions.ArgumentOutOfRange, paramName);
             var e = new PSArgumentOutOfRangeException(paramName, actualValue, message);
@@ -511,12 +493,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(paramName))
             {
-                throw NewArgumentNullException("paramName");
+                throw NewArgumentNullException(nameof(paramName));
             }
 
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw NewArgumentNullException("resourceString");
+                throw NewArgumentNullException(nameof(resourceString));
             }
 
             string message = StringUtil.Format(resourceString, args);
@@ -542,7 +524,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(objectName))
             {
-                throw NewArgumentNullException("objectName");
+                throw NewArgumentNullException(nameof(objectName));
             }
 
             string message = StringUtil.Format(AutomationExceptions.ObjectDisposed, objectName);
@@ -554,4 +536,3 @@ namespace System.Management.Automation
         #endregion TraceFlags.New*Exception methods/helpers
     }
 }
-

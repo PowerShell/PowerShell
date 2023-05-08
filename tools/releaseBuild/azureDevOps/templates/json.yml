@@ -1,0 +1,57 @@
+parameters:
+  parentJobs: []
+
+jobs:
+- job: json
+  variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  displayName: Create Json for Blob
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  condition: succeeded()
+  pool:
+    name: $(windowsPool)
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
+
+  steps:
+  #- task: <task type name>@<version>
+  #  inputs:
+  #    <task specific inputs>
+  #  displayName: '<display name of task>'
+  - checkout: self
+    clean: true
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: yes
+
+  - task: AzureFileCopy@4
+    displayName: 'upload daily-build-info JSON file to Azure - ${{ parameters.architecture }}'
+    inputs:
+      SourcePath: '$(BuildInfoPath)'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: 'BuildInfo'
+    condition: and(succeeded(), eq(variables['IS_DAILY'], 'true'))
+
+  - task: AzureCLI@1
+    displayName: 'Make blob public'
+    inputs:
+      azureSubscription: '$(AzureFileCopySubscription)'
+      scriptLocation: inlineScript
+      inlineScript: 'az storage container set-permission --account-name $(StorageAccount) --name $(azureVersion) --public-access blob'
+    condition: and(succeeded(), eq(variables['IS_DAILY'], 'true'))
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)\tools'
+      snapshotForceEnabled: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

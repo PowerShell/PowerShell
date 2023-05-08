@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,10 +23,7 @@ namespace mvc.Controllers
 
         public JsonResult Retry(string sessionId, int failureCode, int failureCount)
         {
-            if (retryInfo == null)
-            {
-                retryInfo = new Dictionary<string, Tuple<int, int, int>>();
-            }
+            retryInfo ??= new Dictionary<string, Tuple<int, int, int>>();
 
             if (retryInfo.TryGetValue(sessionId, out Tuple<int, int, int> retry))
             {

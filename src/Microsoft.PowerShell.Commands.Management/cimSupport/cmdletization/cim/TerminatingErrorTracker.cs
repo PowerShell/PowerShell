@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -19,12 +19,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Tracks (per-session) terminating errors in a given cmdlet invocation.
     /// </summary>
-    internal class TerminatingErrorTracker
+    internal sealed class TerminatingErrorTracker
     {
         #region Getting tracker for a given cmdlet invocation
 
         private static readonly ConditionalWeakTable<InvocationInfo, TerminatingErrorTracker> s_invocationToTracker =
-            new ConditionalWeakTable<InvocationInfo, TerminatingErrorTracker>();
+            new();
 
         private static int GetNumberOfSessions(InvocationInfo invocationInfo)
         {
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         #region Tracking session's "connectivity" status
 
-        private readonly ConcurrentDictionary<CimSession, bool> _sessionToIsConnected = new ConcurrentDictionary<CimSession, bool>();
+        private readonly ConcurrentDictionary<CimSession, bool> _sessionToIsConnected = new();
 
         internal void MarkSessionAsConnected(CimSession connectedSession)
         {
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         #region Tracking session's "terminated" status
 
-        private readonly ConcurrentDictionary<CimSession, bool> _sessionToIsTerminated = new ConcurrentDictionary<CimSession, bool>();
+        private readonly ConcurrentDictionary<CimSession, bool> _sessionToIsTerminated = new();
 
         internal void MarkSessionAsTerminated(CimSession terminatedSession, out bool sessionWasAlreadyTerminated)
         {
@@ -175,11 +175,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 key: terminatedSession,
                 addValue: true,
                 updateValueFactory:
-                    delegate (CimSession key, bool isTerminatedValueInDictionary)
-                        {
-                            closureSafeSessionWasAlreadyTerminated = isTerminatedValueInDictionary;
-                            return true;
-                        });
+                    (CimSession key, bool isTerminatedValueInDictionary) =>
+                    {
+                        closureSafeSessionWasAlreadyTerminated = isTerminatedValueInDictionary;
+                        return true;
+                    });
 
             sessionWasAlreadyTerminated = closureSafeSessionWasAlreadyTerminated;
         }
@@ -196,22 +196,22 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal CmdletMethodInvoker<bool> GetErrorReportingDelegate(ErrorRecord errorRecord)
         {
-            ManualResetEventSlim manualResetEventSlim = new ManualResetEventSlim();
-            object lockObject = new object();
-            Func<Cmdlet, bool> action = delegate (Cmdlet cmdlet)
-                                                {
-                                                    _numberOfReportedSessionTerminatingErrors++;
-                                                    if (_numberOfReportedSessionTerminatingErrors >= _numberOfSessions)
-                                                    {
-                                                        cmdlet.ThrowTerminatingError(errorRecord);
-                                                    }
-                                                    else
-                                                    {
-                                                        cmdlet.WriteError(errorRecord);
-                                                    }
+            ManualResetEventSlim manualResetEventSlim = new();
+            object lockObject = new();
+            Func<Cmdlet, bool> action = (Cmdlet cmdlet) =>
+            {
+                _numberOfReportedSessionTerminatingErrors++;
+                if (_numberOfReportedSessionTerminatingErrors >= _numberOfSessions)
+                {
+                    cmdlet.ThrowTerminatingError(errorRecord);
+                }
+                else
+                {
+                    cmdlet.WriteError(errorRecord);
+                }
 
-                                                    return false; // not really needed here, but required by CmdletMethodInvoker
-                                                };
+                return false; // not really needed here, but required by CmdletMethodInvoker
+            };
 
             return new CmdletMethodInvoker<bool>
             {

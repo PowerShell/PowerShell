@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -22,10 +22,10 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Runspace ref.
         /// </summary>
-        private ObjectRef<Runspace> _runspaceRef;
+        private readonly ObjectRef<Runspace> _runspaceRef;
         private bool _stopInvoke;
-        private object _localSyncObject;
-        private static RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
+        private readonly object _localSyncObject;
+        private static readonly RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
 
         /// <summary>
         /// Constructor for RunspaceRef.
@@ -93,7 +93,7 @@ namespace System.Management.Automation.Remoting
                 // and if we are not in a loopback configuration mode, in which case we always force remote script commands
                 // to be parsed and evaluated on the remote session (not in the current local session).
                 RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
-                bool isConfiguredLoopback = (remoteRunspace != null) ? remoteRunspace.IsConfiguredLoopBack : false;
+                bool isConfiguredLoopback = remoteRunspace != null && remoteRunspace.IsConfiguredLoopBack;
                 bool isTrustedInput = !isConfiguredLoopback && (localRunspace.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage);
 
                 // Create PowerShell from ScriptBlock.
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates the PSCommand when the runspace is not overridden.
         /// </summary>
-        private PSCommand CreatePsCommandNotOverridden(string line, bool isScript, bool? useNewScope)
+        private static PSCommand CreatePsCommandNotOverridden(string line, bool isScript, bool? useNewScope)
         {
             PSCommand command = new PSCommand();
 
@@ -208,12 +208,9 @@ namespace System.Management.Automation.Remoting
             }
 
             // If that didn't work out fall-back to the traditional approach.
-            if (pipeline == null)
-            {
-                pipeline = useNestedPipelines ?
-                    _runspaceRef.Value.CreateNestedPipeline(line, addToHistory) :
-                    _runspaceRef.Value.CreatePipeline(line, addToHistory);
-            }
+            pipeline ??= useNestedPipelines ?
+                _runspaceRef.Value.CreateNestedPipeline(line, addToHistory) :
+                _runspaceRef.Value.CreatePipeline(line, addToHistory);
 
             // Add robust connection callback if this is a pushed runspace.
             RemotePipeline remotePipeline = pipeline as RemotePipeline;
@@ -222,8 +219,7 @@ namespace System.Management.Automation.Remoting
                 PowerShell shell = remotePipeline.PowerShell;
                 if (shell.RemotePowerShell != null)
                 {
-                    shell.RemotePowerShell.RCConnectionNotification +=
-                        new EventHandler<PSConnectionRetryStatusEventArgs>(HandleRCConnectionNotification);
+                    shell.RemotePowerShell.RCConnectionNotification += HandleRCConnectionNotification;
                 }
 
                 // Add callback to write robust connection errors from stream.
@@ -314,12 +310,11 @@ namespace System.Management.Automation.Remoting
                     powerShell.AddParameter("Name", new string[] { "Out-Default", "Exit-PSSession" });
                     powerShell.Runspace = _runspaceRef.Value;
 
-                    bool isReleaseCandidateBackcompatibilityMode =
-                        _runspaceRef.Value.GetRemoteProtocolVersion() == RemotingConstants.ProtocolVersionWin7RC;
+                    bool isReleaseCandidateBackcompatibilityMode = _runspaceRef.Value.GetRemoteProtocolVersion() == RemotingConstants.ProtocolVersionWin7RC;
                     powerShell.IsGetCommandMetadataSpecialPipeline = !isReleaseCandidateBackcompatibilityMode;
                     int expectedNumberOfResults = isReleaseCandidateBackcompatibilityMode ? 2 : 3;
 
-                    powerShell.RemotePowerShell.HostCallReceived += new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCall);
+                    powerShell.RemotePowerShell.HostCallReceived += HandleHostCall;
 
                     IAsyncResult asyncResult = powerShell.BeginInvoke();
                     PSDataCollection<PSObject> results = new PSDataCollection<PSObject>();
@@ -409,7 +404,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        private void StopProgressBar(
+        private static void StopProgressBar(
             long sourceId)
         {
             s_RCProgress.StopProgress(sourceId);

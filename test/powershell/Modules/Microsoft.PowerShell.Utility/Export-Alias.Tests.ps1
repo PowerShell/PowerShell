@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
@@ -10,21 +10,21 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 		$testAliases        = "TestAliases"
     	$fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
 
-		remove-item alias:abcd* -force -ErrorAction SilentlyContinue
-		remove-item alias:ijkl* -force -ErrorAction SilentlyContinue
-		set-alias abcd01 efgh01
-		set-alias abcd02 efgh02
-		set-alias abcd03 efgh03
-		set-alias abcd04 efgh04
-		set-alias ijkl01 mnop01
-		set-alias ijkl02 mnop02
-		set-alias ijkl03 mnop03
-		set-alias ijkl04 mnop04
+		Remove-Item alias:abcd* -Force -ErrorAction SilentlyContinue
+		Remove-Item alias:ijkl* -Force -ErrorAction SilentlyContinue
+		Set-Alias abcd01 efgh01
+		Set-Alias abcd02 efgh02
+		Set-Alias abcd03 efgh03
+		Set-Alias abcd04 efgh04
+		Set-Alias ijkl01 mnop01
+		Set-Alias ijkl02 mnop02
+		Set-Alias ijkl03 mnop03
+		Set-Alias ijkl04 mnop04
 	}
 
 	AfterAll {
-		remove-item alias:abcd* -force -ErrorAction SilentlyContinue
-		remove-item alias:ijkl* -force -ErrorAction SilentlyContinue
+		Remove-Item alias:abcd* -Force -ErrorAction SilentlyContinue
+		Remove-Item alias:ijkl* -Force -ErrorAction SilentlyContinue
 	}
 
     BeforeEach {
@@ -50,51 +50,51 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Export-Alias with Invalid Scope will throw PSArgumentException" {
-		{ Export-Alias $fulltestpath -scope foobar } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
+		{ Export-Alias $fulltestpath -Scope foodbar } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
 	}
 
 	It "Export-Alias for Default"{
-		Export-Alias $fulltestpath abcd01 -passthru
-		$fulltestpath| Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
+		Export-Alias $fulltestpath abcd01 -PassThru
+		$fulltestpath | Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
     }
 
 	It "Export-Alias As CSV"{
-		Export-Alias $fulltestpath abcd01 -As CSV -passthru
-		$fulltestpath| Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
+		Export-Alias $fulltestpath abcd01 -As CSV -PassThru
+		$fulltestpath | Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
     }
 
 	It "Export-Alias As CSV With Description"{
-		Export-Alias $fulltestpath abcd01 -As CSV -description "My Aliases" -passthru
-		$fulltestpath| Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
-		$fulltestpath| Should -FileContentMatchExactly "My Aliases"
+		Export-Alias $fulltestpath abcd01 -As CSV -Description "My Aliases" -PassThru
+		$fulltestpath | Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
+		$fulltestpath | Should -FileContentMatchExactly "My Aliases"
     }
 
 	It "Export-Alias As CSV With Multiline Description"{
-		Export-Alias $fulltestpath abcd01 -As CSV -description "My Aliases\nYour Aliases\nEveryones Aliases" -passthru
-		$fulltestpath| Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
-		$fulltestpath| Should -FileContentMatchExactly "My Aliases"
-		$fulltestpath| Should -FileContentMatchExactly "Your Aliases"
-		$fulltestpath| Should -FileContentMatchExactly "Everyones Aliases"
+		Export-Alias $fulltestpath abcd01 -As CSV -Description "My Aliases\nYour Aliases\nEveryones Aliases" -PassThru
+		$fulltestpath | Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
+		$fulltestpath | Should -FileContentMatchExactly "My Aliases"
+		$fulltestpath | Should -FileContentMatchExactly "Your Aliases"
+		$fulltestpath | Should -FileContentMatchExactly "Everyones Aliases"
     }
 
 	It "Export-Alias As Script"{
-		Export-Alias $fulltestpath abcd01 -As Script -passthru
-		$fulltestpath| Should -FileContentMatchExactly 'set-alias -Name:"abcd01" -Value:"efgh01" -Description:"" -Option:"None"'
+		Export-Alias $fulltestpath abcd01 -As Script -PassThru
+		$fulltestpath | Should -FileContentMatchExactly 'set-alias -Name:"abcd01" -Value:"efgh01" -Description:"" -Option:"None"'
     }
 
 	It "Export-Alias As Script With Multiline Description"{
-		Export-Alias $fulltestpath abcd01 -As Script -description "My Aliases\nYour Aliases\nEveryones Aliases" -passthru
-		$fulltestpath| Should -FileContentMatchExactly 'set-alias -Name:"abcd01" -Value:"efgh01" -Description:"" -Option:"None"'
-		$fulltestpath| Should -FileContentMatchExactly "My Aliases"
-		$fulltestpath| Should -FileContentMatchExactly "Your Aliases"
-		$fulltestpath| Should -FileContentMatchExactly "Everyones Aliases"
+		Export-Alias $fulltestpath abcd01 -As Script -Description "My Aliases\nYour Aliases\nEveryones Aliases" -PassThru
+		$fulltestpath | Should -FileContentMatchExactly 'set-alias -Name:"abcd01" -Value:"efgh01" -Description:"" -Option:"None"'
+		$fulltestpath | Should -FileContentMatchExactly "My Aliases"
+		$fulltestpath | Should -FileContentMatchExactly "Your Aliases"
+		$fulltestpath | Should -FileContentMatchExactly "Everyones Aliases"
     }
 
 	It "Export-Alias for Force Test"{
 		Export-Alias $fulltestpath abcd01
-		Export-Alias $fulltestpath abcd02 -force
-		$fulltestpath| Should -Not -FileContentMatchExactly '"abcd01","efgh01","","None"'
-		$fulltestpath| Should -FileContentMatchExactly '"abcd02","efgh02","","None"'
+		Export-Alias $fulltestpath abcd02 -Force
+		$fulltestpath | Should -Not -FileContentMatchExactly '"abcd01","efgh01","","None"'
+		$fulltestpath | Should -FileContentMatchExactly '"abcd02","efgh02","","None"'
     }
 
 	It "Export-Alias for Force ReadOnly Test" -Skip:(Test-IsRoot) {
@@ -109,7 +109,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 		}
 
 		{ Export-Alias $fulltestpath abcd02 } | Should -Throw -ErrorId "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
-		Export-Alias $fulltestpath abcd03 -force
+		Export-Alias $fulltestpath abcd03 -Force
 		$fulltestpath | Should -Not -FileContentMatchExactly '"abcd01","efgh01","","None"'
 		$fulltestpath | Should -Not -FileContentMatchExactly '"abcd02","efgh02","","None"'
 		$fulltestpath | Should -FileContentMatchExactly '"abcd03","efgh03","","None"'
@@ -120,7 +120,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 		}
 		else
 		{
-			chmod 777 $fulltestpath
+			chmod a+rw $fulltestpath
 		}
 
     }

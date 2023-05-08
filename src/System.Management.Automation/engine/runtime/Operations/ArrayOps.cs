@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 // ReSharper disable UnusedMember.Global
@@ -52,7 +52,10 @@ namespace System.Management.Automation
 
             if (times == 0 || array.Length == 0)
             {
-                return new T[0]; // don't use Utils.EmptyArray, always return a new array
+#pragma warning disable CA1825 // Avoid zero-length array allocations
+                // Don't use Array.Empty<T>(); always return a new instance.
+                return new T[0];
+#pragma warning restore CA1825 // Avoid zero-length array allocations
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
@@ -231,7 +234,7 @@ namespace System.Management.Automation
             // Convert this index into something printable (we hope)...
             string msgString = PSObject.ToString(null, index, ",", null, null, true, true);
             if (msgString.Length > 20)
-                msgString = msgString.Substring(0, 20) + " ...";
+                msgString = string.Concat(msgString.AsSpan(0, 20), " ...");
             return msgString;
         }
 

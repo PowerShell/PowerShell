@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -360,7 +360,11 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                if (processing) throw;
+                if (processing)
+                {
+                    throw;
+                }
+
                 ThrowTerminatingError(new ErrorRecord(
                     e, // default exception text is OK
                     "EventLogNotFound",
@@ -490,7 +494,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (!entrymatch) return entrymatch;
+                if (!entrymatch)
+                {
+                    return entrymatch;
+                }
             }
 
             if (_sources != null)
@@ -511,7 +518,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (!sourcematch) return sourcematch;
+                if (!sourcematch)
+                {
+                    return sourcematch;
+                }
             }
 
             if (_message != null)
@@ -545,7 +555,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (!usernamematch) return usernamematch;
+                if (!usernamematch) 
+                {
+                    return usernamematch;
+                }
             }
 
             if (_isDateSpecified)
@@ -582,7 +595,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (!datematch) return datematch;
+                if (!datematch) 
+                {
+                    return datematch;
+                }
             }
 
             return true;
@@ -1344,7 +1360,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "RemoveSource".
-        /// Specifies either to remove the event log and and associated source or
+        /// Specifies either to remove the event log and associated source or
         /// source. alone.
         /// When this parameter is not specified, the cmdlet uses Delete Method which
         /// clears the eventlog and also the source associated with it.

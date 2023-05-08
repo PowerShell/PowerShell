@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,14 +25,14 @@ namespace mvc.Controllers
             {
                 output = new Hashtable
                 {
-                    {"Status"      , "OK"},
-                    {"Thumbprint"  , HttpContext.Connection.ClientCertificate.Thumbprint},
-                    {"Subject"     , HttpContext.Connection.ClientCertificate.Subject},
-                    {"SubjectName" , HttpContext.Connection.ClientCertificate.SubjectName.Name},
-                    {"Issuer"      , HttpContext.Connection.ClientCertificate.Issuer},
-                    {"IssuerName"  , HttpContext.Connection.ClientCertificate.IssuerName.Name},
-                    {"NotAfter"    , HttpContext.Connection.ClientCertificate.NotAfter},
-                    {"NotBefore"   , HttpContext.Connection.ClientCertificate.NotBefore}
+                    {"Status", "OK"},
+                    {"Thumbprint", HttpContext.Connection.ClientCertificate.Thumbprint},
+                    {"Subject", HttpContext.Connection.ClientCertificate.Subject},
+                    {"SubjectName", HttpContext.Connection.ClientCertificate.SubjectName.Name},
+                    {"Issuer", HttpContext.Connection.ClientCertificate.Issuer},
+                    {"IssuerName", HttpContext.Connection.ClientCertificate.IssuerName.Name},
+                    {"NotAfter", HttpContext.Connection.ClientCertificate.NotAfter},
+                    {"NotBefore", HttpContext.Connection.ClientCertificate.NotBefore}
                 };
             }
 

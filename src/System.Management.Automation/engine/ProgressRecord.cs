@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Runtime.Serialization;
@@ -15,7 +15,6 @@ namespace System.Management.Automation
     /// which, according to user preference, forwards that information on to the host for rendering to the user.
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Cmdlet.WriteProgress(ProgressRecord)"/>
-
     [DataContract()]
     public
     class ProgressRecord
@@ -35,7 +34,6 @@ namespace System.Management.Automation
         /// <param name="statusDescription">
         /// A description of the status of the activity.
         /// </param>
-
         public
         ProgressRecord(int activityId, string activity, string statusDescription)
         {
@@ -43,17 +41,17 @@ namespace System.Management.Automation
             {
                 // negative Ids are reserved to indicate "no id" for parent Ids.
 
-                throw PSTraceSource.NewArgumentOutOfRangeException("activityId", activityId, ProgressRecordStrings.ArgMayNotBeNegative, "activityId");
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(activityId), activityId, ProgressRecordStrings.ArgMayNotBeNegative, "activityId");
             }
 
             if (string.IsNullOrEmpty(activity))
             {
-                throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "activity");
+                throw PSTraceSource.NewArgumentException(nameof(activity), ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "activity");
             }
 
             if (string.IsNullOrEmpty(statusDescription))
             {
-                throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "statusDescription");
+                throw PSTraceSource.NewArgumentException(nameof(activity), ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "statusDescription");
             }
 
             this.id = activityId;
@@ -81,7 +79,6 @@ namespace System.Management.Automation
         /// Gets the Id of the activity to which this record corresponds.  Used as a 'key' for the
         /// linking of subordinate activities.
         /// </summary>
-
         public
         int
         ActivityId
@@ -107,7 +104,6 @@ namespace System.Management.Automation
         /// shell so that a script can set that variable, and have all subsequent calls to WriteProgress (the API) be
         /// subordinate to the "current parent id".-->
         /// </remarks>
-
         public
         int
         ParentActivityId
@@ -135,7 +131,6 @@ namespace System.Management.Automation
         /// States the overall intent of whats being accomplished, such as "Recursively removing item c:\temp." Typically
         /// displayed in conjunction with a progress bar.
         /// </remarks>
-
         public
         string
         Activity
@@ -159,7 +154,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets and sets the current status of the operation, e.g., "35 of 50 items Copied." or "95% completed." or "100 files purged."
         /// </summary>
-
         public
         string
         StatusDescription
@@ -185,7 +179,6 @@ namespace System.Management.Automation
         /// below its associated progress bar, e.g., "deleting file foo.bar"
         /// Set to null or empty in the case a sub-activity will be used to show the current operation.
         /// </summary>
-
         public
         string
         CurrentOperation
@@ -207,7 +200,6 @@ namespace System.Management.Automation
         /// Gets and sets the estimate of the percentage of total work for the activity that is completed.  Typically displayed as a progress bar.
         /// Set to a negative value to indicate that the percentage completed should not be displayed.
         /// </summary>
-
         public
         int
         PercentComplete
@@ -238,10 +230,9 @@ namespace System.Management.Automation
         ///
         /// Normally displayed beside the progress bar, as "N seconds remaining."
         /// </summary>
-        ///<remarks>
+        /// <remarks>
         /// A value less than 0 means "don't display a time remaining."
         /// </remarks>
-
         public
         int
         SecondsRemaining
@@ -262,7 +253,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets and sets the type of record represented by this instance.
         /// </summary>
-
         public
         ProgressRecordType
         RecordType
@@ -291,7 +281,6 @@ namespace System.Management.Automation
         /// a, b, c, d, e, f, and g are the values of ParentActivityId, ActivityId, Activity, StatusDescription,
         /// CurrentOperation, PercentComplete, SecondsRemaining and RecordType properties.
         /// </returns>
-
         public override
         string
         ToString()
@@ -373,12 +362,12 @@ namespace System.Management.Automation
 
             if (startTime > now)
             {
-                throw new ArgumentOutOfRangeException("startTime");
+                throw new ArgumentOutOfRangeException(nameof(startTime));
             }
 
             if (expectedDuration <= TimeSpan.Zero)
             {
-                throw new ArgumentOutOfRangeException("expectedDuration");
+                throw new ArgumentOutOfRangeException(nameof(expectedDuration));
             }
 
             /*
@@ -429,7 +418,7 @@ namespace System.Management.Automation
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
         [DataMemberAttribute()]
-        private int id;
+        private readonly int id;
 
         [DataMemberAttribute()]
         private int parentId = -1;
@@ -474,7 +463,7 @@ namespace System.Management.Automation
         {
             if (progressAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("progressAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(progressAsPSObject));
             }
 
             string activity = RemotingDecoder.GetPropertyValue<string>(progressAsPSObject, RemoteDataNameStrings.ProgressRecord_Activity);
@@ -520,11 +509,10 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines two types of progress record that refer to the beginning (or middle) and end of an operation.
     /// </summary>
-
     public
     enum ProgressRecordType
     {
-        ///<summary>
+        /// <summary>
         /// Operation just started or is not yet complete.
         /// </summary>
         /// <remarks>
@@ -539,7 +527,6 @@ namespace System.Management.Automation
         /// Finally, when the host receives a 'completed' record
         /// for that activity, it will remove the progress indicator.
         /// </remarks>
-
         Processing,
 
         /// <summary>
@@ -550,8 +537,6 @@ namespace System.Management.Automation
         /// ProgressRecordType.Completed exactly once, in the last call
         /// to WriteProgress.
         /// </remarks>
-
         Completed
     }
 }
-

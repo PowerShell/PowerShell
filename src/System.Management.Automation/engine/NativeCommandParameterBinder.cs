@@ -1,7 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -81,8 +82,8 @@ namespace System.Management.Automation
 
                 if (parameter.ParameterNameSpecified)
                 {
-                    Diagnostics.Assert(parameter.ParameterText.IndexOf(' ') == -1, "Parameters cannot have whitespace");
-                    PossiblyGlobArg(parameter.ParameterText, usedQuotes: false);
+                    Diagnostics.Assert(!parameter.ParameterText.Contains(' '), "Parameters cannot have whitespace");
+                    PossiblyGlobArg(parameter.ParameterText, parameter, usedQuotes: false);
 
                     if (parameter.SpaceAfterParameter)
                     {
@@ -122,8 +123,7 @@ namespace System.Management.Automation
                                 break;
                         }
 
-                        appendOneNativeArgument(Context, argValue,
-                            arrayLiteralAst, sawVerbatimArgumentMarker, usedQuotes);
+                        AppendOneNativeArgument(Context, parameter, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, usedQuotes);
                     }
                 }
             }
@@ -144,6 +144,69 @@ namespace System.Management.Automation
 
         private readonly StringBuilder _arguments = new StringBuilder();
 
+        internal string[] ArgumentList
+        {
+            get
+            {
+                return _argumentList.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Add an argument to the ArgumentList.
+        /// We may need to construct the argument out of the parameter text and the argument
+        /// in the case that we have a parameter that appears as "-switch:value".
+        /// </summary>
+        /// <param name="parameter">The parameter associated with the operation.</param>
+        /// <param name="argument">The value used with parameter.</param>
+        internal void AddToArgumentList(CommandParameterInternal parameter, string argument)
+        {
+            if (parameter.ParameterNameSpecified && parameter.ParameterText.EndsWith(":"))
+            {
+                if (argument != parameter.ParameterText)
+                {
+                    // Only combine the text and argument if there was no space after the parameter,
+                    // otherwise, add the parameter and arguments as separate elements.
+                    if (parameter.SpaceAfterParameter)
+                    {
+                        _argumentList.Add(parameter.ParameterText);
+                        _argumentList.Add(argument);
+                    }
+                    else
+                    {
+                        _argumentList.Add(parameter.ParameterText + argument);
+                    }
+                }
+            }
+            else
+            {
+                _argumentList.Add(argument);
+            }
+        }
+
+        private readonly List<string> _argumentList = new List<string>();
+
+        /// <summary>
+        /// Gets a value indicating whether to use an ArgumentList or string for arguments when invoking a native executable.
+        /// </summary>
+        internal NativeArgumentPassingStyle ArgumentPassingStyle
+        {
+            get
+            {
+                try
+                {
+                    var preference = LanguagePrimitives.ConvertTo<NativeArgumentPassingStyle>(
+                        Context.GetVariableValue(SpecialVariables.NativeArgumentPassingVarPath, NativeArgumentPassingStyle.Standard));
+                    return preference;
+                }
+                catch
+                {
+                    // The value is not convertible send back Legacy
+                    return NativeArgumentPassingStyle.Legacy;
+                }
+            }
+        }
+
         #endregion internal members
 
         #region private members
@@ -154,26 +217,27 @@ namespace System.Management.Automation
         /// each of which will be stringized.
         /// </summary>
         /// <param name="context">Execution context instance.</param>
+        /// <param name="parameter">The parameter associated with the operation.</param>
         /// <param name="obj">The object to append.</param>
         /// <param name="argArrayAst">If the argument was an array literal, the Ast, otherwise null.</param>
         /// <param name="sawVerbatimArgumentMarker">True if the argument occurs after --%.</param>
         /// <param name="usedQuotes">True if the argument was a quoted string (single or double).</param>
-        private void appendOneNativeArgument(ExecutionContext context, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, bool usedQuotes)
+        private void AppendOneNativeArgument(ExecutionContext context, CommandParameterInternal parameter, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, bool usedQuotes)
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(obj);
 
-            Diagnostics.Assert(argArrayAst == null
-                || obj is object[] && ((object[])obj).Length == argArrayAst.Elements.Count,
-                "array argument and ArrayLiteralAst differ in number of elements");
+            Diagnostics.Assert((argArrayAst == null) || (obj is object[] && ((object[])obj).Length == argArrayAst.Elements.Count), "array argument and ArrayLiteralAst differ in number of elements");
 
             int currentElement = -1;
             string separator = string.Empty;
             do
             {
                 string arg;
+                object currentObj;
                 if (list == null)
                 {
                     arg = PSObject.ToStringParser(context, obj);
+                    currentObj = obj;
                 }
                 else
                 {
@@ -182,7 +246,8 @@ namespace System.Management.Automation
                         break;
                     }
 
-                    arg = PSObject.ToStringParser(context, ParserOps.Current(null, list));
+                    currentObj = ParserOps.Current(null, list);
+                    arg = PSObject.ToStringParser(context, currentObj);
 
                     currentElement += 1;
                     if (currentElement != 0)
@@ -193,12 +258,16 @@ namespace System.Management.Automation
 
                 if (!string.IsNullOrEmpty(arg))
                 {
+                    // Only add the separator to the argument string rather than adding a separator to the ArgumentList.
                     _arguments.Append(separator);
 
                     if (sawVerbatimArgumentMarker)
                     {
                         arg = Environment.ExpandEnvironmentVariables(arg);
                         _arguments.Append(arg);
+
+                        // we need to split the argument on spaces
+                        _argumentList.AddRange(arg.Split(' ', StringSplitOptions.RemoveEmptyEntries));
                     }
                     else
                     {
@@ -218,6 +287,8 @@ namespace System.Management.Automation
                         if (NeedQuotes(arg))
                         {
                             _arguments.Append('"');
+                            AddToArgumentList(parameter, arg);
+
                             // need to escape all trailing backslashes so the native command receives it correctly
                             // according to http://www.daviddeley.com/autohotkey/parameters/parameters.htm#WINCRULESDOC
                             _arguments.Append(arg);
@@ -230,11 +301,30 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            PossiblyGlobArg(arg, usedQuotes);
+                            if (argArrayAst != null && ArgumentPassingStyle != NativeArgumentPassingStyle.Legacy)
+                            {
+                                // We have a literal array, so take the extent, break it on spaces and add them to the argument list.
+                                foreach (string element in argArrayAst.Extent.Text.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                                {
+                                    PossiblyGlobArg(element, parameter, usedQuotes);
+                                }
+
+                                break;
+                            }
+                            else
+                            {
+                                PossiblyGlobArg(arg, parameter, usedQuotes);
+                            }
                         }
                     }
                 }
-            } while (list != null);
+                else if (ArgumentPassingStyle != NativeArgumentPassingStyle.Legacy && currentObj != null)
+                {
+                    // add empty strings to arglist, but not nulls
+                    AddToArgumentList(parameter, arg);
+                }
+            }
+            while (list != null);
         }
 
         /// <summary>
@@ -242,8 +332,9 @@ namespace System.Management.Automation
         /// On Unix, do globbing as appropriate, otherwise just append <paramref name="arg"/>.
         /// </summary>
         /// <param name="arg">The argument that possibly needs expansion.</param>
+        /// <param name="parameter">The parameter associated with the operation.</param>
         /// <param name="usedQuotes">True if the argument was a quoted string (single or double).</param>
-        private void PossiblyGlobArg(string arg, bool usedQuotes)
+        private void PossiblyGlobArg(string arg, CommandParameterInternal parameter, bool usedQuotes)
         {
             var argExpanded = false;
 
@@ -290,15 +381,16 @@ namespace System.Management.Automation
                             // If the path contains spaces, then add quotes around it.
                             if (NeedQuotes(expandedPath))
                             {
-                                _arguments.Append("\"");
+                                _arguments.Append('"');
                                 _arguments.Append(expandedPath);
-                                _arguments.Append("\"");
+                                _arguments.Append('"');
                             }
                             else
                             {
                                 _arguments.Append(expandedPath);
                             }
 
+                            AddToArgumentList(parameter, expandedPath);
                             argExpanded = true;
                         }
                     }
@@ -313,12 +405,14 @@ namespace System.Management.Automation
                 if (string.Equals(arg, "~"))
                 {
                     _arguments.Append(home);
+                    AddToArgumentList(parameter, home);
                     argExpanded = true;
                 }
                 else if (arg.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
                 {
-                    var replacementString = home + arg.Substring(1);
+                    var replacementString = string.Concat(home, arg.AsSpan(1));
                     _arguments.Append(replacementString);
+                    AddToArgumentList(parameter, replacementString);
                     argExpanded = true;
                 }
             }
@@ -327,6 +421,7 @@ namespace System.Management.Automation
             if (!argExpanded)
             {
                 _arguments.Append(arg);
+                AddToArgumentList(parameter, arg);
             }
         }
 
@@ -357,7 +452,10 @@ namespace System.Management.Automation
 
         private static string GetEnumerableArgSeparator(ArrayLiteralAst arrayLiteralAst, int index)
         {
-            if (arrayLiteralAst == null) return " ";
+            if (arrayLiteralAst == null)
+            {
+                return " ";
+            }
 
             // index points to the *next* element, so we're looking for space between
             // it and the previous element.
@@ -369,21 +467,33 @@ namespace System.Management.Automation
             var afterPrev = prev.Extent.EndOffset;
             var beforeNext = next.Extent.StartOffset - 1;
 
-            if (afterPrev == beforeNext) return ",";
+            if (afterPrev == beforeNext)
+            {
+                return ",";
+            }
 
             var arrayText = arrayExtent.Text;
             afterPrev -= arrayExtent.StartOffset;
             beforeNext -= arrayExtent.StartOffset;
 
-            if (arrayText[afterPrev] == ',') return ", ";
-            if (arrayText[beforeNext] == ',') return " ,";
+            if (arrayText[afterPrev] == ',') 
+            {
+                return ", ";
+            }
+
+            if (arrayText[beforeNext] == ',')
+            {
+                return " ,";
+            }
+            
             return " , ";
         }
 
         /// <summary>
         /// The native command to bind to.
         /// </summary>
-        private NativeCommand _nativeCommand;
+        private readonly NativeCommand _nativeCommand;
+
         #endregion private members
     }
 }

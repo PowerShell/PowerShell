@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -59,7 +59,10 @@ namespace System.Management.Automation
                 return _message;
             }
 
-            set { _message = value; }
+            set
+            {
+                _message = value;
+            }
         }
 
         /// <summary>
@@ -158,6 +161,7 @@ namespace System.Management.Automation
 
         [DataMember()]
         private string _message;
+
         private InvocationInfo _invocationInfo;
         private ReadOnlyCollection<int> _pipelineIterationInfo;
         private bool _serializeExtendedInfo;
@@ -216,7 +220,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _fullyQualifiedWarningId;
+        private readonly string _fullyQualifiedWarningId;
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Tests for paths of submodules in module manifest" -tags "CI" {
 
@@ -12,10 +12,10 @@ Describe "Tests for paths of submodules in module manifest" -tags "CI" {
     $nestedModuleFilePath = Join-Path $nestedModulePath $submoduleFileName
 
     BeforeEach {
-        
+
         Remove-Module $moduleName -Force -ErrorAction SilentlyContinue
         Remove-Item $moduleRootPath -Recurse -Force -ErrorAction SilentlyContinue
-        
+
         New-Item -ItemType Directory -Force -Path  $nestedModulePath
         "function TestModuleFunction{'Hello from TestModuleFunction'}" | Out-File $nestedModuleFilePath
     }
@@ -40,7 +40,7 @@ Describe "Tests for paths of submodules in module manifest" -tags "CI" {
 
     It "Test if NestedModule path is <SubModulePath>" -TestCases $testCases {
         param($SubModulePath)
-    
+
         New-ModuleManifest $moduleFilePath -NestedModules @($SubModulePath)
         Import-Module $moduleFilePath
         (Get-Module $moduleName).ExportedCommands.Keys.Contains('TestModuleFunction') | Should -BeTrue
@@ -48,7 +48,7 @@ Describe "Tests for paths of submodules in module manifest" -tags "CI" {
 
     It "Test if RootModule path is <SubModulePath>" -TestCases $testCases {
         param($SubModulePath)
-    
+
         New-ModuleManifest $moduleFilePath -RootModule $SubModulePath
         Import-Module $moduleFilePath
         (Get-Module $moduleName).ExportedCommands.Keys.Contains('TestModuleFunction') | Should -BeTrue

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implementation for the new-timespan command.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TimeSpan", DefaultParameterSetName = "Date",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113360", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096709", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(TimeSpan))]
     public sealed class NewTimeSpanCommand : PSCmdlet
     {
@@ -68,25 +68,31 @@ namespace Microsoft.PowerShell.Commands
         /// Allows the user to override the day.
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
-        public int Days { get; set; } = 0;
+        public int Days { get; set; }
 
         /// <summary>
         /// Allows the user to override the hour.
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
-        public int Hours { get; set; } = 0;
+        public int Hours { get; set; }
 
         /// <summary>
         /// Allows the user to override the minute.
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
-        public int Minutes { get; set; } = 0;
+        public int Minutes { get; set; }
 
         /// <summary>
         /// Allows the user to override the second.
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
-        public int Seconds { get; set; } = 0;
+        public int Seconds { get; set; }
+
+        /// <summary>
+        /// Allows the user to override the millisecond.
+        /// </summary>
+        [Parameter(ParameterSetName = "Time")]
+        public int Milliseconds { get; set; }
 
         #endregion
 
@@ -119,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 case "Time":
-                    result = new TimeSpan(Days, Hours, Minutes, Seconds);
+                    result = new TimeSpan(Days, Hours, Minutes, Seconds, Milliseconds);
                     break;
 
                 default:

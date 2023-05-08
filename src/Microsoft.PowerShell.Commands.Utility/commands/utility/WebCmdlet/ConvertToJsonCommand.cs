@@ -1,9 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Threading;
@@ -16,9 +15,9 @@ namespace Microsoft.PowerShell.Commands
     /// The ConvertTo-Json command.
     /// This command converts an object to a Json string representation.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217032", RemotingCapability = RemotingCapability.None)]
-    [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-    public class ConvertToJsonCommand : PSCmdlet
+    [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
+    [OutputType(typeof(string))]
+    public class ConvertToJsonCommand : PSCmdlet, IDisposable
     {
         /// <summary>
         /// Gets or sets the InputObject property.
@@ -28,14 +27,14 @@ namespace Microsoft.PowerShell.Commands
         public object InputObject { get; set; }
 
         private int _depth = 2;
-        private const int maxDepthAllowed = 100;
-        private readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
+
+        private readonly CancellationTokenSource _cancellationSource = new();
 
         /// <summary>
         /// Gets or sets the Depth property.
         /// </summary>
         [Parameter]
-        [ValidateRange(1, int.MaxValue)]
+        [ValidateRange(0, 100)]
         public int Depth
         {
             get { return _depth; }
@@ -72,38 +71,42 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies how strings are escaped when writing JSON text.
         /// If the EscapeHandling property is set to EscapeHtml, the result JSON string will
-        /// be returned with HTML (<, >, &, ', ") and control characters (e.g. newline) are escaped.
+        /// be returned with HTML (&lt;, &gt;, &amp;, ', ") and control characters (e.g. newline) are escaped.
         /// </summary>
         [Parameter]
         public StringEscapeHandling EscapeHandling { get; set; } = StringEscapeHandling.Default;
 
         /// <summary>
-        /// Prerequisite checks.
+        /// IDisposable implementation, dispose of any disposable resources created by the cmdlet.
         /// </summary>
-        protected override void BeginProcessing()
+        public void Dispose()
         {
-            if (_depth > maxDepthAllowed)
-            {
-                string errorMessage = StringUtil.Format(WebCmdletStrings.ReachedMaximumDepthAllowed, maxDepthAllowed);
-                ThrowTerminatingError(new ErrorRecord(
-                                new InvalidOperationException(errorMessage),
-                                "ReachedMaximumDepthAllowed",
-                                ErrorCategory.InvalidOperation,
-                                null));
-            }
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
-        private List<object> _inputObjects = new List<object>();
+        /// <summary>
+        /// Implementation of IDisposable for both manual Dispose() and finalizer-called disposal of resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// Specified as true when Dispose() was called, false if this is called from the finalizer.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _cancellationSource.Dispose();
+            }
+        }
+        
+        private readonly List<object> _inputObjects = new();
 
         /// <summary>
         /// Caching the input objects for the command.
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InputObject != null)
-            {
-                _inputObjects.Add(InputObject);
-            }
+            _inputObjects.Add(InputObject);
         }
 
         /// <summary>
@@ -119,9 +122,9 @@ namespace Microsoft.PowerShell.Commands
                     Depth,
                     EnumsAsStrings.IsPresent,
                     Compress.IsPresent,
-                    _cancellationSource.Token,
                     EscapeHandling,
-                    targetCmdlet: this);
+                    targetCmdlet: this,
+                    _cancellationSource.Token);
 
                 // null is returned only if the pipeline is stopping (e.g. ctrl+c is signaled).
                 // in that case, we shouldn't write the null to the output pipe.

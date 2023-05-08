@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -268,16 +268,15 @@ namespace System.Management.Automation
             }
         }
 
-        private void GetModuleNameAndVersion(string psmodulePathRoot, string filePath, out string moduleName, out Version moduleVersion)
+        private static void GetModuleNameAndVersion(string psmodulePathRoot, string filePath, out string moduleName, out Version moduleVersion)
         {
             moduleVersion = null;
             moduleName = null;
 
             if (filePath.StartsWith(psmodulePathRoot, StringComparison.OrdinalIgnoreCase))
             {
-                var moduleRootSubPath = filePath.Remove(0, psmodulePathRoot.Length).TrimStart(Utils.Separators.Directory);
+                var moduleRootSubPath = filePath.Remove(0, psmodulePathRoot.Length);
                 var pathParts = moduleRootSubPath.Split(Utils.Separators.Directory, StringSplitOptions.RemoveEmptyEntries);
-
                 moduleName = pathParts[0];
                 var potentialVersion = pathParts[1];
                 Version result;
@@ -368,9 +367,9 @@ namespace System.Management.Automation
                     {
                         // Get all the directories under the module path
                         // * and SearchOption.AllDirectories gets all the version directories.
-                        string[] directories = Directory.GetDirectories(psModulePath, "*", SearchOption.AllDirectories);
+                        IEnumerable<string> directories = Directory.EnumerateDirectories(psModulePath, "*", SearchOption.AllDirectories);
 
-                        var possibleModuleDirectories = directories.Where(directory => !ModuleUtils.IsPossibleResourceDirectory(directory));
+                        var possibleModuleDirectories = directories.Where(static directory => !ModuleUtils.IsPossibleResourceDirectory(directory));
 
                         foreach (string directory in possibleModuleDirectories)
                         {
@@ -415,9 +414,8 @@ namespace System.Management.Automation
         ///
         /// This will avoid one help file getting loaded again and again.
         /// </summary>
-        private Hashtable _helpFiles = new Hashtable();
+        private readonly Hashtable _helpFiles = new Hashtable();
 
         #endregion
     }
 }
-

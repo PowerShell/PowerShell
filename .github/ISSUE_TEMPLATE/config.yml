@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Windows PowerShell
+    url: https://support.microsoft.com/windows/send-feedback-to-microsoft-with-the-feedback-hub-app-f59187f8-8739-22d6-ba93-f66612949332
+    about: Windows PowerShell issues or suggestions.
+  - name: Support
+    url: https://github.com/PowerShell/PowerShell/blob/master/.github/SUPPORT.md
+    about: PowerShell Support Questions/Help
+  - name: Documentation Issue
+    url: https://github.com/MicrosoftDocs/PowerShell-Docs/issues/new/choose
+    about: Please open issues on documentation for PowerShell here.

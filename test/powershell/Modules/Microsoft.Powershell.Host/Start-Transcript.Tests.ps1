@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
@@ -47,18 +47,18 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         }
         ## function ends here
 
-        $transcriptFilePath = join-path $TestDrive "transcriptdata.txt"
+        $transcriptFilePath = Join-Path $TestDrive "transcriptdata.txt"
         Remove-Item $transcriptFilePath -Force -ErrorAction SilentlyContinue
     }
 
     AfterEach {
         Remove-Item $transcriptFilePath -ErrorAction SilentlyContinue
-        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $False)
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $false)
     }
 
     It "Should create Transcript file at default path" {
         $script = "Start-Transcript"
-        if ($isWindows) {
+        if ($IsWindows) {
             $defaultTranscriptFilePath = [io.path]::Combine($env:USERPROFILE, "Documents", "PowerShell_transcript*")
         } else {
             $defaultTranscriptFilePath = [io.path]::Combine($env:HOME, "PowerShell_transcript*")
@@ -83,7 +83,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
     It "Should create Transcript file with 'OutputDirectory' parameter" {
         $script = "Start-Transcript -OutputDirectory $TestDrive"
-        $outputFilePath = join-path $TestDrive "PowerShell_transcript*"
+        $outputFilePath = Join-Path $TestDrive "PowerShell_transcript*"
         ValidateTranscription -scriptToExecute $script -outputFilePath $outputFilePath
     }
     It "Should Append Transcript data in existing file if 'Append' parameter is used with Path parameter" {
@@ -102,7 +102,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
     It "Should return an error if file path is invalid" {
         $fileName = (Get-Random).ToString()
-        $inputPath = join-path $TestDrive $fileName
+        $inputPath = Join-Path $TestDrive $fileName
         $null = New-Item -Path $inputPath -ItemType File -Force -ErrorAction SilentlyContinue
         $script = "Start-Transcript -OutputDirectory $inputPath"
         $expectedError = "CannotStartTranscription,Microsoft.PowerShell.Commands.StartTranscriptCommand"
@@ -149,7 +149,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
 
     It "Transcription should be closed if the only runspace gets closed" {
-        pwsh -c "start-transcript $transcriptFilePath; Write-Host ''Before Dispose'';"
+        & "$PSHOME/pwsh" -c "start-transcript $transcriptFilePath; Write-Host ''Before Dispose'';"
 
         $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -FileContentMatch "Before Dispose"
@@ -220,7 +220,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $newLine = [System.Environment]::NewLine
         $expectedContent = "$message$($newLine)Confirm$($newLine)Continue with this operation?"
         $script = {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $True)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $true)
             Start-Transcript -Path $transcriptFilePath
             Write-Information -Message $message -InformationAction Inquire
             Stop-Transcript
@@ -280,7 +280,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $newLine = [System.Environment]::NewLine
         $expectedContent = "$message$($newLine)Confirm$($newLine)Continue with this operation?"
         $script = {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $True)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $true)
             Start-Transcript -Path $transcriptFilePath
             Write-Host -Message $message -InformationAction Inquire
             Stop-Transcript

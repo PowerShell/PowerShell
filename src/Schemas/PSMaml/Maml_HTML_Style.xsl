@@ -172,7 +172,7 @@
 					</xsl:when>
 					<xsl:otherwise>
 						<!-- the default vertical alignment depends on whether
-						     this cell is the the table header, footer or body -->
+						     this cell is the table header, footer or body -->
 						<xsl:choose>
 							<xsl:when test='parent::*/parent::thead'>
 								bottom

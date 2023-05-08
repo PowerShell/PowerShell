@@ -1,17 +1,15 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
-
-using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Implements the write-progress cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Write, "Progress", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113428", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Progress", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097036", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteProgressCommand : PSCmdlet
     {
         /// <summary>
@@ -38,8 +36,8 @@ namespace Microsoft.PowerShell.Commands
         /// Uniquely identifies this activity for purposes of chaining subordinate activities.
         /// </summary>
         [Parameter(Position = 2)]
-        [ValidateRange(0, Int32.MaxValue)]
-        public int Id { get; set; } = 0;
+        [ValidateRange(0, int.MaxValue)]
+        public int Id { get; set; }
 
         /// <summary>
         /// Percentage completion of the activity, or -1 if n/a.
@@ -64,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         /// Identifies the parent Id of this activity, or -1 if none.
         /// </summary>
         [Parameter]
-        [ValidateRange(-1, Int32.MaxValue)]
+        [ValidateRange(-1, int.MaxValue)]
         public int ParentId { get; set; } = -1;
 
         /// <summary>
@@ -98,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
         void
         ProcessRecord()
         {
-            ProgressRecord pr = new ProgressRecord(Id, Activity, Status);
+            ProgressRecord pr = new(Id, Activity, Status);
             pr.ParentActivityId = ParentId;
             pr.PercentComplete = PercentComplete;
             pr.SecondsRemaining = SecondsRemaining;

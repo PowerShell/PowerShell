@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "get-alias" cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Alias", DefaultParameterSetName = "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113306")]
+    [Cmdlet(VerbsCommon.Get, "Alias", DefaultParameterSetName = "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096702")]
     [OutputType(typeof(AliasInfo))]
     public class GetAliasCommand : PSCmdlet
     {
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
                           _excludes,
                           WildcardOptions.IgnoreCase);
 
-            List<AliasInfo> results = new List<AliasInfo>();
+            List<AliasInfo> results = new();
             foreach (KeyValuePair<string, AliasInfo> tableEntry in aliasTable)
             {
                 if (parametersetname.Equals("Definition", StringComparison.OrdinalIgnoreCase))
@@ -181,10 +181,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             results.Sort(
-                delegate (AliasInfo left, AliasInfo right)
-                {
-                    return StringComparer.CurrentCultureIgnoreCase.Compare(left.Name, right.Name);
-                });
+                static (AliasInfo left, AliasInfo right) => StringComparer.CurrentCultureIgnoreCase.Compare(left.Name, right.Name));
             foreach (AliasInfo alias in results)
             {
                 this.WriteObject(alias);
@@ -195,8 +192,8 @@ namespace Microsoft.PowerShell.Commands
                 // Need to write an error if the user tries to get an alias
                 // tat doesn't exist and they are not globbing.
 
-                ItemNotFoundException itemNotFound = new ItemNotFoundException(StringUtil.Format(AliasCommandStrings.NoAliasFound, displayString, value));
-                ErrorRecord er = new ErrorRecord(itemNotFound, "ItemNotFoundException", ErrorCategory.ObjectNotFound, value);
+                ItemNotFoundException itemNotFound = new(StringUtil.Format(AliasCommandStrings.NoAliasFound, displayString, value));
+                ErrorRecord er = new(itemNotFound, "ItemNotFoundException", ErrorCategory.ObjectNotFound, value);
                 WriteError(er);
             }
         }

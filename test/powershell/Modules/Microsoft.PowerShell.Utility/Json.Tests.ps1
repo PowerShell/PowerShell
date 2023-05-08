@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # This is a Pester test suite which validate the Json cmdlets.
@@ -50,7 +50,7 @@ Describe "Json Tests" -Tags "Feature" {
 
             # Test follow-up for bug WinBlue: 11484 - ConvertTo-Json can't handle terms with double quotes.
 
-            $notcompressed = ConvertTo-JSON @{ FirstName = 'Hello " World' }
+            $notcompressed = ConvertTo-Json @{ FirstName = 'Hello " World' }
             $compressed = ConvertTo-Json @{ FirstName = 'Hello " World' } -Compress
             $valueFromNotCompressedResult = ConvertFrom-Json -InputObject $notcompressed
             $valueFromCompressedResult = ConvertFrom-Json -InputObject $compressed
@@ -62,11 +62,11 @@ Describe "Json Tests" -Tags "Feature" {
 
             # Test follow-up for bug Win8: 378368 Convertto-Json problems with Enum based on Int64.
             if ( $null -eq ("JsonEnumTest" -as "Type")) {
-                $enum1 = "TestEnum" + (get-random)
-                $enum2 = "TestEnum" + (get-random)
-                $enum3 = "TestEnum" + (get-random)
+                $enum1 = "TestEnum" + (Get-Random)
+                $enum2 = "TestEnum" + (Get-Random)
+                $enum3 = "TestEnum" + (Get-Random)
 
-                $jsontype = add-type -pass -TypeDef "
+                $jsontype = Add-Type -pass -TypeDef "
                 public enum $enum1 : ulong { One = 1, Two = 2 };
                 public enum $enum2 : long  { One = 1, Two = 2 };
                 public enum $enum3 : int   { One = 1, Two = 2 };
@@ -76,7 +76,7 @@ Describe "Json Tests" -Tags "Feature" {
                     public $enum3 TestEnum3 = ${enum3}.One;
                 }"
             }
-            $op = [JsonEnumTest]::New() | convertto-json | convertfrom-json
+            $op = [JsonEnumTest]::New() | ConvertTo-Json | ConvertFrom-Json
             $op.TestEnum1 | Should -BeExactly "One"
             $op.TestEnum2 | Should -BeExactly "Two"
             $op.TestEnum3 | Should -Be 1
@@ -101,7 +101,7 @@ Describe "Json Tests" -Tags "Feature" {
             $response.d.Name.First | Should -Match "Joel"
         }
 
-        It "Convert to Json using PSObject" -pending:($IsCoreCLR) {
+        It "Convert to Json using PSObject" -Pending:($IsCoreCLR) {
 
             $response = ConvertFrom-Json '{"d":{"__type":"SimpleJsonObject","Name":{"First":"Joel","Last":"Wood"},"Greeting":"Hello"}}'
 
@@ -140,7 +140,7 @@ Describe "Json Tests" -Tags "Feature" {
             $response2 = ConvertTo-Json -InputObject $response -Depth 1
             $response2 | Should -Match $result2
 
-            $arraylist = new-Object System.Collections.ArrayList
+            $arraylist = New-Object System.Collections.ArrayList
             [void]$arraylist.Add("one")
             [void]$arraylist.Add("two")
             [void]$arraylist.Add("three")
@@ -161,7 +161,7 @@ Describe "Json Tests" -Tags "Feature" {
             $response2 | Should -Be $result3
         }
 
-        It "Convert to Json using hashtable" -pending:($IsCoreCLR) {
+        It "Convert to Json using hashtable" -Pending:($IsCoreCLR) {
 
             $nameHash = @{First="Joe1";Last="Wood"}
             $dHash = @{Name=$nameHash; Greeting="Hello"}
@@ -268,7 +268,7 @@ Describe "Json Tests" -Tags "Feature" {
             $json = "[1,2,3,4,5,6]"
             $result = ConvertFrom-Json $json
             $result.Count | Should -Be 6
-            ,$result | Should -BeOfType "System.Array"
+            ,$result | Should -BeOfType System.Array
         }
 
         It "ConvertFrom-Json with a float value" {
@@ -345,6 +345,258 @@ Describe "Json Tests" -Tags "Feature" {
             ValidateSampleObject -result $result -hasEmbeddedSampleObject
         }
 
+		It "ConvertFrom-Json correctly processes datetimes vs strings using newtonsoft conventions" {
+			# Create all the various "standard" date formats from a source date 2008-09-22T14:01:54.9571247Z
+			# Then we deserialize them and verify which ones newtonsoft decides to make into datetimes and which ones newtonsoft keeps as strings
+			# For the ones that are datetimes, make sure they retain all of the various formats correctly
+			# for the ones that are strings just verify that they are actually strings.
+
+			$json = @"
+{
+	"date-s-should-parse-as-datetime": "2008-09-22T14:01:54",
+	"date-upperO-should-parse-as-datetime": "2008-09-22T14:01:54.9571247Z",
+	
+	"date-o-should-parse-as-string": "2019-12-17T06:14:06 +06:00",
+	"date-upperD-should-parse-as-string": "Monday, September 22, 2008",
+	"date-f-should-parse-as-string": "Monday, September 22, 2008 2:01 PM",
+	"date-upperF-should-parse-as-string": "Monday, September 22, 2008 2:01:54 PM",
+	"date-g-should-parse-as-string": "9/22/2008 2:01 PM",
+	"date-upperG-should-parse-as-string": "9/22/2008 2:01:54 PM",
+	"date-m-should-parse-as-string": "September 22",
+	"date-upperM-should-parse-as-string": "September 22",
+	"date-upperR-should-parse-as-string": "Mon, 22 Sep 2008 14:01:54 GMT",
+	"date-t-should-parse-as-string": "2:01 PM",
+	"date-upperT-should-parse-as-string": "2:01:54 PM",
+	"date-u-should-parse-as-string": "2008-09-22 14:01:54Z",
+	"date-upperU-should-parse-as-string": "Monday, September 22, 2008 2:01:54 PM",
+	"date-upperY-should-parse-as-string": "September 2008",
+	"date-y-should-parse-as-string": "September 2008"
+}
+"@
+			foreach ($asHashtableOption in @($True, $False)) {
+				$result = ConvertFrom-Json $json -AsHashtable:$asHashtableOption
+
+                # If the timezone is not specified in the input string newtonsoft assumes the system timezone.
+                # this means that some tests will fail locally but work on the build farm and vice-versa.
+                # this is used to force the datetime into UTC without changing the value so 4PM Central becomes 4PM UTC instead of becoming 10PM UTC
+                $result."date-s-should-parse-as-datetime" = [datetime]::SpecifyKind($result."date-s-should-parse-as-datetime", [System.DateTimeKind]::Utc)
+				$result."date-s-should-parse-as-datetime".ToString("d") | Should -Be "9/22/2008"
+				$result."date-s-should-parse-as-datetime".ToString("D") | Should -Be "Monday, September 22, 2008"
+				$result."date-s-should-parse-as-datetime".ToString("f") | Should -Be "Monday, September 22, 2008 2:01 PM"
+				$result."date-s-should-parse-as-datetime".ToString("F") | Should -Be "Monday, September 22, 2008 2:01:54 PM"
+				$result."date-s-should-parse-as-datetime".ToString("g") | Should -Be "9/22/2008 2:01 PM"
+				$result."date-s-should-parse-as-datetime".ToString("G") | Should -Be "9/22/2008 2:01:54 PM"
+				$result."date-s-should-parse-as-datetime".ToString("m") | Should -Be "September 22"
+				$result."date-s-should-parse-as-datetime".ToString("M") | Should -Be "September 22"
+				$result."date-s-should-parse-as-datetime".ToString("o") | Should -Be "2008-09-22T14:01:54.0000000Z"
+				$result."date-s-should-parse-as-datetime".ToString("O") | Should -Be "2008-09-22T14:01:54.0000000Z"
+				$result."date-s-should-parse-as-datetime".ToString("R") | Should -Be "Mon, 22 Sep 2008 14:01:54 GMT"
+				$result."date-s-should-parse-as-datetime".ToString("s") | Should -Be "2008-09-22T14:01:54"
+				$result."date-s-should-parse-as-datetime".ToString("t") | Should -Be "2:01 PM"
+				$result."date-s-should-parse-as-datetime".ToString("T") | Should -Be "2:01:54 PM"
+				$result."date-s-should-parse-as-datetime".ToString("u") | Should -Be "2008-09-22 14:01:54Z"
+				$result."date-s-should-parse-as-datetime".ToString("U") | Should -Be "Monday, September 22, 2008 2:01:54 PM"
+				$result."date-s-should-parse-as-datetime".ToString("Y") | Should -Be "September 2008"
+				$result."date-s-should-parse-as-datetime".ToString("y") | Should -Be "September 2008"
+				$result."date-s-should-parse-as-datetime" | Should -BeOfType [DateTime]
+				
+                $result."date-upperO-should-parse-as-datetime" = [datetime]::SpecifyKind($result."date-upperO-should-parse-as-datetime", [System.DateTimeKind]::Utc)
+				$result."date-upperO-should-parse-as-datetime".ToString("d") | Should -Be "9/22/2008"
+				$result."date-upperO-should-parse-as-datetime".ToString("D") | Should -Be "Monday, September 22, 2008"
+				$result."date-upperO-should-parse-as-datetime".ToString("f") | Should -Be "Monday, September 22, 2008 2:01 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("F") | Should -Be "Monday, September 22, 2008 2:01:54 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("g") | Should -Be "9/22/2008 2:01 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("G") | Should -Be "9/22/2008 2:01:54 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("m") | Should -Be "September 22"
+				$result."date-upperO-should-parse-as-datetime".ToString("M") | Should -Be "September 22"
+				$result."date-upperO-should-parse-as-datetime".ToString("o") | Should -Be "2008-09-22T14:01:54.9571247Z"
+				$result."date-upperO-should-parse-as-datetime".ToString("O") | Should -Be "2008-09-22T14:01:54.9571247Z"
+				$result."date-upperO-should-parse-as-datetime".ToString("R") | Should -Be "Mon, 22 Sep 2008 14:01:54 GMT"
+				$result."date-upperO-should-parse-as-datetime".ToString("s") | Should -Be "2008-09-22T14:01:54"
+				$result."date-upperO-should-parse-as-datetime".ToString("t") | Should -Be "2:01 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("T") | Should -Be "2:01:54 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("u") | Should -Be "2008-09-22 14:01:54Z"
+				$result."date-upperO-should-parse-as-datetime".ToString("U") | Should -Be "Monday, September 22, 2008 2:01:54 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("Y") | Should -Be "September 2008"
+				$result."date-upperO-should-parse-as-datetime".ToString("y") | Should -Be "September 2008"
+				$result."date-upperO-should-parse-as-datetime" | Should -BeOfType [DateTime]
+				
+				$result."date-o-should-parse-as-string" | Should -Be "2019-12-17T06:14:06 +06:00"
+				$result."date-o-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-f-should-parse-as-string" | Should -Be "Monday, September 22, 2008 2:01 PM"
+				$result."date-f-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-g-should-parse-as-string" | Should -Be "9/22/2008 2:01 PM"
+				$result."date-g-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-m-should-parse-as-string" | Should -Be "September 22"
+				$result."date-m-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperM-should-parse-as-string" | Should -Be "September 22"
+				$result."date-upperM-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-t-should-parse-as-string" | Should -Be "2:01 PM"
+				$result."date-t-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-u-should-parse-as-string" | Should -Be "2008-09-22 14:01:54Z"
+				$result."date-u-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperD-should-parse-as-string" | Should -Be "Monday, September 22, 2008"
+				$result."date-upperD-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperF-should-parse-as-string" | Should -Be "Monday, September 22, 2008 2:01:54 PM"
+				$result."date-upperF-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperG-should-parse-as-string" | Should -Be "9/22/2008 2:01:54 PM"
+				$result."date-upperG-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperR-should-parse-as-string" | Should -Be "Mon, 22 Sep 2008 14:01:54 GMT"
+				$result."date-upperR-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperT-should-parse-as-string" | Should -Be "2:01:54 PM"
+				$result."date-upperT-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperU-should-parse-as-string" | Should -Be "Monday, September 22, 2008 2:01:54 PM"
+				$result."date-upperU-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-upperY-should-parse-as-string" | Should -Be "September 2008"
+				$result."date-upperY-should-parse-as-string" | Should -BeOfType [String]
+				$result."date-y-should-parse-as-string" | Should -Be "September 2008"
+				$result."date-y-should-parse-as-string" | Should -BeOfType [String]
+			}
+		}
+		
+		It "ConvertFrom-Json properly parses complex objects" {
+			$json = @"
+{
+"_id": "60dd3ea9253016932039a0a2",
+"index": 0,
+"guid": "429b96a7-24e3-47de-a93b-f44a346c5ac9",
+"isActive": false,
+"balance": "$2,039.72",
+"picture": "http://placehold.it/32x32",
+"age": 35,
+"eyeColor": "green",
+"name": "Rhodes Roberson",
+"gender": "male",
+"company": "INSECTUS",
+"email": "rhodesroberson@insectus.com",
+"phone": "+1 (883) 561-3999",
+"address": "931 Kings Place, Hartsville/Hartley, Federated States Of Micronesia, 9344",
+"about": "Ipsum pariatur nisi eiusmod aliquip in cupidatat. Deserunt non sit anim consectetur consectetur incididunt elit qui id proident nostrud. Consectetur pariatur et adipisicing aliquip fugiat fugiat Lorem reprehenderit laboris magna. Duis veniam irure amet ex minim eiusmod et laborum non elit. Dolor enim Lorem occaecat nisi consectetur mollit laborum anim velit et. Irure aliquip eiusmod anim proident ex ea duis deserunt aute amet adipisicing nisi nostrud. Minim ipsum fugiat consequat mollit fugiat tempor fugiat.",
+"registered": "2019-12-17T06:14:06 +06:00",
+"latitude": 51.890798,
+"longitude": -47.522764,
+"tags": [
+  "laboris",
+  "voluptate",
+  "amet",
+  "ad",
+  "velit",
+  "ipsum",
+  "do"
+],
+"friends": [
+  {
+	"id": 0,
+	"name": "Renee Holden"
+  },
+  {
+	"id": 1,
+	"name": "Bennett Dixon"
+  },
+  {
+	"id": 2,
+	"name": "Emilia Holder"
+  }
+],
+"greeting": "Hello, Rhodes Roberson! You have 9 unread messages.",
+"favoriteFruit": "banana"
+}
+"@
+			$result = ConvertFrom-Json $Json
+			$result."about"| Should -BeExactly "Ipsum pariatur nisi eiusmod aliquip in cupidatat. Deserunt non sit anim consectetur consectetur incididunt elit qui id proident nostrud. Consectetur pariatur et adipisicing aliquip fugiat fugiat Lorem reprehenderit laboris magna. Duis veniam irure amet ex minim eiusmod et laborum non elit. Dolor enim Lorem occaecat nisi consectetur mollit laborum anim velit et. Irure aliquip eiusmod anim proident ex ea duis deserunt aute amet adipisicing nisi nostrud. Minim ipsum fugiat consequat mollit fugiat tempor fugiat."
+			$result."about" | Should -BeOfType [String]
+			$result."address"| Should -BeExactly "931 Kings Place, Hartsville/Hartley, Federated States Of Micronesia, 9344"
+			$result."address" | Should -BeOfType [String]
+			$result."age" | Should -BeOfType [Int64]
+			$result."balance"| Should -BeExactly ",039.72"
+			$result."balance" | Should -BeOfType [String]
+			$result."company"| Should -BeExactly "INSECTUS"
+			$result."company" | Should -BeOfType [String]
+			$result."email"| Should -BeExactly "rhodesroberson@insectus.com"
+			$result."email" | Should -BeOfType [String]
+			$result."eyeColor"| Should -BeExactly "green"
+			$result."eyeColor" | Should -BeOfType [String]
+			$result."favoriteFruit"| Should -BeExactly "banana"
+			$result."favoriteFruit" | Should -BeOfType [String]
+			$result."gender"| Should -BeExactly "male"
+			$result."gender" | Should -BeOfType [String]
+			$result."greeting"| Should -BeExactly "Hello, Rhodes Roberson! You have 9 unread messages."
+			$result."greeting" | Should -BeOfType [String]
+			$result."guid"| Should -BeExactly "429b96a7-24e3-47de-a93b-f44a346c5ac9"
+			$result."guid" | Should -BeOfType [String]
+			$result."index" | Should -BeOfType [Int64]
+			$result."isActive"| Should -Be False
+			$result."isActive" | Should -BeOfType [Boolean]
+			$result."latitude"| Should -Be 51.890798
+			$result."latitude" | Should -BeOfType [Double]
+			$result."longitude"| Should -Be -47.522764
+			$result."longitude" | Should -BeOfType [Double]
+			$result."name"| Should -BeExactly "Rhodes Roberson"
+			$result."name" | Should -BeOfType [String]
+			$result."phone"| Should -BeExactly "+1 (883) 561-3999"
+			$result."phone" | Should -BeOfType [String]
+			$result."picture"| Should -BeExactly "http://placehold.it/32x32"
+			$result."picture" | Should -BeOfType [String]
+			$result."registered"| Should -BeExactly "2019-12-17T06:14:06 +06:00"
+			$result."registered" | Should -BeOfType [String]
+			$result."_id"| Should -BeExactly "60dd3ea9253016932039a0a2"
+			$result."_id" | Should -BeOfType [String]
+			
+			$result.Tags | Should -BeOfType [string]
+			
+			$result.Tags.count | Should -Be 7 
+			$result.Tags[0] | Should -BeExactly "laboris"
+			$result.Tags | Should -Be @("laboris", "voluptate", "amet", "ad", "velit", "ipsum", "do")
+			
+			$result.Friends | Should -BeOfType [pscustomobject]
+			$result.Friends[0].id | Should -Be 0
+			$result.Friends[0].name | Should -BeExactly "Renee Holden"
+			$result.Friends[1].id | Should -Be 1
+			$result.Friends[1].name | Should -BeExactly "Bennett Dixon"
+			$result.Friends[2].id | Should -Be 2
+			$result.Friends[2].name | Should -BeExactly "Emilia Holder"
+		}
+		
+		It "ConvertFrom-Json chooses the appropriate number type" {
+			ConvertFrom-Json -InputObject "5" | should -Be 5
+			ConvertFrom-Json -InputObject 5 | should -Be 5
+			ConvertFrom-Json -InputObject "5" | should -BeOfType [int64]
+			ConvertFrom-Json -InputObject 5 | should -BeOfType [int64]
+			ConvertFrom-Json -InputObject 5000000000000 | should -Be 5000000000000
+			ConvertFrom-Json -InputObject "5000000000000" | should -Be "5000000000000"
+			ConvertFrom-Json -InputObject "5000000000000" | should -BeOfType [int64]
+			ConvertFrom-Json -InputObject 5000000000000 | should -BeOfType [int64]
+			ConvertFrom-Json -InputObject "5.0" | should -Be 5.0
+			ConvertFrom-Json -InputObject 5.0 | should -Be 5.0
+			ConvertFrom-Json -InputObject "5.0" | should -BeOfType [double]
+			ConvertFrom-Json -InputObject 5.0 | should -BeOfType [double]
+			
+			# The decimal is lost but only when this is quoted
+			ConvertFrom-Json -InputObject "500000000000.0000000000000001" | should -Be "500000000000"
+			
+			# Counter intuitively all four of these tests pass because precision is lost on both sides of the test, likely due to powershell number handling
+			ConvertFrom-Json -InputObject 500000000000.0000000000000001 | should -Be 500000000000
+			ConvertFrom-Json -InputObject 500000000000.0000000000000001 | should -Be 500000000000.0000000000000001
+			ConvertFrom-Json -InputObject 500000000000 | should -Be 500000000000.0000000000000001
+			ConvertFrom-Json -InputObject 500000000000 | should -Be 500000000000
+			
+			ConvertFrom-Json -InputObject "500000000000.0000000000000001" | should -BeOfType [double]
+			ConvertFrom-Json -InputObject 500000000000.0000000000000001 | should -BeOfType [double]
+			
+			# these tests also pass because precision is lost during conversion/powershell handling
+			ConvertFrom-Json -InputObject "50000000000000000000000000000000000.0000000000000001" | should -Be "5E+34"
+			ConvertFrom-Json -InputObject 50000000000000000000000000000000000.0000000000000001 | should -Be "5E+34"
+			
+			ConvertFrom-Json -InputObject "50000000000000000000000000000000000.0000000000000001" | should -BeOfType [double]
+			ConvertFrom-Json -InputObject 50000000000000000000000000000000000.0000000000000001 | should -BeOfType [double]
+			
+			
+			ConvertFrom-Json -InputObject "50000000000000000000000000000000000" | should -Be 50000000000000000000000000000000000
+			ConvertFrom-Json -InputObject 50000000000000000000000000000000000 | should -Be 50000000000000000000000000000000000
+			ConvertFrom-Json -InputObject "50000000000000000000000000000000000" | should -BeOfType [BigInt]
+			ConvertFrom-Json -InputObject 50000000000000000000000000000000000 | should -BeOfType [BigInt]
+		}
+		
         It "ConvertFrom-Json with special characters" {
 
             $json = '{"SampleValue":"\"\\\b\f\n\r\t\u4321\uD7FF"}'
@@ -1237,7 +1489,7 @@ Describe "Validate Json serialization" -Tags "CI" {
             param ($testCase)
 
             if ( $TestCase.TestInput -eq "[char]::MinValue" ) { $pending = $true } else { $pending = $false }
-            It "Validate '$($testCase.TestInput) | ConvertTo-Json' and '$($testCase.TestInput) | ConvertTo-Json | ConvertFrom-Json'" -pending:$pending {
+            It "Validate '$($testCase.TestInput) | ConvertTo-Json' and '$($testCase.TestInput) | ConvertTo-Json | ConvertFrom-Json'" -Pending:$pending {
 
                 # The test case input is executed via invoke-expression. Then, we use this value as an input to ConvertTo-Json,
                 # and the result is saved into in the $result.ToJson variable. Lastly, this value is deserialized back using
@@ -1292,7 +1544,7 @@ Describe "Validate Json serialization" -Tags "CI" {
             }
         }
 
-        It "Validate that CimClass Properties for win32_bios can be serialized using ConvertTo-Json and ConvertFrom-Json" -skip {
+        It "Validate that CimClass Properties for win32_bios can be serialized using ConvertTo-Json and ConvertFrom-Json" -Skip {
 
             $class = Get-CimClass win32_bios
 
@@ -1418,10 +1670,10 @@ Describe "Json Bug fixes"  -Tags "Feature" {
 
     $testCases = @(
         @{
-            Name = "ConvertTo-Json -Depth 101 throws MaximumAllowedDepthReached when the user specifies a depth greater than 100."
+            Name = "ConvertTo-Json -Depth 101 throws ParameterArgumentValidationError when the user specifies a depth greater than 100."
             NumberOfElements = 10
             MaxDepth = 101
-            FullyQualifiedErrorId = "ReachedMaximumDepthAllowed,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
+            FullyQualifiedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
             ShouldThrow = $true
         }
         @{
@@ -1462,5 +1714,12 @@ Describe "Json Bug fixes"  -Tags "Feature" {
 
         $result = "[1,","2,","3]" | ConvertFrom-Json
         $result.Count | Should -Be 3
+    }
+
+    It 'ConvertTo-Json will output warning if depth is exceeded.' {
+        $a = @{ a = @{ b = @{ c = @{ d = 1 } } } }
+        $json = $a | ConvertTo-Json -Depth 2 -WarningVariable warningMessage -WarningAction SilentlyContinue
+        $json | Should -Not -BeNullOrEmpty
+        $warningMessage | Should -Not -BeNullOrEmpty
     }
 }

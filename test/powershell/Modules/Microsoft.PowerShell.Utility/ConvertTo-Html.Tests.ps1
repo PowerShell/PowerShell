@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "ConvertTo-Html Tests" -Tags "CI" {
 
@@ -120,7 +120,7 @@ After the object
     }
 
     It "Test ConvertTo-HTML meta"{
-        $returnString = ($customObject | ConvertTo-HTML -Meta @{"author"="John Doe"}) -join $newLine
+        $returnString = ($customObject | ConvertTo-Html -Meta @{"author"="John Doe"}) -join $newLine
         $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -141,12 +141,12 @@ After the object
     It "Test ConvertTo-HTML meta with invalid properties should throw warning" {
         $parms = @{"authors"="John Doe";"keywords"="PowerShell,PSv6"}
         # make this a string, rather than an array of string so match will behave
-        [string]$observedProperties = $customObject | ConvertTo-HTML -Meta $parms 3>&1
+        [string]$observedProperties = $customObject | ConvertTo-Html -Meta $parms 3>&1
         $observedProperties | Should -Match $parms["authors"]
     }
 
     It "Test ConvertTo-HTML charset"{
-        $returnString = ($customObject | ConvertTo-HTML -Charset "utf-8") -join $newLine
+        $returnString = ($customObject | ConvertTo-Html -Charset "utf-8") -join $newLine
         $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -165,17 +165,17 @@ After the object
     }
 
     It "Test ConvertTo-HTML transitional"{
-        $returnString = $customObject | ConvertTo-HTML -Transitional | Select-Object -First 1
+        $returnString = $customObject | ConvertTo-Html -Transitional | Select-Object -First 1
         $returnString | Should -Be '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
     }
 
     It "Test ConvertTo-HTML supports scriptblock-based calculated properties: by hashtable" {
-        $returnString = ($customObject | ConvertTo-HTML @{ l = 'NewAge'; e = { $_.Age + 1 } }) -join $newLine
+        $returnString = ($customObject | ConvertTo-Html @{ l = 'NewAge'; e = { $_.Age + 1 } }) -join $newLine
         $returnString | Should -Match '\b43\b'
     }
 
     It "Test ConvertTo-HTML supports scriptblock-based calculated properties: directly" {
-        $returnString = ($customObject | ConvertTo-HTML { $_.Age + 1 }) -join $newLine
+        $returnString = ($customObject | ConvertTo-Html { $_.Age + 1 }) -join $newLine
         $returnString | Should -Match '\b43\b'
     }
 

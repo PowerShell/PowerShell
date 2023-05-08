@@ -1,36 +1,57 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
 
+function GetRandomString()
+{
+    return [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName())
+}
+
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
-        { New-PSSession -ComputerName nonexistcomputer -Authentication Basic } |
+        if ( -not (Get-WsManSupport)) {
+            Set-ItResult -Skipped -Because "MI library not available for this platform"
+            return
+        }
+
+        { New-PSSession -ComputerName (GetRandomString) -Authentication Basic } |
            Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.NewPSSessionCommand"
     }
 }
 
 Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
-    It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -skip:($IsWindows) {
-        $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
+    It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -Skip:($IsWindows) {
+        if ( -not (Get-WsManSupport)) {
+            Set-ItResult -Skipped -Because "MI library not available for this platform"
+            return
+        }
+
+        $password = ConvertTo-SecureString -String (GetRandomString) -AsPlainText -Force
         $credential = [PSCredential]::new('username', $password)
 
         $err = ({New-PSSession -ComputerName 'localhost' -Credential $credential -Authentication Basic}  | Should -Throw -PassThru  -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand')
-        $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
+        $err.Exception | Should -BeOfType System.Management.Automation.Remoting.PSRemotingTransportException
         # Should be PSRemotingErrorId.ConnectFailed
         # Ensures we are looking at the expected instance
         $err.Exception.ErrorCode | Should -Be 801
     }
 
-    It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -skip:($IsWindows) {
-        $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
+    # Skip this test for macOS because the latest OS release is incompatible with our shipped libmi for WinRM/OMI.
+    It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -Skip:($IsWindows) {
+        if ( -not (Get-WsManSupport)) {
+            Set-ItResult -Skipped -Because "MI library not available for this platform"
+            return
+        }
+
+        $password = ConvertTo-SecureString -String (GetRandomString) -AsPlainText -Force
         $credential = [PSCredential]::new('username', $password)
 
         # use a Uri that specifies HTTPS to test Basic Auth logic.
         # NOTE: The connection is expected to fail but not with a  ConnectFailed exception
         $uri = "https://localhost"
         New-PSSession -Uri $uri -Credential $credential -Authentication Basic -ErrorVariable err
-        $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
+        $err.Exception | Should -BeOfType System.Management.Automation.Remoting.PSRemotingTransportException
         $err.FullyQualifiedErrorId | Should -Be '1,PSSessionOpenFailed'
         $err.Exception.HResult | Should -Be 0x80131501
     }
@@ -187,7 +208,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
 
-        if($isWindows)
+        if($IsWindows)
         {
             Remove-PSSession $disconnectedSession,$closedSession,$openSession -ErrorAction SilentlyContinue
         }
@@ -306,5 +327,25 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
         $result = Invoke-Command -Session $openSession -ScriptBlock { $using:number }
         $result | Should -Be 100
     }
-}
 
+    It '$Host.Version should be PSVersion' {
+        $session = New-RemoteSession -ConfigurationName $endPoint
+        try {
+            $result = Invoke-Command -Session $session -ScriptBlock { $Host.Version }
+            $result | Should -Be $PSVersionTable.PSVersion
+        }
+        finally {
+            $session | Remove-PSSession -ErrorAction Ignore
+        }
+    }
+
+    It 'Language Mode is FullLanguage by default' {
+        $session = New-RemoteSession -ConfigurationName $endPoint
+        try {
+            $result = Invoke-Command -Session $session -ScriptBlock { $ExecutionContext.SessionState.LanguageMode }
+            $result | Should -Be ([System.Management.Automation.PSLanguageMode]::FullLanguage)
+        } finally {
+            $session | Remove-PSSession -ErrorAction Ignore
+        }
+    }
+}

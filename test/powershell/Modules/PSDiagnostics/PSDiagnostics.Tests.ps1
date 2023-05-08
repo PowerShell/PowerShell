@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
@@ -20,7 +20,7 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
     }
 
     Context "Test for Enable-PSTrace and Disable-PSTrace cmdlets." {
-        it "Should enable $LogType logs for Microsoft-Windows-PowerShell." {
+        It "Should enable $LogType logs for Microsoft-Windows-PowerShell." {
             [XML]$CurrentSetting = & wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
             if($CurrentSetting.Channel.Enabled -eq 'true'){
                 & wevtutil sl Microsoft-Windows-PowerShell/$LogType /e:false /q
@@ -33,7 +33,7 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
             $ExpectedOutput.Channel.enabled | Should -BeExactly 'true'
         }
 
-        it "Should disable $LogType logs for Microsoft-Windows-PowerShell." {
+        It "Should disable $LogType logs for Microsoft-Windows-PowerShell." {
             [XML]$CurrentState = & wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
             if($CurrentState.channel.enabled -eq 'false'){
                 & wevtutil sl Microsoft-Windows-PowerShell/$LogType /e:true /q
@@ -47,7 +47,7 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
     }
 
     Context "Test for Get-LogProperties cmdlet." {
-        it "Should return properties of $LogType logs for 'Microsoft-Windows-PowerShell'." {
+        It "Should return properties of $LogType logs for 'Microsoft-Windows-PowerShell'." {
             [XML]$ExpectedOutput = wevtutil gl Microsoft-Windows-PowerShell/$LogType /f:xml
 
             $LogProperty = Get-LogProperties -Name Microsoft-Windows-PowerShell/$LogType
@@ -78,7 +78,7 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
             }
         }
 
-        it "Should invert AutoBackup setting of $LogType logs for 'Microsoft-Windows-PowerShell'." {
+        It "Should invert AutoBackup setting of $LogType logs for 'Microsoft-Windows-PowerShell'." {
             $LogPropertyToSet.AutoBackup = -not $LogPropertyToSet.AutoBackup
             Set-LogProperties -LogDetails $LogPropertyToSet -Force
 
@@ -86,7 +86,7 @@ Describe "PSDiagnostics cmdlets tests." -Tag "CI", "RequireAdminOnWindows" {
             (Get-LogProperties -Name Microsoft-Windows-PowerShell/$LogType).AutoBackup | Should -Be ([bool]::Parse($ExpectedOutput.Channel.Logging.AutoBackup))
         }
 
-        it "Should throw exception for invalid LogName." {
+        It "Should throw exception for invalid LogName." {
             {Set-LogProperties -LogDetails 'Foo' -Force } | Should -Throw -ErrorId 'ParameterArgumentTransformationError'
         }
     }

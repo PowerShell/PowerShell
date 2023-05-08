@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -140,5 +140,23 @@
   </data>
   <data name="CannotEncryptSecureString" xml:space="preserve">
     <value>Session key not available to encrypt secure string.</value>
+  </data>
+  <data name="InvalidOffset" xml:space="preserve">
+    <value>Invalid buffer offset.</value>
+  </data>
+  <data name="InvalidPublicKey" xml:space="preserve">
+    <value>Invalid public key data.</value>
+  </data>
+  <data name="CannotImportPublicKey" xml:space="preserve">
+    <value>Cannot import public key.</value>
+  </data>
+  <data name="InvalidSessionKey" xml:space="preserve">
+    <value>Invalid session key data.</value>
+  </data>
+  <data name="ScriptFileBlockedBySystemPolicy" xml:space="preserve">
+    <value>Script file, '{0}', is blocked from running by system policy.</value>
+  </data>
+  <data name="UnknownSystemScriptFileEnforcement" xml:space="preserve">
+    <value>An unknown script file policy enforcement value was returned: {0}.</value>
   </data>
 </root>

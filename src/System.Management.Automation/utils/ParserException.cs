@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -9,13 +9,14 @@ using System.Runtime.Serialization;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines the exception thrown when a syntax error occurs while parsing msh script text.
+    /// Defines the exception thrown when a syntax error occurs while parsing PowerShell script text.
     /// </summary>
     [Serializable]
     public class ParseException : RuntimeException
     {
         private const string errorIdString = "Parse";
-        private ParseError[] _errors;
+
+        private readonly ParseError[] _errors;
 
         /// <summary>
         /// The list of parser errors.
@@ -47,7 +48,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -126,13 +127,11 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ParseException class with a collection of error messages.
         /// </summary>
         /// <param name="errors">The collection of error messages.</param>
-        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors",
-            Justification = "ErrorRecord is not overridden in classes deriving from ParseException")]
-        public ParseException(Language.ParseError[] errors)
+        public ParseException(ParseError[] errors)
         {
-            if ((errors == null) || (errors.Length == 0))
+            if (errors is null || errors.Length == 0)
             {
-                throw new ArgumentNullException("errors");
+                throw new ArgumentNullException(nameof(errors));
             }
 
             _errors = errors;
@@ -160,8 +159,8 @@ namespace System.Management.Automation
 
                 // Report at most the first 10 errors
                 var errorsToReport = (_errors.Length > 10)
-                    ? _errors.Take(10).Select(e => e.ToString()).Append(ParserStrings.TooManyErrors)
-                    : _errors.Select(e => e.ToString());
+                    ? _errors.Take(10).Select(static e => e.ToString()).Append(ParserStrings.TooManyErrors)
+                    : _errors.Select(static e => e.ToString());
 
                 return string.Join(Environment.NewLine + Environment.NewLine, errorsToReport);
             }
@@ -169,7 +168,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines the exception thrown when a incomplete parse error occurs while parsing msh script text.
+    /// Defines the exception thrown when a incomplete parse error occurs while parsing PowerShell script text.
     /// </summary>
     /// <remarks>
     /// This is a variation on a parsing error that indicates that the parse was incomplete

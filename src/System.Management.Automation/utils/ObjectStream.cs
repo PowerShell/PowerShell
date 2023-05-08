@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 namespace System.Management.Automation.Internal
@@ -287,7 +287,7 @@ namespace System.Management.Automation.Internal
         /// </exception>
         /// <remarks>
         /// If the enumeration contains elements equal to
-        /// AutomationNull.Value, they are are ignored.
+        /// AutomationNull.Value, they are ignored.
         /// This can cause the return value to be less than the size of
         /// the collection.
         /// </remarks>
@@ -401,7 +401,7 @@ namespace System.Management.Automation.Internal
         // PERF-2003/08/22-JonN We should probably use Queue instead
         // PERF-2004/06/30-JonN Probably more efficient to use type
         //  Collection<object> as the underlying store
-        private List<object> _objects;
+        private readonly List<object> _objects;
 
         /// <summary>
         /// Is the stream open or closed for writing?
@@ -420,7 +420,7 @@ namespace System.Management.Automation.Internal
         /// the stream is closed for reading.  Instead, use WaitAny on
         /// this handle and also _readClosedHandle.
         /// </remarks>
-        private AutoResetEvent _readHandle;
+        private readonly AutoResetEvent _readHandle;
 
         /// <summary>
         /// Handle returned to callers for blocking on data ready.
@@ -431,7 +431,7 @@ namespace System.Management.Automation.Internal
         /// When this handle is set, the stream is closed for reading,
         /// so all blocked readers should be released.
         /// </summary>
-        private ManualResetEvent _readClosedHandle;
+        private readonly ManualResetEvent _readClosedHandle;
 
         /// <summary>
         /// Write handle - signaled with the number of objects in the
@@ -446,7 +446,7 @@ namespace System.Management.Automation.Internal
         /// the stream is closed for writing.  Instead, use WaitAny on
         /// this handle and also _writeClosedHandle.
         /// </remarks>
-        private AutoResetEvent _writeHandle;
+        private readonly AutoResetEvent _writeHandle;
 
         /// <summary>
         /// Handle returned to callers for blocking until buffer space
@@ -458,7 +458,7 @@ namespace System.Management.Automation.Internal
         /// When this handle is set, the stream is closed for writing,
         /// so all blocked readers should be released.
         /// </summary>
-        private ManualResetEvent _writeClosedHandle;
+        private readonly ManualResetEvent _writeClosedHandle;
         #endregion Synchronization handles
 
         /// <summary>
@@ -493,7 +493,7 @@ namespace System.Management.Automation.Internal
         /// Note that this is not permitted to be more than Int32.MaxValue,
         /// since the underlying list has this limitation.
         /// </summary>
-        private int _capacity = Int32.MaxValue;
+        private readonly int _capacity = Int32.MaxValue;
 
         /// <summary>
         /// This object is used to acquire an exclusive lock on the stream.
@@ -503,7 +503,7 @@ namespace System.Management.Automation.Internal
         /// we are protected from outside code interfering in our
         /// critical section.  Thanks to Wintellect for the hint.
         /// </remarks>
-        private object _monitorObject = new Object();
+        private readonly object _monitorObject = new object();
 
         /// <summary>
         /// Indicates if this stream has already been disposed.
@@ -541,7 +541,7 @@ namespace System.Management.Automation.Internal
         {
             if (capacity <= 0 || capacity > Int32.MaxValue)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("capacity", capacity);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(capacity), capacity);
             }
 
             // the maximum number of objects to allow in the stream at a given time.
@@ -609,15 +609,12 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    if (_readWaitHandle == null)
-                    {
-                        // Create the handle signaled if there are objects in the stream
-                        // or the stream has been closed.  The closed scenario addresses
-                        // Pipeline readers that execute asynchronously.  Since the pipeline
-                        // may complete with zero objects before the caller objects this
-                        // handle, it will block indefinitely unless it is set.
-                        _readWaitHandle = new ManualResetEvent(_objects.Count > 0 || !_isOpen);
-                    }
+                    // Create the handle signaled if there are objects in the stream
+                    // or the stream has been closed.  The closed scenario addresses
+                    // Pipeline readers that execute asynchronously.  Since the pipeline
+                    // may complete with zero objects before the caller objects this
+                    // handle, it will block indefinitely unless it is set.
+                    _readWaitHandle ??= new ManualResetEvent(_objects.Count > 0 || !_isOpen);
 
                     handle = _readWaitHandle;
                 }
@@ -642,10 +639,7 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    if (_writeWaitHandle == null)
-                    {
-                        _writeWaitHandle = new ManualResetEvent(_objects.Count < _capacity || !_isOpen);
-                    }
+                    _writeWaitHandle ??= new ManualResetEvent(_objects.Count < _capacity || !_isOpen);
 
                     handle = _writeWaitHandle;
                 }
@@ -665,17 +659,14 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    if (_reader == null)
-                    {
-                        // Always return an object reader, even if the stream
-                        // is closed. This is to address requesting the object reader
-                        // after calling Pipeline.Execute(). NOTE: If Execute completes
-                        // without writing data to the output queue, the
-                        // stream will be in the EndOfPipeline state because the
-                        // stream is closed and has zero data.  Since this is a valid
-                        // and expected execution path, we don't want to throw an exception.
-                        _reader = new ObjectReader(this);
-                    }
+                    // Always return an object reader, even if the stream
+                    // is closed. This is to address requesting the object reader
+                    // after calling Pipeline.Execute(). NOTE: If Execute completes
+                    // without writing data to the output queue, the
+                    // stream will be in the EndOfPipeline state because the
+                    // stream is closed and has zero data.  Since this is a valid
+                    // and expected execution path, we don't want to throw an exception.
+                    _reader ??= new ObjectReader(this);
 
                     reader = _reader;
                 }
@@ -695,17 +686,14 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    if (_mshreader == null)
-                    {
-                        // Always return an object reader, even if the stream
-                        // is closed. This is to address requesting the object reader
-                        // after calling Pipeline.Execute(). NOTE: If Execute completes
-                        // without writing data to the output queue, the
-                        // stream will be in the EndOfPipeline state because the
-                        // stream is closed and has zero data.  Since this is a valid
-                        // and expected execution path, we don't want to throw an exception.
-                        _mshreader = new PSObjectReader(this);
-                    }
+                    // Always return an object reader, even if the stream
+                    // is closed. This is to address requesting the object reader
+                    // after calling Pipeline.Execute(). NOTE: If Execute completes
+                    // without writing data to the output queue, the
+                    // stream will be in the EndOfPipeline state because the
+                    // stream is closed and has zero data.  Since this is a valid
+                    // and expected execution path, we don't want to throw an exception.
+                    _mshreader ??= new PSObjectReader(this);
 
                     reader = _mshreader;
                 }
@@ -726,10 +714,7 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    if (_writer == null)
-                    {
-                        _writer = new ObjectWriter(this) as PipelineWriter;
-                    }
+                    _writer ??= new ObjectWriter(this) as PipelineWriter;
 
                     writer = _writer;
                 }
@@ -755,7 +740,7 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    endOfStream = (_objects.Count == 0 && _isOpen == false);
+                    endOfStream = (_objects.Count == 0 && !_isOpen);
                 }
 
                 return endOfStream;
@@ -824,7 +809,7 @@ namespace System.Management.Automation.Internal
         /// </remarks>
         private bool WaitRead()
         {
-            if (EndOfPipeline == false)
+            if (!EndOfPipeline)
             {
                 try
                 {
@@ -839,7 +824,7 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            return EndOfPipeline == false;
+            return !EndOfPipeline;
         }
 
         /// <summary>
@@ -1124,7 +1109,7 @@ namespace System.Management.Automation.Internal
         {
             if (count < 0)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("count", count);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(count), count);
             }
 
             if (count == 0)
@@ -1232,7 +1217,7 @@ namespace System.Management.Automation.Internal
 
             if (maxRequested < 0)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("maxRequested", maxRequested);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(maxRequested), maxRequested);
             }
 
             try
@@ -1317,7 +1302,7 @@ namespace System.Management.Automation.Internal
         /// </exception>
         /// <remarks>
         /// If the enumeration contains elements equal to
-        /// AutomationNull.Value, they are are ignored.
+        /// AutomationNull.Value, they are ignored.
         /// This can cause the return value to be less than the size of
         /// the collection.
         /// </remarks>
@@ -1383,7 +1368,7 @@ namespace System.Management.Automation.Internal
 
                 // wait for buffer available
                 // false indicates EndOfPipeline
-                if (WaitWrite() == false)
+                if (!WaitWrite())
                 {
                     break;
                 }
@@ -1403,7 +1388,7 @@ namespace System.Management.Automation.Internal
                         // subtraction to ensure we don't have an
                         // overflow exception
                         int freeSpace = _capacity - _objects.Count;
-                        if (0 >= freeSpace)
+                        if (freeSpace <= 0)
                         {
                             // NOTE: lock is released in finally
                             continue;
@@ -1511,16 +1496,8 @@ namespace System.Management.Automation.Internal
                 _writeHandle.Dispose();
                 _writeClosedHandle.Dispose();
                 _readClosedHandle.Dispose();
-
-                if (_readWaitHandle != null)
-                {
-                    _readWaitHandle.Dispose();
-                }
-
-                if (_writeWaitHandle != null)
-                {
-                    _writeWaitHandle.Dispose();
-                }
+                _readWaitHandle?.Dispose();
+                _writeWaitHandle?.Dispose();
 
                 if (_reader != null)
                 {
@@ -1551,15 +1528,15 @@ namespace System.Management.Automation.Internal
     {
         #region Private Fields
 
-        private PSDataCollection<T> _objects;
-        private Guid _psInstanceId;
+        private readonly PSDataCollection<T> _objects;
+        private readonly Guid _psInstanceId;
         private bool _isOpen;
         private PipelineWriter _writer;
         private PipelineReader<object> _objectReader;
         private PipelineReader<PSObject> _psobjectReader;
         private PipelineReader<object> _objectReaderForPipeline;
         private PipelineReader<PSObject> _psobjectReaderForPipeline;
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
         private bool _disposed = false;
 
         #endregion
@@ -1583,7 +1560,7 @@ namespace System.Management.Automation.Internal
         {
             if (storeToUse == null)
             {
-                throw PSTraceSource.NewArgumentNullException("storeToUse");
+                throw PSTraceSource.NewArgumentNullException(nameof(storeToUse));
             }
 
             _objects = storeToUse;
@@ -1686,10 +1663,7 @@ namespace System.Management.Automation.Internal
                 {
                     lock (_syncObject)
                     {
-                        if (_objectReader == null)
-                        {
-                            _objectReader = new PSDataCollectionReader<T, object>(this);
-                        }
+                        _objectReader ??= new PSDataCollectionReader<T, object>(this);
                     }
                 }
 
@@ -1711,11 +1685,8 @@ namespace System.Management.Automation.Internal
             {
                 lock (_syncObject)
                 {
-                    if (_objectReaderForPipeline == null)
-                    {
-                        _objectReaderForPipeline =
-                            new PSDataCollectionPipelineReader<T, object>(this, computerName, runspaceId);
-                    }
+                    _objectReaderForPipeline ??=
+                        new PSDataCollectionPipelineReader<T, object>(this, computerName, runspaceId);
                 }
             }
 
@@ -1733,10 +1704,7 @@ namespace System.Management.Automation.Internal
                 {
                     lock (_syncObject)
                     {
-                        if (_psobjectReader == null)
-                        {
-                            _psobjectReader = new PSDataCollectionReader<T, PSObject>(this);
-                        }
+                        _psobjectReader ??= new PSDataCollectionReader<T, PSObject>(this);
                     }
                 }
 
@@ -1758,11 +1726,8 @@ namespace System.Management.Automation.Internal
             {
                 lock (_syncObject)
                 {
-                    if (_psobjectReaderForPipeline == null)
-                    {
-                        _psobjectReaderForPipeline =
-                            new PSDataCollectionPipelineReader<T, PSObject>(this, computerName, runspaceId);
-                    }
+                    _psobjectReaderForPipeline ??=
+                        new PSDataCollectionPipelineReader<T, PSObject>(this, computerName, runspaceId);
                 }
             }
 
@@ -1784,10 +1749,7 @@ namespace System.Management.Automation.Internal
                 {
                     lock (_syncObject)
                     {
-                        if (_writer == null)
-                        {
-                            _writer = new PSDataCollectionWriter<T>(this) as PipelineWriter;
-                        }
+                        _writer ??= new PSDataCollectionWriter<T>(this) as PipelineWriter;
                     }
                 }
 
@@ -1979,4 +1941,3 @@ namespace System.Management.Automation.Internal
         #endregion IDisposable
     }
 }
-

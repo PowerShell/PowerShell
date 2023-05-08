@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -116,14 +116,14 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             foreach (string path in paths)
             {
                 if (path == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("paths");
+                    throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
 
                 ProviderInfo provider = null;
@@ -416,7 +416,7 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             if (property == null)
@@ -480,19 +480,19 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             if (property == null)
             {
-                throw PSTraceSource.NewArgumentNullException("property");
+                throw PSTraceSource.NewArgumentNullException(nameof(property));
             }
 
             foreach (string path in paths)
             {
                 if (path == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("paths");
+                    throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
 
                 ProviderInfo provider = null;
@@ -789,12 +789,12 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             if (propertyToClear == null)
             {
-                throw PSTraceSource.NewArgumentNullException("propertyToClear");
+                throw PSTraceSource.NewArgumentNullException(nameof(propertyToClear));
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -845,19 +845,19 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             if (propertyToClear == null)
             {
-                throw PSTraceSource.NewArgumentNullException("propertyToClear");
+                throw PSTraceSource.NewArgumentNullException(nameof(propertyToClear));
             }
 
             foreach (string path in paths)
             {
                 if (path == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("paths");
+                    throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
 
                 ProviderInfo provider = null;

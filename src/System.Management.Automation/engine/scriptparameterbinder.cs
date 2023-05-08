@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -48,6 +48,7 @@ namespace System.Management.Automation
 
         private readonly CallSite<Func<CallSite, object, object>> _copyMutableValueSite =
             CallSite<Func<CallSite, object, object>>.Create(PSVariableAssignmentBinder.Get());
+
         internal object CopyMutableValues(object o)
         {
             // The variable assignment binder copies mutable values and returns other values as is.
@@ -160,7 +161,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The script that is being bound to.
         /// </summary>
-        internal ScriptBlock Script { get; private set; }
+        internal ScriptBlock Script { get; }
 
         internal SessionStateScope LocalScope { get; set; }
 

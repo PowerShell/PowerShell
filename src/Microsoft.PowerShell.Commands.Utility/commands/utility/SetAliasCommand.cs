@@ -1,7 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -10,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "set-alias" cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "Alias", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113390")]
+    [Cmdlet(VerbsCommon.Set, "Alias", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096625")]
     [OutputType(typeof(AliasInfo))]
     public class SetAliasCommand : WriteAliasCommandBase
     {
@@ -24,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
             // Create the alias info
 
             AliasInfo aliasToSet =
-                new AliasInfo(
+                new(
                     Name,
                     Value,
                     Context,

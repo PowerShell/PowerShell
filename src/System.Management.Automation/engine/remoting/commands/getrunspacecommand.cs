@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
     ///     get-psession -ContainerId containerId -InstanceId instanceId.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PSSession", DefaultParameterSetName = PSRunspaceCmdlet.NameParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135219", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096697", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
     public class GetPSSessionCommand : PSRunspaceCmdlet, IDisposable
     {
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
-        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
+        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If that's
         /// not specified as well, then "WSMAN" will be used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -78,7 +78,10 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = GetPSSessionCommand.ComputerInstanceIdParameterSet)]
         public string ApplicationName
         {
-            get { return _appName; }
+            get
+            {
+                return _appName;
+            }
 
             set
             {
@@ -202,7 +205,10 @@ namespace Microsoft.PowerShell.Commands
         [Credential()]
         public PSCredential Credential
         {
-            get { return _psCredential; }
+            get
+            {
+                return _psCredential;
+            }
 
             set
             {
@@ -223,7 +229,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.ConnectionUriInstanceIdParameterSet)]
         public AuthenticationMechanism Authentication
         {
-            get { return _authentication; }
+            get
+            {
+                return _authentication;
+            }
 
             set
             {
@@ -245,7 +254,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.ConnectionUriInstanceIdParameterSet)]
         public string CertificateThumbprint
         {
-            get { return _thumbprint; }
+            get
+            {
+                return _thumbprint;
+            }
 
             set
             {
@@ -331,10 +343,7 @@ namespace Microsoft.PowerShell.Commands
         {
             base.BeginProcessing();
 
-            if (ConfigurationName == null)
-            {
-                ConfigurationName = string.Empty;
-            }
+            ConfigurationName ??= string.Empty;
         }
 
         /// <summary>
@@ -525,10 +534,10 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         // Object used for querying remote runspaces.
-        private QueryRunspaces _queryRunspaces = new QueryRunspaces();
+        private readonly QueryRunspaces _queryRunspaces = new QueryRunspaces();
 
         // Object to collect output data from multiple threads.
-        private ObjectStream _stream = new ObjectStream();
+        private readonly ObjectStream _stream = new ObjectStream();
 
         #endregion
     }

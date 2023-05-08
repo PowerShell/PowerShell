@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Format-Wide" -Tags "CI" {
     BeforeAll {
@@ -12,8 +12,8 @@ Describe "Format-Wide" -Tags "CI" {
     }
 
     It "Should be able to use the autosize switch" {
-        { $pathList | Format-Wide -Autosize } | Should -Not -Throw
-        { $pathList | Format-Wide -Autosize | Out-String } | Should -Not -Throw
+        { $pathList | Format-Wide -AutoSize } | Should -Not -Throw
+        { $pathList | Format-Wide -AutoSize | Out-String } | Should -Not -Throw
     }
 
     It "Should be able to take inputobject instead of pipe" {

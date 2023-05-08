@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #if !UNIX
 
 namespace System.Management.Automation.Tracing
@@ -20,10 +21,7 @@ namespace System.Management.Automation.Tracing
 
         public EtwActivityReverterMethodInvoker(IEtwEventCorrelator eventCorrelator)
         {
-            if (eventCorrelator == null)
-            {
-                throw new ArgumentNullException("eventCorrelator");
-            }
+            ArgumentNullException.ThrowIfNull(eventCorrelator); 
 
             _eventCorrelator = eventCorrelator;
             _invoker = DoInvoke;

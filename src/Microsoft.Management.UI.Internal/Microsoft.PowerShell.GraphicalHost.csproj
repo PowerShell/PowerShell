@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="..\..\PowerShell.Common.props" />
+  <PropertyGroup>
+    <Description>Assembly containing WPF code for Out-GridView, HelpWindow, and Show-Command</Description>
+    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <RootNamespace>Microsoft.Management.UI.Internal</RootNamespace>
+    <AssemblyName>Microsoft.PowerShell.GraphicalHost</AssemblyName>
+    <UseWPF>True</UseWPF>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+    <TargetPlatformVersion>8.0</TargetPlatformVersion>
+    <RunAnalyzers>false</RunAnalyzers>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="resources\Graphics\Add16.png" />
+    <Resource Include="resources\Graphics\CloseTile16.png" />
+    <Resource Include="resources\Graphics\Delete16.png" />
+    <Resource Include="resources\Graphics\down.ico" />
+    <Resource Include="resources\Graphics\Error16.png" />
+    <Resource Include="resources\Graphics\Help.ico" />
+    <Resource Include="resources\Graphics\Rename16.png" />
+    <Resource Include="resources\Graphics\Save16.png" />
+    <Resource Include="resources\Graphics\SortAdornerAscending.png" />
+    <Resource Include="resources\Graphics\SortAdornerDescending.png" />
+    <Resource Include="resources\Graphics\SpyGlass10.png" />
+    <Resource Include="resources\Graphics\SpyGlass16.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerShell.Commands.Utility\Microsoft.PowerShell.Commands.Utility.csproj" />
+  </ItemGroup>
+</Project>

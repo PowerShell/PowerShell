@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'Misc Test' -Tags "CI" {
 
@@ -63,10 +63,10 @@ Describe 'Misc Test' -Tags "CI" {
             $NewRunspaceFunctionDefinitions = @"
     ## Define 'Get-TestText' in the new Runspace
     function Get-TestText { return '$ExpectedTextFromUnboundInstance' }
-    
+
     ## Define the function to create an instance of the given type using the default constructor
     function New-UnboundInstance([Type]`$type) { `$type::new() }
-    
+
     ## Define the function to call 'Foo()' on the given C1 instance, and return the result
     function Run-Foo(`$C1Instance) { `$C1Instance.Foo() }
 "@

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.IO;
@@ -17,7 +17,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Members
 
-        private System.Net.Sockets.AddressFamily _addressFamily;
+        private readonly System.Net.Sockets.AddressFamily _addressFamily;
         private Guid _vmId;
         private Guid _serviceId;
 
@@ -53,7 +53,7 @@ namespace System.Management.Automation.Remoting
         {
             get { return _serviceId; }
 
-            set { _vmId = value; }
+            set { _serviceId = value; }
         }
 
         #endregion
@@ -79,7 +79,7 @@ namespace System.Management.Automation.Remoting
             return endpoint;
         }
 
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             HyperVSocketEndPoint endpoint = (HyperVSocketEndPoint)obj;
 
@@ -138,7 +138,7 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private readonly object _syncObject;
-        private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+        private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         #endregion
 
@@ -268,7 +268,7 @@ namespace System.Management.Automation.Remoting
 
             if (ex != null)
             {
-                Dbg.Assert(false, "Unexpected error in RemoteSessionHyperVSocketServer.");
+                Dbg.Fail("Unexpected error in RemoteSessionHyperVSocketServer.");
 
                 // Unexpected error.
                 string errorMessage = !string.IsNullOrEmpty(ex.Message) ? ex.Message : string.Empty;
@@ -278,7 +278,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.RemoteSessionHyperVSocketServerConstructorFailure),
                     ex,
-                    PSRemotingErrorId.RemoteSessionHyperVSocketServerConstructorFailure.ToString(),
+                    nameof(PSRemotingErrorId.RemoteSessionHyperVSocketServerConstructorFailure),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -295,7 +295,10 @@ namespace System.Management.Automation.Remoting
         {
             lock (_syncObject)
             {
-                if (IsDisposed) { return; }
+                if (IsDisposed)
+                {
+                    return;
+                }
 
                 IsDisposed = true;
             }
@@ -337,9 +340,9 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private readonly object _syncObject;
-        private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+        private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
-        private static ManualResetEvent s_connectDone =
+        private static readonly ManualResetEvent s_connectDone =
                 new ManualResetEvent(false);
 
         #endregion
@@ -445,7 +448,10 @@ namespace System.Management.Automation.Remoting
         {
             lock (_syncObject)
             {
-                if (IsDisposed) { return; }
+                if (IsDisposed)
+                {
+                    return;
+                }
 
                 IsDisposed = true;
             }
@@ -551,13 +557,13 @@ namespace System.Management.Automation.Remoting
                     //
                     if (emptyPassword)
                     {
-                        HyperVSocket.Send(Encoding.ASCII.GetBytes("EMPTYPW"));
+                        HyperVSocket.Send("EMPTYPW"u8);
                         HyperVSocket.Receive(response);
                         responseString = Encoding.ASCII.GetString(response);
                     }
                     else
                     {
-                        HyperVSocket.Send(Encoding.ASCII.GetBytes("NONEMPTYPW"));
+                        HyperVSocket.Send("NONEMPTYPW"u8);
                         HyperVSocket.Receive(response);
 
                         HyperVSocket.Send(password);
@@ -575,7 +581,7 @@ namespace System.Management.Automation.Remoting
                     //
                     // Credential is invalid.
                     //
-                    if (string.Compare(responseString, "FAIL", StringComparison.Ordinal) == 0)
+                    if (string.Equals(responseString, "FAIL", StringComparison.Ordinal))
                     {
                         HyperVSocket.Send(response);
 
@@ -586,15 +592,15 @@ namespace System.Management.Automation.Remoting
                     //
                     // If PowerShell Direct in VM supports configuration, send configuration name.
                     //
-                    if (string.Compare(responseString, "CONF", StringComparison.Ordinal) == 0)
+                    if (string.Equals(responseString, "CONF", StringComparison.Ordinal))
                     {
                         if (emptyConfiguration)
                         {
-                            HyperVSocket.Send(Encoding.ASCII.GetBytes("EMPTYCF"));
+                            HyperVSocket.Send("EMPTYCF"u8);
                         }
                         else
                         {
-                            HyperVSocket.Send(Encoding.ASCII.GetBytes("NONEMPTYCF"));
+                            HyperVSocket.Send("NONEMPTYCF"u8);
                             HyperVSocket.Receive(response);
 
                             byte[] configName = Encoding.Unicode.GetBytes(configurationName);

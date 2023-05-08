@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 namespace System.Management.Automation.Provider
@@ -37,13 +37,13 @@ namespace System.Management.Automation.Provider
 
             if (string.IsNullOrEmpty(providerName))
             {
-                throw PSTraceSource.NewArgumentNullException("providerName");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerName));
             }
 
             if (providerName.IndexOfAny(_illegalCharacters) != -1)
             {
                 throw PSTraceSource.NewArgumentException(
-                    "providerName",
+                    nameof(providerName),
                     SessionStateStrings.ProviderNameNotValid,
                     providerName);
             }
@@ -52,7 +52,7 @@ namespace System.Management.Automation.Provider
             ProviderCapabilities = providerCapabilities;
         }
 
-        private char[] _illegalCharacters = new char[] { ':', '\\', '[', ']', '?', '*' };
+        private readonly char[] _illegalCharacters = new char[] { ':', '\\', '[', ']', '?', '*' };
 
         /// <summary>
         /// Gets the name of the provider.
@@ -77,30 +77,30 @@ namespace System.Management.Automation.Provider
     {
         /// <summary>
         /// The provider does not add any additional capabilities beyond what the
-        /// Monad engine provides.
+        /// PowerShell engine provides.
         /// </summary>
         None = 0x0,
 
         /// <summary>
         /// The provider does the inclusion filtering for those commands that take an Include
-        /// parameter. The Monad engine should not try to do the filtering on behalf of this
+        /// parameter. The PowerShell engine should not try to do the filtering on behalf of this
         /// provider.
         /// </summary>
         /// <remarks>
         /// Note, the provider should make every effort to filter in a way that is consistent
-        /// with the Monad engine. This option is allowed because in many cases the provider
+        /// with the PowerShell engine. This option is allowed because in many cases the provider
         /// can be much more efficient at filtering.
         /// </remarks>
         Include = 0x1,
 
         /// <summary>
         /// The provider does the exclusion filtering for those commands that take an Exclude
-        /// parameter. The Monad engine should not try to do the filtering on behalf of this
+        /// parameter. The PowerShell engine should not try to do the filtering on behalf of this
         /// provider.
         /// </summary>
         /// <remarks>
         /// Note, the provider should make every effort to filter in a way that is consistent
-        /// with the Monad engine. This option is allowed because in many cases the provider
+        /// with the PowerShell engine. This option is allowed because in many cases the provider
         /// can be much more efficient at filtering.
         /// </remarks>
         Exclude = 0x2,
@@ -111,18 +111,18 @@ namespace System.Management.Automation.Provider
         /// <remarks>
         /// When this attribute is specified a provider specific filter can be passed from
         /// the Core Commands to the provider. This filter string is not interpreted in any
-        /// way by the Monad engine.
+        /// way by the PowerShell engine.
         /// </remarks>
         Filter = 0x4,
 
         /// <summary>
-        /// The provider does the wildcard matching for those commands that allow for it. The Monad
+        /// The provider does the wildcard matching for those commands that allow for it. The PowerShell
         /// engine should not try to do the wildcard matching on behalf of the provider when this
         /// flag is set.
         /// </summary>
         /// <remarks>
         /// Note, the provider should make every effort to do the wildcard matching in a way that is consistent
-        /// with the Monad engine. This option is allowed because in many cases wildcard matching
+        /// with the PowerShell engine. This option is allowed because in many cases wildcard matching
         /// cannot occur via the path name or because the provider can do the matching in a much more
         /// efficient manner.
         /// </remarks>

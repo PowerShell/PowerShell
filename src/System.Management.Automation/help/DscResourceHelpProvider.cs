@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -141,7 +141,7 @@ namespace System.Management.Automation
                 }
                 else if (!string.IsNullOrEmpty(moduleDir))
                 {
-                    string[] splitPath = moduleDir.Split(Utils.Separators.Backslash);
+                    string[] splitPath = moduleDir.Split('\\');
                     moduleName = splitPath[splitPath.Length - 1];
                 }
 
@@ -279,7 +279,7 @@ namespace System.Management.Automation
             }
 
             if (e != null)
-                s_tracer.WriteLine("Error occured in DscResourceHelpProvider {0}", e.Message);
+                s_tracer.WriteLine("Error occurred in DscResourceHelpProvider {0}", e.Message);
 
             if (reportErrors && (e != null))
             {
@@ -317,7 +317,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < doc.ChildNodes.Count; i++)
                 {
                     XmlNode node = doc.ChildNodes[i];
-                    if (node.NodeType == XmlNodeType.Element && string.Compare(node.LocalName, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (node.NodeType == XmlNodeType.Element && string.Equals(node.LocalName, "helpItems", StringComparison.OrdinalIgnoreCase))
                     {
                         helpItemsNode = node;
                         break;
@@ -343,7 +343,7 @@ namespace System.Management.Automation
 
                         string nodeLocalName = node.LocalName;
 
-                        bool isDscResource = (string.Compare(nodeLocalName, "dscResource", StringComparison.OrdinalIgnoreCase) == 0);
+                        bool isDscResource = (string.Equals(nodeLocalName, "dscResource", StringComparison.OrdinalIgnoreCase));
 
                         if (node.NodeType == XmlNodeType.Element && isDscResource)
                         {

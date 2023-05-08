@@ -1,9 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Management.Automation.Language;
 using System.Text;
 
 namespace System.Management.Automation
@@ -80,7 +81,7 @@ namespace System.Management.Automation
         {
             if (parameterMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameterMetadata");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterMetadata));
             }
 
             Collection<MergedCompiledCommandParameter> result =
@@ -163,6 +164,13 @@ namespace System.Management.Automation
         private uint _nextAvailableParameterSetIndex;
 
         /// <summary>
+        /// The maximum number of parameter sets allowed. Limit is set by the use
+        /// of a uint bitmask to store which parameter sets a parameter is included in.
+        /// See <see cref="ParameterSetSpecificMetadata.ParameterSetFlag"/>.
+        /// </summary>
+        private const uint MaxParameterSetCount = 32;
+
+        /// <summary>
         /// Gets the number of parameter sets that were declared for the command.
         /// </summary>
         internal int ParameterSetCount
@@ -227,7 +235,7 @@ namespace System.Management.Automation
                 // A parameter set name should only be added once
                 if (index == -1)
                 {
-                    if (_nextAvailableParameterSetIndex == uint.MaxValue)
+                    if (_nextAvailableParameterSetIndex >= MaxParameterSetCount)
                     {
                         // Don't let the parameter set index overflow
                         ParsingMetadataException parsingException =
@@ -442,14 +450,14 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             Collection<MergedCompiledCommandParameter> matchingParameters =
                 new Collection<MergedCompiledCommandParameter>();
 
             // Skip the leading '-' if present
-            if (name.Length > 0 && SpecialCharacters.IsDash(name[0]))
+            if (name.Length > 0 && CharExtensions.IsDash(name[0]))
             {
                 name = name.Substring(1);
             }
@@ -512,7 +520,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (filteredParameters.Count == 1)
+                if (tryExactMatching && filteredParameters.Count == 1)
                 {
                     matchingParameters = filteredParameters;
                 }
@@ -656,12 +664,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the compiled command parameter for the association.
         /// </summary>
-        internal CompiledCommandParameter Parameter { get; private set; }
+        internal CompiledCommandParameter Parameter { get; }
 
         /// <summary>
         /// Gets the type of binder that the compiled command parameter should be bound with.
         /// </summary>
-        internal ParameterBinderAssociation BinderAssociation { get; private set; }
+        internal ParameterBinderAssociation BinderAssociation { get; }
 
         public override string ToString()
         {
@@ -707,4 +715,3 @@ namespace System.Management.Automation
         PagingParameters,
     }
 }
-

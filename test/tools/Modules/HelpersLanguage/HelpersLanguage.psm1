@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 #
 # Run the new parser, return either errors or the ast
@@ -8,7 +8,7 @@ function Get-ParseResults
 {
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$True,Mandatory=$True)]
+        [Parameter(ValueFromPipeline=$true,Mandatory=$true)]
         [string]$src,
         [switch]$Ast
     )
@@ -25,9 +25,9 @@ function Get-RuntimeError
 {
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$True,Mandatory=$True)][string]$src
+        [Parameter(ValueFromPipeline=$true,Mandatory=$true)][string]$src
     )
- 
+
     $errors = $null
     try
     {
@@ -71,7 +71,7 @@ function ShouldBeParseError
 
     Context "Parse error expected: <<$src>>" {
         # Test case error if this fails
-        $expectedErrors.Count | Should Be $expectedOffsets.Count
+        $expectedErrors.Count | Should -Be $expectedOffsets.Count
 
         if ($SkipAndCheckRuntimeError)
         {
@@ -86,7 +86,7 @@ function ShouldBeParseError
             $errors = Get-ParseResults -Src $src
         }
 
-        It "Error count" { $errors.Count | Should Be $expectedErrors.Count }
+        It "Error count" { $errors.Count | Should -Be $expectedErrors.Count }
         for ($i = 0; $i -lt $errors.Count; ++$i)
         {
             $err = $errors[$i]
@@ -99,10 +99,10 @@ function ShouldBeParseError
             {
                 $errorId = $err.ErrorId
             }
-            It "Error Id (iteration:$i)" { $errorId | Should Be $expectedErrors[$i] }
+            It "Error Id (iteration:$i)" { $errorId | Should -Be $expectedErrors[$i] }
             $acutalPostion = $err.Extent.StartScriptPosition.Offset
             if ( $CheckColumnNumber ) { $acutalPostion = $err.Extent.StartScriptPosition.ColumnNumber }
-            It "Error position (iteration:$i)" -Pending:$SkipAndCheckRuntimeError { $acutalPostion | Should Be $expectedOffsets[$i] }
+            It "Error position (iteration:$i)" -Pending:$SkipAndCheckRuntimeError { $acutalPostion | Should -Be $expectedOffsets[$i] }
        }
     }
 }
@@ -127,11 +127,11 @@ function Test-ErrorStmt
         $asts = @(Flatten-Ast $ast.EndBlock.Statements[0])
 
         It 'Type is ErrorStatementAst' { $asts[0] | Should BeOfType System.Management.Automation.Language.ErrorStatementAst }
-        It "`$asts.count" { $asts.Count | Should Be ($a.Count + 1) }
-        It "`$asts[0].Extent.Text" { $asts[0].Extent.Text | Should Be $errorStmtExtent }
+        It "`$asts.count" { $asts.Count | Should -Be ($a.Count + 1) }
+        It "`$asts[0].Extent.Text" { $asts[0].Extent.Text | Should -Be $errorStmtExtent }
         for ($i = 0; $i -lt $a.Count; ++$i)
         {
-            It "`$asts[$($i + 1)].Extent.Text" {  $asts[$i + 1].Extent.Text | Should Be $a[$i] }
+            It "`$asts[$($i + 1)].Extent.Text" {  $asts[$i + 1].Extent.Text | Should -Be $a[$i] }
         }
     }
 }
@@ -143,10 +143,10 @@ function Test-Ast
     $ast = Get-ParseResults $src -Ast
     $asts = @(Flatten-Ast $ast)
     Context "Ast Validation: <<$src>>" {
-        It "`$asts.count" { $asts.Count | Should Be $a.Count }
+        It "`$asts.count" { $asts.Count | Should -Be $a.Count }
         for ($i = 0; $i -lt $a.Count; ++$i)
         {
-            It "`$asts[$i].Extent.Text" { $asts[$i].Extent.Text | Should Be $a[$i] }
+            It "`$asts[$i].Extent.Text" { $asts[$i].Extent.Text | Should -Be $a[$i] }
         }
     }
 }
@@ -160,14 +160,14 @@ function Test-Ast
         $ast = $ast.EndBlock.Statements[0]
         Context "Ast Validation: <<$src>>" {
             $ast | Should BeOfType System.Management.Automation.Language.ErrorStatementAst
-            $ast.Flags.ContainsKey($flagName) | Should be $true
+            $ast.Flags.ContainsKey($flagName) | Should -BeTrue
 
             $asts = @(Flatten-Ast $ast.Flags[$flagName].Item2)
 
-            $asts.Count | Should Be $a.Count
+            $asts.Count | Should -Be $a.Count
             for ($i = 0; $i -lt $a.Count; ++$i)
             {
-                $asts[$i].Extent.Text | Should Be $a[$i]
+                $asts[$i].Extent.Text | Should -Be $a[$i]
             }
         }
     }

@@ -5,66 +5,49 @@ trigger:
   branches:
     include:
     - master
-    - release*
     - feature*
 
 pr:
   branches:
     include:
     - master
-    - release*
     - feature*
 
 resources:
-- repo: self
-  clean: true
-jobs:
-- template: templates/credscan.yml
+  repositories:
+  - repository: ComplianceRepo
+    type: github
+    endpoint: PowerShell
+    name: PowerShell/compliance
+    ref: master
 
-- job: Linux_CI
+variables:
+  - name: repoFolder
+    value: PowerShell
 
-  displayName: Markdown and Common Tests
+stages:
+- stage: Compliance
+  jobs:
+  - job: CI_Compliance
+    displayName: CI Compliance
 
-  pool:
-    name: Hosted Ubuntu 1604
-  steps:
-  - powershell: |
-      Get-ChildItem -Path env:
-    displayName: Capture environment
-    condition: succeededOrFailed()
+    pool:
+      vmImage: windows-latest
 
-  - powershell: |
-      Install-module pester -Scope CurrentUser -Force
-    displayName: Install Pester
-    condition: succeededOrFailed()
+    variables:
+      - name: repoPath
+        value: $(Agent.BuildDirectory)\$(repoFolder)
 
-  - bash: |
-      curl -o- --progress-bar -L https://yarnpkg.com/install.sh | bash
-    displayName: Bootstrap Yarn
-    condition: succeededOrFailed()
+    steps:
+    - checkout: self
+      clean: true
+      path: $(repoFolder)
 
-  - bash: |
-      sudo yarn global add markdown-spellcheck@0.11.0
-    displayName: Install mdspell
-    condition: succeededOrFailed()
+    - checkout: ComplianceRepo
 
-  - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
-    displayName: Set Build Name for Non-PR
-    condition: ne(variables['Build.Reason'], 'PullRequest')
-
-  - bash: |
-      mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report --en-us;
-    displayName: Test Spelling in Markdown
-    condition: succeededOrFailed()
-
-  - powershell: |
-      Import-module ./build.psm1
-      $path = Join-Path -Path $pwd -ChildPath './commonTestResults.xml'
-      $results = invoke-pester -Script ./test/common -OutputFile $path -OutputFormat NUnitXml -PassThru
-      Write-Host "##vso[results.publish type=NUnit;mergeResults=true;runTitle=Common Tests;publishRunAttachments=true;resultFiles=$path;]"
-      if($results.TotalCount -eq 0 -or $results.FailedCount -gt 0)
-      {
-        throw "Markdown tests failed"
-      }
-    displayName: Run Common Tests
-    condition: succeededOrFailed()
+    - template: ci-compliance.yml@ComplianceRepo
+- stage: markdown_spelling_lint
+  displayName: Markdown Spelling and Lint
+  dependsOn: []
+  jobs:
+  - template: ./misc-analysis/mdSpell.yml

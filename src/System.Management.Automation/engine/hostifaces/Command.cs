@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -52,7 +52,7 @@ namespace System.Management.Automation.Runspaces
             IsEndOfStatement = false;
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             CommandText = command;
@@ -65,7 +65,7 @@ namespace System.Management.Automation.Runspaces
             IsEndOfStatement = false;
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             CommandText = command;
@@ -109,6 +109,7 @@ namespace System.Management.Automation.Runspaces
             MergeToResult = command.MergeToResult;
             _mergeUnclaimedPreviousCommandResults = command._mergeUnclaimedPreviousCommandResults;
             IsEndOfStatement = command.IsEndOfStatement;
+            CommandInfo = command.CommandInfo;
 
             foreach (CommandParameter param in command.Parameters)
             {
@@ -172,6 +173,13 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _useLocalScope; }
         }
+
+        /// <summary>
+        /// Gets or sets DollarUnderbar ($_) value to be used with script command.
+        /// This is used by foreach-object -parallel where each piped input ($_) is associated
+        /// with a parallel running script block.
+        /// </summary>
+        internal object DollarUnderbar { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// Checks if the current command marks the end of a statement (see PowerShell.AddStatement())
@@ -310,17 +318,17 @@ namespace System.Management.Automation.Runspaces
             // Validate parameters.
             if (myResult == PipelineResultTypes.None || myResult == PipelineResultTypes.Output)
             {
-                throw PSTraceSource.NewArgumentException("myResult", RunspaceStrings.InvalidMyResultError);
+                throw PSTraceSource.NewArgumentException(nameof(myResult), RunspaceStrings.InvalidMyResultError);
             }
 
             if (myResult == PipelineResultTypes.Error && toResult != PipelineResultTypes.Output)
             {
-                throw PSTraceSource.NewArgumentException("toResult", RunspaceStrings.InvalidValueToResultError);
+                throw PSTraceSource.NewArgumentException(nameof(toResult), RunspaceStrings.InvalidValueToResultError);
             }
 
             if (toResult != PipelineResultTypes.Output && toResult != PipelineResultTypes.Null)
             {
-                throw PSTraceSource.NewArgumentException("toResult", RunspaceStrings.InvalidValueToResult);
+                throw PSTraceSource.NewArgumentException(nameof(toResult), RunspaceStrings.InvalidValueToResult);
             }
 
             // For V2 backwards compatibility.
@@ -414,7 +422,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private Pipe GetRedirectionPipe(
+        private static Pipe GetRedirectionPipe(
             PipelineResultTypes toType,
             MshCommandRuntime mcr)
         {
@@ -495,7 +503,8 @@ namespace System.Management.Automation.Runspaces
                     commandProcessorBase = new DlrScriptCommandProcessor(scriptBlock,
                                                                          executionContext, _useLocalScope ?? false,
                                                                          origin,
-                                                                         executionContext.EngineSessionState);
+                                                                         executionContext.EngineSessionState,
+                                                                         DollarUnderbar);
                 }
             }
             else
@@ -509,8 +518,8 @@ namespace System.Management.Automation.Runspaces
                         case PSLanguageMode.NoLanguage:
                             string message = StringUtil.Format(RunspaceStrings.UseLocalScopeNotAllowed,
                                 "UseLocalScope",
-                                PSLanguageMode.RestrictedLanguage.ToString(),
-                                PSLanguageMode.NoLanguage.ToString());
+                                nameof(PSLanguageMode.RestrictedLanguage),
+                                nameof(PSLanguageMode.NoLanguage));
                             throw new RuntimeException(message);
                         case PSLanguageMode.FullLanguage:
                             // Interactive script commands are permitted in this mode...
@@ -559,7 +568,7 @@ namespace System.Management.Automation.Runspaces
         /// property is bool, not bool? (from V1), so it should probably
         /// be deprecated, at least for internal use.
         /// </summary>
-        private bool? _useLocalScope;
+        private readonly bool? _useLocalScope;
 
         #endregion Private fields
 
@@ -583,7 +592,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (commandAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandAsPSObject));
             }
 
             string commandText = RemotingDecoder.GetPropertyValue<string>(commandAsPSObject, RemoteDataNameStrings.CommandText);
@@ -891,4 +900,3 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-

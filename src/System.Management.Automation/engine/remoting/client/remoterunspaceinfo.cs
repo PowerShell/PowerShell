@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Internal;
@@ -44,6 +44,7 @@ namespace System.Management.Automation.Runspaces
         #region Private Members
 
         private RemoteRunspace _remoteRunspace;
+        private string _transportName;
 
         /// <summary>
         /// Static variable which is incremented to generate id.
@@ -208,7 +209,7 @@ namespace System.Management.Automation.Runspaces
         public override string ToString()
         {
             // PSSession is a PowerShell type name and so should not be localized.
-            string formatString = "[PSSession]{0}";
+            const string formatString = "[PSSession]{0}";
             return StringUtil.Format(formatString, Name);
         }
 
@@ -272,48 +273,40 @@ namespace System.Management.Automation.Runspaces
                 remoteRunspace.PSSessionName = Name;
             }
 
-            // WSMan session
-            if (remoteRunspace.ConnectionInfo is WSManConnectionInfo)
+            switch (remoteRunspace.ConnectionInfo)
             {
-                ComputerType = TargetMachineType.RemoteMachine;
+                case WSManConnectionInfo _:
+                    ComputerType = TargetMachineType.RemoteMachine;
+                    string fullShellName = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<string>(
+                        remoteRunspace.ConnectionInfo,
+                        "ShellUri", string.Empty);
+                    ConfigurationName = GetDisplayShellName(fullShellName);
+                    break;
 
-                string fullShellName = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<string>(
-                    remoteRunspace.ConnectionInfo,
-                    "ShellUri", string.Empty);
+                case VMConnectionInfo vmConnectionInfo:
+                    ComputerType = TargetMachineType.VirtualMachine;
+                    ConfigurationName = vmConnectionInfo.ConfigurationName;
+                    break;
 
-                ConfigurationName = GetDisplayShellName(fullShellName);
-                return;
+                case ContainerConnectionInfo containerConnectionInfo:
+                    ComputerType = TargetMachineType.Container;
+                    ConfigurationName = containerConnectionInfo.ContainerProc.ConfigurationName;
+                    break;
+
+                case SSHConnectionInfo _:
+                    ComputerType = TargetMachineType.RemoteMachine;
+                    ConfigurationName = "DefaultShell";
+                    break;
+
+                case NewProcessConnectionInfo _:
+                    ComputerType = TargetMachineType.RemoteMachine;
+                    break;
+
+                default:
+                    // Default for custom connection and transports.
+                    ComputerType = TargetMachineType.RemoteMachine;
+                    break;
             }
-
-            // VM session
-            VMConnectionInfo vmConnectionInfo = remoteRunspace.ConnectionInfo as VMConnectionInfo;
-            if (vmConnectionInfo != null)
-            {
-                ComputerType = TargetMachineType.VirtualMachine;
-                ConfigurationName = vmConnectionInfo.ConfigurationName;
-                return;
-            }
-
-            // Container session
-            ContainerConnectionInfo containerConnectionInfo = remoteRunspace.ConnectionInfo as ContainerConnectionInfo;
-            if (containerConnectionInfo != null)
-            {
-                ComputerType = TargetMachineType.Container;
-                ConfigurationName = containerConnectionInfo.ContainerProc.ConfigurationName;
-                return;
-            }
-
-            // SSH session
-            SSHConnectionInfo sshConnectionInfo = remoteRunspace.ConnectionInfo as SSHConnectionInfo;
-            if (sshConnectionInfo != null)
-            {
-                ComputerType = TargetMachineType.RemoteMachine;
-                ConfigurationName = "DefaultShell";
-                return;
-            }
-
-            // We only support WSMan/VM/Container sessions now.
-            Dbg.Assert(false, "Invalid Runspace");
         }
 
         #endregion Constructor
@@ -326,33 +319,28 @@ namespace System.Management.Automation.Runspaces
         /// <returns>Auto generated name.</returns>
         private string GetTransportName()
         {
-            if (_remoteRunspace.ConnectionInfo is WSManConnectionInfo)
+            switch (_remoteRunspace.ConnectionInfo)
             {
-                return "WSMan";
-            }
-            else if (_remoteRunspace.ConnectionInfo is SSHConnectionInfo)
-            {
-                return "SSH";
-            }
-            else if (_remoteRunspace.ConnectionInfo is NamedPipeConnectionInfo)
-            {
-                return "NamedPipe";
-            }
-            else if (_remoteRunspace.ConnectionInfo is ContainerConnectionInfo)
-            {
-                return "Container";
-            }
-            else if (_remoteRunspace.ConnectionInfo is NewProcessConnectionInfo)
-            {
-                return "Process";
-            }
-            else if (_remoteRunspace.ConnectionInfo is VMConnectionInfo)
-            {
-                return "VMBus";
-            }
-            else
-            {
-                return "Unknown";
+                case WSManConnectionInfo _:
+                    return "WSMan";
+
+                case SSHConnectionInfo _:
+                    return "SSH";
+
+                case NamedPipeConnectionInfo _:
+                    return "NamedPipe";
+
+                case ContainerConnectionInfo _:
+                    return "Container";
+
+                case NewProcessConnectionInfo _:
+                    return "Process";
+
+                case VMConnectionInfo _:
+                    return "VMBus";
+
+                default:
+                    return string.IsNullOrEmpty(_transportName) ? "Custom" : _transportName;
             }
         }
 
@@ -361,9 +349,9 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="shell">Shell configuration name.</param>
         /// <returns>Display shell name.</returns>
-        private string GetDisplayShellName(string shell)
+        private static string GetDisplayShellName(string shell)
         {
-            string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
+            const string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
             int index = shell.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);
 
             return (index == 0) ? shell.Substring(shellPrefix.Length) : shell;
@@ -372,6 +360,34 @@ namespace System.Management.Automation.Runspaces
         #endregion Private Methods
 
         #region Static Methods
+
+        /// <summary>
+        /// Creates a PSSession object from the provided remote runspace object.
+        /// If psCmdlet argument is non-null, then the new PSSession object is added to the
+        /// session runspace repository (Get-PSSession).
+        /// </summary>
+        /// <param name="runspace">Runspace for the new PSSession.</param>
+        /// <param name="transportName">Optional transport name.</param>
+        /// <param name="psCmdlet">Optional cmdlet associated with the PSSession creation.</param>
+        public static PSSession Create(
+            Runspace runspace,
+            string transportName,
+            PSCmdlet psCmdlet)
+        {
+            if (!(runspace is RemoteRunspace remoteRunspace))
+            {
+                throw new PSArgumentException(RemotingErrorIdStrings.InvalidPSSessionArgument);
+            }
+
+            var psSession = new PSSession(remoteRunspace)
+            {
+                _transportName = transportName
+            };
+
+            psCmdlet?.RunspaceRepository.Add(psSession);
+
+            return psSession;
+        }
 
         /// <summary>
         /// Generates a unique runspace id.

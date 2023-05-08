@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "ConvertFrom-StringData DRT Unit Tests" -Tags "CI" {
     It "Should able to throw error when convert invalid line" {
@@ -63,5 +63,43 @@ bazz = 2
 	$(ConvertFrom-StringData -StringData $sampleData).Keys   | Should -BeIn @("foo", "bar", "bazz")
 
 	$(ConvertFrom-StringData -StringData $sampleData).Values | Should -BeIn @("0","1","2")
+    }
+}
+
+Describe "Delimiter parameter tests" -Tags "CI" {
+    BeforeAll  {
+        $TestCases = @(
+            @{ Delimiter = ':'; StringData = 'value:10'; ExpectedResult = @{ value = 10 } }
+            @{ Delimiter = '-'; StringData = 'a-b' ; ExpectedResult = @{ a = 'b' } }
+            @{ Delimiter = ','; StringData = 'c,d' ; ExpectedResult = @{ c = 'd' } }
+        )
+    }
+
+    It "Default delimiter '=' works" {
+        $actualValue = ConvertFrom-StringData -StringData 'a=b'
+
+        $actualValue.Values | Should -BeExactly "b"
+        $actualValue.Keys | Should -BeExactly "a"
+    }
+
+    It "Should not throw on given delimiter" {
+        $sampleData = @"
+a:b
+"@
+        { $sampleData | ConvertFrom-StringData -Delimiter ':' } | Should -Not -Throw
+    }
+
+    It 'is able to parse <StringData> with delimiter "<Delimiter> with <stringdata>"' -TestCases $TestCases {
+        param($Delimiter, $StringData, $ExpectedResult)
+
+        $Result = ConvertFrom-StringData -StringData $StringData -Delimiter $Delimiter
+
+        $key = $ExpectedResult.Keys
+
+        # validate the key in expected and result hashtables match
+        $Result.Keys | Should -BeExactly $ExpectedResult.Keys
+
+        # validate the values in expected and result hashtables match
+        $Result[$key] | Should -BeExactly $ExpectedResult.Values
     }
 }

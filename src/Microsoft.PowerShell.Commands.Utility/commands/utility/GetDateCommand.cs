@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -14,9 +14,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the get-date command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113313")]
-    [OutputType(typeof(string), ParameterSetName = new string[] { "UFormat", "net" })]
-    [OutputType(typeof(DateTime), ParameterSetName = new string[] { "net" })]
+    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = DateAndFormatParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096615")]
+    [OutputType(typeof(string))]
+    [OutputType(typeof(DateTime), ParameterSetName = new[] { DateAndFormatParameterSet, UnixTimeSecondsAndFormatParameterSet })]
     public sealed class GetDateCommand : Cmdlet
     {
         #region parameters
@@ -24,7 +24,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Allows user to override the date/time object that will be processed.
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = DateAndFormatParameterSet, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = DateAndUFormatParameterSet, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("LastWriteTime")]
         public DateTime Date
         {
@@ -42,6 +43,36 @@ namespace Microsoft.PowerShell.Commands
 
         private DateTime _date;
         private bool _dateSpecified;
+
+        // The const comes from DateTimeOffset.MinValue.ToUnixTimeSeconds()
+        private const long MinimumUnixTimeSecond = -62135596800;
+
+        // The const comes from DateTimeOffset.MaxValue.ToUnixTimeSeconds()
+        private const long MaximumUnixTimeSecond = 253402300799;
+
+        /// <summary>
+        /// Gets or sets whether to treat a numeric input as ticks, or unix time.
+        /// </summary>
+        [Parameter(ParameterSetName = UnixTimeSecondsAndFormatParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndUFormatParameterSet, Mandatory = true)]
+        [ValidateRange(MinimumUnixTimeSecond, MaximumUnixTimeSecond)]
+        [Alias("UnixTime")]
+        public long UnixTimeSeconds
+        {
+            get
+            {
+                return _unixTimeSeconds;
+            }
+
+            set
+            {
+                _unixTimeSeconds = value;
+                _unixTimeSecondsSpecified = true;
+            }
+        }
+
+        private long _unixTimeSeconds;
+        private bool _unixTimeSecondsSpecified;
 
         /// <summary>
         /// Allows the user to override the year.
@@ -206,17 +237,23 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Unix format string.
         /// </summary>
-        [Parameter(ParameterSetName = "UFormat")]
-        [ValidateNotNullOrEmpty]
+        [Parameter(ParameterSetName = DateAndUFormatParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndUFormatParameterSet, Mandatory = true)]
         public string UFormat { get; set; }
 
         /// <summary>
-        /// Unix format string.
+        /// DotNet format string.
         /// </summary>
-        [Parameter(ParameterSetName = "net")]
+        [Parameter(ParameterSetName = DateAndFormatParameterSet)]
+        [Parameter(ParameterSetName = UnixTimeSecondsAndFormatParameterSet)]
         [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
         public string Format { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value that converts date to UTC before formatting.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter AsUTC { get; set; }
         #endregion
 
         #region methods
@@ -233,6 +270,10 @@ namespace Microsoft.PowerShell.Commands
             if (_dateSpecified)
             {
                 dateToUse = Date;
+            }
+            else if (_unixTimeSecondsSpecified)
+            {
+                dateToUse = DateTimeOffset.FromUnixTimeSeconds(UnixTimeSeconds).LocalDateTime;
             }
 
             // use passed year if specified
@@ -285,6 +326,11 @@ namespace Microsoft.PowerShell.Commands
                 dateToUse = dateToUse.Subtract(TimeSpan.FromTicks(dateToUse.Ticks % 10000));
             }
 
+            if (AsUTC)
+            {
+                dateToUse = dateToUse.ToUniversalTime();
+            }
+
             if (UFormat != null)
             {
                 // format according to UFormat string
@@ -322,15 +368,13 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // output DateTime object wrapped in an PSObject with DisplayHint attached
-                PSObject outputObj = new PSObject(dateToUse);
-                PSNoteProperty note = new PSNoteProperty("DisplayHint", DisplayHint);
+                PSObject outputObj = new(dateToUse);
+                PSNoteProperty note = new("DisplayHint", DisplayHint);
                 outputObj.Properties.Add(note);
 
                 WriteObject(outputObj);
             }
         }
-
-        private static readonly DateTime s_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         /// <summary>
         /// This is more an implementation of the UNIX strftime.
@@ -338,7 +382,7 @@ namespace Microsoft.PowerShell.Commands
         private string UFormatDateString(DateTime dateTime)
         {
             int offset = 0;
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             // folks may include the "+" as part of the format string
             if (UFormat[0] == '+')
@@ -394,11 +438,12 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'G':
-                            sb.Append("{0:yyyy}");
+                            sb.Append(StringUtil.Format("{0:0000}", ISOWeek.GetYear(dateTime)));
                             break;
 
                         case 'g':
-                            sb.Append("{0:yy}");
+                            int isoYearWithoutCentury = ISOWeek.GetYear(dateTime) % 100;
+                            sb.Append(StringUtil.Format("{0:00}", isoYearWithoutCentury));
                             break;
 
                         case 'H':
@@ -434,7 +479,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'n':
-                            sb.Append("\n");
+                            sb.Append('\n');
                             break;
 
                         case 'p':
@@ -454,7 +499,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 's':
-                            sb.Append(StringUtil.Format("{0:0}", dateTime.ToUniversalTime().Subtract(s_epoch).TotalSeconds));
+                            sb.Append(StringUtil.Format("{0:0}", dateTime.ToUniversalTime().Subtract(DateTime.UnixEpoch).TotalSeconds));
                             break;
 
                         case 'T':
@@ -462,7 +507,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 't':
-                            sb.Append("\t");
+                            sb.Append('\t');
                             break;
 
                         case 'U':
@@ -470,38 +515,12 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'u':
-                            sb.Append((int)dateTime.DayOfWeek);
+                            int dayOfWeek = dateTime.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)dateTime.DayOfWeek;
+                            sb.Append(dayOfWeek);
                             break;
 
                         case 'V':
-                            // .Net Core doesn't implement ISO 8601.
-                            // So we use workaround from https://blogs.msdn.microsoft.com/shawnste/2006/01/24/iso-8601-week-of-year-format-in-microsoft-net/
-                            // with corrections from comments
-
-                            // Culture doesn't matter since we specify start day of week
-                            var calender = CultureInfo.InvariantCulture.Calendar;
-                            var day = calender.GetDayOfWeek(dateTime);
-                            var normalizedDatetime = dateTime;
-
-                            switch (day)
-                            {
-                                case DayOfWeek.Monday:
-                                case DayOfWeek.Tuesday:
-                                case DayOfWeek.Wednesday:
-                                    normalizedDatetime = dateTime.AddDays(3);
-                                    break;
-
-                                case DayOfWeek.Friday:
-                                case DayOfWeek.Saturday:
-                                case DayOfWeek.Sunday:
-                                    normalizedDatetime = dateTime.AddDays(-3);
-                                    break;
-                            }
-
-                            // FirstFourDayWeek and DayOfWeek.Monday is from ISO 8601
-                            sb.Append(StringUtil.Format("{0:00}", calender.GetWeekOfYear(normalizedDatetime,
-                                                                                        CalendarWeekRule.FirstFourDayWeek,
-                                                                                        DayOfWeek.Monday)));
+                            sb.Append(StringUtil.Format("{0:00}", ISOWeek.GetWeekOfYear(dateTime)));
                             break;
 
                         case 'W':
@@ -548,6 +567,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
+
+        private const string DateAndFormatParameterSet = "DateAndFormat";
+        private const string DateAndUFormatParameterSet = "DateAndUFormat";
+        private const string UnixTimeSecondsAndFormatParameterSet = "UnixTimeSecondsAndFormat";
+        private const string UnixTimeSecondsAndUFormatParameterSet = "UnixTimeSecondsAndUFormat";
     }
 
     #endregion

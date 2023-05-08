@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Handle ByRef-like types gracefully" -Tags "CI" {
@@ -121,7 +121,7 @@ namespace DotNetInterop
     }
 
     It "Calling constructor of a ByRef-like type via dotnet adapter should fail gracefully - <Number>" -TestCases @(
-        @{ Number = 1; Script = { [System.Span[string]]::new.Invoke("abc") } }
+        @{ Number = 1; Script = { [System.Span[string]]::new.Invoke([ref]$null) } }
         @{ Number = 2; Script = { [DotNetInterop.MyByRefLikeType]::new.Invoke(2) } }
     ) {
         param($Script)
@@ -164,7 +164,7 @@ namespace DotNetInterop
         param($Script)
 
         try {
-            Set-StrictMode -Version latest
+            Set-StrictMode -Version 3.0
             & $Script | Should -Be $null
         } finally {
             Set-StrictMode -Off
@@ -225,7 +225,7 @@ namespace DotNetInterop
 
     It "Get access of an indexer that returns ByRef-like type should fail gracefully in strict mode" {
         try {
-            Set-StrictMode -Version latest
+            Set-StrictMode -Version 3.0
             { $testObj[1] } | Should -Throw -ErrorId "CannotIndexWithByRefLikeReturnType"
         } finally {
             Set-StrictMode -Off
@@ -242,7 +242,7 @@ namespace DotNetInterop
     }
 
     Context "Passing value that is implicitly/explicitly castable to ByRef-like parameter in method invocation" {
-        
+
         BeforeAll {
             $ps = [powershell]::Create()
 
@@ -277,7 +277,7 @@ namespace DotNetInterop
             { $testObj.PrintMySpan("abc", 12) } | Should -Throw -ErrorId "MethodArgumentConversionInvalidCastArgument"
 
             $path = [System.IO.Path]::GetTempPath()
-            [System.IO.Path]::IsPathRooted($path.ToCharArray()) | Should -Be $true
+            [System.IO.Path]::IsPathRooted($path.ToCharArray()) | Should -BeTrue
         }
 
         It "Support constructor calls with ByRef-like parameter as long as the argument can be casted to the ByRef-like type" {
@@ -302,7 +302,7 @@ namespace DotNetInterop
 
         It "Return null for getter access of a CodeProperty that returns a ByRef-like type, even in strict mode" {
             $result = $ps.AddScript(
-                'try { Set-StrictMode -Version latest; $test.TestName } finally { Set-StrictMode -Off }').Invoke()
+                'try { Set-StrictMode -Version 3.0; $test.TestName } finally { Set-StrictMode -Off }').Invoke()
             $ps.Commands.Clear()
             $result.Count | Should -Be 1
             $result[0] | Should -Be $null

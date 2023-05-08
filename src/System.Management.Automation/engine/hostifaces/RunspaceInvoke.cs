@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 namespace System.Management.Automation
@@ -61,7 +61,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke the specified script.
         /// </summary>
-        /// <param name="script">Msh script to invoke.</param>
+        /// <param name="script">PowerShell script to invoke.</param>
         /// <returns>Output of invocation.</returns>
         public Collection<PSObject> Invoke(string script)
         {
@@ -71,7 +71,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke the specified script and passes specified input to the script.
         /// </summary>
-        /// <param name="script">Msh script to invoke.</param>
+        /// <param name="script">PowerShell script to invoke.</param>
         /// <param name="input">Input to script.</param>
         /// <returns>Output of invocation.</returns>
         public Collection<PSObject> Invoke(string script, IEnumerable input)
@@ -93,7 +93,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Invoke the specified script and passes specified input to the script.
         /// </summary>
-        /// <param name="script">Msh script to invoke.</param>
+        /// <param name="script">PowerShell script to invoke.</param>
         /// <param name="input">Input to script.</param>
         /// <param name="errors">This gets errors from script.</param>
         /// <returns>Output of invocation.</returns>

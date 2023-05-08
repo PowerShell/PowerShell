@@ -1,12 +1,11 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 Describe "ConvertFrom-Csv" -Tags "CI" {
 
     BeforeAll {
         $testObject = "a", "1"
-        $testcsv = Join-Path -Path (Join-Path -Path $here -ChildPath assets) -ChildPath TestCsv2.csv
+        $testcsv = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath TestCsv2.csv
         $testName = "Zaphod BeebleBrox"
         $testColumns = @"
 a,b,c
@@ -31,8 +30,8 @@ a,b,c
         $csvContent   = Get-Content $testcsv
         $actualresult = $csvContent | ConvertFrom-Csv
 
-        ,$actualresult | Should -BeOfType "System.Array"
-        $actualresult[0] | Should -BeOfType "PSCustomObject"
+        ,$actualresult | Should -BeOfType System.Array
+        $actualresult[0] | Should -BeOfType PSCustomObject
 
         #Should have a name property in the result
         $actualresult[0].Name | Should -Be $testName
@@ -46,8 +45,8 @@ a,b,c
         $csvContent   = Get-Content $testcsv
         $actualresult = $csvContent | ConvertFrom-Csv -Delimiter ";"
 
-        ,$actualresult | Should -BeOfType "System.Array"
-        $actualresult[0] | Should -BeOfType "PSCustomObject"
+        ,$actualresult | Should -BeOfType System.Array
+        $actualresult[0] | Should -BeOfType PSCustomObject
 
         # ConvertFrom-Csv takes the first line of the input as a header by default
         $actualresult.Length | Should -Be $($csvContent.Length - 1)

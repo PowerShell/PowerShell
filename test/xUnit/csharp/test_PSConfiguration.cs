@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PSTests.Internal;
 using Xunit;
 
 namespace PSTests.Sequential
@@ -18,6 +19,7 @@ namespace PSTests.Sequential
     public class PowerShellPolicyFixture : IDisposable
     {
         private const string ConfigFileName = "powershell.config.json";
+
         private readonly string systemWideConfigFile;
         private readonly string currentUserConfigFile;
 
@@ -37,7 +39,7 @@ namespace PSTests.Sequential
         public PowerShellPolicyFixture()
         {
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
-            currentUserConfigDirectory = Utils.GetUserConfigurationDirectory();
+            currentUserConfigDirectory = Platform.ConfigDirectory;
 
             if (!Directory.Exists(currentUserConfigDirectory))
             {
@@ -95,18 +97,27 @@ namespace PSTests.Sequential
 
         public void Dispose()
         {
-            CleanupConfigFiles();
-            if (systemWideConfigBackupFile != null)
-            {
-                File.Move(systemWideConfigBackupFile, systemWideConfigFile);
-            }
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }        
 
-            if (currentUserConfigBackupFile != null)
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                File.Move(currentUserConfigBackupFile, currentUserConfigFile);
-            }
+                CleanupConfigFiles();
+                if (systemWideConfigBackupFile != null)
+                {
+                    File.Move(systemWideConfigBackupFile, systemWideConfigFile);
+                }
 
-            InternalTestHooks.BypassGroupPolicyCaching = originalTestHookValue;
+                if (currentUserConfigBackupFile != null)
+                {
+                    File.Move(currentUserConfigBackupFile, currentUserConfigFile);
+                }
+
+                InternalTestHooks.BypassGroupPolicyCaching = originalTestHookValue;
+            }
         }
 
         internal PowerShellPolicies SystemWidePolicies
@@ -355,9 +366,34 @@ namespace PSTests.Sequential
             CreateEmptyFile(currentUserConfigFile);
         }
 
-        private void CreateEmptyFile(string fileName)
+        private static void CreateEmptyFile(string fileName)
         {
             File.Create(fileName).Dispose();
+        }
+
+        public void SetupConfigFile5()
+        {
+            CleanupConfigFiles();
+
+            // System wide config file is broken
+            CreateBrokenConfigFile(systemWideConfigFile);
+
+            // Current user config file is broken
+            CreateBrokenConfigFile(currentUserConfigFile);
+        }
+
+        private static void CreateBrokenConfigFile(string fileName)
+        {
+            File.WriteAllText(fileName, "[abbra");
+        }
+
+        internal void ForceReadingFromFile()
+        {
+            // Reset the cached roots.
+            FieldInfo roots = typeof(PowerShellConfig).GetField("configRoots", BindingFlags.NonPublic | BindingFlags.Instance);
+            JObject[] value = (JObject[])roots.GetValue(PowerShellConfig.Instance);
+            value[0] = null;
+            value[1] = null;
         }
 
         #endregion
@@ -365,17 +401,19 @@ namespace PSTests.Sequential
 
     public class PowerShellPolicyTests : IClassFixture<PowerShellPolicyFixture>
     {
-        private PowerShellPolicyFixture fixture;
+        private readonly PowerShellPolicyFixture fixture;
 
         public PowerShellPolicyTests(PowerShellPolicyFixture fixture)
         {
             this.fixture = fixture;
         }
 
-        [Fact, TestPriority(1)]
+        [Fact, Priority(1)]
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesNotEmpty()
         {
             fixture.SetupConfigFile1();
+            fixture.ForceReadingFromFile();
+
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
@@ -386,10 +424,12 @@ namespace PSTests.Sequential
             fixture.CompareTwoPolicies(userPolicies, fixture.CurrentUserPolicies);
         }
 
-        [Fact, TestPriority(2)]
+        [Fact, Priority(2)]
         public void PowerShellConfig_GetPowerShellPolicies_EmptyUserConfig()
         {
             fixture.SetupConfigFile2();
+            fixture.ForceReadingFromFile();
+
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
@@ -399,10 +439,12 @@ namespace PSTests.Sequential
             fixture.CompareTwoPolicies(sysPolicies, fixture.SystemWidePolicies);
         }
 
-        [Fact, TestPriority(3)]
+        [Fact, Priority(3)]
         public void PowerShellConfig_GetPowerShellPolicies_EmptySystemConfig()
         {
             fixture.SetupConfigFile3();
+            fixture.ForceReadingFromFile();
+
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
@@ -412,10 +454,12 @@ namespace PSTests.Sequential
             fixture.CompareTwoPolicies(userPolicies, fixture.CurrentUserPolicies);
         }
 
-        [Fact, TestPriority(4)]
+        [Fact, Priority(4)]
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesEmpty()
         {
             fixture.SetupConfigFile4();
+            fixture.ForceReadingFromFile();
+
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
@@ -423,10 +467,12 @@ namespace PSTests.Sequential
             Assert.Null(userPolicies);
         }
 
-        [Fact, TestPriority(5)]
+        [Fact, Priority(5)]
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesNotExist()
         {
             fixture.CleanupConfigFiles();
+            fixture.ForceReadingFromFile();
+
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
@@ -434,10 +480,11 @@ namespace PSTests.Sequential
             Assert.Null(userPolicies);
         }
 
-        [Fact, TestPriority(6)]
+        [Fact, Priority(6)]
         public void Utils_GetPolicySetting_BothConfigFilesNotEmpty()
         {
             fixture.SetupConfigFile1();
+            fixture.ForceReadingFromFile();
 
             ScriptExecution scriptExecution;
             scriptExecution = Utils.GetPolicySetting<ScriptExecution>(Utils.SystemWideOnlyConfig);
@@ -532,10 +579,11 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, fixture.SystemWidePolicies.ConsoleSessionConfiguration);
         }
 
-        [Fact, TestPriority(7)]
+        [Fact, Priority(7)]
         public void Utils_GetPolicySetting_EmptyUserConfig()
         {
             fixture.SetupConfigFile2();
+            fixture.ForceReadingFromFile();
 
             // The CurrentUser config is empty
             ScriptExecution scriptExecution;
@@ -630,10 +678,11 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, fixture.SystemWidePolicies.ConsoleSessionConfiguration);
         }
 
-        [Fact, TestPriority(8)]
+        [Fact, Priority(8)]
         public void Utils_GetPolicySetting_EmptySystemConfig()
         {
             fixture.SetupConfigFile3();
+            fixture.ForceReadingFromFile();
 
             // The SystemWide config is empty
             ScriptExecution scriptExecution;
@@ -729,10 +778,11 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
         }
 
-        [Fact, TestPriority(9)]
+        [Fact, Priority(9)]
         public void Utils_GetPolicySetting_BothConfigFilesEmpty()
         {
             fixture.SetupConfigFile4();
+            fixture.ForceReadingFromFile();
 
             // Both config files are empty
             ScriptExecution scriptExecution;
@@ -828,10 +878,11 @@ namespace PSTests.Sequential
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
         }
 
-        [Fact, TestPriority(10)]
+        [Fact, Priority(10)]
         public void Utils_GetPolicySetting_BothConfigFilesNotExist()
         {
             fixture.CleanupConfigFiles();
+            fixture.ForceReadingFromFile();
 
             // Both config files don't exist
             ScriptExecution scriptExecution;
@@ -925,6 +976,16 @@ namespace PSTests.Sequential
 
             consoleSessionConfiguration = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
+        }
+
+        [Fact, Priority(11)]
+        public void PowerShellConfig_GetPowerShellPolicies_BrokenSystemConfig()
+        {
+            fixture.SetupConfigFile5();
+            fixture.ForceReadingFromFile();
+
+            Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers));
+            Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser));
         }
     }
 }

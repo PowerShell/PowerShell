@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "import-alias" cmdlet.
     /// </summary>
-    [Cmdlet(VerbsData.Import, "Alias", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113339")]
+    [Cmdlet(VerbsData.Import, "Alias", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097125")]
     [OutputType(typeof(AliasInfo))]
     public class ImportAliasCommand : PSCmdlet
     {
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
                         // Since the alias already exists, write an error.
 
                         SessionStateException aliasExists =
-                            new SessionStateException(
+                            new(
                                 alias.Name,
                                 SessionStateCategory.Alias,
                                 "AliasAlreadyExists",
@@ -225,6 +225,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Dictionary<string, CommandTypes> _existingCommands;
+
         private Dictionary<string, CommandTypes> ExistingCommands
         {
             get
@@ -232,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_existingCommands == null)
                 {
                     _existingCommands = new Dictionary<string, CommandTypes>(StringComparer.OrdinalIgnoreCase);
-                    CommandSearcher searcher = new CommandSearcher(
+                    CommandSearcher searcher = new(
                         "*",
                         SearchResolutionOptions.CommandNameIsPattern | SearchResolutionOptions.ResolveAliasPatterns | SearchResolutionOptions.ResolveFunctionPatterns,
                         CommandTypes.All ^ CommandTypes.Alias,
@@ -259,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool VerifyShadowingExistingCommandsAndWriteError(string aliasName)
         {
-            CommandSearcher searcher = new CommandSearcher(aliasName, SearchResolutionOptions.None, CommandTypes.All ^ CommandTypes.Alias, this.Context);
+            CommandSearcher searcher = new(aliasName, SearchResolutionOptions.None, CommandTypes.All ^ CommandTypes.Alias, this.Context);
             foreach (string expandedCommandName in searcher.ConstructSearchPatternsFromName(aliasName))
             {
                 CommandTypes commandTypeOfExistingCommand;
@@ -267,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Since the alias already exists, write an error.
                     SessionStateException aliasExists =
-                        new SessionStateException(
+                        new(
                             aliasName,
                             SessionStateCategory.Alias,
                             "AliasAlreadyExists",
@@ -288,14 +289,14 @@ namespace Microsoft.PowerShell.Commands
 
         private Collection<AliasInfo> GetAliasesFromFile(bool isLiteralPath)
         {
-            Collection<AliasInfo> result = new Collection<AliasInfo>();
+            Collection<AliasInfo> result = new();
 
             string filePath = null;
             using (StreamReader reader = OpenFile(out filePath, isLiteralPath))
             {
-                CSVHelper csvHelper = new CSVHelper(',');
+                CSVHelper csvHelper = new(',');
 
-                Int64 lineNumber = 0;
+                long lineNumber = 0;
                 string line = null;
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -326,10 +327,10 @@ namespace Microsoft.PowerShell.Commands
                         string message = StringUtil.Format(AliasCommandStrings.ImportAliasFileInvalidFormat, filePath, lineNumber);
 
                         FormatException formatException =
-                            new FormatException(message);
+                            new(message);
 
                         ErrorRecord errorRecord =
-                            new ErrorRecord(
+                            new(
                                 formatException,
                                 "ImportAliasFileFormatError",
                                 ErrorCategory.ReadError,
@@ -351,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
                         string message = StringUtil.Format(AliasCommandStrings.ImportAliasOptionsError, filePath, lineNumber);
 
                         ErrorRecord errorRecord =
-                            new ErrorRecord(
+                            new(
                                 argException,
                                 "ImportAliasOptionsError",
                                 ErrorCategory.ReadError,
@@ -363,7 +364,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     AliasInfo newAlias =
-                        new AliasInfo(
+                        new(
                             values[0],
                             values[1],
                             Context,
@@ -426,7 +427,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                FileStream file = new(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 result = new StreamReader(file);
             }
             catch (IOException ioException)
@@ -450,7 +451,7 @@ namespace Microsoft.PowerShell.Commands
             string message =
                 StringUtil.Format(AliasCommandStrings.ImportAliasFileOpenFailed, pathWithError, e.Message);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 e,
                 "FileOpenFailure",
                 ErrorCategory.OpenError,

@@ -1,9 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using PSTests.Internal;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -19,7 +20,7 @@ namespace TestOrder.TestCaseOrdering
             {
                 int priority = 0;
 
-                foreach (IAttributeInfo attr in testCase.TestMethod.Method.GetCustomAttributes(typeof(TestPriorityAttribute).AssemblyQualifiedName))
+                foreach (IAttributeInfo attr in testCase.TestMethod.Method.GetCustomAttributes(typeof(PriorityAttribute).AssemblyQualifiedName))
                 {
                     priority = attr.GetNamedArgument<int>("Priority");
                 }

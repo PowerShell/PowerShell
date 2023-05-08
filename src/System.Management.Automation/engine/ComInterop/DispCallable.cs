@@ -1,14 +1,9 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT // ComObject
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
 using System.Dynamic;
 using System.Globalization;
+using System.Linq.Expressions;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -24,17 +19,11 @@ namespace System.Management.Automation.ComInterop
             DispId = dispId;
         }
 
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.CurrentCulture, "<bound dispmethod {0}>", MemberName);
-        }
+        public override string ToString() => $"<bound dispmethod {MemberName}>";
 
         public IDispatchComObject DispatchComObject { get; }
 
-        public IDispatch DispatchObject
-        {
-            get { return DispatchComObject.DispatchObject; }
-        }
+        public IDispatch DispatchObject => DispatchComObject.DispatchObject;
 
         public string MemberName { get; }
 
@@ -47,8 +36,7 @@ namespace System.Management.Automation.ComInterop
 
         public override bool Equals(object obj)
         {
-            var other = obj as DispCallable;
-            return other != null && other.DispatchComObject == DispatchComObject && other.DispId == DispId;
+            return obj is DispCallable other && other.DispatchComObject == DispatchComObject && other.DispId == DispId;
         }
 
         public override int GetHashCode()
@@ -57,6 +45,3 @@ namespace System.Management.Automation.ComInterop
         }
     }
 }
-
-#endif
-

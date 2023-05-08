@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'Validate Attributes Tests' -Tags 'CI' {
 
@@ -8,29 +8,29 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                 @{
                     ScriptBlock              = { function foo { param([ValidateCount(-1,2)] [string[]] $bar) }; foo }
                     FullyQualifiedErrorId    = "ExceptionConstructingAttribute"
-                    InnerErrorId             = "" 
+                    InnerErrorId             = ""
                 }
                 @{
                     ScriptBlock              = { function foo { param([ValidateCount(1,-1)] [string[]] $bar) }; foo }
-                    FullyQualifiedErrorId    = "ExceptionConstructingAttribute"          
-                    InnerErrorId             = "" 
+                    FullyQualifiedErrorId    = "ExceptionConstructingAttribute"
+                    InnerErrorId             = ""
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateCount(2, 1)] [string[]] $bar) }; foo }
                     FullyQualifiedErrorId   = "ValidateRangeMaxLengthSmallerThanMinLength"
-                    InnerErrorId            = "" 
+                    InnerErrorId            = ""
                 }
-                @{ 
-                    ScriptBlock             = { function foo { param([ValidateCount(2, 2)] [string[]] $bar) }; foo 1 } 
+                @{
+                    ScriptBlock             = { function foo { param([ValidateCount(2, 2)] [string[]] $bar) }; foo 1 }
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateCountExactFailure" 
+                    InnerErrorId            = "ValidateCountExactFailure"
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateCount(2, 3)] [string[]] $bar) }; foo 1 }
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateCountMinMaxFailure" 
+                    InnerErrorId            = "ValidateCountMinMaxFailure"
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateCount(2, 3)] [string[]] $bar) }; foo 1,2,3,4 }
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
                     InnerErrorId            = "ValidateCountMinMaxFailure"
@@ -52,28 +52,28 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         }
     }
 
-    Context "ValidateRange - ParameterConstuctors" {
+    Context "ValidateRange - ParameterConstructors" {
         BeforeAll {
             $testCases = @(
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange('xPositive')] $bar) }; foo }
                     FullyQualifiedErrorId   = "ExceptionConstructingAttribute"
-                    InnerErrorId            = "SubstringDisambiguationEnumParseThrewAnException" 
+                    InnerErrorId            = "SubstringDisambiguationEnumParseThrewAnException"
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange(2,1)] [int] $bar) }; foo }
                     FullyQualifiedErrorId   = "MaxRangeSmallerThanMinRange"
-                    InnerErrorId            = "" 
+                    InnerErrorId            = ""
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange("one",10)] $bar) }; foo }
                     FullyQualifiedErrorId   = "MinRangeNotTheSameTypeOfMaxRange"
-                    InnerErrorId            = "" 
+                    InnerErrorId            = ""
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange(1,"two")] $bar) }; foo }
                     FullyQualifiedErrorId   = "MinRangeNotTheSameTypeOfMaxRange"
-                    InnerErrorId            = "" 
+                    InnerErrorId            = ""
                 }
            )
         }
@@ -90,25 +90,25 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
     Context "ValidateRange - User Defined Range"{
         BeforeAll {
            $testCases = @(
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange(1,10)] [int] $bar) }; foo -1 }
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangeTooSmall" 
+                    InnerErrorId            = "ValidateRangeTooSmall"
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange(1,10)] [int] $bar) }; foo 11 }
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangeTooBig" 
+                    InnerErrorId            = "ValidateRangeTooBig"
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange(1,10)] $bar) }; foo "one" }
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidationRangeElementType" 
+                    InnerErrorId            = "ValidationRangeElementType"
                 }
            )
 
             $validTestCases = @(
-               @{ 
+               @{
                    ScriptBlock = { function foo { param([ValidateRange(1,10)] [int] $bar) }; foo 5 }
                 }
            )
@@ -132,115 +132,115 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
     Context "ValidateRange - Predefined Range" {
         BeforeAll {
            $testCases = @(
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange("Positive")] [int] $bar) }; foo -1 }
                     RangeType               = "Positive"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangePositiveFailure" 
+                    InnerErrorId            = "ValidateRangePositiveFailure"
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange("Positive")] [int] $bar) }; foo 0 }
                     RangeType               = "Positive"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangePositiveFailure" 
+                    InnerErrorId            = "ValidateRangePositiveFailure"
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange("Positive")] $bar) }; foo "one" }
                     RangeType               = "Positive"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "" 
+                    InnerErrorId            = ""
                 }
                 @{
                     ScriptBlock             = { function foo { param([ValidateRange('NonNegative')] [int] $bar) }; foo -1 }
                     RangeType               = "NonNegative"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangeNonNegativeFailure" 
+                    InnerErrorId            = "ValidateRangeNonNegativeFailure"
                 }
-                @{ 
+                @{
                    ScriptBlock              = { function foo { param([ValidateRange('NonNegative')] $bar) }; foo "one" }
                    RangeType                = "NonNegative"
                    FullyQualifiedErrorId    = "ParameterArgumentValidationError,foo"
-                   InnerErrorId             = "" 
+                   InnerErrorId             = ""
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange('Negative')] [int] $bar) }; foo 1 }
                     RangeType               = "Negative"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangeNegativeFailure" 
+                    InnerErrorId            = "ValidateRangeNegativeFailure"
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange('Negative')] [int] $bar) }; foo 0 }
                     RangeType               = "Negative"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangeNegativeFailure" 
+                    InnerErrorId            = "ValidateRangeNegativeFailure"
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange('Negative')] $bar) }; foo "one" }
                     RangeType               = "Negative"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "" 
+                    InnerErrorId            = ""
                 }
-                @{ 
+                @{
                     ScriptBlock             = { function foo { param([ValidateRange('NonPositive')] $bar) }; foo 1 }
                     RangeType               = "NonPositive"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangeNonPositiveFailure" 
+                    InnerErrorId            = "ValidateRangeNonPositiveFailure"
                 }
                 @{
                     ScriptBlock             = { function foo { param([ValidateRange('NonPositive')] $bar) }; foo "one" }
                     RangeType               = "NonPositive"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "" 
+                    InnerErrorId            = ""
                 }
            )
 
            $validTestCases = @(
-                @{ 
+                @{
                    ScriptBlock  = { function foo { param([ValidateRange("Positive")] [int] $bar) }; foo 15 }
                    RangeType    = "Positive"
                    TestValue    = 15
                 }
-                @{ 
-                   ScriptBlock  = { function foo { param([ValidateRange("Positive")] [double]$bar) }; foo ([double]::MaxValue) }; 
+                @{
+                   ScriptBlock  = { function foo { param([ValidateRange("Positive")] [double]$bar) }; foo ([double]::MaxValue) };
                    RangeType    = "Positive"
                    TestValue    = [double]::MaxValue
                 }
-                @{ 
+                @{
                    ScriptBlock  = { function foo { param([ValidateRange('NonNegative')] [int] $bar) }; foo 0 }
                    RangeType    = "NonNegative"
                    TestValue    = 0
                 }
-                @{ 
+                @{
                    ScriptBlock  = { function foo { param([ValidateRange('NonNegative')] [int] $bar) }; foo 15 }
                    RangeType    = "NonNegative"
                    TestValue    = 15
                 }
-                @{ 
-                   ScriptBlock  = { function foo { param([ValidateRange('NonNegative')] [double]$bar) }; foo ([double]::MaxValue) }; 
+                @{
+                   ScriptBlock  = { function foo { param([ValidateRange('NonNegative')] [double]$bar) }; foo ([double]::MaxValue) };
                    RangeType    = "NonNegative"
                    TestValue    = [double]::MaxValue
                 }
-                @{ 
+                @{
                     ScriptBlock = { function foo { param([ValidateRange('Negative')] [int] $bar) }; foo -15 }
                     RangeType   = "Negative"
                     TestValue   = -15
                 }
-                @{ 
-                    ScriptBlock = { function foo { param([ValidateRange('Negative')] [double]$bar) }; foo ([double]::MinValue) }; 
+                @{
+                    ScriptBlock = { function foo { param([ValidateRange('Negative')] [double]$bar) }; foo ([double]::MinValue) };
                     TestValue   = [double]::MinValue
                     RangeType   = "Negative"
                 }
-                @{ 
+                @{
                     ScriptBlock = { function foo { param([ValidateRange('NonPositive')] [int] $bar) }; foo 0 }
                     RangeType   = "NonPositive"
                     TestValue   = 0
                 }
-                @{ 
+                @{
                     ScriptBlock = { function foo { param([ValidateRange('NonPositive')] [int] $bar) }; foo -15 }
                     RangeType   = "NonPositive"
                     TestValue   = -15
                 }
-                @{ 
+                @{
                     ScriptBlock = { function foo { param([ValidateRange('NonPositive')] [double]$bar) }; foo ([double]::MinValue) }
                     RangeType   = "NonPositive"
                     TestValue   = [double]::MinValue
@@ -263,7 +263,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         }
     }
 
-    Context "ValidateNotNull, ValidateNotNullOrEmpty and Not-Null-Or-Empty check for Mandatory parameter" {
+    Context "ValidateNotNull, ValidateNotNullOrEmpty, ValidateNotNullOrWhiteSpace and Not-Null-Or-Empty check for Mandatory parameter" {
 
         BeforeAll {
             function MandatoryFunc {
@@ -314,6 +314,22 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                 }
             }
 
+            function NotNullOrWhiteSpaceFunc {
+                param(
+                    [ValidateNotNullOrWhiteSpace()]
+                    $Value,
+                    [string] $TestType
+                )
+
+                switch ($TestType) {
+                    "COM-Enumerable" { $Value | ForEach-Object Name }
+                    "Enumerator"     {
+                        $items = foreach ($i in $Value) { $i }
+                        $items -join ","
+                    }
+                }
+            }
+
             $filePath  = Join-Path -Path $PSHOME -ChildPath System.Management.Automation.dll
             $byteArray = [System.IO.File]::ReadAllBytes($filePath)
             $byteList  = [System.Collections.Generic.List[byte]] $byteArray
@@ -343,6 +359,9 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                 @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteArray } }
                 @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteList } }
                 @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteCollection } }
+                @{ ScriptBlock = { NotNullOrWhiteSpaceFunc -Value $byteArray } }
+                @{ ScriptBlock = { NotNullOrWhiteSpaceFunc -Value $byteList } }
+                @{ ScriptBlock = { NotNullOrWhiteSpaceFunc -Value $byteCollection } }
             )
         }
 
@@ -351,19 +370,21 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
             (Measure-Command $ScriptBlock).Milliseconds | Should -BeLessThan $UpperBoundTime
         }
 
-        It "COM enumerable argument should work with 'ValidateNotNull' and 'ValidateNotNullOrEmpty'" -Skip:(!$IsWindows) {
+        It "COM enumerable argument should work with 'ValidateNotNull', 'ValidateNotNullOrEmpty' and 'ValidateNotNullOrWhiteSpace'" -Skip:(!$IsWindows) {
             $shell = New-Object -ComObject "Shell.Application"
             $folder = $shell.Namespace("$TESTDRIVE")
             $items = $folder.Items()
 
             NotNullFunc -Value $items -TestType "COM-Enumerable" | Should -Be "file1"
             NotNullOrEmptyFunc -Value $items -TestType "COM-Enumerable" | Should -Be "file1"
+            NotNullOrWhiteSpaceFunc -Value $items -TestType "COM-Enumerable" | Should -Be "file1"
         }
 
-        It "Enumerator argument should work with 'ValidateNotNull' and 'ValidateNotNullOrEmpty'" {
+        It "Enumerator argument should work with 'ValidateNotNull', 'ValidateNotNullOrEmpty' and 'ValidateNotNullOrWhiteSpace'" {
             $data = @(1,2,3)
             NotNullFunc -Value $data.GetEnumerator() -TestType "Enumerator" | Should -Be "1,2,3"
             NotNullOrEmptyFunc -Value $data.GetEnumerator() -TestType "Enumerator" | Should -Be "1,2,3"
+            NotNullOrWhiteSpaceFunc -Value $data.GetEnumerator() -TestType "Enumerator" | Should -Be "1,2,3"
         }
 
         It "'ValidateNotNull' should throw on null element of a collection argument" {
@@ -380,6 +401,29 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
             { NotNullOrEmptyFunc -Value @("string", "", 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
             { NotNullOrEmptyFunc -Value @() } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
             { NotNullOrEmptyFunc -Value @{} } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+        }
+
+        It "'ValidateNotNullOrWhiteSpace' should throw on null element of a collection argument, white-space only string element of a collection argument or empty collection/dictionary" {
+            { NotNullOrWhiteSpaceFunc -Value @("string", $null, 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value @("string", "", 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value @("string", " ", 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value @() } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value @{} } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+        }
+
+        It "'ValidateNotNull' should throw on a scalar null value" {
+            { NotNullFunc -Value $null } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullFunc"
+        }
+
+        It "'ValidateNotNullOrEmpty' should throw on a scalar null value and scalar empty string" {
+            { NotNullOrEmptyFunc -Value $null } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+            { NotNullOrEmptyFunc -Value "" } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+        }
+
+        It "'ValidateNotNullOrWhiteSpace' should throw on a scalar null value, scalar empty string and scalar white-space string" {
+            { NotNullOrWhiteSpaceFunc -Value $null } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value "" } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value " " } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
         }
 
         It "Mandatory parameter should throw on empty collection" {

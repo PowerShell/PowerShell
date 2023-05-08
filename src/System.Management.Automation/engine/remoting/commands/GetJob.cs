@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Cmdlet to get available list of results.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Job", DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113328")]
+    [Cmdlet(VerbsCommon.Get, "Job", DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096582")]
     [OutputType(typeof(Job))]
     public class GetJobCommand : JobCmdletBase
     {
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<Job> jobList = FindJobs();
 
-            jobList.Sort((x, y) => x != null ? x.Id.CompareTo(y != null ? y.Id : 1) : -1);
+            jobList.Sort(static (x, y) => x != null ? x.Id.CompareTo(y != null ? y.Id : 1) : -1);
             WriteObject(jobList, true);
         }
 
@@ -256,7 +256,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (Job childJob in job.ChildJobs)
                     {
-                        if (childJob.JobStateInfo.State != ChildJobState) continue;
+                        if (childJob.JobStateInfo.State != ChildJobState)
+                        {
+                            continue;
+                        }
 
                         matches.Add(childJob);
                     }

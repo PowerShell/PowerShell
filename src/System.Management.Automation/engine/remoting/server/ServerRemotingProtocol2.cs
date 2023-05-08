@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -110,7 +110,7 @@ namespace System.Management.Automation
         {
             if (receivedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("receivedData");
+                throw PSTraceSource.NewArgumentNullException(nameof(receivedData));
             }
 
             Dbg.Assert(receivedData.TargetInterface == RemotingTargetInterface.RunspacePool,
@@ -224,7 +224,7 @@ namespace System.Management.Automation
                 _associatedShells.Add(dsHandler.PowerShellId, dsHandler);
             }
 
-            dsHandler.RemoveAssociation += new EventHandler(HandleRemoveAssociation);
+            dsHandler.RemoveAssociation += HandleRemoveAssociation;
 
             return dsHandler;
         }
@@ -266,10 +266,7 @@ namespace System.Management.Automation
 
             // if data structure handler is not found, then association has already been
             // removed, discard message
-            if (dsHandler != null)
-            {
-                dsHandler.ProcessReceivedData(rcvdData);
-            }
+            dsHandler?.ProcessReceivedData(rcvdData);
         }
 
         /// <summary>
@@ -351,7 +348,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should
-        /// be the one thats used to send data from within this
+        /// be the one that's used to send data from within this
         /// data structure handler class</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
@@ -409,16 +406,18 @@ namespace System.Management.Automation
 
         #region Private Members
 
-        private Guid _clientRunspacePoolId;
+        private readonly Guid _clientRunspacePoolId;
         // transport manager using which this
         // runspace pool driver handles all client
         // communication
-        private AbstractServerSessionTransportManager _transportManager;
-        private Dictionary<Guid, ServerPowerShellDataStructureHandler> _associatedShells
+        private readonly AbstractServerSessionTransportManager _transportManager;
+
+        private readonly Dictionary<Guid, ServerPowerShellDataStructureHandler> _associatedShells
             = new Dictionary<Guid, ServerPowerShellDataStructureHandler>();
+
         // powershell data structure handlers associated with this
         // runspace pool data structure handler
-        private object _associationSyncObject = new object();
+        private readonly object _associationSyncObject = new object();
         // object to synchronize operations to above
 
         #endregion Private Members
@@ -434,10 +433,10 @@ namespace System.Management.Automation
         // transport manager using which this
         // powershell driver handles all client
         // communication
-        private AbstractServerTransportManager _transportManager;
-        private Guid _clientRunspacePoolId;
-        private Guid _clientPowerShellId;
-        private RemoteStreamOptions _streamSerializationOptions;
+        private readonly AbstractServerTransportManager _transportManager;
+        private readonly Guid _clientRunspacePoolId;
+        private readonly Guid _clientPowerShellId;
+        private readonly RemoteStreamOptions _streamSerializationOptions;
         private Runspace _rsUsedToInvokePowerShell;
 
         #endregion Private Members
@@ -464,8 +463,7 @@ namespace System.Management.Automation
 
             if (localPowerShell != null)
             {
-                localPowerShell.RunspaceAssigned +=
-                    new EventHandler<PSEventArgs<Runspace>>(LocalPowerShell_RunspaceAssigned);
+                localPowerShell.RunspaceAssigned += LocalPowerShell_RunspaceAssigned;
             }
         }
 
@@ -617,7 +615,7 @@ namespace System.Management.Automation
         {
             if (receivedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("receivedData");
+                throw PSTraceSource.NewArgumentNullException(nameof(receivedData));
             }
 
             Dbg.Assert(receivedData.TargetInterface == RemotingTargetInterface.PowerShell,
@@ -787,7 +785,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should
-        /// be the one thats used to send data from within this
+        /// be the one that's used to send data from within this
         /// data structure handler class</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {

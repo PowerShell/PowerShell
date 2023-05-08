@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace System.Management.Automation
         {
             if (parameter == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameter");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameter));
             }
 
             Name = parameter.Name;
@@ -144,4 +144,3 @@ namespace System.Management.Automation
         #endregion private members
     }
 }
-

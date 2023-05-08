@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -16,6 +16,7 @@ namespace System.Management.Automation
         private readonly HashSet<string> _validVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         internal ScriptBlockAst ScriptBeingConverted { get; set; }
+
         internal bool UsesParameter { get; private set; }
 
         internal bool HasUsingExpr { get; private set; }
@@ -171,13 +172,16 @@ namespace System.Management.Automation
         }
     }
 
-    internal class UsingExpressionAstSearcher : AstSearcher
+    internal sealed class UsingExpressionAstSearcher : AstSearcher
     {
-        internal static IEnumerable<Ast> FindAllUsingExpressionExceptForWorkflow(Ast ast)
+        internal static IEnumerable<Ast> FindAllUsingExpressions(Ast ast)
         {
             Diagnostics.Assert(ast != null, "caller to verify arguments");
 
-            var searcher = new UsingExpressionAstSearcher(astParam => astParam is UsingExpressionAst, stopOnFirst: false, searchNestedScriptBlocks: true);
+            var searcher = new UsingExpressionAstSearcher(
+                callback: astParam => astParam is UsingExpressionAst,
+                stopOnFirst: false,
+                searchNestedScriptBlocks: true);
             ast.InternalVisit(searcher);
             return searcher.Results;
         }
@@ -203,7 +207,7 @@ namespace System.Management.Automation
     /// Converts a ScriptBlock to a PowerShell object by traversing the
     /// given Ast.
     /// </summary>
-    internal class ScriptBlockToPowerShellConverter
+    internal sealed class ScriptBlockToPowerShellConverter
     {
         private readonly PowerShell _powershell;
         private ExecutionContext _context;
@@ -226,10 +230,7 @@ namespace System.Management.Automation
         {
             ExecutionContext.CheckStackDepth();
 
-            if (args == null)
-            {
-                args = Array.Empty<object>();
-            }
+            args ??= Array.Empty<object>();
 
             // Perform validations on the ScriptBlock.  GetSimplePipeline can allow for more than one
             // pipeline if the first parameter is true, but Invoke-Command doesn't yet support multiple
@@ -313,6 +314,156 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Get using values as dictionary for the Foreach-Object parallel cmdlet.
+        /// Ignore any using expressions that are associated with inner nested Foreach-Object parallel calls,
+        /// since they are only effective in the nested call scope and not the current outer scope.
+        /// </summary>
+        /// <param name = "scriptBlock">Scriptblock to search.</param>
+        /// <param name = "isTrustedInput">True when input is trusted.</param>
+        /// <param name = "context">Execution context.</param>
+        /// <returns>Dictionary of using variable map.</returns>
+        internal static Dictionary<string, object> GetUsingValuesForEachParallel(
+            ScriptBlock scriptBlock,
+            bool isTrustedInput,
+            ExecutionContext context)
+        {
+            // Using variables for Foreach-Object -Parallel use are restricted to be within the 
+            // Foreach-Object -Parallel call scope. This will filter the using variable map to variables 
+            // only within the current (outer) Foreach-Object -Parallel call scope.
+            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(scriptBlock.Ast).ToList();
+            UsingExpressionAst usingAst = null;
+            var usingValueMap = new Dictionary<string, object>(usingAsts.Count);
+            Version oldStrictVersion = null;
+            try
+            {
+                if (context != null)
+                {
+                    oldStrictVersion = context.EngineSessionState.CurrentScope.StrictModeVersion;
+                    context.EngineSessionState.CurrentScope.StrictModeVersion = PSVersionInfo.PSVersion;
+                }
+
+                for (int i = 0; i < usingAsts.Count; ++i)
+                {
+                    usingAst = (UsingExpressionAst)usingAsts[i];
+                    if (IsInForeachParallelCallingScope(scriptBlock.Ast, usingAst))
+                    {
+                        var value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
+                        string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
+                        usingValueMap.TryAdd(usingAstKey, value);
+                    }
+                }
+            }
+            catch (RuntimeException rte)
+            {
+                if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("VariableIsUndefined", StringComparison.Ordinal))
+                {
+                    throw InterpreterError.NewInterpreterException(
+                        targetObject: null, 
+                        exceptionType: typeof(RuntimeException),
+                        errorPosition: usingAst.Extent, 
+                        resourceIdAndErrorId: "UsingVariableIsUndefined",
+                        resourceString: AutomationExceptions.UsingVariableIsUndefined, 
+                        args: rte.ErrorRecord.TargetObject);
+                }
+            }
+            finally
+            {
+                if (context != null)
+                {
+                    context.EngineSessionState.CurrentScope.StrictModeVersion = oldStrictVersion;
+                }
+            }
+
+            return usingValueMap;
+        }
+
+        // List of Foreach-Object command names and aliases.
+        // TODO: Look into using SessionState.Internal.GetAliasTable() to find all user created aliases.
+        //       But update Alias command logic to maintain reverse table that lists all aliases mapping
+        //       to a single command definition, for performance.
+        private static readonly string[] forEachNames = new string[]
+        {
+            "ForEach-Object",
+            "foreach",
+            "%"
+        };
+
+        private static bool FindForEachInCommand(CommandAst commandAst)
+        {
+            // Command name is always the first element in the CommandAst.
+            //  e.g., 'foreach -parallel {}'
+            var commandNameElement = (commandAst.CommandElements.Count > 0) ? commandAst.CommandElements[0] : null;
+            if (commandNameElement is StringConstantExpressionAst commandName)
+            {
+                bool found = false;
+                foreach (var foreachName in forEachNames)
+                {
+                    if (commandName.Value.Equals(foreachName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found)
+                {
+                    // Verify this is foreach-object with parallel parameter set.
+                    var bindingResult = StaticParameterBinder.BindCommand(commandAst);
+                    if (bindingResult.BoundParameters.ContainsKey("Parallel"))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Walks the using Ast to verify it is used within a foreach-object -parallel command
+        /// and parameter set scope, and not from within a nested foreach-object -parallel call.
+        /// </summary>
+        /// <param name="scriptblockAst">Scriptblock Ast containing this using Ast</param>
+        /// <param name="usingAst">Using Ast to check.</param>
+        /// <returns>True if using expression is in current call scope.</returns>
+        private static bool IsInForeachParallelCallingScope(
+            Ast scriptblockAst,
+            UsingExpressionAst usingAst)
+        {
+            Diagnostics.Assert(usingAst != null, "usingAst argument cannot be null.");
+
+            /*
+                Example:
+                $Test1 = "Hello"
+                1 | ForEach-Object -Parallel { 
+                   $using:Test1
+                   $Test2 = "Goodbye"
+                   1 | ForEach-Object -Parallel {
+                       $using:Test1    # Invalid using scope
+                       $using:Test2    # Valid using scope
+                   }
+                }
+            */
+
+            // Search up the parent Ast chain for 'Foreach-Object -Parallel' commands.
+            Ast currentParent = usingAst.Parent;
+            while (currentParent != scriptblockAst)
+            {
+                // Look for Foreach-Object outer commands
+                if (currentParent is CommandAst commandAst && 
+                    FindForEachInCommand(commandAst))
+                {
+                    // Using Ast is outside the invoking foreach scope.
+                    return false;
+                }
+
+                currentParent = currentParent.Parent;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Get using values in the dictionary form.
         /// </summary>
         internal static Dictionary<string, object> GetUsingValuesAsDictionary(ScriptBlock scriptBlock, bool isTrustedInput, ExecutionContext context, Dictionary<string, object> variables)
@@ -342,11 +493,16 @@ namespace System.Management.Automation
         /// A tuple of the dictionary-form and the array-form using values.
         /// If the array-form using value is null, then there are UsingExpressions used in different scopes.
         /// </returns>
-        private static Tuple<Dictionary<string, object>, object[]> GetUsingValues(Ast body, bool isTrustedInput, ExecutionContext context, Dictionary<string, object> variables, bool filterNonUsingVariables)
+        private static Tuple<Dictionary<string, object>, object[]> GetUsingValues(
+            Ast body,
+            bool isTrustedInput,
+            ExecutionContext context,
+            Dictionary<string, object> variables,
+            bool filterNonUsingVariables)
         {
             Diagnostics.Assert(context != null || variables != null, "can't retrieve variables with no context and no variables");
 
-            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow(body).ToList();
+            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(body).ToList();
             var usingValueArray = new object[usingAsts.Count];
             var usingValueMap = new Dictionary<string, object>(usingAsts.Count);
             HashSet<string> usingVarNames = (variables != null && filterNonUsingVariables) ? new HashSet<string>() : null;
@@ -386,8 +542,7 @@ namespace System.Management.Automation
 
                     if (variables != null)
                     {
-                        var variableAst = usingAst.SubExpression as VariableExpressionAst;
-                        if (variableAst == null)
+                        if (!(usingAst.SubExpression is VariableExpressionAst variableAst))
                         {
                             throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                                 usingAst.Extent, "CantGetUsingExpressionValueWithSpecifiedVariableDictionary", AutomationExceptions.CantGetUsingExpressionValueWithSpecifiedVariableDictionary, usingAst.Extent.Text);
@@ -409,10 +564,7 @@ namespace System.Management.Automation
 
                     // Collect UsingExpression value as a dictionary
                     string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
-                    if (!usingValueMap.ContainsKey(usingAstKey))
-                    {
-                        usingValueMap.Add(usingAstKey, value);
-                    }
+                    usingValueMap.TryAdd(usingAstKey, value);
                 }
             }
             catch (RuntimeException rte)
@@ -459,7 +611,7 @@ namespace System.Management.Automation
         /// Check if the given UsingExpression is in a different scope from the previous UsingExpression that we analyzed.
         /// </summary>
         /// <remarks>
-        /// Note that the value of <paramref name="usingExpr"/> is retrieved by calling 'UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow'.
+        /// Note that the value of <paramref name="usingExpr"/> is retrieved by calling 'UsingExpressionAstSearcher.FindAllUsingExpressions'.
         /// So <paramref name="usingExpr"/> is guaranteed not inside a workflow.
         /// </remarks>
         /// <param name="usingExpr">The UsingExpression to analyze.</param>
@@ -550,7 +702,6 @@ namespace System.Management.Automation
                 Diagnostics.Assert(commandAst.Redirections.Count == 1, "only 1 kind of redirection is supported");
                 Diagnostics.Assert(commandAst.Redirections[0] is MergingRedirectionAst, "unexpected redirection type");
 
-                PipelineResultTypes toType = PipelineResultTypes.Output;
                 PipelineResultTypes fromType;
                 switch (commandAst.Redirections[0].FromStream)
                 {
@@ -584,7 +735,7 @@ namespace System.Management.Automation
                         break;
                 }
 
-                command.MergeMyResults(fromType, toType);
+                command.MergeMyResults(fromType, toResult: PipelineResultTypes.Output);
             }
 
             _powershell.AddCommand(command);
@@ -617,7 +768,7 @@ namespace System.Management.Automation
                                 var arguments = usingValue as System.Collections.IEnumerable;
                                 if (arguments != null)
                                 {
-                                    foreach (Object argument in arguments)
+                                    foreach (object argument in arguments)
                                     {
                                         _powershell.AddArgument(argument);
                                     }
@@ -646,7 +797,9 @@ namespace System.Management.Automation
                     {
                         var constantExprAst = ast as ConstantExpressionAst;
                         object argument;
-                        if (constantExprAst != null && LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constantExprAst.StaticType)))
+                        if (constantExprAst != null
+                            && (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constantExprAst.StaticType))
+                            || constantExprAst.StaticType == typeof(System.Numerics.BigInteger)))
                         {
                             var commandArgumentText = constantExprAst.Extent.Text;
                             argument = constantExprAst.Value;
@@ -749,7 +902,7 @@ namespace System.Management.Automation
             foreach (var splattedParameter in PipelineOps.Splat(splattedValue, variableAst))
             {
                 CommandParameter publicParameter = CommandParameter.FromCommandParameterInternal(splattedParameter);
-                _powershell.AddParameter(publicParameter.Name, publicParameter.Value);
+                _powershell.AddParameter(publicParameter);
             }
         }
 
@@ -793,7 +946,7 @@ namespace System.Management.Automation
 
             // first character in parameter name must be a dash
             _powershell.AddParameter(
-                string.Format(CultureInfo.InvariantCulture, "-{0}{1}", commandParameterAst.ParameterName, nameSuffix),
+                string.Create(CultureInfo.InvariantCulture, $"-{commandParameterAst.ParameterName}{nameSuffix}"),
                 argument);
         }
     }

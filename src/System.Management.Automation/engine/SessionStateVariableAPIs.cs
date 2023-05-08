@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -36,7 +36,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
-        /// the scope specifiers like "global:foobar"
+        /// the scope specifiers like "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to look up
@@ -54,7 +54,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name, VariablePathFlags.Variable | VariablePathFlags.Unqualified);
@@ -67,7 +67,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
-        /// the scope specifiers like "global:foobar"
+        /// the scope specifiers like "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to look up
@@ -86,7 +86,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:foobar"
+        /// "env:PATH" or "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to look up
@@ -114,7 +114,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name);
@@ -129,7 +129,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:foobar"
+        /// "env:PATH" or "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to look up
@@ -181,7 +181,7 @@ namespace System.Management.Automation
         /// The variable if it was found or null if it was not.
         /// </returns>
         /// <remarks>
-        /// The <paramref name="variablePath" /> is first parsed to see if it contains a drive
+        /// The <paramref name="variablePath"/> is first parsed to see if it contains a drive
         /// specifier or special scope.  If a special scope is found ("LOCAL" or "GLOBAL")
         /// then only that scope is searched for the variable. If any other drive specifier
         /// is found the lookup goes in the following order.
@@ -252,7 +252,7 @@ namespace System.Management.Automation
         /// The variable if it was found or null if it was not.
         /// </returns>
         /// <remarks>
-        /// The <paramref name="variablePath" /> is first parsed to see if it contains a drive
+        /// The <paramref name="variablePath"/> is first parsed to see if it contains a drive
         /// specifier or special scope.  If a special scope is found ("LOCAL" or "GLOBAL")
         /// then only that scope is searched for the variable. If any other drive specifier
         /// is found the lookup goes in the following order.
@@ -287,7 +287,7 @@ namespace System.Management.Automation
 
             if (variablePath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variablePath");
+                throw PSTraceSource.NewArgumentNullException(nameof(variablePath));
             }
 
             Dbg.Diagnostics.Assert(
@@ -352,8 +352,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderCannotBeUsedAsVariable",
@@ -368,8 +367,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderCannotBeUsedAsVariable",
@@ -407,8 +405,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderVariableSyntaxInvalid",
@@ -445,8 +442,7 @@ namespace System.Management.Automation
                 {
                     // First get the provider for the path.
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     ProviderInvocationException providerException =
                         new ProviderInvocationException(
@@ -523,7 +519,7 @@ namespace System.Management.Automation
         /// The variable if it was found or null if it was not.
         /// </returns>
         /// <remarks>
-        /// The <paramref name="variablePath" /> is first parsed to see if it contains a drive
+        /// The <paramref name="variablePath"/> is first parsed to see if it contains a drive
         /// specifier or special scope.  If a special scope is found ("LOCAL" or "GLOBAL")
         /// then only that scope is searched for the variable.
         ///     - current scope
@@ -542,7 +538,7 @@ namespace System.Management.Automation
 
             if (variablePath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variablePath");
+                throw PSTraceSource.NewArgumentNullException(nameof(variablePath));
             }
 
             Dbg.Diagnostics.Assert(variablePath.IsVariable, "Can't get variable w/ non-variable path");
@@ -575,7 +571,7 @@ namespace System.Management.Automation
         /// The variable if it was found or null if it was not.
         /// </returns>
         /// <remarks>
-        /// The <paramref name="variablePath" /> is first parsed to see if it contains a drive
+        /// The <paramref name="variablePath"/> is first parsed to see if it contains a drive
         /// specifier or special scope.  If a special scope is found ("LOCAL" or "GLOBAL")
         /// then only that scope is searched for the variable.
         ///     - current scope
@@ -595,7 +591,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:foobar"
+        /// "env:PATH" or "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to look up
@@ -621,7 +617,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name);
@@ -646,7 +642,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:foobar"
+        /// "env:PATH" or "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to look up
@@ -685,7 +681,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name);
@@ -741,8 +737,7 @@ namespace System.Management.Automation
                         // First get the provider for the path.
 
                         ProviderInfo providerInfo = null;
-                        string unused =
-                            this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                         throw NewProviderInvocationException(
                             "ProviderCannotBeUsedAsVariable",
@@ -757,8 +752,7 @@ namespace System.Management.Automation
                         // First get the provider for the path.
 
                         ProviderInfo providerInfo = null;
-                        string unused =
-                            this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                         throw NewProviderInvocationException(
                             "ProviderCannotBeUsedAsVariable",
@@ -796,8 +790,7 @@ namespace System.Management.Automation
                         // First get the provider for the path.
 
                         ProviderInfo providerInfo = null;
-                        string unused =
-                            this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                         throw NewProviderInvocationException(
                             "ProviderVariableSyntaxInvalid",
@@ -835,8 +828,7 @@ namespace System.Management.Automation
                         // First get the provider for the path.
 
                         ProviderInfo providerInfo = null;
-                        string unused =
-                            this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                         ProviderInvocationException providerException =
                             new ProviderInvocationException(
@@ -922,7 +914,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a variable in session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "$env:PATH = 'c:\windows'" or "$global:foobar = 13"
+        /// "$env:PATH = 'c:\windows'" or "$global:example = 13"
         /// </summary>
         /// <param name="name">
         /// The name of the item to set.
@@ -956,7 +948,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name);
@@ -967,7 +959,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a variable in session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "$env:PATH = 'c:\windows'" or "$global:foobar = 13"
+        /// "$env:PATH = 'c:\windows'" or "$global:example = 13"
         ///
         /// BUGBUG: this overload exists because a lot of tests in the
         /// testsuite use it. Those tests should eventually be fixed and this overload
@@ -1005,7 +997,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Set a variable in session state. This interface supports
-        /// the scope specifiers like "$global:foobar = 13"
+        /// the scope specifiers like "$global:example = 13"
         /// </summary>
         /// <param name="variable">
         /// The variable to be set.
@@ -1030,7 +1022,7 @@ namespace System.Management.Automation
         {
             if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
-                throw PSTraceSource.NewArgumentException("variable");
+                throw PSTraceSource.NewArgumentException(nameof(variable));
             }
 
             VariablePath variablePath = new VariablePath(variable.Name, VariablePathFlags.Variable | VariablePathFlags.Unqualified);
@@ -1138,7 +1130,7 @@ namespace System.Management.Automation
             object result = null;
             if (variablePath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variablePath");
+                throw PSTraceSource.NewArgumentNullException(nameof(variablePath));
             }
 
             CmdletProviderContext context = null;
@@ -1179,7 +1171,7 @@ namespace System.Management.Automation
 
                 if (variablePath.IsPrivate && varResult != null)
                 {
-                    varResult.Options = varResult.Options | ScopedItemOptions.Private;
+                    varResult.Options |= ScopedItemOptions.Private;
                 }
 
                 result = varResult;
@@ -1245,8 +1237,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderCannotBeUsedAsVariable",
@@ -1261,8 +1252,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderCannotBeUsedAsVariable",
@@ -1301,8 +1291,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderVariableSyntaxInvalid",
@@ -1325,8 +1314,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     ProviderInvocationException providerException =
                         new ProviderInvocationException(
@@ -1405,7 +1393,7 @@ namespace System.Management.Automation
         {
             if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
-                throw PSTraceSource.NewArgumentException("variable");
+                throw PSTraceSource.NewArgumentException(nameof(variable));
             }
 
             SessionStateScope lookupScope = GetScopeByID(scopeID);
@@ -1441,7 +1429,7 @@ namespace System.Management.Automation
         {
             if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
-                throw PSTraceSource.NewArgumentException("variable");
+                throw PSTraceSource.NewArgumentException(nameof(variable));
             }
 
             return
@@ -1485,7 +1473,7 @@ namespace System.Management.Automation
         {
             if (variable == null || string.IsNullOrEmpty(variable.Name))
             {
-                throw PSTraceSource.NewArgumentException("variable");
+                throw PSTraceSource.NewArgumentException(nameof(variable));
             }
 
             // The lookup scope from above is ignored and the scope is retrieved by
@@ -1564,7 +1552,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name);
@@ -1623,7 +1611,7 @@ namespace System.Management.Automation
         {
             if (variable == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variable");
+                throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
 
             VariablePath variablePath = new VariablePath(variable.Name);
@@ -1639,7 +1627,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Remove a variable from session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:foobar"
+        /// "env:PATH" or "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to remove
@@ -1669,7 +1657,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Remove a variable from session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:foobar"
+        /// "env:PATH" or "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to remove
@@ -1698,7 +1686,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             VariablePath variablePath = new VariablePath(name);
@@ -1780,7 +1768,7 @@ namespace System.Management.Automation
         {
             if (variable == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variable");
+                throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
 
             VariablePath variablePath = new VariablePath(variable.Name);
@@ -1816,7 +1804,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        private void GetScopeVariableTable(SessionStateScope scope, Dictionary<string, PSVariable> result, bool includePrivate)
+        private static void GetScopeVariableTable(SessionStateScope scope, Dictionary<string, PSVariable> result, bool includePrivate)
         {
             foreach (KeyValuePair<string, PSVariable> entry in scope.Variables)
             {
@@ -1839,10 +1827,7 @@ namespace System.Management.Automation
                 dottedScope.GetVariableTable(result, includePrivate);
             }
 
-            if (scope.LocalsTuple != null)
-            {
-                scope.LocalsTuple.GetVariableTable(result, includePrivate);
-            }
+            scope.LocalsTuple?.GetVariableTable(result, includePrivate);
         }
 
         /// <summary>

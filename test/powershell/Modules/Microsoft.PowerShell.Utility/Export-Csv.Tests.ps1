@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
@@ -66,6 +66,21 @@ Describe "Export-Csv" -Tags "CI" {
 
         $results[0] | Should -Not -Match ([regex]::Escape("System.String"))
         $results[0] | Should -Not -Match ([regex]::Escape("#TYPE"))
+    }
+
+    It "Does not include headers with -NoHeader when exported and can imported with headers" {
+        $P1 | Export-Csv -Path $testCsv -NoHeader
+        $results = Get-Content -Path $testCsv
+        $results | Should -BeExactly '"first"'
+        $results = Import-Csv -Path $testCsv -Header "P1"
+        $results[0].P1 | Should -BeExactly "first"
+    }
+
+    It "Does not include headers when imported with headers and exported using -NoHeader" {
+        $P1 | Export-Csv -Path $testCsv
+        (Import-Csv -Path $testCsv) | Export-Csv -Path $testCsv -NoHeader
+        $results = Get-Content -Path $testCsv
+        $results | Should -BeExactly '"first"'
     }
 
     It "Includes type information when -IncludeTypeInformation is supplied" {

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -39,6 +39,28 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Gets the value of the command arguments as an array of strings.
+        /// </summary>
+        internal string[] ArgumentList
+        {
+            get
+            {
+                return ((NativeCommandParameterBinder)DefaultParameterBinder).ArgumentList;
+            }
+        }
+
+        /// <summary>
+        /// Gets the value indicating what type of native argument binding to use.
+        /// </summary>
+        internal NativeArgumentPassingStyle ArgumentPassingStyle
+        {
+            get
+            {
+                return ((NativeCommandParameterBinder)DefaultParameterBinder).ArgumentPassingStyle;
+            }
+        }
+
+        /// <summary>
         /// Passes the binding directly through to the parameter binder.
         /// It does no verification against metadata.
         /// </summary>
@@ -49,8 +71,7 @@ namespace System.Management.Automation
         /// Ignored.
         /// </param>
         /// <returns>
-        /// True if the parameter was successfully bound. Any error condition
-        /// produces an exception.
+        /// True if the parameter was successfully bound. Any error condition produces an exception.
         /// </returns>
         internal override bool BindParameter(
             CommandParameterInternal argument,
@@ -83,4 +104,3 @@ namespace System.Management.Automation
         private static readonly Collection<CommandParameterInternal> s_emptyReturnCollection = new Collection<CommandParameterInternal>();
     }
 }
-

@@ -1,9 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
@@ -73,7 +74,7 @@ namespace System.Management.Automation
     /// </summary>
     internal static class RemotingConstants
     {
-        internal static readonly Version HostVersion = new Version(1, 0, 0, 0);
+        internal static readonly Version HostVersion = PSVersionInfo.PSVersion;
 
         internal static readonly Version ProtocolVersionWin7RC = new Version(2, 0);
         internal static readonly Version ProtocolVersionWin7RTM = new Version(2, 1);
@@ -93,7 +94,6 @@ namespace System.Management.Automation
         internal static readonly string RunspaceIdNoteProperty = "RunspaceId";
         internal static readonly string ShowComputerNameNoteProperty = "PSShowComputerName";
         internal static readonly string SourceJobInstanceId = "PSSourceJobInstanceId";
-        internal static readonly string SourceLength = "Length";
         internal static readonly string EventObject = "PSEventObject";
         // used by Custom Shell related cmdlets.
         internal const string PSSessionConfigurationNoun = "PSSessionConfiguration";
@@ -124,234 +124,6 @@ namespace System.Management.Automation
         // used by negotiation algorithm. Server sends this information back
         // to client to let client know if the negotiation succeeded.
         internal const string IsNegotiationSucceeded = "IsNegotiationSucceeded";
-
-        #region "PSv2 Tab Expansion Function"
-
-        internal const string PSv2TabExpansionFunction = "TabExpansion";
-
-        /// <summary>
-        /// This is the PSv2 function for tab expansion. It's only for legacy purpose - used in
-        /// an interactive remote session from a win7 machine to a win8 machine (or later).
-        /// </summary>
-        internal const string PSv2TabExpansionFunctionText = @"
-            param($line, $lastWord)
-            & {
-                function Write-Members ($sep='.')
-                {
-                    Invoke-Expression ('$_val=' + $_expression)
-
-                    $_method = [Management.Automation.PSMemberTypes] `
-                        'Method,CodeMethod,ScriptMethod,ParameterizedProperty'
-                    if ($sep -eq '.')
-                    {
-                        $params = @{view = 'extended','adapted','base'}
-                    }
-                    else
-                    {
-                        $params = @{static=$true}
-                    }
-
-                    foreach ($_m in ,$_val | Get-Member @params $_pat |
-                        Sort-Object membertype,name)
-                    {
-                        if ($_m.MemberType -band $_method)
-                        {
-                            # Return a method...
-                            $_base + $_expression + $sep + $_m.name + '('
-                        }
-                        else {
-                            # Return a property...
-                            $_base + $_expression + $sep + $_m.name
-                        }
-                    }
-                }
-
-                # If a command name contains any of these chars, it needs to be quoted
-                $_charsRequiringQuotes = ('`&@''#{}()$,;|<> ' + ""`t"").ToCharArray()
-
-                # If a variable name contains any of these characters it needs to be in braces
-                $_varsRequiringQuotes = ('-`&@''#{}()$,;|<> .\/' + ""`t"").ToCharArray()
-
-                switch -regex ($lastWord)
-                {
-                    # Handle property and method expansion rooted at variables...
-                    # e.g. $a.b.<tab>
-                    '(^.*)(\$(\w|:|\.)+)\.([*\w]*)$' {
-                        $_base = $matches[1]
-                        $_expression = $matches[2]
-                        $_pat = $matches[4] + '*'
-                        Write-Members
-                        break;
-                    }
-
-                    # Handle simple property and method expansion on static members...
-                    # e.g. [datetime]::n<tab>
-                    '(^.*)(\[(\w|\.|\+)+\])(\:\:|\.){0,1}([*\w]*)$' {
-                        $_base = $matches[1]
-                        $_expression = $matches[2]
-                        $_pat = $matches[5] + '*'
-                        Write-Members $(if (! $matches[4]) {'::'} else {$matches[4]})
-                        break;
-                    }
-
-                    # Handle complex property and method expansion on static members
-                    # where there are intermediate properties...
-                    # e.g. [datetime]::now.d<tab>
-                    '(^.*)(\[(\w|\.|\+)+\](\:\:|\.)(\w+\.)+)([*\w]*)$' {
-                        $_base = $matches[1]  # everything before the expression
-                        $_expression = $matches[2].TrimEnd('.') # expression less trailing '.'
-                        $_pat = $matches[6] + '*'  # the member to look for...
-                        Write-Members
-                        break;
-                    }
-
-                    # Handle variable name expansion...
-                    '(^.*\$)([*\w:]+)$' {
-                        $_prefix = $matches[1]
-                        $_varName = $matches[2]
-                        $_colonPos = $_varname.IndexOf(':')
-                        if ($_colonPos -eq -1)
-                        {
-                            $_varName = 'variable:' + $_varName
-                            $_provider = ''
-                        }
-                        else
-                        {
-                            $_provider = $_varname.Substring(0, $_colonPos+1)
-                        }
-
-                        foreach ($_v in Get-ChildItem ($_varName + '*') | sort Name)
-                        {
-                            $_nameFound = $_v.name
-                            $(if ($_nameFound.IndexOfAny($_varsRequiringQuotes) -eq -1) {'{0}{1}{2}'}
-                            else {'{0}{{{1}{2}}}'}) -f $_prefix, $_provider, $_nameFound
-                        }
-
-                        break;
-                    }
-
-                    # Do completion on parameters...
-                    '^-([*\w0-9]*)' {
-                        $_pat = $matches[1] + '*'
-
-                        # extract the command name from the string
-                        # first split the string into statements and pipeline elements
-                        # This doesn't handle strings however.
-                        $_command = [regex]::Split($line, '[|;=]')[-1]
-
-                        #  Extract the trailing unclosed block e.g. ls | foreach { cp
-                        if ($_command -match '\{([^\{\}]*)$')
-                        {
-                            $_command = $matches[1]
-                        }
-
-                        # Extract the longest unclosed parenthetical expression...
-                        if ($_command -match '\(([^()]*)$')
-                        {
-                            $_command = $matches[1]
-                        }
-
-                        # take the first space separated token of the remaining string
-                        # as the command to look up. Trim any leading or trailing spaces
-                        # so you don't get leading empty elements.
-                        $_command = $_command.TrimEnd('-')
-                        $_command,$_arguments = $_command.Trim().Split()
-
-                        # now get the info object for it, -ArgumentList will force aliases to be resolved
-                        # it also retrieves dynamic parameters
-                        try
-                        {
-                            $_command = @(Get-Command -type 'Alias,Cmdlet,Function,Filter,ExternalScript' `
-                                -Name $_command -ArgumentList $_arguments)[0]
-                        }
-                        catch
-                        {
-                            # see if the command is an alias. If so, resolve it to the real command
-                            if(Test-Path alias:\$_command)
-                            {
-                                $_command = @(Get-Command -Type Alias $_command)[0].Definition
-                            }
-
-                            # If we were unsuccessful retrieving the command, try again without the parameters
-                            $_command = @(Get-Command -type 'Cmdlet,Function,Filter,ExternalScript' `
-                                -Name $_command)[0]
-                        }
-
-                        # remove errors generated by the command not being found, and break
-                        if(-not $_command) { $error.RemoveAt(0); break; }
-
-                        # expand the parameter sets and emit the matching elements
-                        # need to use psbase.Keys in case 'keys' is one of the parameters
-                        # to the cmdlet
-                        foreach ($_n in $_command.Parameters.psbase.Keys)
-                        {
-                            if ($_n -like $_pat) { '-' + $_n }
-                        }
-
-                        break;
-                    }
-
-                    # Tab complete against history either #<pattern> or #<id>
-                    '^#(\w*)' {
-                        $_pattern = $matches[1]
-                        if ($_pattern -match '^[0-9]+$')
-                        {
-                            Get-History -ea SilentlyContinue -Id $_pattern | ForEach-Object { $_.CommandLine }
-                        }
-                        else
-                        {
-                            $_pattern = '*' + $_pattern + '*'
-                            Get-History -Count 32767 | Sort-Object -Descending Id| ForEach-Object { $_.CommandLine } | where { $_ -like $_pattern }
-                        }
-
-                        break;
-                    }
-
-                    # try to find a matching command...
-                    default {
-                        # parse the script...
-                        $_tokens = [System.Management.Automation.PSParser]::Tokenize($line,
-                            [ref] $null)
-
-                        if ($_tokens)
-                        {
-                            $_lastToken = $_tokens[$_tokens.count - 1]
-                            if ($_lastToken.Type -eq 'Command')
-                            {
-                                $_cmd = $_lastToken.Content
-
-                                # don't look for paths...
-                                if ($_cmd.IndexOfAny('/\:') -eq -1)
-                                {
-                                    # handle parsing errors - the last token string should be the last
-                                    # string in the line...
-                                    if ($lastword.Length -ge $_cmd.Length -and
-                                        $lastword.substring($lastword.length-$_cmd.length) -eq $_cmd)
-                                    {
-                                        $_pat = $_cmd + '*'
-                                        $_base = $lastword.substring(0, $lastword.length-$_cmd.length)
-
-                                        # get files in current directory first, then look for commands...
-                                        $( try {Resolve-Path -ea SilentlyContinue -Relative $_pat } catch {} ;
-                                           try { $ExecutionContext.InvokeCommand.GetCommandName($_pat, $true, $false) |
-                                               Sort-Object -Unique } catch {} ) |
-                                                   # If the command contains non-word characters (space, ) ] ; ) etc.)
-                                                   # then it needs to be quoted and prefixed with &
-                                                   ForEach-Object {
-                                                        if ($_.IndexOfAny($_charsRequiringQuotes) -eq -1) { $_ }
-                                                        elseif ($_.IndexOf('''') -ge 0) {'& ''{0}''' -f $_.Replace('''','''''') }
-                                                        else { '& ''{0}''' -f $_ }} |
-                                                   ForEach-Object {'{0}{1}' -f $_base,$_ }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        ";
-
-        #endregion "PSv2 Tab Expansion Function"
 
         #region Host Related Strings
 
@@ -677,11 +449,7 @@ namespace System.Management.Automation
             dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MinRunspaces, minRunspaces));
             dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MaxRunspaces, maxRunspaces));
             dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ThreadOptions, runspacePool.ThreadOptions));
-#if CORECLR // No ApartmentState In CoreCLR, default to MTA for outgoing objects
-            ApartmentState poolState = ApartmentState.MTA;
-#else
             ApartmentState poolState = runspacePool.ApartmentState;
-#endif
             dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ApartmentState, poolState));
             dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ApplicationArguments, applicationArguments));
 
@@ -1113,11 +881,7 @@ namespace System.Management.Automation
                 hostInfo = new HostInfo(null);
                 hostInfo.UseRunspaceHost = true;
 
-#if CORECLR // No ApartmentState In CoreCLR, default to MTA for outgoing objects
-                ApartmentState passedApartmentState = ApartmentState.MTA;
-#else
                 ApartmentState passedApartmentState = rsPool.ApartmentState;
-#endif
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ApartmentState, passedApartmentState));
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.RemoteStreamOptions, RemoteStreamOptions.AddInvocationInfo));
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.AddToHistory, false));
@@ -1130,11 +894,7 @@ namespace System.Management.Automation
                     hostInfo.UseRunspaceHost = true;
                 }
 
-#if CORECLR // No ApartmentState In CoreCLR, default to MTA for outgoing objects
-                ApartmentState passedApartmentState = ApartmentState.MTA;
-#else
                 ApartmentState passedApartmentState = settings.ApartmentState;
-#endif
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ApartmentState, passedApartmentState));
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.RemoteStreamOptions, settings.RemoteStreamOptions));
                 dataAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.AddToHistory, settings.AddToHistory));
@@ -1209,10 +969,10 @@ namespace System.Management.Automation
             // Add Reason property
             if (stateInfo.Reason != null)
             {
-                // If Reason is of not type IContainsErrorRecord, a new ErrorRecord is
-                // created using this errorId
-                string errorId = "RemoteRunspaceStateInfoReason";
-                PSNoteProperty exceptionProperty = GetExceptionProperty(stateInfo.Reason, errorId, ErrorCategory.NotSpecified);
+                PSNoteProperty exceptionProperty = GetExceptionProperty(
+                    exception: stateInfo.Reason,
+                    errorId: "RemoteRunspaceStateInfoReason",
+                    category: ErrorCategory.NotSpecified);
                 dataAsPSObject.Properties.Add(exceptionProperty);
             }
 
@@ -1427,7 +1187,7 @@ namespace System.Management.Automation
         {
             if (progressRecord == null)
             {
-                throw PSTraceSource.NewArgumentNullException("progressRecord");
+                throw PSTraceSource.NewArgumentNullException(nameof(progressRecord));
             }
 
             return RemoteDataObject.CreateFrom(RemotingDestination.Client,
@@ -1460,7 +1220,7 @@ namespace System.Management.Automation
         {
             if (informationRecord == null)
             {
-                throw PSTraceSource.NewArgumentNullException("informationRecord");
+                throw PSTraceSource.NewArgumentNullException(nameof(informationRecord));
             }
 
             return RemoteDataObject.CreateFrom(RemotingDestination.Client,
@@ -1528,12 +1288,10 @@ namespace System.Management.Automation
             // Add exception property
             if (stateInfo.Reason != null)
             {
-                // If Reason is of not type IContainsErrorRecord,
-                // a new ErrorRecord is created using this errorId
-                string errorId = "RemotePSInvocationStateInfoReason";
-                PSNoteProperty exceptionProperty =
-                    GetExceptionProperty(stateInfo.Reason, errorId,
-                        ErrorCategory.NotSpecified);
+                PSNoteProperty exceptionProperty = GetExceptionProperty(
+                    exception: stateInfo.Reason,
+                    errorId: "RemotePSInvocationStateInfoReason",
+                    category: ErrorCategory.NotSpecified);
                 dataAsPSObject.Properties.Add(exceptionProperty);
             }
 
@@ -1554,7 +1312,7 @@ namespace System.Management.Automation
         /// <param name="exception"></param>
         /// <returns>
         /// ErrorRecord if exception is of type IContainsErrorRecord
-        /// Null if if exception is not of type IContainsErrorRecord
+        /// Null if exception is not of type IContainsErrorRecord
         /// </returns>
         internal static ErrorRecord GetErrorRecordFromException(Exception exception)
         {
@@ -1576,6 +1334,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a Note Property for the exception.
         /// </summary>
+        /// <remarks>
+        /// If <paramref name="exception"/> is of not type IContainsErrorRecord, a new ErrorRecord is created.
+        /// </remarks>
         /// <param name="exception"></param>
         /// <param name="errorId">ErrorId to use if exception is not of type IContainsErrorRecord.</param>
         /// <param name="category">ErrorCategory to use if exception is not of type IContainsErrorRecord.</param>
@@ -1612,8 +1373,6 @@ namespace System.Management.Automation
                 Guid runspacePoolId)
         {
             PSObject temp = GenerateSessionCapability(capability);
-            temp.Properties.Add(
-                new PSNoteProperty(RemoteDataNameStrings.TimeZone, RemoteSessionCapability.GetCurrentTimeZoneInByteFormat()));
             return RemoteDataObject.CreateFrom(capability.RemotingDestination,
                 RemotingDataType.SessionCapability, runspacePoolId, Guid.Empty, temp);
         }
@@ -1650,7 +1409,7 @@ namespace System.Management.Automation
         {
             if (propertyName == null) // comes from internal caller
             {
-                throw PSTraceSource.NewArgumentNullException("propertyName");
+                throw PSTraceSource.NewArgumentNullException(nameof(propertyName));
             }
 
             if (typeof(T).IsEnum)
@@ -1758,12 +1517,12 @@ namespace System.Management.Automation
         {
             if (psObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("psObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(psObject));
             }
 
             if (propertyName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("propertyName");
+                throw PSTraceSource.NewArgumentNullException(nameof(propertyName));
             }
 
             PSPropertyInfo property = psObject.Properties[propertyName];
@@ -1780,12 +1539,12 @@ namespace System.Management.Automation
         {
             if (psObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("psObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(psObject));
             }
 
             if (propertyName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("propertyName");
+                throw PSTraceSource.NewArgumentNullException(nameof(propertyName));
             }
 
             PSPropertyInfo property = GetProperty(psObject, propertyName);
@@ -1797,12 +1556,12 @@ namespace System.Management.Automation
         {
             if (psObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("psObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(psObject));
             }
 
             if (propertyName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("propertyName");
+                throw PSTraceSource.NewArgumentNullException(nameof(propertyName));
             }
 
             IEnumerable e = GetPropertyValue<IEnumerable>(psObject, propertyName);
@@ -1815,16 +1574,16 @@ namespace System.Management.Automation
             }
         }
 
-        internal static IEnumerable<KeyValuePair<KeyType, ValueType>> EnumerateHashtableProperty<KeyType, ValueType>(PSObject psObject, string propertyName)
+        internal static IEnumerable<KeyValuePair<TKey, TValue>> EnumerateHashtableProperty<TKey, TValue>(PSObject psObject, string propertyName)
         {
             if (psObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("psObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(psObject));
             }
 
             if (propertyName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("propertyName");
+                throw PSTraceSource.NewArgumentNullException(nameof(propertyName));
             }
 
             Hashtable h = GetPropertyValue<Hashtable>(psObject, propertyName);
@@ -1832,9 +1591,9 @@ namespace System.Management.Automation
             {
                 foreach (DictionaryEntry e in h)
                 {
-                    KeyType key = ConvertPropertyValueTo<KeyType>(propertyName, e.Key);
-                    ValueType value = ConvertPropertyValueTo<ValueType>(propertyName, e.Value);
-                    yield return new KeyValuePair<KeyType, ValueType>(key, value);
+                    TKey key = ConvertPropertyValueTo<TKey>(propertyName, e.Key);
+                    TValue value = ConvertPropertyValueTo<TValue>(propertyName, e.Value);
+                    yield return new KeyValuePair<TKey, TValue>(key, value);
                 }
             }
         }
@@ -1849,7 +1608,7 @@ namespace System.Management.Automation
         {
             if (dataAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataAsPSObject));
             }
 
             RunspacePoolState state = GetPropertyValue<RunspacePoolState>(dataAsPSObject, RemoteDataNameStrings.RunspaceState);
@@ -1868,7 +1627,7 @@ namespace System.Management.Automation
         {
             if (dataAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataAsPSObject));
             }
 
             return GetPropertyValue<PSPrimitiveDictionary>(dataAsPSObject, RemoteDataNameStrings.ApplicationPrivateData);
@@ -1883,7 +1642,7 @@ namespace System.Management.Automation
         {
             if (dataAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataAsPSObject));
             }
 
             return GetPropertyValue<string>(dataAsPSObject, RemoteDataNameStrings.PublicKey);
@@ -1898,7 +1657,7 @@ namespace System.Management.Automation
         {
             if (dataAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataAsPSObject));
             }
 
             return GetPropertyValue<string>(dataAsPSObject, RemoteDataNameStrings.EncryptedSessionKey);
@@ -1914,7 +1673,7 @@ namespace System.Management.Automation
         {
             if (dataAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataAsPSObject));
             }
 
             int eventIdentifier = GetPropertyValue<int>(dataAsPSObject, RemoteDataNameStrings.PSEventArgsEventIdentifier);
@@ -1924,7 +1683,7 @@ namespace System.Management.Automation
             string computerName = GetPropertyValue<string>(dataAsPSObject, RemoteDataNameStrings.PSEventArgsComputerName);
             Guid runspaceId = GetPropertyValue<Guid>(dataAsPSObject, RemoteDataNameStrings.PSEventArgsRunspaceId);
 
-            ArrayList sourceArgs = new ArrayList();
+            var sourceArgs = new List<object>();
             foreach (object argument in RemotingDecoder.EnumerateListProperty<object>(dataAsPSObject, RemoteDataNameStrings.PSEventArgsSourceArgs))
             {
                 sourceArgs.Add(argument);
@@ -1954,7 +1713,7 @@ namespace System.Management.Automation
         {
             if (dataAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataAsPSObject));
             }
 
             return GetPropertyValue<int>(dataAsPSObject, RemoteDataNameStrings.MinRunspaces);
@@ -1970,7 +1729,7 @@ namespace System.Management.Automation
         {
             if (dataAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataAsPSObject));
             }
 
             return GetPropertyValue<int>(dataAsPSObject, RemoteDataNameStrings.MaxRunspaces);
@@ -1986,7 +1745,7 @@ namespace System.Management.Automation
         {
             if (dataAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataAsPSObject));
             }
 
             // rehydration might not work yet (there is no type table before a runspace is created)
@@ -2003,7 +1762,7 @@ namespace System.Management.Automation
         {
             if (dataAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataAsPSObject));
             }
 
             int maxRS = GetPropertyValue<int>(dataAsPSObject, RemoteDataNameStrings.MaxRunspaces);
@@ -2022,7 +1781,7 @@ namespace System.Management.Automation
         {
             if (dataAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataAsPSObject));
             }
 
             return GetPropertyValue<PSThreadOptions>(dataAsPSObject, RemoteDataNameStrings.ThreadOptions);
@@ -2038,7 +1797,7 @@ namespace System.Management.Automation
         {
             if (dataAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataAsPSObject));
             }
 
             PSObject propertyValue = GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.HostInfo);
@@ -2101,8 +1860,7 @@ namespace System.Management.Automation
         /// <returns>PSInvocationInfo.</returns>
         internal static PSInvocationStateInfo GetPowerShellStateInfo(object data)
         {
-            PSObject dataAsPSObject = data as PSObject;
-            if (dataAsPSObject == null)
+            if (!(data is PSObject dataAsPSObject))
             {
                 throw new PSRemotingDataStructureException(
                     RemotingErrorIdStrings.DecodingErrorForPowerShellStateInfo);
@@ -2122,7 +1880,7 @@ namespace System.Management.Automation
         {
             if (data == null)
             {
-                throw PSTraceSource.NewArgumentNullException("data");
+                throw PSTraceSource.NewArgumentNullException(nameof(data));
             }
 
             PSObject dataAsPSObject = data as PSObject;
@@ -2139,7 +1897,7 @@ namespace System.Management.Automation
         {
             if (data == null)
             {
-                throw PSTraceSource.NewArgumentNullException("data");
+                throw PSTraceSource.NewArgumentNullException(nameof(data));
             }
 
             return new WarningRecord((PSObject)data);
@@ -2152,7 +1910,7 @@ namespace System.Management.Automation
         {
             if (data == null)
             {
-                throw PSTraceSource.NewArgumentNullException("data");
+                throw PSTraceSource.NewArgumentNullException(nameof(data));
             }
 
             return new VerboseRecord((PSObject)data);
@@ -2165,7 +1923,7 @@ namespace System.Management.Automation
         {
             if (data == null)
             {
-                throw PSTraceSource.NewArgumentNullException("data");
+                throw PSTraceSource.NewArgumentNullException(nameof(data));
             }
 
             return new DebugRecord((PSObject)data);
@@ -2250,7 +2008,7 @@ namespace System.Management.Automation
             }
             else
             {
-                module = new string[] { "" };
+                module = new string[] { string.Empty };
             }
 
             ModuleSpecification[] fullyQualifiedName = null;
@@ -2294,7 +2052,7 @@ namespace System.Management.Automation
         /// Gets the NoInput setting from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
-        /// <returns><c>true</c> if there is no pipeline input; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if there is no pipeline input; <see langword="false"/> otherwise.</returns>
         internal static bool GetNoInput(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2311,7 +2069,7 @@ namespace System.Management.Automation
         /// Gets the AddToHistory setting from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
-        /// <returns><c>true</c> if there is addToHistory data; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if there is addToHistory data; <see langword="false"/> otherwise.</returns>
         internal static bool GetAddToHistory(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2328,7 +2086,7 @@ namespace System.Management.Automation
         /// Gets the IsNested setting from the specified data.
         /// </summary>
         /// <param name="data">Data to decode.</param>
-        /// <returns><c>true</c> if there is IsNested data; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if there is IsNested data; <see langword="false"/> otherwise.</returns>
         internal static bool GetIsNested(object data)
         {
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
@@ -2341,7 +2099,6 @@ namespace System.Management.Automation
             return GetPropertyValue<bool>(dataAsPSObject, RemoteDataNameStrings.IsNested);
         }
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// Gets the invocation settings information from the message.
         /// </summary>
@@ -2352,7 +2109,7 @@ namespace System.Management.Automation
             PSObject dataAsPSObject = PSObject.AsPSObject(data);
             return GetPropertyValue<ApartmentState>(dataAsPSObject, RemoteDataNameStrings.ApartmentState);
         }
-#endif
+
         /// <summary>
         /// Gets the stream options from the message.
         /// </summary>
@@ -2371,9 +2128,7 @@ namespace System.Management.Automation
         /// <returns>RemoteSessionCapability object.</returns>
         internal static RemoteSessionCapability GetSessionCapability(object data)
         {
-            PSObject dataAsPSObject = data as PSObject;
-
-            if (dataAsPSObject == null)
+            if (!(data is PSObject dataAsPSObject))
             {
                 throw new PSRemotingDataStructureException(
                     RemotingErrorIdStrings.CantCastRemotingDataToPSObject, data.GetType().FullName);
@@ -2387,24 +2142,6 @@ namespace System.Management.Automation
             RemoteSessionCapability result = new RemoteSessionCapability(
                 RemotingDestination.InvalidDestination,
                 protocolVersion, psVersion, serializationVersion);
-
-            if (dataAsPSObject.Properties[RemoteDataNameStrings.TimeZone] != null)
-            {
-                // Binary deserialization of timezone info via BinaryFormatter is unsafe,
-                // so don't deserialize any untrusted client data using this API.
-                //
-                // In addition, the binary data being sent by the client doesn't represent
-                // the client's current TimeZone unless they somehow accessed the
-                // StandardName and DaylightName. These properties are initialized lazily
-                // by the .NET Framework, and would be populated by the server with local
-                // values anyways.
-                //
-                // So just return the CurrentTimeZone.
-
-#if !CORECLR // TimeZone Not In CoreCLR
-                result.TimeZone = TimeZone.CurrentTimeZone;
-#endif
-            }
 
             return result;
         }

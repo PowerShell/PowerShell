@@ -1,0 +1,459 @@
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <!-- The URL for add/remove programs -->
+  <!-- TBD:Point to the actual release -->
+  <?define InfoURL="https://github.com/PowerShell/PowerShell" ?>
+  <?define ProductSimpleVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))"?>
+  <?if $(var.IsPreview)=True?>
+    <?define PwshPath = "[VersionFolder]preview"?>
+    <?define IconPath = "assets\Powershell_av_colors.ico"?>
+  <?else?>
+    <?define PwshPath = "[VersionFolder]"?>
+    <?define IconPath = "assets\Powershell_black.ico"?>
+  <?endif?>
+  <!-- UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS, otherwise, updates won't occur. -->
+  <?if $(sys.BUILDARCH)=x64?>
+    <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(var.SimpleProductVersion)"?>
+    <?define UpgradeCodePreview = "39243d76-adaf-42b1-94fb-16ecf83237c8"?>
+    <?define UpgradeCodeRelease = "31ab5147-9a97-4452-8443-d9709f0516e1"?>
+    <?if $(var.IsPreview)=True?>
+      <?define UpgradeCode = $(var.UpgradeCodePreview)?>
+    <?else?>
+      <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
+    <?endif?>
+  <?else?>
+    <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))"?>
+    <?define UpgradeCodePreview = "86abcfbd-1ccc-4a88-b8b2-0facfde29094"?>
+    <?define UpgradeCodeRelease = "1d00683b-0f84-4db8-a64f-2f98ad42fe06"?>
+    <?if $(var.IsPreview)=True?>
+      <?define UpgradeCode = $(var.UpgradeCodePreview)?>
+    <?else?>
+      <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
+    <?endif?>
+  <?endif?>
+  <!-- Explorer context submenu entries. The ampersand denotes the keyboard shortcut. -->
+  <?define ExplorerContextSubMenuDialogText = "Open &here"?>
+  <?define ExplorerContextSubMenuElevatedDialogText = "Open here as &Administrator"?>
+  <!-- ps1 context submenu entries. -->
+  <?define PowerShellFileContextSubMenuDialogText = "Run with $(var.ProductName) $(var.SimpleProductVersion)"?>
+  <Product
+    Id="*"
+    Name="PowerShell $(var.SimpleProductVersion)-$(sys.BUILDARCH)"
+    Language="1033"
+    Version="$(var.ProductVersion)"
+    Manufacturer="Microsoft Corporation"
+    UpgradeCode="$(var.UpgradeCode)">
+    <!-- Properties About The Package -->
+    <Package Id="*" Keywords="Installer" Platform="$(sys.BUILDARCH)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
+    <!-- Add PowerShell icon for executable -->
+    <Icon Id="PowerShellExe.ico" SourceFile="$(var.IconPath)" />
+    <!-- Add PowerShell icon in Add/Remove Programs -->
+    <Property Id="ARPPRODUCTICON" Value="PowerShellExe.ico" />
+    <!-- Set properties for add/remove programs -->
+    <Property Id="ARPHELPLINK" Value="$(var.InfoURL)" />
+    <!-- custom images -->
+    <WixVariable Id="WixUIBannerBmp" Value="assets\wix\WixUIBannerBmp.png" />
+    <WixVariable Id="WixUIDialogBmp" Value="assets\wix\WixUIDialogBmp.png" />
+    <WixVariable Id="WixUIExclamationIco" Value="assets\wix\WixUIInfoIco.png" />
+    <WixVariable Id="WixUIInfoIco" Value="assets\ps_black_32x32.ico" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(var.ProductName)" />
+    <!-- Default value of Checkbox of starting PowerShell after installation -->
+    <Property Id="WixShellExecTarget" Value="[VersionFolder]pwsh.exe"/>
+    <!-- This changes the default setting from "reinstall if the file is a newer version" to "reinstall if the file is a different version" -->
+    <Property Id="REINSTALLMODE" Value="dmus"/>
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+
+    <SetProperty Id="RegisterManifest"
+                 Before="RegisterManifest"
+                 Sequence="execute"
+                 Value="&quot;[VersionFolder]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[VersionFolder]RegisterManifest.ps1&quot;" />
+    <CustomAction Id="RegisterManifest"
+                  BinaryKey="WixCA"
+                  DllEntry="CAQuietExec"
+                  Execute="deferred"
+                  Return="ignore"
+                  Impersonate="no" />
+    <SetProperty Id="EnablePSRemoting"
+                 Before="EnablePSRemoting"
+                 Sequence="execute"
+                 Value="&quot;[VersionFolder]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;Enable-PSRemoting&quot;" />
+    <CustomAction Id="EnablePSRemoting"
+                  BinaryKey="WixCA"
+                  DllEntry="CAQuietExec"
+                  Execute="deferred"
+                  Return="ignore"
+                  Impersonate="no" />
+    <SetProperty Id="EnableMU"
+                 Before="EnableMU"
+                 Sequence="execute"
+                 Value="&quot;[VersionFolder]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[VersionFolder]RegisterMicrosoftUpdate.ps1&quot;" />
+    <CustomAction Id="EnableMU"
+                  BinaryKey="WixCA"
+                  DllEntry="CAQuietExec"
+                  Execute="deferred"
+                  Return="ignore"
+                  Impersonate="no" />
+    <InstallExecuteSequence>
+      <!-- Do not remove shortcuts on upgrade to preserve user shortcuts pinned to Taskbar, see https://stackoverflow.com/a/33402698/1810304 -->
+      <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE</RemoveShortcuts>
+      <Custom Action="RegisterManifest" After="InstallFiles">
+        <![CDATA[NOT Installed AND (REGISTER_MANIFEST=1)]]>
+      </Custom>
+      <Custom Action="EnablePSRemoting" After="InstallFiles">
+        <![CDATA[NOT Installed AND (ENABLE_PSREMOTING=1)]]>
+      </Custom>
+      <Custom Action="EnableMU" After="InstallFiles">
+        <![CDATA[NOT Installed AND (ENABLE_MU=1)]]>
+      </Custom>
+    </InstallExecuteSequence>
+    <UI>
+      <Dialog Id="MyExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
+        <Control Id="Bitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="234" TabSkip="yes" Text="!(loc.ExitDialogBitmap)" />
+        <Control Id="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Bigger}!(loc.Error1707)" TabSkip="yes" />
+        <Control Id="Description" Type="Text" X="135" Y="70" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)" TabSkip="yes" />
+        <!-- divider between check boxes and button row -->
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"  />
+        <!-- Button row -->
+        <!-- Checkbox to allow starting PowerShell after the installation (in UI mode only) -->
+        <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Launch $(var.ProductName)" >
+          <Condition Action="show">NOT Installed</Condition>
+        </Control>
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUIBack)" />
+        <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.WixUIFinish)" />
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUICancel)" />
+      </Dialog>
+      <InstallUISequence>
+          <Show Dialog="MyExitDialog" OnExit="success" />
+      </InstallUISequence>
+      <AdminUISequence>
+          <Show Dialog="MyExitDialog" OnExit="success" />
+      </AdminUISequence>
+      <Publish Dialog="MyExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+    </UI>
+    <UI>
+      <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT=1</Publish>
+    </UI>
+    <!-- Prerequisites -->
+    <Condition Message="Supported only on Windows 8.1 and above">
+      <![CDATA[ Installed OR MsiNTProductType <> 1 OR VersionNT >= 603 ]]>
+    </Condition>
+    <Condition Message="Supported only on Windows Server 2012 and above">
+      <![CDATA[ Installed OR MsiNTProductType = 1 OR VersionNT >= 602 ]]>
+    </Condition>
+    <!-- Information About When Older Versions Are Trying To Be Installed-->
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of $(var.ProductName) is already installed." />
+    <!-- Embed Cabinet Files in Product-->
+    <MediaTemplate EmbedCab="yes" />
+    <!-- In Your Wix Setup Project, Add A Reference To WixUIExtension.dll -->
+    <UIRef Id="CustomWixUI_InstallDir" />
+    <!-- Features are mandatory.  Need At Least One. -->
+    <Feature Id="ProductFeature" Title="PowerShell" Level="1">
+      <ComponentGroupRef Id="ApplicationFiles"/>
+      <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
+      <ComponentRef Id="MURegistryEntries"/>
+      <ComponentRef Id="RegistryEntries"/>
+      <ComponentRef Id="SharedRegistryEntries"/>
+      <ComponentRef Id="SetPath"/>
+      <ComponentRef Id="Telemetry"/>
+      <ComponentRef Id="DisableTelemetry"/>
+      <ComponentRef Id="ExplorerContextMenu"/>
+      <ComponentRef Id="PowerShellFileContextMenu"/>
+    </Feature>
+    <!-- We need to show EULA, and provide option to customize download location -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <!-- Need to get the Windows product name from the registry -->
+    <Property Id="WINDOWS_PRODUCT_NAME">
+      <RegistrySearch Id="ProductName" Root="HKLM" Type="raw" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion" Name="ProductName" />
+    </Property>
+    <!-- Prerequisite check for Windows Universal C runtime -->
+    <Property Id="UNIVERSAL_C_RUNTIME_INSTALLED" Secure="yes">
+      <DirectorySearch Id="WindowsDirectory" Path="[WindowsFolder]">
+        <DirectorySearch Id="System32" Path="System32">
+          <FileSearch Id="ucrtbase" Name="ucrtbase.dll"/>
+        </DirectorySearch>
+      </DirectorySearch>
+    </Property>
+    <Condition Message="$(var.ProductName) requires the Universal C Runtime to be installed to enable remoting over WinRM. You can find a download link to it here: https://aka.ms/pscore6-prereq">
+      <![CDATA[Installed OR UNIVERSAL_C_RUNTIME_INSTALLED]]>
+    </Condition>
+    <!-- Prerequisite check for Windows Management Framework -->
+    <Property Id="PWRSHPLUGIN_VERSION" Secure="yes">
+      <DirectorySearchRef Id="System32" Parent="WindowsDirectory" Path="System32">
+        <FileSearch Id="pwrshplugin" Name="pwrshplugin.dll" MinVersion="6.3.9600.16383"/>
+      </DirectorySearchRef>
+    </Property>
+    <Condition Message="$(var.ProductName) requires the Windows Management Framework 4.0 or newer to be installed to enable remoting over WinRM. You can find download links here: https://aka.ms/pscore6-prereq">
+      <![CDATA[Installed OR PWRSHPLUGIN_VERSION ]]>
+    </Condition>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="$(var.ProductProgFilesDir)">
+        <Directory Id="INSTALLFOLDER" Name="PowerShell">
+          <Directory Id="VersionFolder" Name="$(var.SimpleProductVersion)">
+            <Component Id="Telemetry" Guid="{80520f20-471d-4d08-adc8-bab637627b39}" KeyPath="yes">
+              <!-- Should retain component GUID since this is a shared, non-file, non-registry resource. -->
+              <Environment Id="PowerShellDistributionChannel" Action="create" Name="POWERSHELL_DISTRIBUTION_CHANNEL" Permanent="no" System="yes" Value="MSI:[WINDOWS_PRODUCT_NAME]"/>
+            </Component>
+            <Component Id="MURegistryEntries">
+              <Condition>USE_MU=1</Condition>
+              <!-- Create registry key to allow opt-out of MU servicing without opting out of MU completely.  We don't want to uninstall because it's used by both Preview and Stable and the detection relies on PS7 being installed for this to take effect. -->
+              <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore" Action="create" ForceCreateOnInstall="yes">
+                  <RegistryValue Type="integer" Value="1" Name="UseMU"  KeyPath="yes"/>
+              </RegistryKey>
+            </Component>
+            <Component Id="RegistryEntries">
+              <!-- create key for easy detection of a particular version of a powershell core package
+                    The upgrade code is used in the key because it will change when we allow SxS       -->
+              <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+                  <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)" Name="SemanticVersion" KeyPath="yes"/>
+                  <RegistryValue Type="string" Value="[VersionFolder]" Name="InstallLocation" />
+              </RegistryKey>
+            </Component>
+            <Component Id="SharedRegistryEntries">
+              <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
+              <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+                  <!-- As a shared path, the last one to install will overwrite any previous value. It also needs to be in its own component to properly ref-count and be removed when appropriate. -->
+                  <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe" KeyPath="yes"/>
+              </RegistryKey>
+            </Component>
+            <Component Id="DisableTelemetry" Guid="{E86F5C91-3721-4C5C-A31F-1F0A5A468573}" KeyPath="yes">
+              <Condition>DISABLE_TELEMETRY</Condition>
+              <Environment Id="PowerShellTelemetryOptout" Action="set" Name="POWERSHELL_TELEMETRY_OPTOUT" Permanent="no" System="yes" Value="1"/>
+            </Component>
+            <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
+            <Component Id="SetPath">
+              <Condition>ADD_PATH=1</Condition>
+              <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="$(var.PwshPath)"/>
+              <!-- Can't use a shared component GUID here either since the path we add to PATH varies on the actual directory path. Use a key that represents this same path. -->
+              <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)">
+                <RegistryValue Type="string" Name="InstallDir" Value="[VersionFolder]" KeyPath="yes"/>
+              </RegistryKey>
+            </Component>
+            <!-- Explorer context menu with 2 submenus to open PowerShell normally or as an Administrator.
+                 See https://blogs.msdn.microsoft.com/andrew_richards/2017/03/01/enhancing-the-open-command-prompt-here-shift-right-click-context-menu-experience/ for details -->
+            <Component Id="ExplorerContextMenu">
+              <Condition>ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL</Condition>
+              <!-- When clicking on background in Explorer -->
+              <RegistryKey Root="HKCR" Key="Directory\Background\shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
+                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
+                <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe"/>
+                <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)" KeyPath="yes"/>
+              </RegistryKey>
+              <!-- When clicking on Drive in Explorer -->
+              <RegistryKey Root="HKCR" Key="Drive\shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
+                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
+                <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe"/>
+                <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)"/>
+              </RegistryKey>
+              <!-- When clicking on Desktop background in Explorer -->
+              <RegistryKey Root="HKCR" Key="DesktopBackground\shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
+                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
+                <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe"/>
+                <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)"/>
+              </RegistryKey>
+              <!-- When clicking on folder in Explorer -->
+              <RegistryKey Root="HKCR" Key="Directory\shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
+                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
+                <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe"/>
+                <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)"/>
+              </RegistryKey>
+              <!-- When being in a Library folder in Explorer -->
+              <RegistryKey Root="HKCR" Key="LibraryFolder\background\shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
+                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
+                <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe"/>
+                <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)"/>
+              </RegistryKey>
+              <!-- Sub menus to open PowerShell at the current location either as a normal shell or as Administrator -->
+              <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\openpwsh">
+                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextSubMenuDialogText)"/>
+                <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe"/>
+              </RegistryKey>
+              <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\openpwsh\command">
+                <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe -NoExit -RemoveWorkingDirectoryTrailingCharacter -WorkingDirectory &quot;%V!&quot; -Command &quot;$host.UI.RawUI.WindowTitle = '$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))'&quot;"/>
+              </RegistryKey>
+              <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\runas">
+                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextSubMenuElevatedDialogText)"/>
+                <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe"/>
+                <RegistryValue Type="string" Value="" Name="HasLUAShield"/>
+              </RegistryKey>
+              <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\runas\command">
+                <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe -NoExit -RemoveWorkingDirectoryTrailingCharacter -WorkingDirectory &quot;%V!&quot; -Command &quot;$host.UI.RawUI.WindowTitle = '$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))'&quot;"/>
+              </RegistryKey>
+              <RemoveRegistryKey Id="RemoveOldOpenKey" Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\open" Action="removeOnInstall"/>
+            </Component>
+            <Component Id="PowerShellFileContextMenu">
+              <Condition>ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL</Condition>
+              <!-- When right-clicking ps1 file -->
+              <RegistryKey Root="HKCR" Key="Microsoft.PowerShellScript.1\Shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
+                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.PowerShellFileContextSubMenuDialogText)"/>
+                <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe" KeyPath="yes"/>
+                <RegistryKey Key="Command">
+                  <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe -Command &quot;$host.UI.RawUI.WindowTitle = '$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))'; if((Get-ExecutionPolicy ) -ne 'AllSigned') { Set-ExecutionPolicy -Scope Process Bypass }; &amp; '%1'&quot;"/>
+                </RegistryKey>
+              </RegistryKey>
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)">
+          <Component Id="ApplicationProgramsMenuShortcut">
+            <Shortcut Id="PowerShell_ProgramsMenuShortcut"
+                      Name="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)"
+                      Description="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)"
+                      Target="[VersionFolder]pwsh.exe"
+                      Arguments="-WorkingDirectory ~" />
+            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+            <!-- HKMU is HKLM when installing perMachine and HKCU when installing perUser-->
+            <RegistryValue Root="HKMU" Key="Software\Microsoft\PowerShellCore\ProgramsMenuShortcut\$(var.SimpleProductVersion)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+  </Product>
+
+<!-- Explorer Context Menu Dialog -->
+<Fragment>
+ <UI>
+    <Property Id="REGISTER_MANIFEST" Value="1" />
+    <Property Id="ADD_PATH" Value="1" />
+    <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
+      <!-- Banner -->
+      <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="!(loc.InstallDirDlgBannerBitmap)"/>
+      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Optional Actions" TabSkip="yes" />
+      <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Initialization and Customization" TabSkip="yes" />
+      <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" TabSkip="yes" />
+      <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
+      <Control Id="AddToPathCheckBox" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="ADD_PATH" CheckBoxValue="0" Text="Add $(var.ProductName) to Path Environment Variable"/>
+      <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
+      <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
+      <Control Id="DisableTelemetry" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="DISABLE_TELEMETRY" CheckBoxValue="0" Text="Disable Telemetry (Reboot or Restart of processes may be required)" ToolTip="Sets environment variable POWERSHELL_TELEMETRY_OPTOUT to 1, see https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_telemetry"/>
+      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="140" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
+      <Control Id="ContextMenuRunPowerShell" Type="CheckBox" X="20" Y="160" Width="290" Height="17" Property="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.PowerShellFileContextSubMenuDialogText)' context menu for PowerShell files"/>
+      <Control Id="LicenseLink" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
+        <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt">The application is distributed under the MIT license.</a>]]></Text>
+      </Control>
+      <Control Id="TpnLink" Type="Hyperlink" X="20" Y="210" Width="290" Height="17">
+        <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/ThirdPartyNotices.txt">Please review the ThirdPartyNotices.txt</a>]]></Text>
+      </Control>
+      <!-- divider and bottom buttons -->
+      <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>
+      <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
+      <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
+      <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+        <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+      </Control>
+    </Dialog>
+  </UI>
+</Fragment>
+
+<!-- Microsoft Update Menu Dialog -->
+<Fragment>
+ <UI>
+    <Property Id="USE_MU" Value="1" />
+    <Property Id="ENABLE_MU" Value="1" />
+    <Dialog Id="MuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
+      <!-- Banner -->
+      <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="!(loc.InstallDirDlgBannerBitmap)"/>
+      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="30" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Use Microsoft Update to help keep your computer secure and up to date" TabSkip="yes" />
+      <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" TabSkip="yes" />
+      <Control Id="Description" Type="Text" X="25" Y="54" Width="280" Height="100" Transparent="yes" NoPrefix="yes" Text="Microsoft Update helps keep your computer secure and up to date for Windows and other Microsoft products, including PowerShell 7. Updates will be delivered based on your current update settings. You can review or change these settings from the Windows Update control panel." TabSkip="yes" />
+      <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
+      <Control Id="UseMuCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="27" Property="USE_MU" CheckBoxValue="1" Text="Enable updating PowerShell through Microsoft Update or WSUS (recommended)"/>
+      <Control Id="EnableMuCheckBox" Type="CheckBox" X="20" Y="130" Width="290" Height="17" Property="ENABLE_MU" CheckBoxValue="1" Text="Use Microsoft Update when I check for updates (recommended)">
+      </Control>
+      <Control Id="MuWarningText" Type="Text" X="20" Y="160" Width="290" Height="27" Text="Without Microsoft Update enabled, you will need to use another update solution like WSUS or SCCM in order to receive automatic updates.">
+        <Condition Action="hide"><![CDATA[ENABLE_MU="1" OR USE_MU<>"1"]]></Condition>
+        <Condition Action="show"><![CDATA[ENABLE_MU<>"1" AND USE_MU="1"]]></Condition>
+      </Control>
+      <Control Id="MuFAQ" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
+        <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-FAQ">See the Microsoft Update FAQ</a>]]></Text>
+      </Control>
+      <Control Id="PrivacyLink" Type="Hyperlink" X="20" Y="210" Width="290" Height="17">
+        <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-Privacy-Statement">Read the Microsoft Update Privacy Statement</a>]]></Text>
+      </Control>
+      <!-- divider and bottom buttons -->
+      <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>
+      <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
+      <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
+      <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+        <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+      </Control>
+    </Dialog>
+  </UI>
+</Fragment>
+<!-- Customized version of WixUI_InstallDir, which is necessary to add custom dialogs. https://github.com/wixtoolset/wix3/blob/master/src/ext/UIExtension/wixlib/WixUI_InstallDir.wxs -->
+<Fragment>
+  <UI Id="CustomWixUI_InstallDir">
+      <!--
+      First-time install dialog sequence:
+      - WixUI_WelcomeDlg
+      - WixUI_InstallDirDlg
+      - ExplorerContextMenuDialog
+      - MuDialog
+      - WixUI_VerifyReadyDlg
+      - WixUI_DiskCostDlg
+      Maintenance dialog sequence:
+      - WixUI_MaintenanceWelcomeDlg
+      - WixUI_MaintenanceTypeDlg
+      - WixUI_InstallDirDlg
+      - WixUI_VerifyReadyDlg
+      Patch dialog sequence:
+      - WixUI_WelcomeDlg
+      - WixUI_VerifyReadyDlg
+      -->
+
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+      <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+      <Property Id="WixUI_Mode" Value="InstallDir" />
+
+      <DialogRef Id="BrowseDlg" />
+      <DialogRef Id="DiskCostDlg" />
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="MsiRMFilesInUse" />
+      <DialogRef Id="PrepareDlg" />
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ResumeDlg" />
+      <DialogRef Id="UserExit" />
+      <DialogRef Id="ExplorerContextMenuDialog" />
+
+
+      <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
+      <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
+
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">NOT Installed</Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
+
+      <Publish Dialog="ExplorerContextMenuDialog" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+      <Publish Dialog="ExplorerContextMenuDialog" Control="Next" Event="NewDialog" Value="MuDialog">1</Publish>
+      <Publish Dialog="MuDialog" Control="Back" Event="NewDialog" Value="ExplorerContextMenuDialog">1</Publish>
+      <Publish Dialog="MuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
+
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="DoAction" Value="WixUIValidatePath" Order="2">NOT WIXUI_DONTVALIDATEPATH</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="SpawnDialog" Value="InvalidDirDlg" Order="3"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="ExplorerContextMenuDialog" Order="5">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
+
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MuDialog" Order="1">NOT Installed</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>
+
+      <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
+
+      <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+
+      <Property Id="ARPNOMODIFY" Value="1" />
+    </UI>
+    <UIRef Id="WixUI_Common" />
+  </Fragment>
+
+</Wix>

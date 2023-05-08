@@ -2,11 +2,12 @@
 
 ## Security Vulnerabilities
 
-If you believe that there is a security vulnerability in PowerShell Core,
-it **must** be reported to [secure@microsoft.com](https://technet.microsoft.com/security/ff852094.aspx) to allow for [Coordinated Vulnerability Disclosure](https://technet.microsoft.com/security/dn467923).
-**Only** file an issue, if [secure@microsoft.com](https://www.microsoft.com/en-us/msrc/faqs-report-an-issue?rtc=1) has confirmed filing an issue is appropriate.
+If you believe that there is a security vulnerability in PowerShell,
+first follow the [vulnerability issue reporting policy](../../.github/SECURITY.md) before submitting an issue.
 
 ## Long-living issue labels
+
+Issue labels for PowerShell/PowerShell can be found [here](https://github.com/powershell/powershell/labels).
 
 ### Issue and PR Labels
 
@@ -38,32 +39,35 @@ When an issue is resolved, the following labels are used to describe the resolut
 
 ### Feature areas
 
-These labels describe what feature area of PowerShell that an issue affects:
+These labels describe what feature area of PowerShell that an issue affects.
+Those labels denoted by `WG-*` are owned by a Working Group (WG) defined
+[here](../community/working-group-definitions.md):
 
-* `Area-Build`: build issues
+* `Area-Maintainers-Build`: build issues
 * `Area-Cmdlets-Core`: cmdlets in the Microsoft.PowerShell.Core module
 * `Area-Cmdlets-Utility`: cmdlets in the Microsoft.PowerShell.Utility module
 * `Area-Cmdlets-Management`: cmdlets in the Microsoft.PowerShell.Management module
-* `Area-Console`: the console experience
-* `Area-Debugging`: debugging PowerShell script
-* `Area-Demo`: a demo or sample
 * `Area-Documentation`: PowerShell *repo* documentation issues, general PowerShell doc issues go [here](https://github.com/PowerShell/PowerShell-Docs/issues)
 * `Area-DSC`: DSC related issues
-* `Area-Engine`: core PowerShell engine, interpreter, runtime
-* `Area-HelpSystem`: anything related to the help infrastructure and formatting of help
-* `Area-Intellisense`: tab completion
-* `Area-Language`: parser, language semantics
-* `Area-OMI`: OMI
-* `Area-PackageManagement`: PackageManagement related issues
-* `Area-Performance`: a performance issue
-* `Area-Portability`: anything affecting script portability
 * `Area-PowerShellGet`: PowerShellGet related issues
-* `Area-Providers`: PowerShell providers such as FileSystem, Certificates, Registry, etc...
-* `Area-PSReadline`: PSReadline related issues
-* `Area-Remoting`: PSRP issues with any transport layer
-* `Area-Security`: security related areas such as [JEA](https://github.com/powershell/JEA)
 * `Area-SideBySide`: side by side support
-* `Area-Test`: issues in a test or in test infrastructure
+* `WG-DevEx-Portability`: anything related to authoring cross-platform or cross-architecture
+  modules, cmdlets, and scripts
+* `WG-DevEx-SDK`: anything related to hosting PowerShell as a runtime, PowerShell's APIs,
+   PowerShell Standard, or the development of modules and cmdlets
+* `WG-Engine`: core PowerShell engine, interpreter, and runtime
+* `WG-Engine-Performance`: core PowerShell engine, interpreter, and runtime performance
+* `WG-Engine-Providers`: built-in PowerShell providers such as FileSystem, Certificates,
+   Registry, etc. (or anything returned by `Get-PSProvider`)
+* `WG-Interactive-Console`: the console experience
+* `WG-Interactive-Debugging`: debugging PowerShell script
+* `WG-Interactive-HelpSystem`: anything related to the help infrastructure and formatting of help
+* `WG-Interactive-IntelliSense`: tab completion
+* `WG-Interactive-PSReadline`: PSReadline related issues
+* `WG-Language`: parser, language semantics
+* `WG-Quality-Test`: issues in a test or in test infrastructure
+* `WG-Remoting`: PSRP issues with any transport layer
+* `WG-Security`: security related areas such as [JEA](https://github.com/powershell/JEA)
 
 ### Operating Systems
 

@@ -1,7 +1,21 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Format-List" -Tags "CI" {
-    $nl = [Environment]::NewLine
+    BeforeAll {
+        $nl = [Environment]::NewLine
+
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+    }
+
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+    }
+
     BeforeEach {
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
@@ -23,7 +37,7 @@ Describe "Format-List" -Tags "CI" {
     }
 
     It "Should produce the expected output" {
-        $expected = "${nl}testName : testValue${nl}${nl}${nl}"
+        $expected = "${nl}testName : testValue${nl}${nl}"
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
 
@@ -70,6 +84,19 @@ Describe "Format-List" -Tags "CI" {
 }
 
 Describe "Format-List DRT basic functionality" -Tags "CI" {
+    BeforeAll {
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+    }
+
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+    }
+
     It "Format-List with array should work" {
         $al = (0..255)
         $info = @{}
@@ -158,5 +185,80 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
         $result = Get-ChildItem -File $testdrive\test.txt | Format-List | Out-String
         $result | Should -Match "Name\s*:\s*test.txt"
         $result | Should -Match "Length\s*:\s*5"
+    }
+
+    It "Format-List should work with double byte wide chars" {
+        $obj = [pscustomobject]@{
+            "哇" = "62";
+            "dbda" = "KM";
+            "消息" = "千"
+        }
+
+        $expected = @"
+
+哇   : 62
+dbda : KM
+消息 : 千
+
+
+"@
+        $expected = $expected -replace "`r`n", "`n"
+
+        $actual = $obj | Format-List | Out-String
+        $actual = $actual -replace "`r`n", "`n"
+        $actual | Should -BeExactly $expected
+    }
+
+    It 'Float, double, and decimal should not be truncated to number of decimals from current culture' {
+        $o = [PSCustomObject]@{
+            double = [double]1234.56789
+            float = [float]9876.543
+            decimal = [decimal]4567.123456789
+        }
+
+        $expected = @"
+
+double  : 1234.56789
+float   : 9876.543
+decimal : 4567.123456789
+
+
+"@
+
+        $actual = $o | Format-List | Out-String
+        ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
+    }
+}
+
+Describe 'Format-List color tests' -Tag 'CI' {
+    BeforeAll {
+        $originalRendering = $PSStyle.OutputRendering
+        $PSStyle.OutputRendering = 'Ansi'
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForceFormatListFixedLabelWidth', $true)
+    }
+
+    AfterAll {
+        $PSStyle.OutputRendering = $originalRendering
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForceFormatListFixedLabelWidth', $false)
+    }
+
+    It 'Property names should use FormatAccent' {
+        $out = ([pscustomobject]@{Short=1;LongLabelName=2} | fl | out-string).Split([Environment]::NewLine, [System.StringSplitOptions]::RemoveEmptyEntries)
+        $out.Count | Should -Be 2
+        $out[0] | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)Short      : $($PSStyle.Reset)1" -Because ($out[0] | Format-Hex)
+        $out[1] | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)LongLabelN : $($PSStyle.Reset)2"
+    }
+
+    It 'VT decorations in a property value should not be leaked in list view' {
+        $expected = @"
+`e[32;1ma : `e[0mHello
+`e[32;1mb : `e[0m`e[36mworld`e[0m
+"@
+        ## Format-List should append the 'reset' escape sequence to the value of 'b' property.
+        $obj = [pscustomobject]@{ a = "Hello"; b = $PSStyle.Foreground.Cyan + "world"; }
+        $obj | Format-List | Out-File "$TestDrive/outfile.txt"
+
+        $output = Get-Content "$TestDrive/outfile.txt" -Raw
+        $output.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
 }

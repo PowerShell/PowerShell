@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -53,12 +53,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (parameterType == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameterType");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterType));
             }
 
             _name = name;
@@ -174,14 +174,20 @@ namespace System.Management.Automation
             {
                 if (!hasSeenExpAttribute && attr is ExperimentalAttribute expAttribute)
                 {
-                    if (expAttribute.ToHide) { return true; }
+                    if (expAttribute.ToHide)
+                    {
+                        return true;
+                    }
 
                     hasSeenExpAttribute = true;
                 }
                 else if (attr is ParameterAttribute paramAttribute)
                 {
                     hasParameterAttribute = true;
-                    if (paramAttribute.ToHide) { continue; }
+                    if (paramAttribute.ToHide)
+                    {
+                        continue;
+                    }
 
                     hasEnabledParamAttribute = true;
                 }
@@ -236,6 +242,6 @@ namespace System.Management.Automation
         /// </summary>
         public object Data { get; set; }
 
-        internal static RuntimeDefinedParameter[] EmptyParameterArray = new RuntimeDefinedParameter[0];
+        internal static readonly RuntimeDefinedParameter[] EmptyParameterArray = Array.Empty<RuntimeDefinedParameter>();
     }
 }

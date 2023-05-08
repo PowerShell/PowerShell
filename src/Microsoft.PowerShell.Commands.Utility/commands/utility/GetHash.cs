@@ -1,9 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
 using System.Security.Cryptography;
@@ -69,21 +70,12 @@ namespace Microsoft.PowerShell.Commands
         public Stream InputStream { get; set; }
 
         /// <summary>
-        /// BeginProcessing() override.
-        /// This is for hash function init.
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            InitHasher(Algorithm);
-        }
-
-        /// <summary>
         /// ProcessRecord() override.
         /// This is for paths collecting from pipe.
         /// </summary>
         protected override void ProcessRecord()
         {
-            List<string> pathsToProcess = new List<string>();
+            List<string> pathsToProcess = new();
             ProviderInfo provider = null;
 
             switch (ParameterSetName)
@@ -104,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (!WildcardPattern.ContainsWildcardCharacters(path))
                             {
-                                ErrorRecord errorRecord = new ErrorRecord(e,
+                                ErrorRecord errorRecord = new(e,
                                     "FileNotFound",
                                     ErrorCategory.ObjectNotFound,
                                     path);
@@ -126,31 +118,31 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in pathsToProcess)
             {
-                byte[] bytehash = null;
-                string hash = null;
-                Stream openfilestream = null;
-
-                try
+                if (ComputeFileHash(path, out string hash))
                 {
-                    openfilestream = File.OpenRead(path);
-                    bytehash = hasher.ComputeHash(openfilestream);
-
-                    hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);
                     WriteHashResult(Algorithm, hash, path);
                 }
-                catch (FileNotFoundException ex)
-                {
-                    ErrorRecord errorRecord = new ErrorRecord(ex,
-                        "FileNotFound",
-                        ErrorCategory.ObjectNotFound,
-                        path);
-                    WriteError(errorRecord);
-                }
-                finally
-                {
-                    openfilestream?.Dispose();
-                }
             }
+        }
+
+        private byte[] ComputeHash(Stream stream)
+        {
+            switch (Algorithm)
+            {
+                case HashAlgorithmNames.SHA1:
+                    return SHA1.HashData(stream);
+                case HashAlgorithmNames.SHA256:
+                    return SHA256.HashData(stream);
+                case HashAlgorithmNames.SHA384:
+                    return SHA384.HashData(stream);
+                case HashAlgorithmNames.SHA512:
+                    return SHA512.HashData(stream);
+                case HashAlgorithmNames.MD5:
+                    return MD5.HashData(stream);
+            }
+
+            Debug.Assert(false, "invalid hash algorithm");
+            return SHA256.HashData(stream);
         }
 
         /// <summary>
@@ -161,14 +153,65 @@ namespace Microsoft.PowerShell.Commands
         {
             if (ParameterSetName == StreamParameterSet)
             {
-                byte[] bytehash = null;
-                string hash = null;
+                byte[] bytehash = ComputeHash(InputStream);
 
-                bytehash = hasher.ComputeHash(InputStream);
-
-                hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);
+                string hash = Convert.ToHexString(bytehash);
                 WriteHashResult(Algorithm, hash, string.Empty);
             }
+        }
+
+        /// <summary>
+        /// Read the file and calculate the hash.
+        /// </summary>
+        /// <param name="path">Path to file which will be hashed.</param>
+        /// <param name="hash">Will contain the hash of the file content.</param>
+        /// <returns>Boolean value indicating whether the hash calculation succeeded or failed.</returns>
+        private bool ComputeFileHash(string path, out string hash)
+        {
+            Stream openfilestream = null;
+
+            hash = null;
+
+            try
+            {
+                openfilestream = File.OpenRead(path);
+                byte[] bytehash = ComputeHash(openfilestream);
+
+                hash = Convert.ToHexString(bytehash);
+            }
+            catch (FileNotFoundException ex)
+            {
+                var errorRecord = new ErrorRecord(
+                    ex,
+                    "FileNotFound",
+                    ErrorCategory.ObjectNotFound,
+                    path);
+                WriteError(errorRecord);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var errorRecord = new ErrorRecord(
+                    ex,
+                    "UnauthorizedAccessError",
+                    ErrorCategory.InvalidData,
+                    path);
+                WriteError(errorRecord);
+            }
+            catch (IOException ioException)
+            {
+                var errorRecord = new ErrorRecord(
+                    ioException,
+                    "FileReadError",
+                    ErrorCategory.ReadError,
+                    path);
+                WriteError(errorRecord);
+            }
+            finally
+            {
+                openfilestream?.Dispose();
+            }
+
+            return hash != null;
         }
 
         /// <summary>
@@ -176,7 +219,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteHashResult(string Algorithm, string hash, string path)
         {
-            FileHashInfo result = new FileHashInfo();
+            FileHashInfo result = new();
             result.Algorithm = Algorithm;
             result.Hash = hash;
             result.Path = path;
@@ -225,11 +268,6 @@ namespace Microsoft.PowerShell.Commands
         private string _Algorithm = HashAlgorithmNames.SHA256;
 
         /// <summary>
-        /// Hash algorithm is used.
-        /// </summary>
-        protected HashAlgorithm hasher;
-
-        /// <summary>
         /// Hash algorithm names.
         /// </summary>
         internal static class HashAlgorithmNames
@@ -239,40 +277,6 @@ namespace Microsoft.PowerShell.Commands
             public const string SHA256 = "SHA256";
             public const string SHA384 = "SHA384";
             public const string SHA512 = "SHA512";
-        }
-
-        /// <summary>
-        /// Init a hash algorithm.
-        /// </summary>
-        protected void InitHasher(String Algorithm)
-        {
-            try
-            {
-                switch (Algorithm)
-                {
-                    case HashAlgorithmNames.SHA1:
-                        hasher = SHA1.Create();
-                        break;
-                    case HashAlgorithmNames.SHA256:
-                        hasher = SHA256.Create();
-                        break;
-                    case HashAlgorithmNames.SHA384:
-                        hasher = SHA384.Create();
-                        break;
-                    case HashAlgorithmNames.SHA512:
-                        hasher = SHA512.Create();
-                        break;
-                    case HashAlgorithmNames.MD5:
-                        hasher = MD5.Create();
-                        break;
-                }
-            }
-            catch
-            {
-                // Seems it will never throw! Remove?
-                Exception exc = new NotSupportedException(UtilityCommonStrings.AlgorithmTypeNotSupported);
-                ThrowTerminatingError(new ErrorRecord(exc, "AlgorithmTypeNotSupported", ErrorCategory.NotImplemented, null));
-            }
         }
     }
 

@@ -183,9 +183,6 @@
   <data name="ContentColon" xml:space="preserve">
     <value>Content:</value>
   </data>
-  <data name="OutputColon" xml:space="preserve">
-    <value>Output:</value>
-  </data>
   <data name="ProviderName" xml:space="preserve">
     <value>PROVIDER NAME</value>
   </data>
@@ -267,9 +264,6 @@
   <data name="CmdletsSupported" xml:space="preserve">
     <value>Cmdlets Supported: </value>
   </data>
-  <data name="CmdletsSupportedCaps" xml:space="preserve">
-    <value>CMDLETS SUPPORTED</value>
-  </data>
   <data name="AliasesSection" xml:space="preserve">
     <value>ALIASES</value>
   </data>
@@ -305,6 +299,10 @@
   </data>
   <data name="HelpCultureNotSupported" xml:space="preserve">
     <value>The specified culture is not supported: {0}. Specify a culture from the following list: {{{1}}}.</value>
+  </data>
+  <data name="HelpCultureNotSupportedFallback" xml:space="preserve">
+    <value>Postponing error and trying fallback cultures, will show as error if none of fallbacks are supported:
+{0}</value>
   </data>
   <data name="ModuleBaseMustExist" xml:space="preserve">
     <value>The ModuleBase directory cannot be found. Verify the directory and try again.</value>
@@ -357,9 +355,6 @@
   <data name="UnzipFailure" xml:space="preserve">
     <value>Error extracting Help content.</value>
   </data>
-  <data name="InstallationFailed" xml:space="preserve">
-    <value>Error installing help content.</value>
-  </data>
   <data name="UnableToConnect" xml:space="preserve">
     <value>Unable to connect to Help content. The server on which Help content is stored might not be available. Verify that the server is available, or wait until the server is back online, and then try the command again.</value>
   </data>
@@ -390,10 +385,12 @@
     <value>Failed to save Help for the module(s) '{0}' : {1}</value>
   </data>
   <data name="FailedToSaveHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to save Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}</value>
+    <value>Failed to save Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
+English-US help content is available and can be saved using: Save-Help -UICulture en-US.</value>
   </data>
   <data name="FailedToUpdateHelpForModuleWithCulture" xml:space="preserve">
-    <value>Failed to update Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}</value>
+    <value>Failed to update Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
+English-US help content is available and can be installed using: Update-Help -UICulture en-US.</value>
   </data>
   <data name="FalseShort" xml:space="preserve">
     <value>false</value>
@@ -448,12 +445,6 @@ To update help again, add the Force parameter to your command.</value>
   </data>
   <data name="RootElementMustBeHelpItems" xml:space="preserve">
     <value>The root level element of the help content must be "helpItems".</value>
-  </data>
-  <data name="UpdateHelpPromptBody" xml:space="preserve">
-    <value>The Update-Help cmdlet downloads the most current Help files for PowerShell modules, and installs them on your computer. For more information about the Update-Help cmdlet, see https://go.microsoft.com/fwlink/?LinkId=210614.</value>
-  </data>
-  <data name="UpdateHelpPromptTitle" xml:space="preserve">
-    <value>Do you want to run Update-Help?</value>
   </data>
   <data name="SaveProgressActivityForModule" xml:space="preserve">
     <value>Saving Help for module {0}</value>

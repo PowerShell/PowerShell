@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Version>$(RefAsmVersion)</Version>
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>$(SnkFile)</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
-    <LangVersion>Latest</LangVersion>
+    <LangVersion>11.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Management.Automation">
@@ -13,7 +13,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Security.AccessControl" Version="6.0.2-mauipre.1.22102.15" />
+    <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.0" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -14,9 +14,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Execution context used for stepping.
     /// </summary>
-    internal class ExecutionContextForStepping : IDisposable
+    internal sealed class ExecutionContextForStepping : IDisposable
     {
-        private ExecutionContext _executionContext;
+        private readonly ExecutionContext _executionContext;
         private PSInformationalBuffers _originalInformationalBuffers;
         private PSHost _originalHost;
 
@@ -72,48 +72,16 @@ namespace System.Management.Automation
         // information
         // data to client
         // was created
-        private bool _addToHistory;
+        private readonly bool _addToHistory;
         // associated with this powershell
-#if !CORECLR // No ApartmentState In CoreCLR
-        private ApartmentState apartmentState;  // apartment state for this powershell
-#endif
+        private readonly ApartmentState apartmentState;  // apartment state for this powershell
 
         // pipeline that runs the actual command.
-        private ServerSteppablePipelineSubscriber _eventSubscriber;
-        private PSDataCollection<object> _powershellInput; // input collection of the PowerShell pipeline
+        private readonly ServerSteppablePipelineSubscriber _eventSubscriber;
+        private readonly PSDataCollection<object> _powershellInput; // input collection of the PowerShell pipeline
 
         #endregion
 
-#if CORECLR // No ApartmentState In CoreCLR
-        /// <summary>
-        /// Default constructor for creating ServerSteppablePipelineDriver...Used by server to concurrently
-        /// run 2 pipelines.
-        /// </summary>
-        /// <param name="powershell">Decoded powershell object.</param>
-        /// <param name="noInput">Whether there is input for this powershell.</param>
-        /// <param name="clientPowerShellId">The client powershell id.</param>
-        /// <param name="clientRunspacePoolId">The client runspacepool id.</param>
-        /// <param name="runspacePoolDriver">runspace pool driver
-        /// which is creating this powershell driver</param>
-        /// <param name="hostInfo">host info using which the host for
-        /// this powershell will be constructed</param>
-        /// <param name="streamOptions">Serialization options for the streams in this powershell.</param>
-        /// <param name="addToHistory">
-        /// true if the command is to be added to history list of the runspace. false, otherwise.
-        /// </param>
-        /// <param name="rsToUse">
-        /// If not null, this Runspace will be used to invoke Powershell.
-        /// If null, the RunspacePool pointed by <paramref name="runspacePoolDriver"/> will be used.
-        /// </param>
-        /// <param name="eventSubscriber">
-        /// Steppable pipeline event subscriber
-        /// </param>
-        /// <param name="powershellInput">Input collection of the PowerShell pipeline.</param>
-        internal ServerSteppablePipelineDriver(PowerShell powershell, bool noInput, Guid clientPowerShellId,
-            Guid clientRunspacePoolId, ServerRunspacePoolDriver runspacePoolDriver,
-            HostInfo hostInfo, RemoteStreamOptions streamOptions,
-            bool addToHistory, Runspace rsToUse, ServerSteppablePipelineSubscriber eventSubscriber, PSDataCollection<object> powershellInput)
-#else
         /// <summary>
         /// Default constructor for creating ServerSteppablePipelineDriver...Used by server to concurrently
         /// run 2 pipelines.
@@ -143,15 +111,12 @@ namespace System.Management.Automation
             Guid clientRunspacePoolId, ServerRunspacePoolDriver runspacePoolDriver,
             ApartmentState apartmentState, HostInfo hostInfo, RemoteStreamOptions streamOptions,
             bool addToHistory, Runspace rsToUse, ServerSteppablePipelineSubscriber eventSubscriber, PSDataCollection<object> powershellInput)
-#endif
         {
             LocalPowerShell = powershell;
             InstanceId = clientPowerShellId;
             RunspacePoolId = clientRunspacePoolId;
             RemoteStreamOptions = streamOptions;
-#if !CORECLR // No ApartmentState In CoreCLR
             this.apartmentState = apartmentState;
-#endif
             NoInput = noInput;
             _addToHistory = addToHistory;
             _eventSubscriber = eventSubscriber;
@@ -165,12 +130,11 @@ namespace System.Management.Automation
             RemoteHost = DataStructureHandler.GetHostAssociatedWithPowerShell(hostInfo, runspacePoolDriver.ServerRemoteHost);
 
             // subscribe to various data structure handler events
-            DataStructureHandler.InputEndReceived += new EventHandler(HandleInputEndReceived);
-            DataStructureHandler.InputReceived += new EventHandler<RemoteDataEventArgs<object>>(HandleInputReceived);
-            DataStructureHandler.StopPowerShellReceived += new EventHandler(HandleStopReceived);
-            DataStructureHandler.HostResponseReceived +=
-                new EventHandler<RemoteDataEventArgs<RemoteHostResponse>>(HandleHostResponseReceived);
-            DataStructureHandler.OnSessionConnected += new EventHandler(HandleSessionConnected);
+            DataStructureHandler.InputEndReceived += HandleInputEndReceived;
+            DataStructureHandler.InputReceived += HandleInputReceived;
+            DataStructureHandler.StopPowerShellReceived += HandleStopReceived;
+            DataStructureHandler.HostResponseReceived += HandleHostResponseReceived;
+            DataStructureHandler.OnSessionConnected += HandleSessionConnected;
 
             if (rsToUse == null)
             {
@@ -277,10 +241,7 @@ namespace System.Management.Automation
 
             _eventSubscriber.FireStartSteppablePipeline(this);
 
-            if (_powershellInput != null)
-            {
-                _powershellInput.Pulse();
-            }
+            _powershellInput?.Pulse();
         }
 
         #endregion Internal Methods
@@ -298,20 +259,14 @@ namespace System.Management.Automation
 
             CheckAndPulseForProcessing(true);
 
-            if (_powershellInput != null)
-            {
-                _powershellInput.Pulse();
-            }
+            _powershellInput?.Pulse();
         }
 
         private void HandleSessionConnected(object sender, EventArgs eventArgs)
         {
             // Close input if its active. no need to synchronize as input stream would have already been processed
             // when connect call came into PS plugin
-            if (Input != null)
-            {
-                Input.Complete();
-            }
+            Input?.Complete();
         }
 
         /// <summary>
@@ -338,10 +293,7 @@ namespace System.Management.Automation
 
             PerformStop();
 
-            if (_powershellInput != null)
-            {
-                _powershellInput.Pulse();
-            }
+            _powershellInput?.Pulse();
         }
 
         /// <summary>
@@ -362,10 +314,7 @@ namespace System.Management.Automation
 
                 CheckAndPulseForProcessing(false);
 
-                if (_powershellInput != null)
-                {
-                    _powershellInput.Pulse();
-                }
+                _powershellInput?.Pulse();
             }
         }
 

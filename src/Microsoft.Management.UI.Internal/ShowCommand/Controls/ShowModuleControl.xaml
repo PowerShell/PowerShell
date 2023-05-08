@@ -1,0 +1,34 @@
+<!--=================================================================
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+==================================================================-->
+
+<UserControl x:Class="Microsoft.PowerShell.Commands.ShowCommandInternal.ShowModuleControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:this="clr-namespace:Microsoft.PowerShell.Commands.ShowCommandInternal"
+             mc:Ignorable="d"
+             xmlns:sc="clr-namespace:Microsoft.Management.UI.Internal"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.2*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="{Binding CommandRowHeight}"></RowDefinition>
+        </Grid.RowDefinitions>
+        <ListBox x:Name="CommandList" IsTextSearchEnabled="True" Margin="3" SelectedItem="{Binding SelectedCommand}" ItemsSource="{Binding Path=FilteredCommands}" DisplayMemberPath="Name" Grid.Row="0" AutomationProperties.AutomationId="listboxCommandList">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="AutomationProperties.Name" Value="{Binding Name}"/>
+                    <Setter Property="ToolTip" Value="{Binding ToolTip}"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+        <TextBlock Grid.Row="1" Margin="3" Text="{Binding Path=SelectedCommand.ToolTip}" />
+        <Border Grid.Row="2" Margin="3" Visibility="{Binding CommandControlVisibility}">
+            <this:CmdletControl x:Name="CmdletControl" DataContext="{Binding Path=SelectedCommand}"></this:CmdletControl>
+        </Border>
+    </Grid>
+</UserControl>

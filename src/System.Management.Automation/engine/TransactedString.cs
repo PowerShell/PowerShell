@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -8,7 +8,7 @@ using System.Transactions;
 namespace Microsoft.PowerShell.Commands.Management
 {
     /// <summary>
-    /// Represents a a string that can be used in transactions.
+    /// Represents a string that can be used in transactions.
     /// </summary>
     public class TransactedString : IEnlistmentNotification
     {
@@ -25,10 +25,10 @@ namespace Microsoft.PowerShell.Commands.Management
 
         /// <summary>
         /// Constructor for the TransactedString class.
+        /// </summary>
         /// <param name="value">
         /// The initial value of the transacted string.
         /// </param>
-        /// </summary>
         public TransactedString(string value)
         {
             _value = new StringBuilder(value);
@@ -71,10 +71,10 @@ namespace Microsoft.PowerShell.Commands.Management
 
         /// <summary>
         /// Append text to the transacted string.
+        /// </summary>
         /// <param name="text">
         /// The text to append.
         /// </param>
-        /// </summary>
         public void Append(string text)
         {
             ValidateTransactionOrEnlist();
@@ -91,13 +91,13 @@ namespace Microsoft.PowerShell.Commands.Management
 
         /// <summary>
         /// Remove text from the transacted string.
+        /// </summary>
         /// <param name="startIndex">
         /// The position in the string from which to start removing.
         /// </param>
         /// <param name="length">
         /// The length of text to remove.
         /// </param>
-        /// </summary>
         public void Remove(int startIndex, int length)
         {
             ValidateTransactionOrEnlist();

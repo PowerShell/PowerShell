@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -49,7 +49,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (containsErrorRecord != null)
             {
                 return InitializeErrorRecord(context,
-                    exception : inner,
+                    exception: inner,
                     errorId: "CimCmdlet_" + containsErrorRecord.ErrorRecord.FullyQualifiedErrorId,
                     errorCategory: containsErrorRecord.ErrorRecord.CategoryInfo.Category,
                     cimResultContext: cimResultContext);
@@ -57,7 +57,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             else
             {
                 return InitializeErrorRecord(context,
-                    exception :inner,
+                    exception: inner,
                     errorId: "CimCmdlet_" + inner.GetType().Name,
                     errorCategory: ErrorCategory.NotSpecified,
                     cimResultContext: cimResultContext);
@@ -166,7 +166,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            ErrorRecord coreErrorRecord = new ErrorRecord(
+            ErrorRecord coreErrorRecord = new(
                 exception: exception,
                 errorId: errorId,
                 errorCategory: errorCategory,
@@ -177,7 +177,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return coreErrorRecord;
             }
 
-            System.Management.Automation.Remoting.OriginInfo originInfo = new System.Management.Automation.Remoting.OriginInfo(
+            System.Management.Automation.Remoting.OriginInfo originInfo = new(
                 context.ComputerName,
                 Guid.Empty);
 
@@ -317,24 +317,26 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimWriteError : CimSyncAction
     {
         /// <summary>
-        /// Constructor with an <see cref="CimInstance"/> error.
+        /// Initializes a new instance of the <see cref="CimWriteError"/> class
+        /// with the specified <see cref="CimInstance"/>.
         /// </summary>
         /// <param name="error"></param>
         public CimWriteError(CimInstance error, InvocationContext context)
         {
-            this.error = error;
-            this.invocationContext = context;
+            this.Error = error;
+            this.CimInvocationContext = context;
         }
 
         /// <summary>
-        /// Construct with an exception object.
+        /// Initializes a new instance of the <see cref="CimWriteError"/> class
+        /// with the specified <see cref="Exception"/>.
         /// </summary>
         /// <param name="exception"></param>
         public CimWriteError(Exception exception, InvocationContext context, CimResultContext cimResultContext)
         {
-            this.exception = exception;
-            this.invocationContext = context;
-            this.cimResultContext = cimResultContext;
+            this.Exception = exception;
+            this.CimInvocationContext = context;
+            this.ResultContext = cimResultContext;
         }
 
         /// <summary>
@@ -348,10 +350,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             Debug.Assert(cmdlet != null, "Caller should verify that cmdlet != null");
             try
             {
-                Exception errorException = (error != null) ? new CimException(error) : this.Exception;
+                Exception errorException = (Error != null) ? new CimException(Error) : this.Exception;
 
                 // PS engine takes care of handling error action
-                cmdlet.WriteError(ErrorToErrorRecord.ErrorRecordFromAnyException(this.invocationContext, errorException, this.cimResultContext));
+                cmdlet.WriteError(ErrorToErrorRecord.ErrorRecordFromAnyException(this.CimInvocationContext, errorException, this.ResultContext));
 
                 // if user wants to continue, we will get here
                 this.responseType = CimResponseType.Yes;
@@ -375,59 +377,19 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Error instance
         /// </para>
         /// </summary>
-        private CimInstance error;
 
-        internal CimInstance Error
-        {
-            get
-            {
-                return error;
-            }
-        }
+        internal CimInstance Error { get; }
 
         /// <summary>
         /// <para>
         /// Exception object
         /// </para>
         /// </summary>
-        internal Exception Exception
-        {
-            get
-            {
-                return exception;
-            }
-        }
+        internal Exception Exception { get; }
 
-        private Exception exception;
+        internal InvocationContext CimInvocationContext { get; }
 
-        /// <summary>
-        /// <para>
-        /// <see cref="InvocationContext"/> object that contains
-        /// the information while issuing the current operation
-        /// </para>
-        /// </summary>
-        private InvocationContext invocationContext;
-
-        internal InvocationContext CimInvocationContext
-        {
-            get
-            {
-                return invocationContext;
-            }
-        }
-
-        /// <summary>
-        /// <see cref="CimResultConte"/>
-        /// </summary>
-        private CimResultContext cimResultContext;
-
-        internal CimResultContext ResultContext
-        {
-            get
-            {
-                return cimResultContext;
-            }
-        }
+        internal CimResultContext ResultContext { get; }
 
         #endregion
     }

@@ -1,6 +1,7 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
@@ -22,40 +23,36 @@ namespace System.Management.Automation
         private bool _extraPowerShellAlreadyScheduled;
 
         // extra PowerShell at the server to be run after localPowerShell
-        private PowerShell _extraPowerShell;
+        private readonly PowerShell _extraPowerShell;
 
         // output buffer for the local PowerShell that is associated with this powershell driver
         // associated with this powershell data structure handler object to handle all communications with the client
-        private PSDataCollection<PSObject> _localPowerShellOutput;
+        private readonly PSDataCollection<PSObject> _localPowerShellOutput;
 
         // if the remaining data has been sent to the client before sending state information
-        private bool[] _datasent = new bool[2];
+        private readonly bool[] _datasent = new bool[2];
 
         // sync object for synchronizing sending data to client
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
 
         // there is no input when this driver was created
-        private bool _noInput;
-        private bool _addToHistory;
+        private readonly bool _noInput;
+        private readonly bool _addToHistory;
 
         // the server remote host instance
         // associated with this powershell
-        private ServerRemoteHost _remoteHost;
+        private readonly ServerRemoteHost _remoteHost;
 
-#if !CORECLR
-        // No ApartmentState In CoreCLR
         // apartment state for this powershell
-        private ApartmentState apartmentState;
-#endif
+        private readonly ApartmentState apartmentState;
 
         // Handles nested invocation of PS drivers.
-        private IRSPDriverInvoke _psDriverInvoker;
+        private readonly IRSPDriverInvoke _psDriverInvoker;
 
         #endregion Private Members
 
         #region Constructors
 
-#if !CORECLR
         /// <summary>
         /// Default constructor for creating ServerPowerShellDrivers.
         /// </summary>
@@ -85,66 +82,7 @@ namespace System.Management.Automation
                    apartmentState, hostInfo, streamOptions, addToHistory, rsToUse, null)
         {
         }
-#else
-        /// <summary>
-        /// Default constructor for creating ServerPowerShellDrivers.
-        /// </summary>
-        /// <param name="powershell">Decoded powershell object.</param>
-        /// <param name="extraPowerShell">Extra pipeline to be run after <paramref name="powershell"/> completes.</param>
-        /// <param name="noInput">Whether there is input for this powershell.</param>
-        /// <param name="clientPowerShellId">The client powershell id.</param>
-        /// <param name="clientRunspacePoolId">The client runspacepool id.</param>
-        /// <param name="runspacePoolDriver">runspace pool driver
-        /// which is creating this powershell driver</param>
-        /// <param name="hostInfo">host info using which the host for
-        /// this powershell will be constructed</param>
-        /// <param name="streamOptions">Serialization options for the streams in this powershell.</param>
-        /// <param name="addToHistory">
-        /// true if the command is to be added to history list of the runspace. false, otherwise.
-        /// </param>
-        /// <param name="rsToUse">
-        /// If not null, this Runspace will be used to invoke Powershell.
-        /// If null, the RunspacePool pointed by <paramref name="runspacePoolDriver"/> will be used.
-        /// </param>
-        internal ServerPowerShellDriver(PowerShell powershell, PowerShell extraPowerShell, bool noInput, Guid clientPowerShellId,
-           Guid clientRunspacePoolId, ServerRunspacePoolDriver runspacePoolDriver,
-           HostInfo hostInfo, RemoteStreamOptions streamOptions,
-           bool addToHistory, Runspace rsToUse)
-            : this(powershell, extraPowerShell, noInput, clientPowerShellId, clientRunspacePoolId, runspacePoolDriver,
-                   hostInfo, streamOptions, addToHistory, rsToUse, null)
-        {
-        }
-#endif
 
-#if CORECLR
-        /// <summary>
-        /// Default constructor for creating ServerPowerShellDrivers.
-        /// </summary>
-        /// <param name="powershell">Decoded powershell object.</param>
-        /// <param name="extraPowerShell">Extra pipeline to be run after <paramref name="powershell"/> completes.</param>
-        /// <param name="noInput">Whether there is input for this powershell.</param>
-        /// <param name="clientPowerShellId">The client powershell id.</param>
-        /// <param name="clientRunspacePoolId">The client runspacepool id.</param>
-        /// <param name="runspacePoolDriver">runspace pool driver
-        /// which is creating this powershell driver</param>
-        /// <param name="hostInfo">host info using which the host for
-        /// this powershell will be constructed</param>
-        /// <param name="streamOptions">Serialization options for the streams in this powershell.</param>
-        /// <param name="addToHistory">
-        /// true if the command is to be added to history list of the runspace. false, otherwise.
-        /// </param>
-        /// <param name="rsToUse">
-        /// If not null, this Runspace will be used to invoke Powershell.
-        /// If null, the RunspacePool pointed by <paramref name="runspacePoolDriver"/> will be used.
-        /// </param>
-        /// <param name="output">
-        /// If not null, this is used as another source of output sent to the client.
-        /// </param>
-        internal ServerPowerShellDriver(PowerShell powershell, PowerShell extraPowerShell, bool noInput, Guid clientPowerShellId,
-            Guid clientRunspacePoolId, ServerRunspacePoolDriver runspacePoolDriver,
-            HostInfo hostInfo, RemoteStreamOptions streamOptions,
-            bool addToHistory, Runspace rsToUse, PSDataCollection<PSObject> output)
-#else
         /// <summary>
         /// Default constructor for creating ServerPowerShellDrivers.
         /// </summary>
@@ -173,14 +111,11 @@ namespace System.Management.Automation
             Guid clientRunspacePoolId, ServerRunspacePoolDriver runspacePoolDriver,
             ApartmentState apartmentState, HostInfo hostInfo, RemoteStreamOptions streamOptions,
             bool addToHistory, Runspace rsToUse, PSDataCollection<PSObject> output)
-#endif
         {
             InstanceId = clientPowerShellId;
             RunspacePoolId = clientRunspacePoolId;
             RemoteStreamOptions = streamOptions;
-#if !CORECLR // No ApartmentState In CoreCLR
             this.apartmentState = apartmentState;
-#endif
             LocalPowerShell = powershell;
             _extraPowerShell = extraPowerShell;
             _localPowerShellOutput = new PSDataCollection<PSObject>();
@@ -195,7 +130,7 @@ namespace System.Management.Automation
             {
                 InputCollection = new PSDataCollection<object>();
                 InputCollection.ReleaseOnEnumeration = true;
-                InputCollection.IdleEvent += new EventHandler<EventArgs>(HandleIdleEvent);
+                InputCollection.IdleEvent += HandleIdleEvent;
             }
 
             RegisterPipelineOutputEventHandlers(_localPowerShellOutput);
@@ -298,9 +233,7 @@ namespace System.Management.Automation
             }
 
             PSInvocationSettings settings = new PSInvocationSettings();
-#if !CORECLR // No ApartmentState In CoreCLR
             settings.ApartmentState = apartmentState;
-#endif
             settings.Host = _remoteHost;
 
             // Flow the impersonation policy to pipeline execution thread
@@ -357,7 +290,8 @@ namespace System.Management.Automation
         /// commands that sets debugger state but doesn't run any command
         /// on the server runspace.
         /// </summary>
-        internal void RunNoOpCommand()
+        /// <param name="output">The output from preprocessing that we want to send to the client.</param>
+        internal void RunNoOpCommand(IReadOnlyCollection<object> output)
         {
             if (LocalPowerShell != null)
             {
@@ -367,6 +301,14 @@ namespace System.Management.Automation
                             LocalPowerShell.SetStateChanged(
                                 new PSInvocationStateInfo(
                                     PSInvocationState.Running, null));
+
+                            foreach (var item in output)
+                            {
+                                if (item != null)
+                                {
+                                    _localPowerShellOutput.Add(PSObject.AsPSObject(item));
+                                }
+                            }
 
                             LocalPowerShell.SetStateChanged(
                                 new PSInvocationStateInfo(
@@ -485,7 +427,10 @@ namespace System.Management.Automation
                         if (LocalPowerShell.RunningExtraCommands)
                         {
                             // If completed successfully then allow extra commands to run.
-                            if (state == PSInvocationState.Completed) { return; }
+                            if (state == PSInvocationState.Completed)
+                            {
+                                return;
+                            }
 
                             // For failed or stopped state, extra commands cannot run and
                             // we allow this command invocation to finish.
@@ -856,11 +801,9 @@ namespace System.Management.Automation
         {
             // Close input if its active. no need to synchronize as input stream would have already been processed
             // when connect call came into PS plugin
-            if (InputCollection != null)
-            {
-                // TODO: Post an ETW event
-                InputCollection.Complete();
-            }
+
+            // TODO: Post an ETW event
+            InputCollection?.Complete();
         }
 
         /// <summary>

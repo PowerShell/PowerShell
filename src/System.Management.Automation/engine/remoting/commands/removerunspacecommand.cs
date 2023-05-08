@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "PSSession", SupportsShouldProcess = true,
             DefaultParameterSetName = RemovePSSessionCommand.IdParameterSet,
-            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135250", RemotingCapability = RemotingCapability.OwnedByCommand)]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096963", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class RemovePSSessionCommand : PSRunspaceCmdlet
     {
         #region Parameters

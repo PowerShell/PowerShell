@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ namespace System.Management.Automation
         {
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             _sessionState = sessionState;
@@ -160,9 +160,8 @@ namespace System.Management.Automation
 
         #region private data
 
-        private SessionStateInternal _sessionState;
+        private readonly SessionStateInternal _sessionState;
 
         #endregion private data
     }
 }
-

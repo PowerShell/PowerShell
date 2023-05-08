@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Security.AccessControl;
@@ -7,7 +7,7 @@ namespace System.Management.Automation.Provider
 {
     /// <summary>
     /// Defines the base class for all of the classes the provide implementations for a particular
-    /// data store or item for the MSH core commands.
+    /// data store or item for the PowerShell core commands.
     /// </summary>
     public abstract partial class CmdletProvider
     {

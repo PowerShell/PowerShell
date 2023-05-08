@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -17,7 +17,7 @@ namespace PSTests.Parallel
             Skip.IfNot(Platform.IsWindows);
             Version someVersion = null;
             string someString = null;
-            PSSnapInReader.ReadRegistryInfo(out someVersion, out someString, out someString, out someString, out someString, out someVersion);
+            PSSnapInReader.ReadRegistryInfo(out someVersion, out someString, out someString, out someString, out someVersion);
         }
 
         // PublicKeyToken is null on Linux

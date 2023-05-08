@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -22,12 +22,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimPromptUser : CimSyncAction
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimPromptUser"/> class.
         /// </summary>
         public CimPromptUser(string message,
             CimPromptType prompt)
         {
-            this.message = message;
+            this.Message = message;
             this.prompt = prompt;
         }
 
@@ -54,7 +54,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     // NOTES: prepare the whatif message and caption
                     try
                     {
-                        result = cmdlet.ShouldContinue(message, "caption", ref yestoall, ref notoall);
+                        result = cmdlet.ShouldContinue(Message, "caption", ref yestoall, ref notoall);
                         if (yestoall)
                         {
                             this.responseType = CimResponseType.YesToAll;
@@ -87,7 +87,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimPromptType.Normal:
                     try
                     {
-                        result = cmdlet.ShouldProcess(message);
+                        result = cmdlet.ShouldProcess(Message);
                         if (result)
                         {
                             this.responseType = CimResponseType.Yes;
@@ -121,20 +121,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Prompt message.
         /// </summary>
-        public string Message
-        {
-            get
-            {
-                return message;
-            }
-        }
-
-        private string message;
+        public string Message { get; }
 
         /// <summary>
         /// Prompt type -Normal or Critical.
         /// </summary>
-        private CimPromptType prompt;
+        private readonly CimPromptType prompt;
 
         #endregion
     }

@@ -11,10 +11,11 @@ trigger:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/**/*
-    - /.vsts-ci/misc-analysis.yml
-    - /.github/ISSUE_TEMPLATE/*
-    - /.dependabot/config.yml
+    - tools/releaseBuild/**/*
+    - .vsts-ci/misc-analysis.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .dependabot/config.yml
+    - test/perf/*
 pr:
   branches:
     include:
@@ -25,10 +26,20 @@ pr:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/**/*
-    - /.vsts-ci/misc-analysis.yml
-    - /.github/ISSUE_TEMPLATE/*
-    - /.dependabot/config.yml
+    - .dependabot/config.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .vsts-ci/misc-analysis.yml
+    - .vsts-ci/windows.yml
+    - .vsts-ci/windows/*
+    - tools/cgmanifest.json
+    - LICENSE.txt
+    - test/common/markdown/*
+    - test/perf/*
+    - tools/packaging/*
+    - tools/releaseBuild/*
+    - tools/releaseBuild/azureDevOps/templates/*
+    - README.md
+    - .spelling
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -37,55 +48,46 @@ variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   # Turn off Homebrew analytics
   HOMEBREW_NO_ANALYTICS: 1
+  __SuppressAnsiEscapeSequences: 1
 
 resources:
 - repo: self
   clean: true
-jobs:
-- template: templates/ci-build.yml
-  parameters:
-    pool: Hosted macOS
-    jobName: mac_build
-    displayName: macOS Build
 
-- template: templates/nix-test.yml
-  parameters:
-    purpose: UnelevatedPesterTests
-    tagSet: CI
-    parentJobs:
-      - mac_build
+stages:
+- stage: BuildMac
+  displayName: Build for macOS
+  jobs:
+  - template: templates/ci-build.yml
+    parameters:
+      pool: macOS-latest
+      jobName: mac_build
+      displayName: macOS Build
 
-- template: templates/nix-test.yml
-  parameters:
-    purpose: ElevatedPesterTests
-    tagSet: CI
-    parentJobs:
-      - mac_build
+- stage: TestMac
+  displayName: Test for macOS
+  jobs:
+  - template: templates/nix-test.yml
+    parameters:
+      purpose: UnelevatedPesterTests
+      tagSet: CI
 
-- template: templates/nix-test.yml
-  parameters:
-    purpose: UnelevatedPesterTests
-    tagSet: Others
-    parentJobs:
-      - mac_build
+  - template: templates/nix-test.yml
+    parameters:
+      purpose: ElevatedPesterTests
+      tagSet: CI
 
-- template: templates/nix-test.yml
-  parameters:
-    purpose: ElevatedPesterTests
-    tagSet: Others
-    parentJobs:
-      - mac_build
+  - template: templates/nix-test.yml
+    parameters:
+      purpose: UnelevatedPesterTests
+      tagSet: Others
 
-- template: templates/verify-xunit.yml
-  parameters:
-    pool: 'Hosted macOS'
-    parentJobs:
-      - mac_build
+  - template: templates/nix-test.yml
+    parameters:
+      purpose: ElevatedPesterTests
+      tagSet: Others
 
-- job: CodeCovTestPackage
-  displayName: CodeCoverage and Test Packages
-  steps:
-  - powershell: |
-      Import-Module .\tools\ci.psm1
-      New-CodeCoverageAndTestPackage
-    displayName: CodeCoverage and Test Package
+  - template: templates/verify-xunit.yml
+    parameters:
+      pool: macOS-latest
+

@@ -1,11 +1,11 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
 
+using System;
 using System.Threading;
 using Microsoft.Management.Infrastructure.Options;
-using System;
 
 #endregion
 
@@ -17,9 +17,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal abstract class CimBaseAction
     {
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CimBaseAction"/> class.
         /// </summary>
-        public CimBaseAction()
+        protected CimBaseAction()
         {
         }
 
@@ -44,20 +44,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <see cref="CimSession"/>, <see cref="CimOperationOptions"/> object.
         /// </para>
         /// </summary>
-        protected XOperationContextBase Context
-        {
-            get
-            {
-                return this.context;
-            }
-
-            set
-            {
-                this.context = value;
-            }
-        }
-
-        private XOperationContextBase context;
+        protected XOperationContextBase Context { get; set; }
     }
 
     /// <summary>
@@ -69,7 +56,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimSyncAction : CimBaseAction, IDisposable
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimSyncAction"/> class.
         /// </summary>
         public CimSyncAction()
         {
@@ -91,7 +78,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Set response result
+        /// Set the response result.
         /// </para>
         /// </summary>
         internal CimResponseType ResponseType
@@ -102,7 +89,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// Call this method when the action is completed or
-        /// the operation is terminated
+        /// the operation is terminated.
         /// </para>
         /// </summary>
         internal virtual void OnComplete()
@@ -112,7 +99,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// block current thread.
+        /// Block current thread.
         /// </para>
         /// </summary>
         protected virtual void Block()
@@ -126,7 +113,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Action completed event.
         /// </summary>
-        private ManualResetEventSlim completeEvent;
+        private readonly ManualResetEventSlim completeEvent;
 
         /// <summary>
         /// Response result.
@@ -181,10 +168,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    if (this.completeEvent != null)
-                    {
-                        this.completeEvent.Dispose();
-                    }
+                    this.completeEvent?.Dispose();
                 }
 
                 // Call the appropriate methods to clean up

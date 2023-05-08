@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -12,10 +12,10 @@ using Dbg = System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to resolve MSH paths containing glob characters to
-    /// MSH paths that match the glob strings.
+    /// A command to resolve PowerShell paths containing glob characters to
+    /// PowerShell paths that match the glob strings.
     /// </summary>
-    [Cmdlet(VerbsCommon.Split, "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113404")]
+    [Cmdlet(VerbsCommon.Split, "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097149")]
     [OutputType(typeof(string), ParameterSetName = new[] { leafSet,
                                                            leafBaseSet,
                                                            extensionSet,
@@ -105,9 +105,9 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// If true the qualifier of the path will be returned.
         /// The qualifier is the drive or provider that is qualifying
-        /// the MSH path.
+        /// the PowerShell path.
         /// </value>
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = qualifierSet, Mandatory = false)]
+        [Parameter(ParameterSetName = qualifierSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Qualifier { get; set; }
 
         /// <summary>
@@ -116,9 +116,9 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// If true the qualifier of the path will be returned.
         /// The qualifier is the drive or provider that is qualifying
-        /// the MSH path.
+        /// the PowerShell path.
         /// </value>
-        [Parameter(ParameterSetName = noQualifierSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = noQualifierSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter NoQualifier { get; set; }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// If true the leaf name of the path will be returned.
         /// </value>
-        [Parameter(ParameterSetName = leafSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = leafSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Leaf { get; set; }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// If true the leaf base name of the path will be returned.
         /// </value>
-        [Parameter(ParameterSetName = leafBaseSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = leafBaseSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter LeafBase { get; set; }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// If true the extension of the path will be returned.
         /// </value>
-        [Parameter(ParameterSetName = extensionSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = extensionSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Extension { get; set; }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Determines if the path is an absolute path.
         /// </summary>
-        [Parameter(ParameterSetName = isAbsoluteSet)]
+        [Parameter(ParameterSetName = isAbsoluteSet, Mandatory = true)]
         public SwitchParameter IsAbsolute { get; set; }
 
         #endregion Parameters
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            StringCollection pathsToParse = new StringCollection();
+            StringCollection pathsToParse = new();
 
             if (Resolve)
             {
@@ -300,12 +300,12 @@ namespace Microsoft.PowerShell.Commands
                         continue;
 
                     case qualifierSet:
-                        int separatorIndex = pathsToParse[index].IndexOf(":", StringComparison.CurrentCulture);
+                        int separatorIndex = pathsToParse[index].IndexOf(':');
 
                         if (separatorIndex < 0)
                         {
                             FormatException e =
-                                new FormatException(
+                                new(
                                     StringUtil.Format(NavigationResources.ParsePathFormatError, pathsToParse[index]));
                             WriteError(
                                 new ErrorRecord(
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (SessionState.Path.IsProviderQualified(path))
             {
-                int index = path.IndexOf("::", StringComparison.CurrentCulture);
+                int index = path.IndexOf("::", StringComparison.Ordinal);
 
                 if (index != -1)
                 {
@@ -476,4 +476,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

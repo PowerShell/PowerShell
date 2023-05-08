@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -28,7 +28,7 @@ namespace System.Management.Automation
         {
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             _sessionState = sessionState;
@@ -88,7 +88,7 @@ namespace System.Management.Automation
         /// </summary>
         public DriveManagementIntrinsics Drive
         {
-            get { return _drive ?? (_drive = new DriveManagementIntrinsics(_sessionState)); }
+            get { return _drive ??= new DriveManagementIntrinsics(_sessionState); }
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace System.Management.Automation
         /// </summary>
         public CmdletProviderManagementIntrinsics Provider
         {
-            get { return _provider ?? (_provider = new CmdletProviderManagementIntrinsics(_sessionState)); }
+            get { return _provider ??= new CmdletProviderManagementIntrinsics(_sessionState); }
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// </summary>
         public PathIntrinsics Path
         {
-            get { return _path ?? (_path = new PathIntrinsics(_sessionState)); }
+            get { return _path ??= new PathIntrinsics(_sessionState); }
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSVariableIntrinsics PSVariable
         {
-            get { return _variable ?? (_variable = new PSVariableIntrinsics(_sessionState)); }
+            get { return _variable ??= new PSVariableIntrinsics(_sessionState); }
         }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace System.Management.Automation
                 return true;
             if (variable == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variable");
+                throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
 
             return (variable.Visibility == SessionStateEntryVisibility.Public);
@@ -290,7 +290,7 @@ namespace System.Management.Automation
                 return true;
             if (commandInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
 
             return (commandInfo.Visibility == SessionStateEntryVisibility.Public);
@@ -311,7 +311,7 @@ namespace System.Management.Automation
 
         #region private data
 
-        private SessionStateInternal _sessionState;
+        private readonly SessionStateInternal _sessionState;
         private DriveManagementIntrinsics _drive;
         private CmdletProviderManagementIntrinsics _provider;
         private PathIntrinsics _path;
@@ -336,6 +336,7 @@ namespace System.Management.Automation
         Private = 1
     }
 
+#nullable enable
     internal interface IHasSessionStateEntryVisibility
     {
         SessionStateEntryVisibility Visibility { get; set; }
@@ -371,4 +372,3 @@ namespace System.Management.Automation
         ConstrainedLanguage = 3
     }
 }
-

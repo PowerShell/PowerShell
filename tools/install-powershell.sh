@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 install(){
@@ -71,6 +71,7 @@ install(){
     else
         SCRIPTFOLDER=$(dirname "$(readlink -f "$0")")
         OS=$(uname)
+        DISTRIBUTOR_ID=$(lsb_release --id 2>/dev/null | sed -E 's/^.*:[[:space:]]*//')
         if [ "${OS}" == "SunOS" ] ; then
             OS=solaris
             ARCH=$(uname -p)
@@ -94,23 +95,33 @@ install(){
                 else
                     DistroBasedOn='redhat'
                 fi
-            elif [ -f /etc/SuSE-release ] ; then
-                DistroBasedOn='suse'
-                PSUEDONAME=$( (tr "\n" ' '| sed s/VERSION.*//) < /etc/SuSE-release )
-                REV=$( (grep 'VERSION' | sed s/.*=\ //) < /etc/SuSE-release )
+            elif [ -f /etc/mariner-release ] ; then
+                DistroBasedOn='mariner'
+                PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mariner-release )
+                REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mariner-release )
             elif [ -f /etc/mandrake-release ] ; then
                 DistroBasedOn='mandrake'
                 PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mandrake-release )
                 REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mandrake-release )
             elif [ -f /etc/debian_version ] ; then
                 DistroBasedOn='debian'
-                DIST=$( (grep '^DISTRIB_ID' | awk -F=  '{ print $2 }') < /etc/lsb-release )
-                PSUEDONAME=$( (grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }') < /etc/lsb-release )
-                REV=$( (grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }') < /etc/lsb-release)
+                DIST=$(. /etc/os-release && echo $NAME)
+                PSUEDONAME=$(. /etc/os-release && echo $VERSION_CODENAME)
+                REV=$(. /etc/os-release && echo $VERSION_ID)
+            elif [ "$DISTRIBUTOR_ID" = Gentoo ] ; then
+                DistroBasedOn='gentoo'
+                DIST=$(. /etc/os-release && echo $NAME)
+                PSUEDONAME=$(eselect --brief profile show | sed -E 's/[[:space:]]*//g')
+                REV=$(       eselect --brief profile show | sed -E 's|^.*/([[:digit:].]+).*|\1|')
             fi
             if [ -f /etc/UnitedLinux-release ] ; then
                 DIST="${DIST}[$( (tr "\n" ' ' | sed s/VERSION.*//) < /etc/UnitedLinux-release )]"
             fi
+			osname=$(source /etc/os-release; echo $PRETTY_NAME)
+			if [[ $osname = *SUSE* ]]; then
+				DistroBasedOn='suse'
+				REV=$(source /etc/os-release; echo $VERSION_ID)
+			fi			
             OS=$(lowercase $OS)
             DistroBasedOn=$(lowercase $DistroBasedOn)
         fi
@@ -127,29 +138,33 @@ install(){
     echo "  OSSTR: $OSSTR"
 
 
-    if [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "$DistroBasedOn" == "osx" ] || [ "$DistroBasedOn" == "suse" ] || [ "$DistroBasedOn" == "amazonlinux" ]; then
-        echo "Configuring PowerShell Environment for: $DistroBasedOn $DIST $REV"
-        if [ -f "$SCRIPTFOLDER/installpsh-$DistroBasedOn.sh" ]; then
-            #Script files were copied local - use them
-            # shellcheck source=/dev/null
-            . "$SCRIPTFOLDER/installpsh-$DistroBasedOn.sh"
-        else
-            #Script files are not local - pull from remote
-            echo "Could not find \"installpsh-$DistroBasedOn.sh\" next to this script..."
-            echo "Pulling and executing it from \"$gitreposcriptroot/installpsh-$DistroBasedOn.sh\""
-            if [ -n "$(command -v curl)" ]; then
-                echo "found and using curl"
-                bash <(curl -s $gitreposcriptroot/installpsh-"$DistroBasedOn".sh) "$@"
-            elif [ -n "$(command -v wget)" ]; then
-                echo "found and using wget"
-                bash <(wget -qO- $gitreposcriptroot/installpsh-"$DistroBasedOn".sh) "$@"
+    case "$DistroBasedOn" in
+        redhat|debian|osx|suse|amazonlinux|gentoo|mariner)
+            echo "Configuring PowerShell Environment for: $DistroBasedOn $DIST $REV"
+            if [ -f "$SCRIPTFOLDER/installpsh-$DistroBasedOn.sh" ]; then
+                #Script files were copied local - use them
+                # shellcheck source=/dev/null
+                . "$SCRIPTFOLDER/installpsh-$DistroBasedOn.sh"
             else
-                echo "Could not find curl or wget, install one of these or manually download \"$gitreposcriptroot/installpsh-$DistroBasedOn.sh\""
+                #Script files are not local - pull from remote
+                echo "Could not find \"installpsh-$DistroBasedOn.sh\" next to this script..."
+                echo "Pulling and executing it from \"$gitreposcriptroot/installpsh-$DistroBasedOn.sh\""
+                if [ -n "$(command -v curl)" ]; then
+                    echo "found and using curl"
+                    bash <(curl -s $gitreposcriptroot/installpsh-"$DistroBasedOn".sh) "$@"
+                elif [ -n "$(command -v wget)" ]; then
+                    echo "found and using wget"
+                    bash <(wget -qO- $gitreposcriptroot/installpsh-"$DistroBasedOn".sh) "$@"
+                else
+                    echo "Could not find curl or wget, install one of these or manually download \"$gitreposcriptroot/installpsh-$DistroBasedOn.sh\""
+                fi
             fi
-        fi
-    else
-        echo "Sorry, your operating system is based on $DistroBasedOn and is not supported by PowerShell or this installer at this time."
-    fi
+            ;;
+        *)
+            echo "Sorry, your operating system is based on $DistroBasedOn and is not supported by PowerShell or this installer at this time."
+            exit 1
+            ;;
+    esac
 }
 
 # run the install function

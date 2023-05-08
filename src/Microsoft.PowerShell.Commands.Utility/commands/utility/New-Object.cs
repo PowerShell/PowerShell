@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -13,7 +13,9 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Security;
 using System.Reflection;
 using System.Runtime.InteropServices;
+#if !UNIX
 using System.Threading;
+#endif
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -22,7 +24,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>Create a new .net object</summary>
-    [Cmdlet(VerbsCommon.New, "Object", DefaultParameterSetName = netSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113355")]
+    [Cmdlet(VerbsCommon.New, "Object", DefaultParameterSetName = netSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096620")]
     public sealed class NewObjectCommand : PSCmdlet
     {
         #region parameters
@@ -30,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary> the number</summary>
         [Parameter(ParameterSetName = netSetName, Mandatory = true, Position = 0)]
         [ValidateTrustedData]
-        public string TypeName { get; set; } = null;
+        public string TypeName { get; set; }
 
 #if !UNIX
         private Guid _comObjectClsId = Guid.Empty;
@@ -39,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "Com", Mandatory = true, Position = 0)]
         [ValidateTrustedData]
-        public string ComObject { get; set; } = null;
+        public string ComObject { get; set; }
 #endif
 
         /// <summary>
@@ -49,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = netSetName, Mandatory = false, Position = 1)]
         [ValidateTrustedData]
         [Alias("Args")]
-        public object[] ArgumentList { get; set; } = null;
+        public object[] ArgumentList { get; set; }
 
         /// <summary>
         /// True if we should have an error when Com objects will use an interop assembly.
@@ -102,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateMemberSetValueError(SetValueException e)
         {
-            Exception ex = new Exception(StringUtil.Format(NewObjectStrings.InvalidValue, e));
+            Exception ex = new(StringUtil.Format(NewObjectStrings.InvalidValue, e));
             ThrowTerminatingError(
                 new ErrorRecord(ex, "SetValueException", ErrorCategory.InvalidData, null));
         }
@@ -133,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
             Type type = null;
             PSArgumentException mshArgE = null;
 
-            if (string.Compare(ParameterSetName, netSetName, StringComparison.Ordinal) == 0)
+            if (string.Equals(ParameterSetName, netSetName, StringComparison.Ordinal))
             {
                 object _newObject = null;
                 try
@@ -168,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
                                 targetObject: null));
                     }
 
-                    throw e;
+                    throw;
                 }
 
                 Diagnostics.Assert(type != null, "LanguagePrimitives.TryConvertTo failed but returned true");
@@ -195,6 +197,25 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
+                switch (Context.LanguageMode)
+                {
+                    case PSLanguageMode.NoLanguage:
+                    case PSLanguageMode.RestrictedLanguage:
+                        if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce
+                            && !CoreTypes.Contains(type))
+                        {
+                            ThrowTerminatingError(
+                                new ErrorRecord(
+                                    new PSNotSupportedException(
+                                        string.Format(NewObjectStrings.CannotCreateTypeLanguageMode, Context.LanguageMode.ToString())),
+                                    nameof(NewObjectStrings.CannotCreateTypeLanguageMode),
+                                    ErrorCategory.PermissionDenied,
+                                    targetObject: null));
+                        }
+
+                    break;
+                }
+
                 // WinRT does not support creating instances of attribute & delegate WinRT types.
                 if (WinRTHelper.IsWinRTType(type) && ((typeof(System.Attribute)).IsAssignableFrom(type) || (typeof(System.Delegate)).IsAssignableFrom(type)))
                 {
@@ -207,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
                     ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
                     if (ci != null && ci.IsPublic)
                     {
-                        _newObject = CallConstructor(type, new ConstructorInfo[] { ci }, new object[] { });
+                        _newObject = CallConstructor(type, new ConstructorInfo[] { ci }, Array.Empty<object>());
                         if (_newObject != null && Property != null)
                         {
                             // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2
@@ -217,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(_newObject);
                         return;
                     }
-                    else if (type.GetTypeInfo().IsValueType)
+                    else if (type.IsValueType)
                     {
                         // This is for default parameterless struct ctor which is not returned by
                         // Type.GetConstructor(System.Type.EmptyTypes).
@@ -330,12 +351,12 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
         #region Com
 
-        private object SafeCreateInstance(Type t, object[] args)
+        private object SafeCreateInstance(Type t)
         {
             object result = null;
             try
             {
-                result = Activator.CreateInstance(t, args);
+                result = Activator.CreateInstance(t);
             }
             // Does not catch InvalidComObjectException because ComObject is obtained from GetTypeFromProgID
             catch (ArgumentException e)
@@ -395,8 +416,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-#if !CORECLR
-        private class ComCreateInfo
+        private sealed class ComCreateInfo
         {
             public object objectCreated;
             public bool success;
@@ -405,18 +425,15 @@ namespace Microsoft.PowerShell.Commands
 
         private ComCreateInfo createInfo;
 
-        private void STAComCreateThreadProc(Object createstruct)
+        private void STAComCreateThreadProc(object createstruct)
         {
             ComCreateInfo info = (ComCreateInfo)createstruct;
             try
             {
-                Type type = null;
-                PSArgumentException mshArgE = null;
-
-                type = Type.GetTypeFromCLSID(_comObjectClsId);
+                Type type = Type.GetTypeFromCLSID(_comObjectClsId);
                 if (type == null)
                 {
-                    mshArgE = PSTraceSource.NewArgumentException(
+                    PSArgumentException mshArgE = PSTraceSource.NewArgumentException(
                         "ComObject",
                         NewObjectStrings.CannotLoadComObjectType,
                         ComObject);
@@ -426,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                info.objectCreated = SafeCreateInstance(type, ArgumentList);
+                info.objectCreated = SafeCreateInstance(type);
                 info.success = true;
             }
             catch (Exception e)
@@ -435,46 +452,43 @@ namespace Microsoft.PowerShell.Commands
                 info.success = false;
             }
         }
-#endif
 
         private object CreateComObject()
         {
-            Type type = null;
-            PSArgumentException mshArgE = null;
-
             try
             {
-                type = Marshal.GetTypeFromCLSID(_comObjectClsId);
+                Type type = Marshal.GetTypeFromCLSID(_comObjectClsId);
                 if (type == null)
                 {
-                    mshArgE = PSTraceSource.NewArgumentException("ComObject", NewObjectStrings.CannotLoadComObjectType, ComObject);
+                    PSArgumentException mshArgE = PSTraceSource.NewArgumentException(
+                        "ComObject",
+                        NewObjectStrings.CannotLoadComObjectType,
+                        ComObject);
+
                     ThrowTerminatingError(
-                        new ErrorRecord(mshArgE, "CannotLoadComObjectType", ErrorCategory.InvalidType, null));
+                        new ErrorRecord(
+                            mshArgE,
+                            "CannotLoadComObjectType",
+                            ErrorCategory.InvalidType,
+                            targetObject: null));
                 }
 
-                return SafeCreateInstance(type, ArgumentList);
+                return SafeCreateInstance(type);
             }
             catch (COMException e)
             {
                 // Check Error Code to see if Error is because of Com apartment Mismatch.
                 if (e.HResult == RPC_E_CHANGED_MODE)
                 {
-#if CORECLR
-                    ThrowTerminatingError(
-                        new ErrorRecord(
-                            new COMException(StringUtil.Format(NewObjectStrings.ApartmentNotSupported, e.Message), e),
-                            "NoCOMClassIdentified",
-                            ErrorCategory.ResourceUnavailable, null));
-#else
                     createInfo = new ComCreateInfo();
 
-                    Thread thread = new Thread(new ParameterizedThreadStart(STAComCreateThreadProc));
+                    Thread thread = new(new ParameterizedThreadStart(STAComCreateThreadProc));
                     thread.SetApartmentState(ApartmentState.STA);
                     thread.Start(createInfo);
 
                     thread.Join();
 
-                    if (createInfo.success == true)
+                    if (createInfo.success)
                     {
                         return createInfo.objectCreated;
                     }
@@ -482,7 +496,6 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(
                              new ErrorRecord(createInfo.e, "NoCOMClassIdentified",
                                                     ErrorCategory.ResourceUnavailable, null));
-#endif
                 }
                 else
                 {
@@ -508,12 +521,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Native methods for dealing with COM objects.
     /// </summary>
-    internal class NewObjectNativeMethods
+    internal static class NewObjectNativeMethods
     {
-        private NewObjectNativeMethods()
-        {
-        }
-
         /// Return Type: HRESULT->LONG->int
         [DllImport(PinvokeDllNames.CLSIDFromProgIDDllName)]
         internal static extern int CLSIDFromProgID([MarshalAs(UnmanagedType.LPWStr)] string lpszProgID, out Guid pclsid);

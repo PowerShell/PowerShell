@@ -1,9 +1,14 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 #
 # PSSession tests for non-Windows platforms
 #
+
+function GetRandomString()
+{
+    return [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName())
+}
 
 Describe "New-PSSessionOption parameters for non-Windows platforms" -Tag "CI" {
 
@@ -36,12 +41,13 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        if ($IsWindows)  {
+        # Skip this test for macOS because the latest OS release is incompatible with our shipped libmi for WinRM/OMI.
+        if ($IsWindows -or $IsMacOS)  {
             $PSDefaultParameterValues['it:skip'] = $true
         }
         else {
             $userName = "User_$(Get-Random -Maximum 99999)"
-            $userPassword = "Password_$(Get-Random -Maximum 99999)"
+            $userPassword = GetRandomString
             $cred = [pscredential]::new($userName, (ConvertTo-SecureString -String $userPassword -AsPlainText -Force))
             $soSkipCA = New-PSSessionOption -SkipCACheck
             $soSkipCN = New-PSSessionOption -SkipCNCheck
@@ -54,24 +60,29 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
 
     $testCases = @(
         @{
-            Name = 'Verifies expected error when session options is missing'
+            Name = 'Verifies expected error when session option is missing'
             ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL }
             ExpectedErrorCode = 825
         },
         @{
             Name = 'Verifies expected error when SkipCACheck option is missing'
-            ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSl -SessionOption $soSkipCN }
+            ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL -SessionOption $soSkipCN }
             ExpectedErrorCode = 825
         },
         @{
             Name = 'Verifies expected error when SkipCNCheck option is missing'
-            ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSl -SessionOption $soSkipCA }
+            ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL -SessionOption $soSkipCA }
             ExpectedErrorCode = 825
         }
     )
 
     It "<Name>" -TestCases $testCases {
         param ($scriptBlock, $expectedErrorCode)
+
+        if ( -not (Get-WsManSupport)) {
+            Set-ItResult -Skipped -Because "MI library not available for this platform"
+            return
+        }
 
         $er = { & $scriptBlock } | Should -Throw -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand' -PassThru
         $er.Exception.ErrorCode | Should -Be $expectedErrorCode

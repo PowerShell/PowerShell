@@ -34,6 +34,7 @@ variables:
   POWERSHELL_TELEMETRY_OPTOUT: 1
   # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  __SuppressAnsiEscapeSequences: 1
 
 resources:
 - repo: self
@@ -48,33 +49,98 @@ stages:
 - stage: TestWin
   displayName: Test for Windows
   jobs:
-  - template: templates/windows-test.yml
-    parameters:
-      purpose: UnelevatedPesterTests
-      tagSet: CI
+  - job: win_test
+    pool:
+      vmImage: windows-2019
+    displayName: Windows Test
+    timeoutInMinutes: 90
 
-  - template: templates/windows-test.yml
-    parameters:
-      purpose: ElevatedPesterTests
-      tagSet: CI
+    steps:
+    - pwsh: |
+        Get-ChildItem -Path env:
+      displayName: 'Capture Environment'
+      condition: succeededOrFailed()
 
-  - template: templates/windows-test.yml
-    parameters:
-      purpose: UnelevatedPesterTests
-      tagSet: Others
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Artifacts'
+      inputs:
+        downloadType: specific
+        itemPattern: |
+          build/**/*
+          xunit/**/*
+        downloadPath: '$(System.ArtifactsDirectory)'
 
-  - template: templates/windows-test.yml
-    parameters:
-      purpose: ElevatedPesterTests
-      tagSet: Others
+    - pwsh: |
+        Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+      displayName: 'Capture Artifacts Directory'
+      continueOnError: true
 
-  - template: templates/verify-xunit.yml
-    parameters:
-      pool: 'Hosted VS2017'
+    # must be run frow Windows PowerShell
+    - powershell: |
+        # Remove "Program Files\dotnet" from the env variable PATH, so old SDKs won't affect us.
+        Write-Host "Old Path:"
+        Write-Host $env:Path
 
-- stage: PackagingWin
-  displayName: Packaging for Windows
-  jobs:
-  # Unlike daily builds, we do not upload nuget package to MyGet so we do not wait on tests to finish.
-  - template: templates/windows-packaging.yml
+        $dotnetPath = Join-Path $env:SystemDrive 'Program Files\dotnet'
+        $paths = $env:Path -split ";" | Where-Object { -not $_.StartsWith($dotnetPath) }
+        $env:Path = $paths -join ";"
 
+        Write-Host "New Path:"
+        Write-Host $env:Path
+
+        Import-Module .\tools\ci.psm1
+        Invoke-CIInstall
+      displayName: Bootstrap
+      condition: succeededOrFailed()
+
+    - pwsh: |
+        Import-Module .\build.psm1
+        Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+        $path = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
+        $rootPath = Split-Path -Path $path
+        Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
+      displayName: 'Unzip Build'
+      condition: succeeded()
+
+    - pwsh: |
+        Import-Module .\build.psm1
+        Start-PSBootstrap
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+        Invoke-CITest -Purpose UnelevatedPesterTests -TagSet CI
+      displayName: Test - UnelevatedPesterTests - CI
+      condition: succeeded()
+
+    - pwsh: |
+        Import-Module .\build.psm1
+        Start-PSBootstrap
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+        Invoke-CITest -Purpose ElevatedPesterTests -TagSet CI
+      displayName: Test - ElevatedPesterTests - CI
+      condition: succeededOrFailed()
+
+    - pwsh: |
+        Import-Module .\build.psm1
+        Start-PSBootstrap
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+        Invoke-CITest -Purpose UnelevatedPesterTests -TagSet Others
+      displayName: Test - UnelevatedPesterTests - Others
+      condition: succeededOrFailed()
+
+    - pwsh: |
+        Import-Module .\build.psm1
+        Start-PSBootstrap
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+        Invoke-CITest -Purpose ElevatedPesterTests -TagSet Others
+      displayName: Test - ElevatedPesterTests - Others
+      condition: succeededOrFailed()
+
+    - pwsh: |
+        Import-Module .\build.psm1
+        $xUnitTestResultsFile = '$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml'
+        Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
+      displayName: Verify xUnit Test Results
+      condition: succeededOrFailed()

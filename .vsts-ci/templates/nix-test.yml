@@ -1,72 +1,19 @@
 parameters:
-  pool: 'Hosted macOS'
-  parentJobs: []
+  pool: 'macOS-latest'
   purpose: ''
   tagSet: 'CI'
   name: 'mac'
 
 jobs:
 - job: ${{ parameters.name }}_test_${{ parameters.purpose }}_${{ parameters.tagSet }}
-  dependsOn:
-    ${{ parameters.parentJobs }}
+
   pool:
-    name: ${{ parameters.pool }}
+    vmImage: ${{ parameters.pool }}
 
   displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
   steps:
-  - pwsh: |
-      Get-ChildItem -Path env:
-    displayName: Capture environment
-    condition: succeededOrFailed()
-
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download build artifacts'
-    inputs:
-      downloadType: specific
-      itemPattern: |
-        build/**/*
-      downloadPath: '$(System.ArtifactsDirectory)'
-
-  - pwsh: |
-      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
-    displayName: 'Capture artifacts directory'
-    continueOnError: true
-
-  - pwsh: |
-      Import-Module .\tools\ci.psm1
-      Invoke-CIInstall -SkipUser
-    displayName: Bootstrap
-    condition: succeededOrFailed()
-
-  - task: ExtractFiles@1
-    displayName: 'Extract build zip'
-    inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/build/build.zip'
-      destinationFolder: '$(System.ArtifactsDirectory)/bins'
-
-  - bash: |
-      find "$(System.ArtifactsDirectory)/bins" -type d -exec chmod +rwx {} \;
-      find "$(System.ArtifactsDirectory)/bins" -type f -exec chmod +rw {} \;
-    displayName: 'Fix permissions'
-    continueOnError: true
-
-  - pwsh: |
-      Get-ChildItem "$(System.ArtifactsDirectory)\bins\*" -Recurse -ErrorAction SilentlyContinue
-    displayName: 'Capture extracted build zip'
-    continueOnError: true
-
-  - pwsh: |
-      Import-Module .\tools\ci.psm1
-      Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
-      $options = (Get-PSOptions)
-      $rootPath = '$(System.ArtifactsDirectory)\bins'
-      $originalRootPath = Split-Path -path $options.Output
-      $path = Join-Path -path $rootPath -ChildPath (split-path -leaf -path $originalRootPath)
-      $pwshPath = Join-Path -path $path -ChildPath 'pwsh'
-      chmod a+x $pwshPath
-      $options.Output = $pwshPath
-      Set-PSOptions $options
-      Invoke-CITest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}'
-    displayName: Test
-    condition: succeeded()
+    - template: ./test/nix-test-steps.yml
+      parameters:
+        purpose: ${{ parameters.purpose }}
+        tagSet: ${{ parameters.tagSet }}

@@ -1,7 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections;
 using System.Management.Automation;
 using System.Text;
@@ -11,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// WriteHost cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Write, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113426", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097137", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteHostCommand : ConsoleColorCmdlet
     {
         /// <summary>
@@ -19,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromRemainingArguments = true, ValueFromPipeline = true)]
         [Alias("Msg", "Message")]
-        public object Object { get; set; } = null;
+        public object Object { get; set; }
 
         /// <summary>
         /// False to add a newline to the end of the output string, true if not.
@@ -67,11 +66,11 @@ namespace Microsoft.PowerShell.Commands
                     // unroll enumerables, including arrays.
 
                     bool printSeparator = false;
-                    StringBuilder result = new StringBuilder();
+                    StringBuilder result = new();
 
                     foreach (object element in enumerable)
                     {
-                        if (printSeparator == true && Separator != null)
+                        if (printSeparator && Separator != null)
                         {
                             result.Append(Separator.ToString());
                         }
@@ -103,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string result = ProcessObject(Object) ?? string.Empty;
 
-            HostInformationMessage informationMessage = new HostInformationMessage();
+            HostInformationMessage informationMessage = new();
             informationMessage.Message = result;
             informationMessage.NoNewLine = NoNewline.IsPresent;
 

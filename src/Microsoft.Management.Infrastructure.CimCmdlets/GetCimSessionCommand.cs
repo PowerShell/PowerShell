@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -14,7 +14,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// The command returns zero, one or more CimSession objects that represent
     /// connections with remote computers established from the current PS Session.
     /// </summary>
-
+    [Alias("gcms")]
     [Cmdlet(VerbsCommon.Get, "CimSession", DefaultParameterSetName = ComputerNameSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227966")]
     [OutputType(typeof(CimSession))]
     public sealed class GetCimSessionCommand : CimBaseCommand
@@ -22,7 +22,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="GetCimSessionCommand"/> class.
         /// </summary>
         public GetCimSessionCommand()
             : base(parameters, parameterSets)
@@ -58,7 +58,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ComputerName
         {
-            get { return computername;}
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -78,9 +81,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = SessionIdSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public UInt32[] Id
+        public uint[] Id
         {
-            get { return id;}
+            get
+            {
+                return id;
+            }
 
             set
             {
@@ -89,7 +95,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private UInt32[] id;
+        private uint[] id;
 
         /// <summary>
         /// The following is the definition of the input parameter "InstanceID".
@@ -101,7 +107,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Guid[] InstanceId
         {
-            get { return instanceid;}
+            get
+            {
+                return instanceid;
+            }
 
             set
             {
@@ -123,7 +132,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
-            get { return name;}
+            get
+            {
+                return name;
+            }
 
             set
             {
@@ -173,7 +185,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static readonly Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new()
         {
             {
                 nameComputerName, new HashSet<ParameterDefinitionEntry> {
@@ -200,7 +212,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static readonly Dictionary<string, ParameterSetEntry> parameterSets = new()
         {
             {   CimBaseCommand.ComputerNameSet, new ParameterSetEntry(0, true)     },
             {   CimBaseCommand.SessionIdSet, new ParameterSetEntry(1)     },

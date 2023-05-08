@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" {
   BeforeAll {
@@ -84,11 +84,11 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
     @{script={Stop-Service dcomlaunch -ErrorAction Stop};errorid="ServiceHasDependentServices,Microsoft.PowerShell.Commands.StopServiceCommand"},
     @{script={Suspend-Service winrm -ErrorAction Stop};errorid="CouldNotSuspendServiceNotSupported,Microsoft.PowerShell.Commands.SuspendServiceCommand"},
     @{script={Resume-Service winrm -ErrorAction Stop};errorid="CouldNotResumeServiceNotSupported,Microsoft.PowerShell.Commands.ResumeServiceCommand"},
-    @{script={Stop-Service $(new-guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.StopServiceCommand"},
-    @{script={Start-Service $(new-guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.StartServiceCommand"},
-    @{script={Resume-Service $(new-guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.ResumeServiceCommand"},
-    @{script={Suspend-Service $(new-guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.SuspendServiceCommand"},
-    @{script={Restart-Service $(new-guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.RestartServiceCommand"}
+    @{script={Stop-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.StopServiceCommand"},
+    @{script={Start-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.StartServiceCommand"},
+    @{script={Resume-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.ResumeServiceCommand"},
+    @{script={Suspend-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.SuspendServiceCommand"},
+    @{script={Restart-Service $(New-Guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.RestartServiceCommand"}
   ) {
       param($script,$errorid)
       { & $script } | Should -Throw -ErrorId $errorid

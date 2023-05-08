@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -18,7 +18,9 @@ namespace System.Management.Automation.Remoting
     {
         /// <summary>
         /// </summary>
+#pragma warning disable CA2211 // Non-constant fields should not be visible
         public static bool IsServerManager;
+#pragma warning restore CA2211 // Non-constant fields should not be visible
 
         #region Public Properties
 
@@ -78,7 +80,10 @@ namespace System.Management.Automation.Remoting
         {
             PSSessionConfigurationData configuration = new PSSessionConfigurationData();
 
-            if (string.IsNullOrEmpty(configurationData)) return configuration;
+            if (string.IsNullOrEmpty(configurationData))
+            {
+                return configuration;
+            }
 
             configurationData = Unescape(configurationData);
 
@@ -189,7 +194,7 @@ namespace System.Management.Automation.Remoting
                         AssertValueNotAssigned(ModulesToImportToken, _modulesToImport);
                         _modulesToImport = new List<string>();
                         _modulesToImportInternal = new List<object>();
-                        object[] modulesToImport = optionValue.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                        object[] modulesToImport = optionValue.Split(',', StringSplitOptions.RemoveEmptyEntries);
                         foreach (var module in modulesToImport)
                         {
                             var s = module as string;
@@ -222,8 +227,8 @@ namespace System.Management.Automation.Remoting
 
         private void CreateCollectionIfNecessary()
         {
-            if (_modulesToImport == null) _modulesToImport = new List<string>();
-            if (_modulesToImportInternal == null) _modulesToImportInternal = new List<object>();
+            _modulesToImport ??= new List<string>();
+            _modulesToImportInternal ??= new List<object>();
         }
 
         private const string SessionConfigToken = "SessionConfigurationData";

@@ -1,10 +1,10 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'Test for conversion b/w script block and delegate' -Tags "CI" {
     BeforeAll {
         function lineno
         {
-            $myInvocation.ScriptLineNumber
+            $MyInvocation.ScriptLineNumber
         }
 
         function Generate-ArgumentTypesAndParameters

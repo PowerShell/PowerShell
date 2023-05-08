@@ -1,16 +1,12 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT // ComObject
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
+using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Dynamic;
 using System.Globalization;
+using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 
 namespace System.Management.Automation.ComInterop
@@ -24,11 +20,11 @@ namespace System.Management.Automation.ComInterop
         // typically typelibs contain very small number of coclasses
         // so we will just use the linked list as it performs better
         // on small number of entities
-        private LinkedList<ComTypeClassDesc> _classes;
-        private Dictionary<string, ComTypeEnumDesc> _enums;
+        private readonly LinkedList<ComTypeClassDesc> _classes;
+        private readonly Dictionary<string, ComTypeEnumDesc> _enums;
         private ComTypes.TYPELIBATTR _typeLibAttributes;
 
-        private static Dictionary<Guid, ComTypeLibDesc> s_cachedTypeLibDesc = new Dictionary<Guid, ComTypeLibDesc>();
+        private static readonly Dictionary<Guid, ComTypeLibDesc> s_cachedTypeLibDesc = new Dictionary<Guid, ComTypeLibDesc>();
 
         private ComTypeLibDesc()
         {
@@ -36,12 +32,8 @@ namespace System.Management.Automation.ComInterop
             _classes = new LinkedList<ComTypeClassDesc>();
         }
 
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.CurrentCulture, "<type library {0}>", Name);
-        }
+        public override string ToString() => $"<type library {Name}>";
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public string Documentation
         {
             get { return string.Empty; }
@@ -56,49 +48,6 @@ namespace System.Management.Automation.ComInterop
 
         #endregion
 
-        /// <summary>
-        /// Reads the latest registered type library for the corresponding GUID,
-        /// reads definitions of CoClasses and Enum's from this library
-        /// and creates a IDynamicMetaObjectProvider that allows to instantiate coclasses
-        /// and get actual values for the enums.
-        /// </summary>
-        /// <param name="typeLibGuid">Type Library Guid.</param>
-        /// <returns>ComTypeLibDesc object.</returns>
-        [System.Runtime.Versioning.ResourceExposure(System.Runtime.Versioning.ResourceScope.Machine)]
-        [System.Runtime.Versioning.ResourceConsumption(System.Runtime.Versioning.ResourceScope.Machine, System.Runtime.Versioning.ResourceScope.Machine)]
-        public static ComTypeLibInfo CreateFromGuid(Guid typeLibGuid)
-        {
-            // passing majorVersion = -1, minorVersion = -1 will always
-            // load the latest typelib
-            ComTypes.ITypeLib typeLib = UnsafeMethods.LoadRegTypeLib(ref typeLibGuid, -1, -1, 0);
-
-            return new ComTypeLibInfo(GetFromTypeLib(typeLib));
-        }
-
-        /// <summary>
-        /// Gets an ITypeLib object from OLE Automation compatible RCW ,
-        /// reads definitions of CoClasses and Enum's from this library
-        /// and creates a IDynamicMetaObjectProvider that allows to instantiate coclasses
-        /// and get actual values for the enums.
-        /// </summary>
-        /// <param name="rcw">OLE automation compatible RCW.</param>
-        /// <returns>ComTypeLibDesc object.</returns>
-        public static ComTypeLibInfo CreateFromObject(object rcw)
-        {
-            if (Marshal.IsComObject(rcw) == false)
-            {
-                throw new ArgumentException("COM object is expected.");
-            }
-
-            ComTypes.ITypeInfo typeInfo = ComRuntimeHelpers.GetITypeInfoFromIDispatch(rcw as IDispatch, true);
-
-            ComTypes.ITypeLib typeLib;
-            int typeInfoIndex;
-            typeInfo.GetContainingTypeLib(out typeLib, out typeInfoIndex);
-
-            return new ComTypeLibInfo(GetFromTypeLib(typeLib));
-        }
-
         internal static ComTypeLibDesc GetFromTypeLib(ComTypes.ITypeLib typeLib)
         {
             // check whether we have already loaded this type library
@@ -112,19 +61,18 @@ namespace System.Management.Automation.ComInterop
                 }
             }
 
-            typeLibDesc = new ComTypeLibDesc();
-
-            typeLibDesc.Name = ComRuntimeHelpers.GetNameOfLib(typeLib);
-            typeLibDesc._typeLibAttributes = typeLibAttr;
+            typeLibDesc = new ComTypeLibDesc
+            {
+                Name = ComRuntimeHelpers.GetNameOfLib(typeLib),
+                _typeLibAttributes = typeLibAttr
+            };
 
             int countTypes = typeLib.GetTypeInfoCount();
             for (int i = 0; i < countTypes; i++)
             {
-                ComTypes.TYPEKIND typeKind;
-                typeLib.GetTypeInfoType(i, out typeKind);
+                typeLib.GetTypeInfoType(i, out ComTypes.TYPEKIND typeKind);
 
-                ComTypes.ITypeInfo typeInfo;
-                typeLib.GetTypeInfo(i, out typeInfo);
+                typeLib.GetTypeInfo(i, out ComTypes.ITypeInfo typeInfo);
                 if (typeKind == ComTypes.TYPEKIND.TKIND_COCLASS)
                 {
                     ComTypeClassDesc classDesc = new ComTypeClassDesc(typeInfo, typeLibDesc);
@@ -140,11 +88,9 @@ namespace System.Management.Automation.ComInterop
                     ComTypes.TYPEATTR typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
                     if (typeAttr.tdescAlias.vt == (short)VarEnum.VT_USERDEFINED)
                     {
-                        string aliasName, documentation;
-                        ComRuntimeHelpers.GetInfoFromType(typeInfo, out aliasName, out documentation);
+                        ComRuntimeHelpers.GetInfoFromType(typeInfo, out string aliasName, out _);
 
-                        ComTypes.ITypeInfo referencedTypeInfo;
-                        typeInfo.GetRefTypeInfo(typeAttr.tdescAlias.lpValue.ToInt32(), out referencedTypeInfo);
+                        typeInfo.GetRefTypeInfo(typeAttr.tdescAlias.lpValue.ToInt32(), out ComTypes.ITypeInfo referencedTypeInfo);
 
                         ComTypes.TYPEATTR referencedTypeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(referencedTypeInfo);
                         ComTypes.TYPEKIND referencedTypeKind = referencedTypeAttr.typekind;
@@ -177,14 +123,12 @@ namespace System.Management.Automation.ComInterop
                 }
             }
 
-            ComTypeEnumDesc enumDesc;
-            if (_enums != null && _enums.TryGetValue(member, out enumDesc) == true)
+            if (_enums != null && _enums.TryGetValue(member, out ComTypeEnumDesc enumDesc))
                 return enumDesc;
 
             return null;
         }
 
-        // TODO: internal
         public string[] GetMemberNames()
         {
             string[] retval = new string[_enums.Count + _classes.Count];
@@ -212,26 +156,13 @@ namespace System.Management.Automation.ComInterop
                 }
             }
 
-            if (_enums.ContainsKey(member) == true)
+            if (_enums.ContainsKey(member))
                 return true;
 
             return false;
         }
 
-        public Guid Guid
-        {
-            get { return _typeLibAttributes.guid; }
-        }
-
-        public short VersionMajor
-        {
-            get { return _typeLibAttributes.wMajorVerNum; }
-        }
-
-        public short VersionMinor
-        {
-            get { return _typeLibAttributes.wMinorVerNum; }
-        }
+        public Guid Guid => _typeLibAttributes.guid;
 
         public string Name { get; private set; }
 
@@ -249,6 +180,3 @@ namespace System.Management.Automation.ComInterop
         }
     }
 }
-
-#endif
-

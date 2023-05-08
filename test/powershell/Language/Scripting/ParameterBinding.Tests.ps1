@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Tests for parameter binding" -Tags "CI" {
     Context 'Test of Mandatory parameters' {
@@ -137,7 +137,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             }
         }
 
-        $b = 1..10 | select-object @{name='foo'; expression={$_ * 10}} | get-foo
+        $b = 1..10 | Select-Object @{name='foo'; expression={$_ * 10}} | get-foo
         $b -join ',' | Should -BeExactly '10,20,30,40,50,60,70,80,90,100'
     }
 
@@ -168,6 +168,19 @@ Describe "Tests for parameter binding" -Tags "CI" {
         { get-foo -a a -b b c d } | Should -Throw -ErrorId 'AmbiguousParameterSet,get-foo'
         ( get-foo -a a b c d ) -join ',' | Should -BeExactly 'b,c,d'
         ( get-foo -b b a c d ) -join ',' | Should -BeExactly 'a,c,d'
+    }
+
+    It 'Too many parameter sets defined' {
+        $scriptblock = {
+            param($numSets=1)
+            $parameters = (1..($numSets) | ForEach-Object { "[Parameter(parametersetname='set$_')]`$a$_" }) -join ', '
+            $body = "param($parameters) 'working'"
+            $sb = [scriptblock]::Create($body)
+            & $sb -a1 123
+        }
+
+        & $scriptblock -numSets 32 | Should -Be 'working'
+        { & $scriptblock -numSets 33 } | Should -Throw -ErrorId 'ParsingTooManyParameterSets'
     }
 
     It 'Default parameter set with value from remaining arguments case 1' {
@@ -379,7 +392,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            get-fooe| Should -Be 55
+            get-fooe | Should -Be 55
         }
 
         It "Validation attributes should not run on default values when CmdletBinding is set on the parameter" {
@@ -390,7 +403,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            get-foof| Should -Be 55
+            get-foof | Should -Be 55
         }
 
         It "Validation attributes should not run on default values" {
@@ -400,7 +413,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            { get-foog } | Should -Not -throw
+            { get-foog } | Should -Not -Throw
         }
 
         It "Validation attributes should not run on default values when CmdletBinding is set" {
@@ -411,7 +424,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            { get-fooh } | Should -Not -throw
+            { get-fooh } | Should -Not -Throw
         }
 
         It "ValidateScript can use custom ErrorMessage" {
@@ -451,12 +464,12 @@ Describe "Tests for parameter binding" -Tags "CI" {
     }
 
     #known issue 2069
-    It 'Some conversions should be attempted before trying to encode a collection' -skip:$IsCoreCLR {
+    It 'Some conversions should be attempted before trying to encode a collection' -Skip:$IsCoreCLR {
         try {
                  $null = [Test.Language.ParameterBinding.MyClass]
             }
             catch {
-                add-type -PassThru -TypeDefinition @'
+                Add-Type -PassThru -TypeDefinition @'
                 using System.Management.Automation;
                 using System;
                 using System.Collections;
@@ -486,7 +499,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                         }
                     }
                 }
-'@ | ForEach-Object {$_.assembly} | Import-module
+'@ | ForEach-Object {$_.assembly} | Import-Module
             }
 
         Get-TestCmdlet -MyParameter @{ a = 42 } | Should -BeExactly 'hashtable'

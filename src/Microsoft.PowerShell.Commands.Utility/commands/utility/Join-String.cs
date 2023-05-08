@@ -1,9 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
@@ -22,7 +23,8 @@ namespace Microsoft.PowerShell.Commands.Utility
     {
         /// <summary>A bigger default to not get re-allocations in common use cases.</summary>
         private const int DefaultOutputStringCapacity = 256;
-        private readonly StringBuilder _outputBuilder = new StringBuilder(DefaultOutputStringCapacity);
+
+        private readonly StringBuilder _outputBuilder = new(DefaultOutputStringCapacity);
         private CultureInfo _cultureInfo = CultureInfo.InvariantCulture;
         private string _separator;
         private char _quoteChar;
@@ -92,7 +94,7 @@ namespace Microsoft.PowerShell.Commands.Utility
         [Parameter(ValueFromPipeline = true)]
         public PSObject[] InputObject { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         protected override void BeginProcessing()
         {
             _quoteChar = SingleQuote ? '\'' : DoubleQuote ? '"' : char.MinValue;
@@ -103,7 +105,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         protected override void ProcessRecord()
         {
             if (InputObject != null)
@@ -150,7 +152,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             }
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         protected override void EndProcessing()
         {
             _outputBuilder.Append(OutputSuffix);
@@ -158,6 +160,10 @@ namespace Microsoft.PowerShell.Commands.Utility
         }
     }
 
+    [SuppressMessage(
+        "Microsoft.Performance",
+        "CA1812:AvoidUninstantiatedInternalClasses",
+        Justification = "Class is instantiated through late-bound reflection")]
     internal class JoinItemCompleter : IArgumentCompleter
     {
         public IEnumerable<CompletionResult> CompleteArgument(
@@ -176,7 +182,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             return null;
         }
 
-        private IEnumerable<CompletionResult> CompleteFormatString(string wordToComplete)
+        private static IEnumerable<CompletionResult> CompleteFormatString(string wordToComplete)
         {
             var res = new List<CompletionResult>();
             void AddMatching(string completionText)

@@ -1,6 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Read-Host Test" -tag "CI" {
+Describe "Read-Host Test" -Tag "CI" {
     BeforeAll {
         $th = New-TestHost
         $rs = [runspacefactory]::Createrunspace($th)
@@ -12,6 +12,7 @@ Describe "Read-Host Test" -tag "CI" {
 
     AfterEach {
         $ps.Commands.Clear()
+        $th.UI.Streams.Clear()
     }
 
     AfterAll {
@@ -30,16 +31,36 @@ Describe "Read-Host Test" -tag "CI" {
         $prompt = $th.ui.streams.prompt[0]
         $prompt | Should -Not -BeNullOrEmpty
         $prompt.split(":")[-1] | Should -Be myprompt
+        $result | Should -BeExactly 'this is a prompt response'
     }
 
     It "Read-Host returns a secure string when using -AsSecureString parameter" {
-        $result = $ps.AddScript("Read-Host -AsSecureString").Invoke() | select-object -first 1
+        $result = $ps.AddScript("Read-Host -AsSecureString").Invoke() | Select-Object -First 1
         $result | Should -BeOfType SecureString
-        [pscredential]::New("foo",$result).GetNetworkCredential().Password | Should -BeExactly TEST
+        $result | ConvertFrom-SecureString -AsPlainText | Should -BeExactly 'TEST'
+    }
+
+    It "Read-Host returns a string when using -MaskInput parameter" {
+        $result = $ps.AddScript("Read-Host -MaskInput").Invoke()
+        $result | Should -BeExactly 'TEST'
+    }
+
+    It "Read-Host returns a string when using -MaskInput parameter used with -Prompt" {
+        $result = $ps.AddScript("Read-Host -MaskInput -Prompt Test").Invoke()
+        $prompt = $th.ui.streams.prompt[0]
+        $prompt | Should -Not -BeNullOrEmpty
+        $prompt.split(":")[-1] | Should -BeExactly 'Test'
+        $result | Should -BeExactly 'this is a prompt response'
+    }
+
+    It "Read-Host throws an error when both -AsSecureString parameter and -MaskInput parameter are used" {
+        # Contrary to the rest of the tests this does not need to be invoked through a runspace since it is going to throw an error.
+        $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ReadHostCommand"
+        {Read-Host -MaskInput -AsSecureString} | Should -Throw -ErrorId $errorId
     }
 
     It "Read-Host doesn't enter command prompt mode" {
-        $result = "!1" | pwsh -NoProfile -c "Read-host -Prompt 'foo'"
+        $result = "!1" | & "$PSHOME/pwsh" -NoProfile -c "Read-host -Prompt 'foo'"
         if ($IsWindows) {
             # Windows write to console directly so can't capture prompt in stdout
             $expected = @('!1','!1')
@@ -47,6 +68,6 @@ Describe "Read-Host Test" -tag "CI" {
         else {
             $expected = @('foo: !1','!1')
         }
-        $result | should -BeExactly $expected
+        $result | Should -BeExactly $expected
     }
 }

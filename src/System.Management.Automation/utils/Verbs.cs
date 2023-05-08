@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -348,7 +348,7 @@ namespace System.Management.Automation
         public const string Build = "Build";
 
         /// <summary>
-        /// Finalize an interruptable activity. Makes pending changes permanent.
+        /// Finalize an interruptible activity. Makes pending changes permanent.
         /// </summary>
         public const string Complete = "Complete";
 
@@ -387,9 +387,9 @@ namespace System.Management.Automation
         /// </summary>
         public const string Invoke = "Invoke";
 
-        ///<summary>
+        /// <summary>
         /// Record details about an item in a public store or publishing location
-        ///</summary>
+        /// </summary>
         public const string Register = "Register";
 
         /// <summary>
@@ -397,9 +397,9 @@ namespace System.Management.Automation
         /// </summary>
         public const string Request = "Request";
 
-        ///<summary>
+        /// <summary>
         /// Terminate existing activity and begin it again (with the same configuration)
-        ///</summary>
+        /// </summary>
         public const string Restart = "Restart";
 
         /// <summary>
@@ -412,9 +412,9 @@ namespace System.Management.Automation
         /// </summary>
         public const string Start = "Start";
 
-        ///<summary>
+        /// <summary>
         ///Discontinue or cease an activity
-        ///</summary>
+        /// </summary>
         public const string Stop = "Stop";
 
         /// <summary>
@@ -432,14 +432,14 @@ namespace System.Management.Automation
         /// </summary>
         public const string Uninstall = "Uninstall";
 
-        ///<summary>
+        /// <summary>
         /// Remove details of an item from a public store or publishing location
-        ///</summary>
+        /// </summary>
         public const string Unregister = "Unregister";
 
-        ///<summary>
+        /// <summary>
         /// Suspend execution until an expected event
-        ///</summary>
+        /// </summary>
         public const string Wait = "Wait";
     }
 
@@ -1116,12 +1116,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Class for Verbs and Groups.
+    /// Provides information about a verb used to name commands defined in PowerShell.
     /// </summary>
     public class VerbInfo
     {
         /// <summary>
-        /// Verb Name.
+        /// The verb name, used to begin command names.
         /// </summary>
         public string Verb
         {
@@ -1129,7 +1129,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Alias Prefix.
+        /// The alias prefix, recommended for aliases to commands that begin with this verb.
         /// </summary>
         public string AliasPrefix
         {
@@ -1137,7 +1137,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Group Name.
+        /// The name of the functional category of commands that begin with this verb.
         /// </summary>
         public string Group
         {
@@ -1145,7 +1145,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Description.
+        /// Explains what the verb is meant to do with its object.
         /// </summary>
         public string Description
         {
@@ -1311,8 +1311,8 @@ namespace System.Management.Automation
 #endif
         }
 
-        private static Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
-        private static Dictionary<string, string[]> s_recommendedAlternateVerbs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, string[]> s_recommendedAlternateVerbs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
 
         internal static bool IsStandard(string verb)
         {

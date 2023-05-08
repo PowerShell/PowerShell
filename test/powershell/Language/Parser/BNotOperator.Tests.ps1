@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 $baseTypes = @{
@@ -12,7 +12,7 @@ $ns = [Guid]::NewGuid() -replace '-',''
 
 $typeDefinition = "namespace ns_$ns`n{"
 
-$enumTypeNames = foreach ($baseType in $baseTypes.Keys)
+foreach ($baseType in $baseTypes.Keys)
 {
     $baseTypeName = $baseTypes[$baseType]
     $typeDefinition += @"
@@ -24,14 +24,12 @@ $enumTypeNames = foreach ($baseType in $baseTypes.Keys)
         Max = $($baseType::MaxValue)
     }
 "@
-
-    "ns_$ns.E_$baseTypeName"
 }
 
 $typeDefinition += "`n}"
 
-Write-Verbose $typeDefinition
-Add-Type $typeDefinition
+Write-Verbose $typeDefinition -verbose
+$enumTypeNames = Add-Type $typeDefinition -Pass
 
 Describe "bnot on enums" -Tags "CI" {
     foreach ($enumType in [type[]]$enumTypeNames)

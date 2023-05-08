@@ -1,5 +1,5 @@
 #
-#  Copyright (c) Microsoft Corporation. All rights reserved.
+#  Copyright (c) Microsoft Corporation.
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
@@ -13,61 +13,79 @@
 #
 # ------------------ PackageManagement Test  -----------------------------------
 
-$InternalGallery = "https://www.poshtestgallery.com/api/v2/"
-$InternalSource = 'OneGetTestSource'
-
 Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
- BeforeAll{
-    Register-PackageSource -Name Nugettest -provider NuGet -Location https://www.nuget.org/api/v2 -force
-    Register-PackageSource -Name $InternalSource -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
-    $SavedProgressPreference = $ProgressPreference
-    $ProgressPreference = "SilentlyContinue"
- }
- AfterAll {
-     $ProgressPreference = $SavedProgressPreference
- }
+    BeforeAll {
+        # the package name for testing
+        $packageName = "PowerShell.TestPackage"
+
+        # register the asset directory
+        $localSourceName = [Guid]::NewGuid().ToString("n")
+        $localSourceLocation = Join-Path $PSScriptRoot assets
+        Register-PackageSource -Name $localSourceName -provider NuGet -Location $localSourceLocation -Force -Trusted
+
+        # register the gallery location
+        $galleryLocation = "https://www.powershellgallery.com/api/v2"
+        $gallerySourceName = [Guid]::newGuid().ToString("n")
+        Register-PackageSource -Name $gallerySourceName -Location $galleryLocation -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
+
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+        }
+
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+        Unregister-PackageSource -Source $localSourceName -ErrorAction Ignore
+        Unregister-PackageSource -Name $gallerySourceName -ErrorAction Ignore
+        Uninstall-Module NanoServerPackage -ErrorAction Ignore -WarningAction SilentlyContinue
+    }
+
     It "get-packageprovider" {
-
         $gpp = Get-PackageProvider
-
         $gpp.Name | Should -Contain 'NuGet'
-
         $gpp.Name | Should -Contain 'PowerShellGet'
     }
 
     It "find-packageprovider PowerShellGet" {
-        $fpp = (Find-PackageProvider -Name "PowerShellGet" -force).name
+        $fpp = (Find-PackageProvider -Name "PowerShellGet" -Force).name
         $fpp | Should -Contain "PowerShellGet"
     }
 
-     It "install-packageprovider, Expect succeed" {
-        $ipp = (install-PackageProvider -name gistprovider -force -source $InternalSource -Scope CurrentUser).name
-        $ipp | Should -Contain "gistprovider"
+    It "install-packageprovider, Expect succeed" {
+        Set-ItResult -Pending -Because "local test package provider not installable"
+		$ippArgs = @{
+			Name = "NanoServerPackage"
+			Force = $true
+			Source = $galleryLocation
+			Scope  = "CurrentUser"
+			WarningAction = "SilentlyContinue"
+		}
+        $ipp = (Install-PackageProvider @ippArgs).name
+        $ipp | Should -Contain "NanoServerPackage"
     }
 
-    it "Find-package"  {
-        $f = Find-Package -ProviderName NuGet -Name jquery -source Nugettest
-        $f.Name | Should -Contain "jquery"
+    It "Find-package"  {
+        $f = Find-Package -ProviderName NuGet -Name $packageName -Source $localSourceName
+        $f.Name | Should -Contain "$packageName"
 	}
 
-    it "Install-package"  {
-        $i = install-Package -ProviderName NuGet -Name jquery -force -source Nugettest -Scope CurrentUser
-        $i.Name | Should -Contain "jquery"
+    It "Install-package"  {
+        $i = Install-Package -ProviderName NuGet -Name $packageName -Force -Source $localSourceName -Scope CurrentUser
+        $i.Name | Should -Contain "$packageName"
 	}
 
-    it "Get-package"  {
-        $g = Get-Package -ProviderName NuGet -Name jquery
-        $g.Name | Should -Contain "jquery"
+    It "Get-package"  {
+        $g = Get-Package -ProviderName NuGet -Name $packageName
+        $g.Name | Should -Contain "$packageName"
 	}
 
-    it "save-package"  {
-        $s = save-Package -ProviderName NuGet -Name jquery -path $TestDrive -force -source Nugettest
-        $s.Name | Should -Contain "jquery"
+    It "save-package"  {
+        $s = Save-Package -ProviderName NuGet -Name $packageName -Path $TestDrive -Force -Source $localSourceName
+        $s.Name | Should -Contain "$packageName"
 	}
 
-    it "uninstall-package"  {
-        $u = uninstall-Package -ProviderName NuGet -Name jquery
-        $u.Name | Should -Contain "jquery"
+    It "uninstall-package"  {
+        $u = Uninstall-Package -ProviderName NuGet -Name $packageName
+        $u.Name | Should -Contain "$packageName"
 	}
 }

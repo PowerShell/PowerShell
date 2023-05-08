@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Registers for an event coming from the engine.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Register, "EngineEvent", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135243")]
+    [Cmdlet(VerbsLifecycle.Register, "EngineEvent", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097128")]
     [OutputType(typeof(PSEventJob))]
     public class RegisterEngineEventCommand : ObjectEventRegistrationBase
     {
@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
                 (!(bool)Forward)
                )
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new ArgumentException(EventingStrings.ActionMandatoryForLocal),
                     "ACTION_MANDATORY_FOR_LOCAL",
                     ErrorCategory.InvalidArgument,

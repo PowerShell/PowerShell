@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -121,7 +121,7 @@
     <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code.  The TimeStamp server URL must be fully qualified in the form of http://&lt;server url&gt;</value>
+    <value>Cannot sign code.  The TimeStamp server URL must be fully qualified in the form of http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
   </data>
   <data name="CannotRetrieveFromContainer" xml:space="preserve">
     <value>The Get-AuthenticodeSignature cmdlet does not support directories. Supply a path to a file and retry.</value>

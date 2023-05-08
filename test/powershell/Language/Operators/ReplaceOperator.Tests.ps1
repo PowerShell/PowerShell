@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Replace Operator" -Tags CI {
@@ -9,6 +9,12 @@ Describe "Replace Operator" -Tags CI {
 
             $res = "image.gif" -replace "\.gif$",".jpg"
             $res | Should -BeExactly "image.jpg"
+        }
+
+        It "Replace operator can convert an substitution object to string" {
+            $substitution = Get-Process -Id $pid
+            $res = "!3!" -replace "3",$substitution
+            $res | Should -BeExactly "!System.Diagnostics.Process (pwsh)!"
         }
 
         It "Replace operator can be case-insensitive and case-sensitive" {
@@ -28,6 +34,18 @@ Describe "Replace Operator" -Tags CI {
 
             $res = "PowerPoint" -replace "Point"
             $res | Should -BeExactly "Power"
+        }
+
+        It "Replace operator can take an enumerable as first argument, a mandatory pattern, and an optional substitution" {
+            $res = "PowerPoint1","PowerPoint2" -replace "Point","Shell"
+            $res.Count | Should -Be 2
+            $res[0] | Should -BeExactly "PowerShell1"
+            $res[1] | Should -BeExactly "PowerShell2"
+
+            $res = "PowerPoint1","PowerPoint2" -replace "Point"
+            $res.Count | Should -Be 2
+            $res[0] | Should -BeExactly "Power1"
+            $res[1] | Should -BeExactly "Power2"
         }
     }
 
@@ -62,6 +80,26 @@ Describe "Replace Operator" -Tags CI {
             $substitutionMethod = [R]::Replace
             $res = "ID 0000123" -replace "\b0+", $substitutionMethod
             $res | Should -BeExactly "ID XXXX123"
+        }
+    }
+
+    Describe "Culture-invariance tests for -split and -replace" -Tags CI {
+        BeforeAll {
+            $prevCulture = [cultureinfo]::CurrentCulture
+            # The French culture uses "," as the decimal mark.
+            [cultureinfo]::CurrentCulture = 'fr'
+        }
+
+        AfterAll {
+            [cultureinfo]::CurrentCulture = $prevCulture
+        }
+
+        It "-split: LHS stringification is not culture-sensitive" {
+          1.2 -split ',' | Should -Be '1.2'
+        }
+
+        It "-replace: LHS stringification is not culture-sensitive" {
+          1.2 -replace ',' | Should -Be '1.2'
         }
     }
 }

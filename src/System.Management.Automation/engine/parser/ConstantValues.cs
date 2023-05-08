@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -15,7 +15,7 @@ namespace System.Management.Automation.Language
      * There is a number of similarities between these two classes, and changes (fixes) in this code
      * may need to be reflected in that class and vice versa
      */
-    internal class IsConstantValueVisitor : ICustomAstVisitor
+    internal class IsConstantValueVisitor : ICustomAstVisitor2
     {
         public static bool IsConstant(Ast ast, out object constantValue, bool forAttribute = false, bool forRequires = false)
         {
@@ -53,7 +53,9 @@ namespace System.Management.Automation.Language
         }
 
         internal bool CheckingAttributeArgument { get; set; }
+
         internal bool CheckingClassAttributeArguments { get; set; }
+
         internal bool CheckingRequiresArgument { get; set; }
 
         public object VisitErrorStatement(ErrorStatementAst errorStatementAst) { return false; }
@@ -130,10 +132,32 @@ namespace System.Management.Automation.Language
 
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { return false; }
 
+        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { return false; }
+
+        public object VisitPropertyMember(PropertyMemberAst propertyMemberAst) { return false; }
+
+        public object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return false; }
+
+        public object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) { return false; }
+
+        public object VisitUsingStatement(UsingStatementAst usingStatement) { return false; }
+
+        public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) { return false; }
+
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) { return false; }
+
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
-            if (statementBlockAst.Traps != null) return false;
-            if (statementBlockAst.Statements.Count > 1) return false;
+            if (statementBlockAst.Traps != null) 
+            {
+                return false;
+            }
+
+            if (statementBlockAst.Statements.Count > 1)
+            {
+                return false;
+            }
+
             var pipeline = statementBlockAst.Statements.FirstOrDefault();
             return pipeline != null && (bool)pipeline.Accept(this);
         }
@@ -146,8 +170,7 @@ namespace System.Management.Automation.Language
 
         private static bool IsNullDivisor(ExpressionAst operand)
         {
-            var varExpr = operand as VariableExpressionAst;
-            if (varExpr == null)
+            if (!(operand is VariableExpressionAst varExpr))
             {
                 return false;
             }
@@ -170,6 +193,13 @@ namespace System.Management.Automation.Language
             }
 
             return false;
+        }
+
+        public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            return (bool)ternaryExpressionAst.Condition.Accept(this) &&
+                   (bool)ternaryExpressionAst.IfTrue.Accept(this) &&
+                   (bool)ternaryExpressionAst.IfFalse.Accept(this);
         }
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
@@ -240,7 +270,7 @@ namespace System.Management.Automation.Language
 
         public object VisitMemberExpression(MemberExpressionAst memberExpressionAst)
         {
-            if (!memberExpressionAst.Static || !(memberExpressionAst.Expression is TypeExpressionAst))
+            if (!memberExpressionAst.Static || memberExpressionAst.Expression is not TypeExpressionAst)
             {
                 return false;
             }
@@ -251,8 +281,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            var member = memberExpressionAst.Member as StringConstantExpressionAst;
-            if (member == null)
+            if (!(memberExpressionAst.Member is StringConstantExpressionAst member))
             {
                 return false;
             }
@@ -300,9 +329,10 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class ConstantValueVisitor : ICustomAstVisitor
+    internal class ConstantValueVisitor : ICustomAstVisitor2
     {
         internal bool AttributeArgument { get; set; }
+
         internal bool RequiresArgument { get; set; }
 
         [Conditional("DEBUG")]
@@ -400,6 +430,20 @@ namespace System.Management.Automation.Language
 
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { return AutomationNull.Value; }
 
+        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { return AutomationNull.Value; }
+
+        public object VisitPropertyMember(PropertyMemberAst propertyMemberAst) { return AutomationNull.Value; }
+
+        public object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return AutomationNull.Value; }
+
+        public object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) { return AutomationNull.Value; }
+
+        public object VisitUsingStatement(UsingStatementAst usingStatement) { return AutomationNull.Value; }
+
+        public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) { return AutomationNull.Value; }
+
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) { return AutomationNull.Value; }
+
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
             CheckIsConstant(statementBlockAst, "Caller to verify ast is constant");
@@ -410,6 +454,16 @@ namespace System.Management.Automation.Language
         {
             CheckIsConstant(pipelineAst, "Caller to verify ast is constant");
             return pipelineAst.GetPureExpression().Accept(this);
+        }
+
+        public object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            CheckIsConstant(ternaryExpressionAst, "Caller to verify ast is constant");
+
+            object condition = ternaryExpressionAst.Condition.Accept(this);
+            return LanguagePrimitives.IsTrue(condition)
+                ? ternaryExpressionAst.IfTrue.Accept(this)
+                : ternaryExpressionAst.IfFalse.Accept(this);
         }
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)

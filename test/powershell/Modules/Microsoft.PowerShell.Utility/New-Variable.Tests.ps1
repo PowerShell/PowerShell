@@ -1,23 +1,23 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 	It "New-Variable variable with description should works"{
-		New-Variable foo bar -description "my description"
+		New-Variable foo bar -Description "my description"
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeExactly "bar"
-		$var1.Options|Should -BeExactly "None"
-		$var1.Description|Should -BeExactly "my description"
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "None"
+		$var1.Description | Should -BeExactly "my description"
 	}
 
 	It "New-Variable variable with option should works"{
-		New-Variable foo bar -option Constant
+		New-Variable foo bar -Option Constant
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeExactly "bar"
-		$var1.Options|Should -BeExactly "Constant"
-		$var1.Description|Should -BeNullOrEmpty
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "Constant"
+		$var1.Description | Should -BeNullOrEmpty
 	}
 
 	It "New-Variable variable twice should throw Exception"{
@@ -29,14 +29,14 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 
 		New-Variable foo bar -Force -PassThru
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeExactly "bar"
-		$var1.Options|Should -BeExactly "None"
-		$var1.Description|Should -BeNullOrEmpty
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "None"
+		$var1.Description | Should -BeNullOrEmpty
 	}
 
 	It "New-Variable ReadOnly variable twice should throw Exception"{
-		New-Variable foo bogus -option ReadOnly
+		New-Variable foo bogus -Option ReadOnly
 
 		$e = { New-Variable foo bar -Scope 1 -ErrorAction Stop } |
 		    Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand" -PassThru
@@ -44,10 +44,10 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 
 		New-Variable foo bar -Force -PassThru
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeExactly "bar"
-		$var1.Options|Should -BeExactly "None"
-		$var1.Description|Should -BeNullOrEmpty
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "None"
+		$var1.Description | Should -BeNullOrEmpty
 	}
 }
 
@@ -122,7 +122,7 @@ Describe "New-Variable" -Tags "CI" {
 	}
 
 	It "Should default to none as the value for options" {
-		 (new-variable -name var2 -value 4 -passthru).Options | Should -BeExactly "None"
+		 (New-Variable -Name var2 -Value 4 -PassThru).Options | Should -BeExactly "None"
 	}
 
 	It "Should be able to set ReadOnly option" {
@@ -197,38 +197,38 @@ Describe "New-Variable" -Tags "CI" {
 
     Context "Scope Tests" {
     BeforeAll {
-        if ( get-variable -scope global -name globalVar1 -ErrorAction SilentlyContinue )
+        if ( Get-Variable -Scope global -Name globalVar1 -ErrorAction SilentlyContinue )
         {
-            Remove-Variable -scope global -name globalVar1
+            Remove-Variable -Scope global -Name globalVar1
         }
-        if ( get-variable -scope script -name scriptvar -ErrorAction SilentlyContinue )
+        if ( Get-Variable -Scope script -Name scriptvar -ErrorAction SilentlyContinue )
         {
-            remove-variable -scope script -name scriptvar
+            Remove-Variable -Scope script -Name scriptvar
         }
         # no check for local scope variable as that scope is created with test invocation
     }
     AfterAll {
-        if ( get-variable -scope global -name globalVar1 )
+        if ( Get-Variable -Scope global -Name globalVar1 )
         {
-            Remove-Variable -scope global -name globalVar1
+            Remove-Variable -Scope global -Name globalVar1
         }
-        if ( get-variable -scope script -name scriptvar )
+        if ( Get-Variable -Scope script -Name scriptvar )
         {
-            remove-variable -scope script -name scriptvar
+            Remove-Variable -Scope script -Name scriptvar
         }
     }
     It "Should be able to create a global scope variable using the global switch" {
-        new-variable -Scope global -name globalvar1 -value 1
-        get-variable -Scope global -name globalVar1 -ValueOnly | Should -Be 1
+        New-Variable -Scope global -Name globalvar1 -Value 1
+        Get-Variable -Scope global -Name globalVar1 -ValueOnly | Should -Be 1
     }
     It "Should be able to create a local scope variable using the local switch" {
-        Get-Variable -scope local -name localvar -ValueOnly -ErrorAction silentlycontinue | Should -BeNullOrEmpty
-        New-Variable -Scope local -Name localVar -value 10
-        get-variable -scope local -name localvar -ValueOnly | Should -Be 10
+        Get-Variable -Scope local -Name localvar -ValueOnly -ErrorAction silentlycontinue | Should -BeNullOrEmpty
+        New-Variable -Scope local -Name localVar -Value 10
+        Get-Variable -Scope local -Name localvar -ValueOnly | Should -Be 10
     }
     It "Should be able to create a script scope variable using the script switch" {
-        new-variable -scope script -name scriptvar -value 100
-        get-variable -scope script -name scriptvar -ValueOnly | Should -Be 100
+        New-Variable -Scope script -Name scriptvar -Value 100
+        Get-Variable -Scope script -Name scriptvar -ValueOnly | Should -Be 100
     }
 	}
 }

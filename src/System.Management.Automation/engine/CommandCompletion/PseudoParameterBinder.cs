@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -75,7 +75,7 @@ namespace System.Management.Automation.Language
         internal PipeObjectPair(string parameterName, Type pipeObjType)
         {
             if (parameterName == null)
-                throw PSTraceSource.NewArgumentNullException("parameterName");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterName));
 
             Parameter = null;
             ParameterArgumentType = AstParameterArgumentType.PipeObject;
@@ -96,9 +96,9 @@ namespace System.Management.Automation.Language
         internal AstArrayPair(string parameterName, ICollection<ExpressionAst> arguments)
         {
             if (parameterName == null)
-                throw PSTraceSource.NewArgumentNullException("parameterName");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterName));
             if (arguments == null || arguments.Count == 0)
-                throw PSTraceSource.NewArgumentNullException("arguments");
+                throw PSTraceSource.NewArgumentNullException(nameof(arguments));
 
             Parameter = null;
             ParameterArgumentType = AstParameterArgumentType.AstArray;
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Language
         internal FakePair(CommandParameterAst parameterAst)
         {
             if (parameterAst == null)
-                throw PSTraceSource.NewArgumentNullException("parameterAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterAst));
 
             Parameter = parameterAst;
             ParameterArgumentType = AstParameterArgumentType.Fake;
@@ -145,7 +145,7 @@ namespace System.Management.Automation.Language
         internal SwitchPair(CommandParameterAst parameterAst)
         {
             if (parameterAst == null)
-                throw PSTraceSource.NewArgumentNullException("parameterAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterAst));
 
             Parameter = parameterAst;
             ParameterArgumentType = AstParameterArgumentType.Switch;
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Language
         internal AstPair(CommandParameterAst parameterAst)
         {
             if (parameterAst == null || parameterAst.Argument == null)
-                throw PSTraceSource.NewArgumentException("parameterAst");
+                throw PSTraceSource.NewArgumentException(nameof(parameterAst));
 
             Parameter = parameterAst;
             ParameterArgumentType = AstParameterArgumentType.AstPair;
@@ -192,18 +192,18 @@ namespace System.Management.Automation.Language
         internal AstPair(CommandParameterAst parameterAst, ExpressionAst argumentAst)
         {
             if (parameterAst != null && parameterAst.Argument != null)
-                throw PSTraceSource.NewArgumentException("parameterAst");
+                throw PSTraceSource.NewArgumentException(nameof(parameterAst));
 
             if (parameterAst == null && argumentAst == null)
-                throw PSTraceSource.NewArgumentNullException("argumentAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(argumentAst));
 
             Parameter = parameterAst;
             ParameterArgumentType = AstParameterArgumentType.AstPair;
             ParameterSpecified = parameterAst != null;
             ArgumentSpecified = argumentAst != null;
-            ParameterName = parameterAst != null ? parameterAst.ParameterName : null;
-            ParameterText = parameterAst != null ? parameterAst.ParameterName : null;
-            ArgumentType = argumentAst != null ? argumentAst.StaticType : null;
+            ParameterName = parameterAst?.ParameterName;
+            ParameterText = parameterAst?.ParameterName;
+            ArgumentType = argumentAst?.StaticType;
 
             ParameterContainsArgument = false;
             Argument = argumentAst;
@@ -212,10 +212,10 @@ namespace System.Management.Automation.Language
         internal AstPair(CommandParameterAst parameterAst, CommandElementAst argumentAst)
         {
             if (parameterAst != null && parameterAst.Argument != null)
-                throw PSTraceSource.NewArgumentException("parameterAst");
+                throw PSTraceSource.NewArgumentException(nameof(parameterAst));
 
             if (parameterAst == null || argumentAst == null)
-                throw PSTraceSource.NewArgumentNullException("argumentAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(argumentAst));
 
             Parameter = parameterAst;
             ParameterArgumentType = AstParameterArgumentType.AstPair;
@@ -261,8 +261,7 @@ namespace System.Management.Automation.Language
         /// <returns>The StaticBindingResult that represents the binding.</returns>
         public static StaticBindingResult BindCommand(CommandAst commandAst)
         {
-            bool resolve = true;
-            return BindCommand(commandAst, resolve);
+            return BindCommand(commandAst, resolve: true);
         }
 
         /// <summary>
@@ -332,17 +331,17 @@ namespace System.Management.Automation.Language
             {
                 // Handle static binding from a non-PowerShell / C# application
                 // DefaultRunspace is a thread static field, so race condition will not happen because different threads will access different instances of "DefaultRunspace"
-                if (s_bindCommandRunspace == null)
+                if (t_bindCommandRunspace == null)
                 {
                     // Create a mini runspace by remove the types and formats
                     InitialSessionState minimalState = InitialSessionState.CreateDefault2();
                     minimalState.Types.Clear();
                     minimalState.Formats.Clear();
-                    s_bindCommandRunspace = RunspaceFactory.CreateRunspace(minimalState);
-                    s_bindCommandRunspace.Open();
+                    t_bindCommandRunspace = RunspaceFactory.CreateRunspace(minimalState);
+                    t_bindCommandRunspace.Open();
                 }
 
-                Runspace.DefaultRunspace = s_bindCommandRunspace;
+                Runspace.DefaultRunspace = t_bindCommandRunspace;
                 // Static binding always does argument binding (not argument or parameter completion).
                 pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ArgumentBinding);
                 Runspace.DefaultRunspace = null;
@@ -357,7 +356,7 @@ namespace System.Management.Automation.Language
         }
 
         [ThreadStatic]
-        static Runspace s_bindCommandRunspace = null;
+        private static Runspace t_bindCommandRunspace = null;
     }
 
     /// <summary>
@@ -729,7 +728,10 @@ namespace System.Management.Automation.Language
         /// </summary>
         public object ConstantValue
         {
-            get { return _constantValue; }
+            get
+            {
+                return _constantValue;
+            }
 
             internal set
             {
@@ -746,7 +748,10 @@ namespace System.Management.Automation.Language
         /// </summary>
         public CommandElementAst Value
         {
-            get { return _value; }
+            get
+            {
+                return _value;
+            }
 
             internal set
             {
@@ -782,12 +787,12 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The command element associated with the exception.
         /// </summary>
-        public CommandElementAst CommandElement { get; private set; }
+        public CommandElementAst CommandElement { get; }
 
         /// <summary>
         /// The ParameterBindingException that this command element caused.
         /// </summary>
-        public ParameterBindingException BindingException { get; private set; }
+        public ParameterBindingException BindingException { get; }
     }
 
     #region "PseudoBindingInfo"
@@ -944,12 +949,13 @@ namespace System.Management.Automation.Language
         /// <param name="pipeArgumentType">Indicate the type of the piped-in argument.</param>
         /// <param name="paramAstAtCursor">The CommandParameterAst the cursor is pointing at.</param>
         /// <param name="bindingType">Indicates whether pseudo binding is for argument binding, argument completion, or parameter completion.</param>
+        /// <param name="bindPositional">Indicates if the pseudo binding should bind positional parameters</param>
         /// <returns>PseudoBindingInfo.</returns>
-        internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType)
+        internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType, bool bindPositional = true)
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             // initialize/reset the private members
@@ -1003,12 +1009,15 @@ namespace System.Management.Automation.Language
                 unboundArguments = BindNamedParameters();
                 _bindingEffective = _currentParameterSetFlag != 0;
 
-                // positional binding
-                unboundArguments = BindPositionalParameter(
-                    unboundArguments,
-                    _currentParameterSetFlag,
-                    _defaultParameterSetFlag,
-                    bindingType);
+                if (bindPositional)
+                {
+                    // positional binding
+                    unboundArguments = BindPositionalParameter(
+                        unboundArguments,
+                        _currentParameterSetFlag,
+                        _defaultParameterSetFlag,
+                        bindingType);
+                }
 
                 // VFRA/pipeline binding if the given command is a binary cmdlet or a script cmdlet
                 if (!_function)
@@ -1151,12 +1160,12 @@ namespace System.Management.Automation.Language
             _bindableParameters = null;
 
             // reuse the collections/dictionaries
-            _arguments = _arguments ?? new Collection<AstParameterArgumentPair>();
-            _boundParameters = _boundParameters ?? new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
-            _boundArguments = _boundArguments ?? new Dictionary<string, AstParameterArgumentPair>(StringComparer.OrdinalIgnoreCase);
-            _unboundParameters = _unboundParameters ?? new List<MergedCompiledCommandParameter>();
-            _boundPositionalParameter = _boundPositionalParameter ?? new Collection<string>();
-            _bindingExceptions = _bindingExceptions ?? new Dictionary<CommandParameterAst, ParameterBindingException>();
+            _arguments ??= new Collection<AstParameterArgumentPair>();
+            _boundParameters ??= new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
+            _boundArguments ??= new Dictionary<string, AstParameterArgumentPair>(StringComparer.OrdinalIgnoreCase);
+            _unboundParameters ??= new List<MergedCompiledCommandParameter>();
+            _boundPositionalParameter ??= new Collection<string>();
+            _bindingExceptions ??= new Dictionary<CommandParameterAst, ParameterBindingException>();
 
             _arguments.Clear();
             _boundParameters.Clear();
@@ -1171,9 +1180,9 @@ namespace System.Management.Automation.Language
             _isPipelineInputExpected = false;
 
             // reuse the collections
-            _parametersNotFound = _parametersNotFound ?? new Collection<CommandParameterAst>();
-            _ambiguousParameters = _ambiguousParameters ?? new Collection<CommandParameterAst>();
-            _duplicateParameters = _duplicateParameters ?? new Collection<AstParameterArgumentPair>();
+            _parametersNotFound ??= new Collection<CommandParameterAst>();
+            _ambiguousParameters ??= new Collection<CommandParameterAst>();
+            _duplicateParameters ??= new Collection<AstParameterArgumentPair>();
 
             _parametersNotFound.Clear();
             _ambiguousParameters.Clear();
@@ -1202,9 +1211,6 @@ namespace System.Management.Automation.Language
             bool implementsDynamicParameters = commandProcessor != null &&
                                                commandProcessor.CommandInfo.ImplementsDynamicParameters;
 
-            var argumentsToGetDynamicParameters = implementsDynamicParameters
-                                                      ? new List<object>(_commandElements.Count)
-                                                      : null;
             if (commandProcessor != null || scriptProcessor != null)
             {
                 // Pre-processing the arguments -- command arguments
@@ -1213,9 +1219,31 @@ namespace System.Management.Automation.Language
                     var parameter = _commandElements[commandIndex] as CommandParameterAst;
                     if (parameter != null)
                     {
-                        if (argumentsToGetDynamicParameters != null)
+                        if (implementsDynamicParameters)
                         {
-                            argumentsToGetDynamicParameters.Add(parameter.Extent.Text);
+                            CommandParameterInternal paramToAdd;
+                            if (parameter.Argument is null)
+                            {
+                                paramToAdd = CommandParameterInternal.CreateParameter(parameter.ParameterName, parameter.Extent.Text);
+                            }
+                            else
+                            {
+                                object value;
+                                if (!SafeExprEvaluator.TrySafeEval(parameter.Argument, context, out value))
+                                {
+                                    value = parameter.Argument.Extent.Text;
+                                }
+
+                                paramToAdd = CommandParameterInternal.CreateParameterWithArgument(
+                                    parameterAst: null,
+                                    parameterName: parameter.ParameterName,
+                                    parameterText: parameter.Extent.Text,
+                                    argumentAst: null,
+                                    value: value,
+                                    spaceAfterParameter: false);
+                            }
+
+                            commandProcessor.AddParameter(paramToAdd);
                         }
 
                         AstPair parameterArg = parameter.Argument != null
@@ -1226,21 +1254,40 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        var dash = _commandElements[commandIndex] as StringConstantExpressionAst;
-                        if (dash != null && dash.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
+                        object valueToAdd;
+                        ExpressionAst expressionToAdd;
+                        if (_commandElements[commandIndex] is ConstantExpressionAst constant)
                         {
-                            // "-" is represented by StringConstantExpressionAst. Most likely the user type a tab here,
-                            // and we don't want it be treated as an argument
+                            if (constant.Extent.Text.Equals("-", StringComparison.Ordinal))
+                            {
+                                // A value of "-" is most likely the user trying to tab here,
+                                // and we don't want it be treated as an argument
+                                continue;
+                            }
+
+                            valueToAdd = constant.Value;
+                            expressionToAdd = constant;
+                        }
+                        else if (_commandElements[commandIndex] is ExpressionAst expression)
+                        {
+                            if (!SafeExprEvaluator.TrySafeEval(expression, context, out valueToAdd))
+                            {
+                                valueToAdd = expression.Extent.Text;
+                            }
+
+                            expressionToAdd = expression;
+                        }
+                        else
+                        {
                             continue;
                         }
 
-                        var expressionArgument = _commandElements[commandIndex] as ExpressionAst;
-                        if (expressionArgument != null)
+                        if (implementsDynamicParameters)
                         {
-                            argumentsToGetDynamicParameters?.Add(expressionArgument.Extent.Text);
-
-                            _arguments.Add(new AstPair(null, expressionArgument));
+                            commandProcessor.AddParameter(CommandParameterInternal.CreateArgument(valueToAdd));
                         }
+
+                        _arguments.Add(new AstPair(null, expressionToAdd));
                     }
                 }
             }
@@ -1250,7 +1297,6 @@ namespace System.Management.Automation.Language
                 _function = false;
                 if (implementsDynamicParameters)
                 {
-                    ParameterBinderController.AddArgumentsToCommandProcessor(commandProcessor, argumentsToGetDynamicParameters.ToArray());
                     bool retryWithNoArgs = false, alreadyRetried = false;
 
                     do
@@ -1857,6 +1903,13 @@ namespace System.Management.Automation.Language
             while (unboundArgumentsIndex < unboundArgumentsCollection.Count)
             {
                 AstParameterArgumentPair argument = unboundArgumentsCollection[unboundArgumentsIndex++];
+                if (argument is AstPair astPair
+                    && astPair.Argument is VariableExpressionAst argumentVariable
+                    && argumentVariable.Splatted)
+                {
+                    continue;
+                }
+
                 if (!argument.ParameterSpecified)
                 {
                     result = argument;

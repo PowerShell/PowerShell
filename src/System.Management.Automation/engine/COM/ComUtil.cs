@@ -1,7 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Collections;
 using System.Collections.ObjectModel;
 using System.Management.Automation.ComInterop;
 using System.Runtime.InteropServices;
@@ -17,7 +16,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines a utility class that is used by COM adapter.
     /// </summary>
-    internal class ComUtil
+    internal static class ComUtil
     {
         // HResult error code '-2147352573' - Member not found.
         internal const int DISP_E_MEMBERNOTFOUND = unchecked((int)0x80020003);
@@ -98,7 +97,7 @@ namespace System.Management.Automation
                 }
             }
 
-            builder.Append(")");
+            builder.Append(')');
 
             return builder.ToString();
         }
@@ -363,89 +362,6 @@ namespace System.Management.Automation
             }
 
             return returnValue;
-        }
-    }
-
-    /// <summary>
-    /// Defines an enumerator that represent a COM collection object.
-    /// </summary>
-    internal class ComEnumerator : IEnumerator
-    {
-        private COM.IEnumVARIANT _enumVariant;
-        private object[] _element;
-
-        private ComEnumerator(COM.IEnumVARIANT enumVariant)
-        {
-            _enumVariant = enumVariant;
-            _element = new object[1];
-        }
-
-        public object Current
-        {
-            get { return _element[0]; }
-        }
-
-        public bool MoveNext()
-        {
-            _element[0] = null;
-            int result = _enumVariant.Next(1, _element, IntPtr.Zero);
-            return result == 0;
-        }
-
-        public void Reset()
-        {
-            _element[0] = null;
-            _enumVariant.Reset();
-        }
-
-        /// <summary>
-        /// Try to create an enumerator for a COM object.
-        /// </summary>
-        /// <returns>
-        /// A 'ComEnumerator' instance, or null if we cannot create an enumerator for the COM object.
-        /// </returns>
-        internal static ComEnumerator Create(object comObject)
-        {
-            if (comObject == null || !comObject.GetType().IsCOMObject) { return null; }
-
-            // The passed-in COM object could already be a IEnumVARIANT interface.
-            // e.g. user call '_NewEnum()' on a COM collection interface.
-            var enumVariant = comObject as COM.IEnumVARIANT;
-            if (enumVariant != null)
-            {
-                return new ComEnumerator(enumVariant);
-            }
-
-            // The passed-in COM object could be a collection.
-            var enumerable = comObject as IEnumerable;
-            var target = comObject as IDispatch;
-            if (enumerable != null && target != null)
-            {
-                try
-                {
-                    var comTypeInfo = ComTypeInfo.GetDispatchTypeInfo(comObject);
-                    if (comTypeInfo != null && comTypeInfo.NewEnumInvokeKind.HasValue)
-                    {
-                        // The COM object is a collection and also a IDispatch interface, so we try to get a
-                        // IEnumVARIANT interface out of it by invoking its '_NewEnum (DispId: -4)' function.
-                        var result = ComInvoker.Invoke(target, ComTypeInfo.DISPID_NEWENUM,
-                                                        args: Array.Empty<object>(), byRef: null,
-                                                        invokeKind: comTypeInfo.NewEnumInvokeKind.Value);
-                        enumVariant = result as COM.IEnumVARIANT;
-                        if (enumVariant != null)
-                        {
-                            return new ComEnumerator(enumVariant);
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    // Ignore exceptions. In case of exception, no enumerator can be created
-                    // for the passed-in COM object, and we will return null eventually.
-                }
-            }
-
-            return null;
         }
     }
 }

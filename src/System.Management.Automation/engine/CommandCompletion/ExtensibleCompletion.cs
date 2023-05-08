@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -24,20 +24,32 @@ namespace System.Management.Automation
     {
         /// <summary/>
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
-        public Type Type { get; private set; }
+        public Type Type { get; }
 
         /// <summary/>
-        public ScriptBlock ScriptBlock { get; private set; }
+        public ScriptBlock ScriptBlock { get; }
 
         /// <param name="type">The type must implement <see cref="IArgumentCompleter"/> and have a default constructor.</param>
         public ArgumentCompleterAttribute(Type type)
         {
-            if (type == null || (type.GetInterfaces().All(t => t != typeof(IArgumentCompleter))))
+            if (type == null || (type.GetInterfaces().All(static t => t != typeof(IArgumentCompleter))))
             {
-                throw PSTraceSource.NewArgumentException("type");
+                throw PSTraceSource.NewArgumentException(nameof(type));
             }
 
             Type = type;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArgumentCompleterAttribute"/> class.
+        /// This constructor is used by derived attributes implementing <see cref="IArgumentCompleterFactory"/>.
+        /// </summary>
+        protected ArgumentCompleterAttribute()
+        {
+            if (this is not IArgumentCompleterFactory)
+            {
+                throw PSTraceSource.NewInvalidOperationException();
+            }
         }
 
         /// <summary>
@@ -46,18 +58,28 @@ namespace System.Management.Automation
         /// <param name="scriptBlock"></param>
         public ArgumentCompleterAttribute(ScriptBlock scriptBlock)
         {
-            if (scriptBlock == null)
+            if (scriptBlock is null)
             {
-                throw PSTraceSource.NewArgumentNullException("scriptBlock");
+                throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
 
             ScriptBlock = scriptBlock;
+        }
+
+        internal IArgumentCompleter CreateArgumentCompleter()
+        {
+            return Type != null
+                ? Activator.CreateInstance(Type) as IArgumentCompleter
+                : this is IArgumentCompleterFactory factory
+                    ? factory.Create()
+                    : null;
         }
     }
 
     /// <summary>
     /// A type specified by the <see cref="ArgumentCompleterAttribute"/> must implement this interface.
     /// </summary>
+#nullable enable
     public interface IArgumentCompleter
     {
         /// <summary>
@@ -81,6 +103,68 @@ namespace System.Management.Automation
             string wordToComplete,
             CommandAst commandAst,
             IDictionary fakeBoundParameters);
+    }
+#nullable restore
+
+    /// <summary>
+    /// Creates a new argument completer.
+    /// </summary>
+    /// <para>
+    /// If an attribute that derives from <see cref="ArgumentCompleterAttribute"/> implements this interface,
+    /// it will be used to create the <see cref="IArgumentCompleter"/>, thus giving a way to parameterize a completer.
+    /// The derived attribute can have properties or constructor arguments that are used when creating the completer.
+    /// </para>
+    /// <example>
+    /// This example shows the intended usage of <see cref="IArgumentCompleterFactory"/> to pass arguments to an argument completer.
+    /// <code>
+    /// public class NumberCompleterAttribute : ArgumentCompleterAttribute, IArgumentCompleterFactory {
+    ///    private readonly int _from;
+    ///    private readonly int _to;
+    ///
+    ///    public NumberCompleterAttribute(int from, int to){
+    ///       _from = from;
+    ///       _to = to;
+    ///    }
+    ///
+    ///    // use the attribute parameters to create a parameterized completer
+    ///    IArgumentCompleter Create() => new NumberCompleter(_from, _to);
+    /// }
+    ///
+    /// class NumberCompleter : IArgumentCompleter {
+    ///    private readonly int _from;
+    ///    private readonly int _to;
+    ///
+    ///    public NumberCompleter(int from, int to){
+    ///       _from = from;
+    ///       _to = to;
+    ///    }
+    ///
+    ///    IEnumerable{CompletionResult} CompleteArgument(string commandName, string parameterName, string wordToComplete,
+    ///       CommandAst commandAst, IDictionary fakeBoundParameters) {
+    ///       for(int i = _from; i &lt; _to; i++) {
+    ///           yield return new CompletionResult(i.ToString());
+    ///       }
+    ///    }
+    /// }
+    /// </code>
+    /// </example>
+    public interface IArgumentCompleterFactory
+    {
+        /// <summary>
+        /// Creates an instance of a class implementing the <see cref="IArgumentCompleter"/> interface.
+        /// </summary>
+        /// <returns>An IArgumentCompleter instance.</returns>
+        IArgumentCompleter Create();
+    }
+
+    /// <summary>
+    /// Base class for parameterized argument completer attributes.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public abstract class ArgumentCompleterFactoryAttribute : ArgumentCompleterAttribute, IArgumentCompleterFactory
+    {
+        /// <inheritdoc />
+        public abstract IArgumentCompleter Create();
     }
 
     /// <summary>
@@ -129,7 +213,7 @@ namespace System.Management.Automation
 
             if (CommandName == null || CommandName.Length == 0)
             {
-                CommandName = new[] { "" };
+                CommandName = new[] { string.Empty };
             }
 
             for (int i = 0; i < CommandName.Length; i++)
@@ -164,7 +248,7 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class ArgumentCompletionsAttribute : Attribute
     {
-        private string[] _completions;
+        private readonly string[] _completions;
 
         /// <summary>
         /// Initializes a new instance of the ArgumentCompletionsAttribute class.
@@ -176,12 +260,12 @@ namespace System.Management.Automation
         {
             if (completions == null)
             {
-                throw PSTraceSource.NewArgumentNullException("completions");
+                throw PSTraceSource.NewArgumentNullException(nameof(completions));
             }
 
             if (completions.Length == 0)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("completions", completions);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(completions), completions);
             }
 
             _completions = completions;

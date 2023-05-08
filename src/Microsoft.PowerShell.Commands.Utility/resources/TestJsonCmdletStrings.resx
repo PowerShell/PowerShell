@@ -123,7 +123,13 @@
   <data name="InvalidJson" xml:space="preserve">
     <value>Cannot parse the JSON.</value>
   </data>
-  <data name="InvalidJsonAgainstSchema" xml:space="preserve">
-    <value>The JSON is not valid with the schema.</value>
+  <data name="InvalidJsonAgainstSchemaDetailed" xml:space="preserve">
+    <value>The JSON is not valid with the schema: {0} at '{1}'</value>
+  </data>
+  <data name="JsonSchemaFileOpenFailure" xml:space="preserve">
+    <value>Can not open JSON schema file: {0}</value>
+  </data>
+  <data name="InvalidUriScheme" xml:space="preserve">
+    <value>URI scheme '{0}' is not supported. Only HTTP(S) and local file system URIs are allowed.</value>
   </data>
 </root>

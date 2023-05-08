@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics;
@@ -28,7 +28,6 @@ namespace System.Management.Automation.Help
         internal UpdatableHelpModuleInfo(string name, Guid guid, string path, string uri)
         {
             Debug.Assert(!string.IsNullOrEmpty(name));
-            Debug.Assert(guid != null);
             Debug.Assert(!string.IsNullOrEmpty(path));
             Debug.Assert(!string.IsNullOrEmpty(uri));
 
@@ -54,7 +53,7 @@ namespace System.Management.Automation.Help
             }
         }
 
-        private Guid _moduleGuid;
+        private readonly Guid _moduleGuid;
 
         /// <summary>
         /// Module path.

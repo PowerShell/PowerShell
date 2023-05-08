@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersRemoting
@@ -8,30 +8,44 @@ Describe "Remote runspace pool should expose commands in endpoint configuration"
 
     BeforeAll {
 
-        if ($isWindows -and (Test-CanWriteToPsHome))
-        {
-            $configName = "restrictedV"
-            $configPath = Join-Path $TestDrive ($configName + ".pssc")
+        $pendingTest = (Test-IsWinWow64)
+        $skipTest = !$IsWindows -or !(Test-CanWriteToPsHome)
 
-            New-PSSessionConfigurationFile -Path $configPath -SessionType RestrictedRemoteServer -VisibleCmdlets 'Get-CimInstance'
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-            $null = Register-PSSessionConfiguration -Name $configName -Path $configPath -Force -ErrorAction SilentlyContinue
-
-            $remoteRunspacePool = New-RemoteRunspacePool -ConfigurationName $configName
+        if ($pendingTest) {
+            $PSDefaultParameterValues["it:pending"] = $true
+            return
         }
+
+        if ($skipTest) {
+            $PSDefaultParameterValues["it:skip"] = $true
+            return
+        }
+
+        $configName = "restrictedV"
+        $configPath = Join-Path $TestDrive ($configName + ".pssc")
+
+        New-PSSessionConfigurationFile -Path $configPath -SessionType RestrictedRemoteServer -VisibleCmdlets 'Get-CimInstance'
+
+        $null = Register-PSSessionConfiguration -Name $configName -Path $configPath -Force -ErrorAction SilentlyContinue
+
+        $remoteRunspacePool = New-RemoteRunspacePool -ConfigurationName $configName
     }
 
     AfterAll {
 
-        if ($IsWindows -and (Test-CanWriteToPsHome))
-        {
-            if ($remoteRunspacePool -ne $null)
-            {
-                $remoteRunspacePool.Dispose()
-            }
-
-            Unregister-PSSessionConfiguration -Name $configName -Force -ErrorAction SilentlyContinue
+        if ($pendingTest -or $skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            return
         }
+
+        if ($remoteRunspacePool -ne $null)
+        {
+            $remoteRunspacePool.Dispose()
+        }
+
+        Unregister-PSSessionConfiguration -Name $configName -Force -ErrorAction SilentlyContinue
     }
 
     It "Verifies that the configured endpoint cmdlet is available in all runspace pool instances" -Skip:(!$IsWindows -or !(Test-CanWriteToPsHome)) {

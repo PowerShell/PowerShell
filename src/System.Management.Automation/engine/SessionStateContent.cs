@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -55,7 +55,7 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -107,7 +107,7 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             ProviderInfo provider = null;
@@ -119,7 +119,7 @@ namespace System.Management.Automation
             {
                 if (path == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("paths");
+                    throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
 
                 Collection<string> providerPaths =
@@ -396,7 +396,7 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -448,7 +448,7 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             ProviderInfo provider = null;
@@ -459,7 +459,7 @@ namespace System.Management.Automation
             {
                 if (path == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("paths");
+                    throw PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
 
                 Collection<string> providerPaths =
@@ -738,7 +738,7 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -785,7 +785,7 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             ProviderInfo provider = null;
@@ -795,7 +795,7 @@ namespace System.Management.Automation
             {
                 if (path == null)
                 {
-                    PSTraceSource.NewArgumentNullException("paths");
+                    PSTraceSource.NewArgumentNullException(nameof(paths));
                 }
 
                 Collection<string> providerPaths =

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -8,22 +8,28 @@ using System.Runtime.InteropServices;
 namespace System.Diagnostics.Eventing
 {
     [StructLayout(LayoutKind.Explicit, Size = 16)]
-    public struct EventDescriptor
+    public readonly struct EventDescriptor
     {
         [FieldOffset(0)]
-        private ushort _id;
+        private readonly ushort _id;
+
         [FieldOffset(2)]
-        private byte _version;
+        private readonly byte _version;
+
         [FieldOffset(3)]
-        private byte _channel;
+        private readonly byte _channel;
+
         [FieldOffset(4)]
-        private byte _level;
+        private readonly byte _level;
+
         [FieldOffset(5)]
-        private byte _opcode;
+        private readonly byte _opcode;
+
         [FieldOffset(6)]
-        private ushort _task;
+        private readonly ushort _task;
+
         [FieldOffset(8)]
-        private long _keywords;
+        private readonly long _keywords;
 
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "opcode", Justification = "matell: Shipped public in 3.5, breaking change to fix now.")]
         public EventDescriptor(
@@ -38,12 +44,12 @@ namespace System.Diagnostics.Eventing
         {
             if (id < 0)
             {
-                throw new ArgumentOutOfRangeException("id", DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum);
+                throw new ArgumentOutOfRangeException(nameof(id), DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum);
             }
 
             if (id > ushort.MaxValue)
             {
-                throw new ArgumentOutOfRangeException("id", string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_NeedValidId, 1, ushort.MaxValue));
+                throw new ArgumentOutOfRangeException(nameof(id), string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_NeedValidId, 1, ushort.MaxValue));
             }
 
             _id = (ushort)id;
@@ -55,12 +61,12 @@ namespace System.Diagnostics.Eventing
 
             if (task < 0)
             {
-                throw new ArgumentOutOfRangeException("task", DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum);
+                throw new ArgumentOutOfRangeException(nameof(task), DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum);
             }
 
             if (task > ushort.MaxValue)
             {
-                throw new ArgumentOutOfRangeException("task", string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_NeedValidId, 1, ushort.MaxValue));
+                throw new ArgumentOutOfRangeException(nameof(task), string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_NeedValidId, 1, ushort.MaxValue));
             }
 
             _task = (ushort)task;

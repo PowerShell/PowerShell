@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 function Wait-UntilTrue
 {
@@ -37,12 +37,12 @@ function Wait-FileToBePresent
 
 function Test-IsElevated
 {
-    $IsElevated = $False
+    $IsElevated = $false
     if ( $IsWindows ) {
         # on Windows we can determine whether we're executing in an
         # elevated context
         $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
-        $windowsPrincipal = new-object 'Security.Principal.WindowsPrincipal' $identity
+        $windowsPrincipal = New-Object 'Security.Principal.WindowsPrincipal' $identity
         if ($windowsPrincipal.IsInRole("Administrators") -eq 1)
         {
             $IsElevated = $true
@@ -209,7 +209,7 @@ function Send-VstsLogFile {
         $Path
     )
 
-    $logFolder = Join-Path -path $pwd -ChildPath 'logfile'
+    $logFolder = Join-Path -Path $PWD -ChildPath 'logfile'
     if(!(Test-Path -Path $logFolder))
     {
         $null = New-Item -Path $logFolder -ItemType Directory
@@ -219,22 +219,21 @@ function Send-VstsLogFile {
         }
     }
 
+    $newName = ([System.Io.Path]::GetRandomFileName() + "-$LogName.txt")
     if($Contents)
     {
-        $logFile = Join-Path -Path $logFolder -ChildPath ([System.Io.Path]::GetRandomFileName() + "-$LogName.txt")
-        $name = Split-Path -leaf -Path $logFile
+        $logFile = Join-Path -Path $logFolder -ChildPath $newName
 
-        $Contents | out-file -path $logFile -Encoding ascii
+        $Contents | Out-File -path $logFile -Encoding ascii
     }
     else
     {
-        $name = Split-Path -leaf -Path $path
-        $logFile = Join-Path -Path $logFolder -ChildPath ([System.Io.Path]::GetRandomFileName() + '-' + $name)
+        $logFile = Join-Path -Path $logFolder -ChildPath $newName
         Copy-Item -Path $Path -Destination $logFile
     }
 
-    Write-Host "##vso[artifact.upload containerfolder=$name;artifactname=$name]$logFile"
-    Write-Verbose "Log file captured as $name" -Verbose
+    Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
+    Write-Verbose "Log file captured as $newName" -Verbose
 }
 
 # Tests if the Linux or macOS user is root
@@ -327,20 +326,133 @@ function Test-CanWriteToPsHome
         return $script:CanWriteToPsHome
     }
 
-    $script:CanWriteToPsHome = $true
+    $script:CanWriteToPsHome = $false
 
     try {
-        $testFileName = Join-Path $PSHome (New-Guid).Guid
+        $testFileName = Join-Path $PSHOME (New-Guid).Guid
         $null = New-Item -ItemType File -Path $testFileName -ErrorAction Stop
+        $script:CanWriteToPsHome = $true
+        Remove-Item -Path $testFileName -ErrorAction SilentlyContinue
     }
-    catch [System.UnauthorizedAccessException] {
-        $script:CanWriteToPsHome = $false
-    }
-    finally {
-        if ($script:CanWriteToPsHome) {
-            Remove-Item -Path $testFileName -ErrorAction SilentlyContinue
-        }
+    catch {
+        ; # do nothing
     }
 
     $script:CanWriteToPsHome
+}
+
+# Creates a password meeting Windows complexity rules
+function New-ComplexPassword
+{
+    $numbers = "0123456789"
+    $lowercase = "abcdefghijklmnopqrstuvwxyz"
+    $uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    $symbols = "~!@#$%^&*_-+=``|\(){}[]:;`"'<>,.?/"
+    $password = [string]::Empty
+    # Windows password complexity rule requires minimum 8 characters and using at least 3 of the
+    # buckets above, so we just pick one from each bucket twice.
+    # https://docs.microsoft.com/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
+    1..2 | ForEach-Object {
+        $Password += $numbers[(Get-Random $numbers.Length)] + $lowercase[(Get-Random $lowercase.Length)] +
+            $uppercase[(Get-Random $uppercase.Length)] + $symbols[(Get-Random $symbols.Length)]
+    }
+
+    $password
+}
+
+# return a specific string with regard to platform information
+function Get-PlatformInfo {
+    if ( $IsWindows ) {
+        return @{Platform = "windows"; Version = '' }
+    }
+    if ( $IsMacOS ) {
+        return @{Platform = "macos"; Version = '' }
+    }
+    if ( $IsLinux ) {
+        $osrelease = Get-Content /etc/os-release | ConvertFrom-StringData
+        if ( -not [string]::IsNullOrEmpty($osrelease.ID) ) {
+
+            $versionId = if (-not $osrelease.Version_ID ) {
+                ''
+            } else {
+                $osrelease.Version_ID.trim('"')
+            }
+
+            $platform = $osrelease.ID.trim('"')
+
+            return @{Platform = $platform; Version = $versionId }
+        }
+        return "unknown"
+    }
+}
+
+# return true if WsMan is supported on the current platform
+function Get-WsManSupport {
+    $platformInfo = Get-PlatformInfo
+    if (
+        ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '7')
+    ) {
+        return $true
+    }
+    return $false
+}
+
+function Test-IsWindowsArm64 {
+    return $IsWindows -and [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64
+}
+
+function Test-IsWinWow64 {
+    return $IsWindows -and [System.Environment]::Is64BitOperatingSystem -and -not [System.Environment]::Is64BitProcess
+}
+
+function Test-IsPreview
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version,
+
+        [switch]$IsLTS
+    )
+
+    if ($IsLTS.IsPresent) {
+        ## If we are building a LTS package, then never consider it preview.
+        return $false
+    }
+
+    return $Version -like '*-*'
+}
+
+<#
+    .Synopsis
+        Tests if a version is a Release Candidate
+    .EXAMPLE
+        Test-IsReleaseCandidate -version '6.1.0-sometthing' # returns false
+        Test-IsReleaseCandidate -version '6.1.0-rc.1' # returns true
+        Test-IsReleaseCandidate -version '6.1.0' # returns false
+#>
+function Test-IsReleaseCandidate
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version
+    )
+
+    if ($Version -like '*-rc.*')
+    {
+        return $true
+    }
+
+    return $false
+}
+
+function Test-IsWinServer2012R2
+{
+    if (-not $IsWindows) {
+        return $false
+    }
+
+    $osInfo = [System.Environment]::OSVersion.Version
+    return ($osInfo.Major -eq 6 -and $osInfo.Minor -eq 3)
 }

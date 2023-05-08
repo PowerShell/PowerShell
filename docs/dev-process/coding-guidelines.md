@@ -86,8 +86,14 @@ We also run the [.NET code formatter tool](https://github.com/dotnet/codeformatt
 
 * Make sure the added/updated comments are meaningful, accurate and easy to understand.
 
-* Public members must use [doc comments](https://docs.microsoft.com/dotnet/csharp/programming-guide/xmldoc/xml-documentation-comments).
+### Documentation comments
+
+* Create documentation using [XML documentation comments](https://docs.microsoft.com/dotnet/csharp/language-reference/xmldoc/) so that Visual Studio and other IDEs can use IntelliSense to show quick information about types or members.
+
+* Publicly visible types and their members must be documented.
   Internal and private members may use doc comments but it is not required.
+
+* Documentation text should be written using complete sentences ending with full stops.
 
 ## Performance Considerations
 
@@ -110,9 +116,6 @@ Some general guidelines:
 
 * Avoid using string interpolations and overloads with implicit parameters such as `Culture` and `StringComparison`.
   Instead, use overloads with more explicit parameters such as `String.Format(IFormatProvider, String, Object[])` and `Equals(String, String, StringComparison)`.
-
-* Avoid creating empty arrays.
-  Instead, reuse the static ones via `Utils.EmptyArray<T>`.
 
 * Avoid unnecessary memory allocation in a loop.
   Move the memory allocation outside the loop if possible.
@@ -190,7 +193,7 @@ See [CODEOWNERS](../../.github/CODEOWNERS) for more information about the area e
     * [Arrays](https://docs.microsoft.com/dotnet/standard/design-guidelines/arrays)
     * [Collections](https://docs.microsoft.com/dotnet/standard/design-guidelines/guidelines-for-collections)
     * [Exceptions](https://docs.microsoft.com/dotnet/standard/design-guidelines/exceptions)
-  * [Best Practices for Developing World-Ready Applications](https://docs.microsoft.com/dotnet/standard/globalization-localization/best-practices-for-developing-world-ready-apps) - Unicode, Culture, Encoding and Localization.
+  * [Best Practices for Developing World-Ready Applications](https://docs.microsoft.com/dotnet/core/extensions/best-practices-for-developing-world-ready-apps) - Unicode, Culture, Encoding and Localization.
   * [Best Practices for Exceptions](https://docs.microsoft.com/dotnet/standard/exceptions/best-practices-for-exceptions)
   * [Best Practices for Using Strings in .NET](https://docs.microsoft.com/dotnet/standard/base-types/best-practices-strings)
   * [Best Practices for Regular Expressions in .NET](https://docs.microsoft.com/dotnet/standard/base-types/best-practices)

@@ -1,15 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell Host</Description>
-    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <NoWarn>$(NoWarn);CS1570;CA1416</NoWarn>
     <AssemblyName>Microsoft.PowerShell.ConsoleHost</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-    <!-- the following package(s) are from https://github.com/microsoft/applicationinsights-??? -->
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.10.0" />
   </ItemGroup>
 
   <PropertyGroup>

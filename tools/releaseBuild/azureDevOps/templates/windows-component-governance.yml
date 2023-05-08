@@ -1,13 +1,22 @@
 
 jobs:
 - job: ComponentRegistrationJob
+  variables:
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
   displayName: Component Registration
   condition: succeeded()
 
   pool:
-    name: PowerShell
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
 
   steps:
+  - checkout: self
+    clean: true
 
   - template: SetVersionVariables.yml
     parameters:

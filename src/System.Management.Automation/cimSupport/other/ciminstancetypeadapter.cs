@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -21,14 +21,12 @@ namespace Microsoft.PowerShell.Cim
     /// Implementing the PropertyOnlyAdapter for the time being as CimInstanceTypeAdapter currently
     /// supports only properties. If method support is needed in future, this should derive from
     /// Adapter class.
-    ///
-    /// The Adapter registration is done in monad\src\singleshell\installer\MshManagementMshSnapin.cs
     /// </remarks>
     public sealed class CimInstanceAdapter : PSPropertyAdapter
     {
         private static PSAdaptedProperty GetCimPropertyAdapter(CimProperty property, object baseObject, string propertyName)
         {
-            PSAdaptedProperty propertyToAdd = new PSAdaptedProperty(propertyName, property);
+            PSAdaptedProperty propertyToAdd = new(propertyName, property);
             propertyToAdd.baseObject = baseObject;
             // propertyToAdd.adapter = this;
             return propertyToAdd;
@@ -50,7 +48,7 @@ namespace Microsoft.PowerShell.Cim
 
         private static PSAdaptedProperty GetPSComputerNameAdapter(CimInstance cimInstance)
         {
-            PSAdaptedProperty psComputerNameProperty = new PSAdaptedProperty(RemotingConstants.ComputerNameNoteProperty, cimInstance);
+            PSAdaptedProperty psComputerNameProperty = new(RemotingConstants.ComputerNameNoteProperty, cimInstance);
             psComputerNameProperty.baseObject = cimInstance;
             // psComputerNameProperty.adapter = this;
             return psComputerNameProperty;
@@ -73,7 +71,7 @@ namespace Microsoft.PowerShell.Cim
                 throw new PSInvalidOperationException(msg);
             }
 
-            Collection<PSAdaptedProperty> result = new Collection<PSAdaptedProperty>();
+            Collection<PSAdaptedProperty> result = new();
 
             if (cimInstance.CimInstanceProperties != null)
             {
@@ -105,7 +103,7 @@ namespace Microsoft.PowerShell.Cim
         {
             if (propertyName == null)
             {
-                throw new PSArgumentNullException("propertyName");
+                throw new PSArgumentNullException(nameof(propertyName));
             }
 
             // baseObject should never be null
@@ -135,7 +133,7 @@ namespace Microsoft.PowerShell.Cim
             return null;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public override PSAdaptedProperty GetFirstPropertyOrDefault(object baseObject, MemberNamePredicate predicate)
         {
             if (predicate == null)
@@ -197,10 +195,7 @@ namespace Microsoft.PowerShell.Cim
         /// <returns></returns>
         public override string GetPropertyTypeName(PSAdaptedProperty adaptedProperty)
         {
-            if (adaptedProperty == null)
-            {
-                throw new ArgumentNullException("adaptedProperty");
-            }
+            ArgumentNullException.ThrowIfNull(adaptedProperty);
 
             CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
             if (cimProperty != null)
@@ -213,7 +208,7 @@ namespace Microsoft.PowerShell.Cim
                 return ToStringCodeMethods.Type(typeof(string));
             }
 
-            throw new ArgumentNullException("adaptedProperty");
+            throw new ArgumentNullException(nameof(adaptedProperty));
         }
 
         /// <summary>
@@ -222,10 +217,7 @@ namespace Microsoft.PowerShell.Cim
         /// <returns></returns>
         public override object GetPropertyValue(PSAdaptedProperty adaptedProperty)
         {
-            if (adaptedProperty == null)
-            {
-                throw new ArgumentNullException("adaptedProperty");
-            }
+            ArgumentNullException.ThrowIfNull(adaptedProperty);
 
             CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
             if (cimProperty != null)
@@ -239,28 +231,23 @@ namespace Microsoft.PowerShell.Cim
                 return cimInstance.GetCimSessionComputerName();
             }
 
-            throw new ArgumentNullException("adaptedProperty");
+            throw new ArgumentNullException(nameof(adaptedProperty));
         }
 
-        private void AddTypeNameHierarchy(IList<string> typeNamesWithNamespace, IList<string> typeNamesWithoutNamespace, string namespaceName, string className)
+        private static void AddTypeNameHierarchy(IList<string> typeNamesWithNamespace, IList<string> typeNamesWithoutNamespace, string namespaceName, string className)
         {
             if (!string.IsNullOrEmpty(namespaceName))
             {
-                string fullTypeName = string.Format(CultureInfo.InvariantCulture,
-                                        "Microsoft.Management.Infrastructure.CimInstance#{0}/{1}",
-                                        namespaceName,
-                                        className);
+                string fullTypeName = string.Create(CultureInfo.InvariantCulture, $"Microsoft.Management.Infrastructure.CimInstance#{namespaceName}/{className}");
                 typeNamesWithNamespace.Add(fullTypeName);
             }
 
-            typeNamesWithoutNamespace.Add(string.Format(CultureInfo.InvariantCulture,
-                                     "Microsoft.Management.Infrastructure.CimInstance#{0}",
-                                     className));
+            typeNamesWithoutNamespace.Add(string.Create(CultureInfo.InvariantCulture, $"Microsoft.Management.Infrastructure.CimInstance#{className}"));
         }
 
-        private List<CimClass> GetInheritanceChain(CimInstance cimInstance)
+        private static List<CimClass> GetInheritanceChain(CimInstance cimInstance)
         {
-            List<CimClass> inheritanceChain = new List<CimClass>();
+            List<CimClass> inheritanceChain = new();
             CimClass cimClass = cimInstance.CimClass;
             Dbg.Assert(cimClass != null, "CimInstance should always have ClassDecl");
             while (cimClass != null)
@@ -285,10 +272,9 @@ namespace Microsoft.PowerShell.Cim
         /// <returns></returns>
         public override Collection<string> GetTypeNameHierarchy(object baseObject)
         {
-            var cimInstance = baseObject as CimInstance;
-            if (cimInstance == null)
+            if (!(baseObject is CimInstance cimInstance))
             {
-                throw new ArgumentNullException("baseObject");
+                throw new ArgumentNullException(nameof(baseObject));
             }
 
             var typeNamesWithNamespace = new List<string>();
@@ -362,13 +348,12 @@ namespace Microsoft.PowerShell.Cim
                 return false;
             }
 
-            CimProperty cimProperty = adaptedProperty.Tag as CimProperty;
-            if (cimProperty == null)
+            if (!(adaptedProperty.Tag is CimProperty cimProperty))
             {
                 return false;
             }
 
-            bool isReadOnly = (CimFlags.ReadOnly == (cimProperty.Flags & CimFlags.ReadOnly));
+            bool isReadOnly = ((cimProperty.Flags & CimFlags.ReadOnly) == CimFlags.ReadOnly);
             bool isSettable = !isReadOnly;
             return isSettable;
         }
@@ -379,10 +364,7 @@ namespace Microsoft.PowerShell.Cim
         /// <param name="value"></param>
         public override void SetPropertyValue(PSAdaptedProperty adaptedProperty, object value)
         {
-            if (adaptedProperty == null)
-            {
-                throw new ArgumentNullException("adaptedProperty");
-            }
+            ArgumentNullException.ThrowIfNull(adaptedProperty);
 
             if (!IsSettable(adaptedProperty))
             {

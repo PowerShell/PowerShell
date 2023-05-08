@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -279,7 +279,7 @@ namespace System.Management.Automation
             return propertyTypeName ?? "System.Object";
         }
 
-        private PSPropertyAdapter _externalAdapter;
+        private readonly PSPropertyAdapter _externalAdapter;
     }
 
     /// <summary>
@@ -296,10 +296,7 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "object")]
         public virtual Collection<string> GetTypeNameHierarchy(object baseObject)
         {
-            if (baseObject == null)
-            {
-                throw new ArgumentNullException("baseObject");
-            }
+            ArgumentNullException.ThrowIfNull(baseObject);
 
             Collection<string> types = new Collection<string>();
 
@@ -351,7 +348,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a property if it's name matches the specified <see cref="MemberNamePredicate"/>, otherwise null.
         /// </summary>
-        /// <returns>An adapted property if the predicate matches, or <c>null</c>.</returns>
+        /// <returns>An adapted property if the predicate matches, or <see langword="null"/>.</returns>
         public virtual PSAdaptedProperty GetFirstPropertyOrDefault(object baseObject, MemberNamePredicate predicate)
         {
             foreach (var property in GetProperties(baseObject))

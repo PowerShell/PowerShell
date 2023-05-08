@@ -1,5 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #if !UNIX
 
 namespace System.Management.Automation.Tracing
@@ -11,6 +12,7 @@ namespace System.Management.Automation.Tracing
     ///     An object that can be used to manage the ETW activity ID of the current thread.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Etw")]
+#nullable enable
     public interface IEtwEventCorrelator
     {
         /// <summary>
@@ -18,8 +20,8 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <remarks>
         ///     <para>This method should only be used for advanced scenarios
-        ///         or diagnostics.  Prefer using <see cref="StartActivity()" />
-        ///         or <see cref="StartActivity(Guid)" /> instead.</para>
+        ///         or diagnostics.  Prefer using <see cref="StartActivity()"/>
+        ///         or <see cref="StartActivity(Guid)"/> instead.</para>
         /// </remarks>
         Guid CurrentActivityId { get; set; }
 
@@ -28,7 +30,7 @@ namespace System.Management.Automation.Tracing
         ///     the new activity with another activity.
         /// </summary>
         /// <param name="relatedActivityId">The ID of an existing activity to be correlated with the
-        ///     new activity or <see cref="Guid.Empty" /> if correlation is not desired.</param>
+        ///     new activity or <see cref="Guid.Empty"/> if correlation is not desired.</param>
         /// <returns>An object which can be used to revert the activity ID of the current thread once
         ///     the new activity yields control of the current thread.</returns>
         IEtwActivityReverter StartActivity(Guid relatedActivityId);
@@ -41,9 +43,10 @@ namespace System.Management.Automation.Tracing
         ///     the new activity yields control of the current thread.</returns>
         IEtwActivityReverter StartActivity();
     }
+#nullable restore
 
     /// <summary>
-    ///     A simple implementation of <see cref="IEtwEventCorrelator" />.
+    ///     A simple implementation of <see cref="IEtwEventCorrelator"/>.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Etw")]
     public class EtwEventCorrelator :
@@ -53,25 +56,22 @@ namespace System.Management.Automation.Tracing
         private readonly EventDescriptor _transferEvent;
 
         /// <summary>
-        ///     Creates an <see cref="EtwEventCorrelator" />.
+        ///     Creates an <see cref="EtwEventCorrelator"/>.
         /// </summary>
-        /// <param name="transferProvider">The <see cref="EventProvider" /> to use when logging transfer events
+        /// <param name="transferProvider">The <see cref="EventProvider"/> to use when logging transfer events
         ///     during activity correlation.</param>
-        /// <param name="transferEvent">The <see cref="EventDescriptor" /> to use when logging transfer events
+        /// <param name="transferEvent">The <see cref="EventDescriptor"/> to use when logging transfer events
         ///     during activity correlation.</param>
         public EtwEventCorrelator(EventProvider transferProvider, EventDescriptor transferEvent)
         {
-            if (transferProvider == null)
-            {
-                throw new ArgumentNullException("transferProvider");
-            }
+            ArgumentNullException.ThrowIfNull(transferProvider);
 
             _transferProvider = transferProvider;
             _transferEvent = transferEvent;
         }
 
         /// <summary>
-        ///     Implements <see cref="IEtwEventCorrelator.CurrentActivityId" />.
+        ///     Implements <see cref="IEtwEventCorrelator.CurrentActivityId"/>.
         /// </summary>
         public Guid CurrentActivityId
         {
@@ -87,7 +87,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///     Implements <see cref="IEtwEventCorrelator.StartActivity(Guid)" />.
+        ///     Implements <see cref="IEtwEventCorrelator.StartActivity(Guid)"/>.
         /// </summary>
         public IEtwActivityReverter StartActivity(Guid relatedActivityId)
         {
@@ -97,14 +97,14 @@ namespace System.Management.Automation.Tracing
             if (relatedActivityId != Guid.Empty)
             {
                 var tempTransferEvent = _transferEvent;
-                _transferProvider.WriteTransferEvent(ref tempTransferEvent, relatedActivityId);
+                _transferProvider.WriteTransferEvent(in tempTransferEvent, relatedActivityId);
             }
 
             return retActivity;
         }
 
         /// <summary>
-        ///     Implements <see cref="IEtwEventCorrelator.StartActivity()" />.
+        ///     Implements <see cref="IEtwEventCorrelator.StartActivity()"/>.
         /// </summary>
         public IEtwActivityReverter StartActivity()
         {

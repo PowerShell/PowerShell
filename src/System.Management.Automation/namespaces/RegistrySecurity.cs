@@ -1,8 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #if !UNIX
 
-using System;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Security.AccessControl;
@@ -48,12 +48,12 @@ namespace Microsoft.PowerShell.Commands
             // Validate input first.
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if ((sections & ~AccessControlSections.All) != 0)
             {
-                throw PSTraceSource.NewArgumentException("sections");
+                throw PSTraceSource.NewArgumentException(nameof(sections));
             }
 
             path = NormalizePath(path);
@@ -93,12 +93,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (securityDescriptor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("securityDescriptor");
+                throw PSTraceSource.NewArgumentNullException(nameof(securityDescriptor));
             }
 
             path = NormalizePath(path);
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (sd == null)
                 {
-                    throw PSTraceSource.NewArgumentException("securityDescriptor");
+                    throw PSTraceSource.NewArgumentException(nameof(securityDescriptor));
                 }
             }
             else
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (sd == null)
                 {
-                    throw PSTraceSource.NewArgumentException("securityDescriptor");
+                    throw PSTraceSource.NewArgumentException(nameof(securityDescriptor));
                 }
             }
 
@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the parts of a security descriptor to create.
         /// </param>
         /// <returns>
-        /// An instance of <see cref="System.Security.AccessControl.ObjectSecurity" /> object.
+        /// An instance of <see cref="System.Security.AccessControl.ObjectSecurity"/> object.
         /// </returns>
         /// <remarks><paramref name="path"/> and <paramref name="sections"/> are not used by this method.</remarks>
         public ObjectSecurity NewSecurityDescriptorFromPath(
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the parts of a security descriptor to create.
         /// </param>
         /// <returns>
-        /// An instance of <see cref="System.Security.AccessControl.ObjectSecurity" /> object.
+        /// An instance of <see cref="System.Security.AccessControl.ObjectSecurity"/> object.
         /// </returns>
         public ObjectSecurity NewSecurityDescriptorOfType(
             string type,

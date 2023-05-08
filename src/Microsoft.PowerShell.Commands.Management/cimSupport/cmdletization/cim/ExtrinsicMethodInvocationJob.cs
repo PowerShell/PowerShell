@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -52,16 +52,16 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             Dbg.Assert(methodResult != null, "Caller should verify methodResult != null");
             Dbg.Assert(methodParameter != null, "Caller should verify methodParameter != null");
-            Dbg.Assert(0 != (methodParameter.Bindings & (MethodParameterBindings.Out | MethodParameterBindings.Error)), "Caller should verify that this is an out parameter");
+            Dbg.Assert((methodParameter.Bindings & (MethodParameterBindings.Out | MethodParameterBindings.Error)) != 0, "Caller should verify that this is an out parameter");
             Dbg.Assert(cmdletOutput != null, "Caller should verify cmdletOutput != null");
 
             Dbg.Assert(this.MethodSubject != null, "MethodSubject property should be initialized before starting main job processing");
 
             CimMethodParameter outParameter = methodResult.OutParameters[methodParameter.Name];
-            object valueReturnedFromMethod = (outParameter == null) ? null : outParameter.Value;
+            object valueReturnedFromMethod = outParameter?.Value;
 
             object dotNetValue = CimValueConverter.ConvertFromCimToDotNet(valueReturnedFromMethod, methodParameter.ParameterType);
-            if (MethodParameterBindings.Out == (methodParameter.Bindings & MethodParameterBindings.Out))
+            if ((methodParameter.Bindings & MethodParameterBindings.Out) == MethodParameterBindings.Out)
             {
                 methodParameter.Value = dotNetValue;
                 cmdletOutput.Add(methodParameter.Name, methodParameter);
@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     CimCmdletAdapter.AssociateSessionOfOriginWithInstance(cimInstance, this.JobContext.Session);
                 }
             }
-            else if (MethodParameterBindings.Error == (methodParameter.Bindings & MethodParameterBindings.Error))
+            else if ((methodParameter.Bindings & MethodParameterBindings.Error) == MethodParameterBindings.Error)
             {
                 var gotError = (bool)LanguagePrimitives.ConvertTo(dotNetValue, typeof(bool), CultureInfo.InvariantCulture);
                 if (gotError)
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             if (cmdletOutput.Count == 1)
             {
-                var singleOutputParameter = cmdletOutput.Values.Single();
+                var singleOutputParameter = cmdletOutput.Values.First();
                 if (singleOutputParameter.Value == null)
                 {
                     return;

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -32,25 +32,26 @@ namespace System.Management.Automation.Remoting
     internal class ClientRemoteSessionDSHandlerStateMachine
     {
         [TraceSourceAttribute("CRSessionFSM", "CRSessionFSM")]
-        private static PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionFSM", "CRSessionFSM");
+        private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionFSM", "CRSessionFSM");
 
         /// <summary>
         /// Event handling matrix. It defines what action to take when an event occur.
         /// [State,Event]=>Action.
         /// </summary>
-        private EventHandler<RemoteSessionStateMachineEventArgs>[,] _stateMachineHandle;
-        private Queue<RemoteSessionStateEventArgs> _clientRemoteSessionStateChangeQueue;
+        private readonly EventHandler<RemoteSessionStateMachineEventArgs>[,] _stateMachineHandle;
+        private readonly Queue<RemoteSessionStateEventArgs> _clientRemoteSessionStateChangeQueue;
 
         /// <summary>
         /// Current state of session.
         /// </summary>
         private RemoteSessionState _state;
 
-        private Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
+        private readonly Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
             = new Queue<RemoteSessionStateMachineEventArgs>();
+
         // all events raised through the state machine
         // will be queued in this
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
         // object for synchronizing access to the above
         // queue
 
@@ -161,7 +162,7 @@ namespace System.Management.Automation.Remoting
         /// Unique identifier for this state machine. Used
         /// in tracing.
         /// </summary>
-        private Guid _id;
+        private readonly Guid _id;
 
         /// <summary>
         /// Handler to be used in cases, where setting the state is the
@@ -190,7 +191,7 @@ namespace System.Management.Automation.Remoting
                             "State can be set to NegotiationReceived only when RemoteSessionCapability is not null");
                         if (eventArgs.RemoteSessionCapability == null)
                         {
-                            throw PSTraceSource.NewArgumentException("eventArgs");
+                            throw PSTraceSource.NewArgumentException(nameof(eventArgs));
                         }
 
                         SetState(RemoteSessionState.NegotiationReceived, null);
@@ -253,10 +254,7 @@ namespace System.Management.Automation.Remoting
                         if (_state == RemoteSessionState.EstablishedAndKeySent)
                         {
                             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
-                            if (tmp != null)
-                            {
-                                tmp.Dispose();
-                            }
+                            tmp?.Dispose();
 
                             _keyExchanged = true;
                             SetState(RemoteSessionState.Established, eventArgs.Reason);
@@ -277,7 +275,7 @@ namespace System.Management.Automation.Remoting
                         Dbg.Assert(_state >= RemoteSessionState.Established,
                             "Client can send a public key only after reaching the Established state");
 
-                        Dbg.Assert(_keyExchanged == false, "Client should do key exchange only once");
+                        Dbg.Assert(!_keyExchanged, "Client should do key exchange only once");
 
                         if (_state == RemoteSessionState.Established ||
                             _state == RemoteSessionState.EstablishedAndKeyRequested)
@@ -338,10 +336,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeySent, "timeout should only happen when waiting for a key");
 
             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
-            if (tmp != null)
-            {
-                tmp.Dispose();
-            }
+            tmp?.Dispose();
 
             PSRemotingDataStructureException exception =
                 new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientKeyExchangeFailed);
@@ -455,7 +450,7 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyRequested, (int)RemoteSessionEvent.KeySendFailed] += SetStateToClosedHandler;
 
             // TODO: All these are potential unexpected state transitions.. should have a way to track these calls..
-            // should atleast put a dbg assert in this handler
+            // should at least put a dbg assert in this handler
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)
             {
                 for (int j = 0; j < _stateMachineHandle.GetLength(1); j++)
@@ -490,7 +485,7 @@ namespace System.Management.Automation.Remoting
                     _state == RemoteSessionState.EstablishedAndKeyReceived ||   // TODO - Client session would never get into this state... to be removed
                     _state == RemoteSessionState.EstablishedAndKeySent ||
                     _state == RemoteSessionState.Disconnecting ||               // There can be input data until disconnect has been completed
-                    _state == RemoteSessionState.Disconnected)                  // Data can arrive while state machine is transitioning to disconnected, in a race.
+                    _state == RemoteSessionState.Disconnected)                  // Data can arrive while state machine is transitioning to disconnected
                 {
                     return true;
                 }
@@ -554,7 +549,7 @@ namespace System.Management.Automation.Remoting
         {
             if (arg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("arg");
+                throw PSTraceSource.NewArgumentNullException(nameof(arg));
             }
 
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)State, (int)arg.StateEvent];
@@ -775,7 +770,7 @@ namespace System.Management.Automation.Remoting
 
         #endregion Event Handlers
 
-        private void CleanAll()
+        private static void CleanAll()
         {
         }
 

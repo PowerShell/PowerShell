@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -29,7 +29,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "PSDriveInfo",
              "The namespace navigation tracer")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("PSDriveInfo",
              "The namespace navigation tracer");
 
@@ -127,7 +127,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (!DriveBeingCreated)
@@ -271,7 +271,7 @@ namespace System.Management.Automation
         {
             if (driveInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("driveInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(driveInfo));
             }
 
             _name = driveInfo.Name;
@@ -289,7 +289,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a drive that maps an MSH Path in
+        /// Constructs a drive that maps a PowerShell Path in
         /// the shell to a Cmdlet Provider.
         /// </summary>
         /// <param name="name">
@@ -326,17 +326,17 @@ namespace System.Management.Automation
 
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             if (root == null)
             {
-                throw PSTraceSource.NewArgumentNullException("root");
+                throw PSTraceSource.NewArgumentNullException(nameof(root));
             }
 
             // Copy the parameters to the local members
@@ -366,7 +366,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a drive that maps an MSH Path in
+        /// Constructs a drive that maps a PowerShell Path in
         /// the shell to a Cmdlet Provider.
         /// </summary>
         /// <param name="name">
@@ -408,7 +408,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a drive that maps an MSH Path in
+        /// Constructs a drive that maps a PowerShell Path in
         /// the shell to a Cmdlet Provider.
         /// </summary>
         /// <param name="name">
@@ -430,7 +430,7 @@ namespace System.Management.Automation
         /// If null, the current user credential is used.
         /// </param>
         /// <param name="persist">
-        /// It indicates if the the created PSDrive would be
+        /// It indicates if the created PSDrive would be
         /// persisted across PowerShell sessions.
         /// </param>
         /// <throws>
@@ -508,7 +508,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(newName))
             {
-                throw PSTraceSource.NewArgumentException("newName");
+                throw PSTraceSource.NewArgumentException(nameof(newName));
             }
 
             _name = newName;
@@ -534,7 +534,7 @@ namespace System.Management.Automation
         {
             if (newProvider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("newProvider");
+                throw PSTraceSource.NewArgumentNullException(nameof(newProvider));
             }
 
             _provider = newProvider;
@@ -602,7 +602,7 @@ namespace System.Management.Automation
 
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             return string.Compare(Name, drive.Name, StringComparison.OrdinalIgnoreCase);
@@ -631,7 +631,7 @@ namespace System.Management.Automation
             {
                 ArgumentException e =
                     PSTraceSource.NewArgumentException(
-                        "obj",
+                        nameof(obj),
                         SessionStateStrings.OnlyAbleToComparePSDriveInfo);
                 throw e;
             }
@@ -817,6 +817,7 @@ namespace System.Management.Automation
         }
 
         private PSNoteProperty _noteProperty;
+
         internal PSNoteProperty GetNotePropertyForProviderCmdlets(string name)
         {
             if (_noteProperty == null)
@@ -829,4 +830,3 @@ namespace System.Management.Automation
         }
     }
 }
-

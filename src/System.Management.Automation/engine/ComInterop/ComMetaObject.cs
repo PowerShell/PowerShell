@@ -1,15 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
 using System.Dynamic;
-
-//using Microsoft.Scripting.Utils;
+using System.Linq.Expressions;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -23,31 +16,37 @@ namespace System.Management.Automation.ComInterop
 
         public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args)
         {
+            Requires.NotNull(binder);
             return binder.Defer(args.AddFirst(WrapSelf()));
         }
 
         public override DynamicMetaObject BindInvoke(InvokeBinder binder, DynamicMetaObject[] args)
         {
+            Requires.NotNull(binder);
             return binder.Defer(args.AddFirst(WrapSelf()));
         }
 
         public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
         {
+            Requires.NotNull(binder);
             return binder.Defer(WrapSelf());
         }
 
         public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value)
         {
+            Requires.NotNull(binder);
             return binder.Defer(WrapSelf(), value);
         }
 
         public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes)
         {
+            Requires.NotNull(binder);
             return binder.Defer(WrapSelf(), indexes);
         }
 
         public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
         {
+            Requires.NotNull(binder);
             return binder.Defer(WrapSelf(), indexes.AddLast(value));
         }
 
@@ -57,7 +56,7 @@ namespace System.Management.Automation.ComInterop
                 ComObject.RcwToComObject(Expression),
                 BindingRestrictions.GetExpressionRestriction(
                     Expression.Call(
-                        typeof(ComObject).GetMethod("IsComObject", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic),
+                        typeof(ComBinder).GetMethod(nameof(ComBinder.IsComObject), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public),
                         Helpers.Convert(Expression, typeof(object))
                     )
                 )
@@ -65,6 +64,3 @@ namespace System.Management.Automation.ComInterop
         }
     }
 }
-
-#endif
-

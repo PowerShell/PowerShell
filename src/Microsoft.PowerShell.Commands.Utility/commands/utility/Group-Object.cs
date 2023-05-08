@@ -1,11 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -141,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static string BuildName(List<ObjectCommandPropertyValue> propValues)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             foreach (ObjectCommandPropertyValue propValue in propValues)
             {
                 var propValuePropertyValue = propValue?.PropertyValue;
@@ -149,12 +148,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (propValuePropertyValue is ICollection propertyValueItems)
                     {
-                        sb.Append("{");
+                        sb.Append('{');
                         var length = sb.Length;
 
                         foreach (object item in propertyValueItems)
                         {
-                            sb.AppendFormat(CultureInfo.InvariantCulture, "{0}, ", item.ToString());
+                            sb.Append(CultureInfo.InvariantCulture, $"{item}, ");
                         }
 
                         sb = sb.Length > length ? sb.Remove(sb.Length - 2, 2) : sb;
@@ -162,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}, ", propValuePropertyValue.ToString());
+                        sb.Append(CultureInfo.InvariantCulture, $"{propValuePropertyValue}, ");
                     }
                 }
             }
@@ -177,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                ArrayList values = new ArrayList();
+                ArrayList values = new();
                 foreach (ObjectCommandPropertyValue propValue in GroupValue.orderValues)
                 {
                     values.Add(propValue.PropertyValue);
@@ -211,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Group-Object implementation.
     /// </summary>
-    [Cmdlet(VerbsData.Group, "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113338", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsData.Group, "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096619", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(Hashtable), typeof(GroupInfo))]
     public class GroupObjectCommand : ObjectBase
     {
@@ -249,10 +248,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "HashTable")]
         public SwitchParameter AsString { get; set; }
 
-        private readonly List<GroupInfo> _groups = new List<GroupInfo>();
-        private readonly OrderByProperty _orderByProperty = new OrderByProperty();
-        private readonly Dictionary<object, GroupInfo> _tupleToGroupInfoMappingDictionary = new Dictionary<object, GroupInfo>();
-        private readonly List<OrderByPropertyEntry> _entriesToOrder = new List<OrderByPropertyEntry>();
+        private readonly List<GroupInfo> _groups = new();
+        private readonly OrderByProperty _orderByProperty = new();
+        private readonly Dictionary<object, GroupInfo> _tupleToGroupInfoMappingDictionary = new();
+        private readonly List<OrderByPropertyEntry> _entriesToOrder = new();
         private OrderByPropertyComparer _orderByPropertyComparer;
         private bool _hasProcessedFirstInputObject;
         private bool _hasDifferentValueTypes;
@@ -376,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteNonTerminatingError(Exception exception, string resourceIdAndErrorId, ErrorCategory category)
         {
-            Exception ex = new Exception(StringUtil.Format(resourceIdAndErrorId), exception);
+            Exception ex = new(StringUtil.Format(resourceIdAndErrorId), exception);
             WriteError(new ErrorRecord(ex, resourceIdAndErrorId, category, null));
         }
 
@@ -393,24 +392,21 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!_hasProcessedFirstInputObject)
                 {
-                    if (Property == null)
-                    {
-                        Property = OrderByProperty.GetDefaultKeyPropertySet(InputObject);
-                    }
+                    Property ??= OrderByProperty.GetDefaultKeyPropertySet(InputObject);
 
                     _orderByProperty.ProcessExpressionParameter(this, Property);
 
                     if (AsString && !AsHashTable)
                     {
-                        ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectWithHashTable);
-                        ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, AsString);
+                        ArgumentException ex = new(UtilityCommonStrings.GroupObjectWithHashTable);
+                        ErrorRecord er = new(ex, "ArgumentException", ErrorCategory.InvalidArgument, AsString);
                         ThrowTerminatingError(er);
                     }
 
                     if (AsHashTable && !AsString && (Property != null && (Property.Length > 1 || _orderByProperty.MshParameterList.Count > 1)))
                     {
-                        ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectSingleProperty);
-                        ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, Property);
+                        ArgumentException ex = new(UtilityCommonStrings.GroupObjectSingleProperty);
+                        ErrorRecord er = new(ex, "ArgumentException", ErrorCategory.InvalidArgument, Property);
                         ThrowTerminatingError(er);
                     }
 
@@ -444,7 +440,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_propertyTypesCandidate == null)
             {
-                _propertyTypesCandidate = currentEntryOrderValues.Select(c => PSObject.Base(c.PropertyValue)?.GetType()).ToArray();
+                _propertyTypesCandidate = currentEntryOrderValues.Select(static c => PSObject.Base(c.PropertyValue)?.GetType()).ToArray();
                 return;
             }
 
@@ -492,7 +488,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // using OrderBy to get stable sort.
                 // fast path when we only have the same object types to group
-                foreach (var entry in _entriesToOrder.OrderBy(e => e, _orderByPropertyComparer))
+                foreach (var entry in _entriesToOrder.Order(_orderByPropertyComparer))
                 {
                     DoOrderedGrouping(entry, NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
                     if (Stopping)
@@ -516,9 +512,12 @@ namespace Microsoft.PowerShell.Commands
             s_tracer.WriteLine(_groups.Count);
             if (_groups.Count > 0)
             {
-                if (AsHashTable)
+                if (AsHashTable.IsPresent)
                 {
-                    Hashtable hashtable = CollectionsUtil.CreateCaseInsensitiveHashtable();
+                    StringComparer comparer = CaseSensitive.IsPresent
+                        ? StringComparer.CurrentCulture
+                        : StringComparer.CurrentCultureIgnoreCase;
+                    var hashtable = new Hashtable(comparer);
                     try
                     {
                         if (AsString)

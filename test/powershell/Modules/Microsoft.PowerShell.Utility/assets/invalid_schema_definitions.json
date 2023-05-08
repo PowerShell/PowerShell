@@ -1,0 +1,8 @@
+{
+    "definitions": {
+        "name": {
+            "type": "string"
+        },
+        "hobbies"
+    }
+}

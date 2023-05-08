@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Argument transformation attribute on optional argument with explicit $null' -Tags "CI" {
@@ -79,23 +79,23 @@ Describe 'Argument transformation attribute on optional argument with explicit $
     It "Script function takes uint64" {
         Invoke-ScriptFunctionTakesUInt64 | Should -Be 42
     }
-    it "csharp cmdlet takes object" {
+    It "csharp cmdlet takes object" {
         Invoke-CSharpCmdletTakesObject | Should -Be "passed in null"
     }
-    it "csharp cmdlet takes uint64" {
+    It "csharp cmdlet takes uint64" {
         Invoke-CSharpCmdletTakesUInt64 | Should -Be 0
     }
 
-    it "script function takes object when parameter is null" {
+    It "script function takes object when parameter is null" {
         Invoke-ScriptFunctionTakesObject -Address $null | Should -Be 42
     }
-    it "script function takes unit64 when parameter is null" {
+    It "script function takes unit64 when parameter is null" {
         Invoke-ScriptFunctionTakesUInt64 -Address $null | Should -Be 42
     }
-    it "script csharp cmdlet takes object when parameter is null" {
+    It "script csharp cmdlet takes object when parameter is null" {
         Invoke-CSharpCmdletTakesObject -Address $null | Should -Be 42
     }
-    it "script csharp cmdlet takes uint64 when parameter is null" {
+    It "script csharp cmdlet takes uint64 when parameter is null" {
         Invoke-CSharpCmdletTakesUInt64 -Address $null | Should -Be 42
     }
 }
@@ -168,7 +168,13 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
             }
         }
 '@
-        $asmFile = [System.IO.Path]::GetTempFileName() + ".dll"
+        if ($IsWindows) {
+            $asmFile = [System.IO.Path]::GetTempFileName() + ".dll"
+        }
+        else {
+            $asmFile = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName() + ".dll"))
+        }
+
         Add-Type -TypeDefinition $code -OutputAssembly $asmFile
 
         ## Helper function to execute script
@@ -223,16 +229,16 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
             Execute-Script -ps $ps -Script $importCSharpModule
 
             $languageMode = Execute-Script -ps $ps -Script $getLanguageMode
-            $languageMode | Should Be 'FullLanguage'
+            $languageMode | Should -Be 'FullLanguage'
 
             $result1 = Execute-Script -ps $ps -Script "Test-ScriptCmdlet -File fileToUse"
-            $result1 | Should Be "fileToUse"
+            $result1 | Should -Be "fileToUse"
 
             $result2 = Execute-Script -ps $ps -Script "Test-ScriptFunction -File fileToUse"
-            $result2 | Should Be "fileToUse"
+            $result2 | Should -Be "fileToUse"
 
             $result3 = Execute-Script -ps $ps -Script "Test-BinaryCmdlet -File fileToUse"
-            $result3 | Should Be "fileToUse"
+            $result3 | Should -Be "fileToUse"
 
             ## Conversion involves setting properties of an instance of the target type is allowed in FullLanguage mode
             $hashValue = @{ FileName = "filename"; Arguments = "args" }
@@ -240,21 +246,21 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
 
             ## Test 'Test-ScriptCmdlet -StartInfo' with IDictionary and PSObject with properties
             $result4 = Execute-Script -ps $ps -Command "Test-ScriptCmdlet" -ParameterName "StartInfo" -Argument $hashValue
-            $result4 | Should Be "filename"
+            $result4 | Should -Be "filename"
             $result5 = Execute-Script -ps $ps -Command "Test-ScriptCmdlet" -ParameterName "StartInfo" -Argument $psobjValue
-            $result5 | Should Be "filename"
+            $result5 | Should -Be "filename"
 
             ## Test 'Test-ScriptFunction -StartInfo' with IDictionary and PSObject with properties
             $result6 = Execute-Script -ps $ps -Command "Test-ScriptFunction" -ParameterName "StartInfo" -Argument $hashValue
-            $result6 | Should Be "filename"
+            $result6 | Should -Be "filename"
             $result7 = Execute-Script -ps $ps -Command "Test-ScriptFunction" -ParameterName "StartInfo" -Argument $psobjValue
-            $result7 | Should Be "filename"
+            $result7 | Should -Be "filename"
 
             ## Test 'Test-BinaryCmdlet -StartInfo' with IDictionary and PSObject with properties
             $result8 = Execute-Script -ps $ps -Command "Test-BinaryCmdlet" -ParameterName "StartInfo" -Argument $hashValue
-            $result8 | Should Be "filename"
+            $result8 | Should -Be "filename"
             $result9 = Execute-Script -ps $ps -Command "Test-BinaryCmdlet" -ParameterName "StartInfo" -Argument $psobjValue
-            $result9 | Should Be "filename"
+            $result9 | Should -Be "filename"
         }
         finally {
             $ps.Dispose()
@@ -270,21 +276,21 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
             Execute-Script -ps $ps -Script $importCSharpModule
 
             $languageMode = Execute-Script -ps $ps -Script $getLanguageMode
-            $languageMode | Should Be 'FullLanguage'
+            $languageMode | Should -Be 'FullLanguage'
 
             ## Change to ConstrainedLanguage mode
             Execute-Script -ps $ps -Script $changeToConstrainedLanguage
             $languageMode = Execute-Script -ps $ps -Script $getLanguageMode
-            $languageMode | Should Be 'ConstrainedLanguage'
+            $languageMode | Should -Be 'ConstrainedLanguage'
 
             $result1 = Execute-Script -ps $ps -Script "Test-ScriptCmdlet -File fileToUse"
-            $result1 | Should Be "fileToUse"
+            $result1 | Should -Be "fileToUse"
 
             $result2 = Execute-Script -ps $ps -Script "Test-ScriptFunction -File fileToUse"
-            $result2 | Should Be "fileToUse"
+            $result2 | Should -Be "fileToUse"
 
             $result3 = Execute-Script -ps $ps -Script "Test-BinaryCmdlet -File fileToUse"
-            $result3 | Should Be "fileToUse"
+            $result3 | Should -Be "fileToUse"
 
             ## If the conversion involves setting properties of an instance of the target type,
             ## then it's disallowed even for trusted cmdlets.
@@ -296,14 +302,14 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
                 Execute-Script -ps $ps -Command "Test-ScriptCmdlet" -ParameterName "StartInfo" -Argument $hashValue
                 throw "Expected exception was not thrown!"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingArgumentTransformationException,Execute-Script"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingArgumentTransformationException,Execute-Script"
             }
 
             try {
                 Execute-Script -ps $ps -Command "Test-ScriptCmdlet" -ParameterName "StartInfo" -Argument $psobjValue
                 throw "Expected exception was not thrown!"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingArgumentTransformationException,Execute-Script"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingArgumentTransformationException,Execute-Script"
             }
 
             ## Test 'Test-ScriptFunction -StartInfo' with IDictionary and PSObject with properties
@@ -311,14 +317,14 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
                 Execute-Script -ps $ps -Command "Test-ScriptFunction" -ParameterName "StartInfo" -Argument $hashValue
                 throw "Expected exception was not thrown!"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingArgumentTransformationException,Execute-Script"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingArgumentTransformationException,Execute-Script"
             }
 
             try {
                 Execute-Script -ps $ps -Command "Test-ScriptFunction" -ParameterName "StartInfo" -Argument $psobjValue
                 throw "Expected exception was not thrown!"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingArgumentTransformationException,Execute-Script"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingArgumentTransformationException,Execute-Script"
             }
 
             ## Test 'Test-BinaryCmdlet -StartInfo' with IDictionary and PSObject with properties
@@ -326,14 +332,14 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
                 Execute-Script -ps $ps -Command "Test-BinaryCmdlet" -ParameterName "StartInfo" -Argument $hashValue
                 throw "Expected exception was not thrown!"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingException,Execute-Script"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingException,Execute-Script"
             }
 
             try {
                 Execute-Script -ps $ps -Command "Test-BinaryCmdlet" -ParameterName "StartInfo" -Argument $psobjValue
                 throw "Expected exception was not thrown!"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingException,Execute-Script"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingException,Execute-Script"
             }
         }
         finally {
@@ -346,30 +352,30 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
         $ps = [powershell]::Create()
         try {
             $languageMode = Execute-Script -ps $ps -Script $getLanguageMode
-            $languageMode | Should Be 'FullLanguage'
+            $languageMode | Should -Be 'FullLanguage'
 
             ## Change to ConstrainedLanguage mode
             Execute-Script -ps $ps -Script $changeToConstrainedLanguage
             $languageMode = Execute-Script -ps $ps -Script $getLanguageMode
-            $languageMode | Should Be 'ConstrainedLanguage'
+            $languageMode | Should -Be 'ConstrainedLanguage'
 
             ## Import the modules in ConstrainedLanguage mode
             Execute-Script -ps $ps -Script $importScriptModule
             Execute-Script -ps $ps -Script $importCSharpModule
 
             $result1 = Execute-Script -ps $ps -Script "Test-ScriptCmdlet -File fileToUse"
-            $result1 | Should Be $null
-            $ps.Streams.Error.Count | Should Be 1
-            $ps.Streams.Error[0].FullyQualifiedErrorId | Should Be "ParameterArgumentTransformationError,Test-ScriptCmdlet"
+            $result1 | Should -Be $null
+            $ps.Streams.Error.Count | Should -Be 1
+            $ps.Streams.Error[0].FullyQualifiedErrorId | Should -Be "ParameterArgumentTransformationError,Test-ScriptCmdlet"
 
             $result2 = Execute-Script -ps $ps -Script "Test-ScriptFunction -File fileToUse"
-            $result2 | Should Be $null
-            $ps.Streams.Error.Count | Should Be 1
-            $ps.Streams.Error[0].FullyQualifiedErrorId | Should Be "ParameterArgumentTransformationError,Test-ScriptFunction"
+            $result2 | Should -Be $null
+            $ps.Streams.Error.Count | Should -Be 1
+            $ps.Streams.Error[0].FullyQualifiedErrorId | Should -Be "ParameterArgumentTransformationError,Test-ScriptFunction"
 
             ## Binary cmdlets are always marked as trusted because only trusted assemblies can be loaded on DeviceGuard machine.
             $result3 = Execute-Script -ps $ps -Script "Test-BinaryCmdlet -File fileToUse"
-            $result3 | Should Be "fileToUse"
+            $result3 | Should -Be "fileToUse"
 
             ## Conversion that involves setting properties of an instance of the target type is disallowed.
             $hashValue = @{ FileName = "filename"; Arguments = "args" }
@@ -380,14 +386,14 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
                 Execute-Script -ps $ps -Command "Test-ScriptCmdlet" -ParameterName "StartInfo" -Argument $hashValue
                 throw "Expected exception was not thrown!"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingArgumentTransformationException,Execute-Script"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingArgumentTransformationException,Execute-Script"
             }
 
             try {
                 Execute-Script -ps $ps -Command "Test-ScriptCmdlet" -ParameterName "StartInfo" -Argument $psobjValue
                 throw "Expected exception was not thrown!"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingArgumentTransformationException,Execute-Script"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingArgumentTransformationException,Execute-Script"
             }
 
             ## Test 'Test-ScriptFunction -StartInfo' with IDictionary and PSObject with properties
@@ -395,14 +401,14 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
                 Execute-Script -ps $ps -Command "Test-ScriptFunction" -ParameterName "StartInfo" -Argument $hashValue
                 throw "Expected exception was not thrown!"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingArgumentTransformationException,Execute-Script"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingArgumentTransformationException,Execute-Script"
             }
 
             try {
                 Execute-Script -ps $ps -Command "Test-ScriptFunction" -ParameterName "StartInfo" -Argument $psobjValue
                 throw "Expected exception was not thrown!"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingArgumentTransformationException,Execute-Script"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingArgumentTransformationException,Execute-Script"
             }
 
             ## Test 'Test-BinaryCmdlet -StartInfo' with IDictionary and PSObject with properties
@@ -410,18 +416,59 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
                 Execute-Script -ps $ps -Command "Test-BinaryCmdlet" -ParameterName "StartInfo" -Argument $hashValue
                 throw "Expected exception was not thrown!"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingException,Execute-Script"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingException,Execute-Script"
             }
 
             try {
                 Execute-Script -ps $ps -Command "Test-BinaryCmdlet" -ParameterName "StartInfo" -Argument $psobjValue
                 throw "Expected exception was not thrown!"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingException,Execute-Script"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingException,Execute-Script"
             }
         }
         finally {
             $ps.Dispose()
         }
+    }
+}
+
+Describe 'Roundtrippable Conversions for Bare-string Numeric Literals passed to [string] Parameters' -Tags CI {
+
+    BeforeAll {
+        $TestValues = @(
+            @{ Argument = "34uy" }
+            @{ Argument = "48y" }
+            @{ Argument = "8s" }
+            @{ Argument = "49us" }
+            @{ Argument = "26" }
+            @{ Argument = "28u" }
+            @{ Argument = "24l" }
+            @{ Argument = "32ul" }
+            @{ Argument = "20d" }
+            @{ Argument = "6n" }
+        )
+
+        function Test-SimpleStringValue([string] $Value) { $Value }
+        function Test-AdvancedStringValue {
+            [CmdletBinding()]
+            param(
+                [string]
+                $Value
+            )
+
+            $Value
+        }
+    }
+
+    It 'should correctly convert <Argument> back to string in simple functions' -TestCases $TestValues {
+        param($Argument)
+
+        Invoke-Expression "Test-SimpleStringValue -Value $Argument" | Should -BeExactly $Argument
+    }
+
+    It 'should correctly convert <Argument> back to string in advanced functions' -TestCases $TestValues {
+        param($Argument)
+
+        Invoke-Expression "Test-AdvancedStringValue -Value $Argument" | Should -BeExactly $Argument
     }
 }

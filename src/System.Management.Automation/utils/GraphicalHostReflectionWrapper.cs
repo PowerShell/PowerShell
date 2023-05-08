@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 namespace System.Management.Automation.Internal
@@ -18,7 +18,7 @@ namespace System.Management.Automation.Internal
     ///    2) show-command window implementation (the actual cmdlet is in Microsoft.PowerShell.Commands.Utility.dll)
     ///    3) the help window used in the System.Management.Automation.dll's get-help cmdlet when -ShowWindow is specified.
     /// </summary>
-    internal class GraphicalHostReflectionWrapper
+    internal sealed class GraphicalHostReflectionWrapper
     {
         /// <summary>
         /// Initialized in GetGraphicalHostReflectionWrapper with the Microsoft.PowerShell.GraphicalHost.dll assembly.
@@ -128,12 +128,12 @@ namespace System.Management.Automation.Internal
             ConstructorInfo constructor = returnValue._graphicalHostHelperType.GetConstructor(
                 BindingFlags.NonPublic | BindingFlags.Instance,
                 null,
-                new Type[] { },
+                Array.Empty<Type>(),
                 null);
 
             if (constructor != null)
             {
-                returnValue._graphicalHostHelperObject = constructor.Invoke(new object[] { });
+                returnValue._graphicalHostHelperObject = constructor.Invoke(Array.Empty<object>());
                 Diagnostics.Assert(returnValue._graphicalHostHelperObject != null, "the constructor does not throw anything");
             }
 
@@ -187,7 +187,7 @@ namespace System.Management.Automation.Internal
             Diagnostics.Assert(_graphicalHostHelperObject != null, "there should be a constructor in order to get an instance property value");
             PropertyInfo property = _graphicalHostHelperType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Instance);
             Diagnostics.Assert(property != null, "property " + propertyName + " exists in graphicalHostHelperType is verified by caller");
-            return property.GetValue(_graphicalHostHelperObject, new object[] { });
+            return property.GetValue(_graphicalHostHelperObject, Array.Empty<object>());
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace System.Management.Automation.Internal
         {
             PropertyInfo property = _graphicalHostHelperType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Static);
             Diagnostics.Assert(property != null, "property " + propertyName + " exists in graphicalHostHelperType is verified by caller");
-            return property.GetValue(null, new object[] { });
+            return property.GetValue(null, Array.Empty<object>());
         }
 
         /// <summary>

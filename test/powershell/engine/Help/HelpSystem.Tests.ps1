@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 #
 # Validates Get-Help for cmdlets in Microsoft.PowerShell.Core.
@@ -15,7 +15,9 @@ $script:cmdletsToSkip = @(
     "Enable-PSRemoting",
     "Get-ExperimentalFeature",
     "Enable-ExperimentalFeature",
-    "Disable-ExperimentalFeature"
+    "Disable-ExperimentalFeature",
+    "Get-PSSubsystem",
+    "Switch-Process"
 )
 
 function UpdateHelpFromLocalContentPath {
@@ -28,7 +30,8 @@ function UpdateHelpFromLocalContentPath {
         throw "Unable to find help content at '$helpContentPath'"
     }
 
-    Update-Help -Module $ModuleName -SourcePath $helpContentPath -Force -ErrorAction Stop -Scope $Scope
+    # Test files are 'en-US', set explicit culture so test does not help on non-US systems
+    Update-Help -Module $ModuleName -SourcePath $helpContentPath -UICulture 'en-US' -Force -ErrorAction Stop -Scope $Scope
 }
 
 function GetCurrentUserHelpRoot {
@@ -40,6 +43,16 @@ function GetCurrentUserHelpRoot {
     }
 
     return $userHelpRoot
+}
+
+Describe 'Validate HelpInfo type' -Tags @('CI') {
+
+    It 'Category should be a string' {
+        $help = Get-Help *
+        $category = $help | ForEach-Object { $_.Category.GetType().FullName } | Select-Object -Unique
+        $category.Count | Should -Be 1 -Because 'All help categories should be strings, >1 indicates a type mismatch'
+        $category | Should -BeExactly 'System.String'
+    }
 }
 
 Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @('CI') {
@@ -56,11 +69,15 @@ Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @(
 Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') {
 
     It "Help doesn't fail when strict mode is on" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
 
         $help = & {
             # run in nested scope to keep strict mode from affecting other tests
-            Set-StrictMode -Version Latest
-            Help
+            Set-StrictMode -Version 3.0
+            help
         }
         # the help function renders the help content as text so just verify that there is content
         $help | Should -Not -BeNullOrEmpty
@@ -91,9 +108,9 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
 
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases {
             param($cmdletName)
-            $help = get-help -name $cmdletName
-            $help.Description | Out-String | Should Match $cmdletName
-            $help.Examples | Out-String | Should Match $cmdletName
+            $help = Get-Help -Name $cmdletName
+            $help.Description | Out-String | Should -Match $cmdletName
+            $help.Examples | Out-String | Should -Match $cmdletName
         }
     }
 }
@@ -101,7 +118,7 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
 Describe "Testing Get-Help Progress" -Tags @('Feature') {
     It "Last ProgressRecord should be Completed" {
         try {
-            $j = Start-Job { Get-Help DoesNotExist }
+            $j = Start-Job { Get-Help ([guid]::NewGuid().ToString("N")) }
             $j | Wait-Job
             $j.ChildJobs[0].Progress[-1].RecordType | Should -Be ([System.Management.Automation.ProgressRecordType]::Completed)
         }
@@ -135,9 +152,9 @@ Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature', 'R
 
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases -Skip:(!(Test-CanWriteToPsHome)) {
             param($cmdletName)
-            $help = get-help -name $cmdletName
-            $help.Description | Out-String | Should Match $cmdletName
-            $help.Examples | Out-String | Should Match $cmdletName
+            $help = Get-Help -Name $cmdletName
+            $help.Description | Out-String | Should -Match $cmdletName
+            $help.Examples | Out-String | Should -Match $cmdletName
         }
     }
 }
@@ -217,7 +234,7 @@ Describe "Validate that get-help works for provider specific help" -Tags @('CI')
 
 Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
-        $modulePath = "$pshome\Modules\Test"
+        $modulePath = "$PSHOME\Modules\Test"
         if (Test-CanWriteToPsHome) {
             $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
             New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
@@ -241,7 +258,7 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
         Get-ChildItem -Path $aboutHelpPath -Include @('about_*.txt', "*help.xml") -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
-    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" -Skip:(!(Test-CanWriteToPsHome)) {
+    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$PSHOME path" -Skip:(!(Test-CanWriteToPsHome)) {
 
         $help = Get-Help about_testhelp
         $help.count | Should -Be 1
@@ -273,7 +290,7 @@ Describe "About help files can be found in AllUsers scope" -Tags @('Feature', 'R
 
     It "Get-Help for about_Variable should return only one help object" -Skip:(!(Test-CanWriteToPsHome)) {
         $help = Get-Help about_Variables
-        $help.count | Should Be 1
+        $help.count | Should -Be 1
     }
 }
 
@@ -298,10 +315,6 @@ Describe "Get-Help should find help info within help files" -Tags @('CI') {
 }
 
 Describe "Get-Help should find pattern help files" -Tags "CI" {
-
-    # There is a bug specific to Travis CI that suspends the test if "get-help" is used to search pattern string. This doesn't repro locally.
-    # This occurs even if Unix system just returns "Directory.GetFiles(path, pattern);" as the windows' code does.
-    # Since there's currently no way to get the vm from Travis CI and the test PASSES locally on both Ubuntu and MacOS, excluding pattern test under Unix system.
 
     BeforeAll {
         $helpFile1 = "about_testCase1.help.txt"
@@ -336,7 +349,7 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
         @{command = {Get-Help about_testCas?.2*}; testname = "test ?, * pattern with dot"; result = "about_test2"}
     )
 
-    It "Get-Help should find pattern help files - <testname>" -TestCases $testcases -Pending: (-not $IsWindows) {
+    It "Get-Help should find pattern help files - <testname>" -TestCases $testcases {
         param (
             $command,
             $result
@@ -395,16 +408,28 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
 
 Describe "help function uses full view by default" -Tags "CI" {
     It "help should return full view without -Full switch" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -Not -BeNullOrEmpty
     }
 
     It "help should return full view even with -Full switch" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -Not -BeNullOrEmpty
     }
 
     It "help should not append -Full when not using AllUsersView parameter set" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "IOException: The handle is invalid."
+        }
+
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -BeNullOrEmpty
     }
@@ -574,7 +599,9 @@ Describe "Help failure cases" -Tags Feature {
     ) {
         param($command)
 
-        { & $command foobar -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
+        # under some conditions this does not throw, so include what we actually got
+        $helpTopic = [guid]::NewGuid().ToString("N")
+        { & $command $helpTopic -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand" -Because "A help topic was unexpectantly found for $helpTopic"
     }
 }
 

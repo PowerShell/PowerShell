@@ -1,7 +1,6 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
@@ -21,17 +20,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Depth of serialization.
         /// </summary>
-        private int _depth;
+        private readonly int _depth;
 
         /// <summary>
         /// XmlWriter to be used for writing.
         /// </summary>
-        private XmlWriter _writer;
+        private readonly XmlWriter _writer;
 
         /// <summary>
         /// Whether type information should be included in the xml.
         /// </summary>
-        private bool _notypeinformation;
+        private readonly bool _notypeinformation;
 
         /// <summary>
         /// CustomerSerializer used for formatting the output for _writer.
@@ -39,7 +38,7 @@ namespace System.Management.Automation
         private CustomInternalSerializer _serializer;
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CustomSerialization"/> class.
         /// </summary>
         /// <param name="writer">
         /// writer to be used for serialization.
@@ -55,12 +54,12 @@ namespace System.Management.Automation
         {
             if (writer == null)
             {
-                throw PSTraceSource.NewArgumentException("writer");
+                throw PSTraceSource.NewArgumentException(nameof(writer));
             }
 
             if (depth < 1)
             {
-                throw PSTraceSource.NewArgumentException("writer", Serialization.DepthOfOneRequired);
+                throw PSTraceSource.NewArgumentException(nameof(writer), Serialization.DepthOfOneRequired);
             }
 
             _depth = depth;
@@ -75,7 +74,7 @@ namespace System.Management.Automation
         public static int MshDefaultSerializationDepth { get; } = 1;
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CustomSerialization"/> class.
         /// </summary>
         /// <param name="writer">
         /// writer to be used for serialization.
@@ -171,10 +170,7 @@ namespace System.Management.Automation
         internal void Stop()
         {
             CustomInternalSerializer serializer = _serializer;
-            if (serializer != null)
-            {
-                serializer.Stop();
-            }
+            serializer?.Stop();
         }
 
         #endregion
@@ -191,7 +187,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Xml writer to be used.
         /// </summary>
-        private XmlWriter _writer;
+        private readonly XmlWriter _writer;
 
         /// <summary>
         /// Check first call for every pipeline object to write Object tag else property tag.
@@ -201,7 +197,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Should the type information to be shown.
         /// </summary>
-        private bool _notypeinformation;
+        private readonly bool _notypeinformation;
 
         /// <summary>
         /// Check object call.
@@ -209,7 +205,7 @@ namespace System.Management.Automation
         private bool _firstobjectcall = true;
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CustomInternalSerializer"/> class.
         /// </summary>
         /// <param name="writer">
         /// Xml writer to be used.
@@ -442,7 +438,7 @@ namespace System.Management.Automation
         /// <param name="ct"></param>
         /// <param name="dictionary"></param>
         /// <param name="enumerable"></param>
-        private void GetKnownContainerTypeInfo(
+        private static void GetKnownContainerTypeInfo(
             object source, out ContainerType ct, out IDictionary dictionary, out IEnumerable enumerable)
         {
             Dbg.Assert(source != null, "caller should validate the parameter");
@@ -648,7 +644,7 @@ namespace System.Management.Automation
             if (property != null)
             {
                 WriteStartElement(_writer, CustomSerializationStrings.Properties);
-                WriteAttribute(_writer, CustomSerializationStrings.NameAttribute, property.ToString());
+                WriteAttribute(_writer, CustomSerializationStrings.NameAttribute, property);
             }
             else
             {
@@ -676,7 +672,7 @@ namespace System.Management.Automation
         /// <param name="source"></param>
         /// <returns>
         /// </returns>
-        private bool PSObjectHasNotes(PSObject source)
+        private static bool PSObjectHasNotes(PSObject source)
         {
             if (source.InstanceMembers != null && source.InstanceMembers.Count > 0)
             {
@@ -710,8 +706,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                PSPropertyInfo property = info as PSPropertyInfo;
-                if (property == null)
+                if (!(info is PSPropertyInfo property))
                 {
                     continue;
                 }
@@ -743,7 +738,7 @@ namespace System.Management.Automation
             Dbg.Assert(depth >= 0, "depth should be greater or equal to zero");
             if (source.GetSerializationMethod(null) == SerializationMethod.SpecificProperties)
             {
-                PSMemberInfoInternalCollection<PSPropertyInfo> specificProperties = new PSMemberInfoInternalCollection<PSPropertyInfo>();
+                PSMemberInfoInternalCollection<PSPropertyInfo> specificProperties = new();
                 foreach (string propertyName in source.GetSpecificPropertiesToSerialize(null))
                 {
                     PSPropertyInfo property = source.Properties[propertyName];
@@ -956,7 +951,7 @@ namespace System.Management.Automation
         /// <returns>
         /// string value to use for serializing this PSObject.
         /// </returns>
-        private string GetStringFromPSObject(PSObject source)
+        private static string GetStringFromPSObject(PSObject source)
         {
             Dbg.Assert(source != null, "caller should have validated the information");
 
@@ -1063,9 +1058,9 @@ namespace System.Management.Automation
             XmlWriter writer, PSPropertyInfo source, int depth)
         {
             WriteStartElement(writer, CustomSerializationStrings.Properties);
-            WriteAttribute(writer, CustomSerializationStrings.NameAttribute, ((PSPropertyInfo)source).Name.ToString());
+            WriteAttribute(writer, CustomSerializationStrings.NameAttribute, ((PSPropertyInfo)source).Name);
             if (!_notypeinformation)
-                WriteAttribute(writer, CustomSerializationStrings.TypeAttribute, ((PSPropertyInfo)source).TypeNameOfValue.ToString());
+                WriteAttribute(writer, CustomSerializationStrings.TypeAttribute, ((PSPropertyInfo)source).TypeNameOfValue);
             writer.WriteEndElement();
         }
 
@@ -1075,7 +1070,7 @@ namespace System.Management.Automation
             if (property != null)
             {
                 WriteStartElement(writer, CustomSerializationStrings.Properties);
-                WriteAttribute(writer, CustomSerializationStrings.NameAttribute, property.ToString());
+                WriteAttribute(writer, CustomSerializationStrings.NameAttribute, property);
             }
             else
             {
@@ -1104,7 +1099,6 @@ namespace System.Management.Automation
         /// <param name="property">Name of property. Pass null for item.</param>
         /// <param name="source">Object to be written.</param>
         /// <param name="entry">Serialization information about source.</param>
-
         private void WriteOnePrimitiveKnownType(
             XmlWriter writer, string property, object source, TypeSerializationInfo entry)
         {

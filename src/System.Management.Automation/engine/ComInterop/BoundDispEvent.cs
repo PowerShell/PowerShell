@@ -1,23 +1,18 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT // ComObject
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
+using System;
 using System.Dynamic;
-
-//using Microsoft.Scripting.Utils;
+using System.Linq.Expressions;
+using System.Management.Automation.InteropServices;
 
 namespace System.Management.Automation.ComInterop
 {
     internal sealed class BoundDispEvent : DynamicObject
     {
-        private object _rcw;
-        private Guid _sourceIid;
-        private int _dispid;
+        private readonly object _rcw;
+        private readonly Guid _sourceIid;
+        private readonly int _dispid;
 
         internal BoundDispEvent(object rcw, Guid sourceIid, int dispid)
         {
@@ -78,9 +73,10 @@ namespace System.Management.Automation.ComInterop
         /// <returns>The original event with handler added.</returns>
         private object InPlaceAdd(object handler)
         {
+            Requires.NotNull(handler);
             VerifyHandler(handler);
 
-            ComEventSink comEventSink = ComEventSink.FromRuntimeCallableWrapper(_rcw, _sourceIid, true);
+            ComEventsSink comEventSink = ComEventsSink.FromRuntimeCallableWrapper(_rcw, _sourceIid, true);
             comEventSink.AddHandler(_dispid, handler);
             return this;
         }
@@ -92,18 +88,13 @@ namespace System.Management.Automation.ComInterop
         /// <returns>The original event with handler removed.</returns>
         private object InPlaceSubtract(object handler)
         {
+            Requires.NotNull(handler);
             VerifyHandler(handler);
 
-            ComEventSink comEventSink = ComEventSink.FromRuntimeCallableWrapper(_rcw, _sourceIid, false);
-            if (comEventSink != null)
-            {
-                comEventSink.RemoveHandler(_dispid, handler);
-            }
+            ComEventsSink comEventSink = ComEventsSink.FromRuntimeCallableWrapper(_rcw, _sourceIid, false);
+            comEventSink?.RemoveHandler(_dispid, handler);
 
             return this;
         }
     }
 }
-
-#endif
-

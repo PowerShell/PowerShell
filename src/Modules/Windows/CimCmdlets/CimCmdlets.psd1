@@ -2,8 +2,8 @@
 GUID="{Fb6cc51d-c096-4b38-b78d-0fed6277096a}"
 Author="PowerShell"
 CompanyName="Microsoft Corporation"
-Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
-ModuleVersion="6.1.0.0"
+Copyright="Copyright (c) Microsoft Corporation."
+ModuleVersion="7.0.0.0"
 CompatiblePSEditions = @("Core")
 PowerShellVersion="3.0"
 RootModule="Microsoft.Management.Infrastructure.CimCmdlets"
@@ -14,5 +14,5 @@ CmdletsToExport= "Get-CimAssociatedInstance", "Get-CimClass", "Get-CimInstance",
     "Remove-CimSession","Set-CimInstance",
     "Export-BinaryMiLog","Import-BinaryMiLog"
 AliasesToExport = "gcim","scim","ncim", "rcim","icim","gcai","rcie","ncms","rcms","gcms","ncso","gcls"
-HelpInfoUri="https://go.microsoft.com/fwlink/?linkid=855946"
+HelpInfoUri="https://aka.ms/powershell73-help"
 }

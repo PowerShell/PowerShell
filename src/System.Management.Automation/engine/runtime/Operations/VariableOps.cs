@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Linq;
@@ -46,6 +46,13 @@ namespace System.Management.Automation
                                      : GetAttributeCollection(attributeAsts);
                 var = new PSVariable(variablePath.UnqualifiedPath, value, ScopedItemOptions.None, attributes);
 
+                if (attributes.Count > 0)
+                {
+                    // When there are any attributes, it's possible the value was converted/transformed.
+                    // Use 'GetValueRaw' here so the debugger check won't be triggered.
+                    value = var.GetValueRaw();
+                }
+
                 // Marking untrusted values for assignments in 'ConstrainedLanguage' mode is done in
                 // SessionStateScope.SetVariable.
                 sessionState.SetVariable(variablePath, var, false, origin);
@@ -81,7 +88,7 @@ namespace System.Management.Automation
                             null,
                             Metadata.InvalidValueFailure,
                             var.Name,
-                            ((value != null) ? value.ToString() : "$null"));
+                            (value != null) ? value.ToString() : "$null");
 
                         throw e;
                     }
@@ -277,7 +284,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private class UsingResult
+        private sealed class UsingResult
         {
             public object Value { get; set; }
         }

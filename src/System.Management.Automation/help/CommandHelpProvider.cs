@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -48,7 +48,7 @@ namespace System.Management.Automation
             s_engineModuleHelpFileCache.Add("Microsoft.WSMan.Management", "Microsoft.Wsman.Management.dll-Help.xml");
         }
 
-        private static Dictionary<string, string> s_engineModuleHelpFileCache = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> s_engineModuleHelpFileCache = new Dictionary<string, string>();
 
         private readonly ExecutionContext _context;
 
@@ -84,7 +84,7 @@ namespace System.Management.Automation
 
         #region Help Provider Interface
 
-        private void GetModulePaths(CommandInfo commandInfo, out string moduleName, out string moduleDir, out string nestedModulePath)
+        private static void GetModulePaths(CommandInfo commandInfo, out string moduleName, out string moduleDir, out string nestedModulePath)
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
 
@@ -132,7 +132,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string GetHelpName(CommandInfo commandInfo)
+        private static string GetHelpName(CommandInfo commandInfo)
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
 
@@ -427,7 +427,7 @@ namespace System.Management.Automation
             int countHelpInfosFound = 0;
             string target = helpRequest.Target;
             // this is for avoiding duplicate result from help output.
-            Hashtable hashtable = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            var allHelpNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             CommandSearcher searcher = GetCommandSearcherForExactMatch(target, _context);
 
@@ -453,7 +453,7 @@ namespace System.Management.Automation
                         throw new PSInvalidOperationException(HelpErrors.CircularDependencyInHelpForwarding);
                     }
 
-                    if (hashtable.ContainsKey(helpName))
+                    if (allHelpNames.Contains(helpName))
                         continue;
 
                     if (!Match(helpInfo, helpRequest, current))
@@ -462,7 +462,7 @@ namespace System.Management.Automation
                     }
 
                     countHelpInfosFound++;
-                    hashtable.Add(helpName, null);
+                    allHelpNames.Add(helpName);
                     yield return helpInfo;
 
                     if ((countHelpInfosFound >= helpRequest.MaxResults) && (helpRequest.MaxResults > 0))
@@ -566,7 +566,7 @@ namespace System.Management.Automation
 
             if (cmdletInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cmdletInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(cmdletInfo));
             }
 
             // Get the help file name from the cmdlet metadata
@@ -696,7 +696,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < doc.ChildNodes.Count; i++)
                 {
                     XmlNode node = doc.ChildNodes[i];
-                    if (node.NodeType == XmlNodeType.Element && string.Compare(node.LocalName, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (node.NodeType == XmlNodeType.Element && string.Equals(node.LocalName, "helpItems", StringComparison.OrdinalIgnoreCase))
                     {
                         helpItemsNode = node;
                         break;
@@ -719,7 +719,7 @@ namespace System.Management.Automation
                     for (int i = 0; i < helpItemsNode.ChildNodes.Count; i++)
                     {
                         XmlNode node = helpItemsNode.ChildNodes[i];
-                        if (node.NodeType == XmlNodeType.Element && string.Compare(node.LocalName, "command", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (node.NodeType == XmlNodeType.Element && string.Equals(node.LocalName, "command", StringComparison.OrdinalIgnoreCase))
                         {
                             MamlCommandHelpInfo helpInfo = null;
 
@@ -735,7 +735,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        if (node.NodeType == XmlNodeType.Element && string.Compare(node.Name, "UserDefinedData", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (node.NodeType == XmlNodeType.Element && string.Equals(node.Name, "UserDefinedData", StringComparison.OrdinalIgnoreCase))
                         {
                             UserDefinedHelpData userDefinedHelpData = UserDefinedHelpData.Load(node);
 
@@ -765,9 +765,7 @@ namespace System.Management.Automation
             if (helpInfo == null)
                 return;
 
-            MamlCommandHelpInfo commandHelpInfo = helpInfo as MamlCommandHelpInfo;
-
-            if (commandHelpInfo == null)
+            if (!(helpInfo is MamlCommandHelpInfo commandHelpInfo))
                 return;
 
             commandHelpInfo.AddUserDefinedData(userDefinedHelpData);
@@ -881,7 +879,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to retrieve helpinfo by removing the prefix from the noun portion of a command name.
         /// Import-Module and Import-PSSession supports changing the name of a command
-        /// by suppling a custom prefix. In those cases, the help content is stored by using the
+        /// by supplying a custom prefix. In those cases, the help content is stored by using the
         /// original command name (without prefix) as the key.
         ///
         /// This method retrieves the help content by suppressing the prefix and then making a copy
@@ -952,15 +950,21 @@ namespace System.Management.Automation
 
             // Add snapin qualified type name for this command at the top..
             // this will enable customizations of the help object.
-            helpInfo.FullHelp.TypeNames.Insert(0, string.Format(CultureInfo.InvariantCulture,
-                "MamlCommandHelpInfo#{0}#{1}", mshSnapInId, cmdletName));
+            helpInfo.FullHelp.TypeNames.Insert(
+                index: 0,
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"MamlCommandHelpInfo#{mshSnapInId}#{cmdletName}"));
 
             if (!string.IsNullOrEmpty(mshSnapInId))
             {
                 key = mshSnapInId + "\\" + key;
                 // Add snapin name to the typenames of this object
-                helpInfo.FullHelp.TypeNames.Insert(1, string.Format(CultureInfo.InvariantCulture,
-                    "MamlCommandHelpInfo#{0}", mshSnapInId));
+                helpInfo.FullHelp.TypeNames.Insert(
+                    index: 1,
+                    string.Create(
+                        CultureInfo.InvariantCulture,
+                        $"MamlCommandHelpInfo#{mshSnapInId}"));
             }
 
             AddCache(key, helpInfo);
@@ -1024,7 +1028,7 @@ namespace System.Management.Automation
             {
                 if (decoratedSearch)
                 {
-                    if (target.IndexOf(StringLiterals.CommandVerbNounSeparator) >= 0)
+                    if (target.Contains(StringLiterals.CommandVerbNounSeparator))
                     {
                         patternList.Add(target + "*");
                     }
@@ -1053,8 +1057,8 @@ namespace System.Management.Automation
 
             int countOfHelpInfoObjectsFound = 0;
             // this is for avoiding duplicate result from help output.
-            Hashtable hashtable = new Hashtable(StringComparer.OrdinalIgnoreCase);
-            Hashtable hiddenCommands = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var hiddenCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (string pattern in patternList)
             {
                 CommandSearcher searcher = GetCommandSearcherForSearch(pattern, _context);
@@ -1077,15 +1081,15 @@ namespace System.Management.Automation
                         {
                             // this command is not visible to the user (from CommandOrigin) so
                             // dont show help topic for it.
-                            if (!hiddenCommands.ContainsKey(helpName))
+                            if (!hiddenCommands.Contains(helpName))
                             {
-                                hiddenCommands.Add(helpName, null);
+                                hiddenCommands.Add(helpName);
                             }
 
                             continue;
                         }
 
-                        if (hashtable.ContainsKey(helpName))
+                        if (set.Contains(helpName))
                             continue;
 
                         // filter out the helpInfo object depending on user request
@@ -1100,7 +1104,7 @@ namespace System.Management.Automation
                             continue;
                         }
 
-                        hashtable.Add(helpName, null);
+                        set.Add(helpName);
                         countOfHelpInfoObjectsFound++;
                         yield return helpInfo;
 
@@ -1130,10 +1134,10 @@ namespace System.Management.Automation
 
                         if (helpInfo != null && !string.IsNullOrEmpty(helpName))
                         {
-                            if (hashtable.ContainsKey(helpName))
+                            if (set.Contains(helpName))
                                 continue;
 
-                            if (hiddenCommands.ContainsKey(helpName))
+                            if (hiddenCommands.Contains(helpName))
                                 continue;
 
                             // filter out the helpInfo object depending on user request
@@ -1148,7 +1152,7 @@ namespace System.Management.Automation
                                 continue;
                             }
 
-                            hashtable.Add(helpName, null);
+                            set.Add(helpName);
                             countOfHelpInfoObjectsFound++;
                             yield return helpInfo;
 
@@ -1173,12 +1177,12 @@ namespace System.Management.Automation
             if (helpRequest == null)
                 return true;
 
-            if (0 == (helpRequest.HelpCategory & commandInfo.HelpCategory))
+            if ((helpRequest.HelpCategory & commandInfo.HelpCategory) == 0)
             {
                 return false;
             }
 
-            if (!(helpInfo is BaseCommandHelpInfo))
+            if (helpInfo is not BaseCommandHelpInfo)
                 return false;
 
             if (!Match(helpInfo.Component, helpRequest.Component))
@@ -1244,7 +1248,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Process helpInfo forwarded over from other other providers, specificly AliasHelpProvider.
+        /// Process helpInfo forwarded over from other providers, specificly AliasHelpProvider.
         /// This can return more than 1 helpinfo object.
         /// </summary>
         /// <param name="helpInfo">HelpInfo that is forwarded over.</param>
@@ -1252,8 +1256,8 @@ namespace System.Management.Automation
         /// <returns>The result helpInfo objects after processing.</returns>
         internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
-            HelpCategory categoriesHandled = (HelpCategory.Alias
-                | HelpCategory.ExternalScript | HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand | HelpCategory.Workflow);
+            const HelpCategory categoriesHandled = (HelpCategory.Alias
+                | HelpCategory.ExternalScript | HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand);
 
             if ((helpInfo.HelpCategory & categoriesHandled) != 0)
             {
@@ -1277,7 +1281,7 @@ namespace System.Management.Automation
                     }
                     catch (CommandNotFoundException)
                     {
-                        // ignore errors for aliases pointing to non-existant commands
+                        // ignore errors for aliases pointing to non-existent commands
                     }
                 }
 
@@ -1361,7 +1365,7 @@ namespace System.Management.Automation
     /// Legally, user-defined Help Data should be within the same file as the corresponding
     /// commandHelp and it should appear after the commandHelp.
     /// </summary>
-    internal class UserDefinedHelpData
+    internal sealed class UserDefinedHelpData
     {
         private UserDefinedHelpData()
         {

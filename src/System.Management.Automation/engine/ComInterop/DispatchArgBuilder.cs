@@ -1,12 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT // ComObject
-#if !CLR2
+using System;
 using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
 using System.Runtime.InteropServices;
 
 namespace System.Management.Automation.ComInterop
@@ -30,9 +26,9 @@ namespace System.Management.Automation.ComInterop
             {
                 parameter = Expression.Property(
                     Helpers.Convert(parameter, typeof(DispatchWrapper)),
-                    typeof(DispatchWrapper).GetProperty("WrappedObject")
+                    typeof(DispatchWrapper).GetProperty(nameof(DispatchWrapper.WrappedObject))
                 );
-            };
+            }
 
             return Helpers.Convert(parameter, typeof(object));
         }
@@ -46,7 +42,7 @@ namespace System.Management.Automation.ComInterop
                 Expression.Equal(parameter, Expression.Constant(null)),
                 Expression.Constant(IntPtr.Zero),
                 Expression.Call(
-                    typeof(Marshal).GetMethod("GetIDispatchForObject"),
+                    typeof(Marshal).GetMethod(nameof(System.Runtime.InteropServices.Marshal.GetIDispatchForObject)),
                     parameter
                 )
             );
@@ -59,7 +55,7 @@ namespace System.Management.Automation.ComInterop
                 Expression.Equal(value, Expression.Constant(IntPtr.Zero)),
                 Expression.Constant(null),
                 Expression.Call(
-                    typeof(Marshal).GetMethod("GetObjectForIUnknown"),
+                    typeof(Marshal).GetMethod(nameof(System.Runtime.InteropServices.Marshal.GetObjectForIUnknown)),
                     value
                 )
             );
@@ -76,6 +72,3 @@ namespace System.Management.Automation.ComInterop
         }
     }
 }
-
-#endif
-

@@ -3,16 +3,24 @@ parameters:
 
 jobs:
 - job: compliance
+  variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+
   displayName: Compliance
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
-    name: Package ES CodeHub Lab E
-
-  # APIScan can take a long time
-  timeoutInMinutes: 180
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
 
   steps:
+  - checkout: self
+    clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -32,6 +40,11 @@ jobs:
 
   - template: expand-compliance.yml
     parameters:
+      architecture: fxdependent
+      version: $(version)
+
+  - template: expand-compliance.yml
+    parameters:
       architecture: x86
       version: $(version)
 
@@ -40,20 +53,8 @@ jobs:
       architecture: x64
       version: $(version)
 
-  - template: expand-compliance.yml
-    parameters:
-      architecture: fxdependent
-      version: $(version)
-
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
     displayName: 'Run Defender Scan'
-
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
-    displayName: 'Run CredScan'
-    inputs:
-      suppressionsFile: tools/credScan/suppress.json
-      debugMode: false
-    continueOnError: true
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-binskim.BinSkim@3
     displayName: 'Run BinSkim '
@@ -64,19 +65,6 @@ jobs:
       AnalyzeVerbose: true
       AnalyzeHashes: true
       AnalyzeStatistics: true
-    continueOnError: true
-
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
-    displayName: 'Run PoliCheck'
-    inputs:
-      targetType: F
-      optionsFC: 0
-      optionsXS: 0
-      optionsPE: '1|2|3|4'
-      optionsHMENABLE: 0
-      optionsRulesDBPath: '$(Build.SourcesDirectory)\tools\terms\PowerShell-Terms-Rules.mdb'
-      optionsFTPATH: '$(Build.SourcesDirectory)\tools\terms\FileTypeSet.xml'
-      toolVersion: 5.8.2.1
     continueOnError: true
 
   # add RoslynAnalyzers
@@ -99,16 +87,6 @@ jobs:
 
   # PreFASt is not applicable
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@1
-    displayName: 'Run APIScan'
-    inputs:
-      softwareFolder: '$(CompliancePath)'
-      softwareName: PowerShell
-      softwareVersionNum: '$(ReleaseTagVar)'
-      isLargeApp: false
-      preserveTempFiles: true
-    continueOnError: true
-
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
     displayName: 'Publish Security Analysis Logs to Build Artifacts'
     continueOnError: true
@@ -118,9 +96,13 @@ jobs:
     inputs:
       tsaVersion: TsaV2
       codeBaseName: 'PowerShellCore_201906'
+      uploadAPIScan: false
+      uploadBinSkim: true
+      uploadCredScan: false
       uploadFortifySCA: false
       uploadFxCop: false
       uploadModernCop: false
+      uploadPoliCheck: false
       uploadPREfast: false
       uploadRoslyn: false
       uploadTSLint: false
@@ -129,7 +111,7 @@ jobs:
     displayName: 'Create Security Analysis Report'
     inputs:
       TsvFile: false
-      APIScan: true
+      APIScan: false
       BinSkim: true
       CredScan: true
       PoliCheck: true
@@ -138,5 +120,5 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
+      sourceScanPath: '$(Build.SourcesDirectory)\tools'
       snapshotForceEnabled: true

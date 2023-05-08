@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Tab completion bug fix" -Tags "CI" {
 
@@ -28,10 +28,19 @@ Describe "Tab completion bug fix" -Tags "CI" {
     It "Issue#1345 - 'Import-Module -n<tab>' should work" {
         $cmd = "Import-Module -n"
         $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-        $result.CompletionMatches | Should -HaveCount 3
+        $result.CompletionMatches | Should -HaveCount 2
         $result.CompletionMatches[0].CompletionText | Should -BeExactly "-Name"
         $result.CompletionMatches[1].CompletionText | Should -BeExactly "-NoClobber"
-        $result.CompletionMatches[2].CompletionText | Should -BeExactly "-NoOverwrite"
+    }
+
+    It "Issue#11227 - [CompletionCompleters]::CompleteVariable and [CompletionCompleters]::CompleteType should work" {
+        $result = [System.Management.Automation.CompletionCompleters]::CompleteType("CompletionComple")
+        $result.Count | Should -BeExactly 1
+        $result[0].CompletionText | Should -BeExactly 'System.Management.Automation.CompletionCompleters'
+
+        $result = [System.Management.Automation.CompletionCompleters]::CompleteVariable("errorAction")
+        $result.Count | Should -BeExactly 1
+        $result[0].CompletionText | Should -BeExactly '$ErrorActionPreference'
     }
 
     Context "Issue#3416 - 'Select-Object'" {
@@ -75,8 +84,7 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result.CurrentMatchIndex | Should -Be -1
         $result.ReplacementIndex | Should -Be 40
         $result.ReplacementLength | Should -Be 0
-        $result.CompletionMatches[0].CompletionText | Should -BeExactly 'Expression'
-        $result.CompletionMatches[1].CompletionText | Should -BeExactly 'Ascending'
-        $result.CompletionMatches[2].CompletionText | Should -BeExactly 'Descending'
+        $result.CompletionMatches[0].CompletionText | Should -BeExactly 'Ascending'
+        $result.CompletionMatches[1].CompletionText | Should -BeExactly 'Descending'
     }
 }

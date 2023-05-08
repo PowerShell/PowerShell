@@ -1,9 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Reflection;
 
 namespace System.Management.Automation
 {
@@ -53,12 +52,12 @@ namespace System.Management.Automation
         internal sealed class TraceFrame : IDisposable
         {
             // Following are help context information
-            private string _helpFile = string.Empty;
+            private readonly string _helpFile = string.Empty;
 
             // ErrorRecords accumulated during the help content loading.
-            private Collection<ErrorRecord> _errors = new Collection<ErrorRecord>();
+            private readonly Collection<ErrorRecord> _errors = new Collection<ErrorRecord>();
 
-            private HelpErrorTracer _helpTracer;
+            private readonly HelpErrorTracer _helpTracer;
             /// <summary>
             /// Constructor. Here help context information will be collected.
             /// </summary>
@@ -134,7 +133,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This tracks all live TraceFrame objects, which forms a stack.
         /// </summary>
-        private ArrayList _traceFrames = new ArrayList();
+        private readonly List<TraceFrame> _traceFrames = new List<TraceFrame>();
 
         /// <summary>
         /// This is the API to use for starting a help trace scope.
@@ -157,10 +156,10 @@ namespace System.Management.Automation
         /// <param name="errorRecord"></param>
         internal void TraceError(ErrorRecord errorRecord)
         {
-            if (_traceFrames.Count <= 0)
+            if (_traceFrames.Count == 0)
                 return;
 
-            TraceFrame traceFrame = (TraceFrame)_traceFrames[_traceFrames.Count - 1];
+            TraceFrame traceFrame = _traceFrames[_traceFrames.Count - 1];
 
             traceFrame.TraceError(errorRecord);
         }
@@ -172,20 +171,20 @@ namespace System.Management.Automation
         /// <param name="errorRecords"></param>
         internal void TraceErrors(Collection<ErrorRecord> errorRecords)
         {
-            if (_traceFrames.Count <= 0)
+            if (_traceFrames.Count == 0)
                 return;
 
-            TraceFrame traceFrame = (TraceFrame)_traceFrames[_traceFrames.Count - 1];
+            TraceFrame traceFrame = _traceFrames[_traceFrames.Count - 1];
 
             traceFrame.TraceErrors(errorRecords);
         }
 
         internal void PopFrame(TraceFrame traceFrame)
         {
-            if (_traceFrames.Count <= 0)
+            if (_traceFrames.Count == 0)
                 return;
 
-            TraceFrame lastFrame = (TraceFrame)_traceFrames[_traceFrames.Count - 1];
+            TraceFrame lastFrame = _traceFrames[_traceFrames.Count - 1];
 
             if (lastFrame == traceFrame)
             {

@@ -1,16 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-#if !SILVERLIGHT
-#if !CLR2
-using System.Linq.Expressions;
-#else
-using Microsoft.Scripting.Ast;
-#endif
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
-//using Microsoft.Scripting.Runtime;
-//using AstUtils = Microsoft.Scripting.Ast.Utils;
+using System.Linq.Expressions;
 using AstUtils = System.Management.Automation.Interpreter.Utils;
 
 namespace System.Management.Automation.ComInterop
@@ -55,9 +49,9 @@ namespace System.Management.Automation.ComInterop
                         Expression.Property(
                             Expression.Property(
                                 AstUtils.Convert(Expression, typeof(ComTypeEnumDesc)),
-                                typeof(ComTypeDesc).GetProperty("TypeLib")),
-                            typeof(ComTypeLibDesc).GetProperty("Guid")),
-                        AstUtils.Constant(_desc.TypeLib.Guid)
+                                typeof(ComTypeDesc).GetProperty(nameof(ComTypeDesc.TypeLib))),
+                            typeof(ComTypeLibDesc).GetProperty(nameof(ComTypeLibDesc.Guid))),
+                        Expression.Constant(_desc.TypeLib.Guid)
                     )
                 )
             ).Merge(
@@ -65,15 +59,12 @@ namespace System.Management.Automation.ComInterop
                     Expression.Equal(
                         Expression.Property(
                             AstUtils.Convert(Expression, typeof(ComTypeEnumDesc)),
-                            typeof(ComTypeEnumDesc).GetProperty("TypeName")
+                            typeof(ComTypeEnumDesc).GetProperty(nameof(ComTypeEnumDesc.TypeName))
                         ),
-                        AstUtils.Constant(_desc.TypeName)
+                        Expression.Constant(_desc.TypeName)
                     )
                 )
             );
         }
     }
 }
-
-#endif
-
