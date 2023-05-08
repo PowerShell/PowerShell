@@ -766,6 +766,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error | Should -BeNullOrEmpty
     }
 
+    It "Validate Invoke-WebRequest Content-Disposition FileName and FileNameStar." {
+
+        $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
+        $ContentDisposition.FileName = "Kündigung_Mustermann_Max.TTA_2023_01_30.pdf"
+        $ContentDisposition.FileNameStar = "Kündigung_Mustermann_Max.TTA_2023_01_30.pdf"
+
+        $uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query @{ "Content-Disposition" = $ContentDisposition }
+        $content = Invoke-WebRequest -Uri $uri
+
+        $content.Headers.ContentDisposition.FileName | Should -Be $ContentDisposition.FileName
+        $content.Headers.ContentDisposition.FileNameStar | Should -Be $ContentDisposition.FileNameStar
+    }
+
     It "Validate Invoke-WebRequest StandardMethod and CustomMethod parameter sets" {
         $uri = Get-WebListenerUrl -Test 'Get'
         #Validate that parameter sets are functioning correctly
