@@ -106,8 +106,8 @@ namespace Microsoft.PowerShell.Commands
                     RestReturnType returnType = CheckReturnType(response);
 
                     bool convertSuccess = false;
-                    object obj = null;
-                    Exception ex = null;
+                    object? obj = null;
+                    Exception? ex = null;
 
                     if (returnType == RestReturnType.Json)
                     {
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(response);
 
             RestReturnType rt = RestReturnType.Detect;
-            string contentType = ContentHelper.GetContentType(response);
+            string? contentType = ContentHelper.GetContentType(response);
 
             if (ContentHelper.IsJson(contentType))
             {
