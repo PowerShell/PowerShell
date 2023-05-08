@@ -1346,7 +1346,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.RBracket:
                     case TokenKind.Comma:
                         var elementType = new TypeName(typeName.Extent, typeName.Text);
-                        return CompleteArrayTypeName(elementType, elementType, token);
+                        return CompleteArrayTypeName(elementType, elementType, token, unBracketedGenericArg);
 
                     case TokenKind.LBracket:
                     case TokenKind.Identifier:
@@ -1496,7 +1496,7 @@ namespace System.Management.Automation.Language
             if (token.Kind == TokenKind.LBracket)
             {
                 SkipToken();
-                return CompleteArrayTypeName(result, openGenericType, NextToken());
+                return CompleteArrayTypeName(result, openGenericType, NextToken(), unbracketedGenericArg);
             }
 
             if (token.Kind == TokenKind.Comma && !unbracketedGenericArg)
@@ -1519,7 +1519,7 @@ namespace System.Management.Automation.Language
             return result;
         }
 
-        private ITypeName CompleteArrayTypeName(ITypeName elementType, TypeName typeForAssemblyQualification, Token firstTokenAfterLBracket)
+        private ITypeName CompleteArrayTypeName(ITypeName elementType, TypeName typeForAssemblyQualification, Token firstTokenAfterLBracket, bool unBracketedGenericArg)
         {
             while (true)
             {
@@ -1592,7 +1592,9 @@ namespace System.Management.Automation.Language
                 }
 
                 token = PeekToken();
-                if (token.Kind == TokenKind.Comma)
+
+                // An array declared inside an unbracketed generic type argument cannot be assembly qualified
+                if (!unBracketedGenericArg && token.Kind == TokenKind.Comma)
                 {
                     SkipToken();
                     var assemblyName = _tokenizer.GetAssemblyNameSpec();
