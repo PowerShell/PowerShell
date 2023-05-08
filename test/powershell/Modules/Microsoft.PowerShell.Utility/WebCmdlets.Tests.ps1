@@ -766,19 +766,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Error | Should -BeNullOrEmpty
     }
 
-    It "Validate Invoke-WebRequest Content-Disposition FileName and FileNameStar." {
-
-        $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
-        $ContentDisposition.FileName = "Kündigung_Mustermann_Max.TTA_2023_01_30.pdf"
-        $ContentDisposition.FileNameStar = "Kündigung_Mustermann_Max.TTA_2023_01_30.pdf"
-
-        $uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query @{ "Content-Disposition" = $ContentDisposition }
-        $content = Invoke-WebRequest -Uri $uri
-
-        $content.Headers.ContentDisposition.FileName | Should -Be $ContentDisposition.FileName
-        $content.Headers.ContentDisposition.FileNameStar | Should -Be $ContentDisposition.FileNameStar
-    }
-
     It "Validate Invoke-WebRequest StandardMethod and CustomMethod parameter sets" {
         $uri = Get-WebListenerUrl -Test 'Get'
         #Validate that parameter sets are functioning correctly
@@ -1667,6 +1654,26 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Files[0].FileName | Should -BeExactly $file1Name
             $result.Files[0].ContentType | Should -BeExactly 'application/octet-stream'
             $result.Files[0].Content | Should -Match $file1Contents
+        }
+
+        It "Verifies Invoke-WebRequest -Form sets Content-Disposition FileName and FileNameStar." {
+            $fileName = "Kündigung_Mustermann_Max.TTA_2023_01_30.pdf"
+            $filePath = Join-Path $testdrive $fileName
+
+            $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
+            $ContentDisposition.FileName = $fileName
+            $ContentDisposition.FileNameStar = $fileName
+
+            $form = @{TestFile = [System.IO.FileInfo]$filePath}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
+            $result.Files.Count | Should -Be 1
+
+            $result.Files[0].ContentDisposition.FileName | Should $ContentDisposition.FileName
+            $result.Files[0].ContentDisposition.FileNameStar | Should $ContentDisposition.FileNameStar
         }
 
         It "Verifies Invoke-WebRequest -Form supports a collection of file values" {
@@ -3392,6 +3399,25 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Files[0].FileName | Should -Be $file1Name
             $result.Files[0].ContentType | Should -Be 'application/octet-stream'
             $result.Files[0].Content | Should -Match $file1Contents
+        }
+
+        It "Verifies Invoke-RestMethod -Form sets Content-Disposition FileName and FileNameStar." {
+            $fileName = "Kündigung_Mustermann_Max.TTA_2023_01_30.pdf"
+            $filePath = Join-Path $testdrive $fileName
+
+            $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
+            $ContentDisposition.FileName = $fileName
+            $ContentDisposition.FileNameStar = $fileName
+
+            $form = @{TestFile = [System.IO.FileInfo]$filePath}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Form $form -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
+            $result.Files.Count | Should -Be 1
+
+            $result.Files[0].ContentDisposition.FileName | Should $ContentDisposition.FileName
+            $result.Files[0].ContentDisposition.FileNameStar | Should $ContentDisposition.FileNameStar
         }
 
         It "Verifies Invoke-RestMethod -Form supports a collection of file values" {
