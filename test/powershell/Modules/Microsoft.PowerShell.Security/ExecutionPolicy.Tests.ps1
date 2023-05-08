@@ -67,9 +67,6 @@ try {
                     Set-ExecutionPolicy -ExecutionPolicy Restricted -Force -ErrorAction Stop
                     (Get-Help -Name Get-Disk -ErrorAction Stop).Name | Should -Be 'Get-Disk'
                 }
-                catch {
-                    $_.ToString | Should -Be $null
-                }
                 finally
                 {
                     Set-ExecutionPolicy $currentExecutionPolicy -Force
