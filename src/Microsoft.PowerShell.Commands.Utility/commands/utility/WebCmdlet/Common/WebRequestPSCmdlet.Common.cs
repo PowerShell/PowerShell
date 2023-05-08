@@ -568,8 +568,8 @@ namespace Microsoft.PowerShell.Commands
                             string contentType = ContentHelper.GetContentType(response);
                             long? contentLength = response.Content.Headers.ContentLength;
                             string respVerboseMsg = contentLength is null
-                                ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, contentType)
-                                : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, contentLength, contentType);
+                                ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, response.Version, contentType)
+                                : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, response.Version, contentLength, contentType);
                             
                             WriteVerbose(respVerboseMsg);
 
