@@ -106,7 +106,7 @@ namespace System.Management.Automation.Language
 
         internal void AddType(Parser parser, TypeDefinitionAst typeDefinitionAst)
         {
-            ReportConflictingTypeAliases(_ast, parser, typeDefinitionAst.Name, typeIsExternal:false);
+            ReportConflictingTypeAliases(_ast, parser, typeDefinitionAst.Name, typeIsExternal: false);
             TypeLookupResult result;
             if (_typeTable.TryGetValue(typeDefinitionAst.Name, out result))
             {
