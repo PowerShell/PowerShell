@@ -2145,6 +2145,16 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $jsonError.error | Should -BeExactly 'Error: HTTP - 400 occurred.'
         }
 
+        It "Invoke-WebRequest can retry - specified number of times following Retry-After header - error 429" {
+
+            $uri = Get-WebListenerUrl -Test 'RetryAfter' -Query @{ sessionid = (New-Guid).Guid; failureCode = 409; failureCount = 2; retryAfter = 2 }
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-WebRequest -Uri $uri -MaximumRetryCount 2 -RetryIntervalSec 1 -Verbose 4>>$verboseFile
+
+            $result.StatusCode | Should -Be "200"
+            $verboseFile | Should -FileContentMatch "Retrying after interval of 2 seconds. Status code for previous attempt: Conflict"
+        }
+
         It "Invoke-WebRequest can retry with POST" {
 
             $uri = Get-WebListenerUrl -Test 'Retry'
@@ -4034,6 +4044,16 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $result.output.failureResponsesSent | Should -Be 2
             $result.output.sessionId | Should -BeExactly $sessionId
+        }
+
+        It "Invoke-RestMethod can retry - specified number of times following Retry-After header - error 429" {
+
+            $uri = Get-WebListenerUrl -Test 'RetryAfter' -Query @{ sessionid = (New-Guid).Guid; failureCode = 409; failureCount = 2; retryAfter = 2 }
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-RestMethod -Uri $uri -MaximumRetryCount 2 -RetryIntervalSec 1 -Verbose 4>>$verboseFile
+
+            $result.StatusCode | Should -Be "200"
+            $verboseFile | Should -FileContentMatch "Retrying after interval of 2 seconds. Status code for previous attempt: Conflict"
         }
 
         It "Invoke-RestMethod can retry with POST" {
