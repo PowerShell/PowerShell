@@ -2168,15 +2168,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 headers        = '{"Retry-After":"1"}'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
-            # Measure processing time
-            $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
-            $commandStr = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount 2 -RetryIntervalSec 3 -SkipHttpErrorCheck"
-            $result = ExecuteWebCommand -command $commandStr
-            $stopWatch.Stop()
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-WebRequest -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
 
-            # If it is working correctly, the process takes about 2.x seconds to complete (Retry-After:1 * MaximumRetryCount:2)
-            # otherwise it takes >6 seconds (RetryIntervalSec:3 * MaximumRetryCount:2)
-            $stopWatch.Elapsed.TotalSeconds | Should -BeLessThan 2.9
+            $verboseFile | Should -FileContentMatch 'Retrying after interval of 1 seconds. Status code for previous attempt: TooManyRequests'
         }
 
         It "Invoke-WebRequest ignores the Retry-After header value NOT in 429 status" {
@@ -2186,18 +2181,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 reposnsephrase = 'Conflict'
                 contenttype    = 'application/json'
                 body           = '{"message":"oops"}'
-                headers        = '{"Retry-After":"4"}'
+                headers        = '{"Retry-After":"1"}'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
-            # Measure processing time
-            $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
-            $commandStr = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount 2 -RetryIntervalSec 1 -SkipHttpErrorCheck"
-            $result = ExecuteWebCommand -command $commandStr
-            $stopWatch.Stop()
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-WebRequest -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
 
-            # If it is working correctly, the process takes about 2.x seconds to complete (RetryIntervalSec:1 * MaximumRetryCount:2)
-            # otherwise it takes >8 seconds (Retry-After:4 * MaximumRetryCount:2)
-            $stopWatch.Elapsed.TotalSeconds | Should -BeLessThan 2.9
+            $verboseFile | Should -FileContentMatch 'Retrying after interval of 3 seconds. Status code for previous attempt: Conflict'
         }
     }
 
@@ -4100,15 +4090,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
                 headers        = '{"Retry-After":"1"}'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
-            # Measure processing time
-            $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
-            $commandStr = "Invoke-RestMethod -Uri '$uri' -MaximumRetryCount 2 -RetryIntervalSec 3 -SkipHttpErrorCheck"
-            $result = ExecuteWebCommand -command $commandStr
-            $stopWatch.Stop()
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-RestMethod -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
 
-            # If it is working correctly, the process takes about 2.x seconds to complete (Retry-After:1 * MaximumRetryCount:2)
-            # otherwise it takes >6 seconds (RetryIntervalSec:3 * MaximumRetryCount:2)
-            $stopWatch.Elapsed.TotalSeconds | Should -BeLessThan 2.9
+            $verboseFile | Should -FileContentMatch 'Retrying after interval of 1 seconds. Status code for previous attempt: TooManyRequests'
         }
 
         It "Invoke-RestMethod ignores the Retry-After header value NOT in 429 status" {
@@ -4118,18 +4103,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
                 reposnsephrase = 'Conflict'
                 contenttype    = 'application/json'
                 body           = '{"message":"oops"}'
-                headers        = '{"Retry-After":"4"}'
+                headers        = '{"Retry-After":"1"}'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
-            # Measure processing time
-            $stopWatch = [System.Diagnostics.Stopwatch]::StartNew()
-            $commandStr = "Invoke-RestMethod -Uri '$uri' -MaximumRetryCount 2 -RetryIntervalSec 1 -SkipHttpErrorCheck"
-            $result = ExecuteWebCommand -command $commandStr
-            $stopWatch.Stop()
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-RestMethod -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
 
-            # If it is working correctly, the process takes about 2.x seconds to complete (RetryIntervalSec:1 * MaximumRetryCount:2)
-            # otherwise it takes >8 seconds (Retry-After:4 * MaximumRetryCount:2)
-            $stopWatch.Elapsed.TotalSeconds | Should -BeLessThan 2.9
+            $verboseFile | Should -FileContentMatch 'Retrying after interval of 3 seconds. Status code for previous attempt: Conflict'
         }
     }
 }
