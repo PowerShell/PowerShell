@@ -21,13 +21,13 @@ namespace mvc.Controllers
         // Dictionary for sessionId as key and failureCode, failureCount and failureResponsesSent as the value.
         private static Dictionary<string, Tuple<int, int, int>> retryInfo;
 
-        public JsonResult Retry(string sessionId, int failureCode, int failureCount, string retryAfter = null)
+        public JsonResult Retry(string sessionId, int failureCode, int failureCount, int retryAfter = 0)
         {
             retryInfo ??= new Dictionary<string, Tuple<int, int, int>>();
 
-            if (failureCode == 409 && retryAfter != null)
+            if (failureCode == 409 && retryAfter > 0)
             {
-                Response.Headers.Append("Retry-After", retryAfter);
+                Response.Headers.Append("Retry-After", $"{retryAfter}");
             }
 
             if (retryInfo.TryGetValue(sessionId, out Tuple<int, int, int> retry))
