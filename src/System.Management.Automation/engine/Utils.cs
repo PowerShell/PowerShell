@@ -1514,10 +1514,13 @@ namespace System.Management.Automation.Internal
         internal static bool UseDebugAmsiImplementation;
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
-        internal static bool ThrowHelpCultureNotSupported;
         internal static bool ForcePromptForChoiceDefaultOption;
         internal static bool NoPromptForPassword;
         internal static bool ForceFormatListFixedLabelWidth;
+
+        // Update-Help tests
+        internal static bool ThrowHelpCultureNotSupported;
+        internal static CultureInfo CurrentUICulture;
 
         // Stop/Restart/Rename Computer tests
         internal static bool TestStopComputer;
