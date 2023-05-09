@@ -4418,7 +4418,7 @@ namespace System.Management.Automation
             bool defaultRelativePath = false;
             bool inputUsedHomeChar = false;
 
-            if (wordToComplete == string.Empty)
+            if (string.IsNullOrEmpty(wordToComplete))
             {
                 filter = "*";
                 basePath = ".";
@@ -4840,7 +4840,7 @@ namespace System.Management.Automation
             // The obvious solution would be to use the "PSChildName" property
             // but some providers don't have it (like the Variable provider)
             // So we use a substring of "PSPath" instead.
-            string childName = psObject.PSPath;
+            string childName = psObject.PSPath ?? string.Empty;
             int ProviderSeparatorIndex = childName.IndexOf("::", StringComparison.Ordinal);
             childName = childName.Substring(ProviderSeparatorIndex + 2);
             int indexOfName = childName.LastIndexOf(separator);
