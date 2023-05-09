@@ -4435,6 +4435,7 @@ namespace System.Management.Automation
                 int lastSeparatorIndex = wordToComplete.LastIndexOfAny(Utils.Separators.DirectoryOrDrive);
                 if (lastSeparatorIndex == -1)
                 {
+                    // provider path is always absolute
                     if (providerSeparatorIndex == -1)
                     {
                         filter = $"{wordToComplete}*";
