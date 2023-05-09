@@ -5260,7 +5260,7 @@ namespace System.Management.Automation
                     {
                         foreach (var parameterName in s_pipelineVariableParameters)
                         {
-                            if (bindResult.BoundParameters.TryGetValue(parameterName, out ParameterBindingResult outVarBind))
+                            if (bindResult.BoundParameters.TryGetValue(parameterName, out ParameterBindingResult pipeVarBind))
                             {
                                 var varName = outVarBind.ConstantValue as string;
                                 if (varName is not null)
