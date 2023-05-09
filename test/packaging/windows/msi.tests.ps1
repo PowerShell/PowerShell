@@ -202,8 +202,20 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         It 'MSI should add ProductCode in registry' -Skip:(!(Test-Elevated)) {
-            $regKeyPath | Should -Exist
-            $productCode = Get-ItemPropertyValue -Path $regKeyPath -Name 'ProductCode'
+
+            $productCode = if ($msiUpgradeCode -eq '39243d76-adaf-42b1-94fb-16ecf83237c8' -or
+                $msi -eq '31ab5147-9a97-4452-8443-d9709f0516e1') {
+                # x64
+                $regKeyPath | Should -Exist
+                $productCode = Get-ItemPropertyValue -Path $regKeyPath -Name 'ProductCode'
+            } elseif ($msiUpgradeCode -eq '39243d76-adaf-42b1-94fb-16ecf83237c8' -or
+                $msi -eq '31ab5147-9a97-4452-8443-d9709f0516e1') {
+                # x86 - need to open the 32bit reghive
+                $wow32RegKey = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry32)
+                $subKey = $wow32RegKey.OpenSubKey("Software\Microsoft\PowerShellCore\InstalledVersions\$msiUpgradeCode")
+                $subKey.GetValue("ProductCode")
+            }
+
             $productCode | Should -Not -BeNullOrEmpty
             $productCodeGuid = [Guid]$productCode
             $productCodeGuid | Should -BeOfType "Guid"
