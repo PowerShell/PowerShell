@@ -314,7 +314,7 @@ namespace System.Management.Automation.Language
         public bool HasReservedProperties { get; set; }
 
         /// <summary>
-        /// A list of the properties allowed for this constuctor.
+        /// A list of the properties allowed for this constructor.
         /// </summary>
         public Dictionary<string, DynamicKeywordProperty> Properties
         {
@@ -327,7 +327,7 @@ namespace System.Management.Automation.Language
         private Dictionary<string, DynamicKeywordProperty> _properties;
 
         /// <summary>
-        /// A list of the parameters allowed for this constuctor.
+        /// A list of the parameters allowed for this constructor.
         /// </summary>
         public Dictionary<string, DynamicKeywordParameter> Parameters
         {
@@ -1976,9 +1976,6 @@ namespace System.Management.Automation.Language
                 RequiredPSEditions = requiredEditions != null
                                                     ? new ReadOnlyCollection<string>(requiredEditions)
                                                     : ScriptRequirements.EmptyEditionCollection,
-                RequiresPSSnapIns = requiredSnapins != null
-                                                   ? new ReadOnlyCollection<PSSnapInSpecification>(requiredSnapins)
-                                                   : ScriptRequirements.EmptySnapinCollection,
                 RequiredAssemblies = requiredAssemblies != null
                                                     ? new ReadOnlyCollection<string>(requiredAssemblies)
                                                     : ScriptRequirements.EmptyAssemblyCollection,

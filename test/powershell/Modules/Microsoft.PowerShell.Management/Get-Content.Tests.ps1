@@ -104,7 +104,8 @@ Describe "Get-Content" -Tags "CI" {
         @{EncodingName = 'UTF8NoBOM'},
         @{EncodingName = 'UTF7'},
         @{EncodingName = 'UTF32'},
-        @{EncodingName = 'Ascii'}
+        @{EncodingName = 'Ascii'},
+        @{EncodingName = 'ANSI'}
         ){
         param($EncodingName)
 
@@ -114,7 +115,7 @@ Describe "Get-Content" -Tags "CI" {
               @('𐍈1','𐍈𐍈2','𐍈𐍈𐍈3','𐍈𐍈𐍈𐍈4','𐍈𐍈𐍈𐍈𐍈5')) # utf-32
         ForEach ($content in $contentSets)
         {
-            $tailCount = 3
+            $tailCount = 4
             $testPath = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
             $content | Set-Content -Path $testPath -Encoding $EncodingName
 
@@ -221,7 +222,7 @@ Describe "Get-Content" -Tags "CI" {
         $expected = 'He', 'o,', '', 'Wor', "d${nl}He", 'o2,', '', 'Wor', "d2${nl}"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]    | Should -BeExactly $expected[$i]}
     }
-    
+
     Context "Alternate Data Stream support on Windows" {
         It "Should support NTFS streams using colon syntax" -Skip:(!$IsWindows) {
             Set-Content "${testPath}:Stream" -Value "Foo"

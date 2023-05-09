@@ -877,8 +877,8 @@ function New-PSOptions {
         [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis', '')]
         [string]$Configuration,
 
-        [ValidateSet("net7.0")]
-        [string]$Framework = "net7.0",
+        [ValidateSet("net8.0")]
+        [string]$Framework = "net8.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -1118,17 +1118,6 @@ function Publish-CustomConnectionTestModule
     $sourcePath = "${PSScriptRoot}/test/tools/NamedPipeConnection"
     $outPath = "${PSScriptRoot}/test/tools/NamedPipeConnection/out/Microsoft.PowerShell.NamedPipeConnection"
     $publishPath = "${PSScriptRoot}/test/tools/Modules"
-    $refPath = "${sourcePath}/src/code/Ref"
-
-    # Copy the current SMA build to the refPath.
-    $smaPath = Join-Path -Path (Split-Path -Path (Get-PSOutput)) -ChildPath 'System.Management.Automation.dll'
-    if (! (Test-Path -Path $smaPath)) {
-        throw "Publish-CustomConnectionTestModule: Cannot find reference SMA at: ${smaPath}"
-    }
-    if (! (Test-Path -Path $refPath)) {
-        $null = New-Item -Path $refPath -ItemType Directory -Force
-    }
-    Copy-Item -Path $smapath -Destination $refPath -Force
 
     Find-DotNet
 
@@ -1146,7 +1135,6 @@ function Publish-CustomConnectionTestModule
 
         # Clean up build artifacts
         ./build.ps1 -Clean
-        Remove-Item -Path $refPath -Recurse -Force -ErrorAction SilentlyContinue
     }
     finally {
         Pop-Location
@@ -1219,6 +1207,9 @@ function Publish-PSTestTools {
 
     # `dotnet restore` on test project is not called if product projects have been restored unless -Force is specified.
     Copy-PSGalleryModules -Destination "${PSScriptRoot}/test/tools/Modules" -CsProjPath "$PSScriptRoot/test/tools/Modules/PSGalleryTestModules.csproj" -Force
+
+    # Publish the Microsoft.PowerShell.NamedPipeConnection module
+    Publish-CustomConnectionTestModule
 }
 
 function Get-ExperimentalFeatureTests {
@@ -3484,7 +3475,7 @@ function Clear-NativeDependencies
     $filesToDeleteWinDesktop = @()
 
     $deps = Get-Content "$PublishFolder/pwsh.deps.json" -Raw | ConvertFrom-Json -Depth 20
-    $targetRuntime = ".NETCoreApp,Version=v7.0/$($script:Options.Runtime)"
+    $targetRuntime = ".NETCoreApp,Version=v8.0/$($script:Options.Runtime)"
 
     $runtimePackNetCore = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.NETCore.App.Runtime*'
     $runtimePackWinDesktop = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.WindowsDesktop.App.Runtime*'

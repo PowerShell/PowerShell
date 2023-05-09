@@ -61,12 +61,17 @@ namespace Microsoft.PowerShell.Commands
             List<Job> matches = new List<Job>();
             Hashtable duplicateDetector = new Hashtable();
 
-            if (_names == null) return matches;
+            if (_names == null)
+            {
+                return matches;
+            }
 
             foreach (string name in _names)
             {
                 if (string.IsNullOrEmpty(name))
+                {
                     continue;
+                }
 
                 // search all jobs in repository.
                 bool jobFound = false;
@@ -94,7 +99,10 @@ namespace Microsoft.PowerShell.Commands
                 jobFound = jobFound || job2Found;
 
                 // if a match is not found, write an error)
-                if (jobFound || !writeErrorOnNoMatch || WildcardPattern.ContainsWildcardCharacters(name)) continue;
+                if (jobFound || !writeErrorOnNoMatch || WildcardPattern.ContainsWildcardCharacters(name))
+                {
+                    continue;
+                }
 
                 Exception ex = PSTraceSource.NewArgumentException(NameParameter, RemotingErrorIdStrings.JobWithSpecifiedNameNotFound, name);
                 WriteError(new ErrorRecord(ex, "JobWithSpecifiedNameNotFound", ErrorCategory.ObjectNotFound, name));
@@ -191,7 +199,10 @@ namespace Microsoft.PowerShell.Commands
 
             Hashtable duplicateDetector = new Hashtable();
 
-            if (_instanceIds == null) return matches;
+            if (_instanceIds == null)
+            {
+                return matches;
+            }
 
             foreach (Guid id in _instanceIds)
             {
@@ -217,7 +228,10 @@ namespace Microsoft.PowerShell.Commands
 
                 jobFound = jobFound || job2Found;
 
-                if (jobFound || !writeErrorOnNoMatch) continue;
+                if (jobFound || !writeErrorOnNoMatch)
+                {
+                    continue;
+                }
 
                 Exception ex = PSTraceSource.NewArgumentException(InstanceIdParameter,
                                                                   RemotingErrorIdStrings.JobWithSpecifiedInstanceIdNotFound,
@@ -306,7 +320,10 @@ namespace Microsoft.PowerShell.Commands
         {
             List<Job> matches = new List<Job>();
 
-            if (_sessionIds == null) return matches;
+            if (_sessionIds == null)
+            {
+                return matches;
+            }
 
             Hashtable duplicateDetector = new Hashtable();
 
@@ -331,7 +348,10 @@ namespace Microsoft.PowerShell.Commands
 
                 jobFound = jobFound || job2Found;
 
-                if (jobFound || !writeErrorOnNoMatch) continue;
+                if (jobFound || !writeErrorOnNoMatch)
+                {
+                    continue;
+                }
 
                 Exception ex = PSTraceSource.NewArgumentException(SessionIdParameter, RemotingErrorIdStrings.JobWithSpecifiedSessionIdNotFound, id);
                 WriteError(new ErrorRecord(ex, "JobWithSpecifiedSessionNotFound", ErrorCategory.ObjectNotFound, id));
@@ -408,7 +428,10 @@ namespace Microsoft.PowerShell.Commands
         {
             List<Job> matches = new List<Job>();
 
-            if (_commands == null) return matches;
+            if (_commands == null)
+            {
+                return matches;
+            }
 
             List<Job> jobs = new List<Job>();
 
@@ -476,7 +499,10 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (Job job in jobs)
             {
-                if (job.JobStateInfo.State != _jobstate) continue;
+                if (job.JobStateInfo.State != _jobstate)
+                {
+                    continue;
+                }
 
                 if (writeobject)
                 {
@@ -558,7 +584,10 @@ namespace Microsoft.PowerShell.Commands
         internal List<Job> CopyJobsToList(Job[] jobs, bool writeobject, bool checkIfJobCanBeRemoved)
         {
             List<Job> matches = new List<Job>();
-            if (jobs == null) return matches;
+            if (jobs == null)
+            {
+                return matches;
+            }
 
             foreach (Job job in jobs)
             {
@@ -890,10 +919,12 @@ namespace Microsoft.PowerShell.Commands
             // Now actually remove the jobs
             foreach (Job job in listOfJobsToRemove)
             {
-                string message = GetMessage(RemotingErrorIdStrings.StopPSJobWhatIfTarget,
-                        job.Command, job.Id);
+                string message = GetMessage(RemotingErrorIdStrings.StopPSJobWhatIfTarget, job.Command, job.Id);
 
-                if (!ShouldProcess(message, VerbsCommon.Remove)) continue;
+                if (!ShouldProcess(message, VerbsCommon.Remove))
+                {
+                    continue;
+                }
 
                 Job2 job2 = job as Job2;
                 if (!job.IsFinishedState(job.JobStateInfo.State))
@@ -1037,7 +1068,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)
         {
-            if (!disposing) return;
+            if (!disposing)
+            {
+                return;
+            }
+
             foreach (var pair in _cleanUpActions)
             {
                 pair.Key.StopJobCompleted -= pair.Value;

@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.IO;
 using System.Management.Automation;
@@ -34,20 +36,21 @@ namespace Microsoft.PowerShell.Commands
         {
             ArgumentNullException.ThrowIfNull(response);
 
-            Stream responseStream = StreamHelper.GetResponseStream(response);
+            Stream responseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
             if (ShouldWriteToPipeline)
             {
-                // creating a MemoryStream wrapper to response stream here to support IsStopping.
+                // Creating a MemoryStream wrapper to response stream here to support IsStopping.
                 responseStream = new WebResponseContentMemoryStream(
                     responseStream,
                     StreamHelper.ChunkSize,
                     this,
-                    response.Content.Headers.ContentLength.GetValueOrDefault());
-                WebResponseObject ro = WebResponseObjectFactory.GetResponseObject(response, responseStream, this.Context);
+                    response.Content.Headers.ContentLength.GetValueOrDefault(),
+                    _cancelToken.Token);
+                WebResponseObject ro = WebResponseHelper.IsText(response) ? new BasicHtmlWebResponseObject(response, responseStream, _cancelToken.Token) : new WebResponseObject(response, responseStream, _cancelToken.Token);
                 ro.RelationLink = _relationLink;
                 WriteObject(ro);
 
-                // use the rawcontent stream from WebResponseObject for further
+                // Use the rawcontent stream from WebResponseObject for further
                 // processing of the stream. This is need because WebResponse's
                 // stream can be used only once.
                 responseStream = ro.RawContentStream;
@@ -56,7 +59,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldSaveToOutFile)
             {
-                StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
+                string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
+
+                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
+
+                StreamHelper.SaveStreamToFile(responseStream, outFilePath, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
         }
 

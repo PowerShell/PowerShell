@@ -253,6 +253,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo());
 
             yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+TcpPortStatus",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TcpPortStatus());
+
+            yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
                 ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus());
 
@@ -1075,6 +1079,8 @@ namespace System.Management.Automation.Runspaces
                                 ")
                         .AddScriptBlockExpressionBinding(@"
                                     Set-StrictMode -Off
+                                    $ErrorActionPreference = 'Stop'
+                                    trap { 'Error found in error view definition: ' + $_.Exception.Message }
                                     $newline = [Environment]::Newline
 
                                     $resetColor = ''
@@ -1105,8 +1111,11 @@ namespace System.Management.Automation.Runspaces
                                         $message = ''
                                         $prefix = ''
 
-                                        # Don't show line information if script module
-                                        if (($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') -and !($myinv.ScriptName.EndsWith('.psm1', [System.StringComparison]::OrdinalIgnoreCase))) {
+                                        # The checks here determine if we show line detailed error information:
+                                        # - check if `ParserError` and comes from PowerShell which eventually results in a ParseException, but during this execution it's an ErrorRecord
+                                        # - check if invocation is a script or multiple lines in the console
+                                        # - check that it's not a script module as expectation is that users don't want to see the line of error within a module
+                                        if ((($err.CategoryInfo.Category -eq 'ParserError' -and $err.Exception -is 'System.Management.Automation.ParentContainsErrorRecordException') -or $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1) -and $myinv.ScriptName -notmatch '\.psm1$') {
                                             $useTargetObject = $false
 
                                             # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
@@ -1911,6 +1920,31 @@ namespace System.Management.Automation.Runspaces
                 .EndList());
         }
 
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TcpPortStatus()
+        {
+            yield return new FormatViewDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+TcpPortStatus",
+                TableControl.Create()
+                    .AddHeader(Alignment.Right, label: "Id", width: 4)
+                    .AddHeader(Alignment.Left, label: "Source", width: 16)
+                    .AddHeader(Alignment.Left, label: "Address", width: 25)
+                    .AddHeader(Alignment.Right, label: "Port", width: 7)
+                    .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
+                    .AddHeader(Alignment.Left, label: "Connected", width: 10)
+                    .AddHeader(Alignment.Left, label: "Status", width: 24)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Id")
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("TargetAddress")
+                        .AddPropertyColumn("Port")
+                        .AddPropertyColumn("Latency")
+                        .AddPropertyColumn("Connected")
+                        .AddPropertyColumn("Status")
+                    .EndRowDefinition()
+                    .GroupByProperty("Target")
+                .EndTable());
+        }
+
         private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus()
         {
             yield return new FormatViewDefinition(
@@ -2063,8 +2097,9 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Formatting.Debug)$($_.Formatting.Debug.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Debug")
                         .AddItemScriptBlock(@"""$($_.Formatting.TableHeader)$($_.Formatting.TableHeader.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.TableHeader")
                         .AddItemScriptBlock(@"""$($_.Formatting.CustomTableHeaderLabel)$($_.Formatting.CustomTableHeaderLabel.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.CustomTableHeaderLabel")
-                        .AddItemScriptBlock(@"""$($_.Formatting.FeedbackProvider)$($_.Formatting.FeedbackProvider.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FeedbackProvider")
+                        .AddItemScriptBlock(@"""$($_.Formatting.FeedbackName)$($_.Formatting.FeedbackName.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FeedbackName")
                         .AddItemScriptBlock(@"""$($_.Formatting.FeedbackText)$($_.Formatting.FeedbackText.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FeedbackText")
+                        .AddItemScriptBlock(@"""$($_.Formatting.FeedbackAction)$($_.Formatting.FeedbackAction.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FeedbackAction")
                         .AddItemScriptBlock(@"""$($_.Progress.Style)$($_.Progress.Style.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Progress.Style")
                         .AddItemScriptBlock(@"""$($_.Progress.MaxWidth)""", label: "Progress.MaxWidth")
                         .AddItemScriptBlock(@"""$($_.Progress.View)""", label: "Progress.View")
@@ -2122,8 +2157,9 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Debug)$($_.Debug.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Debug")
                         .AddItemScriptBlock(@"""$($_.TableHeader)$($_.TableHeader.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "TableHeader")
                         .AddItemScriptBlock(@"""$($_.CustomTableHeaderLabel)$($_.CustomTableHeaderLabel.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "CustomTableHeaderLabel")
-                        .AddItemScriptBlock(@"""$($_.FeedbackProvider)$($_.FeedbackProvider.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FeedbackProvider")
+                        .AddItemScriptBlock(@"""$($_.FeedbackName)$($_.FeedbackName.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FeedbackName")
                         .AddItemScriptBlock(@"""$($_.FeedbackText)$($_.FeedbackText.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FeedbackText")
+                        .AddItemScriptBlock(@"""$($_.FeedbackAction)$($_.FeedbackAction.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FeedbackAction")
                     .EndEntry()
                 .EndList());
         }

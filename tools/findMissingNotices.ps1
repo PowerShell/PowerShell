@@ -177,8 +177,8 @@ function Get-CGRegistrations {
 
     $registrationChanged = $false
 
-    $dotnetTargetName = 'net7.0'
-    $dotnetTargetNameWin7 = 'net7.0-windows7.0'
+    $dotnetTargetName = 'net8.0'
+    $dotnetTargetNameWin7 = 'net8.0-windows8.0'
     $unixProjectName = 'powershell-unix'
     $windowsProjectName = 'powershell-win-core'
     $actualRuntime = $Runtime
@@ -276,7 +276,7 @@ $newRegistrations = $registrations.Keys | Sort-Object | ForEach-Object { $regist
 
 $count = $newRegistrations.Count
 $newJson = @{
-    Registrations = $newRegistrations 
+    Registrations = $newRegistrations
      '$schema' = "https://json.schemastore.org/component-detection-manifest.json"
 } | ConvertTo-Json -depth 99
 
