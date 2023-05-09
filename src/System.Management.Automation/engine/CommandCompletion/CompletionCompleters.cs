@@ -4887,9 +4887,7 @@ namespace System.Management.Automation
                     }
 
                     var varInfo = findVariablesVisitor.VariableInfoTable[varName];
-                    var varType = varInfo.LastDeclaredConstraint is null
-                        ? varInfo.LastAssignedType
-                        : varInfo.LastDeclaredConstraint;
+                    var varType = varInfo.LastDeclaredConstraint ?? varInfo.LastAssignedType;
                     var toolTip = varType is null
                         ? varName
                         : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(varType, dropNamespaces: true), varName);
