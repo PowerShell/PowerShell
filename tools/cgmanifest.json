@@ -65,7 +65,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.2.0"
+          "Version": "4.3.1"
         }
       },
       "DevelopmentDependency": false
@@ -75,7 +75,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.2.0"
+          "Version": "4.3.1"
         }
       },
       "DevelopmentDependency": false
@@ -164,16 +164,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "Microsoft.NETCore.Windows.ApiSets",
-          "Version": "1.0.1"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "Microsoft.PowerShell.MarkdownRender",
           "Version": "7.2.0"
         }
@@ -235,7 +225,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -664,26 +654,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "runtime.win7-x64.Microsoft.NETCore.Windows.ApiSets",
-          "Version": "1.0.1"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win7-x86.Microsoft.NETCore.Windows.ApiSets",
-          "Version": "1.0.1"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "runtime.win7.System.Private.Uri",
           "Version": "4.3.0"
         }
@@ -765,7 +735,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Configuration.ConfigurationManager",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -775,7 +745,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Data.Odbc",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -1015,7 +985,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Private.ServiceModel",
-          "Version": "4.9.0"
+          "Version": "4.10.0"
         }
       },
       "DevelopmentDependency": false
@@ -1265,7 +1235,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Duplex",
-          "Version": "4.9.0"
+          "Version": "4.10.0"
         }
       },
       "DevelopmentDependency": false
@@ -1275,7 +1245,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Http",
-          "Version": "4.9.0"
+          "Version": "4.10.0"
         }
       },
       "DevelopmentDependency": false
@@ -1285,7 +1255,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.NetTcp",
-          "Version": "4.9.0"
+          "Version": "4.10.0"
         }
       },
       "DevelopmentDependency": false
@@ -1295,7 +1265,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Primitives",
-          "Version": "4.9.0"
+          "Version": "4.10.0"
         }
       },
       "DevelopmentDependency": false
@@ -1305,7 +1275,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Security",
-          "Version": "4.9.0"
+          "Version": "4.10.0"
         }
       },
       "DevelopmentDependency": false
@@ -1430,5 +1400,6 @@
       },
       "DevelopmentDependency": false
     }
-  ]
+  ],
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
 }

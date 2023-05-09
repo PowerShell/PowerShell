@@ -275,7 +275,11 @@ foreach ($runtime in "win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win-arm"
 $newRegistrations = $registrations.Keys | Sort-Object | ForEach-Object { $registrations[$_] }
 
 $count = $newRegistrations.Count
-$newJson = @{Registrations = $newRegistrations } | ConvertTo-Json -depth 99
+$newJson = @{
+    Registrations = $newRegistrations 
+     '$schema' = "https://json.schemastore.org/component-detection-manifest.json"
+} | ConvertTo-Json -depth 99
+
 if ($Fix -and $registrationChanged) {
     $newJson | Set-Content $cgManifestPath
     Set-GWVariable -Name CGMANIFEST_PATH -Value $cgManifestPath

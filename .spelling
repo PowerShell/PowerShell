@@ -114,8 +114,9 @@ cdxml
 celsius
 CentOS
 codeql-action
-cgmanifest
 CGManifest
+cgmanifest.json
+cgmanifest
 changelog
 changelog.md
 changelogs
@@ -325,6 +326,7 @@ functionprovider
 FunctionTable
 fxdependent
 gabrielsroka
+GAC_Arm64
 gamified
 gc.regions.xml
 Generic.SortedList
@@ -614,6 +616,7 @@ new-wsmaninstance
 new-wsmansessionoption
 NextTurn
 ngharo
+Newtonsoft.Json
 NJsonSchema
 NoMoreFood
 non-22
@@ -731,6 +734,7 @@ preview.8
 preview1-24530-04
 preview1.22217.1
 preview7
+ProcessorArchitecture
 productversion
 program.cs
 prototyyppi
@@ -765,6 +769,7 @@ pvs-studio
 pwd
 pwrshplughin.dll
 pwsh
+pwsh.deps.json
 qmfrederik
 raghav710
 RandomNoun7
@@ -774,6 +779,7 @@ rc.1
 rc.1.21455.2
 rc.1.21458.32
 rc.2
+rc.2.22477.20
 rc.3
 rc2-24027
 rc3-24011
@@ -1052,6 +1058,7 @@ v7.1.6
 v7.1.7
 v7.2.2
 v7.3.0
+v7.0.13
 validatenotnullorempty
 ValidateSet
 varunsh-coder
@@ -1080,6 +1087,7 @@ wildcards
 win32
 win32-openssh
 win7
+win8
 windos
 windowspsmodulepath
 windowsversion
@@ -1582,5 +1590,6 @@ vmImage
 ci.psm1
 jcotton42
 centos-7
+Security.types.ps1xml
  - ADOPTERS.md
 MicrosoftPowerBIMgmt

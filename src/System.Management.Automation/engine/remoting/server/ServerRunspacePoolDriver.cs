@@ -472,7 +472,7 @@ namespace System.Management.Automation
             // Remote debugger is created only when client version is PSVersion (4.0)
             // or greater, and remote session supports debugging.
             if ((_driverNestedInvoker != null) &&
-                (_clientPSVersion != null && _clientPSVersion >= PSVersionInfo.PSV4Version) &&
+                (_clientPSVersion != null && _clientPSVersion.Major >= 4) &&
                 (runspace != null && runspace.Debugger != null))
             {
                 _serverRemoteDebugger = new ServerRemoteDebugger(this, runspace, runspace.Debugger);

@@ -4,7 +4,7 @@
 Describe 'Switch-Process tests for Unix' -Tags 'CI' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (-not [ExperimentalFeature]::IsEnabled('PSExec') -or $IsWindows)
+        if ($IsWindows)
         {
             $PSDefaultParameterValues['It:Skip'] = $true
             return
@@ -48,12 +48,19 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
             ($p | Get-Process).Name -eq 'sleep'
         } -timeout 60000 -interval 100 | Should -BeTrue
     }
+
+    It 'Error is returned if target command is not found' {
+        $invalidCommand = 'doesNotExist'
+        $e = { Switch-Process $invalidCommand } | Should -Throw -ErrorId 'CommandNotFound,Microsoft.PowerShell.Commands.SwitchProcessCommand' -PassThru
+        $e.Exception.Message | Should -BeLike "*'$invalidCommand'*"
+        $e.TargetObject | Should -BeExactly $invalidCommand
+    }
 }
 
-Describe 'Switch-Process for Windows' {
+Describe 'Switch-Process for Windows' -Tag 'CI' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (-not $IsWindows)
+        if (!$IsWindows)
         {
             $PSDefaultParameterValues['It:Skip'] = $true
             return

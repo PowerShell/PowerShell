@@ -5,8 +5,6 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -17,7 +15,6 @@ using System.Management.Automation.Remoting;
 using System.Management.Automation.Security;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 #if !UNIX
@@ -641,41 +638,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks whether current monad session supports version specified
-        /// by ver.
-        /// </summary>
-        /// <param name="ver">Version to check.</param>
-        /// <returns>True if supported, false otherwise.</returns>
-        internal static bool IsPSVersionSupported(string ver)
-        {
-            // Convert version to supported format ie., x.x
-            Version inputVersion = StringToVersion(ver);
-            return IsPSVersionSupported(inputVersion);
-        }
-
-        /// <summary>
-        /// Checks whether current monad session supports version specified
-        /// by checkVersion.
-        /// </summary>
-        /// <param name="checkVersion">Version to check.</param>
-        /// <returns>True if supported, false otherwise.</returns>
-        internal static bool IsPSVersionSupported(Version checkVersion)
-        {
-            if (checkVersion == null)
-            {
-                return false;
-            }
-
-            foreach (Version compatibleVersion in PSVersionInfo.PSCompatibleVersions)
-            {
-                if (checkVersion.Major == compatibleVersion.Major && checkVersion.Minor <= compatibleVersion.Minor)
-                    return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Checks whether current PowerShell session supports edition specified
         /// by checkEdition.
         /// </summary>
@@ -683,7 +645,7 @@ namespace System.Management.Automation
         /// <returns>True if supported, false otherwise.</returns>
         internal static bool IsPSEditionSupported(string checkEdition)
         {
-            return PSVersionInfo.PSEdition.Equals(checkEdition, StringComparison.OrdinalIgnoreCase);
+            return PSVersionInfo.PSEditionValue.Equals(checkEdition, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -693,7 +655,7 @@ namespace System.Management.Automation
         /// <returns>True if the edition is supported by this runtime, false otherwise.</returns>
         internal static bool IsPSEditionSupported(IEnumerable<string> editions)
         {
-            string currentPSEdition = PSVersionInfo.PSEdition;
+            string currentPSEdition = PSVersionInfo.PSEditionValue;
             foreach (string edition in editions)
             {
                 if (currentPSEdition.Equals(edition, StringComparison.OrdinalIgnoreCase))
@@ -1383,9 +1345,6 @@ namespace System.Management.Automation
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
 
-        internal static readonly UTF8Encoding utf8NoBom =
-            new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-
 #if !UNIX
         /// <summary>
         /// Queues a CLR worker thread with impersonation of provided Windows identity.
@@ -1433,7 +1392,7 @@ namespace System.Management.Automation
         /// <returns>Command name and as appropriate Module name in out parameter.</returns>
         internal static string ParseCommandName(string commandName, out string moduleName)
         {
-            var names = commandName.Split(Separators.Backslash, 2);
+            var names = commandName.Split('\\', 2);
             if (names.Length == 2)
             {
                 moduleName = names[0];
@@ -1457,25 +1416,10 @@ namespace System.Management.Automation
 
         internal static class Separators
         {
-            internal static readonly char[] Backslash = new char[] { '\\' };
             internal static readonly char[] Directory = new char[] { '\\', '/' };
             internal static readonly char[] DirectoryOrDrive = new char[] { '\\', '/', ':' };
-
-            internal static readonly char[] Colon = new char[] { ':' };
-            internal static readonly char[] Dot = new char[] { '.' };
-            internal static readonly char[] Pipe = new char[] { '|' };
-            internal static readonly char[] Comma = new char[] { ',' };
-            internal static readonly char[] Semicolon = new char[] { ';' };
-            internal static readonly char[] StarOrQuestion = new char[] { '*', '?' };
-            internal static readonly char[] ColonOrBackslash = new char[] { '\\', ':' };
-            internal static readonly char[] PathSeparator = new char[] { Path.PathSeparator };
-
-            internal static readonly char[] QuoteChars = new char[] { '\'', '"' };
-            internal static readonly char[] Space = new char[] { ' ' };
-            internal static readonly char[] QuotesSpaceOrTab = new char[] { ' ', '\t', '\'', '"' };
             internal static readonly char[] SpaceOrTab = new char[] { ' ', '\t' };
-            internal static readonly char[] Newline = new char[] { '\n' };
-            internal static readonly char[] CrLf = new char[] { '\r', '\n' };
+            internal static readonly char[] StarOrQuestion = new char[] { '*', '?' };
 
             // (Copied from System.IO.Path so we can call TrimEnd in the same way that Directory.EnumerateFiles would on the search patterns).
             // Trim trailing white spaces, tabs etc but don't be aggressive in removing everything that has UnicodeCategory of trailing space.
@@ -1546,6 +1490,21 @@ namespace System.Management.Automation
             }
 
             return oldMode;
+        }
+
+        internal static string DisplayHumanReadableFileSize(long bytes)
+        {
+            return bytes switch
+            {
+                < 1024 and >= 0 => $"{bytes} Bytes",
+                < 1048576 and >= 1024 => $"{(bytes / 1024.0).ToString("0.0")} KB",
+                < 1073741824 and >= 1048576 => $"{(bytes / 1048576.0).ToString("0.0")} MB",
+                < 1099511627776 and >= 1073741824 => $"{(bytes / 1073741824.0).ToString("0.000")} GB",
+                < 1125899906842624 and >= 1099511627776 => $"{(bytes / 1099511627776.0).ToString("0.00000")} TB",
+                < 1152921504606847000 and >= 1125899906842624 => $"{(bytes / 1125899906842624.0).ToString("0.0000000")} PB",
+                >= 1152921504606847000 => $"{(bytes / 1152921504606847000.0).ToString("0.000000000")} EB",
+                _ => $"0 Bytes",
+            };
         }
     }
 }
@@ -1812,6 +1771,20 @@ namespace System.Management.Automation.Internal
             if (!precondition)
             {
                 throw new ArgumentException(paramName);
+            }
+        }
+
+        internal static void OneSpecificSubsystemKind(Subsystem.SubsystemKind kind)
+        {
+            uint value = (uint)kind;
+            if (value == 0 || (value & (value - 1)) != 0)
+            {
+                // The value is either invalid or a composite value because it's not power of 2.
+                throw new ArgumentException(
+                    StringUtil.Format(
+                        SubsystemStrings.RequireOneSpecificSubsystemKind,
+                        kind.ToString()),
+                    nameof(kind));
             }
         }
     }

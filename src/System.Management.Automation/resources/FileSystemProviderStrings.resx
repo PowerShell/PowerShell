@@ -216,9 +216,6 @@
   <data name="DirectoryExist" xml:space="preserve">
     <value>An item with the specified name {0} already exists.</value>
   </data>
-  <data name="BasePathLengthError" xml:space="preserve">
-    <value>The path length is too short. The character length of a path cannot be less than the character length of the basePath.</value>
-  </data>
   <data name="DelimiterError" xml:space="preserve">
     <value>A delimiter cannot be specified when reading the stream one byte at a time.</value>
   </data>
@@ -324,14 +321,8 @@
   <data name="CopyItemRemotelyFailedToReadFile" xml:space="preserve">
     <value>Failed to read remote file '{0}'.</value>
   </data>
-  <data name="CopyItemRemotelyFailedToValidateDestination" xml:space="preserve">
-    <value>Failed to validate remote destination '{0}'.</value>
-  </data>
   <data name="CopyItemRemotelyFailedToValidateIfDestinationIsFile" xml:space="preserve">
     <value>Cannot validate if remote destination {0} is a file.</value>
-  </data>
-  <data name="CopyItemRemotelyOperationNotSupported" xml:space="preserve">
-    <value>Remote copy with {0} is not supported.</value>
   </data>
   <data name="CopyItemRemotelyFailedToCreateDirectory" xml:space="preserve">
     <value>Failed to create directory '{0}' on remote destination.</value>

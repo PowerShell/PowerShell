@@ -865,7 +865,7 @@ namespace System.Management.Automation
             return v;
         }
 
-        internal static void ReadRegistryInfo(out Version assemblyVersion, out string publicKeyToken, out string culture, out string architecture, out string applicationBase, out Version psVersion)
+        internal static void ReadRegistryInfo(out Version assemblyVersion, out string publicKeyToken, out string culture, out string applicationBase, out Version psVersion)
         {
             applicationBase = Utils.DefaultPowerShellAppBase;
             Dbg.Assert(
@@ -885,8 +885,7 @@ namespace System.Management.Automation
             // culture, publickeytoken...This will break the scenarios where only one of
             // the assemblies is patched. ie., all monad assemblies should have the
             // same version number.
-            Assembly currentAssembly = typeof(PSSnapInReader).Assembly;
-            AssemblyName assemblyName = currentAssembly.GetName();
+            AssemblyName assemblyName = typeof(PSSnapInReader).Assembly.GetName();
             assemblyVersion = assemblyName.Version;
             byte[] publicTokens = assemblyName.GetPublicKeyToken();
             if (publicTokens.Length == 0)
@@ -899,11 +898,6 @@ namespace System.Management.Automation
             // save some cpu cycles by hardcoding the culture to neutral
             // assembly should never be targeted to a particular culture
             culture = "neutral";
-
-            // Hardcoding the architecture MSIL as PowerShell assemblies are architecture neutral, this should
-            // be changed if the assumption is broken. Preferred hardcoded string to using (for perf reasons):
-            // string architecture = currentAssembly.GetName().ProcessorArchitecture.ToString()
-            architecture = "MSIL";
         }
 
         /// <summary>
@@ -931,13 +925,12 @@ namespace System.Management.Automation
         /// </returns>
         internal static PSSnapInInfo ReadCoreEngineSnapIn()
         {
-            Version assemblyVersion, psVersion;
-            string publicKeyToken = null;
-            string culture = null;
-            string architecture = null;
-            string applicationBase = null;
-
-            ReadRegistryInfo(out assemblyVersion, out publicKeyToken, out culture, out architecture, out applicationBase, out psVersion);
+            ReadRegistryInfo(
+                out Version assemblyVersion,
+                out string publicKeyToken,
+                out string culture,
+                out string applicationBase,
+                out Version psVersion);
 
             // System.Management.Automation formats & types files
             Collection<string> types = new Collection<string>(new string[] { "types.ps1xml", "typesv3.ps1xml" });
@@ -946,8 +939,8 @@ namespace System.Management.Automation
                          "Help.format.ps1xml", "HelpV3.format.ps1xml", "PowerShellCore.format.ps1xml", "PowerShellTrace.format.ps1xml",
                          "Registry.format.ps1xml"});
 
-            string strongName = string.Format(CultureInfo.InvariantCulture, "{0}, Version={1}, Culture={2}, PublicKeyToken={3}, ProcessorArchitecture={4}",
-                s_coreSnapin.AssemblyName, assemblyVersion, culture, publicKeyToken, architecture);
+            string strongName = string.Format(CultureInfo.InvariantCulture, "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
+                s_coreSnapin.AssemblyName, assemblyVersion, culture, publicKeyToken);
 
             string moduleName = Path.Combine(applicationBase, s_coreSnapin.AssemblyName + ".dll");
 
@@ -985,13 +978,12 @@ namespace System.Management.Automation
         /// </returns>
         internal static Collection<PSSnapInInfo> ReadEnginePSSnapIns()
         {
-            Version assemblyVersion, psVersion;
-            string publicKeyToken = null;
-            string culture = null;
-            string architecture = null;
-            string applicationBase = null;
-
-            ReadRegistryInfo(out assemblyVersion, out publicKeyToken, out culture, out architecture, out applicationBase, out psVersion);
+            ReadRegistryInfo(
+                out Version assemblyVersion,
+                out string publicKeyToken,
+                out string culture,
+                out string applicationBase,
+                out Version psVersion);
 
             // System.Management.Automation formats & types files
             Collection<string> smaFormats = new Collection<string>(new string[]
@@ -1010,12 +1002,11 @@ namespace System.Management.Automation
 
                 string strongName = string.Format(
                     CultureInfo.InvariantCulture,
-                    "{0}, Version={1}, Culture={2}, PublicKeyToken={3}, ProcessorArchitecture={4}",
+                    "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
                     defaultMshSnapinInfo.AssemblyName,
                     assemblyVersionString,
                     culture,
-                    publicKeyToken,
-                    architecture);
+                    publicKeyToken);
 
                 Collection<string> formats = null;
                 Collection<string> types = null;

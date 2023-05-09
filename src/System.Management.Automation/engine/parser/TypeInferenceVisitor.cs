@@ -936,6 +936,11 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitReturnStatement(ReturnStatementAst returnStatementAst)
         {
+            if (returnStatementAst.Pipeline is null)
+            {
+                return TypeInferenceContext.EmptyPSTypeNameArray;
+            }
+
             return returnStatementAst.Pipeline.Accept(this);
         }
 

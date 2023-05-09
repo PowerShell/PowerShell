@@ -90,4 +90,42 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
 
         TestFunc2 | Should -Be @("1", "2")
     }
+
+    It "'[NullString]::Value' should be treated as string type when resolving .NET method" {
+        $testType = 'NullStringTest' -as [type]
+        if (-not $testType) {
+            Add-Type -TypeDefinition @'
+using System;
+public class NullStringTest {
+    public static string Test(bool argument)
+    {
+        return "bool";
+    }
+
+    public static string Test(string argument)
+    {
+        return "string";
+    }
+
+    public static string Get<T>(T argument)
+    {
+        string ret = typeof(T).FullName;
+        if (argument is string[] array)
+        {
+            if (array[1] == null)
+            {
+                return ret + "; 2nd element is NULL";
+            }
+        }
+
+        return ret;
+    }
+}
+'@
+        }
+
+        [NullStringTest]::Test([NullString]::Value) | Should -BeExactly 'string'
+        [NullStringTest]::Get([NullString]::Value) | Should -BeExactly 'System.String'
+        [NullStringTest]::Get(@('foo', [NullString]::Value, 'bar')) | Should -BeExactly 'System.String[]; 2nd element is NULL'
+    }
 }

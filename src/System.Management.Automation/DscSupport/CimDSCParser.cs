@@ -918,7 +918,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             foreach (KeyValuePair<string, DscClassCacheEntry> cimClass in ClassCache)
             {
-                string cachedClassName = cimClass.Key.Split(Utils.Separators.Backslash)[IndexClassName];
+                string cachedClassName = cimClass.Key.Split('\\')[IndexClassName];
                 if (string.Equals(cachedClassName, className, StringComparison.OrdinalIgnoreCase))
                 {
                     return cimClass.Value.CimClassInstance;
@@ -992,7 +992,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         // allow sharing of nested objects.
                         if (!IsSameNestedObject(cimClass, c))
                         {
-                            var files = string.Join(",", GetFileDefiningClass(className));
+                            var files = string.Join(',', GetFileDefiningClass(className));
                             PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
                                 ParserStrings.DuplicateCimClassDefinition, className, path, files);
 
@@ -1099,7 +1099,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static List<KeyValuePair<string, DscClassCacheEntry>> FindResourceInCache(string moduleName, string className, string resourceName)
         {
             return (from cacheEntry in ClassCache
-                    let splittedName = cacheEntry.Key.Split(Utils.Separators.Backslash)
+                    let splittedName = cacheEntry.Key.Split('\\')
                     let cachedClassName = splittedName[IndexClassName]
                     let cachedModuleName = splittedName[IndexModuleName]
                     let cachedResourceName = splittedName[IndexFriendlyName]
@@ -1295,7 +1295,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             foreach (KeyValuePair<string, DscClassCacheEntry> cachedClass in ClassCache)
             {
-                string[] splittedName = cachedClass.Key.Split(Utils.Separators.Backslash);
+                string[] splittedName = cachedClass.Key.Split('\\');
                 string moduleName = splittedName[IndexModuleName];
                 string moduleVersion = splittedName[IndexModuleVersion];
 
@@ -3677,7 +3677,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             // Do the property values map
             if (prop.ValueMap != null && prop.ValueMap.Count > 0)
             {
-                formattedTypeString.Append(" { " + string.Join(" | ", prop.ValueMap.Keys.OrderBy(static x => x)) + " }");
+                formattedTypeString.Append(" { " + string.Join(" | ", prop.ValueMap.Keys.Order()) + " }");
             }
 
             // We prepend optional property with "[" so close out it here. This way it is shown with [ ] to indication optional

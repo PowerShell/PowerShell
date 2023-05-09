@@ -1211,9 +1211,6 @@ namespace System.Management.Automation.Language
             bool implementsDynamicParameters = commandProcessor != null &&
                                                commandProcessor.CommandInfo.ImplementsDynamicParameters;
 
-            var argumentsToGetDynamicParameters = implementsDynamicParameters
-                                                      ? new List<object>(_commandElements.Count)
-                                                      : null;
             if (commandProcessor != null || scriptProcessor != null)
             {
                 // Pre-processing the arguments -- command arguments
@@ -1222,7 +1219,32 @@ namespace System.Management.Automation.Language
                     var parameter = _commandElements[commandIndex] as CommandParameterAst;
                     if (parameter != null)
                     {
-                        argumentsToGetDynamicParameters?.Add(parameter.Extent.Text);
+                        if (implementsDynamicParameters)
+                        {
+                            CommandParameterInternal paramToAdd;
+                            if (parameter.Argument is null)
+                            {
+                                paramToAdd = CommandParameterInternal.CreateParameter(parameter.ParameterName, parameter.Extent.Text);
+                            }
+                            else
+                            {
+                                object value;
+                                if (!SafeExprEvaluator.TrySafeEval(parameter.Argument, context, out value))
+                                {
+                                    value = parameter.Argument.Extent.Text;
+                                }
+
+                                paramToAdd = CommandParameterInternal.CreateParameterWithArgument(
+                                    parameterAst: null,
+                                    parameterName: parameter.ParameterName,
+                                    parameterText: parameter.Extent.Text,
+                                    argumentAst: null,
+                                    value: value,
+                                    spaceAfterParameter: false);
+                            }
+
+                            commandProcessor.AddParameter(paramToAdd);
+                        }
 
                         AstPair parameterArg = parameter.Argument != null
                             ? new AstPair(parameter)
@@ -1248,7 +1270,11 @@ namespace System.Management.Automation.Language
                         }
                         else if (_commandElements[commandIndex] is ExpressionAst expression)
                         {
-                            valueToAdd = expression.Extent.Text;
+                            if (!SafeExprEvaluator.TrySafeEval(expression, context, out valueToAdd))
+                            {
+                                valueToAdd = expression.Extent.Text;
+                            }
+
                             expressionToAdd = expression;
                         }
                         else
@@ -1256,7 +1282,11 @@ namespace System.Management.Automation.Language
                             continue;
                         }
 
-                        argumentsToGetDynamicParameters?.Add(valueToAdd);
+                        if (implementsDynamicParameters)
+                        {
+                            commandProcessor.AddParameter(CommandParameterInternal.CreateArgument(valueToAdd));
+                        }
+
                         _arguments.Add(new AstPair(null, expressionToAdd));
                     }
                 }
@@ -1267,7 +1297,6 @@ namespace System.Management.Automation.Language
                 _function = false;
                 if (implementsDynamicParameters)
                 {
-                    ParameterBinderController.AddArgumentsToCommandProcessor(commandProcessor, argumentsToGetDynamicParameters.ToArray());
                     bool retryWithNoArgs = false, alreadyRetried = false;
 
                     do

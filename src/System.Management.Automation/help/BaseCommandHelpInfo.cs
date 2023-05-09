@@ -252,7 +252,7 @@ namespace System.Management.Automation
                         // Split the string based on <s> (space). We decided to go with this approach as
                         // UX localization authors use spaces. Correctly extracting only the wellformed URI
                         // is out-of-scope for this fix.
-                        string[] tempUriSplitArray = uriString.Split(Utils.Separators.Space);
+                        string[] tempUriSplitArray = uriString.Split(' ');
                         uriString = tempUriSplitArray[0];
                     }
 
@@ -319,7 +319,7 @@ namespace System.Management.Automation
                             // Split the string based on <s> (space). We decided to go with this approach as
                             // UX localization authors use spaces. Correctly extracting only the wellformed URI
                             // is out-of-scope for this fix.
-                            string[] tempUriSplitArray = uriString.Split(Utils.Separators.Space);
+                            string[] tempUriSplitArray = uriString.Split(' ');
                             uriString = tempUriSplitArray[0];
                         }
 

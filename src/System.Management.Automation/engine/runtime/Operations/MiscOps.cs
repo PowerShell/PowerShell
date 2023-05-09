@@ -13,6 +13,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -2299,8 +2300,13 @@ namespace System.Management.Automation
                 Diagnostics.Assert(t.Type != null, "TypeDefinitionAst.Type cannot be null");
                 if (t.IsClass)
                 {
-                    var helperType =
-                        t.Type.Assembly.GetType(t.Type.FullName + "_<staticHelpers>");
+                    if (t.Type.IsDefined(typeof(NoRunspaceAffinityAttribute), inherit: true))
+                    {
+                        // Skip the initialization for session state affinity.
+                        continue;
+                    }
+
+                    var helperType = t.Type.Assembly.GetType(t.Type.FullName + "_<staticHelpers>");
                     Diagnostics.Assert(helperType != null, "no corresponding " + t.Type.FullName + "_<staticHelpers> type found");
                     foreach (var p in helperType.GetFields(BindingFlags.Static | BindingFlags.NonPublic))
                     {
@@ -3545,6 +3551,38 @@ namespace System.Management.Automation
             }
         );
 
+        private static string ArgumentToString(object arg)
+        {
+            object baseObj = PSObject.Base(arg);
+            if (baseObj is null)
+            {
+                // The argument is null or AutomationNull.Value.
+                return "null";
+            }
+
+            // The comparisons below are ordered by the likelihood of arguments being of those types.
+            if (baseObj is string str)
+            {
+                return str;
+            }
+
+            // Special case some types to call 'ToString' on the object. For the rest, we return its
+            // full type name to avoid calling a potentially expensive 'ToString' implementation.
+            Type baseType = baseObj.GetType();
+            if (baseType.IsEnum || baseType.IsPrimitive
+                || baseType == typeof(Guid)
+                || baseType == typeof(Uri)
+                || baseType == typeof(Version)
+                || baseType == typeof(SemanticVersion)
+                || baseType == typeof(BigInteger)
+                || baseType == typeof(decimal))
+            {
+                return baseObj.ToString();
+            }
+
+            return baseType.FullName;
+        }
+
         internal static void LogMemberInvocation(string targetName, string name, object[] args)
         {
             try
@@ -3554,7 +3592,7 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < args.Length; i++)
                 {
-                    string value = args[i] is null ? "null" : args[i].ToString();
+                    string value = ArgumentToString(args[i]);
 
                     if (i > 0)
                     {

@@ -1929,13 +1929,13 @@ namespace System.Management.Automation.Remoting
             string moduleName = "*";
             if (roleCapability.Contains('\\'))
             {
-                string[] components = roleCapability.Split(Utils.Separators.Backslash, 2);
+                string[] components = roleCapability.Split('\\', 2);
                 moduleName = components[0];
                 roleCapability = components[1];
             }
 
             // Go through each directory in the module path
-            string[] modulePaths = ModuleIntrinsics.GetModulePath().Split(Utils.Separators.PathSeparator);
+            string[] modulePaths = ModuleIntrinsics.GetModulePath().Split(Path.PathSeparator);
             foreach (string path in modulePaths)
             {
                 try
@@ -2985,7 +2985,7 @@ namespace System.Management.Automation.Remoting
         };
 #endif
 
-        // These are configuration options for WSMan (WinRM) endpoint configurations, that 
+        // These are configuration options for WSMan (WinRM) endpoint configurations, that
         // appearand in .pssc files, but are not part of PowerShell InitialSessionState.
         private static readonly HashSet<string> UnsupportedConfigOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -3022,6 +3022,6 @@ namespace System.Management.Automation.Remoting
     }
 
     #endregion
-    
+
     #endregion
 }

@@ -120,9 +120,6 @@
   <data name="CommandAlreadySpecified" xml:space="preserve">
     <value>Cannot process command because a command is already specified with -Command or -EncodedCommand.</value>
   </data>
-  <data name="CannotReadFile" xml:space="preserve">
-    <value>Unable to read from file '{0}'.</value>
-  </data>
   <data name="MissingCommandParameter" xml:space="preserve">
     <value>Cannot process the command because of a missing parameter. A command must follow -Command.</value>
   </data>

@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
                 module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
                 if (!found)
                 {
-                    if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                    if (name.AsSpan().IndexOfAny('\\', '/') == -1)
                     {
                         qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
                     }
@@ -1014,7 +1014,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool containsWildCards = false;
 
-                string modulePath = mp.TrimEnd(Utils.Separators.Backslash);
+                string modulePath = mp.TrimEnd('\\');
 
                 // If the given path contains wildcards, we won't throw error if no match module path is found.
                 if (WildcardPattern.ContainsWildcardCharacters(modulePath))

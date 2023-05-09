@@ -153,4 +153,7 @@
   <data name="NullOrEmptyImplementationDescription" xml:space="preserve">
     <value>The 'Description' property of an implementation for the subsystem '{0}' cannot be null or an empty string.</value>
   </data>
+  <data name="RequireOneSpecificSubsystemKind" xml:space="preserve">
+    <value>The subsystem kind here should represent one specific subsystem, but the given value is either invalid or a composite enum value: '{0}'.</value>
+  </data>
 </root>

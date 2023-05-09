@@ -17,7 +17,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that allows use of execv API.
     /// </summary>
-    [Experimental(ExperimentalFeature.PSExecFeatureName, ExperimentAction.Show)]
     [Cmdlet(VerbsCommon.Switch, "Process", HelpUri = "https://go.microsoft.com/fwlink/?linkid=2181448")]
     public sealed class SwitchProcessCommand : PSCmdlet
     {
@@ -47,12 +46,12 @@ namespace Microsoft.PowerShell.Commands
                             string.Format(
                                 System.Globalization.CultureInfo.InvariantCulture,
                                 CommandBaseStrings.NativeCommandNotFound,
-                                command
+                                WithCommand[0]
                             )
                         ),
                         "CommandNotFound",
                         ErrorCategory.InvalidArgument,
-                        WithCommand
+                        WithCommand[0]
                     )
                 );
             }
@@ -81,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
                                 System.Globalization.CultureInfo.InvariantCulture,
                                 CommandBaseStrings.ExecFailed,
                                 Marshal.GetLastPInvokeError(),
-                                string.Join(" ", WithCommand)
+                                string.Join(' ', WithCommand)
                             )
                         ),
                         "ExecutionFailed",

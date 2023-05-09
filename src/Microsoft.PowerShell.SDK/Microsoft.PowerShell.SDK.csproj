@@ -18,19 +18,18 @@
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="7.0.0-preview.7.22375.6" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="7.0.0-preview.7.22375.6" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="7.0.0-preview.7.22375.6" />
+    <PackageReference Include="System.IO.Packaging" Version="7.0.0-rc.2.22472.3" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="7.0.0-rc.2.22472.3" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="7.0.0-rc.2.22472.3" />
     <!-- the following package(s) are from https://github.com/dotnet/wcf -->
-    <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.0-preview1.22261.2" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.10.0-preview1.22261.2" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.0-preview1.22261.2" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.0-preview1.22261.2" />
-    <PackageReference Include="System.ServiceModel.Security" Version="4.10.0-preview1.22261.2" />
-    <PackageReference Include="System.Private.ServiceModel" Version="4.10.0-preview1.22261.2" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.10.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.0" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.10.0" />
+    <PackageReference Include="System.Private.ServiceModel" Version="4.10.0" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.NETCore.Windows.ApiSets" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0-preview.7.22375.6" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0-rc.2.22472.3" />
   </ItemGroup>
 
 </Project>

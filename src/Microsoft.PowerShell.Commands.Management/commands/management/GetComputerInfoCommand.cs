@@ -1890,7 +1890,7 @@ namespace Microsoft.PowerShell.Commands
             var mask = suiteMask.Value;
             var list = new List<OSProductSuite>();
 
-            foreach (OSProductSuite suite in Enum.GetValues(typeof(OSProductSuite)))
+            foreach (OSProductSuite suite in Enum.GetValues<OSProductSuite>())
                 if ((mask & (uint)suite) != 0)
                     list.Add(suite);
 

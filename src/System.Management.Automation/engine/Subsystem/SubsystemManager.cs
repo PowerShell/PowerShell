@@ -6,9 +6,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Subsystem.DSC;
+using System.Management.Automation.Subsystem.Feedback;
 using System.Management.Automation.Subsystem.Prediction;
 
 namespace System.Management.Automation.Subsystem
@@ -35,6 +35,11 @@ namespace System.Management.Automation.Subsystem
                     SubsystemKind.CrossPlatformDsc,
                     allowUnregistration: true,
                     allowMultipleRegistration: false),
+
+                SubsystemInfo.Create<IFeedbackProvider>(
+                    SubsystemKind.FeedbackProvider,
+                    allowUnregistration: true,
+                    allowMultipleRegistration: true),
             };
 
             var subSystemTypeMap = new Dictionary<Type, SubsystemInfo>(subsystems.Length);
@@ -49,6 +54,9 @@ namespace System.Management.Automation.Subsystem
             s_subsystems = new ReadOnlyCollection<SubsystemInfo>(subsystems);
             s_subSystemTypeMap = new ReadOnlyDictionary<Type, SubsystemInfo>(subSystemTypeMap);
             s_subSystemKindMap = new ReadOnlyDictionary<SubsystemKind, SubsystemInfo>(subSystemKindMap);
+
+            // Register built-in suggestion providers.
+            RegisterSubsystem(SubsystemKind.FeedbackProvider, new GeneralCommandErrorFeedback());
         }
 
         #region internal - Retrieve subsystem proxy object
@@ -143,6 +151,8 @@ namespace System.Management.Automation.Subsystem
         /// <returns>The <see cref="SubsystemInfo"/> object that represents the concrete subsystem.</returns>
         public static SubsystemInfo GetSubsystemInfo(SubsystemKind kind)
         {
+            Requires.OneSpecificSubsystemKind(kind);
+
             if (s_subSystemKindMap.TryGetValue(kind, out SubsystemInfo? subsystemInfo))
             {
                 return subsystemInfo;
@@ -181,8 +191,9 @@ namespace System.Management.Automation.Subsystem
         public static void RegisterSubsystem(SubsystemKind kind, ISubsystem proxy)
         {
             Requires.NotNull(proxy, nameof(proxy));
+            Requires.OneSpecificSubsystemKind(kind);
 
-            if (kind != proxy.Kind)
+            if (!proxy.Kind.HasFlag(kind))
             {
                 throw new ArgumentException(
                     StringUtil.Format(
@@ -267,6 +278,8 @@ namespace System.Management.Automation.Subsystem
         /// <param name="id">The Id of the implementation to be unregistered.</param>
         public static void UnregisterSubsystem(SubsystemKind kind, Guid id)
         {
+            Requires.OneSpecificSubsystemKind(kind);
+
             UnregisterSubsystem(GetSubsystemInfo(kind), id);
         }
 

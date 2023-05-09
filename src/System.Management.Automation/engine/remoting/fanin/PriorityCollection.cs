@@ -98,7 +98,7 @@ namespace System.Management.Automation.Remoting
                 Dbg.Assert(value != null, "Fragmentor cannot be null.");
                 _fragmentor = value;
                 // create serialized streams using fragment size.
-                string[] names = Enum.GetNames(typeof(DataPriorityType));
+                string[] names = Enum.GetNames<DataPriorityType>();
                 _dataToBeSent = new SerializedDataStream[names.Length];
                 _dataSyncObjects = new object[names.Length];
                 for (int i = 0; i < names.Length; i++)
@@ -765,7 +765,7 @@ namespace System.Management.Automation.Remoting
         internal PriorityReceiveDataCollection(Fragmentor defragmentor, bool createdByClientTM)
         {
             _defragmentor = defragmentor;
-            string[] names = Enum.GetNames(typeof(DataPriorityType));
+            string[] names = Enum.GetNames<DataPriorityType>();
             _recvdData = new ReceiveDataCollection[names.Length];
             for (int index = 0; index < names.Length; index++)
             {

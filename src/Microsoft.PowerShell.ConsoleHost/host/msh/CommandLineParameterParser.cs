@@ -1200,7 +1200,7 @@ namespace Microsoft.PowerShell
         private void ParseFormat(string[] args, ref int i, ref Serialization.DataFormat format, string resourceStr)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (string s in Enum.GetNames(typeof(Serialization.DataFormat)))
+            foreach (string s in Enum.GetNames<Serialization.DataFormat>())
             {
                 sb.Append(s);
                 sb.Append(Environment.NewLine);

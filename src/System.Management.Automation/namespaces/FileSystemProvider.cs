@@ -2068,43 +2068,32 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Name if a file or directory, Name -> Target if symlink.</returns>
         public static string NameString(PSObject instance)
         {
-            if (ExperimentalFeature.IsEnabled("PSAnsiRenderingFileInfo"))
+            if (instance?.BaseObject is FileSystemInfo fileInfo)
             {
-                if (instance?.BaseObject is FileSystemInfo fileInfo)
+                if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo))
                 {
-                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo))
-                    {
-                        return $"{PSStyle.Instance.FileInfo.SymbolicLink}{fileInfo.Name}{PSStyle.Instance.Reset} -> {fileInfo.LinkTarget}";
-                    }
-                    else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
-                    {
-                        return $"{PSStyle.Instance.FileInfo.Directory}{fileInfo.Name}{PSStyle.Instance.Reset}";
-                    }
-                    else if (PSStyle.Instance.FileInfo.Extension.ContainsKey(fileInfo.Extension))
-                    {
-                        return $"{PSStyle.Instance.FileInfo.Extension[fileInfo.Extension]}{fileInfo.Name}{PSStyle.Instance.Reset}";
-                    }
-                    else if ((Platform.IsWindows && CommandDiscovery.PathExtensions.Contains(fileInfo.Extension.ToLower())) ||
-                        (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileInfo.FullName)))
-                    {
-                        return $"{PSStyle.Instance.FileInfo.Executable}{fileInfo.Name}{PSStyle.Instance.Reset}";
-                    }
-                    else
-                    {
-                        return fileInfo.Name;
-                    }
+                    return $"{PSStyle.Instance.FileInfo.SymbolicLink}{fileInfo.Name}{PSStyle.Instance.Reset} -> {fileInfo.LinkTarget}";
                 }
+                else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+                {
+                    return $"{PSStyle.Instance.FileInfo.Directory}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                }
+                else if (PSStyle.Instance.FileInfo.Extension.ContainsKey(fileInfo.Extension))
+                {
+                    return $"{PSStyle.Instance.FileInfo.Extension[fileInfo.Extension]}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                }
+                else if ((Platform.IsWindows && CommandDiscovery.PathExtensions.Contains(fileInfo.Extension.ToLower())) ||
+                    (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileInfo.FullName)))
+                {
+                    return $"{PSStyle.Instance.FileInfo.Executable}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                }
+                else
+                {
+                    return fileInfo.Name;
+                }
+            }
 
-                return string.Empty;
-            }
-            else
-            {
-                return instance?.BaseObject is FileSystemInfo fileInfo
-                    ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo)
-                        ? $"{fileInfo.Name} -> {fileInfo.LinkTarget}"
-                        : fileInfo.Name
-                    : string.Empty;
-            }
+            return string.Empty;
         }
 
         /// <summary>
@@ -8603,7 +8592,7 @@ namespace System.Management.Automation.Internal
                     data.Stream = findStreamData.Name;
                     data.Length = findStreamData.Length;
                     data.FileName = path.Replace(data.Stream, string.Empty);
-                    data.FileName = data.FileName.Trim(Utils.Separators.Colon);
+                    data.FileName = data.FileName.Trim(':');
 
                     alternateStreams.Add(data);
                     findStreamData = new AlternateStreamNativeData();

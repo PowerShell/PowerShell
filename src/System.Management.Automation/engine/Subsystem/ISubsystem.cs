@@ -10,8 +10,10 @@ namespace System.Management.Automation.Subsystem
 {
     /// <summary>
     /// Define the kinds of subsystems.
+    /// Allow composite enum values to enable one subsystem implementation to serve as multiple subystems.
     /// </summary>
-    public enum SubsystemKind
+    [Flags]
+    public enum SubsystemKind : uint
     {
         /// <summary>
         /// Component that provides predictive suggestions to commandline input.
@@ -22,6 +24,11 @@ namespace System.Management.Automation.Subsystem
         /// Cross platform desired state configuration component.
         /// </summary>
         CrossPlatformDsc = 2,
+
+        /// <summary>
+        /// Component that provides feedback when a command fails interactively.
+        /// </summary>
+        FeedbackProvider = 4,
     }
 
     /// <summary>

@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#pragma warning disable 1634, 1691
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,6 +16,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Subsystem.Feedback;
 using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Runtime;
@@ -2465,14 +2464,15 @@ namespace Microsoft.PowerShell
             /// </summary>
             internal void Run(bool inputLoopIsNested)
             {
-                System.Management.Automation.Host.PSHostUserInterface c = _parent.UI;
+                PSHostUserInterface c = _parent.UI;
                 ConsoleHostUserInterface ui = c as ConsoleHostUserInterface;
 
                 Dbg.Assert(ui != null, "Host.UI should return an instance.");
 
                 bool inBlockMode = false;
-                bool previousResponseWasEmpty = false;
-                StringBuilder inputBlock = new StringBuilder();
+                // Use nullable so that we don't evaluate suggestions at startup.
+                bool? previousResponseWasEmpty = null;
+                var inputBlock = new StringBuilder();
 
                 while (!_parent.ShouldEndSession && !_shouldExit)
                 {
@@ -2488,7 +2488,6 @@ namespace Microsoft.PowerShell
                             if (inBlockMode)
                             {
                                 // use a special prompt that denotes block mode
-
                                 prompt = ">> ";
                             }
                             else
@@ -2499,9 +2498,16 @@ namespace Microsoft.PowerShell
                                     ui.WriteLine();
 
                                 // Evaluate any suggestions
-                                if (!previousResponseWasEmpty)
+                                if (previousResponseWasEmpty == false)
                                 {
-                                    EvaluateSuggestions(ui);
+                                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSFeedbackProvider))
+                                    {
+                                        EvaluateFeedbacks(ui);
+                                    }
+                                    else
+                                    {
+                                        EvaluateSuggestions(ui);
+                                    }
                                 }
 
                                 // Then output the prompt
@@ -2802,6 +2808,77 @@ namespace Microsoft.PowerShell
                 }
 
                 return remoteException.ErrorRecord.CategoryInfo.Reason == nameof(IncompleteParseException);
+            }
+
+            private void EvaluateFeedbacks(ConsoleHostUserInterface ui)
+            {
+                // Output any training suggestions
+                try
+                {
+                    List<FeedbackEntry> feedbacks = FeedbackHub.GetFeedback(_parent.Runspace);
+                    if (feedbacks is null || feedbacks.Count == 0)
+                    {
+                        return;
+                    }
+
+                    // Feedback section starts with a new line.
+                    ui.WriteLine();
+
+                    const string Indentation = "  ";
+                    string nameStyle = PSStyle.Instance.Formatting.FeedbackProvider;
+                    string textStyle = PSStyle.Instance.Formatting.FeedbackText;
+                    string ansiReset = PSStyle.Instance.Reset;
+
+                    if (!ui.SupportsVirtualTerminal)
+                    {
+                        nameStyle = string.Empty;
+                        textStyle = string.Empty;
+                        ansiReset = string.Empty;
+                    }
+
+                    int count = 0;
+                    var output = new StringBuilder();
+
+                    foreach (FeedbackEntry entry in feedbacks)
+                    {
+                        if (count > 0)
+                        {
+                            output.AppendLine();
+                        }
+
+                        output.Append("Suggestion [")
+                            .Append(nameStyle)
+                            .Append(entry.Name)
+                            .Append(ansiReset)
+                            .AppendLine("]:")
+                            .Append(textStyle);
+
+                        string[] lines = entry.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                        foreach (string line in lines)
+                        {
+                            output.Append(Indentation)
+                                .Append(line.AsSpan().TrimEnd())
+                                .AppendLine();
+                        }
+
+                        output.Append(ansiReset);
+                        ui.Write(output.ToString());
+
+                        count++;
+                        output.Clear();
+                    }
+
+                    // Feedback section ends with a new line.
+                    ui.WriteLine();
+                }
+                catch (Exception e)
+                {
+                    // Catch-all OK. This is a third-party call-out.
+                    ui.WriteErrorLine(e.Message);
+
+                    LocalRunspace localRunspace = (LocalRunspace)_parent.Runspace;
+                    localRunspace.GetExecutionContext.AppendDollarError(e);
+                }
             }
 
             private void EvaluateSuggestions(ConsoleHostUserInterface ui)

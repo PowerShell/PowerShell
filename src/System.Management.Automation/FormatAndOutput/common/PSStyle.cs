@@ -173,6 +173,16 @@ namespace System.Management.Automation
 
                 return FromRgb(red, green, blue);
             }
+
+            /// <summary>
+            /// Return the VT escape sequence for a foreground color.
+            /// </summary>
+            /// <param name="color">The foreground color to be mapped from.</param>
+            /// <returns>The VT escape sequence representing the foreground color.</returns>
+            public string FromConsoleColor(ConsoleColor color)
+            {
+                return MapForegroundColorToEscapeSequence(color);
+            }
         }
 
         /// <summary>
@@ -288,6 +298,16 @@ namespace System.Management.Automation
 
                 return FromRgb(red, green, blue);
             }
+
+            /// <summary>
+            /// Return the VT escape sequence for a background color.
+            /// </summary>
+            /// <param name="color">The background color to be mapped from.</param>
+            /// <returns>The VT escape sequence representing the background color.</returns>
+            public string FromConsoleColor(ConsoleColor color)
+            {
+                return MapBackgroundColorToEscapeSequence(color);
+            }
         }
 
         /// <summary>
@@ -365,6 +385,17 @@ namespace System.Management.Automation
             private string _tableHeader = "\x1b[32;1m";
 
             /// <summary>
+            /// Gets or sets the style for custom table headers.
+            /// </summary>
+            public string CustomTableHeaderLabel
+            {
+                get => _customTableHeaderLabel;
+                set => _customTableHeaderLabel = ValidateNoContent(value);
+            }
+
+            private string _customTableHeaderLabel = "\x1b[32;1;3m";
+
+            /// <summary>
             /// Gets or sets the accent style for errors.
             /// </summary>
             public string ErrorAccent
@@ -418,6 +449,28 @@ namespace System.Management.Automation
             }
 
             private string _debug = "\x1b[33;1m";
+
+            /// <summary>
+            /// Gets or sets the style for rendering feedback provider names.
+            /// </summary>
+            public string FeedbackProvider
+            {
+                get => _feedbackProvider;
+                set => _feedbackProvider = ValidateNoContent(value);
+            }
+
+            private string _feedbackProvider = "\x1b[33m";
+
+            /// <summary>
+            /// Gets or sets the style for rendering feedback text.
+            /// </summary>
+            public string FeedbackText
+            {
+                get => _feedbackText;
+                set => _feedbackText = ValidateNoContent(value);
+            }
+
+            private string _feedbackText = "\x1b[96m";
         }
 
         /// <summary>
@@ -820,6 +873,116 @@ namespace System.Management.Automation
                 return s_psstyle;
             }
         }
+
+        /// <summary>
+        /// The map of background console colors to escape sequences.
+        /// </summary>
+        private static readonly string[] BackgroundColorMap =
+            {
+                "\x1b[40m", // Black
+                "\x1b[44m", // DarkBlue
+                "\x1b[42m", // DarkGreen
+                "\x1b[46m", // DarkCyan
+                "\x1b[41m", // DarkRed
+                "\x1b[45m", // DarkMagenta
+                "\x1b[43m", // DarkYellow
+                "\x1b[47m", // Gray
+                "\x1b[100m", // DarkGray
+                "\x1b[104m", // Blue
+                "\x1b[102m", // Green
+                "\x1b[106m", // Cyan
+                "\x1b[101m", // Red
+                "\x1b[105m", // Magenta
+                "\x1b[103m", // Yellow
+                "\x1b[107m", // White
+            };
+
+        /// <summary>
+        /// The map of foreground console colors to escape sequences.
+        /// </summary>
+        private static readonly string[] ForegroundColorMap =
+            {
+                "\x1b[30m", // Black
+                "\x1b[34m", // DarkBlue
+                "\x1b[32m", // DarkGreen
+                "\x1b[36m", // DarkCyan
+                "\x1b[31m", // DarkRed
+                "\x1b[35m", // DarkMagenta
+                "\x1b[33m", // DarkYellow
+                "\x1b[37m", // Gray
+                "\x1b[90m", // DarkGray
+                "\x1b[94m", // Blue
+                "\x1b[92m", // Green
+                "\x1b[96m", // Cyan
+                "\x1b[91m", // Red
+                "\x1b[95m", // Magenta
+                "\x1b[93m", // Yellow
+                "\x1b[97m", // White
+            };
+
+        /// <summary>
+        /// Return the VT escape sequence for a ConsoleColor.
+        /// </summary>
+        /// <param name="color">The <see cref="ConsoleColor"/> to be mapped from.</param>
+        /// <param name="isBackground">Whether or not it's a background color.</param>
+        /// <returns>The VT escape sequence representing the color.</returns>
+        internal static string MapColorToEscapeSequence(ConsoleColor color, bool isBackground)
+        {
+            int index = (int)color;
+            if (index < 0 || index >= ForegroundColorMap.Length)
+            {
+                throw new ArgumentOutOfRangeException(paramName: nameof(color));
+            }
+
+            return (isBackground ? BackgroundColorMap : ForegroundColorMap)[index];
+        }
+
+        /// <summary>
+        /// Return the VT escape sequence for a foreground color.
+        /// </summary>
+        /// <param name="foregroundColor">The foreground color to be mapped from.</param>
+        /// <returns>The VT escape sequence representing the foreground color.</returns>
+        public static string MapForegroundColorToEscapeSequence(ConsoleColor foregroundColor)
+            => MapColorToEscapeSequence(foregroundColor, isBackground: false);
+
+        /// <summary>
+        /// Return the VT escape sequence for a background color.
+        /// </summary>
+        /// <param name="backgroundColor">The background color to be mapped from.</param>
+        /// <returns>The VT escape sequence representing the background color.</returns>
+        public static string MapBackgroundColorToEscapeSequence(ConsoleColor backgroundColor)
+            => MapColorToEscapeSequence(backgroundColor, isBackground: true);
+
+        /// <summary>
+        /// Return the VT escape sequence for a pair of foreground and background colors.
+        /// </summary>
+        /// <param name="foregroundColor">The foreground color of the color pair.</param>
+        /// <param name="backgroundColor">The background color of the color pair.</param>
+        /// <returns>The VT escape sequence representing the foreground and background color pair.</returns>
+        public static string MapColorPairToEscapeSequence(ConsoleColor foregroundColor, ConsoleColor backgroundColor)
+        {
+            int foreIndex = (int)foregroundColor;
+            int backIndex = (int)backgroundColor;
+
+            if (foreIndex < 0 || foreIndex >= ForegroundColorMap.Length)
+            {
+                throw new ArgumentOutOfRangeException(paramName: nameof(foregroundColor));
+            }
+
+            if (backIndex < 0 || backIndex >= ForegroundColorMap.Length)
+            {
+                throw new ArgumentOutOfRangeException(paramName: nameof(backgroundColor));
+            }
+
+            string foreground = ForegroundColorMap[foreIndex];
+            string background = BackgroundColorMap[backIndex];
+
+            return string.Concat(
+                foreground.AsSpan(start: 0, length: foreground.Length - 1),
+                ";".AsSpan(),
+                background.AsSpan(start: 2));
+        }
     }
+
     #endregion PSStyle
 }

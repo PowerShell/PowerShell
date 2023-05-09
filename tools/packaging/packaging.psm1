@@ -2108,7 +2108,7 @@ function New-ILNugetPackageSource
 
     #region ref
     $refFolder = New-Item (Join-Path $filePackageFolder.FullName "ref/$script:netCoreRuntime") -ItemType Directory -Force
-    CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
+    CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList -winBinPath $WinFxdBinPath
     #endregion ref
 
     $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
@@ -2257,7 +2257,8 @@ function CopyReferenceAssemblies
         [string] $assemblyName,
         [string] $refBinPath,
         [string] $refNugetPath,
-        [string[]] $assemblyFileList
+        [string[]] $assemblyFileList,
+        [string] $winBinPath
     )
 
     $supportedRefList = @(
@@ -2286,7 +2287,8 @@ function CopyReferenceAssemblies
         default {
             $ref_SMA = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.dll
             $ref_doc = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.xml
-            Copy-Item $ref_SMA, $ref_doc -Destination $refNugetPath -Force
+            $self_ref_doc = Join-Path -Path $winBinPath -ChildPath "$assemblyName.xml"
+            Copy-Item $ref_SMA, $ref_doc, $self_ref_doc -Destination $refNugetPath -Force
             Write-Log "Copied file '$ref_SMA' and '$ref_doc' to '$refNugetPath'"
         }
     }
@@ -4585,7 +4587,6 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             # Remove symbol files, xml document files.
             Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
 
-
             ## Build 'linux-arm' and create 'tar.gz' package for it.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm32LinuxBuildFolder}"
@@ -4598,14 +4599,14 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             # Remove symbol files.
             Remove-Item "${buildFolder}\*.pdb" -Force
         } elseif ($BuildType -eq 'rpm') {
-            ## Build 'min-size'
+            ## Build for Mariner
             $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Min-Size ----"
+            Write-Verbose -Verbose "---- Mariner ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
             Write-Verbose -Verbose "options.Top $($options.Top)"
             $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
             if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
+                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner package"
                 Remove-Item -Path $binDir -Recurse -Force
             }
 

@@ -422,7 +422,7 @@ namespace System.Management.Automation
             catch (Exception)
             {
                 // Do cleanup in case of exception
-                CleanUp();
+                CleanUp(killBackgroundProcess: true);
                 throw;
             }
         }
@@ -444,7 +444,7 @@ namespace System.Management.Automation
             catch (Exception)
             {
                 // Do cleanup in case of exception
-                CleanUp();
+                CleanUp(killBackgroundProcess: true);
                 throw;
             }
         }
@@ -904,7 +904,7 @@ namespace System.Management.Automation
             finally
             {
                 // Do some cleanup
-                CleanUp();
+                CleanUp(killBackgroundProcess: false);
             }
 
             // An exception was thrown while attempting to run the program
@@ -1161,7 +1161,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Aggressively clean everything up...
         /// </summary>
-        private void CleanUp()
+        /// <param name="killBackgroundProcess">If set, also terminate background process.</param>
+        private void CleanUp(bool killBackgroundProcess)
         {
             // We need to call 'NotifyEndApplication' as appropriate during cleanup
             if (_hasNotifiedBeginApplication)
@@ -1171,17 +1172,20 @@ namespace System.Management.Automation
 
             try
             {
-                // on Unix, we need to kill the process to ensure it terminates as Dispose() merely
-                // closes the redirected streams and the processs does not exit on macOS.  However,
-                // on Windows, a winexe like notepad should continue running so we don't want to kill it.
+                // on Unix, we need to kill the process (if not running in background) to ensure it terminates,
+                // as Dispose() merely closes the redirected streams and the process does not exit.
+                // However, on Windows, a winexe like notepad should continue running so we don't want to kill it.
 #if UNIX
-                try
+                if (killBackgroundProcess || !_isRunningInBackground)
                 {
-                    _nativeProcess?.Kill();
-                }
-                catch
-                {
-                    // Ignore all exception since it is cleanup.
+                    try
+                    {
+                        _nativeProcess?.Kill();
+                    }
+                    catch
+                    {
+                        // Ignore all exceptions since it is cleanup.
+                    }
                 }
 #endif
                 _nativeProcess?.Dispose();
@@ -1572,7 +1576,7 @@ namespace System.Management.Automation
             }
             else
             {
-                extensionList = pathext.Split(Utils.Separators.Semicolon);
+                extensionList = pathext.Split(';');
             }
 
             foreach (string extension in extensionList)
@@ -2057,11 +2061,12 @@ namespace System.Management.Automation
             // Get the encoding for writing to native command. Note we get the Encoding
             // from the current scope so a script or function can use a different encoding
             // than global value.
-            Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
-                                    Utils.utf8NoBom;
+            Encoding outputEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as Encoding;
 
-            _streamWriter = new StreamWriter(process.StandardInput.BaseStream, pipeEncoding);
-            _streamWriter.AutoFlush = true;
+            _streamWriter = new StreamWriter(process.StandardInput.BaseStream, outputEncoding ?? Encoding.Default)
+            {
+                AutoFlush = true
+            };
 
             _inputFormat = inputFormat;
 

@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Tests for OrderedHashtable' {
+Describe 'Tests for OrderedHashtable' -Tag 'CI' {
 
     It 'Can create an empty OrderedHashtable' {
         $oh =[System.Management.Automation.OrderedHashtable]::new()

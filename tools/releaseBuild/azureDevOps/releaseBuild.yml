@@ -100,7 +100,7 @@ stages:
       - template: templates/linux.yml
         parameters:
           buildName: rpm
-          uploadDisplayName: Upload and Sign
+          parentJob: build_deb
 
       - template: templates/linux.yml
         parameters:
@@ -110,6 +110,29 @@ stages:
       - template: templates/linux.yml
         parameters:
           buildName: alpine
+
+      - template: templates/linux-authenticode-sign.yml
+
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: deb
+          parentJob: sign_linux_builds
+
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: rpm
+          uploadDisplayName: Upload and Sign
+          parentJob: sign_linux_builds
+
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: alpine
+          parentJob: sign_linux_builds
+
+      - template: templates/linux-packaging.yml
+        parameters:
+          buildName: fxdependent
+          parentJob: sign_linux_builds
 
   - stage: windows
     dependsOn: ['prep']

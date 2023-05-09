@@ -202,6 +202,10 @@ jobs:
       $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
 
       Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
+      if ($env:BuildConfiguration -eq 'minSize') {
+        ## Remove XML files when making a min-size package.
+        Remove-Item "$BuildPath/*.xml" -Force
+      }
     displayName: Merge ThirdParty signed files with Build
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 

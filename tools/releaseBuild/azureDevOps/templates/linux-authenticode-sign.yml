@@ -1,0 +1,127 @@
+jobs:
+- job: sign_linux_builds
+  displayName: Sign all linux builds
+  condition: succeeded()
+  pool:
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
+  dependsOn: ['build_fxdependent', 'build_rpm']
+  variables:
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - group: ESRP
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuild
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
+    displayName: Download deb build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildMinSize
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize
+    displayName: Download min-size build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildArm32
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32
+    displayName: Download arm32 build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildArm64
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64
+    displayName: Download arm64 build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshMarinerBuildAmd64
+      path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
+    displayName: Download mariner build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildAlpine
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine
+    displayName: Download alpine build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildFxdependent
+      path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent
+    displayName: Download fxdependent build
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: cloneToOfficialPath.yml
+
+  - template: insert-nuget-config-azfeed.yml
+    parameters:
+      repoRoot: $(PowerShellRoot)
+
+  - powershell: |
+      Set-Location $env:POWERSHELLROOT
+      import-module "$env:POWERSHELLROOT/build.psm1"
+      Sync-PSTags -AddRemoteIfMissing
+    displayName: SyncTags
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+
+  - checkout: ComplianceRepo
+    clean: true
+
+  - template: shouldSign.yml
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuild
+      buildPrefixName: 'PowerShell Linux'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuildMinSize
+      buildPrefixName: 'PowerShell Linux Minimum Size'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuildArm32
+      buildPrefixName: 'PowerShell Linux Arm32'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuildArm64
+      buildPrefixName: 'PowerShell Linux Arm64'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshMarinerBuildAmd64
+      buildPrefixName: 'PowerShell Linux x64 Framework Dependent'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuildAlpine
+      buildPrefixName: 'PowerShell Linux Alpine x64'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuildFxdependent
+      buildPrefixName: 'PowerShell Linux Framework Dependent'
+
+  #- template: Sbom.yml@ComplianceRepo
+  #  parameters:
+  #    BuildDropPath: '$(System.ArtifactsDirectory)/$(BIN_LOCATION)'
+  #    Build_Repository_Uri: $(Github_Build_Repository_Uri)
+  #    displayName: ${{ parameters.buildName }} SBOM
+  #    PackageName: $(PACKAGE_NAME)
+  #    PackageVersion: $(Version)
+  #    sourceScanPath: '$(PowerShellRoot)/tools'
