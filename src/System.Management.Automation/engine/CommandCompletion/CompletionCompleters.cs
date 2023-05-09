@@ -4435,29 +4435,22 @@ namespace System.Management.Automation
                 int lastSeparatorIndex = wordToComplete.LastIndexOfAny(Utils.Separators.DirectoryOrDrive);
                 if (lastSeparatorIndex == -1)
                 {
-                    // provider path is always absolute
-                    if (providerSeparatorIndex == -1)
-                    {
-                        filter = $"{wordToComplete}*";
-                        basePath = ".";
-                        defaultRelativePath = true;
-                    }
-                    else
-                    {
-                        filter = $"{wordToComplete.Substring(pathStartOffset)}*";
-                        basePath = wordToComplete.Remove(pathStartOffset);
-                        defaultRelativePath = false;
-                    }
+                    // Input is a simple word with no path separators like: "Program Files"
+                    filter = $"{wordToComplete}*";
+                    basePath = ".";
+                    defaultRelativePath = true;
                 }
                 else
                 {
                     if (lastSeparatorIndex + 1 == wordToComplete.Length)
                     {
+                        // Input ends with a separator like: "./", "filesystem::" or "C:"
                         filter = "*";
                         basePath = wordToComplete;
                     }
                     else
                     {
+                        // Input contains a separator, but doesn't end with one like: "C:\Program Fil" or "Registry::HKEY_LOC"
                         filter = $"{wordToComplete.Substring(lastSeparatorIndex + 1)}*";
                         basePath = wordToComplete.Substring(0, lastSeparatorIndex + 1);
                     }
@@ -4557,6 +4550,21 @@ namespace System.Management.Automation
             return results.OrderBy(x => x.ToolTip);
         }
 
+        /// <summary>
+        /// Helper method for generating path completion results for the file system provider.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="provider"></param>
+        /// <param name="resolvedPaths"></param>
+        /// <param name="filterText"></param>
+        /// <param name="includedExtensions"></param>
+        /// <param name="containersOnly"></param>
+        /// <param name="relativePaths"></param>
+        /// <param name="literalPaths"></param>
+        /// <param name="inputUsedHome"></param>
+        /// <param name="providerPrefix"></param>
+        /// <param name="stringType"></param>
+        /// <returns></returns>
         private static List<CompletionResult> GetFileSystemProviderResults(
             CompletionContext context,
             ProviderInfo provider,
@@ -4570,6 +4578,9 @@ namespace System.Management.Automation
             string providerPrefix,
             StringConstantType stringType)
         {
+#if DEBUG
+            Diagnostics.Assert(provider.Name.Equals(FileSystemProvider.ProviderName), "Provider should be filesystem provider.");
+#endif
             var enumerationOptions = _enumerationOptions;
             var results = new List<CompletionResult>();
             string homePath;
@@ -4667,6 +4678,20 @@ namespace System.Management.Automation
             return results;
         }
 
+        /// <summary>
+        /// Helper method for generating path completion results standard providers that don't need any special treatment.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="provider"></param>
+        /// <param name="resolvedPaths"></param>
+        /// <param name="filterText"></param>
+        /// <param name="containersOnly"></param>
+        /// <param name="relativePaths"></param>
+        /// <param name="literalPaths"></param>
+        /// <param name="inputUsedHome"></param>
+        /// <param name="providerPrefix"></param>
+        /// <param name="stringType"></param>
+        /// <returns></returns>
         private static List<CompletionResult> GetDefaultProviderResults(
             CompletionContext context,
             ProviderInfo provider,
@@ -4854,117 +4879,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                switch (path[i])
-                {
-                    case '#':
-                    case '&':
-                    case '-':
-                    case '@':
-                        if (i == 0 && stringType == StringConstantType.BareWord)
-                        {
-                            quotesAreNeeded = true;
-                        }
-                        break;
-
-                    case ' ':
-                    case ',':
-                    case ';':
-                    case '(':
-                    case ')':
-                    case '{':
-                    case '}':
-                    case '|':
-                        if (stringType == StringConstantType.BareWord)
-                        {
-                            quotesAreNeeded = true;
-                        }
-                        break;
-
-                    case '0':
-                    case 'a':
-                    case 'b':
-                    case 'e':
-                    case 'f':
-                    case 'n':
-                    case 'r':
-                    case 't':
-                    case 'u':
-                    case 'v':
-                        if (!useSingleQuoteEscapeRules && i > 0 && path[i - 1] == '`')
-                        {
-                            _ = sb.Append('`');
-                        }
-                        break;
-
-                    case '[':
-                    case ']':
-                        if (!literalPath)
-                        {
-                            if (useSingleQuoteEscapeRules)
-                            {
-                                _ = sb.Append('`');
-                            }
-                            else
-                            {
-                                _ = sb.Append("``");
-                            }
-
-                            quotesAreNeeded = true;
-                        }
-                        break;
-
-                    case '`':
-                        if (useSingleQuoteEscapeRules)
-                        {
-                            if (!literalPath)
-                            {
-                                _ = sb.Append('`');
-                            }
-                        }
-                        else
-                        {
-                            if (literalPath)
-                            {
-                                _ = sb.Append('`');
-                            }
-                            else
-                            {
-                                _ = sb.Append("``");
-                            }
-                        }
-
-                        if (stringType is StringConstantType.BareWord or StringConstantType.DoubleQuoted)
-                        {
-                            quotesAreNeeded = true;
-                        }
-                        break;
-
-                    case '$':
-                        if (!useSingleQuoteEscapeRules)
-                        {
-                            _ = sb.Append('`');
-                        }
-
-                        if (stringType is StringConstantType.BareWord or StringConstantType.DoubleQuoted)
-                        {
-                            quotesAreNeeded = true;
-                        }
-                        break;
-
-                    default:
-                        if (useSingleQuoteEscapeRules && path[i].IsSingleQuote())
-                        {
-                            _ = sb.Append('\'');
-                            quotesAreNeeded = true;
-                        }
-                        else if (!useSingleQuoteEscapeRules && path[i].IsDoubleQuote())
-                        {
-                            _ = sb.Append('`');
-                            quotesAreNeeded = true;
-                        }
-                        break;
-                }
-
+                EscapeCharIfNeeded(sb, path, i, stringType, literalPath, useSingleQuoteEscapeRules, ref quotesAreNeeded);
                 _ = sb.Append(path[i]);
             }
 
@@ -4979,121 +4894,140 @@ namespace System.Management.Automation
 
             for (int i = 0; i < path.Length; i++)
             {
-                switch (path[i])
-                {
-                    case '#':
-                    case '&':
-                    case '-':
-                    case '@':
-                        if (i == 0 && stringType == StringConstantType.BareWord)
-                        {
-                            quotesAreNeeded = true;
-                        }
-                        break;
-
-                    case ' ':
-                    case ',':
-                    case ';':
-                    case '(':
-                    case ')':
-                    case '{':
-                    case '}':
-                    case '|':
-                        if (stringType == StringConstantType.BareWord)
-                        {
-                            quotesAreNeeded = true;
-                        }
-                        break;
-
-                    case '0':
-                    case 'a':
-                    case 'b':
-                    case 'e':
-                    case 'f':
-                    case 'n':
-                    case 'r':
-                    case 't':
-                    case 'u':
-                    case 'v':
-                        if (!useSingleQuoteEscapeRules && i > 0 && path[i - 1] == '`')
-                        {
-                            _ = sb.Append('`');
-                        }
-                        break;
-
-                    case '[':
-                    case ']':
-                        if (!literalPath)
-                        {
-                            if (useSingleQuoteEscapeRules)
-                            {
-                                _ = sb.Append('`');
-                            }
-                            else
-                            {
-                                _ = sb.Append("``");
-                            }
-
-                            quotesAreNeeded = true;
-                        }
-                        break;
-
-                    case '`':
-                        if (useSingleQuoteEscapeRules)
-                        {
-                            if (!literalPath)
-                            {
-                                _ = sb.Append('`');
-                            }
-                        }
-                        else
-                        {
-                            if (literalPath)
-                            {
-                                _ = sb.Append('`');
-                            }
-                            else
-                            {
-                                _ = sb.Append("``");
-                            }
-                        }
-
-                        if (stringType is StringConstantType.BareWord or StringConstantType.DoubleQuoted)
-                        {
-                            quotesAreNeeded = true;
-                        }
-                        break;
-
-                    case '$':
-                        if (!useSingleQuoteEscapeRules)
-                        {
-                            _ = sb.Append('`');
-                        }
-
-                        if (stringType is StringConstantType.BareWord or StringConstantType.DoubleQuoted)
-                        {
-                            quotesAreNeeded = true;
-                        }
-                        break;
-
-                    default:
-                        if (useSingleQuoteEscapeRules && path[i].IsSingleQuote())
-                        {
-                            _ = sb.Append('\'');
-                            quotesAreNeeded = true;
-                        }
-                        else if (!useSingleQuoteEscapeRules && path[i].IsDoubleQuote())
-                        {
-                            _ = sb.Append('`');
-                            quotesAreNeeded = true;
-                        }
-                        break;
-                }
-
+                EscapeCharIfNeeded(sb, path, i, stringType, literalPath, useSingleQuoteEscapeRules, ref quotesAreNeeded);
                 _ = sb.Append(path[i]);
             }
 
             return sb.ToString();
+        }
+
+        private static void EscapeCharIfNeeded(
+            StringBuilder sb,
+            string path,
+            int index,
+            StringConstantType stringType,
+            bool literalPath,
+            bool useSingleQuoteEscapeRules,
+            ref bool quotesAreNeeded)
+        {
+            switch (path[index])
+            {
+                case '#':
+                case '-':
+                case '@':
+                    if (index == 0 && stringType == StringConstantType.BareWord)
+                    {
+                        // Chars that would start a new token when used as the first char in a bareword argument.
+                        quotesAreNeeded = true;
+                    }
+                    break;
+
+                case ' ':
+                case ',':
+                case ';':
+                case '(':
+                case ')':
+                case '{':
+                case '}':
+                case '|':
+                case '&':
+                    if (stringType == StringConstantType.BareWord)
+                    {
+                        // Chars that would start a new token when used anywhere in a bareword argument.
+                        quotesAreNeeded = true;
+                    }
+                    break;
+
+                case '0':
+                case 'a':
+                case 'b':
+                case 'e':
+                case 'f':
+                case 'n':
+                case 'r':
+                case 't':
+                case 'u':
+                case 'v':
+                    if (!useSingleQuoteEscapeRules && index > 0 && path[index - 1] == '`')
+                    {
+                        // Characters that have special meaning if the last character is a backtick in bareword/double quote string.
+                        // See: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_special_characters
+                        _ = sb.Append('`');
+                    }
+                    break;
+
+                case '[':
+                case ']':
+                    if (!literalPath)
+                    {
+                        // Wildcard characters that need to be escaped.
+                        if (useSingleQuoteEscapeRules)
+                        {
+                            _ = sb.Append('`');
+                        }
+                        else
+                        {
+                            _ = sb.Append("``");
+                        }
+
+                        quotesAreNeeded = true;
+                    }
+                    break;
+
+                case '`':
+                    // Literal backtick needs to be escaped to not be treated as an escape character
+                    if (useSingleQuoteEscapeRules)
+                    {
+                        if (!literalPath)
+                        {
+                            _ = sb.Append('`');
+                        }
+                    }
+                    else
+                    {
+                        if (literalPath)
+                        {
+                            _ = sb.Append('`');
+                        }
+                        else
+                        {
+                            _ = sb.Append("``");
+                        }
+                    }
+
+                    if (stringType is StringConstantType.BareWord or StringConstantType.DoubleQuoted)
+                    {
+                        quotesAreNeeded = true;
+                    }
+                    break;
+
+                case '$':
+                    // $ needs to be escaped so following chars are not parsed as a variable
+                    if (!useSingleQuoteEscapeRules)
+                    {
+                        _ = sb.Append('`');
+                    }
+
+                    if (stringType is StringConstantType.BareWord or StringConstantType.DoubleQuoted)
+                    {
+                        quotesAreNeeded = true;
+                    }
+                    break;
+
+                default:
+                    // Handle all the different quote types
+                    if (useSingleQuoteEscapeRules && path[index].IsSingleQuote())
+                    {
+                        _ = sb.Append('\'');
+                        quotesAreNeeded = true;
+                    }
+                    else if (!useSingleQuoteEscapeRules && path[index].IsDoubleQuote())
+                    {
+                        _ = sb.Append('`');
+                        quotesAreNeeded = true;
+                    }
+                    break;
+            }
         }
 
         private static string NewPathCompletionText(string parent, string leaf, StringConstantType stringType, bool containsNestedExpressions, bool forceQuotes, bool addAmpersand)
