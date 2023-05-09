@@ -7,7 +7,7 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation.Host
 {
     /// <summary>
-    /// Defines the properties and facilities providing by an application hosting an MSH <see
+    /// Defines the properties and facilities providing by an application hosting PowerShell <see
     /// cref="System.Management.Automation.Runspaces.Runspace"/>.
     /// </summary>
     /// <remarks>
@@ -15,7 +15,7 @@ namespace System.Management.Automation.Host
     /// overrides the abstract methods and properties.  The hosting application creates an instance of its derived class and
     /// passes it to the <see cref="System.Management.Automation.Runspaces.RunspaceFactory"/> CreateRunspace method.
     ///
-    /// From the moment that the instance of the derived class (the "host class") is passed to CreateRunspace, the MSH runtime
+    /// From the moment that the instance of the derived class (the "host class") is passed to CreateRunspace, the PowerShell runtime
     /// can call any of the methods of that class.  The instance must not be destroyed until after the Runspace is closed.
     ///
     /// There is a 1:1 relationship between the instance of the host class and the Runspace instance to which it is passed.  In
@@ -64,9 +64,9 @@ namespace System.Management.Automation.Host
         /// The name identifier of the hosting application.
         /// </value>
         /// <example>
-        ///     <MSH>
+        ///     <code>
         ///         if ($Host.Name -ieq "ConsoleHost") { write-host "I'm running in the Console Host" }
-        ///     </MSH>
+        ///     </code>
         /// </example>
         public abstract string Name
         {
@@ -79,7 +79,7 @@ namespace System.Management.Automation.Host
         /// </summary>
         /// <remarks>
         /// When implementing this member, it should return the product version number for the product
-        /// that is hosting the Monad engine.
+        /// that is hosting the PowerShell engine.
         /// </remarks>
         /// <value>
         /// The version number of the hosting application.

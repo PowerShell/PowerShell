@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell
                     }
 
                     // Reset style after each in case it is decorated
-                    defaultChoicesBuilder.Append(prepend + defaultStr + PSStyle.Instance.Reset + PSStyle.Instance.Prompt.Help);
+                    defaultChoicesBuilder.Append(CultureInfo.InvariantCulture, $"{prepend}{defaultStr}{PSStyle.Instance.Reset}{PSStyle.Instance.Prompt.Help}");
                     prepend = ",";
                 }
 
@@ -429,7 +429,9 @@ namespace Microsoft.PowerShell
 
                 prompt = PSStyle.Decorate(prompt, PSStyle.Instance.Prompt.ChoiceOther);
                 message = PSStyle.Decorate(message, PSStyle.Instance.Prompt.Help);
-                WriteLineToConsole(WrapToCurrentWindowWidth(prompt + message));
+                WriteLineToConsole(
+                    WrapToCurrentWindowWidth(
+                        string.Create(CultureInfo.InvariantCulture, $"{prompt}{message}")));
             }
         }
     }

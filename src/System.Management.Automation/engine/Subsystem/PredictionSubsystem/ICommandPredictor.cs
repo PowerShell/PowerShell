@@ -22,11 +22,6 @@ namespace System.Management.Automation.Subsystem.Prediction
         Dictionary<string, string>? ISubsystem.FunctionsToDefine => null;
 
         /// <summary>
-        /// Default implementation for `ISubsystem.Kind`.
-        /// </summary>
-        SubsystemKind ISubsystem.Kind => SubsystemKind.CommandPredictor;
-
-        /// <summary>
         /// Get the predictive suggestions. It indicates the start of a suggestion rendering session.
         /// </summary>
         /// <param name="client">Represents the client that initiates the call.</param>
@@ -41,7 +36,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="feedback">A specific type of feedback.</param>
         /// <returns>True or false, to indicate whether the specific feedback is accepted.</returns>
-        bool CanAcceptFeedback(PredictionClient client, PredictorFeedbackKind feedback);
+        bool CanAcceptFeedback(PredictionClient client, PredictorFeedbackKind feedback) => false;
 
         /// <summary>
         /// One or more suggestions provided by the predictor were displayed to the user.
@@ -52,7 +47,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// When the value is greater than 0, it's the number of displayed suggestions from the list returned in <paramref name="session"/>, starting from the index 0.
         /// When the value is less than or equal to 0, it means a single suggestion from the list got displayed, and the index is the absolute value.
         /// </param>
-        void OnSuggestionDisplayed(PredictionClient client, uint session, int countOrIndex);
+        void OnSuggestionDisplayed(PredictionClient client, uint session, int countOrIndex) { }
 
         /// <summary>
         /// The suggestion provided by the predictor was accepted.
@@ -60,7 +55,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="session">Represents the mini-session where the accepted suggestion came from.</param>
         /// <param name="acceptedSuggestion">The accepted suggestion text.</param>
-        void OnSuggestionAccepted(PredictionClient client, uint session, string acceptedSuggestion);
+        void OnSuggestionAccepted(PredictionClient client, uint session, string acceptedSuggestion) { }
 
         /// <summary>
         /// A command line was accepted to execute.
@@ -68,7 +63,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// </summary>
         /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="history">History command lines provided as references for prediction.</param>
-        void OnCommandLineAccepted(PredictionClient client, IReadOnlyList<string> history);
+        void OnCommandLineAccepted(PredictionClient client, IReadOnlyList<string> history) { }
 
         /// <summary>
         /// A command line was done execution.
@@ -76,7 +71,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="commandLine">The last accepted command line.</param>
         /// <param name="success">Shows whether the execution was successful.</param>
-        void OnCommandLineExecuted(PredictionClient client, string commandLine, bool success);
+        void OnCommandLineExecuted(PredictionClient client, string commandLine, bool success) { }
     }
 
     /// <summary>
@@ -137,6 +132,12 @@ namespace System.Management.Automation.Subsystem.Prediction
         public PredictionClientKind Kind { get; }
 
         /// <summary>
+        /// Gets the current location of the default session.
+        /// It returns null if there is no default Runspace or if the default is a remote Runspace.
+        /// </summary>
+        public PathInfo? CurrentLocation { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="PredictionClient"/> class.
         /// </summary>
         /// <param name="name">Name of the interactive client.</param>
@@ -186,8 +187,8 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="inputTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         public PredictionContext(Ast inputAst, Token[] inputTokens)
         {
-            Requires.NotNull(inputAst, nameof(inputAst));
-            Requires.NotNull(inputTokens, nameof(inputTokens));
+            ArgumentNullException.ThrowIfNull(inputAst);
+            ArgumentNullException.ThrowIfNull(inputTokens);
 
             var cursor = inputAst.Extent.EndScriptPosition;
             var astContext = CompletionAnalysis.ExtractAstContext(inputAst, inputTokens, cursor);
@@ -206,7 +207,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <returns>A <see cref="PredictionContext"/> object.</returns>
         public static PredictionContext Create(string input)
         {
-            Requires.NotNullOrEmpty(input, nameof(input));
+            ArgumentException.ThrowIfNullOrEmpty(input);
 
             Ast ast = Parser.ParseInput(input, out Token[] tokens, out _);
             return new PredictionContext(ast, tokens);
@@ -244,7 +245,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="toolTip">The tooltip of the suggestion.</param>
         public PredictiveSuggestion(string suggestion, string? toolTip)
         {
-            Requires.NotNullOrEmpty(suggestion, nameof(suggestion));
+            ArgumentException.ThrowIfNullOrEmpty(suggestion);
 
             SuggestionText = suggestion;
             ToolTip = toolTip;

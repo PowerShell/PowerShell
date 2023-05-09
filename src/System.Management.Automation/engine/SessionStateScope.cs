@@ -421,7 +421,10 @@ namespace System.Management.Automation
             bool varExists = TryGetVariable(name, origin, true, out variable);
 
             // Initialize the private variable dictionary if it's not yet
-            if (_variables == null) { GetPrivateVariables(); }
+            if (_variables == null)
+            {
+                GetPrivateVariables();
+            }
 
             if (!asValue && variableToSet != null)
             {
@@ -1245,11 +1248,18 @@ namespace System.Management.Automation
                 name != null,
                 "The caller should verify the name");
 
-            var functionInfos = GetFunctions();
-            FunctionInfo existingValue;
+            Dictionary<string, FunctionInfo> functionInfos = GetFunctions();
             FunctionInfo result;
-            if (!functionInfos.TryGetValue(name, out existingValue))
+
+            // Functions are equal only if they have the same name and if they come from the same module (if any).
+            // If the function is not associated with a module then the info 'ModuleName' property is set to empty string.
+            // If the new function has the same name of an existing function, but different module names, then the
+            // existing table function is replaced with the new function.
+            if (!functionInfos.TryGetValue(name, out FunctionInfo existingValue) ||
+                (originalFunction != null &&
+                    !existingValue.ModuleName.Equals(originalFunction.ModuleName, StringComparison.OrdinalIgnoreCase)))
             {
+                // Add new function info to function table and return.
                 result = functionFactory(name, function, originalFunction, options, context, helpFile);
                 functionInfos[name] = result;
 
@@ -1257,81 +1267,78 @@ namespace System.Management.Automation
                 {
                     GetAllScopeFunctions()[name] = result;
                 }
+
+                return result;
+            }
+
+            // Update the existing function.
+
+            // Make sure the function isn't constant or readonly.
+            SessionState.ThrowIfNotVisible(origin, existingValue);
+
+            if (IsFunctionOptionSet(existingValue, ScopedItemOptions.Constant) ||
+                (!force && IsFunctionOptionSet(existingValue, ScopedItemOptions.ReadOnly)))
+            {
+                SessionStateUnauthorizedAccessException e =
+                    new SessionStateUnauthorizedAccessException(
+                            name,
+                            SessionStateCategory.Function,
+                            "FunctionNotWritable",
+                            SessionStateStrings.FunctionNotWritable);
+
+                throw e;
+            }
+
+            // Ensure we are not trying to set the function to constant as this can only be
+            // done at creation time.
+            if ((options & ScopedItemOptions.Constant) != 0)
+            {
+                SessionStateUnauthorizedAccessException e =
+                    new SessionStateUnauthorizedAccessException(
+                            name,
+                            SessionStateCategory.Function,
+                            "FunctionCannotBeMadeConstant",
+                            SessionStateStrings.FunctionCannotBeMadeConstant);
+
+                throw e;
+            }
+
+            // Ensure we are not trying to remove the AllScope option.
+            if ((options & ScopedItemOptions.AllScope) == 0 &&
+                IsFunctionOptionSet(existingValue, ScopedItemOptions.AllScope))
+            {
+                SessionStateUnauthorizedAccessException e =
+                    new SessionStateUnauthorizedAccessException(
+                            name,
+                            SessionStateCategory.Function,
+                            "FunctionAllScopeOptionCannotBeRemoved",
+                            SessionStateStrings.FunctionAllScopeOptionCannotBeRemoved);
+
+                throw e;
+            }
+
+            FunctionInfo existingFunction = existingValue;
+
+            // If the function type changes (i.e.: function to workflow or back)
+            // then we need to replace what was there.
+            FunctionInfo newValue = functionFactory(name, function, originalFunction, options, context, helpFile);
+
+            bool changesFunctionType = existingFunction.GetType() != newValue.GetType();
+
+            // Since the options are set after the script block, we have to
+            // forcefully apply the script block if the options will be
+            // set to not being ReadOnly.
+            if (changesFunctionType ||
+                ((existingFunction.Options & ScopedItemOptions.ReadOnly) != 0 && force))
+            {
+                result = newValue;
+                functionInfos[name] = newValue;
             }
             else
             {
-                // Make sure the function isn't constant or readonly
-
-                SessionState.ThrowIfNotVisible(origin, existingValue);
-
-                if (IsFunctionOptionSet(existingValue, ScopedItemOptions.Constant) ||
-                    (!force && IsFunctionOptionSet(existingValue, ScopedItemOptions.ReadOnly)))
-                {
-                    SessionStateUnauthorizedAccessException e =
-                        new SessionStateUnauthorizedAccessException(
-                                name,
-                                SessionStateCategory.Function,
-                                "FunctionNotWritable",
-                                SessionStateStrings.FunctionNotWritable);
-
-                    throw e;
-                }
-
-                // Ensure we are not trying to set the function to constant as this can only be
-                // done at creation time.
-
-                if ((options & ScopedItemOptions.Constant) != 0)
-                {
-                    SessionStateUnauthorizedAccessException e =
-                        new SessionStateUnauthorizedAccessException(
-                                name,
-                                SessionStateCategory.Function,
-                                "FunctionCannotBeMadeConstant",
-                                SessionStateStrings.FunctionCannotBeMadeConstant);
-
-                    throw e;
-                }
-
-                // Ensure we are not trying to remove the AllScope option
-
-                if ((options & ScopedItemOptions.AllScope) == 0 &&
-                    IsFunctionOptionSet(existingValue, ScopedItemOptions.AllScope))
-                {
-                    SessionStateUnauthorizedAccessException e =
-                        new SessionStateUnauthorizedAccessException(
-                                name,
-                                SessionStateCategory.Function,
-                                "FunctionAllScopeOptionCannotBeRemoved",
-                                SessionStateStrings.FunctionAllScopeOptionCannotBeRemoved);
-
-                    throw e;
-                }
-
-                FunctionInfo existingFunction = existingValue;
-                FunctionInfo newValue = null;
-
-                // If the function type changes (i.e.: function to workflow or back)
-                // then we need to blast what was there
-                newValue = functionFactory(name, function, originalFunction, options, context, helpFile);
-
-                bool changesFunctionType = existingFunction.GetType() != newValue.GetType();
-
-                // Since the options are set after the script block, we have to
-                // forcefully apply the script block if the options will be
-                // set to not being ReadOnly
-                if (changesFunctionType ||
-                    ((existingFunction.Options & ScopedItemOptions.ReadOnly) != 0 && force))
-                {
-                    result = newValue;
-                    functionInfos[name] = newValue;
-                }
-                else
-                {
-                    bool applyForce = force || (options & ScopedItemOptions.ReadOnly) == 0;
-
-                    existingFunction.Update(newValue, applyForce, options, helpFile);
-                    result = existingFunction;
-                }
+                bool applyForce = force || (options & ScopedItemOptions.ReadOnly) == 0;
+                existingFunction.Update(newValue, applyForce, options, helpFile);
+                result = existingFunction;
             }
 
             return result;
@@ -1635,9 +1642,14 @@ namespace System.Management.Automation
 
         internal Type LookupType(string name)
         {
-            if (TypeTable == null) return null;
+            if (TypeTable == null)
+            {
+                return null;
+            }
+
             Type result;
             TypeTable.TryGetValue(name, out result);
+
             return result;
         }
 
@@ -1678,12 +1690,18 @@ namespace System.Management.Automation
 
             // Then use the creation constructors - workflows don't get here because the workflow info
             // is created during compilation.
-            else if (function.IsFilter) { newValue = new FilterInfo(name, function, options, context, helpFile); }
+            else if (function.IsFilter)
+            {
+                newValue = new FilterInfo(name, function, options, context, helpFile);
+            }
             else if (function.IsConfiguration)
             {
                 newValue = new ConfigurationInfo(name, function, options, context, helpFile, function.IsMetaConfiguration());
             }
-            else newValue = new FunctionInfo(name, function, options, context, helpFile);
+            else
+            {
+                newValue = new FunctionInfo(name, function, options, context, helpFile);
+            }
 
             return newValue;
         }

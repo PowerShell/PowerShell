@@ -3,10 +3,10 @@
 
 #nullable enable
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Management.Automation.Internal;
+using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +17,7 @@ namespace System.Management.Automation.Subsystem.Feedback
     /// <summary>
     /// The class represents a result from a feedback provider.
     /// </summary>
-    public class FeedbackEntry
+    public class FeedbackResult
     {
         /// <summary>
         /// Gets the Id of the feedback provider.
@@ -30,15 +30,15 @@ namespace System.Management.Automation.Subsystem.Feedback
         public string Name { get; }
 
         /// <summary>
-        /// Gets the text of the feedback.
+        /// Gets the feedback item.
         /// </summary>
-        public string Text { get; }
+        public FeedbackItem Item { get; }
 
-        internal FeedbackEntry(Guid id, string name, string text)
+        internal FeedbackResult(Guid id, string name, FeedbackItem item)
         {
             Id = id;
             Name = name;
-            Text = text;
+            Item = item;
         }
     }
 
@@ -50,7 +50,7 @@ namespace System.Management.Automation.Subsystem.Feedback
         /// <summary>
         /// Collect the feedback from registered feedback providers using the default timeout.
         /// </summary>
-        public static List<FeedbackEntry>? GetFeedback(Runspace runspace)
+        public static List<FeedbackResult>? GetFeedback(Runspace runspace)
         {
             return GetFeedback(runspace, millisecondsTimeout: 300);
         }
@@ -58,65 +58,58 @@ namespace System.Management.Automation.Subsystem.Feedback
         /// <summary>
         /// Collect the feedback from registered feedback providers using the specified timeout.
         /// </summary>
-        public static List<FeedbackEntry>? GetFeedback(Runspace runspace, int millisecondsTimeout)
+        public static List<FeedbackResult>? GetFeedback(Runspace runspace, int millisecondsTimeout)
         {
-            Requires.Condition(millisecondsTimeout > 0, nameof(millisecondsTimeout));
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(millisecondsTimeout);
 
-            var localRunspace = runspace as LocalRunspace;
-            if (localRunspace is null)
+            if (runspace is not LocalRunspace localRunspace)
             {
                 return null;
             }
 
-            // Get the last value of $?
-            bool questionMarkValue = localRunspace.ExecutionContext.QuestionMarkVariableValue;
-            if (questionMarkValue)
+            var providers = SubsystemManager.GetSubsystems<IFeedbackProvider>();
+            if (providers.Count is 0)
+            {
+                return null;
+            }
+
+            ExecutionContext executionContext = localRunspace.ExecutionContext;
+            bool questionMarkValue = executionContext.QuestionMarkVariableValue;
+
+            // The command line would have run successfully in most cases during an interactive use of the shell.
+            // So, we do a quick check to see whether we can skip proceeding, so as to avoid unneeded allocations
+            // from the 'TryGetFeedbackContext' call below.
+            if (questionMarkValue && CanSkip(providers))
             {
                 return null;
             }
 
             // Get the last history item
             HistoryInfo[] histories = localRunspace.History.GetEntries(id: 0, count: 1, newest: true);
-            if (histories.Length == 0)
+            if (histories.Length is 0)
             {
                 return null;
             }
 
-            HistoryInfo lastHistory = histories[0];
-
-            // Get the last error
-            ArrayList errorList = (ArrayList)localRunspace.ExecutionContext.DollarErrorVariable;
-            if (errorList.Count == 0)
+            // Try creating the feedback context object.
+            if (!TryGetFeedbackContext(executionContext, questionMarkValue, histories[0], out FeedbackContext? feedbackContext))
             {
                 return null;
             }
 
-            var lastError = errorList[0] as ErrorRecord;
-            if (lastError is null && errorList[0] is RuntimeException rtEx)
-            {
-                lastError = rtEx.ErrorRecord;
-            }
-
-            if (lastError?.InvocationInfo is null || lastError.InvocationInfo.HistoryId != lastHistory.Id)
-            {
-                return null;
-            }
-
-            var providers = SubsystemManager.GetSubsystems<IFeedbackProvider>();
             int count = providers.Count;
-            if (count == 0)
-            {
-                return null;
-            }
-
             IFeedbackProvider? generalFeedback = null;
-            List<Task<FeedbackEntry?>>? tasks = null;
+            List<Task<FeedbackResult?>>? tasks = null;
             CancellationTokenSource? cancellationSource = null;
-            Func<object?, FeedbackEntry?>? callBack = null;
+            Func<object?, FeedbackResult?>? callBack = null;
 
-            for (int i = 0; i < providers.Count; i++)
+            foreach (IFeedbackProvider provider in providers)
             {
-                IFeedbackProvider provider = providers[i];
+                if (!provider.Trigger.HasFlag(feedbackContext.Trigger))
+                {
+                    continue;
+                }
+
                 if (provider is GeneralCommandErrorFeedback)
                 {
                     // This built-in feedback provider needs to run on the target Runspace.
@@ -126,9 +119,9 @@ namespace System.Management.Automation.Subsystem.Feedback
 
                 if (tasks is null)
                 {
-                    tasks = new List<Task<FeedbackEntry?>>(capacity: count);
+                    tasks = new List<Task<FeedbackResult?>>(capacity: count);
                     cancellationSource = new CancellationTokenSource();
-                    callBack = GetCallBack(lastHistory.CommandLine, lastError, cancellationSource);
+                    callBack = GetCallBack(feedbackContext, cancellationSource);
                 }
 
                 // Other feedback providers will run on background threads in parallel.
@@ -148,36 +141,14 @@ namespace System.Management.Automation.Subsystem.Feedback
                     Task.Delay(millisecondsTimeout, cancellationSource!.Token));
             }
 
-            List<FeedbackEntry>? resultList = null;
+            List<FeedbackResult>? resultList = null;
             if (generalFeedback is not null)
             {
-                bool changedDefault = false;
-                Runspace? oldDefault = Runspace.DefaultRunspace;
-
-                try
+                FeedbackResult? builtInResult = GetBuiltInFeedback(generalFeedback, localRunspace, feedbackContext, questionMarkValue);
+                if (builtInResult is not null)
                 {
-                    if (oldDefault != localRunspace)
-                    {
-                        changedDefault = true;
-                        Runspace.DefaultRunspace = localRunspace;
-                    }
-
-                    string? text = generalFeedback.GetFeedback(lastHistory.CommandLine, lastError, CancellationToken.None);
-                    if (text is not null)
-                    {
-                        resultList ??= new List<FeedbackEntry>(count);
-                        resultList.Add(new FeedbackEntry(generalFeedback.Id, generalFeedback.Name, text));
-                    }
-                }
-                finally
-                {
-                    if (changedDefault)
-                    {
-                        Runspace.DefaultRunspace = oldDefault;
-                    }
-
-                    // Restore $? for the target Runspace.
-                    localRunspace.ExecutionContext.QuestionMarkVariableValue = questionMarkValue;
+                    resultList ??= new List<FeedbackResult>(count);
+                    resultList.Add(builtInResult);
                 }
             }
 
@@ -188,14 +159,14 @@ namespace System.Management.Automation.Subsystem.Feedback
                     waitTask.Wait();
                     cancellationSource!.Cancel();
 
-                    foreach (Task<FeedbackEntry?> task in tasks!)
+                    foreach (Task<FeedbackResult?> task in tasks!)
                     {
                         if (task.IsCompletedSuccessfully)
                         {
-                            FeedbackEntry? result = task.Result;
+                            FeedbackResult? result = task.Result;
                             if (result is not null)
                             {
-                                resultList ??= new List<FeedbackEntry>(count);
+                                resultList ??= new List<FeedbackResult>(count);
                                 resultList.Add(result);
                             }
                         }
@@ -210,18 +181,135 @@ namespace System.Management.Automation.Subsystem.Feedback
             return resultList;
         }
 
+        private static bool CanSkip(IEnumerable<IFeedbackProvider> providers)
+        {
+            const FeedbackTrigger possibleTriggerOnSuccess = FeedbackTrigger.Success | FeedbackTrigger.Comment;
+
+            bool canSkip = true;
+            foreach (IFeedbackProvider provider in providers)
+            {
+                if ((provider.Trigger & possibleTriggerOnSuccess) != 0)
+                {
+                    canSkip = false;
+                    break;
+                }
+            }
+
+            return canSkip;
+        }
+
+        private static FeedbackResult? GetBuiltInFeedback(
+            IFeedbackProvider builtInFeedback,
+            LocalRunspace localRunspace,
+            FeedbackContext feedbackContext,
+            bool questionMarkValue)
+        {
+            bool changedDefault = false;
+            Runspace? oldDefault = Runspace.DefaultRunspace;
+
+            try
+            {
+                if (oldDefault != localRunspace)
+                {
+                    changedDefault = true;
+                    Runspace.DefaultRunspace = localRunspace;
+                }
+
+                FeedbackItem? item = builtInFeedback.GetFeedback(feedbackContext, CancellationToken.None);
+                if (item is not null)
+                {
+                    return new FeedbackResult(builtInFeedback.Id, builtInFeedback.Name, item);
+                }
+            }
+            finally
+            {
+                if (changedDefault)
+                {
+                    Runspace.DefaultRunspace = oldDefault;
+                }
+
+                // Restore $? for the target Runspace.
+                localRunspace.ExecutionContext.QuestionMarkVariableValue = questionMarkValue;
+            }
+
+            return null;
+        }
+
+        private static bool TryGetFeedbackContext(
+            ExecutionContext executionContext,
+            bool questionMarkValue,
+            HistoryInfo lastHistory,
+            [NotNullWhen(true)] out FeedbackContext? feedbackContext)
+        {
+            feedbackContext = null;
+            Ast ast = Parser.ParseInput(lastHistory.CommandLine, out Token[] tokens, out _);
+
+            FeedbackTrigger trigger;
+            ErrorRecord? lastError = null;
+
+            if (IsPureComment(tokens))
+            {
+                trigger = FeedbackTrigger.Comment;
+            }
+            else if (questionMarkValue)
+            {
+                trigger = FeedbackTrigger.Success;
+            }
+            else if (TryGetLastError(executionContext, lastHistory, out lastError))
+            {
+                trigger = lastError.FullyQualifiedErrorId is "CommandNotFoundException"
+                    ? FeedbackTrigger.CommandNotFound
+                    : FeedbackTrigger.Error;
+            }
+            else
+            {
+                return false;
+            }
+
+            PathInfo cwd = executionContext.SessionState.Path.CurrentLocation;
+            feedbackContext = new(trigger, ast, tokens, cwd, lastError);
+            return true;
+        }
+
+        private static bool IsPureComment(Token[] tokens)
+        {
+            return tokens.Length is 2 && tokens[0].Kind is TokenKind.Comment && tokens[1].Kind is TokenKind.EndOfInput;
+        }
+
+        private static bool TryGetLastError(ExecutionContext context, HistoryInfo lastHistory, [NotNullWhen(true)] out ErrorRecord? lastError)
+        {
+            lastError = null;
+            ArrayList errorList = (ArrayList)context.DollarErrorVariable;
+            if (errorList.Count == 0)
+            {
+                return false;
+            }
+
+            lastError = errorList[0] as ErrorRecord;
+            if (lastError is null && errorList[0] is RuntimeException rtEx)
+            {
+                lastError = rtEx.ErrorRecord;
+            }
+
+            if (lastError?.InvocationInfo is null || lastError.InvocationInfo.HistoryId != lastHistory.Id)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         // A local helper function to avoid creating an instance of the generated delegate helper class
         // when no feedback provider is registered.
-        private static Func<object?, FeedbackEntry?> GetCallBack(
-            string commandLine,
-            ErrorRecord lastError,
+        private static Func<object?, FeedbackResult?> GetCallBack(
+            FeedbackContext feedbackContext,
             CancellationTokenSource cancellationSource)
         {
             return state =>
             {
                 var provider = (IFeedbackProvider)state!;
-                var text = provider.GetFeedback(commandLine, lastError, cancellationSource.Token);
-                return text is null ? null : new FeedbackEntry(provider.Id, provider.Name, text);
+                var item = provider.GetFeedback(feedbackContext, cancellationSource.Token);
+                return item is null ? null : new FeedbackResult(provider.Id, provider.Name, item);
             };
         }
     }

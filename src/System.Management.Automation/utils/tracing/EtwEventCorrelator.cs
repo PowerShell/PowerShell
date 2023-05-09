@@ -64,10 +64,7 @@ namespace System.Management.Automation.Tracing
         ///     during activity correlation.</param>
         public EtwEventCorrelator(EventProvider transferProvider, EventDescriptor transferEvent)
         {
-            if (transferProvider == null)
-            {
-                throw new ArgumentNullException(nameof(transferProvider));
-            }
+            ArgumentNullException.ThrowIfNull(transferProvider);
 
             _transferProvider = transferProvider;
             _transferEvent = transferEvent;

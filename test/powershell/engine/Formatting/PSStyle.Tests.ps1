@@ -9,6 +9,8 @@ Describe 'Tests for $PSStyle automatic variable' -Tag 'CI' {
             Blink = "`e[5m"
             BoldOff = "`e[22m"
             Bold = "`e[1m"
+            DimOff = "`e[22m"
+            Dim = "`e[2m"
             HiddenOff = "`e[28m"
             Hidden = "`e[8m"
             ReverseOff = "`e[27m"
@@ -225,6 +227,8 @@ Describe 'Tests for $PSStyle automatic variable' -Tag 'CI' {
         @{ Submember = 'Blink' }
         @{ Submember = 'BoldOff' }
         @{ Submember = 'Bold' }
+        @{ Submember = 'DimOff' }
+        @{ Submember = 'Dim' }
         @{ Submember = 'HiddenOff' }
         @{ Submember = 'Hidden' }
         @{ Submember = 'ItalicOff' }
@@ -512,10 +516,10 @@ Billy Bob… Senior DevOps …  13
     It "Wrapping long word with escape sequences" {
         $expected = @"
 `e[32;1mb : `e[0m`e[33mC:\repos\PowerShell\src\powershell-w`e[0m
-    `e[33min-core\bin\Debug\net7.0\win7-x64\pu`e[0m
+    `e[33min-core\bin\Debug\net8.0\win7-x64\pu`e[0m
     `e[33mblish\pwsh.exe`e[0m
 "@
-        $obj = [pscustomobject] @{ b = "`e[33mC:\repos\PowerShell\src\powershell-win-core\bin\Debug\net7.0\win7-x64\publish\pwsh.exe" }
+        $obj = [pscustomobject] @{ b = "`e[33mC:\repos\PowerShell\src\powershell-win-core\bin\Debug\net8.0\win7-x64\publish\pwsh.exe" }
         $obj | Format-List | Out-String -Width 40 | Out-File $outFile
 
         $text = Get-Content $outFile -Raw

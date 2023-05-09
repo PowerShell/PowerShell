@@ -7,7 +7,7 @@ namespace System.Management.Automation.Host
 {
     /// <summary>
     /// Provides a description of a choice for use by <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>.
-    /// <!--Used by the Msh engine to describe cmdlet parameters.-->
+    /// <!--Used by the engine to describe cmdlet parameters.-->
     /// </summary>
     public sealed
     class ChoiceDescription

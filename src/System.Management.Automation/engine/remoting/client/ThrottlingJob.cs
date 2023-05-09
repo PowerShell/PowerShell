@@ -294,7 +294,7 @@ namespace System.Management.Automation
         {
             using (var jobGotEnqueued = new ManualResetEventSlim(initialState: false))
             {
-                if (childJob == null) throw new ArgumentNullException(nameof(childJob));
+                ArgumentNullException.ThrowIfNull(childJob);
 
                 this.AddChildJobWithoutBlocking(childJob, flags, jobGotEnqueued.Set);
                 jobGotEnqueued.Wait();
@@ -308,7 +308,7 @@ namespace System.Management.Automation
         {
             using (var forwardingCancellation = new CancellationTokenSource())
             {
-                if (childJob == null) throw new ArgumentNullException(nameof(childJob));
+                ArgumentNullException.ThrowIfNull(childJob);
 
                 this.AddChildJobWithoutBlocking(childJob, flags, forwardingCancellation.Cancel);
                 this.ForwardAllResultsToCmdlet(cmdlet, forwardingCancellation.Token);
@@ -368,15 +368,26 @@ namespace System.Management.Automation
         /// </exception>
         internal void AddChildJobWithoutBlocking(StartableJob childJob, ChildJobFlags flags, Action jobEnqueuedAction = null)
         {
-            if (childJob == null) throw new ArgumentNullException(nameof(childJob));
-            if (childJob.JobStateInfo.State != JobState.NotStarted) throw new ArgumentException(RemotingErrorIdStrings.ThrottlingJobChildAlreadyRunning, nameof(childJob));
+            ArgumentNullException.ThrowIfNull(childJob);
+            if (childJob.JobStateInfo.State != JobState.NotStarted)
+            {
+                throw new ArgumentException(RemotingErrorIdStrings.ThrottlingJobChildAlreadyRunning, nameof(childJob));
+            }
+                
             this.AssertNotDisposed();
 
             JobStateInfo newJobStateInfo = null;
             lock (_lockObject)
             {
-                if (this.IsEndOfChildJobs) throw new InvalidOperationException(RemotingErrorIdStrings.ThrottlingJobChildAddedAfterEndOfChildJobs);
-                if (_isStopping) { return; }
+                if (this.IsEndOfChildJobs)
+                {
+                    throw new InvalidOperationException(RemotingErrorIdStrings.ThrottlingJobChildAddedAfterEndOfChildJobs);
+                }
+
+                if (_isStopping)
+                {
+                    return;
+                }
 
                 if (_countOfAllChildJobs == 0)
                 {

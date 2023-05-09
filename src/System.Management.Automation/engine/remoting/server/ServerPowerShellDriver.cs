@@ -427,7 +427,10 @@ namespace System.Management.Automation
                         if (LocalPowerShell.RunningExtraCommands)
                         {
                             // If completed successfully then allow extra commands to run.
-                            if (state == PSInvocationState.Completed) { return; }
+                            if (state == PSInvocationState.Completed)
+                            {
+                                return;
+                            }
 
                             // For failed or stopped state, extra commands cannot run and
                             // we allow this command invocation to finish.

@@ -620,7 +620,6 @@ namespace System.Management.Automation.Security
             internal IntPtr psUnauthenticatedNotUsed;    // PCRYPT_ATTRIBUTES
         }
 
-        [ArchitectureSensitive]
         internal static CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO
             InitSignInfoExtendedStruct(string description,
                                        string moreInfoUrl,
@@ -724,7 +723,6 @@ namespace System.Management.Automation.Security
             System.IntPtr pvKey,
             uint dwGroupId);
 
-        [ArchitectureSensitive]
         internal static DWORD GetCertChoiceFromSigningOption(
             SigningOption option)
         {
@@ -752,7 +750,6 @@ namespace System.Management.Automation.Security
             return cc;
         }
 
-        [ArchitectureSensitive]
         internal static CRYPTUI_WIZ_DIGITAL_SIGN_INFO
             InitSignInfoStruct(string fileName,
                                X509Certificate2 signingCert,

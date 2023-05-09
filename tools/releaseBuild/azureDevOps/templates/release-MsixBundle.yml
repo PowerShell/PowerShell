@@ -15,6 +15,7 @@ jobs:
     - template: release-SetReleaseTagAndContainerName.yml
 
     - task: DownloadPipelineArtifact@2
+      retryCountOnTaskFailure: 2
       inputs:
         source: specific
         project: PowerShellCore
@@ -46,6 +47,7 @@ jobs:
         Write-Host "sending " + $vstsCommandString
         Write-Host "##$vstsCommandString"
       displayName: Install makeappx tool
+      retryCountOnTaskFailure: 1
 
     - pwsh: |
         $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
@@ -64,17 +66,16 @@ jobs:
         Write-Host "sending " + $vstsCommandString
         Write-Host "##$vstsCommandString"
       displayName: Create MsixBundle
+      retryCountOnTaskFailure: 1
 
-    - pwsh: |
-        Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
-        Install-AzCopy
-      displayName: Install AzCopy
-
-    - pwsh: |
-        ## We use AzCopy v8.1 in our release pipeline, see the documentation at:
-        ## https://docs.microsoft.com/en-us/previous-versions/azure/storage/storage-use-azcopy
-
-        Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
-        $azcopy = Find-AzCopy
-        & $azcopy /Source:$(BundleDir) /Dest:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)-private /DestKey:$(StorageAccountKey) /Pattern:*.msixbundle /Y
-      displayName: Upload MSIX Bundle package to Az Blob
+    - task: AzureFileCopy@4
+      displayName: 'Upload MSIX Bundle package to Az Blob'
+      retryCountOnTaskFailure: 2
+      inputs:
+        SourcePath: '$(BundleDir)/*.msixbundle'
+        azureSubscription: '$(AzureFileCopySubscription)'
+        Destination: AzureBlob
+        storage: '$(StorageAccount)'
+        ContainerName: '$(AzureVersion)-private'
+        resourceGroup: '$(StorageResourceGroup)'
+      condition: succeeded()

@@ -8,7 +8,7 @@ jobs:
   displayName: Build NuGet packages
   condition: succeeded()
   pool:
-    name: PowerShell1ES
+    name: $(windowsPool)
     demands:
     - ImageOverride -equals PSMMS2019-Secure
 
@@ -32,6 +32,7 @@ jobs:
       value: '$(System.ArtifactsDirectory)/winFxdWinDesktop'
     - name: linuxFxdPath
       value: '$(System.ArtifactsDirectory)/linuxFxd'
+    - group: DotNetPrivateBuildAccess
 
   steps:
   - checkout: self
@@ -56,6 +57,9 @@ jobs:
       # We just need .NET but we fixed this in an urgent situation.
       Start-PSBootStrap -Verbose
     displayName: Bootstrap
+    env:
+      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download PowerShell build artifacts - finalResults'
@@ -102,14 +106,6 @@ jobs:
       archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-fxdependent.tar.gz'
       destinationFolder: '$(linuxFxdPath)'
 
-  - task: PkgESInstallNuGetToolsPackage@10
-    displayName: 'Install package Microsoft.DotNet.BuildTools.GenAPI'
-    inputs:
-      packageName: Microsoft.DotNet.BuildTools.GenAPI
-      packageVersion: '1.0.0-beta-00081'
-      packageSources: 'https://nuget.org/api/v2'
-      installRoot: '$(GenAPIToolPath)'
-
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -126,7 +122,6 @@ jobs:
       PackagePath: $(PackagePath)
       WinFxdPath: $(winFxdPath)
       LinuxFxdPath: $(linuxFxdPath)
-      GenAPIToolPath: $(GenAPIToolPath)
 
   - pwsh: |
       Get-ChildItem $(linuxFxdPath)

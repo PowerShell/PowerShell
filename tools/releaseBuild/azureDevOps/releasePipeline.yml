@@ -113,6 +113,14 @@ stages:
       imageName: ubuntu-latest
       packageNamePattern: '**/*fxdependent.tar.gz'
 
+  - template: templates/release-ValidateFxdPackage.yml
+    parameters:
+      jobName: FxdPackageLinuxonARM
+      displayName: Fxd Package Test Linux ARM64
+      imageName: 'PSMMSUbuntu20.04-ARM64-secure'
+      packageNamePattern: '**/*fxdependent.tar.gz'
+      use1ES: true
+
 - stage: StaticPkgValidation
   dependsOn: []
   displayName: Static package validation
@@ -167,6 +175,7 @@ stages:
   jobs:
   - job: KickOffRA
     displayName: Kickoff Release Automation
+    timeoutInMinutes: 240
 
     pool:
       name: PowerShell1ES
@@ -239,8 +248,8 @@ stages:
         $azDoBuild | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -tag 'SignedOff'
       displayName: Signoff Release-Automation run
 
-- stage: GitHubDraftRelease
-  displayName: Create GitHub draft release
+- stage: UpdateChangeLog
+  displayName: Update the changelog
   # do not include stages that are likely to fail in dependency as there is no way to force deploy.
   dependsOn:
   - MSIXBundle
@@ -249,11 +258,24 @@ stages:
   - StaticPkgValidation
   - StartDocker
   - ManualValidation
-  - ReleaseAutomation
   - ValidateFxdPackage
   - ValidateGlobalTool
 
-# The environment here is used for approval.
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Make sure the changelog is updated
+      jobName: MergeChangeLog
+      instructions: |
+        Update and merge the changelog for the release.
+        This step is required for creating GitHub draft release.
+
+- stage: GitHubDraftRelease
+  displayName: Create GitHub draft release
+  # do not include stages that are likely to fail in dependency as there is no way to force deploy.
+  dependsOn: UpdateChangeLog
+
+  # The environment here is used for approval.
   jobs:
   - deployment: AzureBlobPublic
     displayName: Make Azure Blob Public
@@ -283,6 +305,7 @@ stages:
     variables:
     - group: 'Azure Blob variable group'
     - group: 'AzDevOpsArtifacts'
+    - group: ReleasePipelineSecrets
     dependsOn: AzureBlobPublic
     steps:
     - template: templates/release-CreateGitHubDraft.yml
@@ -328,6 +351,20 @@ stages:
     - group: 'packages.microsoft.com'
     steps:
     - template: templates/release-PublishPackageMsftCom.yml
+
+- stage: PublishSymbols
+  displayName: Publish symbols
+  dependsOn: PublishPackages
+  jobs:
+  - job: PublishSymbol
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    steps:
+    - template: templates/release-PublishSymbols.yml
 
 - stage: ChangesToMaster
   displayName: Ensure changes are in GH master
@@ -534,7 +571,7 @@ stages:
         $isPreview = $semanticVersion.PreReleaseLabel -ne $null
 
         if (-not $isPreview) {
-          $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 1238 -Tag $metadata.ReleaseVersion, 'InProgress' -PassThru
+          $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 1238  -Branch '$(Build.SourceBranch)' -Tag $metadata.ReleaseVersion, 'InProgress' -PassThru
           Write-Verbose -Verbose "Kicked off vPack build: $($buildInvocationInfo.WebUrl)"
           $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -timeoutMinutes 60
           if ($status.result -ne 'Succeeded') {

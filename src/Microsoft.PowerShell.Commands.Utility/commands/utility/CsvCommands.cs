@@ -32,9 +32,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public char Delimiter { get; set; }
 
-        ///<summary>
-        ///Culture switch for csv conversion
-        ///</summary>
+        /// <summary>
+        /// Culture switch for csv conversion
+        /// </summary>
         [Parameter(ParameterSetName = "UseCulture")]
         public SwitchParameter UseCulture { get; set; }
 
@@ -71,6 +71,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Alias("UQ")]
         public QuoteKind UseQuotes { get; set; } = QuoteKind.Always;
+
+        /// <summary>
+        /// Gets or sets property that writes csv file with no headers.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter NoHeader { get; set; }
 
         #endregion Command Line Parameters
 
@@ -229,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         /// <summary>
         /// Gets or sets property that sets append parameter.
@@ -301,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // write headers (row1: typename + row2: column names)
-                if (!_isActuallyAppending)
+                if (!_isActuallyAppending && !NoHeader.IsPresent)
                 {
                     if (NoTypeInformation == false)
                     {
@@ -586,9 +592,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public SwitchParameter UseCulture { get; set; }
 
-        ///<summary>
+        /// <summary>
         /// Gets or sets header property to customize the names.
-        ///</summary>
+        /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -615,7 +621,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        private Encoding _encoding = Encoding.Default;
 
         /// <summary>
         /// Avoid writing out duplicate warning messages when there are one or more unspecified names.
@@ -727,16 +733,20 @@ namespace Microsoft.PowerShell.Commands
             if (_propertyNames == null)
             {
                 _propertyNames = ExportCsvHelper.BuildPropertyNames(InputObject, _propertyNames);
-                if (NoTypeInformation == false)
-                {
-                    WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
-                }
 
-                // Write property information
-                string properties = _helper.ConvertPropertyNamesCSV(_propertyNames);
-                if (!properties.Equals(string.Empty))
+                if (!NoHeader.IsPresent)
                 {
-                    WriteCsvLine(properties);
+                    if (NoTypeInformation == false)
+                    {
+                        WriteCsvLine(ExportCsvHelper.GetTypeString(InputObject));
+                    }
+
+                    // Write property information
+                    string properties = _helper.ConvertPropertyNamesCSV(_propertyNames);
+                    if (!properties.Equals(string.Empty))
+                    {
+                        WriteCsvLine(properties);
+                    }
                 }
             }
 
@@ -785,9 +795,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public char Delimiter { get; set; }
 
-        ///<summary>
-        ///Culture switch for csv conversion
-        ///</summary>
+        /// <summary>
+        /// Culture switch for csv conversion
+        /// </summary>
         [Parameter(ParameterSetName = "UseCulture", Mandatory = true)]
         [ValidateNotNull]
         [ValidateNotNullOrEmpty]
@@ -802,9 +812,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public PSObject[] InputObject { get; set; }
 
-        ///<summary>
+        /// <summary>
         /// Gets or sets header property to customize the names.
-        ///</summary>
+        /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNull]
         [ValidateNotNullOrEmpty]
@@ -951,10 +961,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Converted string.</returns>
         internal string ConvertPropertyNamesCSV(IList<string> propertyNames)
         {
-            if (propertyNames == null)
-            {
-                throw new ArgumentNullException(nameof(propertyNames));
-            }
+            ArgumentNullException.ThrowIfNull(propertyNames); 
 
             _outputString.Clear();
             bool first = true;
@@ -1018,10 +1025,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal string ConvertPSObjectToCSV(PSObject mshObject, IList<string> propertyNames)
         {
-            if (propertyNames == null)
-            {
-                throw new ArgumentNullException(nameof(propertyNames));
-            }
+            ArgumentNullException.ThrowIfNull(propertyNames); 
 
             _outputString.Clear();
             bool first = true;
@@ -1107,10 +1111,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>ToString() value.</returns>
         internal static string GetToStringValueForProperty(PSPropertyInfo property)
         {
-            if (property == null)
-            {
-                throw new ArgumentNullException(nameof(property));
-            }
+            ArgumentNullException.ThrowIfNull(property); 
 
             string value = null;
             try
@@ -1160,7 +1161,7 @@ namespace Microsoft.PowerShell.Commands
                     temp = temp.Substring(4);
                 }
 
-                type = string.Format(System.Globalization.CultureInfo.InvariantCulture, "#TYPE {0}", temp);
+                type = string.Create(System.Globalization.CultureInfo.InvariantCulture, $"#TYPE {temp}");
             }
 
             return type;
@@ -1272,15 +1273,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException(nameof(cmdlet));
-            }
-
-            if (streamReader == null)
-            {
-                throw new ArgumentNullException(nameof(streamReader));
-            }
+            ArgumentNullException.ThrowIfNull(cmdlet); 
+            ArgumentNullException.ThrowIfNull(streamReader);
 
             _cmdlet = cmdlet;
             _delimiter = delimiter;

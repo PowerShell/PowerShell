@@ -270,7 +270,10 @@ namespace Microsoft.PowerShell.Commands
                     // Wait for running script.
                     _newRunningScriptEvent.Wait();
 
-                    if (!_debugging) { return; }
+                    if (!_debugging)
+                    {
+                        return;
+                    }
 
                     AddDataEventHandlers();
 
@@ -503,7 +506,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void AddToDebugBlockingCollection(PSStreamObject streamItem)
         {
-            if (!_debugBlockingCollection.IsOpen) { return; }
+            if (!_debugBlockingCollection.IsOpen)
+            {
+                return;
+            }
 
             if (streamItem != null)
             {

@@ -109,7 +109,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
         }
 
         It "Error shows if `$PSModuleAutoLoadingPreference is set to 'none'" {
-            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' 2>&1 | Out-String
+            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = "none"; cmdletThatDoesntExist' 2>&1 | Out-String
             $e | Should -BeLike "*cmdletThatDoesntExist*"
         }
 
@@ -150,6 +150,21 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e = & "$PSHOME/pwsh" -noprofile -command "Import-Module '$testModulePath'; Invoke-Error" 2>&1 | Out-String
             $e | Should -Not -BeNullOrEmpty
             $e | Should -Not -BeLike "*Line*"
+        }
+
+        It 'Parser error shows line information' {
+            $testScript = '$psstyle.outputrendering = "plaintext"; 1 ++ 1'
+            $e = & "$PSHOME/pwsh" -noprofile -command $testScript 2>&1 | Out-String
+            $e | Should -Not -BeNullOrEmpty
+            $e = $e.Split([Environment]::NewLine)
+            $e[0] | Should -BeLike "ParserError:*"
+            $e[1] | Should -BeLike "Line *" -Because ($e | Out-String)
+            $e[2] | Should -BeLike "*|*1 ++ 1*"
+        }
+
+        It 'Faux remote parser error shows concise message' {
+            start-job { [cmdletbinding()]param() $e = [System.Management.Automation.ErrorRecord]::new([System.Exception]::new('hello'), 1, 'ParserError', $null); $pscmdlet.ThrowTerminatingError($e) } | Wait-Job | Receive-Job -ErrorVariable e -ErrorAction SilentlyContinue
+            $e | Out-String | Should -BeLike '*ParserError*'
         }
     }
 
