@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Provider;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -4843,13 +4844,14 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteVariable(CompletionContext context)
         {
-            HashSet<string> hashedResults = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            List<CompletionResult> results = new List<CompletionResult>();
+            HashSet<string> hashedResults = new(StringComparer.OrdinalIgnoreCase);
+            List<CompletionResult> results = new();
+            List<CompletionResult> tempResults = new();
 
             var wordToComplete = context.WordToComplete;
             var colon = wordToComplete.IndexOf(':');
 
-            var lastAst = context.RelatedAsts?.Last();
+            var lastAst = context.RelatedAsts?[^1];
             var variableAst = lastAst as VariableExpressionAst;
             var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
             bool tokenAtCursorUsedBraces = context.TokenAtCursor is not null && context.TokenAtCursor.Text.StartsWith("${");
@@ -4857,10 +4859,15 @@ namespace System.Management.Automation
             // Look for variables in the input (e.g. parameters, etc.) before checking session state - these
             // variables might not exist in session state yet.
             var wildcardPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-            if (lastAst != null)
+            if (lastAst is not null)
             {
                 Ast parent = lastAst.Parent;
-                var findVariablesVisitor = new FindVariablesVisitor { CompletionVariableAst = lastAst };
+                var findVariablesVisitor = new FindVariablesVisitor
+                {
+                    CompletionVariableAst = lastAst,
+                    StopSearchOffset = lastAst.Extent.StartOffset,
+                    Context = context.TypeInferenceContext
+                };
                 while (parent != null)
                 {
                     if (parent is IParameterMetadataProvider)
@@ -4872,95 +4879,56 @@ namespace System.Management.Automation
                     parent = parent.Parent;
                 }
 
-                foreach (Tuple<string, Ast> varAst in findVariablesVisitor.VariableSources)
+                foreach (string varName in findVariablesVisitor.FoundVariables)
                 {
-                    Ast astTarget = null;
-                    string userPath = null;
-
-                    VariableExpressionAst variableDefinitionAst = varAst.Item2 as VariableExpressionAst;
-                    if (variableDefinitionAst != null)
+                    if (!wildcardPattern.IsMatch(varName))
                     {
-                        userPath = varAst.Item1;
-                        astTarget = varAst.Item2.Parent;
-                    }
-                    else
-                    {
-                        CommandAst commandParameterAst = varAst.Item2 as CommandAst;
-                        if (commandParameterAst != null)
-                        {
-                            userPath = varAst.Item1;
-                            astTarget = varAst.Item2;
-                        }
+                        continue;
                     }
 
-                    if (string.IsNullOrEmpty(userPath))
-                    {
-                        Diagnostics.Assert(false, "Found a variable source but it was an unknown AST type.");
-                    }
+                    var varInfo = findVariablesVisitor.VariableInfoTable[varName];
+                    var varType = varInfo.LastDeclaredConstraint ?? varInfo.LastAssignedType;
+                    var toolTip = varType is null
+                        ? varName
+                        : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(varType, dropNamespaces: true), varName);
 
-                    if (wildcardPattern.IsMatch(userPath))
-                    {
-                        var completedName = (userPath.IndexOfAny(s_charactersRequiringQuotes) == -1)
-                                                ? prefix + userPath
-                                                : prefix + "{" + userPath + "}";
-                        var tooltip = userPath;
-                        var ast = astTarget;
-
-                        while (ast != null)
-                        {
-                            var parameterAst = ast as ParameterAst;
-                            if (parameterAst != null)
-                            {
-                                var typeConstraint = parameterAst.Attributes.OfType<TypeConstraintAst>().FirstOrDefault();
-                                if (typeConstraint != null)
-                                {
-                                    tooltip = StringUtil.Format("{0}${1}", typeConstraint.Extent.Text, userPath);
-                                }
-
-                                break;
-                            }
-
-                            var assignmentAst = ast.Parent as AssignmentStatementAst;
-                            if (assignmentAst != null)
-                            {
-                                if (assignmentAst.Left == ast)
-                                {
-                                    tooltip = ast.Extent.Text;
-                                }
-
-                                break;
-                            }
-
-                            var commandAst = ast as CommandAst;
-                            if (commandAst != null)
-                            {
-                                PSTypeName discoveredType = AstTypeInference.InferTypeOf(ast, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval).FirstOrDefault<PSTypeName>();
-                                if (discoveredType != null)
-                                {
-                                    tooltip = StringUtil.Format("[{0}]${1}", discoveredType.Name, userPath);
-                                }
-
-                                break;
-                            }
-
-                            ast = ast.Parent;
-                        }
-
-                        AddUniqueVariable(hashedResults, results, completedName, userPath, tooltip);
-                    }
+                    var completionText = !tokenAtCursorUsedBraces && varName.IndexOfAny(s_charactersRequiringQuotes) == -1
+                        ? prefix + varName
+                        : prefix + "{" + varName + "}";
+                    AddUniqueVariable(hashedResults, results, completionText, varName, toolTip);
                 }
             }
 
-            string pattern;
-            string provider;
             if (colon == -1)
             {
-                pattern = "variable:" + wordToComplete + "*";
-                provider = string.Empty;
+                var allVariables = context.ExecutionContext.SessionState.Internal.GetVariableTable();
+                foreach (var key in allVariables.Keys)
+                {
+                    if (wildcardPattern.IsMatch(key))
+                    {
+                        var variable = allVariables[key];
+                        var name = variable.Name;
+                        var value = variable.Value;
+                        var toolTip = value is null
+                            ? key
+                            : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(value.GetType(), dropNamespaces: true), key);
+                        var completionText = !tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1
+                            ? prefix + name
+                            : prefix + "{" + name + "}";
+                        AddUniqueVariable(hashedResults, tempResults, completionText, key, key);
+                    }
+                }
+
+                if (tempResults.Count > 0)
+                {
+                    results.AddRange(tempResults.OrderBy(item => item.ListItemText, StringComparer.OrdinalIgnoreCase));
+                    tempResults.Clear();
+                }
             }
             else
             {
-                provider = wordToComplete.Substring(0, colon + 1);
+                string provider = wordToComplete.Substring(0, colon + 1);
+                string pattern;
                 if (s_variableScopes.Contains(provider, StringComparer.OrdinalIgnoreCase))
                 {
                     pattern = string.Concat("variable:", wordToComplete.AsSpan(colon + 1), "*");
@@ -4969,65 +4937,57 @@ namespace System.Management.Automation
                 {
                     pattern = wordToComplete + "*";
                 }
-            }
 
-            var powerShellExecutionHelper = context.Helper;
-            powerShellExecutionHelper
-                .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Item").AddParameter("Path", pattern)
-                .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object").AddParameter("Property", "Name");
-
-            Exception exceptionThrown;
-            var psobjs = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
-            if (psobjs != null)
-            {
-                foreach (dynamic psobj in psobjs)
-                {
-                    var name = psobj.Name as string;
-                    if (!string.IsNullOrEmpty(name))
-                    {
-                        var tooltip = name;
-                        var variable = PSObject.Base(psobj) as PSVariable;
-                        if (variable != null)
-                        {
-                            var value = variable.Value;
-                            if (value != null)
-                            {
-                                tooltip = StringUtil.Format("[{0}]${1}",
-                                                            ToStringCodeMethods.Type(value.GetType(),
-                                                                                     dropNamespaces: true), name);
-                            }
-                        }
-
-                        var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
-                                                ? prefix + provider + name
-                                                : prefix + "{" + provider + name + "}";
-                        AddUniqueVariable(hashedResults, results, completedName, name, tooltip);
-                    }
-                }
-            }
-
-            if (colon == -1 && "env".StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
-            {
+                var powerShellExecutionHelper = context.Helper;
                 powerShellExecutionHelper
-                    .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Item").AddParameter("Path", "env:*")
-                    .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object").AddParameter("Property", "Key");
+                    .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Item").AddParameter("Path", pattern)
+                    .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object").AddParameter("Property", "Name");
 
-                psobjs = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
-                if (psobjs != null)
+                var psobjs = powerShellExecutionHelper.ExecuteCurrentPowerShell(out _);
+
+                if (psobjs is not null)
                 {
                     foreach (dynamic psobj in psobjs)
                     {
                         var name = psobj.Name as string;
                         if (!string.IsNullOrEmpty(name))
                         {
-                            name = "env:" + name;
-                            var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
-                                                    ? prefix + name
-                                                    : prefix + "{" + name + "}";
-                            AddUniqueVariable(hashedResults, results, completedName, name, "[string]" + name);
+                            var tooltip = name;
+                            var variable = PSObject.Base(psobj) as PSVariable;
+                            if (variable != null)
+                            {
+                                var value = variable.Value;
+                                if (value != null)
+                                {
+                                    tooltip = StringUtil.Format("[{0}]${1}",
+                                                                ToStringCodeMethods.Type(value.GetType(),
+                                                                                         dropNamespaces: true), name);
+                                }
+                            }
+
+                            var completedName = !tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1
+                                                    ? prefix + provider + name
+                                                    : prefix + "{" + provider + name + "}";
+                            AddUniqueVariable(hashedResults, results, completedName, name, tooltip);
                         }
                     }
                 }
+            }
+
+            if (colon == -1 && "env".StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+            {
+                var envVars = Environment.GetEnvironmentVariables();
+                foreach (var key in envVars.Keys)
+                {
+                    var name = "env:" + key;
+                    var completedName = !tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1
+                        ? prefix + name
+                        : prefix + "{" + name + "}";
+                    AddUniqueVariable(hashedResults, tempResults, completedName, name, "[string]" + name);
+                }
+
+                results.AddRange(tempResults.OrderBy(item => item.ListItemText, StringComparer.OrdinalIgnoreCase));
+                tempResults.Clear();
             }
 
             // Return variables already in session state first, because we can sometimes give better information,
@@ -5036,7 +4996,7 @@ namespace System.Management.Automation
             {
                 if (wildcardPattern.IsMatch(specialVariable))
                 {
-                    var completedName = (!tokenAtCursorUsedBraces && specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                    var completedName = !tokenAtCursorUsedBraces && specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1
                                             ? prefix + specialVariable
                                             : prefix + "{" + specialVariable + "}";
 
@@ -5046,41 +5006,37 @@ namespace System.Management.Automation
 
             if (colon == -1)
             {
-                // If no drive was specified, then look for matching drives/scopes
-                pattern = wordToComplete + "*";
-                powerShellExecutionHelper
-                    .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-PSDrive").AddParameter("Name", pattern)
-                    .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object").AddParameter("Property", "Name");
-                psobjs = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
-                if (psobjs != null)
+                var allDrives = context.ExecutionContext.SessionState.Drive.GetAll();
+                foreach (var drive in allDrives)
                 {
-                    foreach (var psobj in psobjs)
+                    if (drive.Name.Length < 2
+                        || !wildcardPattern.IsMatch(drive.Name)
+                        || !drive.Provider.ImplementingType.IsAssignableTo(typeof(IContentCmdletProvider)))
                     {
-                        var driveInfo = PSObject.Base(psobj) as PSDriveInfo;
-                        if (driveInfo != null)
-                        {
-                            var name = driveInfo.Name;
-                            if (name != null && !string.IsNullOrWhiteSpace(name) && name.Length > 1)
-                            {
-                                var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
-                                                        ? prefix + name + ":"
-                                                        : prefix + "{" + name + ":}";
-
-                                var tooltip = string.IsNullOrEmpty(driveInfo.Description) ? name : driveInfo.Description;
-                                AddUniqueVariable(hashedResults, results, completedName, name, tooltip);
-                            }
-                        }
+                        continue;
                     }
+
+                    var completedName = !tokenAtCursorUsedBraces && drive.Name.IndexOfAny(s_charactersRequiringQuotes) == -1
+                        ? prefix + drive.Name + ":"
+                        : prefix + "{" + drive.Name + ":}";
+                    var tooltip = string.IsNullOrEmpty(drive.Description)
+                        ? drive.Name
+                        : drive.Description;
+                    AddUniqueVariable(hashedResults, tempResults, completedName, drive.Name, tooltip);
                 }
 
-                var scopePattern = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
+                if (tempResults.Count > 0)
+                {
+                    results.AddRange(tempResults.OrderBy(item => item.ListItemText, StringComparer.OrdinalIgnoreCase));
+                }
+
                 foreach (var scope in s_variableScopes)
                 {
-                    if (scopePattern.IsMatch(scope))
+                    if (wildcardPattern.IsMatch(scope))
                     {
-                        var completedName = (!tokenAtCursorUsedBraces && scope.IndexOfAny(s_charactersRequiringQuotes) == -1)
-                                                ? prefix + scope
-                                                : prefix + "{" + scope + "}";
+                        var completedName = !tokenAtCursorUsedBraces && scope.IndexOfAny(s_charactersRequiringQuotes) == -1
+                            ? prefix + scope
+                            : prefix + "{" + scope + "}";
                         AddUniqueVariable(hashedResults, results, completedName, scope, scope);
                     }
                 }
@@ -5091,24 +5047,170 @@ namespace System.Management.Automation
 
         private static void AddUniqueVariable(HashSet<string> hashedResults, List<CompletionResult> results, string completionText, string listItemText, string tooltip)
         {
-            if (!hashedResults.Contains(completionText))
+            if (hashedResults.Add(completionText))
             {
-                hashedResults.Add(completionText);
                 results.Add(new CompletionResult(completionText, listItemText, CompletionResultType.Variable, tooltip));
             }
+        }
+
+        private static readonly HashSet<string> s_varModificationCommands = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "New-Variable",
+            "nv",
+            "Set-Variable",
+            "set",
+            "sv"
+        };
+
+        private static readonly string[] s_varModificationParameters = new string[]
+        {
+            "Name",
+            "Value"
+        };
+
+        private static readonly string[] s_outVarParameters = new string[]
+        {
+            "ErrorVariable",
+            "ev",
+            "WarningVariable",
+            "wv",
+            "InformationVariable",
+            "iv",
+            "OutVariable",
+            "ov",
+
+        };
+
+        private static readonly string[] s_pipelineVariableParameters = new string[]
+        {
+            "PipelineVariable",
+            "pv"
+        };
+
+        private sealed class VariableInfo
+        {
+            internal Type LastDeclaredConstraint;
+            internal Type LastAssignedType;
         }
 
         private sealed class FindVariablesVisitor : AstVisitor
         {
             internal Ast Top;
             internal Ast CompletionVariableAst;
-            internal readonly List<Tuple<string, Ast>> VariableSources = new List<Tuple<string, Ast>>();
+            internal readonly List<string> FoundVariables = new();
+            internal readonly Dictionary<string, VariableInfo> VariableInfoTable = new(StringComparer.OrdinalIgnoreCase);
+            internal int StopSearchOffset;
+            internal TypeInferenceContext Context;
 
-            public override AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst)
+            private static Type GetInferredVarTypeFromAst(Ast ast)
             {
-                if (variableExpressionAst != CompletionVariableAst)
+                Type type;
+                switch (ast)
                 {
-                    VariableSources.Add(new Tuple<string, Ast>(variableExpressionAst.VariablePath.UserPath, variableExpressionAst));
+                    case ConstantExpressionAst constant:
+                        type = constant.StaticType;
+                        break;
+
+                    case ExpandableStringExpressionAst:
+                        type = typeof(string);
+                        break;
+
+                    case ConvertExpressionAst convertExpression:
+                        type = convertExpression.StaticType;
+                        break;
+
+                    case HashtableAst:
+                        type = typeof(Hashtable);
+                        break;
+
+                    case ArrayExpressionAst:
+                    case ArrayLiteralAst:
+                        type = typeof(object[]);
+                        break;
+
+                    case ScriptBlockExpressionAst:
+                        type = typeof(ScriptBlock);
+                        break;
+
+                    default:
+                        type = null;
+                        break;
+                }
+
+                return type;
+            }
+
+            private void SaveVariableInfo(string variableName, Type variableType, bool isConstraint)
+            {
+                VariableInfo varInfo;
+                if (VariableInfoTable.TryGetValue(variableName, out varInfo))
+                {
+                    if (isConstraint)
+                    {
+                        varInfo.LastDeclaredConstraint = variableType;
+                    }
+                    else
+                    {
+                        varInfo.LastAssignedType = variableType;
+                    }
+                }
+                else
+                {
+                    varInfo = isConstraint
+                        ? new VariableInfo() { LastDeclaredConstraint = variableType }
+                        : new VariableInfo() { LastAssignedType = variableType };
+                    VariableInfoTable.Add(variableName, varInfo);
+                    FoundVariables.Add(variableName);
+                }
+            }
+
+            public override AstVisitAction DefaultVisit(Ast ast)
+            {
+                if (ast.Extent.StartOffset > StopSearchOffset)
+                {
+                    return AstVisitAction.StopVisit;
+                }
+
+                return AstVisitAction.Continue;
+            }
+
+            public override AstVisitAction VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst)
+            {
+                if (assignmentStatementAst.Extent.StartOffset > StopSearchOffset)
+                {
+                    return AstVisitAction.StopVisit;
+                }
+
+                if (assignmentStatementAst.Left is ConvertExpressionAst convertExpression)
+                {
+                    if (convertExpression.Child is VariableExpressionAst variableExpression)
+                    {
+                        if (variableExpression == CompletionVariableAst || s_specialVariablesCache.Value.Contains(variableExpression.VariablePath.UserPath))
+                        {
+                            return AstVisitAction.Continue;
+                        }
+
+                        SaveVariableInfo(variableExpression.VariablePath.UserPath, convertExpression.StaticType, isConstraint: true);
+                    }
+                }
+                else if (assignmentStatementAst.Left is VariableExpressionAst variableExpression)
+                {
+                    if (variableExpression == CompletionVariableAst || s_specialVariablesCache.Value.Contains(variableExpression.VariablePath.UserPath))
+                    {
+                        return AstVisitAction.Continue;
+                    }
+
+                    Type lastAssignedType;
+                    if (assignmentStatementAst.Right is CommandExpressionAst commandExpression)
+                    {
+                        lastAssignedType = GetInferredVarTypeFromAst(commandExpression.Expression);
+                    }
+                    else
+                    {
+                        lastAssignedType = null;
+                    }
+
+                    SaveVariableInfo(variableExpression.VariablePath.UserPath, lastAssignedType, isConstraint: false);
                 }
 
                 return AstVisitAction.Continue;
@@ -5116,31 +5218,96 @@ namespace System.Management.Automation
 
             public override AstVisitAction VisitCommand(CommandAst commandAst)
             {
-                // MSFT: 784739 Stack overflow during tab completion of pipeline variable
-                // $null | % -pv p { $p<TAB> -> In this case $p is pipelinevariable
-                // and is used in the same command. PipelineVariables are not available
-                // in the command they are assigned in. Hence the following code ignores
-                // if the variable being completed is in the command extent.
-                if ((commandAst != CompletionVariableAst) && (!CompletionVariableAst.Extent.IsWithin(commandAst.Extent)))
+                if (commandAst.Extent.StartOffset > StopSearchOffset)
                 {
-                    string[] desiredParameters = new string[] { "PV", "PipelineVariable", "OV", "OutVariable" };
+                    return AstVisitAction.StopVisit;
+                }
 
-                    StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, false, desiredParameters);
-                    if (bindingResult != null)
+                var commandName = commandAst.GetCommandName();
+                if (commandName is not null && s_varModificationCommands.Contains(commandName))
+                {
+                    StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, resolve: false, s_varModificationParameters);
+                    if (bindingResult is not null
+                        && bindingResult.BoundParameters.TryGetValue("Name", out ParameterBindingResult variableName))
                     {
-                        ParameterBindingResult parameterBindingResult;
-
-                        foreach (string commandVariableParameter in desiredParameters)
+                        var nameValue = variableName.ConstantValue as string;
+                        if (nameValue is not null)
                         {
-                            if (bindingResult.BoundParameters.TryGetValue(commandVariableParameter, out parameterBindingResult))
+                            Type variableType;
+                            if (bindingResult.BoundParameters.TryGetValue("Value", out ParameterBindingResult variableValue))
                             {
-                                VariableSources.Add(new Tuple<string, Ast>((string)parameterBindingResult.ConstantValue, commandAst));
+                                variableType = GetInferredVarTypeFromAst(variableValue.Value);
+                            }
+                            else
+                            {
+                                variableType = null;
+                            }
+
+                            SaveVariableInfo(nameValue, variableType, isConstraint: false);
+                        }
+                    }
+                }
+
+                var bindResult = StaticParameterBinder.BindCommand(commandAst, resolve: false);
+                if (bindResult is not null)
+                {
+                    foreach (var parameterName in s_outVarParameters)
+                    {
+                        if (bindResult.BoundParameters.TryGetValue(parameterName, out ParameterBindingResult outVarBind))
+                        {
+                            var varName = outVarBind.ConstantValue as string;
+                            if (varName is not null)
+                            {
+                                SaveVariableInfo(varName, typeof(ArrayList), isConstraint: false);
+                            }
+                        }
+                    }
+
+                    if (commandAst.Parent is PipelineAst pipeline && pipeline.Extent.EndOffset > CompletionVariableAst.Extent.StartOffset)
+                    {
+                        foreach (var parameterName in s_pipelineVariableParameters)
+                        {
+                            if (bindResult.BoundParameters.TryGetValue(parameterName, out ParameterBindingResult pipeVarBind))
+                            {
+                                var varName = pipeVarBind.ConstantValue as string;
+                                if (varName is not null)
+                                {
+                                    var inferredTypes = AstTypeInference.InferTypeOf(commandAst, Context, TypeInferenceRuntimePermissions.AllowSafeEval);
+                                    Type varType = inferredTypes.Count == 0
+                                        ? null
+                                        : inferredTypes[0].Type;
+                                    SaveVariableInfo(varName, varType, isConstraint: false);
+                                }
                             }
                         }
                     }
                 }
 
                 return AstVisitAction.Continue;
+            }
+
+            public override AstVisitAction VisitParameter(ParameterAst parameterAst)
+            {
+                if (parameterAst.Extent.StartOffset > StopSearchOffset)
+                {
+                    return AstVisitAction.StopVisit;
+                }
+
+                VariableExpressionAst variableExpression = parameterAst.Name;
+                if (variableExpression == CompletionVariableAst)
+                {
+                    return AstVisitAction.Continue;
+                }
+
+                SaveVariableInfo(variableExpression.VariablePath.UserPath, parameterAst.StaticType, isConstraint: true);
+
+                return AstVisitAction.Continue;
+            }
+
+            public override AstVisitAction VisitAttribute(AttributeAst attributeAst)
+            {
+                // Attributes can't assign values to variables so they aren't interesting.
+                return AstVisitAction.SkipChildren;
             }
 
             public override AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
@@ -5163,7 +5330,7 @@ namespace System.Management.Automation
 
         private static SortedSet<string> BuildSpecialVariablesCache()
         {
-            var result = new SortedSet<string>();
+            var result = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var member in typeof(SpecialVariables).GetFields(BindingFlags.NonPublic | BindingFlags.Static))
             {
                 if (member.FieldType.Equals(typeof(string)))
