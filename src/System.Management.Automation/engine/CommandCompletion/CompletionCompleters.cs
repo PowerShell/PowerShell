@@ -7094,11 +7094,11 @@ namespace System.Management.Automation
                 {
                     if (statement.UsingStatementKind == UsingStatementKind.Namespace && statement.Alias is not null)
                     {
-                        namespaceAliases.Add(statement.Name.Value, statement.Alias.Extent.Text);
+                        namespaceAliases.Add(statement.Name.Value, statement.Alias.Value);
                     }
                     else if (statement.UsingStatementKind == UsingStatementKind.Type)
                     {
-                        typeAliases.Add(statement.Name.Value, Parser.ScanType(statement.Alias.Extent.Text, ignoreErrors: false));
+                        typeAliases.Add(statement.Name.Value, Parser.ScanType(statement.Alias.Value, ignoreErrors: false));
                     }
                 }
             }

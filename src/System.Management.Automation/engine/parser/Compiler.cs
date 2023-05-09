@@ -2763,9 +2763,9 @@ namespace System.Management.Automation.Language
                     case UsingStatementKind.Namespace:
                         break;
                     case UsingStatementKind.Type:
-                        if (usingStmt.Alias is TypeConstraintAst typeConstraint)
+                        if (usingStmt.Alias is not null)
                         {
-                            alias[usingStmt.Name.Value] = typeConstraint.TypeName;
+                            alias[usingStmt.Name.Value] = Parser.ScanType(usingStmt.Alias.Value, ignoreErrors: false);
                         }
                         break;
                     default:

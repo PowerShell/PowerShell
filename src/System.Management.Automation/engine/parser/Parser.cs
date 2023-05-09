@@ -5041,7 +5041,7 @@ namespace System.Management.Automation.Language
                             return new ErrorStatementAst(ExtentOf(usingToken, aliasTypeName.Extent));
                         }
 
-                        aliasAst = new TypeConstraintAst(aliasTypeName.Extent, aliasTypeName);
+                        aliasAst = new StringConstantExpressionAst(aliasTypeName.Extent, aliasTypeName.FullName, StringConstantType.BareWord);
                     }
                     else
                     {
@@ -5069,7 +5069,7 @@ namespace System.Management.Automation.Language
                     {
                         htAst = (HashtableAst)aliasAst;
                     }
-                    else if (aliasAst is not StringConstantExpressionAst and not TypeConstraintAst)
+                    else if (aliasAst is not StringConstantExpressionAst)
                     {
                         var errorExtent = ExtentFromFirstOf(aliasAst, aliasToken);
                         Ast[] nestedAsts;
@@ -5094,7 +5094,7 @@ namespace System.Management.Automation.Language
                             ExtentOf(usingToken, aliasAst),
                             kind,
                             (StringConstantExpressionAst)itemAst,
-                            aliasAst);
+                            (StringConstantExpressionAst)aliasAst);
                     }
                     else
                     {
