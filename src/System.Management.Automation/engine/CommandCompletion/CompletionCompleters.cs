@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Provider;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -5009,7 +5010,9 @@ namespace System.Management.Automation
                 var allDrives = context.ExecutionContext.SessionState.Drive.GetAll();
                 foreach (var drive in allDrives)
                 {
-                    if (drive.Name.Length < 2 || !wildcardPattern.IsMatch(drive.Name))
+                    if (drive.Name.Length < 2
+                        || !wildcardPattern.IsMatch(drive.Name)
+                        || !drive.Provider.ImplementingType.IsAssignableTo(typeof(IContentCmdletProvider)))
                     {
                         continue;
                     }
@@ -5262,7 +5265,7 @@ namespace System.Management.Automation
                         {
                             if (bindResult.BoundParameters.TryGetValue(parameterName, out ParameterBindingResult pipeVarBind))
                             {
-                                var varName = outVarBind.ConstantValue as string;
+                                var varName = pipeVarBind.ConstantValue as string;
                                 if (varName is not null)
                                 {
                                     var inferredTypes = AstTypeInference.InferTypeOf(commandAst, Context, TypeInferenceRuntimePermissions.AllowSafeEval);
