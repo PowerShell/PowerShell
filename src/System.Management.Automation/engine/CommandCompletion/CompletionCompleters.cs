@@ -4865,8 +4865,7 @@ namespace System.Management.Automation
                 var findVariablesVisitor = new FindVariablesVisitor
                 {
                     CompletionVariableAst = lastAst,
-                    StopSearchOffset =
-                    lastAst.Extent.StartOffset,
+                    StopSearchOffset = lastAst.Extent.StartOffset,
                     Context = context.TypeInferenceContext
                 };
                 while (parent != null)
