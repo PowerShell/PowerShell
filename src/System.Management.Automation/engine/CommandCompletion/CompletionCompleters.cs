@@ -5219,6 +5219,11 @@ namespace System.Management.Automation
 
             public override AstVisitAction VisitCommand(CommandAst commandAst)
             {
+                if (commandAst.Extent.StartOffset > StopSearchOffset)
+                {
+                    return AstVisitAction.StopVisit;
+                }
+
                 var commandName = commandAst.GetCommandName();
                 if (commandName is not null && s_varModificationCommands.Contains(commandName))
                 {
