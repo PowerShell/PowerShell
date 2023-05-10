@@ -91,7 +91,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public static CommandCompletion CompleteInput(string input, int cursorIndex, Hashtable options)
         {
-            if (input == null)
+            if (input == null || input.Length == 0)
             {
                 return s_emptyCommandCompletion;
             }
@@ -124,6 +124,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(positionOfCursor));
             }
 
+            if (ast.Extent.Text.Length == 0)
+            {
+                return s_emptyCommandCompletion;
+            }
+
             return CompleteInputImpl(ast, tokens, positionOfCursor, options);
         }
 
@@ -138,7 +143,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "powershell")]
         public static CommandCompletion CompleteInput(string input, int cursorIndex, Hashtable options, PowerShell powershell)
         {
-            if (input == null)
+            if (input == null || input.Length == 0)
             {
                 return s_emptyCommandCompletion;
             }
@@ -219,6 +224,11 @@ namespace System.Management.Automation
             if (powershell == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(powershell));
+            }
+
+            if (ast.Extent.Text.Length == 0)
+            {
+                return s_emptyCommandCompletion;
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.

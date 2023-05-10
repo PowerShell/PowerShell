@@ -2050,6 +2050,14 @@ dir -Recurse `
             param($inputStr, $expected)
             $inputStr | Should -Throw -ErrorId $expected
         }
+
+        It "Should not throw errors in tab completion with empty input string" {
+            {[System.Management.Automation.CommandCompletion]::CompleteInput("", 0, $null)} | Should -Not -Throw
+        }
+
+        It "Should not throw errors in tab completion with empty input ast" {
+            {[System.Management.Automation.CommandCompletion]::CompleteInput({}.Ast, @(), {}.Ast.Extent.StartScriptPosition, $null)} | Should -Not -Throw
+        }
     }
 
     Context "DSC tab completion tests" {
