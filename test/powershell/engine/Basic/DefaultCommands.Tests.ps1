@@ -617,8 +617,8 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
         $expectedCmdletNames = $commandHashTableList.ForEach({"{0}" -f $_.Name})
         $extraCmds = $observedCmdletNames.Where({$expectedCmdletNames -notcontains $_})
         $missedCmds = $expectedCmdletNames.Where({$observedCmdletNames -notcontains $_})
-        $extraCmds.Count | Should -Be 0 -Because "Extra cmdlets $($extraCmds -join ',')"
-        $missedCmds.Count | Should -Be 0 -Because "Missed cmdlets $($missedCmds -join ',')"
+        $extraCmds | Should -HaveCount 0 -Because "Extra cmdlets $($extraCmds -join ',')"
+        $missedCmds | Should -HaveCount 0 -Because "Missed cmdlets $($missedCmds -join ',')"
     }
 
     It "'<Name>' Cmdlet should have the correct ConfirmImpact '<ConfirmImpact>'" -TestCases $commandHashtableList {
