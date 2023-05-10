@@ -4463,17 +4463,19 @@ namespace System.Management.Automation
             }
 
             StringConstantType stringType;
-            if (quote.Equals(string.Empty, StringComparison.Ordinal))
+            switch (quote)
             {
-                stringType = StringConstantType.BareWord;
-            }
-            else if (quote.Equals("\"", StringComparison.Ordinal))
-            {
-                stringType = StringConstantType.DoubleQuoted;
-            }
-            else
-            {
-                stringType = StringConstantType.SingleQuoted;
+                case "":
+                    stringType = StringConstantType.BareWord;
+                    break;
+
+                case "\"":
+                    stringType = StringConstantType.DoubleQuoted;
+                    break;
+
+                default:
+                    stringType = StringConstantType.SingleQuoted;
+                    break;
             }
 
             var useLiteralPath = context.GetOption("LiteralPaths", @default: false);
@@ -4704,15 +4706,9 @@ namespace System.Management.Automation
             string providerPrefix,
             StringConstantType stringType)
         {
-            string homePath;
-            if (inputUsedHome && !string.IsNullOrEmpty(provider.Home))
-            {
-                homePath = provider.Home;
-            }
-            else
-            {
-                homePath = null;
-            }
+            string homePath = inputUsedHome && !string.IsNullOrEmpty(provider.Home)
+                ? provider.Home
+                : null;
 
             var pattern = WildcardPattern.Get(filterText, WildcardOptions.IgnoreCase);
             var results = new List<CompletionResult>();
