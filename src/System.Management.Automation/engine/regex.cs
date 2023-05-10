@@ -318,7 +318,7 @@ namespace System.Management.Automation
         /// Checks if the string contains a left bracket "[" followed by a right bracket "]" after any number of characters.
         /// </summary>
         /// <param name="pattern"> The string to check.</param>
-        /// <returns>Returns true if the string contains both a left and right bracket "[" "]" and if the right bracket comes after the left bracket</returns>
+        /// <returns>Returns true if the string contains both a left and right bracket "[" "]" and if the right bracket comes after the left bracket.</returns>
         internal static bool ContainsRangeWildcard(string pattern)
         {
             if (string.IsNullOrEmpty(pattern))
