@@ -99,8 +99,18 @@ namespace Microsoft.PowerShell.Commands
 
                     string str = StreamHelper.DecodeStream(responseStream, characterSet, out Encoding encoding, _cancelToken.Token);
 
+                    string encodingVerboseName;
+                    try
+                    {
+                        encodingVerboseName = encoding.HeaderName;
+                    }
+                    catch
+                    {
+                        encodingVerboseName = string.Empty;
+                    }
+
                     // NOTE: Tests use this verbose output to verify the encoding.
-                    WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encoding.HeaderName}"));
+                    WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encodingVerboseName}"));
 
                     // Determine the response type
                     RestReturnType returnType = CheckReturnType(response);
