@@ -4583,15 +4583,7 @@ namespace System.Management.Automation
 #endif
             var enumerationOptions = _enumerationOptions;
             var results = new List<CompletionResult>();
-            string homePath;
-            if (inputUsedHome && !string.IsNullOrEmpty(provider.Home))
-            {
-                homePath = provider.Home;
-            }
-            else
-            {
-                homePath = null;
-            }
+            string homePath = inputUsedHome && !string.IsNullOrEmpty(provider.Home) ? provider.Home : null;
 
             WildcardPattern wildcardFilter;
             if (WildcardPattern.ContainsRangeWildcard(filterText))
@@ -4622,15 +4614,10 @@ namespace System.Management.Automation
                 {
                     basePath = null;
                 }
-                IEnumerable <FileSystemInfo> fileSystemObjects;
-                if (containersOnly)
-                {
-                    fileSystemObjects = dirInfo.EnumerateDirectories(filterText, enumerationOptions);
-                }
-                else
-                {
-                    fileSystemObjects = dirInfo.EnumerateFileSystemInfos(filterText, enumerationOptions);
-                }
+                IEnumerable <FileSystemInfo> fileSystemObjects = containersOnly
+                    ? dirInfo.EnumerateDirectories(filterText, enumerationOptions)
+                    : dirInfo.EnumerateFileSystemInfos(filterText, enumerationOptions);
+
                 foreach (var entry in fileSystemObjects)
                 {
                     bool isContainer = entry.Attributes.HasFlag(FileAttributes.Directory);
