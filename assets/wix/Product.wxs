@@ -203,7 +203,9 @@
               <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
                   <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)" Name="SemanticVersion" KeyPath="yes"/>
                   <RegistryValue Type="string" Value="[VersionFolder]" Name="InstallLocation" />
+                  <RegistryValue Type="string" Value="[ProductCode]" Name="ProductCode" />
               </RegistryKey>
+
             </Component>
             <Component Id="SharedRegistryEntries">
               <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
