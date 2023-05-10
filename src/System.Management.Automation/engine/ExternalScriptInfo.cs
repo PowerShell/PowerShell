@@ -110,7 +110,9 @@ namespace System.Management.Automation
                         break;
 
                     case SystemEnforcementMode.Audit:
-                        DefiningLanguageMode = PSLanguageMode.ConstrainedLanguageAudit;
+                        // For policy audit mode, language mode is set to CL but audit messages are emitted to log
+                        // instead of applying restrictions.
+                        DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
                         break;
 
                     case SystemEnforcementMode.Enforce:
@@ -537,7 +539,6 @@ namespace System.Management.Automation
                                     {
                                         DefiningLanguageMode = Context.LanguageMode;
                                     }
-                                    
                                     break;
 
                                 case SystemScriptFileEnforcement.Allow:
@@ -554,7 +555,9 @@ namespace System.Management.Automation
                                         title: SecuritySupportStrings.ExternalScriptWDACLogTitle,
                                         message: string.Format(Globalization.CultureInfo.CurrentUICulture, SecuritySupportStrings.ExternalScriptWDACLogMessage, _path),
                                         fqid: "ScriptFileNotTrustedByPolicy");
-                                    DefiningLanguageMode = PSLanguageMode.ConstrainedLanguageAudit;
+                                    // We set the language mode to Constrained Language, even though in policy audit mode no restrictions are applied
+                                    // and instead an audit log message is generated wherever a restriction would be applied.
+                                    DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
                                     break;
 
                                 case SystemScriptFileEnforcement.Block:

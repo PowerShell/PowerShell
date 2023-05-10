@@ -556,25 +556,27 @@ namespace Microsoft.PowerShell.Commands
         {
             // Prevent code compilation in ConstrainedLanguage mode, or NoLanguage mode under system lock down.
             if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage ||
-                (SessionState.LanguageMode == PSLanguageMode.NoLanguage && 
-                 SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce))
+                SessionState.LanguageMode == PSLanguageMode.NoLanguage)
             {
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSNotSupportedException(AddTypeStrings.CannotDefineNewType),
-                        nameof(AddTypeStrings.CannotDefineNewType),
-                        ErrorCategory.PermissionDenied,
-                        targetObject: null));
-            }
+                if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSNotSupportedException(AddTypeStrings.CannotDefineNewType),
+                            nameof(AddTypeStrings.CannotDefineNewType),
+                            ErrorCategory.PermissionDenied,
+                            targetObject: null));
+                }
 
-            if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
-            {
-                SystemPolicy.LogWDACAuditMessage(
-                    context: Context,
-                    title: AddTypeStrings.AddTypeLogTitle,
-                    message: AddTypeStrings.AddTypeLogMessage,
-                    fqid: "AddTypeCmdletDisabled",
-                    dropIntoDebugger: true);
+                if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+                {
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: Context,
+                        title: AddTypeStrings.AddTypeLogTitle,
+                        message: AddTypeStrings.AddTypeLogMessage,
+                        fqid: "AddTypeCmdletDisabled",
+                        dropIntoDebugger: true);
+                }
             }
 
             // 'ConsoleApplication' and 'WindowsApplication' types are currently not working in .NET Core

@@ -2982,24 +2982,24 @@ namespace System.Management.Automation.Language
                     Runspaces.Runspace.DefaultRunspace = localRunspace;
                 }
 
-                if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+                // Configuration is not supported on ARM or in ConstrainedLanguage
+                if (PsUtils.IsRunningOnProcessorArchitectureARM() || Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        ReportError(configurationToken.Extent,
+                                    nameof(ParserStrings.ConfigurationNotAllowedInConstrainedLanguage),
+                                    ParserStrings.ConfigurationNotAllowedInConstrainedLanguage,
+                                    configurationToken.Kind.Text());
+                        return null;
+                    }
+
                     SystemPolicy.LogWDACAuditMessage(
                         context: Runspace.DefaultRunspace?.ExecutionContext,
                         title: ParserStrings.WDACParserConfigKeywordLogTitle,
                         message: ParserStrings.WDACParserConfigKeywordLogMessage,
                         fqid: "ConfigurationLanguageKeywordNotAllowed",
                         dropIntoDebugger: true);
-                }
-
-                // Configuration is not supported on ARM or in ConstrainedLanguage
-                if (PsUtils.IsRunningOnProcessorArchitectureARM() || Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
-                {
-                    ReportError(configurationToken.Extent,
-                                nameof(ParserStrings.ConfigurationNotAllowedInConstrainedLanguage),
-                                ParserStrings.ConfigurationNotAllowedInConstrainedLanguage,
-                                configurationToken.Kind.Text());
-                    return null;
                 }
 
                 // Configuration is not supported on WinPE
@@ -4210,23 +4210,24 @@ namespace System.Management.Automation.Language
             // G      class-member-list   class-member
 
             // PowerShell classes are not supported in ConstrainedLanguage
-            if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+            if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                {
+                    ReportError(classToken.Extent,
+                                nameof(ParserStrings.ClassesNotAllowedInConstrainedLanguage),
+                                ParserStrings.ClassesNotAllowedInConstrainedLanguage,
+                                classToken.Kind.Text());
+
+                    return null;
+                }
+
                 SystemPolicy.LogWDACAuditMessage(
                     context: Runspace.DefaultRunspace?.ExecutionContext,
                     title: ParserStrings.WDACParserClassKeywordLogTitle,
                     message: ParserStrings.WDACParserClassKeywordLogMessage,
                     fqid: "ClassLanguageKeywordNotAllowed",
                     dropIntoDebugger: true);
-            }
-            else if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
-            {
-                ReportError(classToken.Extent,
-                            nameof(ParserStrings.ClassesNotAllowedInConstrainedLanguage),
-                            ParserStrings.ClassesNotAllowedInConstrainedLanguage,
-                            classToken.Kind.Text());
-
-                return null;
             }
 
             SkipNewlines();

@@ -192,16 +192,15 @@ namespace Microsoft.PowerShell.Commands
                     case PSLanguageMode.ConstrainedLanguage:
                         if (!CoreTypes.Contains(type))
                         {
-                            ThrowTerminatingError(
+                            if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                            {
+                                ThrowTerminatingError(
                                 new ErrorRecord(
-                                    new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), "CannotCreateTypeConstrainedLanguage", ErrorCategory.PermissionDenied, null));
-                        }
-
-                        break;
-
-                    case PSLanguageMode.ConstrainedLanguageAudit:
-                        if (!CoreTypes.Contains(type))
-                        {
+                                    new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), 
+                                    "CannotCreateTypeConstrainedLanguage",
+                                    ErrorCategory.PermissionDenied, null));
+                            }
+                            
                             SystemPolicy.LogWDACAuditMessage(
                                 context: Context,
                                 title: NewObjectStrings.TypeWDACLogTitle,
@@ -209,7 +208,6 @@ namespace Microsoft.PowerShell.Commands
                                 fqid: "NewObjectCmdletCannotCreateType",
                                 dropIntoDebugger: true);
                         }
-
                         break;
 
                     case PSLanguageMode.NoLanguage:
@@ -225,7 +223,6 @@ namespace Microsoft.PowerShell.Commands
                                     ErrorCategory.PermissionDenied,
                                     targetObject: null));
                         }
-                        
                         break;
                 }
 
@@ -309,7 +306,7 @@ namespace Microsoft.PowerShell.Commands
                 int result = NewObjectNativeMethods.CLSIDFromProgID(ComObject, out _comObjectClsId);
 
                 // If we're in ConstrainedLanguage, do additional restrictions
-                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage || Context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
                     bool isAllowed = false;
 
@@ -322,11 +319,13 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!isAllowed)
                     {
-                        if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                         {
                             ThrowTerminatingError(
                                 new ErrorRecord(
-                                    new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), "CannotCreateComTypeConstrainedLanguage", ErrorCategory.PermissionDenied, null));
+                                    new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage),
+                                    "CannotCreateComTypeConstrainedLanguage",
+                                    ErrorCategory.PermissionDenied, null));
                             return;
                         }
 

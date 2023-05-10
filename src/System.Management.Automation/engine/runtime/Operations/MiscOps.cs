@@ -57,17 +57,7 @@ namespace System.Management.Automation
                 }
                 else if (((invocationToken == TokenKind.Ampersand) || (invocationToken == TokenKind.Dot)) && (mi.LanguageMode != context.LanguageMode))
                 {
-                    if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
-                    {
-                        // In audit mode, report but don't enforce.
-                        SystemPolicy.LogWDACAuditMessage(
-                            context: context,
-                            title: ParserStrings.WDACParserModuleScopeCallOperatorLogTitle,
-                            message: ParserStrings.WDACParserModuleScopeCallOperatorLogMessage,
-                            fqid: "ModuleScopeCallOperatorNotAllowed",
-                            dropIntoDebugger: true);
-                    }
-                    else
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                     {
                         // Disallow FullLanguage "& (Get-Module MyModule) MyPrivateFn" from ConstrainedLanguage because it always
                         // runs "internal" origin and so has access to all functions, including non-exported functions.
@@ -75,6 +65,14 @@ namespace System.Management.Automation
                         throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null,
                             "CantInvokeCallOperatorAcrossLanguageBoundaries", ParserStrings.CantInvokeCallOperatorAcrossLanguageBoundaries);
                     }
+
+                    // In audit mode, report but don't enforce.
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: context,
+                        title: ParserStrings.WDACParserModuleScopeCallOperatorLogTitle,
+                        message: ParserStrings.WDACParserModuleScopeCallOperatorLogMessage,
+                        fqid: "ModuleScopeCallOperatorNotAllowed",
+                        dropIntoDebugger: true);
                 }
 
                 commandSessionState = mi.SessionState.Internal;
@@ -699,7 +697,7 @@ namespace System.Management.Automation
                 // GetSteppablePipeline() is called on an arbitrary script block with the intention
                 // of invoking it. So the trustworthiness is defined by the trustworthiness of the
                 // script block's language mode.
-                bool isTrusted = scriptBlock.LanguageMode == PSLanguageMode.FullLanguage || scriptBlock.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit;
+                bool isTrusted = scriptBlock.LanguageMode == PSLanguageMode.FullLanguage;
 
                 foreach (var commandAst in pipelineAst.PipelineElements.Cast<CommandAst>())
                 {
@@ -3004,11 +3002,11 @@ namespace System.Management.Automation
                                 }
 
                                 // In constrained language mode, can only execute methods on certain types.
-                                if (languageMode == PSLanguageMode.ConstrainedLanguage || languageMode == PSLanguageMode.ConstrainedLanguageAudit)
+                                if (languageMode == PSLanguageMode.ConstrainedLanguage)
                                 {
                                     if (!CoreTypes.Contains(basedCurrent.GetType()))
                                     {
-                                        if (languageMode == PSLanguageMode.ConstrainedLanguage)
+                                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                                         {
                                             throw InterpreterError.NewInterpreterException(current, typeof(PSInvalidOperationException),
                                                 null, "MethodInvocationNotSupportedInConstrainedLanguage", ParserStrings.InvokeMethodConstrainedLanguage);

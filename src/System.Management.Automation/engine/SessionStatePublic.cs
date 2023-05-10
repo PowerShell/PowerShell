@@ -369,16 +369,6 @@ namespace System.Management.Automation
         /// types, does not support method invocation (except on those types), and does not
         /// support property setters (except on those types).
         /// </summary>
-        ConstrainedLanguage = 3,
-
-        /// <summary>
-        /// This language mode applies no language restrictions, but is set when a system is
-        /// in WDAC (Windows Defender Application Control) policy Audit mode.
-        /// When in ConstrainedLanguageAudit mode, PowerShell language and lock down restrictions
-        /// are logged instead of applied.
-        /// This allows users to discover what restrictions would apply to running scripts if
-        /// the WDAC policy was in enforcement mode.
-        /// </summary>
-        ConstrainedLanguageAudit = 4
+        ConstrainedLanguage = 3
     }
 }

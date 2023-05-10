@@ -185,7 +185,7 @@ namespace System.Management.Automation
 
             // Early out.
             // Always allow built-in functions needed for command line debugging.
-            if ((this.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage || this.ExecutionContext.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit) ||
+            if (this.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage ||
                 (fnInfo == null) ||
                 (fnInfo.Name.Equals("prompt", StringComparison.OrdinalIgnoreCase)) ||
                 (fnInfo.Name.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase)) ||

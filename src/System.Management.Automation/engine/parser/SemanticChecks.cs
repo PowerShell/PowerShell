@@ -1830,23 +1830,23 @@ namespace System.Management.Automation.Language
         {
             // If we get here, we have already determined the data statement invokes commands, so
             // we only need to check the language mode.
-            switch (executionContext.LanguageMode)
+            if (executionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                case PSLanguageMode.ConstrainedLanguageAudit:
-                    SystemPolicy.LogWDACAuditMessage(
-                        context: executionContext,
-                        title: ParserStrings.WDACParserDSSupportedCommandLogTitle,
-                        message: ParserStrings.WDACParserDSSupportedCommandLogMessage,
-                        fqid: "SupportedCommandInDataSectionNotSupported",
-                        dropIntoDebugger: true);
-                    break;
-
-                case PSLanguageMode.ConstrainedLanguage:
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                {
                     var parser = new Parser();
                     parser.ReportError(dataStatementAst.CommandsAllowed[0].Extent,
                         nameof(ParserStrings.DataSectionAllowedCommandDisallowed),
                         ParserStrings.DataSectionAllowedCommandDisallowed);
                     throw new ParseException(parser.ErrorList.ToArray());
+                }
+
+                SystemPolicy.LogWDACAuditMessage(
+                    context: executionContext,
+                    title: ParserStrings.WDACParserDSSupportedCommandLogTitle,
+                    message: ParserStrings.WDACParserDSSupportedCommandLogMessage,
+                    fqid: "SupportedCommandInDataSectionNotSupported",
+                    dropIntoDebugger: true);
             }
         }
 

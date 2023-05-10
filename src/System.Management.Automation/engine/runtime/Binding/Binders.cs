@@ -5516,12 +5516,11 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            if ((ExecutionContext.HasEverUsedConstrainedLanguage && context.LanguageMode == PSLanguageMode.ConstrainedLanguage) || 
-                context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+            if (ExecutionContext.HasEverUsedConstrainedLanguage && context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
                 if (!IsAllowedInConstrainedLanguage(targetValue, name, isStatic))
                 {
-                    if (context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                     {
                         return target.ThrowRuntimeError(args, moreTests, errorID, resourceString);
                     }
@@ -7693,10 +7692,9 @@ namespace System.Management.Automation.Language
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage && context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit &&
-                !CoreTypes.Contains(instanceType))
+            if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage && !CoreTypes.Contains(instanceType))
             {
-                if (context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                 {
                     return target.ThrowRuntimeError(restrictions, "CannotCreateTypeConstrainedLanguage", ParserStrings.CannotCreateTypeConstrainedLanguage).WriteToDebugLog(this);
                 }

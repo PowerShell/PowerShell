@@ -1982,36 +1982,29 @@ namespace System.Management.Automation
                 return;
             }
 
-            if ((ExecutionContext.HasEverUsedConstrainedLanguage && context.LanguageMode == PSLanguageMode.ConstrainedLanguage) ||
-                context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+            if (ExecutionContext.HasEverUsedConstrainedLanguage && context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                switch (context.LanguageMode)
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                 {
-                    case PSLanguageMode.ConstrainedLanguage:
-                        if ((variable.Options & ScopedItemOptions.AllScope) == ScopedItemOptions.AllScope)
-                        {
-                            // Don't let people set AllScope variables in ConstrainedLanguage, as they can be used to
-                            // interfere with the session state of trusted commands.
-                            throw new PSNotSupportedException();
-                        }
+                    if ((variable.Options & ScopedItemOptions.AllScope) == ScopedItemOptions.AllScope)
+                    {
+                        // Don't let people set AllScope variables in ConstrainedLanguage, as they can be used to
+                        // interfere with the session state of trusted commands.
+                        throw new PSNotSupportedException();
+                    }
 
-                        // Mark untrusted values for assignments to 'Global:' variables, and 'Script:' variables in
-                        // a module scope, if it's necessary.
-                        ExecutionContext.MarkObjectAsUntrustedForVariableAssignment(variable, this, context.EngineSessionState);
-                        break;
-
-                    case PSLanguageMode.ConstrainedLanguageAudit:
-                        if ((variable.Options & ScopedItemOptions.AllScope) == ScopedItemOptions.AllScope)
-                        {
-                            SystemPolicy.LogWDACAuditMessage(
-                                context: context,
-                                title: SessionStateStrings.WDACSessionStateVarLogTitle,
-                                message: StringUtil.Format(SessionStateStrings.WDACSessionStateVarLogMessage, variable.Name),
-                                fqid: "AllScopeVariableNotAllowed",
-                                dropIntoDebugger: true);
-                        }
-
-                        break;
+                    // Mark untrusted values for assignments to 'Global:' variables, and 'Script:' variables in
+                    // a module scope, if it's necessary.
+                    ExecutionContext.MarkObjectAsUntrustedForVariableAssignment(variable, this, context.EngineSessionState);
+                }
+                else if ((variable.Options & ScopedItemOptions.AllScope) == ScopedItemOptions.AllScope)
+                {
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: context,
+                        title: SessionStateStrings.WDACSessionStateVarLogTitle,
+                        message: StringUtil.Format(SessionStateStrings.WDACSessionStateVarLogMessage, variable.Name),
+                        fqid: "AllScopeVariableNotAllowed",
+                        dropIntoDebugger: true);
                 }
             }
         }

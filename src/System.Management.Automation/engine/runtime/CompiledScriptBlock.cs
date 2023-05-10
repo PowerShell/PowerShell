@@ -1069,7 +1069,7 @@ namespace System.Management.Automation
                 }
                 else if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
                 {
-                    string scriptBlockId = $"{this.Id}+{this.GetFileName() ?? string.Empty}";
+                    string scriptBlockId = this.GetFileName() ?? string.Empty;
                     SystemPolicy.LogWDACAuditMessage(
                         context: context,
                         title: AutomationExceptions.WDACCompiledScriptBlockLogTitle,

@@ -5646,14 +5646,13 @@ namespace System.Management.Automation
             // If we've ever used ConstrainedLanguage, check if the target type is allowed.
             var context = LocalPipeline.GetExecutionContextFromTLS();
             if (context != null &&
-                ((ExecutionContext.HasEverUsedConstrainedLanguage && context.LanguageMode == PSLanguageMode.ConstrainedLanguage) ||
-                 context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit))
+                ExecutionContext.HasEverUsedConstrainedLanguage && context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
                 if ((toType != typeof(object)) &&
                     (toType != typeof(object[])) &&
                     (!CoreTypes.Contains(toType)))
                 {
-                    if (context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                     {
                         converter = ConvertNotSupportedConversion;
                         rank = ConversionRank.None;

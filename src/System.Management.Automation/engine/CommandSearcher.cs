@@ -841,10 +841,9 @@ namespace System.Management.Automation
             }
 
             // Don't return untrusted commands to trusted functions
-            if ((result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage || result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
-                (executionContext.LanguageMode == PSLanguageMode.FullLanguage))
+            if (result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage && executionContext.LanguageMode == PSLanguageMode.FullLanguage)
             {
-                if (result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage)
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                 {
                     return true;
                 }

@@ -1466,7 +1466,6 @@ namespace System.Management.Automation
                     switch (context.LanguageMode)
                     {
                         case PSLanguageMode.FullLanguage:
-                        case PSLanguageMode.ConstrainedLanguageAudit:
                             context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                             break;
 
@@ -1489,7 +1488,9 @@ namespace System.Management.Automation
                     switch (context.LanguageMode)
                     {
                         case PSLanguageMode.FullLanguage:
-                            context.LanguageMode = PSLanguageMode.ConstrainedLanguageAudit;
+                            // Set to ConstrainedLanguage mode.  But no restrictions are applied in audit mode
+                            // and only audit messages will be emitted to logs.
+                            context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                             break;
                     }
                     break;

@@ -4579,7 +4579,7 @@ namespace System.Management.Automation.Runspaces
                 ps1xmlInfo = new ExternalScriptInfo(fileToLoad, fileToLoad);
                 fileContents = ps1xmlInfo.ScriptContents;
 
-                if (ps1xmlInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage || ps1xmlInfo.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+                if (ps1xmlInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage)
                 {
                     isFullyTrusted = true;
                 }

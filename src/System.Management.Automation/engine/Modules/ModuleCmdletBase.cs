@@ -5643,10 +5643,10 @@ namespace Microsoft.PowerShell.Commands
             PSModuleInfo module = null;
 
             // Block ps1 files from being imported in constrained language.
-            if ((Context.LanguageMode == PSLanguageMode.ConstrainedLanguage || Context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
+            if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
                 ext.Equals(StringLiterals.PowerShellScriptFileExtension, StringComparison.OrdinalIgnoreCase))
             {
-                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                 {
                     InvalidOperationException invalidOp = new InvalidOperationException(Modules.ImportPSFileNotAllowedInConstrainedLanguage);
                     ErrorRecord er = new ErrorRecord(invalidOp, "Modules_ImportPSFileNotAllowedInConstrainedLanguage",

@@ -481,7 +481,6 @@ namespace System.Management.Automation.Runspaces
                         scriptBlock.CheckRestrictedLanguage(null, null, false);
                         break;
                     case PSLanguageMode.FullLanguage:
-                    case PSLanguageMode.ConstrainedLanguageAudit:
                         // Interactive script commands are permitted in this mode.
                         break;
                     case PSLanguageMode.ConstrainedLanguage:
@@ -523,7 +522,6 @@ namespace System.Management.Automation.Runspaces
                                 nameof(PSLanguageMode.NoLanguage));
                             throw new RuntimeException(message);
                         case PSLanguageMode.FullLanguage:
-                        case PSLanguageMode.ConstrainedLanguageAudit:
                             // Interactive script commands are permitted in this mode...
                             break;
                     }

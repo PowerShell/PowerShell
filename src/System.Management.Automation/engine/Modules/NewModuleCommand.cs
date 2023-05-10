@@ -169,10 +169,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Check ScriptBlock language mode.  If it is different than the context language mode
                 // then throw error since private trusted script functions may be exposed.
-                if ((Context.LanguageMode == PSLanguageMode.ConstrainedLanguage || Context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
-                    _scriptBlock.LanguageMode == PSLanguageMode.FullLanguage)
+                if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage && _scriptBlock.LanguageMode == PSLanguageMode.FullLanguage)
                 {
-                    if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                     {
                         this.ThrowTerminatingError(
                             new ErrorRecord(

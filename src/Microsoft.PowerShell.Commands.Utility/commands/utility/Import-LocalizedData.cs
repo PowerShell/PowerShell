@@ -147,27 +147,23 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Prevent additional commands in ConstrainedLanguage mode
-            if (_setSupportedCommand)
+            if (_setSupportedCommand && Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                switch (Context.LanguageMode)
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                 {
-                    case PSLanguageMode.ConstrainedLanguage:
-                        NotSupportedException nse =
-                            PSTraceSource.NewNotSupportedException(
-                                ImportLocalizedDataStrings.CannotDefineSupportedCommand);
-                        ThrowTerminatingError(
-                            new ErrorRecord(nse, "CannotDefineSupportedCommand", ErrorCategory.PermissionDenied, null));
-                        break;
-
-                    case PSLanguageMode.ConstrainedLanguageAudit:
-                        SystemPolicy.LogWDACAuditMessage(
-                            context: Context,
-                            title: ImportLocalizedDataStrings.WDACLogTitle,
-                            message: ImportLocalizedDataStrings.WDACLogMessage,
-                            fqid: "SupportedCommandsDisabled",
-                            dropIntoDebugger: true);
-                        break;
+                    NotSupportedException nse =
+                        PSTraceSource.NewNotSupportedException(
+                            ImportLocalizedDataStrings.CannotDefineSupportedCommand);
+                    ThrowTerminatingError(
+                        new ErrorRecord(nse, "CannotDefineSupportedCommand", ErrorCategory.PermissionDenied, null));
                 }
+                
+                SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
+                    title: ImportLocalizedDataStrings.WDACLogTitle,
+                    message: ImportLocalizedDataStrings.WDACLogMessage,
+                    fqid: "SupportedCommandsDisabled",
+                    dropIntoDebugger: true);
             }
 
             string script = GetScript(path);

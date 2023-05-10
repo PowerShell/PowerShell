@@ -943,7 +943,9 @@ namespace System.Management.Automation.PSTasks
                     break;
 
                 case SystemEnforcementMode.Audit:
-                    iss.LanguageMode = PSLanguageMode.ConstrainedLanguageAudit;
+                    // In audit mode, CL restrictions are not enforced and instead audit
+                    // log entries are created.
+                    iss.LanguageMode = PSLanguageMode.ConstrainedLanguage;
                     break;
 
                 case SystemEnforcementMode.None:

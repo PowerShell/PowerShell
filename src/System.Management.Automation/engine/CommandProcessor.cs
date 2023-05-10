@@ -226,10 +226,9 @@ namespace System.Management.Automation
                     oldLanguageMode = Context.LanguageMode;
                     Context.LanguageMode = scriptCmdletInfo.ScriptBlock.LanguageMode.Value;
 
-                    // If it's from ConstrainedLanguage or ConstrainedLanguageAduit to FullLanguage, indicate the transition before parameter binding takes place.
+                    // If it's from ConstrainedLanguage to FullLanguage, indicate the transition before parameter binding takes place.
                     // When transitioning to FullLanguage mode, we don't want any ConstrainedLanguage restrictions or incorrect Audit messages.
-                    if ((oldLanguageMode == PSLanguageMode.ConstrainedLanguage || oldLanguageMode == PSLanguageMode.ConstrainedLanguageAudit) &&
-                        Context.LanguageMode == PSLanguageMode.FullLanguage)
+                    if (oldLanguageMode == PSLanguageMode.ConstrainedLanguage && Context.LanguageMode == PSLanguageMode.FullLanguage)
                     {
                         oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
                         Context.LanguageModeTransitionInParameterBinding = true;

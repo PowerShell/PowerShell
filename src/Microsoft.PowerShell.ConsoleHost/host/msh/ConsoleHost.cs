@@ -16,6 +16,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Management.Automation.Subsystem.Feedback;
 using System.Management.Automation.Tracing;
 using System.Reflection;
@@ -1839,11 +1840,14 @@ namespace Microsoft.PowerShell
                     switch (languageMode)
                     {
                         case PSLanguageMode.ConstrainedLanguage:
-                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLMode);
-                            break;
-
-                        case PSLanguageMode.ConstrainedLanguageAudit:
-                            s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLAuditMode);
+                            if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                            {
+                                s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLMode);
+                            }
+                            else
+                            {
+                                s_theConsoleHost.UI.WriteLine(ManagedEntranceStrings.ShellBannerCLAuditMode);
+                            }
                             break;
 
                         case PSLanguageMode.NoLanguage:

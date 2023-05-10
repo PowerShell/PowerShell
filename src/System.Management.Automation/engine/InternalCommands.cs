@@ -1203,14 +1203,14 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Cannot invoke certain methods in ConstrainedLanguage mode
-            if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage || Context.LanguageMode == PSLanguageMode.ConstrainedLanguageAudit)
+            if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
                 object baseObject = PSObject.Base(inputObject);
                 var objectType = baseObject.GetType();
 
                 if (!CoreTypes.Contains(objectType))
                 {
-                    if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                     {
                         PSInvalidOperationException exception =
                             new PSInvalidOperationException(ParserStrings.InvokeMethodConstrainedLanguage);

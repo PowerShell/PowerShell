@@ -211,8 +211,7 @@ namespace System.Management.Automation
             if (scriptBlock.LanguageMode.HasValue &&
                 scriptBlock.LanguageMode != languageMode &&
                 (languageMode == PSLanguageMode.RestrictedLanguage ||
-                 languageMode == PSLanguageMode.ConstrainedLanguage ||
-                 languageMode == PSLanguageMode.ConstrainedLanguageAudit))
+                 languageMode == PSLanguageMode.ConstrainedLanguage))
             {
                 // Finally check if script block is really just PowerShell commands plus parameters.
                 // If so then it is safe to dot source across language mode boundaries.
@@ -228,7 +227,7 @@ namespace System.Management.Automation
 
                 if (!isSafeToDotSource)
                 {
-                    if (languageMode != PSLanguageMode.ConstrainedLanguageAudit)
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                     {
                         ErrorRecord errorRecord = new ErrorRecord(
                         new NotSupportedException(
@@ -240,7 +239,7 @@ namespace System.Management.Automation
                         throw new CmdletInvocationException(errorRecord);
                     }
 
-                    string scriptBlockId = $"{scriptBlock.Id}+{scriptBlock.GetFileName() ?? string.Empty}";
+                    string scriptBlockId = scriptBlock.GetFileName() ?? string.Empty;
                     SystemPolicy.LogWDACAuditMessage(
                         context: context,
                         title: CommandBaseStrings.WDACLogTitle,
