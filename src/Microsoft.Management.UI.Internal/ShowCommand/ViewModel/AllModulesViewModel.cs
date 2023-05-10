@@ -79,7 +79,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="commands">Commands to show.</param>
         public AllModulesViewModel(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands)
         {
-            if (commands == null || !commands.GetEnumerator().MoveNext())
+            ArgumentNullException.ThrowIfNull(commands);
+
+            if (!commands.GetEnumerator().MoveNext())
             {
                 throw new ArgumentNullException("commands");
             }
@@ -95,10 +97,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="noCommonParameter">True not to show common parameters.</param>
         public AllModulesViewModel(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands, bool noCommonParameter)
         {
-            if (commands == null)
-            {
-                throw new ArgumentNullException("commands");
-            }
+            ArgumentNullException.ThrowIfNull(commands);
 
             this.Initialization(importedModules, commands, noCommonParameter);
         }
@@ -530,7 +529,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 return;
             }
 
-            // If there are more modules, create an additional module to agregate all commands
+            // If there are more modules, create an additional module to aggregate all commands
             ModuleViewModel allCommandsModule = new ModuleViewModel(ShowCommandResources.All, null);
             this.modules.Add(allCommandsModule);
             allCommandsModule.SetAllModules(this);

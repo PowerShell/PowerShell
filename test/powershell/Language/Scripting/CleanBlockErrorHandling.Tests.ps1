@@ -540,7 +540,7 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
     }
 }
 
-Describe "Multiple errors from 'Clean' and another named block" {
+Describe "Multiple errors from 'Clean' and another named block" -Tag 'CI' {
 
     BeforeAll {
         function MultipleErrors {

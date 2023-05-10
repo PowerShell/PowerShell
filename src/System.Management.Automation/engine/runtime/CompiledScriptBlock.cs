@@ -187,7 +187,10 @@ namespace System.Management.Automation
                 TelemetryAPI.ReportScriptTelemetry((Ast)_ast, !optimize, sw.ElapsedMilliseconds);
             }
 #endif
-            if (etwEnabled) ParserEventSource.Log.CompileStop();
+            if (etwEnabled)
+            {
+                ParserEventSource.Log.CompileStop();
+            }
         }
 
         private void PerformSecurityChecks()
@@ -1968,7 +1971,7 @@ namespace System.Management.Automation
             ///
             /// If a hash matches, we ignore the possibility of a
             /// collision. If the hash is acceptable, collisions will
-            /// be infrequent and we'll just log an occasionaly script
+            /// be infrequent and we'll just log an occasional script
             /// that isn't really suspicious.
             /// </summary>
             /// <returns>The string matching the hash, or null.</returns>
@@ -2033,7 +2036,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    for (int j = Math.Min(i, runningHash.Length) - 1; j > 0; j--)
+                    for (int j = Math.Min(i, runningHash.Length - 1); j > 0; j--)
                     {
                         // Say our input is: `Emit` (our shortest pattern, len 4).
                         // Towards the end just before matching, we will:
@@ -2054,7 +2057,10 @@ namespace System.Management.Automation
                     if (++longestPossiblePattern >= 4)
                     {
                         var result = CheckForMatches(runningHash, longestPossiblePattern);
-                        if (result != null) return result;
+                        if (result != null)
+                        {
+                            return result;
+                        }
                     }
                 }
 
@@ -2178,10 +2184,7 @@ namespace System.Management.Automation
 
         private ScriptBlockSerializationHelper(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
+            ArgumentNullException.ThrowIfNull(info);
 
             _scriptText = info.GetValue("ScriptText", typeof(string)) as string;
             if (_scriptText == null)
@@ -2517,6 +2520,11 @@ namespace System.Management.Automation
             if (_commandRuntime.IsInformationActionSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Information, _commandRuntime.InformationPreference);
+            }
+
+            if (_commandRuntime.IsProgressActionSet)
+            {
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.Progress, _commandRuntime.ProgressPreference);
             }
 
             if (_commandRuntime.IsWhatIfFlagSet)

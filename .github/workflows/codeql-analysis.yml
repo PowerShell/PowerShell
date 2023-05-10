@@ -24,7 +24,7 @@ jobs:
       contents: read  # for actions/checkout to fetch code
       security-events: write  # for github/codeql-action/analyze to upload SARIF results
     name: Analyze
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false

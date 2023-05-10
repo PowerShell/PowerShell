@@ -472,7 +472,7 @@ namespace System.Management.Automation
             // Remote debugger is created only when client version is PSVersion (4.0)
             // or greater, and remote session supports debugging.
             if ((_driverNestedInvoker != null) &&
-                (_clientPSVersion != null && _clientPSVersion >= PSVersionInfo.PSV4Version) &&
+                (_clientPSVersion != null && _clientPSVersion.Major >= 4) &&
                 (runspace != null && runspace.Debugger != null))
             {
                 _serverRemoteDebugger = new ServerRemoteDebugger(this, runspace, runspace.Debugger);
@@ -2386,7 +2386,10 @@ namespace System.Management.Automation
         private void HandleDebuggerStop(object sender, DebuggerStopEventArgs e)
         {
             // Ignore if we are in restricted mode.
-            if (!IsDebuggingSupported()) { return; }
+            if (!IsDebuggingSupported())
+            {
+                return;
+            }
 
             if (LocalDebugMode)
             {
@@ -2442,7 +2445,10 @@ namespace System.Management.Automation
         private void HandleBreakpointUpdated(object sender, BreakpointUpdatedEventArgs e)
         {
             // Ignore if we are in restricted mode.
-            if (!IsDebuggingSupported()) { return; }
+            if (!IsDebuggingSupported())
+            {
+                return;
+            }
 
             if (LocalDebugMode)
             {
@@ -2762,7 +2768,10 @@ namespace System.Management.Automation
 
         internal void PopDebugger()
         {
-            if (!_wrappedDebugger.IsOverridden) { return; }
+            if (!_wrappedDebugger.IsOverridden)
+            {
+                return;
+            }
 
             // Swap wrapped debugger.
             UnsubscribeWrappedDebugger(_wrappedDebugger.Value);

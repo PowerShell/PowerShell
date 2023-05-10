@@ -237,7 +237,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the execution context.
         /// </summary>
-        internal override System.Management.Automation.ExecutionContext GetExecutionContext
+        internal override ExecutionContext GetExecutionContext
         {
             get
             {
@@ -934,7 +934,10 @@ namespace System.Management.Automation.Runspaces
         private static void CloseOrDisconnectAllRemoteRunspaces(Func<List<RemoteRunspace>> getRunspaces)
         {
             List<RemoteRunspace> runspaces = getRunspaces();
-            if (runspaces.Count == 0) { return; }
+            if (runspaces.Count == 0)
+            {
+                return;
+            }
 
             // whether the close of all remoterunspaces completed
             using (ManualResetEvent remoteRunspaceCloseCompleted = new ManualResetEvent(false))
@@ -959,7 +962,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void StopOrDisconnectAllJobs()
         {
-            if (JobRepository.Jobs.Count == 0) { return; }
+            if (JobRepository.Jobs.Count == 0)
+            {
+                return;
+            }
 
             List<RemoteRunspace> disconnectRunspaces = new List<RemoteRunspace>();
 
@@ -1512,7 +1518,7 @@ namespace System.Management.Automation.Runspaces
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public RunspaceOpenModuleLoadException(string message, Exception innerException)
             : base(message, innerException)
         {

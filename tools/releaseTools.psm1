@@ -41,6 +41,8 @@ $Script:powershell_team = @(
     "Andrew Schwartzmeyer"
     "Jason Helmick"
     "Patrick Meinecke"
+    "Steven Bucher"
+    "PowerShell Team Bot"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -628,4 +630,222 @@ function Update-PsVersionInCode
                 }
 }
 
-Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode
+
+##############################
+#.SYNOPSIS
+# Test if the GithubCli is in the path
+##############################
+function Test-GitHubCli {
+    $gitHubCli = Get-Command -Name 'gh' -ErrorAction SilentlyContinue
+
+    if ($gitHubCli) {
+        return $true
+    } else {
+        return $false
+    }
+}
+
+##############################
+#.SYNOPSIS
+# Test if the GithubCli is the required version
+##############################
+function Test-GitHubCliVersion {
+    param(
+        [Parameter(Mandatory)]
+        [System.Management.Automation.SemanticVersion]
+        $RequiredVersion
+    )
+    [System.Management.Automation.SemanticVersion] $version = gh --version | ForEach-Object {
+        if ($_ -match ' (\d+\.\d+\.\d+) ') {
+            $matches[1]
+        }
+    }
+
+    if ($version -ge $RequiredVersion) {
+        return $true
+    } else {
+        return $false
+    }
+}
+
+##############################
+#.SYNOPSIS
+# Gets a report of Backport PRs
+#
+#.PARAMETER Triage state
+# The triage states of the PR.  Consider, Approved or Done
+#
+#.PARAMETER Version
+# The version of PowerShell the backport is targeting.  7.0, 7.2, 7.3, etc
+#
+#.PARAMETER Web
+# A switch to open all the PRs in the browser
+#
+##############################
+function Get-PRBackportReport {
+    param(
+        [ValidateSet('Consider', 'Approved', 'Done')]
+        [String] $TriageState = 'Approved',
+        [ValidatePattern('^\d+\.\d+$')]
+        [string] $Version,
+        [switch] $Web
+    )
+
+    if (!(Test-GitHubCli)) {
+        throw "GitHub CLI is not installed. Please install it from https://cli.github.com/"
+    }
+
+    $requiredVersion = '2.17'
+    if (!(Test-GitHubCliVersion -RequiredVersion $requiredVersion)) {
+        throw "Please upgrade the GitHub CLI to version $requiredVersion. Please install it from https://cli.github.com/"
+    }
+
+    if (!(gh auth status 2>&1  | Select-String 'logged in')){
+        throw "Please login to GitHub CLI using 'gh auth login'"
+    }
+
+    $prs = gh pr list --state merged --label "Backport-$Version.x-$TriageState" --json title,number,mergeCommit,mergedAt |
+        ConvertFrom-Json |
+        ForEach-Object {
+            [PScustomObject]@{
+                CommitId = $_.mergeCommit.oid
+                Number   = $_.number
+                Title    = $_.title
+                MergedAt = $_.mergedAt
+            }
+        } | Sort-Object -Property MergedAt
+
+    if ($Web) {
+        $prs | ForEach-Object {
+            gh pr view $_.Number --web
+        }
+    } else {
+        $prs
+    }
+}
+
+# Backports a PR
+# requires:
+#   * a remote called upstream pointing to powershell/powershell
+#   * the github cli installed and authenticated
+# Usage:
+#     Invoke-PRBackport -PRNumber 1234 -Target release/v7.0.1
+# To overwrite a local branch add -Overwrite
+# To add an postfix to the branch name use -BranchPostFix <postfix>
+function Invoke-PRBackport {
+    [cmdletbinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $PrNumber,
+
+        [Parameter(Mandatory)]
+        [ValidateScript({$_ -match '^release/v\d+\.\d+\.\d+'})]
+        [string]
+        $Target,
+
+        [switch]
+        $Overwrite,
+
+        [string]
+        $BranchPostFix
+    )
+    function script:Invoke-NativeCommand {
+        param(
+            [scriptblock] $ScriptBlock
+        )
+        &$ScriptBlock
+        if ($LASTEXITCODE -ne 0) {
+            throw "$ScriptBlock fail with $LASTEXITCODE"
+        }
+    }
+    function script:Test-ShouldContinue {
+        param (
+            $Message
+        )
+        $continue = $false
+        while(!$continue) {
+            $input= Read-Host -Prompt ($Message + "`nType 'Yes<enter>' to continue 'No<enter>' to exit")
+            switch($input) {
+                'yes' {
+                    $continue= $true
+                }
+                'no' {
+                    throw "User abort"
+                }
+            }
+        }
+    }
+    $ErrorActionPreference = 'stop'
+
+    $pr = gh pr view $PrNumber --json 'mergeCommit,state,title' | ConvertFrom-Json
+
+    $commitId = $pr.mergeCommit.oid
+    $state = $pr.state
+    $originaltitle = $pr.title
+    $backportTitle = "[$Target]$originalTitle"
+
+    Write-Verbose -Verbose "commitId: $commitId; state: $state"
+    Write-Verbose -Verbose "title:$backportTitle"
+
+    if ($state -ne 'MERGED') {
+        throw "PR is not merged ($state)"
+    }
+
+    $upstream = $null
+    $upstreamName = 'powershell/powershell'
+    $upstream = Invoke-NativeCommand { git remote -v } | Where-Object { $_ -match "^upstream.*$upstreamName.*fetch" }
+
+    if (!$upstream) {
+        throw "Please create an upstream remote that points to $upstreamName"
+    }
+
+    Invoke-NativeCommand { git fetch upstream $Target }
+
+    $switch = '-c'
+    if ($Overwrite) {
+        $switch = '-C'
+    }
+
+    $branchName = "backport-$PrNumber"
+    if ($BranchPostFix) {
+        $branchName += "-$BranchPostFix"
+    }
+
+    if ($PSCmdlet.ShouldProcess("Create branch $branchName from upstream/$Target")) {
+        Invoke-NativeCommand { git switch upstream/$Target $switch $branchName }
+    }
+
+    try {
+        Invoke-NativeCommand { git cherry-pick $commitId }
+    }
+    catch {
+        Test-ShouldContinue -Message "Fix any conflicts with the cherry-pick."
+    }
+
+    if ($PSCmdlet.ShouldProcess("Create the PR")) {
+        gh pr create --base $Target --title $backportTitle --body "Backport #$PrNumber"
+    }
+}
+
+# Backport all approved backports
+# Usage:
+#      Invoke-PRBackportApproved -Version 7.2.12
+function Invoke-PRBackportApproved {
+    param(
+        [Parameter(Mandatory)]
+        [semver]
+        $Version
+    )
+
+    $tagVersion = "$($Version.Major).$($Version.Minor)"
+    $target = "release/$ReleaseTag"
+
+    Get-PRBackportReport -Version $tagVersion |
+        ForEach-Object {
+            $prNumber = $_.Number
+            Invoke-PRBackport -ErrorAction Stop -PrNumber $prNumber -Target $target
+        }
+}
+
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport, Invoke-PRBackport, Invoke-PRBackportApproved

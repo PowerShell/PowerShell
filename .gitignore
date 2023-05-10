@@ -92,3 +92,12 @@ test/tools/Modules/SelfSignedCertificate/
 
 # BenchmarkDotNet artifacts
 test/perf/BenchmarkDotNet.Artifacts/
+
+# Test generated module
+test/tools/Modules/Microsoft.PowerShell.NamedPipeConnection/
+
+# Test generated startup profile
+StartupProfileData-NonInteractive
+
+# Ignore logfiles
+logfile/*

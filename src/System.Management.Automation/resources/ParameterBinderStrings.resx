@@ -174,9 +174,6 @@
   <data name="GetDynamicParametersException" xml:space="preserve">
     <value>Cannot retrieve the dynamic parameters for the cmdlet. {6}</value>
   </data>
-  <data name="DynamicParametersCannotCreateParameterSets" xml:space="preserve">
-    <value>Cannot retrieve dynamic parameters for the cmdlet. Dynamic parameter '{1}' specified parameter set '{6}' which was not statically defined for this cmdlet. New parameter sets may not be defined as dynamic parameters, although dynamic parameters may join parameter sets which were statically defined.</value>
-  </data>
   <data name="PromptMessage" xml:space="preserve">
     <value>Supply values for the following parameters:</value>
   </data>
@@ -221,9 +218,6 @@
   </data>
   <data name="DifferentValuesAssignedToSingleParameter" xml:space="preserve">
     <value>Multiple different default values are defined in $PSDefaultParameterValues for the parameter matching the following name or alias: {0}. These defaults have been ignored.</value>
-  </data>
-  <data name="InvalidDefaultParameterHashTable" xml:space="preserve">
-    <value>The automatic variable $PSDefaultParameterValues was ignored because it is not a valid hashtable object. It must be of the type IDictionary.</value>
   </data>
   <data name="MultipleParametersMatched" xml:space="preserve">
     <value>The following name or alias defined in $PSDefaultParameterValues for this cmdlet resolves to multiple parameters: {0}. The default has been ignored.</value>

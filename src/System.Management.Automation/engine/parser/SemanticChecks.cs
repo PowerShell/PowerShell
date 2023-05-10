@@ -533,7 +533,10 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitTryStatement(TryStatementAst tryStatementAst)
         {
-            if (tryStatementAst.CatchClauses.Count <= 1) return AstVisitAction.Continue;
+            if (tryStatementAst.CatchClauses.Count <= 1)
+            {
+                return AstVisitAction.Continue;
+            }
 
             for (int i = 0; i < tryStatementAst.CatchClauses.Count - 1; ++i)
             {
@@ -550,7 +553,10 @@ namespace System.Management.Automation.Language
                         break;
                     }
 
-                    if (block2.IsCatchAll) continue;
+                    if (block2.IsCatchAll) 
+                    {
+                        continue;
+                    }
 
                     foreach (TypeConstraintAst typeLiteral1 in block1.CatchTypes)
                     {
@@ -1396,7 +1402,7 @@ namespace System.Management.Automation.Language
                     else if (!keyword.Properties.ContainsKey(propName.Value))
                     {
                         IOrderedEnumerable<string> tableKeys = keyword.Properties.Keys
-                            .OrderBy(static key => key, StringComparer.OrdinalIgnoreCase);
+                            .Order(StringComparer.OrdinalIgnoreCase);
 
                         _parser.ReportError(propName.Extent,
                             nameof(ParserStrings.InvalidInstanceProperty),
@@ -1689,7 +1695,11 @@ namespace System.Management.Automation.Language
         /// <param name="hasTest">True if it is a Test method with qualified return type and signature; otherwise, false.</param>
         private static void CheckTest(FunctionMemberAst functionMemberAst, ref bool hasTest)
         {
-            if (hasTest) return;
+            if (hasTest)
+            {
+                return;
+            }
+
             hasTest = (functionMemberAst.Name.Equals("Test", StringComparison.OrdinalIgnoreCase) &&
                     functionMemberAst.Parameters.Count == 0 &&
                     functionMemberAst.ReturnType != null &&
@@ -1702,7 +1712,11 @@ namespace System.Management.Automation.Language
         /// <param name="hasSet">True if it is a Set method with qualified return type and signature; otherwise, false.</param>
         private static void CheckSet(FunctionMemberAst functionMemberAst, ref bool hasSet)
         {
-            if (hasSet) return;
+            if (hasSet)
+            {
+                return;
+            }
+
             hasSet = (functionMemberAst.Name.Equals("Set", StringComparison.OrdinalIgnoreCase) &&
                     functionMemberAst.Parameters.Count == 0 &&
                     functionMemberAst.IsReturnTypeVoid());

@@ -289,12 +289,12 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
 
         protected Exception CreateUnknownTypeException(XmlQualifiedName type)
         {
-            return new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "XmlUnknownType. Name: {0}, Namespace {1}, CurrentTag: {2}", type.Name, type.Namespace, CurrentTag()));
+            return new InvalidOperationException(string.Create(CultureInfo.CurrentCulture, $"XmlUnknownType. Name: {type.Name}, Namespace: {type.Namespace}, CurrentTag: {CurrentTag()}"));
         }
 
         protected Exception CreateUnknownConstantException(string value, Type enumType)
         {
-            return new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "XmlUnknownConstant. Value: {0}, EnumType: {1}", value, enumType.Name));
+            return new InvalidOperationException(string.Create(CultureInfo.CurrentCulture, $"XmlUnknownConstant. Value: {value}, EnumType: {enumType.Name}"));
         }
 
         protected Array ShrinkArray(Array a, int length, Type elementType, bool isNullable)
@@ -426,7 +426,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 if (ns == null)
                 {
                     // Namespace prefix '{0}' is not defined.
-                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "XmlUndefinedAlias. Prefix: {0}", prefix));
+                    throw new InvalidOperationException(string.Create(CultureInfo.CurrentCulture, $"XmlUndefinedAlias. Prefix: {prefix}"));
                 }
 
                 return new XmlQualifiedName(_r.NameTable.Add(localName), ns);
@@ -6678,10 +6678,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         internal object Deserialize(XmlReader reader)
         {
-            if (reader == null)
-            {
-                throw new ArgumentNullException(nameof(reader));
-            }
+            ArgumentNullException.ThrowIfNull(reader);
 
             XmlSerializationReader1 cdxmlSerializationReader = new XmlSerializationReader1(reader);
             return cdxmlSerializationReader.Read50_PowerShellMetadata();

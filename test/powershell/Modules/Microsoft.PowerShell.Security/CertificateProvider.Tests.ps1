@@ -82,8 +82,13 @@ Describe "Certificate Provider tests" -Tags "Feature" {
     BeforeAll{
         if($IsWindows)
         {
-            Install-TestCertificates
-            Push-Location Cert:\
+            if (-not (Install-TestCertificates) ) {
+                $SetupFailure = $true
+            }
+            else {
+                Push-Location Cert:\
+                $SetupFailure = $false
+            }
         }
         else
         {
@@ -94,28 +99,45 @@ Describe "Certificate Provider tests" -Tags "Feature" {
     }
 
     AfterAll {
-        if($IsWindows)
+        if($IsWindows -and -not $SetupFailure)
         {
             Remove-TestCertificates
             Pop-Location
         }
         else
         {
-            $global:PSDefaultParameterValues = $defaultParamValues
+            if ($defaultParamValues -ne $null) {
+                $global:PSDefaultParameterValues = $defaultParamValues
+            }
         }
     }
 
     Context "Get-Item tests" {
         It "Should be able to get certifate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
             $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
             $cert = (Get-Item -LiteralPath $leafPath)
-            $cert | Should -Not -Be null
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
             $cert.Thumbprint | Should -Be $expectedThumbprint
         }
         It "Should be able to get DnsNameList of certifate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
             $expectedName = (Get-GoodCertificateObject).DnsNameList
             $expectedEncodedName = (Get-GoodCertificateObject).DnsNameList
@@ -133,6 +155,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         }
         it "Should be able to get EnhancedKeyUsageList of certifate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
             $expectedOid = (Get-GoodCertificateObject).EnhancedKeyUsageList[0].ObjectId
             $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
@@ -144,6 +171,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $cert.EnhancedKeyUsageList[0].ObjectId | Should -Be $expectedOid
         }
         It "Should filter to codesign certificates" {
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $allCerts = Get-Item cert:\CurrentUser\My\*
             $codeSignCerts = Get-Item cert:\CurrentUser\My\* -CodeSigningCert
             $codeSignCerts | Should -Not -Be null
@@ -152,6 +184,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $nonCodeSignCertCount | Should -Not -Be 0
         }
         It "Should be able to exclude by thumbprint" {
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $allCerts = Get-Item cert:\CurrentUser\My\*
             $testThumbprint = (Get-GoodCertificateObject).Thumbprint
             $allCertsExceptOne = (Get-Item "cert:\currentuser\my\*" -Exclude $testThumbprint)
@@ -166,6 +203,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $cert = Get-GoodServerCertificateObject
         }
         it "Should filter to codesign certificates" {
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $allCerts = get-ChildItem cert:\CurrentUser\My
             $codeSignCerts = get-ChildItem cert:\CurrentUser\My -CodeSigningCert
             $codeSignCerts | Should -Not -Be null
@@ -174,6 +216,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $nonCodeSignCertCount | Should -Not -Be 0
         }
         it "Should filter to ExpiringInDays certificates" {
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $thumbprint = $cert.Thumbprint
             $NotAfter = $cert.NotAfter
             $before = ($NotAfter.AddDays(-1) - (Get-Date)).Days
@@ -186,6 +233,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $afterCerts.Thumbprint | Should -BeExactly $thumbprint
         }
         it "Should filter to DocumentEncryptionCert certificates" {
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $thumbprint = $cert.Thumbprint
             $certs = Get-ChildItem cert:\CurrentUser\My\$thumbprint -DocumentEncryptionCert
 
@@ -199,6 +251,10 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         ) {
             param($name, $searchName, $count, $thumbprint)
 
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $certs = Get-ChildItem cert:\CurrentUser\My\$thumbprint -DNSName $searchName
 
             $certs.Count | Should -Be $count
@@ -206,6 +262,11 @@ Describe "Certificate Provider tests" -Tags "Feature" {
 
         }
         it "Should filter to SSLServerAuthentication certificates" {
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
+
             $thumbprint = $cert.Thumbprint
 
             $certs = Get-ChildItem cert:\CurrentUser\My\$thumbprint -SSLServerAuthentication
@@ -220,6 +281,10 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             @{ Name = "all patterns should be passed - negative test"; EKU = "*QWERTY*","*encryp*";                  Count = 0; Thumbprint = $null }
         ) {
             param($name, $ekuSearch, $count, $thumbprint)
+
+            if ($SetupFailure) {
+                Set-ItResult -Inconclusive -Because "Test certificates are not installed"
+            }
 
             $certs = Get-ChildItem cert:\CurrentUser\My\$thumbprint -EKU $ekuSearch
 

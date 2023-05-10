@@ -32,10 +32,7 @@ namespace Microsoft.Management.UI.Internal
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
+                ArgumentNullException.ThrowIfNull(value);
 
                 factoryInstance = value;
             }

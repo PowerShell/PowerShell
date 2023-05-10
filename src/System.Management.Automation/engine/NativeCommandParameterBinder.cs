@@ -193,23 +193,17 @@ namespace System.Management.Automation
         {
             get
             {
-                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandArgumentPassingFeatureName))
+                try
                 {
-                    try
-                    {
-                        // This will default to the new behavior if it is set to anything other than Legacy
-                        var preference = LanguagePrimitives.ConvertTo<NativeArgumentPassingStyle>(
-                            Context.GetVariableValue(SpecialVariables.NativeArgumentPassingVarPath, NativeArgumentPassingStyle.Standard));
-                        return preference;
-                    }
-                    catch
-                    {
-                        // The value is not convertable send back Legacy
-                        return NativeArgumentPassingStyle.Legacy;
-                    }
+                    var preference = LanguagePrimitives.ConvertTo<NativeArgumentPassingStyle>(
+                        Context.GetVariableValue(SpecialVariables.NativeArgumentPassingVarPath, NativeArgumentPassingStyle.Standard));
+                    return preference;
                 }
-
-                return NativeArgumentPassingStyle.Legacy;
+                catch
+                {
+                    // The value is not convertible send back Legacy
+                    return NativeArgumentPassingStyle.Legacy;
+                }
             }
         }
 
@@ -458,7 +452,10 @@ namespace System.Management.Automation
 
         private static string GetEnumerableArgSeparator(ArrayLiteralAst arrayLiteralAst, int index)
         {
-            if (arrayLiteralAst == null) return " ";
+            if (arrayLiteralAst == null)
+            {
+                return " ";
+            }
 
             // index points to the *next* element, so we're looking for space between
             // it and the previous element.
@@ -470,14 +467,25 @@ namespace System.Management.Automation
             var afterPrev = prev.Extent.EndOffset;
             var beforeNext = next.Extent.StartOffset - 1;
 
-            if (afterPrev == beforeNext) return ",";
+            if (afterPrev == beforeNext)
+            {
+                return ",";
+            }
 
             var arrayText = arrayExtent.Text;
             afterPrev -= arrayExtent.StartOffset;
             beforeNext -= arrayExtent.StartOffset;
 
-            if (arrayText[afterPrev] == ',') return ", ";
-            if (arrayText[beforeNext] == ',') return " ,";
+            if (arrayText[afterPrev] == ',') 
+            {
+                return ", ";
+            }
+
+            if (arrayText[beforeNext] == ',')
+            {
+                return " ,";
+            }
+            
             return " , ";
         }
 
