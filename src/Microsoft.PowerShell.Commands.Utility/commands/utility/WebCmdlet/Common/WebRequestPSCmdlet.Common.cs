@@ -1357,13 +1357,13 @@ namespace Microsoft.PowerShell.Commands
                     if (string.Equals(RetryMode, "Exponential", StringComparison.OrdinalIgnoreCase))
                     {
                         // If RetryMode is specified as "Exponential", use the exponential backoff algorithm to determine the retry interval.
-                        retryIntervalInSeconds = MathF.Min(retryIntervalInSeconds * MathF.Pow(2, exponent), _maximumRetryIntervalInSeconds);
+                        retryIntervalInSeconds = MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent), _maximumRetryIntervalInSeconds);
                     }
                     else if (string.Equals(RetryMode, "ExponentialJitter", StringComparison.OrdinalIgnoreCase))
                     {
                         // If RetryMode is specified as "ExponentialJitter", use the exponential backoff with jitter algorithm to determine the retry interval.
                         Random random = new();
-                        retryIntervalInSeconds = MathF.Min(retryIntervalInSeconds * MathF.Pow(2, exponent) * random.NextSingle(), _maximumRetryIntervalInSeconds);
+                        retryIntervalInSeconds = MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent) * random.NextSingle(), _maximumRetryIntervalInSeconds);
                     }
 
                     // If the status code is 429 get the retry interval from the Headers.
