@@ -1351,19 +1351,19 @@ namespace Microsoft.PowerShell.Commands
                 // When MaximumRetryCount is not specified, the totalRequests is 1.
                 if (totalRequests > 1 && ShouldRetry(response.StatusCode))
                 {
-                    double retryIntervalInSeconds = (double)WebSession.RetryIntervalInSeconds;
+                    float retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
                     int exponent = WebSession.MaximumRetryCount - totalRequests + 1;
 
-                    if (String.Equals(RetryMode, "Exponential", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(RetryMode, "Exponential", StringComparison.OrdinalIgnoreCase))
                     {
                         // If RetryMode is specified as "Exponential", use the exponential backoff algorithm to determine the retry interval.
-                        retryIntervalInSeconds = Math.Min(retryIntervalInSeconds * Math.Pow(2.0, exponent), _maximumRetryIntervalInSeconds);
+                        retryIntervalInSeconds = Math.Min(retryIntervalInSeconds * MathF.Pow(2, exponent), _maximumRetryIntervalInSeconds);
                     }
-                    else if (String.Equals(RetryMode, "ExponentialJitter", StringComparison.OrdinalIgnoreCase))
+                    else if (string.Equals(RetryMode, "ExponentialJitter", StringComparison.OrdinalIgnoreCase))
                     {
                         // If RetryMode is specified as "ExponentialJitter", use the exponential backoff with jitter algorithm to determine the retry interval.
-                        Random random = new Random();
-                        retryIntervalInSeconds = Math.Min(retryIntervalInSeconds * Math.Pow(2.0, exponent) * random.NextDouble(), _maximumRetryIntervalInSeconds);
+                        Random random = new();
+                        retryIntervalInSeconds = Math.Min(retryIntervalInSeconds * MathF.Pow(2, exponent) * random.NextDouble(), _maximumRetryIntervalInSeconds);
                     }
 
                     // If the status code is 429 get the retry interval from the Headers.
