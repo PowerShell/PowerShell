@@ -586,8 +586,7 @@ namespace System.Management.Automation
             // Send Telemetry indicating what argument passing mode we are in.
             ApplicationInsightsTelemetry.SendExperimentalUseData(
                 ExperimentalFeature.PSWindowsNativeCommandArgPassing,
-                NativeParameterBinderController.ArgumentPassingStyle.ToString()
-                );
+                NativeParameterBinderController.ArgumentPassingStyle.ToString());
 
 #if !UNIX
             string commandPath = this.Path.ToLowerInvariant();
