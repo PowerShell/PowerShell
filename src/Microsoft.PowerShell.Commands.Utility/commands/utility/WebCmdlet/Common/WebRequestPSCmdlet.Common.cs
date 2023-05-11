@@ -1375,7 +1375,7 @@ namespace Microsoft.PowerShell.Commands
                             IEnumerator<string> enumerator = retryAfter.GetEnumerator();
                             if (enumerator.MoveNext())
                             {
-                                retryIntervalInSeconds = (double)Convert.ToInt32(enumerator.Current);
+                                retryIntervalInSeconds = Convert.ToInt32(enumerator.Current);
                             }
                         }
                         catch
