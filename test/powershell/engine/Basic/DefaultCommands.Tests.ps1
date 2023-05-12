@@ -18,7 +18,8 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
         $FullCLR = !$IsCoreCLR
         $CoreWindows = $IsCoreCLR -and $IsWindows
         $CoreUnix = $IsCoreCLR -and !$IsWindows
-        $isPreview = $PSVersionTable.GitCommitId.Contains("preview")
+        # if psversion can be converted to [version], then it is not a preview version
+        $isPreview = $psversiontable.psversion.tostring() -as [version] ? $false : $true
         if ($IsWindows) {
             $configPath = Join-Path -Path $env:USERPROFILE -ChildPath 'Documents' -AdditionalChildPath 'PowerShell'
         }
