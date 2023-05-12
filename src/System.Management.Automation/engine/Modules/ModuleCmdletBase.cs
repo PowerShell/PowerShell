@@ -890,11 +890,21 @@ namespace Microsoft.PowerShell.Commands
                     // Constrained Language session.
                     if (module.LanguageMode != manifestLanguageMode)
                     {
-                        var languageModeError = PSTraceSource.NewInvalidOperationException(
-                            Modules.MismatchedLanguageModes,
-                            module.Name, manifestLanguageMode, module.LanguageMode);
-                        languageModeError.SetErrorId("Modules_MismatchedLanguageModes");
-                        throw languageModeError;
+                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                        {
+                            var languageModeError = PSTraceSource.NewInvalidOperationException(
+                                Modules.MismatchedLanguageModes,
+                                module.Name, manifestLanguageMode, module.LanguageMode);
+                            languageModeError.SetErrorId("Modules_MismatchedLanguageModes");
+                            throw languageModeError;
+                        }
+
+                        SystemPolicy.LogWDACAuditMessage(
+                            context: Context,
+                            title: Modules.WDACMismatchedLanguageModesTitle,
+                            message: Modules.WDACMismatchedLanguageModesMessage,
+                            fqid: "ModulesMismatchedLanguageModes",
+                            dropIntoDebugger: true);
                     }
                 }
 
