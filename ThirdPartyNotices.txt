@@ -172,9 +172,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Json.More.Net 1.7.0 - MIT
+Json.More.Net 1.8.0 - MIT
 
 
+(c) Microsoft 2023
+Copyright (c) 2022 Greg Dennis
 
 MIT License
 
@@ -203,13 +205,15 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonPointer.Net 2.2.1 - MIT
+JsonPointer.Net 3.0.1 - MIT
 
 
+(c) Microsoft 2023
+Copyright (c) 2022 Greg Dennis
 
 MIT License
 
-Copyright (c) 2020 Greg Dennis
+Copyright (c) 2022 Greg Dennis
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -234,10 +238,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonSchema.Net 3.3.2 - MIT
+JsonSchema.Net 4.1.1 - MIT
 
 
-(c) Microsoft 2022
+(c) Microsoft 2023
 Copyright (c) 2022 Greg Dennis
 
 MIT License
