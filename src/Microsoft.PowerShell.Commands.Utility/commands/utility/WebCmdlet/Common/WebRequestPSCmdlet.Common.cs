@@ -86,6 +86,28 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// The valid values for the -RetryMode parameter for Invoke-RestMethod and Invoke-WebRequest.
+    /// </summary>
+    [Flags]
+    public enum WebRequestRetryMode
+    {
+        /// <summary>
+        /// Specifies fixed time interval between retries.
+        /// </summary>
+        Fixed,
+
+        /// <summary>
+        /// Specifies exponential backoff strategy to determine the interval between retries.
+        /// </summary>
+        Exponential,
+
+        /// <summary>
+        /// Specifies exponential backoff with jitter strategy to determine the interval between retries.
+        /// </summary>
+        ExponentialJitter
+    }
+
+    /// <summary>
     /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
     /// </summary>
     public abstract class WebRequestPSCmdlet : PSCmdlet, IDisposable
@@ -333,8 +355,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the RetryMode property.
         /// </summary>
         [Parameter]
-        [ValidateSet("Fixed", "Exponential", "ExponentialJitter", IgnoreCase = true)]
-        public virtual string RetryMode { get; set; } = "Fixed";
+        public virtual WebRequestRetryMode RetryMode { get; set; } = WebRequestRetryMode.Fixed;
 
         /// <summary>
         /// Gets or sets the MaximumRetryCount property, which determines the number of retries of a failed web request.
@@ -1354,16 +1375,21 @@ namespace Microsoft.PowerShell.Commands
                     float retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
                     int exponent = WebSession.MaximumRetryCount - totalRequests + 1;
 
-                    if (string.Equals(RetryMode, "Exponential", StringComparison.OrdinalIgnoreCase))
+                    switch (RetryMode)
                     {
-                        // If RetryMode is specified as "Exponential", use the exponential backoff algorithm to determine the retry interval.
-                        retryIntervalInSeconds = MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent), _maximumRetryIntervalInSeconds);
-                    }
-                    else if (string.Equals(RetryMode, "ExponentialJitter", StringComparison.OrdinalIgnoreCase))
-                    {
-                        // If RetryMode is specified as "ExponentialJitter", use the exponential backoff with jitter algorithm to determine the retry interval.
-                        Random random = new();
-                        retryIntervalInSeconds = MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent) * random.NextSingle(), _maximumRetryIntervalInSeconds);
+                        case WebRequestRetryMode.Fixed:
+                            retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
+                            break;
+                        case WebRequestRetryMode.Exponential:
+                            retryIntervalInSeconds = MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent), _maximumRetryIntervalInSeconds);
+                            break;
+                        case WebRequestRetryMode.ExponentialJitter:
+                            Random random = new();
+                            retryIntervalInSeconds = MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent) * random.NextSingle(), _maximumRetryIntervalInSeconds);
+                            break;
+                        default:
+                            retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
+                            break;
                     }
 
                     // If the status code is 429 get the retry interval from the Headers.
