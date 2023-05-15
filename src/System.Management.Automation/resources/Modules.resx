@@ -666,4 +666,10 @@
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
     <value>A new module from an untrusted ConstrainedLanguage session would be blocked from providing the FullLanguage script block.</value>
   </data>
+  <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
+    <value>"Module Mismatched Language Modes</value>
+  </data>
+  <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
+    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when the policy is enforced.</value>
+  </data>
 </root>
