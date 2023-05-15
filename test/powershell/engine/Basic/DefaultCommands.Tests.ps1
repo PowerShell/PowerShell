@@ -18,7 +18,12 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
         $FullCLR = !$IsCoreCLR
         $CoreWindows = $IsCoreCLR -and $IsWindows
         $CoreUnix = $IsCoreCLR -and !$IsWindows
-        $isPreview = $PSVersionTable.GitCommitId.Contains("preview")
+        # If psversion can be converted to [version], then it is not a preview version.
+        # We can't just use '$psversiontable.psversion -as [version]' because pwsh
+        # will succeed with the conversion and add note properties to the version object.
+        $psVersionAsVersion = $psversiontable.psversion.tostring() -as [version]
+        $isRC = $psversiontable.psversion.tostring() -match "rc"
+        $isPreview = -not ($isRC -or $psVersionAsVersion)
         if ($IsWindows) {
             $configPath = Join-Path -Path $env:USERPROFILE -ChildPath 'Documents' -AdditionalChildPath 'PowerShell'
         }
