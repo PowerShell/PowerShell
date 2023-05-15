@@ -1241,13 +1241,22 @@ namespace System.Management.Automation
             }
 
             // handle special cases like '\\wsl$\ubuntu', '\\?\', and '\\.\pipe\' which aren't a UNC path, but we can say it is so the filesystemprovider can use it
-            if (!networkOnly && (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase) || path.StartsWith("\\\\?\\") || path.StartsWith("\\\\.\\")))
+            if (!networkOnly && (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase) || PathIsDevicePath(path)))
             {
                 return true;
             }
 
             Uri uri;
             return Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
+#endif
+        }
+
+        internal static bool PathIsDevicePath(string path)
+        {
+#if UNIX
+            return false;
+#else
+            return path.StartsWith(@"\\.\") || path.StartsWith(@"\\?\");
 #endif
         }
 
