@@ -1375,22 +1375,13 @@ namespace Microsoft.PowerShell.Commands
                     float retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
                     int exponent = WebSession.MaximumRetryCount - totalRequests + 1;
 
-                    switch (RetryMode)
+                    Random random = new();
+                    retryIntervalInSeconds = RetryMode switch
                     {
-                        case WebRequestRetryMode.Fixed:
-                            retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
-                            break;
-                        case WebRequestRetryMode.Exponential:
-                            retryIntervalInSeconds = MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent), _maximumRetryIntervalInSeconds);
-                            break;
-                        case WebRequestRetryMode.ExponentialJitter:
-                            Random random = new();
-                            retryIntervalInSeconds = MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent) * random.NextSingle(), _maximumRetryIntervalInSeconds);
-                            break;
-                        default:
-                            retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
-                            break;
-                    }
+                        WebRequestRetryMode.Exponential => MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent), _maximumRetryIntervalInSeconds),
+                        WebRequestRetryMode.ExponentialJitter => MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent) * random.NextSingle(), _maximumRetryIntervalInSeconds),
+                        WebRequestRetryMode.Fixed or _ => WebSession.RetryIntervalInSeconds
+                    };
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
