@@ -6148,7 +6148,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (dotSourceOperator != null)
                 {
-                    if (systemLockdownPolicy == SystemEnforcementMode.Enforce)
+                    if (systemLockdownPolicy != SystemEnforcementMode.Audit)
                     {
                         var errorRecord = new ErrorRecord(
                             new PSSecurityException(Modules.CannotUseDotSourceWithWildCardFunctionExport),
@@ -6176,21 +6176,18 @@ namespace Microsoft.PowerShell.Commands
             if ((input == null) || (input.Count == 0))
             { return; }
 
-            switch (systemLockdownPolicy)
+            if (systemLockdownPolicy != SystemEnforcementMode.Audit)
             {
-                case SystemEnforcementMode.Enforce:
-                    input.RemoveAll(fnInfo => !module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase));
-                    break;
-
-                case SystemEnforcementMode.Audit:
-                    SystemPolicy.LogWDACAuditMessage(
-                        context: context,
-                        title: Modules.WDACModuleFnExportWithNestedModulesLogTitle,
-                        message: StringUtil.Format(Modules.WDACModuleFnExportWithNestedModulesLogMessage, module.Name),
-                        fqid: "ModuleExportWithWildcardCharactersNotAllowed",
-                        dropIntoDebugger: true);
-                    break;
+                input.RemoveAll(fnInfo => !module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase));
+                return;
             }
+
+            SystemPolicy.LogWDACAuditMessage(
+                context: context,
+                title: Modules.WDACModuleFnExportWithNestedModulesLogTitle,
+                message: StringUtil.Format(Modules.WDACModuleFnExportWithNestedModulesLogMessage, module.Name),
+                fqid: "ModuleExportWithWildcardCharactersNotAllowed",
+                dropIntoDebugger: true);
         }
 
         private static bool ShouldProcessScriptModule(PSModuleInfo parentModule, ref bool found)
