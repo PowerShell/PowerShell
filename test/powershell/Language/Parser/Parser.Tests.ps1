@@ -130,7 +130,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         }
 
         if (Test-Path $testfolder1) {
-            Remove-Item $testfolder1 -Recurse -Force -ErrorAction SilentlyContinue
+            Remove-Item $testfolder1 -Recurse -Force -ErrorAction Ignore
         }
 
         $env:PATH = $BackupEnvPATH
