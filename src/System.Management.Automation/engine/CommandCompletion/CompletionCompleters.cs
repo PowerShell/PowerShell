@@ -4432,6 +4432,8 @@ namespace System.Management.Automation
                     && wordToComplete[pathStartOffset] is '~'
                     && wordToComplete[pathStartOffset + 1] is '/' or '\\';
 
+                // This simple analysis is quick but doesn't handle scenarios where a separator character is not actually a separator
+                // For example "\" or ":" in *nix filenames. This is only a problem if it appears to be the last separator though.
                 int lastSeparatorIndex = wordToComplete.LastIndexOfAny(Utils.Separators.DirectoryOrDrive);
                 if (lastSeparatorIndex == -1)
                 {
