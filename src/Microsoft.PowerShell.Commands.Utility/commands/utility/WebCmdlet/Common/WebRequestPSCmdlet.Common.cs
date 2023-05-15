@@ -1375,11 +1375,10 @@ namespace Microsoft.PowerShell.Commands
                     float retryIntervalInSeconds = WebSession.RetryIntervalInSeconds;
                     int exponent = WebSession.MaximumRetryCount - totalRequests + 1;
 
-                    Random random = new();
                     retryIntervalInSeconds = RetryMode switch
                     {
                         WebRequestRetryMode.Exponential => MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent), _maximumRetryIntervalInSeconds),
-                        WebRequestRetryMode.ExponentialJitter => MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent) * random.NextSingle(), _maximumRetryIntervalInSeconds),
+                        WebRequestRetryMode.ExponentialJitter => MathF.Min(MathF.ScaleB(retryIntervalInSeconds, exponent) * Random.Shared.NextSingle(), _maximumRetryIntervalInSeconds),
                         WebRequestRetryMode.Fixed or _ => WebSession.RetryIntervalInSeconds
                     };
 
