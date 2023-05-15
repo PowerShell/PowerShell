@@ -556,9 +556,9 @@ namespace Microsoft.PowerShell.Commands
         {
             // Prevent code compilation in ConstrainedLanguage mode, or NoLanguage mode under system lock down.
             if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage ||
-                SessionState.LanguageMode == PSLanguageMode.NoLanguage)
+                (SessionState.LanguageMode == PSLanguageMode.NoLanguage && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce))
             {
-                if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                 {
                     ThrowTerminatingError(
                         new ErrorRecord(
@@ -568,15 +568,12 @@ namespace Microsoft.PowerShell.Commands
                             targetObject: null));
                 }
 
-                if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
-                {
-                    SystemPolicy.LogWDACAuditMessage(
-                        context: Context,
-                        title: AddTypeStrings.AddTypeLogTitle,
-                        message: AddTypeStrings.AddTypeLogMessage,
-                        fqid: "AddTypeCmdletDisabled",
-                        dropIntoDebugger: true);
-                }
+                SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
+                    title: AddTypeStrings.AddTypeLogTitle,
+                    message: AddTypeStrings.AddTypeLogMessage,
+                    fqid: "AddTypeCmdletDisabled",
+                    dropIntoDebugger: true);
             }
 
             // 'ConsoleApplication' and 'WindowsApplication' types are currently not working in .NET Core
