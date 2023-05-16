@@ -888,8 +888,8 @@ class InheritedClassTest : System.Attribute
         try
         {
             Push-Location function:
-            $res = TabExpansion2 -inputScript 'Get-ChildItem -LiteralPath $PSHOME -File'
-            $res.CompletionMatches[0].CompletionText | Should -Be '-File'
+            $res = TabExpansion2 -inputScript 'Get-ChildItem -LiteralPath $PSHOME -Fi'
+            $res.CompletionMatches[1].CompletionText | Should -Be '-File'
         }
         finally
         {
