@@ -4383,10 +4383,7 @@ namespace System.Management.Automation
 
             // Matches file shares with and without the provider name and with either slash direction.
             // Avoids matching Windows device paths like \\.\CDROM0 and \\?\Volume{b8f3fc1c-5cd6-4553-91e2-d6814c4cd375}\
-            var shareMatch = Regex.Match(
-                wordToComplete,
-                @"(^Microsoft\.PowerShell\.Core\\FileSystem::|^FileSystem::|^)(?:\\\\|//)(?![.|?])([^\\/]+)(?:\\|/)([^\\/]*)$",
-                RegexOptions.IgnoreCase);
+            var shareMatch = s_shareMatch.Match(wordToComplete);
             if (shareMatch.Success)
             {
                 // Only match share names, no filenames.
@@ -4757,6 +4754,10 @@ namespace System.Management.Automation
 
             return results;
         }
+
+        private static readonly Regex s_shareMatch = new(
+            @"(^Microsoft\.PowerShell\.Core\\FileSystem::|^FileSystem::|^)(?:\\\\|//)(?![.|?])([^\\/]+)(?:\\|/)([^\\/]*)$",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct SHARE_INFO_1
