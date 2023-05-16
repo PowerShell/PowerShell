@@ -4923,38 +4923,22 @@ namespace System.Management.Automation
                     }
                     break;
 
-                case '0':
-                case 'a':
-                case 'b':
-                case 'e':
-                case 'f':
-                case 'n':
-                case 'r':
-                case 't':
-                case 'u':
-                case 'v':
-                    if (!useSingleQuoteEscapeRules && index > 0 && path[index - 1] == '`')
-                    {
-                        // Characters that have special meaning if the last character is a backtick in bareword/double quote string.
-                        // See: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_special_characters
-                        _ = sb.Append('`');
-                    }
-                    break;
-
                 case '[':
                 case ']':
                     if (!literalPath)
                     {
                         // Wildcard characters that need to be escaped.
+                        int backtickCount;
                         if (useSingleQuoteEscapeRules)
                         {
-                            _ = sb.Append('`');
+                            backtickCount = 1;
                         }
                         else
                         {
-                            _ = sb.Append("``");
+                            backtickCount = sb[^1] == '`' ? 4 : 2;
                         }
 
+                        _ = sb.Append('`', backtickCount);
                         quotesAreNeeded = true;
                     }
                     break;
@@ -4970,14 +4954,8 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        if (literalPath)
-                        {
-                            _ = sb.Append('`');
-                        }
-                        else
-                        {
-                            _ = sb.Append("``");
-                        }
+                        int backtickCount = !literalPath && sb[^1] == '`' ? 3 : 1;
+                        _ = sb.Append('`', backtickCount);
                     }
 
                     if (stringType is StringConstantType.BareWord or StringConstantType.DoubleQuoted)
@@ -4987,7 +4965,7 @@ namespace System.Management.Automation
                     break;
 
                 case '$':
-                    // $ needs to be escaped so following chars are not parsed as a variable
+                    // $ needs to be escaped so following chars are not parsed as a variable/subexpression
                     if (!useSingleQuoteEscapeRules)
                     {
                         _ = sb.Append('`');
