@@ -671,6 +671,7 @@ It "Should correctly parse array literals for index expressions in method calls"
     $Script = '[string]::join(" ", (0, 1, 2)[0, 1])'
     $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
     $result.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments[1].Index.Elements.Count | Should -Be 2
+    $ers.Count | Should -Be 0
 }
 
 It "Should correctly parse array types that are used as arguments without brackets in generic type" {
