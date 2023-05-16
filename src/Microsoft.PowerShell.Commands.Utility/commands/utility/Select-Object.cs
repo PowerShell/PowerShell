@@ -144,10 +144,11 @@ namespace Microsoft.PowerShell.Commands
         private bool _firstOrLastSpecified;
 
         /// <summary>
-        /// Skips the specified number of items from top when used with First, from end when used with Last.
+        /// Skips the specified number of items from top when used with First, from end when used with Last or SkipLast.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
+        [Parameter(ParameterSetName = "SkipLastParameter")]
         [ValidateRange(0, int.MaxValue)]
         public int Skip { get; set; }
 

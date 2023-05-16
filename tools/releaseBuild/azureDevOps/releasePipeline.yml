@@ -248,8 +248,8 @@ stages:
         $azDoBuild | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -tag 'SignedOff'
       displayName: Signoff Release-Automation run
 
-- stage: GitHubDraftRelease
-  displayName: Create GitHub draft release
+- stage: UpdateChangeLog
+  displayName: Update the changelog
   # do not include stages that are likely to fail in dependency as there is no way to force deploy.
   dependsOn:
   - MSIXBundle
@@ -261,7 +261,21 @@ stages:
   - ValidateFxdPackage
   - ValidateGlobalTool
 
-# The environment here is used for approval.
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Make sure the changelog is updated
+      jobName: MergeChangeLog
+      instructions: |
+        Update and merge the changelog for the release.
+        This step is required for creating GitHub draft release.
+
+- stage: GitHubDraftRelease
+  displayName: Create GitHub draft release
+  # do not include stages that are likely to fail in dependency as there is no way to force deploy.
+  dependsOn: UpdateChangeLog
+
+  # The environment here is used for approval.
   jobs:
   - deployment: AzureBlobPublic
     displayName: Make Azure Blob Public

@@ -7,6 +7,9 @@ param(
     [parameter(Mandatory = $true, ParameterSetName='Test')]
     [switch]
     $Test,
+    [parameter(Mandatory = $true, ParameterSetName='TestAndHarvest')]
+    [switch]
+    $TestAndHarvest,
     [switch]
     $ForceModuleReload
 )
@@ -35,9 +38,10 @@ $needHarvest = $fullList | Where-Object { !$_.harvested }
 Write-Verbose "Full List count: $($fullList.Count)" -Verbose
 Write-Verbose "Need harvest: $($needHarvest.Count)" -Verbose
 
-if ($Harvest) {
+if ($Harvest -or $TestAndHarvest) {
     $needHarvest | select-object -ExpandProperty coordinates | Start-ClearlyDefinedHarvest
-} elseif ($Test) {
+}
+if ($Test -or $TestAndHarvest) {
     if($needHarvest.Count -gt 0) {
         $needHarvest | Format-List | Out-String -Width 9999 | Write-Verbose -Verbose
         throw "There are $($needHarvest.Count) packages that need to be harvested"
