@@ -1472,9 +1472,17 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (host == null) return;
+                    if (host == null)
+                    {
+                        return;
+                    }
+
                     PSHostUserInterface ui = host.UI;
-                    if (ui == null) return;
+                    if (ui == null)
+                    {
+                        return;
+                    }
+
                     ui.WriteErrorLine(
                         StringUtil.Format(resourceString, arguments));
                 }
@@ -1502,9 +1510,17 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (host == null) return;
+                    if (host == null)
+                    {
+                        return;
+                    }
+
                     PSHostUserInterface ui = host.UI;
-                    if (ui == null) return;
+                    if (ui == null)
+                    {
+                        return;
+                    }
+
                     ui.WriteErrorLine(error);
                 }
             }
@@ -1537,9 +1553,17 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (host == null) return;
+                    if (host == null)
+                    {
+                        return;
+                    }
+
                     PSHostUserInterface ui = host.UI;
-                    if (ui == null) return;
+                    if (ui == null)
+                    {
+                        return;
+                    }
+
                     ui.WriteErrorLine(e.Message);
                 }
             }
@@ -1564,9 +1588,17 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (host == null) return;
+                    if (host == null)
+                    {
+                        return;
+                    }
+
                     PSHostUserInterface ui = host.UI;
-                    if (ui == null) return;
+                    if (ui == null)
+                    {
+                        return;
+                    }
+
                     ui.WriteErrorLine(errorRecord.ToString());
                 }
             }

@@ -179,11 +179,7 @@ namespace Microsoft.WSMan.Management
             object[] args)
         {
             ArgumentNullException.ThrowIfNull(resourceManager);
-
-            if (string.IsNullOrEmpty(resourceName))
-            {
-                throw new ArgumentNullException(nameof(resourceName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(resourceName);
 
             string template = resourceManager.GetString(resourceName);
 
@@ -615,7 +611,7 @@ namespace Microsoft.WSMan.Management
             if ((credential != null) && (certificateThumbprint != null))
             {
                 string message = FormatResourceMsgFromResourcetextS(
-                    "AmbiguosAuthentication",
+                    "AmbiguousAuthentication",
                         "CertificateThumbPrint", "credential");
 
                 throw new InvalidOperationException(message);
@@ -626,7 +622,7 @@ namespace Microsoft.WSMan.Management
                 (certificateThumbprint != null))
             {
                 string message = FormatResourceMsgFromResourcetextS(
-                    "AmbiguosAuthentication",
+                    "AmbiguousAuthentication",
                         "CertificateThumbPrint", authentication.ToString());
 
                 throw new InvalidOperationException(message);

@@ -108,7 +108,7 @@ jobs:
         $localLocation = "$(Pipeline.Workspace)/releasePipeline/finalResults"
         $xmlElement = @"
           <add key=`"local`" value=`"$localLocation`" />
-          <add key="dotnet" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/7.0.100-preview.1.22101.1-shipping/nuget/v2" />
+          <add key="dotnet" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet8/nuget/v2" />
         </packageSources>
         "@
 

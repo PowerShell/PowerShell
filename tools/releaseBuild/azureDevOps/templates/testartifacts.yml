@@ -1,16 +1,17 @@
 jobs:
-- job: build_testartifacts
+- job: build_testartifacts_win
   variables:
     - name: runCodesignValidationInjection
       value: false
     - name: NugetSecurityAnalysisWarningLevel
       value: none
     - group: DotNetPrivateBuildAccess
-  displayName: Build test artifacts
+  displayName: Build windows test artifacts
   condition: succeeded()
   pool:
-    # testing
-    vmImage: ubuntu-latest
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
   steps:
   - checkout: self
     clean: true
@@ -46,6 +47,64 @@ jobs:
           win7-x64 { $packageName = "TestPackage-win-x64.zip" }
           win7-x86 { $packageName = "TestPackage-win-x86.zip" }
           win-arm64 { $packageName = "TestPackage-win-arm64.zip" }
+        }
+
+        Rename-Item $(System.ArtifactsDirectory)/TestPackage.zip $packageName
+        Write-Host "##vso[artifact.upload containerfolder=testArtifacts;artifactname=testArtifacts]$(System.ArtifactsDirectory)/$packageName"
+      }
+
+      BuildTestPackage -runtime win7-x64
+      BuildTestPackage -runtime win7-x86
+      BuildTestPackage -runtime win-arm64
+
+    displayName: Build test package and upload
+    retryCountOnTaskFailure: 1
+
+- job: build_testartifacts_nonwin
+  variables:
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - group: DotNetPrivateBuildAccess
+  displayName: Build non-windows test artifacts
+  condition: succeeded()
+  pool:
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMSUbuntu20.04-Secure
+  steps:
+  - checkout: self
+    clean: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+    parameters:
+      repoRoot: $(Build.SourcesDirectory)
+
+  - pwsh: |
+      Import-Module ./build.psm1
+      Start-PSBootstrap
+    displayName: Bootstrap
+    env:
+      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+  - pwsh: |
+      Import-Module ./build.psm1
+
+      function BuildTestPackage([string] $runtime)
+      {
+        Write-Verbose -Verbose "Starting to build package for $runtime"
+
+        New-TestPackage -Destination $(System.ArtifactsDirectory) -Runtime $runtime
+
+        if (-not (Test-Path $(System.ArtifactsDirectory)/TestPackage.zip))
+        {
+          throw "Test Package was not found at: $(System.ArtifactsDirectory)"
+        }
+
+        switch ($runtime)
+        {
           linux-x64 { $packageName = "TestPackage-linux-x64.zip" }
           linux-arm { $packageName = "TestPackage-linux-arm.zip" }
           linux-arm64 { $packageName = "TestPackage-linux-arm64.zip" }
@@ -57,9 +116,6 @@ jobs:
         Write-Host "##vso[artifact.upload containerfolder=testArtifacts;artifactname=testArtifacts]$(System.ArtifactsDirectory)/$packageName"
       }
 
-      BuildTestPackage -runtime win7-x64
-      BuildTestPackage -runtime win7-x86
-      BuildTestPackage -runtime win-arm64
       BuildTestPackage -runtime linux-x64
       BuildTestPackage -runtime linux-arm
       BuildTestPackage -runtime linux-arm64

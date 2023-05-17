@@ -200,7 +200,7 @@ namespace System.Management.Automation.Language
         /// <summary>The addition operator '+'.</summary>
         Plus = 40,
 
-        /// <summary>The substraction operator '-'.</summary>
+        /// <summary>The subtraction operator '-'.</summary>
         Minus = 41,
 
         /// <summary>The assignment operator '='.</summary>

@@ -495,7 +495,7 @@ namespace System.Management.Automation.Internal.Host
                         break;
 
                     case 3:
-                        // No to All means that we want to stop everytime WriteDebug is called. Since No throws an error, I
+                        // No to All means that we want to stop every time WriteDebug is called. Since No throws an error, I
                         // think that ordinarily, the caller will terminate.  So I don't think the caller will ever get back
                         // calling WriteDebug again, and thus "No to All" might not be a useful option to have.
 

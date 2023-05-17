@@ -48,4 +48,8 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
             Pop-Location
         }
     }
+    It 'Resolve-Path should support user specified base paths' {
+        $Expected = Join-Path -Path .\ -ChildPath fakeroot
+        Resolve-Path -Path $fakeRoot -RelativeBasePath $testRoot | Should -BeExactly $Expected
+    }
 }

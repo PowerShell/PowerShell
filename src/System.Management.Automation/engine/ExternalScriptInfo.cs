@@ -188,7 +188,10 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Context == null) return SessionStateEntryVisibility.Public;
+                if (Context == null)
+                {
+                    return SessionStateEntryVisibility.Public;
+                }
 
                 return Context.EngineSessionState.CheckScriptVisibility(_path);
             }
@@ -453,15 +456,6 @@ namespace System.Management.Automation
         internal uint PSVersionLineNumber
         {
             get { return 0; }
-        }
-
-        internal IEnumerable<PSSnapInSpecification> RequiresPSSnapIns
-        {
-            get
-            {
-                var data = GetRequiresData();
-                return data?.RequiresPSSnapIns;
-            }
         }
 
         /// <summary>

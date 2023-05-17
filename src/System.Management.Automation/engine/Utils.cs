@@ -1241,13 +1241,22 @@ namespace System.Management.Automation
             }
 
             // handle special cases like '\\wsl$\ubuntu', '\\?\', and '\\.\pipe\' which aren't a UNC path, but we can say it is so the filesystemprovider can use it
-            if (!networkOnly && (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase) || path.StartsWith("\\\\?\\") || path.StartsWith("\\\\.\\")))
+            if (!networkOnly && (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase) || PathIsDevicePath(path)))
             {
                 return true;
             }
 
             Uri uri;
             return Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
+#endif
+        }
+
+        internal static bool PathIsDevicePath(string path)
+        {
+#if UNIX
+            return false;
+#else
+            return path.StartsWith(@"\\.\") || path.StartsWith(@"\\?\");
 #endif
         }
 
@@ -1514,10 +1523,13 @@ namespace System.Management.Automation.Internal
         internal static bool UseDebugAmsiImplementation;
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
-        internal static bool ThrowHelpCultureNotSupported;
         internal static bool ForcePromptForChoiceDefaultOption;
         internal static bool NoPromptForPassword;
         internal static bool ForceFormatListFixedLabelWidth;
+
+        // Update-Help tests
+        internal static bool ThrowHelpCultureNotSupported;
+        internal static CultureInfo CurrentUICulture;
 
         // Stop/Restart/Rename Computer tests
         internal static bool TestStopComputer;
@@ -1733,34 +1745,11 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal static class Requires
     {
-        internal static void NotNull(object value, string paramName)
-        {
-            ArgumentNullException.ThrowIfNull(value, paramName);
-        }
-
-        internal static void NotNullOrEmpty(string value, string paramName)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new ArgumentNullException(paramName);
-            }
-        }
-
         internal static void NotNullOrEmpty(ICollection value, string paramName)
         {
-            ArgumentNullException.ThrowIfNull(value, paramName);
-
-            if (value.Count == 0)
+            if (value is null || value.Count == 0)
             {
                 throw new ArgumentNullException(paramName);
-            }
-        }
-
-        internal static void Condition([DoesNotReturnIf(false)] bool precondition, string paramName)
-        {
-            if (!precondition)
-            {
-                throw new ArgumentException(paramName);
             }
         }
     }

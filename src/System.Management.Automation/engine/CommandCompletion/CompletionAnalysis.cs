@@ -155,6 +155,11 @@ namespace System.Management.Automation
                 ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent),
                 searchNestedScriptBlocks: true).ToList();
 
+            if (relatedAsts.Count == 0)
+            {
+                relatedAsts.Add(inputAst);
+            }
+
             // If the last ast is an unnamed block that starts with "param" the cursor is inside a param block.
             // To avoid adding special handling to all the completers that look at the last ast, we remove it here because it's not useful for completion.
             if (relatedAsts[^1].Extent.Text.StartsWith("param", StringComparison.OrdinalIgnoreCase)
@@ -1421,6 +1426,24 @@ namespace System.Management.Automation
             return typeConstraint != null || setConstraint != null;
         }
 
+        private static List<CompletionResult> CompletePropertyAssignment(MemberExpressionAst memberExpression, CompletionContext context)
+        {
+            if (SafeExprEvaluator.TrySafeEval(memberExpression, context.ExecutionContext, out var evalValue))
+            {
+                if (evalValue is null)
+                {
+                    return null;
+                }
+
+                Type type = evalValue.GetType();
+                if (type.IsEnum)
+                {
+                    return GetResultForEnum(type, context);
+                }
+            }
+            return null;
+        }
+
         private static bool TryGetCompletionsForVariableAssignment(
             CompletionContext completionContext,
             AssignmentStatementAst assignmentAst,
@@ -1450,6 +1473,12 @@ namespace System.Management.Automation
                 }
 
                 return false;
+            }
+
+            if (assignmentAst.Left is MemberExpressionAst member)
+            {
+                completions = CompletePropertyAssignment(member, completionContext);
+                return completions is not null;
             }
 
             completions = null;
