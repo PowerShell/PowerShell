@@ -7098,7 +7098,7 @@ namespace System.Management.Automation
                     }
                     else if (statement.UsingStatementKind == UsingStatementKind.Type)
                     {
-                        typeAliases.Add(statement.Name.Value, Parser.ScanType(statement.Alias.Value, ignoreErrors: false));
+                        typeAliases.Add(statement.Name.Value, statement.TypeAlias.TypeName);
                     }
                 }
             }

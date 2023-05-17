@@ -5012,7 +5012,7 @@ namespace System.Management.Automation.Language
                         return new ErrorStatementAst(ExtentOf(usingToken, itemAst.Extent));
                     }
 
-                    Ast aliasAst;
+                    ExpressionAst aliasAst;
                     Token aliasToken;
                     if (kind is UsingStatementKind.Type)
                     {
@@ -5041,7 +5041,7 @@ namespace System.Management.Automation.Language
                             return new ErrorStatementAst(ExtentOf(usingToken, aliasTypeName.Extent));
                         }
 
-                        aliasAst = new StringConstantExpressionAst(aliasTypeName.Extent, aliasTypeName.FullName, StringConstantType.BareWord);
+                        aliasAst = new TypeExpressionAst(aliasTypeName.Extent, aliasTypeName);
                     }
                     else
                     {
@@ -5069,18 +5069,12 @@ namespace System.Management.Automation.Language
                     {
                         htAst = (HashtableAst)aliasAst;
                     }
-                    else if (aliasAst is not StringConstantExpressionAst)
+                    else if (aliasAst is not StringConstantExpressionAst and not TypeExpressionAst)
                     {
                         var errorExtent = ExtentFromFirstOf(aliasAst, aliasToken);
-                        Ast[] nestedAsts;
-                        if (aliasAst is null)
-                        {
-                            nestedAsts = new Ast[] { itemAst };
-                        }
-                        else
-                        {
-                            nestedAsts = new Ast[] { itemAst, aliasAst };
-                        }
+                        Ast[] nestedAsts = aliasAst is null
+                            ? new Ast[] { itemAst }
+                            : new Ast[] { itemAst, aliasAst };
 
                         ReportError(errorExtent, nameof(ParserStrings.InvalidValueForUsingItemName), ParserStrings.InvalidValueForUsingItemName, errorExtent.Text);
                         return new ErrorStatementAst(ExtentOf(usingToken, errorExtent), nestedAsts);
@@ -5090,6 +5084,14 @@ namespace System.Management.Automation.Language
 
                     if (htAst is null)
                     {
+                        if (kind == UsingStatementKind.Type)
+                        {
+                            return new UsingStatementAst(
+                            ExtentOf(usingToken, aliasAst),
+                            (StringConstantExpressionAst)itemAst,
+                            (TypeExpressionAst)aliasAst);
+                        }
+
                         return new UsingStatementAst(
                             ExtentOf(usingToken, aliasAst),
                             kind,

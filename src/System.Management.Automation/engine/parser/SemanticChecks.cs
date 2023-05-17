@@ -1324,8 +1324,7 @@ namespace System.Management.Automation.Language
                                       usingStatementAst.UsingStatementKind == UsingStatementKind.Module ||
                                       usingStatementAst.UsingStatementKind == UsingStatementKind.Type;
             
-            bool usingAliasSupported = usingStatementAst.UsingStatementKind == UsingStatementKind.Type ||
-                                       usingStatementAst.UsingStatementKind == UsingStatementKind.Namespace;
+            bool usingAliasSupported = usingStatementAst.UsingStatementKind == UsingStatementKind.Namespace;
             
             if (!usingKindSupported || (usingStatementAst.Alias is not null && !usingAliasSupported))
             {
