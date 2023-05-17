@@ -495,7 +495,7 @@ namespace System.Management.Automation.Security
             if (path != null)
             {
                 // Assume everything under SYSTEM32 is trusted
-                if (path.StartsWith("$env:windir\system32", StringComparison.OrdinalIgnoreCase))
+                if (path.StartsWith(@"$env:windir\system32", StringComparison.OrdinalIgnoreCase))
                 {
                     return SystemEnforcementMode.None;
                 }
