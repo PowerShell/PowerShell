@@ -1173,32 +1173,32 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The available module path types.
+        /// The available module path scopes.
         /// </summary>
-        public enum PSModulePathType
+        public enum PSModulePathScope
         {
             /// <summary>The users module path.</summary>
             User,
 
-            /// <summary>The PSHOME module path.</summary>
-            PSHome,
+            /// <summary>The Builtin module path. This is where PowerShell is installed (PSHOME).</summary>
+            Builtin,
 
-            /// <summary>The shared module path.</summary>
-            Shared
+            /// <summary>The machine module path. This is the shared location for all users of the system.</summary>
+            Machine
         }
 
         /// <summary>
-        /// Retrieve the current PSModulePath of the specified type.
+        /// Retrieve the current PSModulePath for the specified scope.
         /// </summary>
-        /// <param name="type">The type of module path to retrieve. This can be User, PSHome, or Shared.</param>
+        /// <param name="scope">The scope of module path to retrieve. This can be User, Builtin, or Machine.</param>
         /// <returns>The string representing the requested module path type.</returns>
-        public static string GetPSModulePath(PSModulePathType type)
+        public static string GetPSModulePath(PSModulePathScope scope)
         {
-            if (type == PSModulePathType.User)
+            if (scope == PSModulePathScope.User)
             {
                 return GetPersonalModulePath();
             }
-            else if (type == PSModulePathType.PSHome)
+            else if (scope == PSModulePathScope.Builtin)
             {
                 return GetPSHomeModulePath();
             }
