@@ -256,6 +256,6 @@
     <value>Type Creation Not Allowed</value>
   </data>
   <data name="WDACBinderTypeCreationLogMessage" xml:space="preserve">
-    <value>Will not be able to create type '{0}' during parameter binding in ConstrainedLanguage mode.</value>
+    <value>Creation of Type '{0}' will not be allowed during parameter binding in ConstrainedLanguage mode.</value>
   </data>
 </root>
