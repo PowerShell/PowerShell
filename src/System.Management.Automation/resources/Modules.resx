@@ -652,7 +652,7 @@
     <value>Module Contains Dot-Source Operator</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>Module '{0}' import will fail because it exports functions using wild card characters while also uses the dot-source operator.</value>
+    <value>Module '{0}' import will fail because it exports functions using wildcard characters while also using the dot-source operator.</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
     <value>"Module Exporting Functions</value>
