@@ -5516,23 +5516,21 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            if (ExecutionContext.HasEverUsedConstrainedLanguage && context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            if (context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                !IsAllowedInConstrainedLanguage(targetValue, name, isStatic))
             {
-                if (!IsAllowedInConstrainedLanguage(targetValue, name, isStatic))
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                 {
-                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
-                    {
-                        return target.ThrowRuntimeError(args, moreTests, errorID, resourceString);
-                    }
-
-                    string targetName = (targetValue as Type)?.FullName;
-                    SystemPolicy.LogWDACAuditMessage(
-                        context: context,
-                        title: ParameterBinderStrings.WDACBinderInvocationLogTitle,
-                        message: StringUtil.Format(ParameterBinderStrings.WDACBinderInvocationLogMessage, name, targetName ?? string.Empty),
-                        fqid: "MethodOrPropertyInvocationNotAllowed",
-                        dropIntoDebugger: true);
+                    return target.ThrowRuntimeError(args, moreTests, errorID, resourceString);
                 }
+
+                string targetName = (targetValue as Type)?.FullName;
+                SystemPolicy.LogWDACAuditMessage(
+                    context: context,
+                    title: ParameterBinderStrings.WDACBinderInvocationLogTitle,
+                    message: StringUtil.Format(ParameterBinderStrings.WDACBinderInvocationLogMessage, name, targetName ?? string.Empty),
+                    fqid: "MethodOrPropertyInvocationNotAllowed",
+                    dropIntoDebugger: true);
             }
 
             return null;
@@ -6185,15 +6183,15 @@ namespace System.Management.Automation.Language
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
             {
                 restrictions = restrictions.Merge(BinderUtils.GetLanguageModeCheckIfHasEverUsedConstrainedLanguage());
-            }
 
-            // Validate that this is allowed in the current language mode.
-            DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
-                target, targetValue, Name, _static, new[] { value }, restrictions,
-                "PropertySetterNotSupportedInConstrainedLanguage", ParserStrings.PropertySetConstrainedLanguage);
-            if (runtimeError != null)
-            {
-                return runtimeError.WriteToDebugLog(this);
+                // Validate that this is allowed in the current language mode.
+                DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
+                    target, targetValue, Name, _static, new[] { value }, restrictions,
+                    "PropertySetterNotSupportedInConstrainedLanguage", ParserStrings.PropertySetConstrainedLanguage);
+                if (runtimeError != null)
+                {
+                    return runtimeError.WriteToDebugLog(this);
+                }
             }
 
             if (!canOptimize)
@@ -6737,15 +6735,15 @@ namespace System.Management.Automation.Language
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
             {
                 restrictions = restrictions.Merge(BinderUtils.GetLanguageModeCheckIfHasEverUsedConstrainedLanguage());
-            }
 
-            // Validate that this is allowed in the current language mode.
-            DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
-                target, targetValue, Name, _static, args, restrictions,
-                "MethodInvocationNotSupportedInConstrainedLanguage", ParserStrings.InvokeMethodConstrainedLanguage);
-            if (runtimeError != null)
-            {
-                return runtimeError.WriteToDebugLog(this);
+                // Validate that this is allowed in the current language mode.
+                DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
+                    target, targetValue, Name, _static, args, restrictions,
+                    "MethodInvocationNotSupportedInConstrainedLanguage", ParserStrings.InvokeMethodConstrainedLanguage);
+                if (runtimeError != null)
+                {
+                    return runtimeError.WriteToDebugLog(this);
+                }
             }
 
             if (!canOptimize)

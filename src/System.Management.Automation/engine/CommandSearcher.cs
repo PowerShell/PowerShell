@@ -840,7 +840,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // Don't return untrusted commands to trusted functions
+            // Don't return untrusted commands to trusted functions.
             if (result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage && executionContext.LanguageMode == PSLanguageMode.FullLanguage)
             {
                 if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
@@ -848,6 +848,8 @@ namespace System.Management.Automation
                     return true;
                 }
 
+                // This audit log message is to inform the user that an expected command will not be available because it is not trusted
+                // when the machine is in policy enforcement mode.
                 SystemPolicy.LogWDACAuditMessage(
                     context: executionContext,
                     title: CommandBaseStrings.SearcherWDACLogTitle,

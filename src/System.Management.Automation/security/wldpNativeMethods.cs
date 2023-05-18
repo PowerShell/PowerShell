@@ -112,17 +112,23 @@ namespace System.Management.Automation.Security
                 dropIntoDebugger is true && 
                 context._debugger.DebugMode.HasFlag(DebugModes.LocalScript) &&
                 System.Management.Automation.Runspaces.Runspace.DefaultRunspace.Id == 1 &&
-                context.DebugPreferenceVariable.HasFlag(ActionPreference.Break))
+                context.DebugPreferenceVariable.HasFlag(ActionPreference.Break) &&
+                context.InternalHost?.UI is not null)
             {
-                System.Console.WriteLine(string.Empty);
-                System.Console.WriteLine("WDAC Audit Log:");
-                System.Console.WriteLine($"Title: {title}");
-                System.Console.WriteLine($"Message: {message}");
-                System.Console.WriteLine($"FullyQualifedId: {fqid}");
-                System.Console.WriteLine("Stopping script execution in debugger...");
-                System.Console.WriteLine(string.Empty);
+                try
+                {
+                    context.InternalHost.UI.WriteLine();
+                    context.InternalHost.UI.WriteLine("WDAC Audit Log:");
+                    context.InternalHost.UI.WriteLine($"Title: {title}");
+                    context.InternalHost.UI.WriteLine($"Message: {message}");
+                    context.InternalHost.UI.WriteLine($"FullyQualifedId: {fqid}");
+                    context.InternalHost.UI.WriteLine("Stopping script execution in debugger...");
+                    context.InternalHost.UI.WriteLine();
 
-                context._debugger.Break();
+                    context._debugger.Break();
+                }
+                catch
+                { }
             }
         }
 
