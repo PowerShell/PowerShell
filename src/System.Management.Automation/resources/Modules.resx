@@ -631,7 +631,7 @@
     <value>Export-ModuleMember Cmdlet</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>Export of module members will fail because module '{0}', has a different language mode '{1}' than the current session '{2}'.</value>
+    <value>Export of module members will fail because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>Module Implicit Function Export</value>
