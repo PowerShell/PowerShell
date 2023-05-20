@@ -639,7 +639,11 @@ namespace Microsoft.PowerShell.Commands
                 bool isObjUnique = true;
                 foreach (UniquePSObjectHelper uniqueObj in _uniques)
                 {
-                    ObjectCommandComparer comparer = new(true, CultureInfo.CurrentCulture, !CaseInsensitive.IsPresent);
+                    ObjectCommandComparer comparer = new(
+                        ascending: true,
+                        CultureInfo.CurrentCulture,
+                        caseSensitive: !CaseInsensitive.IsPresent);
+
                     if ((comparer.Compare(obj.BaseObject, uniqueObj.WrittenObject.BaseObject) == 0) &&
                         (uniqueObj.NotePropertyCount == addedNoteProperties.Count))
                     {
