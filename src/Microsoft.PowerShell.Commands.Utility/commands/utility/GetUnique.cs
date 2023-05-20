@@ -84,9 +84,7 @@ namespace Microsoft.PowerShell.Commands
                 if (string.Equals(
                     inputString,
                     _lastObjectAsString,
-                    CaseInsensitive.IsPresent
-                        ? StringComparison.CurrentCultureIgnoreCase
-                        : StringComparison.CurrentCulture))
+                    CaseInsensitive.IsPresent ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture))
                 {
                     isUnique = false;
                 }
