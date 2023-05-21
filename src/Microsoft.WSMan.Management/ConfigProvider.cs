@@ -1024,20 +1024,15 @@ namespace Microsoft.WSMan.Management
                         strPathChk = strPathChk + WSManStringLiterals.containerPlugin + WSManStringLiterals.DefaultPathSeparator;
                         if (path.EndsWith(strPathChk + currentpluginname, StringComparison.OrdinalIgnoreCase))
                         {
-                            if (WSManStringLiterals.ConfigRunAsUserName.Equals(ChildName, StringComparison.OrdinalIgnoreCase))
+                            if (WSManStringLiterals.ConfigRunAsUserName.Equals(ChildName, StringComparison.OrdinalIgnoreCase)  && value is PSCredential runAsCredentials)
                             {
-                                PSCredential runAsCredentials = value as PSCredential;
+                                // UserName
+                                value = runAsCredentials.UserName;
 
-                                if (runAsCredentials != null)
-                                {
-                                    // UserName
-                                    value = runAsCredentials.UserName;
-
-                                    pluginConfiguration.UpdateOneConfiguration(
-                                        ".",
-                                        WSManStringLiterals.ConfigRunAsPasswordName,
-                                        GetStringFromSecureString(runAsCredentials.Password));
-                                }
+                                pluginConfiguration.UpdateOneConfiguration(
+                                    ".",
+                                    WSManStringLiterals.ConfigRunAsPasswordName,
+                                    GetStringFromSecureString(runAsCredentials.Password));
                             }
 
                             if (WSManStringLiterals.ConfigRunAsPasswordName.Equals(ChildName, StringComparison.OrdinalIgnoreCase))
@@ -1304,8 +1299,7 @@ namespace Microsoft.WSMan.Management
                                     }
                                 }
 
-                                WSManProviderSetItemDynamicParameters dynParams = DynamicParameters as WSManProviderSetItemDynamicParameters;
-                                if (dynParams != null)
+                                if (DynamicParameters is WSManProviderSetItemDynamicParameters dynParams)
                                 {
                                     if (dynParams.Concatenate)
                                     {
@@ -1968,9 +1962,8 @@ namespace Microsoft.WSMan.Management
         private void NewItemCreateComputerConnection(string Name)
         {
             helper = new WSManHelper(this);
-            WSManProviderNewItemComputerParameters dynParams = DynamicParameters as WSManProviderNewItemComputerParameters;
             string parametersetName = "ComputerName";
-            if (dynParams != null)
+            if (DynamicParameters is WSManProviderNewItemComputerParameters dynParams)
             {
                 if (dynParams.ConnectionURI != null)
                 {
@@ -2067,8 +2060,7 @@ namespace Microsoft.WSMan.Management
             // to create a new plugin
             if (path.EndsWith(strPathChk, StringComparison.OrdinalIgnoreCase))
             {
-                WSManProviderNewItemPluginParameters niParams = DynamicParameters as WSManProviderNewItemPluginParameters;
-                if (niParams != null)
+                if (DynamicParameters is WSManProviderNewItemPluginParameters niParams)
                 {
                     if (string.IsNullOrEmpty(niParams.File))
                     {
@@ -2156,32 +2148,28 @@ namespace Microsoft.WSMan.Management
                 if (path.Contains(strPathChk + WSManStringLiterals.containerResources))
                 {
                     strPathChk += WSManStringLiterals.containerResources;
-                    if (path.EndsWith(strPathChk, StringComparison.OrdinalIgnoreCase))
+                    if (path.EndsWith(strPathChk, StringComparison.OrdinalIgnoreCase) && DynamicParameters is WSManProviderNewItemResourceParameters niParams)
                     {
-                        WSManProviderNewItemResourceParameters niParams = DynamicParameters as WSManProviderNewItemResourceParameters;
-                        if (niParams != null)
+                        mshObj.Properties.Add(new PSNoteProperty("Resource", niParams.ResourceUri));
+                        mshObj.Properties.Add(new PSNoteProperty("Capability", niParams.Capability));
+
+                        inputStr = ConstructResourceXml(mshObj, null, null);
+                        XmlDocument xdoc = new XmlDocument();
+                        xdoc.LoadXml(inputStr);
+
+                        ArrayList arrList = null;
+                        ArrayList NewResource = ProcessPluginResourceLevel(xdoc, out arrList);
+
+                        NewItem = ((PSObject)NewResource[0]).Properties["ResourceDir"].Value.ToString();
+                        Keys = new string[] { "Uri=" + ((PSObject)NewResource[0]).Properties["ResourceURI"].Value.ToString() };
+
+                        if (ResourceArray != null)
                         {
-                            mshObj.Properties.Add(new PSNoteProperty("Resource", niParams.ResourceUri));
-                            mshObj.Properties.Add(new PSNoteProperty("Capability", niParams.Capability));
-
-                            inputStr = ConstructResourceXml(mshObj, null, null);
-                            XmlDocument xdoc = new XmlDocument();
-                            xdoc.LoadXml(inputStr);
-
-                            ArrayList arrList = null;
-                            ArrayList NewResource = ProcessPluginResourceLevel(xdoc, out arrList);
-
-                            NewItem = ((PSObject)NewResource[0]).Properties["ResourceDir"].Value.ToString();
-                            Keys = new string[] { "Uri=" + ((PSObject)NewResource[0]).Properties["ResourceURI"].Value.ToString() };
-
-                            if (ResourceArray != null)
-                            {
-                                ResourceArray.Add(NewResource[0]);
-                            }
-                            else
-                            {
-                                ResourceArray = NewResource;
-                            }
+                            ResourceArray.Add(NewResource[0]);
+                        }
+                        else
+                        {
+                            ResourceArray = NewResource;
                         }
                     }
 
@@ -5193,10 +5181,9 @@ namespace Microsoft.WSMan.Management
         /// <param name="propertyValue">Value to append.</param>
         private static string GetStringFromSecureString(object propertyValue)
         {
-            SecureString value = propertyValue as SecureString;
             string passwordValueToAdd = string.Empty;
 
-            if (value != null)
+            if (propertyValue is SecureString value)
             {
                 IntPtr ptr = Marshal.SecureStringToBSTR(value);
                 passwordValueToAdd = Marshal.PtrToStringAuto(ptr);
