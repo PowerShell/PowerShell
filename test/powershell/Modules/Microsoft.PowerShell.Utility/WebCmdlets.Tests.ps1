@@ -4344,14 +4344,16 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
 
     It "Execute Invoke-WebRequest with -UnixSocket" {
         $uri = Get-UnixSocketUri
-        $result = Invoke-WebRequest $uri -UnixSocket "/tmp/foo.sock"
+        $unixSocket = Get-UnixSocketName
+        $result = Invoke-WebRequest $uri -UnixSocket $unixSocket
         $result.StatusCode | Should -Be "200"
         $result.Content | Should -Be "Hello World Unix Socket."
     }
 
     It "Execute Invoke-RestMethod with -UnixSocket" {
         $uri = Get-UnixSocketUri
-        $result = Invoke-RestMethod  $uri -UnixSocket "/tmp/foo.sock"
+        $unixSocket = Get-UnixSocketName
+        $result = Invoke-RestMethod  $uri -UnixSocket $unixSocket
         $result | Should -Be "Hello World Unix Socket."
     }
 }

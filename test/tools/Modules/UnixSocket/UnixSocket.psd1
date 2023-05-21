@@ -7,6 +7,7 @@
     RequiredModules = @()
     FunctionsToExport = @(
         'Get-UnixSocket'
+        'Get-UnixSocketName'
         'Get-UnixSocketUri'
         'Start-UnixSocket'
         'Stop-UnixSocket'

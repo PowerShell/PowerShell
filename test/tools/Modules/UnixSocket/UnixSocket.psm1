@@ -96,6 +96,23 @@ function Stop-UnixSocket
     }
 }
 
+function Get-UnixSocketName {
+    [CmdletBinding()]
+    [OutputType([string])]
+    param ()
+
+    process {
+        $runningListener = Get-UnixSocket
+        if ($null -eq $runningListener -or $runningListener.GetStatus() -ne 'Running')
+        {
+            return $null
+        }
+        $unixSocketName = "/tmp/UnixSocket.sock"
+
+        return $unixSocketName
+    }
+}
+
 function Get-UnixSocketUri {
     [CmdletBinding()]
     [OutputType([Uri])]

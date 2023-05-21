@@ -12,7 +12,7 @@ namespace UnixSocket
     {
         public static void Main(string[] args)
         {
-            const string UnixSocketPath = "/tmp/foo.sock";
+            const string UnixSocketPath = "/tmp/UnixSocket.sock";
 
             if (!Directory.Exists("/tmp"))
             {
