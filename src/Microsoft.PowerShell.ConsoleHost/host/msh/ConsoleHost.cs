@@ -2141,9 +2141,7 @@ namespace Microsoft.PowerShell
 
             // NTRAID#Windows OS Bugs-1143621-2005/04/08-sburns
 
-            IContainsErrorRecord icer = e as IContainsErrorRecord;
-
-            if (icer != null)
+            if (e is IContainsErrorRecord icer)
             {
                 error = icer.ErrorRecord;
             }
@@ -2200,8 +2198,7 @@ namespace Microsoft.PowerShell
 
             // See if the exception has an error record attached to it...
             ErrorRecord er = null;
-            IContainsErrorRecord icer = e as IContainsErrorRecord;
-            if (icer != null)
+            if (e is IContainsErrorRecord icer)
                 er = icer.ErrorRecord;
 
             if (e is PSRemotingTransportException)
@@ -2736,8 +2733,7 @@ namespace Microsoft.PowerShell
 
             internal void BlockCommandOutput()
             {
-                RemotePipeline rCmdPipeline = _parent.runningCmd as RemotePipeline;
-                if (rCmdPipeline != null)
+                if (_parent.runningCmd is RemotePipeline rCmdPipeline)
                 {
                     rCmdPipeline.DrainIncomingData();
                     rCmdPipeline.SuspendIncomingData();
@@ -2750,8 +2746,7 @@ namespace Microsoft.PowerShell
 
             internal void ResumeCommandOutput()
             {
-                RemotePipeline rCmdPipeline = _parent.runningCmd as RemotePipeline;
-                if (rCmdPipeline != null)
+                if (_parent.runningCmd is RemotePipeline rCmdPipeline)
                 {
                     rCmdPipeline.ResumeIncomingData();
                 }
@@ -2841,8 +2836,7 @@ namespace Microsoft.PowerShell
                 }
 
                 // If it is remote exception ferret out the real exception.
-                RemoteException remoteException = e as RemoteException;
-                if (remoteException == null || remoteException.ErrorRecord == null)
+                if (e is not RemoteException remoteException || remoteException.ErrorRecord == null)
                 {
                     return false;
                 }
@@ -2923,8 +2917,7 @@ namespace Microsoft.PowerShell
                 // Check for the pushed runspace scenario.
                 if (_isRunspacePushed)
                 {
-                    RemoteRunspace remoteRunspace = _parent.Runspace as RemoteRunspace;
-                    if (remoteRunspace != null)
+                    if (_parent.Runspace is RemoteRunspace remoteRunspace)
                     {
                         promptString = HostUtilities.GetRemotePrompt(remoteRunspace, promptString, _parent._inPushedConfiguredSession);
                     }
@@ -2958,13 +2951,9 @@ namespace Microsoft.PowerShell
 
                 PSObject prompt = output.ReadAndRemoveAt0();
                 string promptString = (prompt != null) ? (prompt.BaseObject as string) : null;
-                if (promptString != null)
+                if (promptString != null && _parent.Runspace is RemoteRunspace remoteRunspace)
                 {
-                    RemoteRunspace remoteRunspace = _parent.Runspace as RemoteRunspace;
-                    if (remoteRunspace != null)
-                    {
-                        promptString = HostUtilities.GetRemotePrompt(remoteRunspace, promptString, _parent._inPushedConfiguredSession);
-                    }
+                    promptString = HostUtilities.GetRemotePrompt(remoteRunspace, promptString, _parent._inPushedConfiguredSession);
                 }
 
                 return promptString;
