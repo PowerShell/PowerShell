@@ -2148,28 +2148,31 @@ namespace Microsoft.WSMan.Management
                 if (path.Contains(strPathChk + WSManStringLiterals.containerResources))
                 {
                     strPathChk += WSManStringLiterals.containerResources;
-                    if (path.EndsWith(strPathChk, StringComparison.OrdinalIgnoreCase) && DynamicParameters is WSManProviderNewItemResourceParameters niParams)
+                    if (path.EndsWith(strPathChk, StringComparison.OrdinalIgnoreCase))
                     {
-                        mshObj.Properties.Add(new PSNoteProperty("Resource", niParams.ResourceUri));
-                        mshObj.Properties.Add(new PSNoteProperty("Capability", niParams.Capability));
-
-                        inputStr = ConstructResourceXml(mshObj, null, null);
-                        XmlDocument xdoc = new XmlDocument();
-                        xdoc.LoadXml(inputStr);
-
-                        ArrayList arrList = null;
-                        ArrayList NewResource = ProcessPluginResourceLevel(xdoc, out arrList);
-
-                        NewItem = ((PSObject)NewResource[0]).Properties["ResourceDir"].Value.ToString();
-                        Keys = new string[] { "Uri=" + ((PSObject)NewResource[0]).Properties["ResourceURI"].Value.ToString() };
-
-                        if (ResourceArray != null)
+                        if (DynamicParameters is WSManProviderNewItemResourceParameters niParams)
                         {
-                            ResourceArray.Add(NewResource[0]);
-                        }
-                        else
-                        {
-                            ResourceArray = NewResource;
+                            mshObj.Properties.Add(new PSNoteProperty("Resource", niParams.ResourceUri));
+                            mshObj.Properties.Add(new PSNoteProperty("Capability", niParams.Capability));
+
+                            inputStr = ConstructResourceXml(mshObj, null, null);
+                            XmlDocument xdoc = new XmlDocument();
+                            xdoc.LoadXml(inputStr);
+
+                            ArrayList arrList = null;
+                            ArrayList NewResource = ProcessPluginResourceLevel(xdoc, out arrList);
+
+                            NewItem = ((PSObject)NewResource[0]).Properties["ResourceDir"].Value.ToString();
+                            Keys = new string[] { "Uri=" + ((PSObject)NewResource[0]).Properties["ResourceURI"].Value.ToString() };
+
+                            if (ResourceArray != null)
+                            {
+                                ResourceArray.Add(NewResource[0]);
+                            }
+                            else
+                            {
+                                ResourceArray = NewResource;
+                            }
                         }
                     }
 
