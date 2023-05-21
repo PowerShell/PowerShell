@@ -189,9 +189,7 @@ namespace System.Management.Automation
         {
             sb.AppendLine(StringUtil.Format(EtwLoggingStrings.ErrorRecordMessage, except.Message));
 
-            IContainsErrorRecord ier = except as IContainsErrorRecord;
-
-            if (ier != null)
+            if (except is IContainsErrorRecord ier)
             {
                 ErrorRecord er = ier.ErrorRecord;
 

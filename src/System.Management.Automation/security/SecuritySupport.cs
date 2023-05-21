@@ -663,8 +663,7 @@ namespace System.Management.Automation.Internal
         {
             foreach (X509Extension extension in c.Extensions)
             {
-                X509KeyUsageExtension keyUsageExtension = extension as X509KeyUsageExtension;
-                if (keyUsageExtension != null)
+                if (extension is X509KeyUsageExtension keyUsageExtension)
                 {
                     if ((keyUsageExtension.KeyUsages & keyUsage) == keyUsage)
                     {
