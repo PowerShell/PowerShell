@@ -96,9 +96,9 @@ namespace Microsoft.PowerShell.Commands
             else // compare as objects
             {
                 _comparer ??= new ObjectCommandComparer(
-                    ascending: true, // ascending (doesn't matter)
+                    ascending: true,
                     CultureInfo.CurrentCulture,
-                    caseSensitive: !CaseInsensitive.IsPresent); // case-sensitive
+                    caseSensitive: !CaseInsensitive.IsPresent);
 
                 isUnique = (_comparer.Compare(InputObject, _lastObject) != 0);
             }
