@@ -33,7 +33,6 @@ namespace Microsoft.PowerShell.Commands
             // so we create the DebugRecord here and fill it up with the appropriate InvocationInfo;
             // then, we call the command runtime directly and pass this record to WriteDebug().
             //
-
             if (this.CommandRuntime is MshCommandRuntime mshCommandRuntime)
             {
                 DebugRecord record = new(Message);
@@ -78,7 +77,6 @@ namespace Microsoft.PowerShell.Commands
             // so we create the VerboseRecord here and fill it up with the appropriate InvocationInfo;
             // then, we call the command runtime directly and pass this record to WriteVerbose().
             //
-
             if (this.CommandRuntime is MshCommandRuntime mshCommandRuntime)
             {
                 VerboseRecord record = new(Message);
@@ -123,7 +121,6 @@ namespace Microsoft.PowerShell.Commands
             // so we create the WarningRecord here and fill it up with the appropriate InvocationInfo;
             // then, we call the command runtime directly and pass this record to WriteWarning().
             //
-
             if (this.CommandRuntime is MshCommandRuntime mshCommandRuntime)
             {
                 WarningRecord record = new(Message);
