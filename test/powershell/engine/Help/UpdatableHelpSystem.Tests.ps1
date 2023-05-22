@@ -400,7 +400,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell modules for user s
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunSaveHelpTests -Tag "Feature" -useSourcePath -UserScope
+    RunUpdateHelpTests -Tag "Feature" -useSourcePath -UserScope
 }
 
 Describe "Validate 'Save-Help -DestinationPath for one PowerShell modules." -Tags @('CI', 'RequireAdminOnWindows') {
