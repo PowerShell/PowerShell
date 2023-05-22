@@ -2543,7 +2543,7 @@ namespace System.Management.Automation
                     var functionContext = enumerator.Current.FunctionContext;
                     if (functionContext is not null)
                     {
-                        var invocationInfo = new InvocationInfo(null, functionContext.CurrentPosition, _context);
+                        var invocationInfo = new InvocationInfo(commandInfo: null, functionContext.CurrentPosition, _context);
                         return $"\n{invocationInfo.PositionMessage}";
                     }
                 }
