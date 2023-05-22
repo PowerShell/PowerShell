@@ -6123,7 +6123,9 @@ namespace Microsoft.PowerShell.Commands
             ImportModuleOptions options)
         {
             if (moduleInfo.SessionState == null || moduleInfo.SessionState.Internal == null)
-            { return; }
+            {
+                return;
+            }
 
             // A manifest with explicit function export is detected through a shared session state or the nested module options, because nested
             // module processing does not use a shared session state.
