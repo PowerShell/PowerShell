@@ -6175,7 +6175,7 @@ namespace Microsoft.PowerShell.Commands
             SystemEnforcementMode systemLockdownPolicy)
         {
             var input = module.SessionState?.Internal?.ExportedFunctions;
-            if ((input == null) || (input.Count == 0))
+            if (input == null || input.Count == 0)
             {
                 return;
             }
