@@ -631,16 +631,13 @@
     <value>Export-ModuleMember Cmdlet</value>
   </data>
   <data name="WDACExportModuleCommandLogMessage" xml:space="preserve">
-    <value>Export of module members will fail because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
+    <value>Export of module members will fail in Constrained Language mode because module '{0}', has a language mode '{1}' that is different from the current session '{2}'.</value>
   </data>
   <data name="WDACImplicitFunctionExportLogTitle" xml:space="preserve">
     <value>Module Implicit Function Export</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>Implicit function export for module '{0}' will be denied, because it is trusted but the session is in ConstrainedLanguage mode (not trusted).</value>
-  </data>
-  <data name="WDACImplicitFunctionExportLogMessage2" xml:space="preserve">
-    <value>Implict function export for trusted module '{0}' will be denied because the session is in ConstrainedLanguage mode.</value>
+    <value>Implicit function export for module '{0}' will be denied because it is trusted but the session is in ConstrainedLanguage mode (not trusted). Always export module functions individually by full name.</value>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
     <value>Importing Script File as Module</value>
@@ -652,24 +649,24 @@
     <value>Module Contains Dot-Source Operator</value>
   </data>
   <data name="WDACModuleDotSourceLogMessage" xml:space="preserve">
-    <value>Module '{0}' import will fail because it exports functions using wildcard characters while also using the dot-source operator.</value>
+    <value>Module '{0}' import will in fail Constrained Language mode because it exports functions using wildcard characters while also using the dot-source operator.</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogTitle" xml:space="preserve">
     <value>"Module Exporting Functions</value>
   </data>
   <data name="WDACModuleFnExportWithNestedModulesLogMessage" xml:space="preserve">
-    <value>Module '{0}' exports functions using name wildcard characters, any nested module function names will be removed when running in ConstrainedLanguage mode.</value>
+    <value>Module '{0}' exports functions using name wildcard characters. Any nested module function names will be removed when running in Constrained Language mode.</value>
   </data>
   <data name="WDACNewModuleCommandLogTitle" xml:space="preserve">
     <value>"New-Module Cmdlet</value>
   </data>
   <data name="WDACNewModuleCommandLogMessage" xml:space="preserve">
-    <value>A new module from an untrusted ConstrainedLanguage session would be blocked from providing the FullLanguage script block.</value>
+    <value>A new module from an untrusted Constrained Language session will be blocked from providing the FullLanguage script block.</value>
   </data>
   <data name="WDACMismatchedLanguageModesTitle" xml:space="preserve">
     <value>"Module Mismatched Language Modes</value>
   </data>
   <data name="WDACMismatchedLanguageModesMessage" xml:space="preserve">
-    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when the policy is enforced.</value>
+    <value>A dependent module is being loaded that has a different language mode than the parent. This will be disallowed when in Constrained Language mode.</value>
   </data>
 </root>

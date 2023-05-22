@@ -5772,7 +5772,7 @@ namespace Microsoft.PowerShell.Commands
                                         SystemPolicy.LogWDACAuditMessage(
                                             context: Context,
                                             title: Modules.WDACImplicitFunctionExportLogTitle,
-                                            message: StringUtil.Format(Modules.WDACImplicitFunctionExportLogMessage2, module.Name),
+                                            message: StringUtil.Format(Modules.WDACImplicitFunctionExportLogMessage, module.Name),
                                             fqid: "ModuleImplicitFunctionExportNotAllowed",
                                             dropIntoDebugger: true);
                                         fnMatchPattern = MatchAll;

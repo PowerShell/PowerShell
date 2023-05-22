@@ -188,6 +188,6 @@ ErrorAction, WarningAction, InformationAction, PipelineVariable</value>
     <value>ForEach-Object Cmdlet</value>
   </data>
   <data name="WDACLogMessage" xml:space="preserve">
-    <value>Method invocation on type '{0}' would not be allowed when run in non-audit policy enforcement mode.</value>
+    <value>Method invocation on type '{0}' will not be allowed when run in Constrained Language mode.</value>
   </data>
 </root>
