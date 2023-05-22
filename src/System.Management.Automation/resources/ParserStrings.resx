@@ -1332,13 +1332,13 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Parser Configuration Keyword</value>
   </data>
   <data name="WDACParserConfigKeywordLogMessage" xml:space="preserve">
-    <value>The Configuration keyword will not allowed in Constrained Language mode for untrusted script.</value>
+    <value>The Configuration keyword will not be allowed in Constrained Language mode for untrusted script.</value>
   </data>
   <data name="WDACParserClassKeywordLogTitle" xml:space="preserve">
     <value>Parser Class Keyword</value>
   </data>
   <data name="WDACParserClassKeywordLogMessage" xml:space="preserve">
-    <value>The Class keyword will not allowed in Constrained Language mode for untrusted script.</value>
+    <value>The Class keyword will not be allowed in Constrained Language mode for untrusted script.</value>
   </data>
   <data name="WDACParserDSSupportedCommandLogTitle" xml:space="preserve">
     <value>Parser Data Section SupportedCommand</value>
