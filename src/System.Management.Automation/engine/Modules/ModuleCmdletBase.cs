@@ -5788,7 +5788,7 @@ namespace Microsoft.PowerShell.Commands
                                         doNotExportCmdlets: null);
                                 }
                                 else if ((systemLockdownPolicy == SystemEnforcementMode.Enforce || systemLockdownPolicy == SystemEnforcementMode.Audit) &&
-                                         (module.LanguageMode == PSLanguageMode.FullLanguage) &&
+                                         module.LanguageMode == PSLanguageMode.FullLanguage &&
                                          module.SessionState.Internal.FunctionsExportedWithWildcard &&
                                          !module.SessionState.Internal.ManifestWithExplicitFunctionExport)
                                 {
