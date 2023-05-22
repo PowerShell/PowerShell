@@ -55,7 +55,7 @@ namespace System.Management.Automation
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                         null, "CantInvokeInNonImportedModule", ParserStrings.CantInvokeInNonImportedModule, mi.Name);
                 }
-                else if (((invocationToken == TokenKind.Ampersand) || (invocationToken == TokenKind.Dot)) && (mi.LanguageMode != context.LanguageMode))
+                else if ((invocationToken == TokenKind.Ampersand || invocationToken == TokenKind.Dot) && mi.LanguageMode != context.LanguageMode)
                 {
                     if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                     {
