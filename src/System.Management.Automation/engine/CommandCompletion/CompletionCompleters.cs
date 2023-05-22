@@ -4379,7 +4379,6 @@ namespace System.Management.Automation
         {
             var wordToComplete = context.WordToComplete;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
-            var results = new List<CompletionResult>();
 
             // First, try to match \\server\share
             // support both / and \ when entering UNC paths for typing convenience (#17111)
@@ -4391,6 +4390,12 @@ namespace System.Management.Automation
                 var sharePattern = WildcardPattern.Get(shareMatch.Groups[2].Value + "*", WildcardOptions.IgnoreCase);
                 var ignoreHidden = context.GetOption("IgnoreHiddenShares", @default: false);
                 var shares = GetFileShares(server, ignoreHidden);
+                if (shares.Count == 0)
+                {
+                    return CommandCompletion.EmptyCompletionResult;
+                }
+
+                var shareResults = new List<CompletionResult>(shares.Count);
                 foreach (var share in shares)
                 {
                     if (sharePattern.IsMatch(share))
@@ -4401,350 +4406,625 @@ namespace System.Management.Automation
                             shareFullPath = quote + shareFullPath + quote;
                         }
 
-                        results.Add(new CompletionResult(shareFullPath, shareFullPath, CompletionResultType.ProviderContainer, shareFullPath));
+                        shareResults.Add(new CompletionResult(shareFullPath, shareFullPath, CompletionResultType.ProviderContainer, shareFullPath));
                     }
                 }
+
+                return shareResults;
+            }
+
+            string filter;
+            string basePath;
+            int providerSeparatorIndex = -1;
+            bool defaultRelativePath = false;
+            bool inputUsedHomeChar = false;
+
+            if (string.IsNullOrEmpty(wordToComplete))
+            {
+                filter = "*";
+                basePath = ".";
+                defaultRelativePath = true;
             }
             else
             {
-                // We want to prefer relative paths in a completion result unless the user has already
-                // specified a drive or portion of the path.
-                var executionContext = context.ExecutionContext;
-                var defaultRelative = string.IsNullOrWhiteSpace(wordToComplete)
-                                      || (wordToComplete.AsSpan().IndexOfAny('\\', '/') != 0 &&
-                                          !Regex.Match(wordToComplete, @"^~[\\/]+.*").Success &&
-                                          !executionContext.LocationGlobber.IsAbsolutePath(wordToComplete, out _));
-                var relativePaths = context.GetOption("RelativePaths", @default: defaultRelative);
-                var useLiteralPath = context.GetOption("LiteralPaths", @default: false);
+                providerSeparatorIndex = wordToComplete.IndexOf("::", StringComparison.Ordinal);
+                int pathStartOffset = providerSeparatorIndex == -1 ? 0 : providerSeparatorIndex + 2;
+                inputUsedHomeChar = pathStartOffset + 2 <= wordToComplete.Length
+                    && wordToComplete[pathStartOffset] is '~'
+                    && wordToComplete[pathStartOffset + 1] is '/' or '\\';
 
-                if (useLiteralPath && LocationGlobber.StringContainsGlobCharacters(wordToComplete))
+                // This simple analysis is quick but doesn't handle scenarios where a separator character is not actually a separator
+                // For example "\" or ":" in *nix filenames. This is only a problem if it appears to be the last separator though.
+                int lastSeparatorIndex = wordToComplete.LastIndexOfAny(Utils.Separators.DirectoryOrDrive);
+                if (lastSeparatorIndex == -1)
                 {
-                    wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.StarOrQuestion);
+                    // Input is a simple word with no path separators like: "Program Files"
+                    filter = $"{wordToComplete}*";
+                    basePath = ".";
+                    defaultRelativePath = true;
                 }
-
-                if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]) && executionContext != null)
+                else
                 {
-                    // We don't actually need the drive, but the drive must be "mounted" in PowerShell before completion
-                    // can succeed.  This call will mount the drive if it wasn't already.
-                    executionContext.SessionState.Drive.GetAtScope(wordToComplete.Substring(0, 1), "global");
-                }
-
-                var powerShellExecutionHelper = context.Helper;
-                powerShellExecutionHelper
-                    .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Resolve-Path")
-                    .AddParameter("Path", wordToComplete + "*");
-
-                Exception exceptionThrown;
-                var psobjs = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
-
-                if (psobjs != null)
-                {
-                    var isFileSystem = false;
-                    var wordContainsProviderId = ProviderSpecified(wordToComplete);
-
-                    if (psobjs.Count > 0)
+                    if (lastSeparatorIndex + 1 == wordToComplete.Length)
                     {
-                        dynamic firstObj = psobjs[0];
-                        var provider = firstObj.Provider as ProviderInfo;
-                        isFileSystem = provider != null &&
-                                       provider.Name.Equals(FileSystemProvider.ProviderName,
-                                                            StringComparison.OrdinalIgnoreCase);
+                        // Input ends with a separator like: "./", "filesystem::" or "C:"
+                        filter = "*";
+                        basePath = wordToComplete;
                     }
                     else
                     {
-                        try
-                        {
-                            ProviderInfo provider;
-                            if (defaultRelative)
-                            {
-                                provider = executionContext.EngineSessionState.CurrentDrive.Provider;
-                            }
-                            else
-                            {
-                                executionContext.LocationGlobber.GetProviderPath(wordToComplete, out provider);
-                            }
-
-                            isFileSystem = provider != null &&
-                                           provider.Name.Equals(FileSystemProvider.ProviderName,
-                                                                StringComparison.OrdinalIgnoreCase);
-                        }
-                        catch (Exception)
-                        {
-                        }
+                        // Input contains a separator, but doesn't end with one like: "C:\Program Fil" or "Registry::HKEY_LOC"
+                        filter = $"{wordToComplete.Substring(lastSeparatorIndex + 1)}*";
+                        basePath = wordToComplete.Substring(0, lastSeparatorIndex + 1);
                     }
 
-                    if (isFileSystem)
+                    if (!inputUsedHomeChar && basePath[0] is not '/' and not '\\')
                     {
-                        bool hiddenFilesAreHandled = false;
-
-                        if (psobjs.Count > 0 && !LocationGlobber.StringContainsGlobCharacters(wordToComplete))
-                        {
-                            string leaf = null;
-                            string pathWithoutProvider = wordContainsProviderId
-                                    ? wordToComplete.Substring(wordToComplete.IndexOf(':') + 2)
-                                    : wordToComplete;
-
-                            try
-                            {
-                                leaf = Path.GetFileName(pathWithoutProvider);
-                            }
-                            catch (Exception)
-                            {
-                            }
-
-                            var notHiddenEntries = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                            string providerPath = null;
-
-                            foreach (dynamic entry in psobjs)
-                            {
-                                providerPath = entry.ProviderPath;
-                                if (string.IsNullOrEmpty(providerPath))
-                                {
-                                    // This is unexpected. ProviderPath should never be null or an empty string
-                                    leaf = null;
-                                    break;
-                                }
-
-                                if (!notHiddenEntries.Contains(providerPath))
-                                {
-                                    notHiddenEntries.Add(providerPath);
-                                }
-                            }
-
-                            if (leaf != null)
-                            {
-                                leaf += "*";
-                                var parentPath = Path.GetDirectoryName(providerPath);
-
-                                // ProviderPath should be absolute path for FileSystem entries
-                                if (!string.IsNullOrEmpty(parentPath))
-                                {
-                                    string[] entries = null;
-                                    try
-                                    {
-                                        entries = Directory.GetFileSystemEntries(parentPath, leaf, _enumerationOptions);
-                                    }
-                                    catch (Exception)
-                                    {
-                                    }
-
-                                    if (entries != null)
-                                    {
-                                        hiddenFilesAreHandled = true;
-
-                                        if (entries.Length > notHiddenEntries.Count)
-                                        {
-                                            // Do the iteration only if there are hidden files
-                                            foreach (var entry in entries)
-                                            {
-                                                if (notHiddenEntries.Contains(entry))
-                                                    continue;
-
-                                                var fileInfo = new FileInfo(entry);
-                                                try
-                                                {
-                                                    if ((fileInfo.Attributes & FileAttributes.Hidden) != 0)
-                                                    {
-                                                        PSObject wrapper = PSObject.AsPSObject(entry);
-                                                        psobjs.Add(wrapper);
-                                                    }
-                                                }
-                                                catch
-                                                {
-                                                    // do nothing if can't get file attributes
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (!hiddenFilesAreHandled)
-                        {
-                            powerShellExecutionHelper
-                                .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-ChildItem")
-                                .AddParameter("Path", wordToComplete + "*")
-                                .AddParameter("Hidden", true);
-
-                            var hiddenItems = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
-                            if (hiddenItems != null && hiddenItems.Count > 0)
-                            {
-                                foreach (var hiddenItem in hiddenItems)
-                                {
-                                    psobjs.Add(hiddenItem);
-                                }
-                            }
-                        }
+                        defaultRelativePath = !context.ExecutionContext.LocationGlobber.IsAbsolutePath(wordToComplete, out _);
                     }
+                }
+            }
 
-                    // Sorting the results by the path
-                    var sortedPsobjs = psobjs.Order(new ItemPathComparer());
+            StringConstantType stringType;
+            switch (quote)
+            {
+                case "":
+                    stringType = StringConstantType.BareWord;
+                    break;
 
-                    foreach (PSObject psobj in sortedPsobjs)
+                case "\"":
+                    stringType = StringConstantType.DoubleQuoted;
+                    break;
+
+                default:
+                    stringType = StringConstantType.SingleQuoted;
+                    break;
+            }
+
+            var useLiteralPath = context.GetOption("LiteralPaths", @default: false);
+            if (useLiteralPath)
+            {
+                basePath = EscapePath(basePath, stringType, useLiteralPath, out _);
+            }
+
+            _ = context.Helper
+                .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Resolve-Path")
+                .AddParameter("Path", basePath);
+
+            var resolvedPaths = context.Helper.ExecuteCurrentPowerShell(out _);
+            if (resolvedPaths is null || resolvedPaths.Count == 0)
+            {
+                return CommandCompletion.EmptyCompletionResult;
+            }
+
+            var useRelativePath = context.GetOption("RelativePaths", @default: defaultRelativePath);
+            if (useRelativePath && providerSeparatorIndex != -1)
+            {
+                // User must have requested relative paths but that's not valid with provider paths.
+                return CommandCompletion.EmptyCompletionResult;
+            }
+
+            var resolvedProvider = ((PathInfo)resolvedPaths[0].BaseObject).Provider;
+            string providerPrefix;
+            if (providerSeparatorIndex == -1)
+            {
+                providerPrefix = string.Empty;
+            }
+            else if (providerSeparatorIndex == resolvedProvider.Name.Length)
+            {
+                providerPrefix = $"{resolvedProvider.Name}::";
+            }
+            else
+            {
+                providerPrefix = $"{resolvedProvider.ModuleName}\\{resolvedProvider.Name}::";
+            }
+
+            List<CompletionResult> results;
+            switch (resolvedProvider.Name)
+            {
+                case FileSystemProvider.ProviderName:
+                    results = GetFileSystemProviderResults(
+                        context,
+                        resolvedProvider,
+                        resolvedPaths,
+                        filter,
+                        extension,
+                        containerOnly,
+                        useRelativePath,
+                        useLiteralPath,
+                        inputUsedHomeChar,
+                        providerPrefix,
+                        stringType);
+                    break;
+
+                default:
+                    results = GetDefaultProviderResults(
+                        context,
+                        resolvedProvider,
+                        resolvedPaths,
+                        filter,
+                        containerOnly,
+                        useRelativePath,
+                        useLiteralPath,
+                        inputUsedHomeChar,
+                        providerPrefix,
+                        stringType);
+                    break;
+            }
+
+            return results.OrderBy(x => x.ToolTip);
+        }
+
+        /// <summary>
+        /// Helper method for generating path completion results for the file system provider.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="provider"></param>
+        /// <param name="resolvedPaths"></param>
+        /// <param name="filterText"></param>
+        /// <param name="includedExtensions"></param>
+        /// <param name="containersOnly"></param>
+        /// <param name="relativePaths"></param>
+        /// <param name="literalPaths"></param>
+        /// <param name="inputUsedHome"></param>
+        /// <param name="providerPrefix"></param>
+        /// <param name="stringType"></param>
+        /// <returns></returns>
+        private static List<CompletionResult> GetFileSystemProviderResults(
+            CompletionContext context,
+            ProviderInfo provider,
+            Collection<PSObject> resolvedPaths,
+            string filterText,
+            HashSet<string> includedExtensions,
+            bool containersOnly,
+            bool relativePaths,
+            bool literalPaths,
+            bool inputUsedHome,
+            string providerPrefix,
+            StringConstantType stringType)
+        {
+#if DEBUG
+            Diagnostics.Assert(provider.Name.Equals(FileSystemProvider.ProviderName), "Provider should be filesystem provider.");
+#endif
+            var enumerationOptions = _enumerationOptions;
+            var results = new List<CompletionResult>();
+            string homePath = inputUsedHome && !string.IsNullOrEmpty(provider.Home) ? provider.Home : null;
+
+            WildcardPattern wildcardFilter;
+            if (WildcardPattern.ContainsRangeWildcard(filterText))
+            {
+                wildcardFilter = WildcardPattern.Get(filterText, WildcardOptions.IgnoreCase);
+                filterText = "*";
+            }
+            else
+            {
+                wildcardFilter = null;
+            }
+
+            foreach (var item in resolvedPaths)
+            {
+                var pathInfo = (PathInfo)item.BaseObject;
+                var dirInfo = new DirectoryInfo(pathInfo.ProviderPath);
+
+                bool baseQuotesNeeded = false;
+                string basePath;
+                if (!relativePaths)
+                {
+                    basePath = dirInfo.FullName.EndsWith(provider.ItemSeparator)
+                        ? providerPrefix + dirInfo.FullName
+                        : providerPrefix + dirInfo.FullName + provider.ItemSeparator;
+                    basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
+                }
+                else
+                {
+                    basePath = null;
+                }
+                IEnumerable <FileSystemInfo> fileSystemObjects = containersOnly
+                    ? dirInfo.EnumerateDirectories(filterText, enumerationOptions)
+                    : dirInfo.EnumerateFileSystemInfos(filterText, enumerationOptions);
+
+                foreach (var entry in fileSystemObjects)
+                {
+                    bool isContainer = entry.Attributes.HasFlag(FileAttributes.Directory);
+                    if (!isContainer && includedExtensions is not null && !includedExtensions.Contains(entry.Extension))
                     {
-                        object baseObj = PSObject.Base(psobj);
-                        string path = null, providerPath = null;
-
-                        // Get the path, the PSObject could be:
-                        // 1. a PathInfo object -- results of Resolve-Path
-                        // 2. a FileSystemInfo Object -- results of Get-ChildItem
-                        // 3. a string -- the path results return by the direct .NET API invocation
-                        var baseObjAsPathInfo = baseObj as PathInfo;
-                        if (baseObjAsPathInfo != null)
-                        {
-                            path = baseObjAsPathInfo.Path;
-                            providerPath = baseObjAsPathInfo.ProviderPath;
-                        }
-                        else if (baseObj is FileSystemInfo)
-                        {
-                            // The target provider is the FileSystem
-                            dynamic dirResult = psobj;
-                            providerPath = dirResult.FullName;
-                            path = wordContainsProviderId ? dirResult.PSPath : providerPath;
-                        }
-                        else
-                        {
-                            var baseObjAsString = baseObj as string;
-                            if (baseObjAsString != null)
-                            {
-                                // The target provider is the FileSystem
-                                providerPath = baseObjAsString;
-                                path = wordContainsProviderId
-                                    ? FileSystemProvider.ProviderName + "::" + baseObjAsString
-                                    : providerPath;
-                            }
-                        }
-
-                        if (path == null) continue;
-                        if (isFileSystem && providerPath == null) continue;
-
-                        string completionText;
-                        if (relativePaths)
-                        {
-                            try
-                            {
-                                var sessionStateInternal = executionContext.EngineSessionState;
-                                completionText = sessionStateInternal.NormalizeRelativePath(path, sessionStateInternal.CurrentLocation.ProviderPath);
-                                string parentDirectory = ".." + StringLiterals.DefaultPathSeparator;
-                                if (!completionText.StartsWith(parentDirectory, StringComparison.Ordinal))
-                                    completionText = Path.Combine(".", completionText);
-                            }
-                            catch (Exception)
-                            {
-                                // The object at the specified path is not accessible, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
-                                // We ignore those files
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            completionText = path;
-                        }
-
-                        if (ProviderSpecified(completionText) && !wordContainsProviderId)
-                        {
-                            // Remove the provider id from the path: cd \\scratch2\scratch\dongbw
-                            var index = completionText.IndexOf(':');
-                            completionText = completionText.Substring(index + 2);
-                        }
-
-                        if (CompletionRequiresQuotes(completionText, !useLiteralPath))
-                        {
-                            var quoteInUse = quote == string.Empty ? "'" : quote;
-                            if (quoteInUse == "'")
-                            {
-                                completionText = completionText.Replace("'", "''");
-                            }
-                            else
-                            {
-                                // When double quote is in use, we have to escape the backtip and '$' even when using literal path
-                                //   Get-Content -LiteralPath ".\a``g.txt"
-                                completionText = completionText.Replace("`", "``");
-                                completionText = completionText.Replace("$", "`$");
-                            }
-
-                            if (!useLiteralPath)
-                            {
-                                if (quoteInUse == "'")
-                                {
-                                    completionText = completionText.Replace("[", "`[");
-                                    completionText = completionText.Replace("]", "`]");
-                                }
-                                else
-                                {
-                                    completionText = completionText.Replace("[", "``[");
-                                    completionText = completionText.Replace("]", "``]");
-                                }
-                            }
-
-                            completionText = quoteInUse + completionText + quoteInUse;
-                        }
-                        else if (quote != string.Empty)
-                        {
-                            completionText = quote + completionText + quote;
-                        }
-
-                        if (isFileSystem)
-                        {
-                            // Use .NET APIs directly to reduce the time overhead
-                            var isContainer = Directory.Exists(providerPath);
-                            if (containerOnly && !isContainer)
-                                continue;
-
-                            if (!containerOnly && !isContainer && !CheckFileExtension(providerPath, extension))
-                                continue;
-
-                            string tooltip = providerPath, listItemText = Path.GetFileName(providerPath);
-                            results.Add(new CompletionResult(completionText, listItemText,
-                                                             isContainer ? CompletionResultType.ProviderContainer : CompletionResultType.ProviderItem,
-                                                             tooltip));
-                        }
-                        else
-                        {
-                            powerShellExecutionHelper
-                                .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Item")
-                                .AddParameter("LiteralPath", path);
-                            var items = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
-                            if (items != null && items.Count == 1)
-                            {
-                                dynamic item = items[0];
-                                var isContainer = LanguagePrimitives.ConvertTo<bool>(item.PSIsContainer);
-
-                                if (containerOnly && !isContainer)
-                                    continue;
-
-                                powerShellExecutionHelper
-                                    .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Convert-Path")
-                                    .AddParameter("LiteralPath", item.PSPath);
-                                var tooltips = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
-                                string tooltip = null, listItemText = item.PSChildName;
-                                if (tooltips != null && tooltips.Count == 1)
-                                {
-                                    tooltip = PSObject.Base(tooltips[0]) as string;
-                                }
-
-                                if (string.IsNullOrEmpty(listItemText))
-                                {
-                                    // For provider items that don't have PSChildName values, such as variable::error
-                                    listItemText = item.Name;
-                                }
-
-                                results.Add(new CompletionResult(completionText, listItemText,
-                                                                 isContainer ? CompletionResultType.ProviderContainer : CompletionResultType.ProviderItem,
-                                                                 tooltip ?? path));
-                            }
-                            else
-                            {
-                                // We can get here when get-item fails, perhaps due an acl or whatever.
-                                results.Add(new CompletionResult(completionText));
-                            }
-                        }
+                        continue;
                     }
+
+                    var entryName = entry.Name;
+                    if (wildcardFilter is not null && !wildcardFilter.IsMatch(entryName))
+                    {
+                        continue;
+                    }
+
+                    if (basePath is null)
+                    {
+                        basePath = context.ExecutionContext.EngineSessionState.NormalizeRelativePath(
+                            entry.FullName,
+                            context.ExecutionContext.SessionState.Internal.CurrentLocation.ProviderPath);
+                        if (!basePath.StartsWith($"..{provider.ItemSeparator}", StringComparison.Ordinal))
+                        {
+                            basePath = $".{provider.ItemSeparator}{basePath}";
+                        }
+
+                        basePath = basePath.Remove(basePath.Length - entry.Name.Length);
+                        basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
+                    }
+
+                    var resultType = isContainer
+                        ? CompletionResultType.ProviderContainer
+                        : CompletionResultType.ProviderItem;
+                    
+                    bool leafQuotesNeeded;
+                    var completionText = NewPathCompletionText(
+                        basePath,
+                        EscapePath(entryName, stringType, literalPaths, out leafQuotesNeeded),
+                        stringType,
+                        containsNestedExpressions: false,
+                        forceQuotes: baseQuotesNeeded || leafQuotesNeeded,
+                        addAmpersand: false);
+                    results.Add(new CompletionResult(completionText, entryName, resultType, entry.FullName));
                 }
             }
 
             return results;
+        }
+
+        /// <summary>
+        /// Helper method for generating path completion results standard providers that don't need any special treatment.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="provider"></param>
+        /// <param name="resolvedPaths"></param>
+        /// <param name="filterText"></param>
+        /// <param name="containersOnly"></param>
+        /// <param name="relativePaths"></param>
+        /// <param name="literalPaths"></param>
+        /// <param name="inputUsedHome"></param>
+        /// <param name="providerPrefix"></param>
+        /// <param name="stringType"></param>
+        /// <returns></returns>
+        private static List<CompletionResult> GetDefaultProviderResults(
+            CompletionContext context,
+            ProviderInfo provider,
+            Collection<PSObject> resolvedPaths,
+            string filterText,
+            bool containersOnly,
+            bool relativePaths,
+            bool literalPaths,
+            bool inputUsedHome,
+            string providerPrefix,
+            StringConstantType stringType)
+        {
+            string homePath = inputUsedHome && !string.IsNullOrEmpty(provider.Home)
+                ? provider.Home
+                : null;
+
+            var pattern = WildcardPattern.Get(filterText, WildcardOptions.IgnoreCase);
+            var results = new List<CompletionResult>();
+
+            foreach (var item in resolvedPaths)
+            {
+                var pathInfo = (PathInfo)item.BaseObject;
+                string baseTooltip = pathInfo.ProviderPath.Equals(string.Empty, StringComparison.Ordinal)
+                    ? pathInfo.Path
+                    : pathInfo.ProviderPath;
+                if (baseTooltip[^1] is not '\\' and not '/' and not ':')
+                {
+                    baseTooltip += provider.ItemSeparator;
+                }
+
+                _ = context.Helper.CurrentPowerShell
+                    .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-ChildItem")
+                    .AddParameter("LiteralPath", pathInfo.Path);
+
+                bool hadErrors;
+                var childItemOutput = context.Helper.ExecuteCurrentPowerShell(out _, out hadErrors);
+
+                var childrenInfoTable = new Dictionary<string, bool>(childItemOutput.Count);
+                var childNameList = new List<string>(childItemOutput.Count);
+
+                if (hadErrors)
+                {
+                    // Get-ChildItem failed to get some items (Access denied or something)
+                    // Save relevant info and try again to get just the names.
+                    foreach (dynamic child in childItemOutput)
+                    {
+                        childrenInfoTable.Add(GetChildNameFromPsObject(child, provider.ItemSeparator), child.PSIsContainer);
+                    }
+
+                    _ = context.Helper.CurrentPowerShell
+                        .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-ChildItem")
+                        .AddParameter("LiteralPath", pathInfo.Path)
+                        .AddParameter("Name");
+                    childItemOutput = context.Helper.ExecuteCurrentPowerShell(out _);
+                    foreach (var child in childItemOutput)
+                    {
+                        var childName = (string)child.BaseObject;
+                        childNameList.Add(childName);
+                    }
+                }
+                else
+                {
+                    foreach (dynamic child in childItemOutput)
+                    {
+                        var childName = GetChildNameFromPsObject(child, provider.ItemSeparator);
+                        childrenInfoTable.Add(childName, child.PSIsContainer);
+                        childNameList.Add(childName);
+                    }
+                }
+
+                if (childNameList.Count == 0)
+                {
+                    return results;
+                }
+
+                string basePath = providerPrefix.Length > 0
+                    ? string.Concat(providerPrefix, pathInfo.Path.AsSpan(providerPrefix.Length))
+                    : pathInfo.Path;
+                if (basePath[^1] is not '\\' and not '/' and not ':')
+                {
+                    basePath += provider.ItemSeparator;
+                }
+
+                if (relativePaths)
+                {
+                    basePath = context.ExecutionContext.EngineSessionState.NormalizeRelativePath(
+                        basePath + childNameList[0], context.ExecutionContext.SessionState.Internal.CurrentLocation.ProviderPath);
+                    if (!basePath.StartsWith($"..{provider.ItemSeparator}", StringComparison.Ordinal))
+                    {
+                        basePath = $".{provider.ItemSeparator}{basePath}";
+                    }
+
+                    basePath = basePath.Remove(basePath.Length - childNameList[0].Length);
+                }
+
+                bool baseQuotesNeeded;
+                basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
+
+                foreach (var childName in childNameList)
+                {
+                    if (!pattern.IsMatch(childName))
+                    {
+                        continue;
+                    }
+
+                    CompletionResultType resultType;
+                    if (childrenInfoTable.TryGetValue(childName, out bool isContainer))
+                    {
+                        if (containersOnly && !isContainer)
+                        {
+                            continue;
+                        }
+
+                        resultType = isContainer
+                            ? CompletionResultType.ProviderContainer
+                            : CompletionResultType.ProviderItem;
+                    }
+                    else
+                    {
+                        resultType = CompletionResultType.Text;
+                    }
+
+                    bool leafQuotesNeeded;
+                    var completionText = NewPathCompletionText(
+                        basePath,
+                        EscapePath(childName, stringType, literalPaths, out leafQuotesNeeded),
+                        stringType,
+                        containsNestedExpressions: false,
+                        forceQuotes: baseQuotesNeeded || leafQuotesNeeded,
+                        addAmpersand: false);
+                    results.Add(new CompletionResult(completionText, childName, resultType, baseTooltip + childName));
+                }
+            }
+
+            return results;
+        }
+
+        private static string GetChildNameFromPsObject(dynamic psObject, char separator)
+        {
+            // The obvious solution would be to use the "PSChildName" property
+            // but some providers don't have it (like the Variable provider)
+            // So we use a substring of "PSPath" instead.
+            string childName = psObject.PSPath ?? string.Empty;
+            int ProviderSeparatorIndex = childName.IndexOf("::", StringComparison.Ordinal);
+            childName = childName.Substring(ProviderSeparatorIndex + 2);
+            int indexOfName = childName.LastIndexOf(separator);
+            if (indexOfName == -1 || indexOfName + 1 == childName.Length)
+            {
+                return childName;
+            }
+
+            return childName.Substring(indexOfName + 1);
+        }
+        
+        /// <summary>
+        /// Takes a path and rebuilds it with the specified variable replacements.
+        /// Also escapes special characters as needed.
+        /// </summary>
+        private static string RebuildPathWithVars(
+            string path,
+            string homePath,
+            StringConstantType stringType,
+            bool literalPath,
+            out bool quotesAreNeeded)
+        {
+            var sb = new StringBuilder(path.Length);
+            int homeIndex = string.IsNullOrEmpty(homePath)
+                ? -1
+                : path.IndexOf(homePath, StringComparison.OrdinalIgnoreCase);
+            quotesAreNeeded = false;
+            bool useSingleQuoteEscapeRules = stringType is StringConstantType.SingleQuoted or StringConstantType.BareWord;
+
+            for (int i = 0; i < path.Length; i++)
+            {
+                if (i == homeIndex)
+                {
+                    _ = sb.Append('~');
+                    i += homePath.Length - 1;
+                    continue;
+                }
+
+                EscapeCharIfNeeded(sb, path, i, stringType, literalPath, useSingleQuoteEscapeRules, ref quotesAreNeeded);
+                _ = sb.Append(path[i]);
+            }
+
+            return sb.ToString();
+        }
+
+        private static string EscapePath(string path, StringConstantType stringType, bool literalPath, out bool quotesAreNeeded)
+        {
+            var sb = new StringBuilder(path.Length);
+            bool useSingleQuoteEscapeRules = stringType is StringConstantType.SingleQuoted or StringConstantType.BareWord;
+            quotesAreNeeded = false;
+
+            for (int i = 0; i < path.Length; i++)
+            {
+                EscapeCharIfNeeded(sb, path, i, stringType, literalPath, useSingleQuoteEscapeRules, ref quotesAreNeeded);
+                _ = sb.Append(path[i]);
+            }
+
+            return sb.ToString();
+        }
+
+        private static void EscapeCharIfNeeded(
+            StringBuilder sb,
+            string path,
+            int index,
+            StringConstantType stringType,
+            bool literalPath,
+            bool useSingleQuoteEscapeRules,
+            ref bool quotesAreNeeded)
+        {
+            switch (path[index])
+            {
+                case '#':
+                case '-':
+                case '@':
+                    if (index == 0 && stringType == StringConstantType.BareWord)
+                    {
+                        // Chars that would start a new token when used as the first char in a bareword argument.
+                        quotesAreNeeded = true;
+                    }
+                    break;
+
+                case ' ':
+                case ',':
+                case ';':
+                case '(':
+                case ')':
+                case '{':
+                case '}':
+                case '|':
+                case '&':
+                    if (stringType == StringConstantType.BareWord)
+                    {
+                        // Chars that would start a new token when used anywhere in a bareword argument.
+                        quotesAreNeeded = true;
+                    }
+                    break;
+
+                case '[':
+                case ']':
+                    if (!literalPath)
+                    {
+                        // Wildcard characters that need to be escaped.
+                        int backtickCount;
+                        if (useSingleQuoteEscapeRules)
+                        {
+                            backtickCount = 1;
+                        }
+                        else
+                        {
+                            backtickCount = sb[^1] == '`' ? 4 : 2;
+                        }
+
+                        _ = sb.Append('`', backtickCount);
+                        quotesAreNeeded = true;
+                    }
+                    break;
+
+                case '`':
+                    // Literal backtick needs to be escaped to not be treated as an escape character
+                    if (useSingleQuoteEscapeRules)
+                    {
+                        if (!literalPath)
+                        {
+                            _ = sb.Append('`');
+                        }
+                    }
+                    else
+                    {
+                        int backtickCount = !literalPath && sb[^1] == '`' ? 3 : 1;
+                        _ = sb.Append('`', backtickCount);
+                    }
+
+                    if (stringType is StringConstantType.BareWord or StringConstantType.DoubleQuoted)
+                    {
+                        quotesAreNeeded = true;
+                    }
+                    break;
+
+                case '$':
+                    // $ needs to be escaped so following chars are not parsed as a variable/subexpression
+                    if (!useSingleQuoteEscapeRules)
+                    {
+                        _ = sb.Append('`');
+                    }
+
+                    if (stringType is StringConstantType.BareWord or StringConstantType.DoubleQuoted)
+                    {
+                        quotesAreNeeded = true;
+                    }
+                    break;
+
+                default:
+                    // Handle all the different quote types
+                    if (useSingleQuoteEscapeRules && path[index].IsSingleQuote())
+                    {
+                        _ = sb.Append('\'');
+                        quotesAreNeeded = true;
+                    }
+                    else if (!useSingleQuoteEscapeRules && path[index].IsDoubleQuote())
+                    {
+                        _ = sb.Append('`');
+                        quotesAreNeeded = true;
+                    }
+                    break;
+            }
+        }
+
+        private static string NewPathCompletionText(string parent, string leaf, StringConstantType stringType, bool containsNestedExpressions, bool forceQuotes, bool addAmpersand)
+        {
+            string result;
+            if (stringType == StringConstantType.SingleQuoted)
+            {
+                result = addAmpersand ? $"& '{parent}{leaf}'" : $"'{parent}{leaf}'";
+            }
+            else if (stringType == StringConstantType.DoubleQuoted)
+            {
+                result = addAmpersand ? $"& \"{parent}{leaf}\"" : $"\"{parent}{leaf}\"";
+            }
+            else
+            {
+                if (forceQuotes)
+                {
+                    if (containsNestedExpressions)
+                    {
+                        result = addAmpersand ? $"& \"{parent}{leaf}\"" : $"\"{parent}{leaf}\"";
+                    }
+                    else
+                    {
+                        result = addAmpersand ? $"& '{parent}{leaf}'" : $"'{parent}{leaf}'";
+                    }
+                }
+                else
+                {
+                    result = string.Concat(parent, leaf);
+                }
+            }
+
+            return result;
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

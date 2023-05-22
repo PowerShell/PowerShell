@@ -1176,6 +1176,51 @@ class InheritedClassTest : System.Attribute
             $expectedPath = Join-Path $PSScriptRoot -ChildPath BugFix.Tests.ps1
             $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
         }
+
+        It "Should keep '~' in completiontext when it's used to refer to home in input" {
+            $res = TabExpansion2 -inputScript "~$separator"
+            $res.CompletionMatches[0].CompletionText | Should -BeLike "~$separator*"
+        }
+
+        It "Should use '~' as relative filter text when not followed by separator" {
+            $TempDirName = "~TempDir"
+            $TempDirPath = Join-Path -Path $TestDrive -ChildPath "~TempDir"
+            $TempDir = New-Item -Path $TempDirPath -ItemType Directory -Force
+            Push-Location -Path $TestDrive
+            $res = TabExpansion2 -inputScript ~
+            $res.CompletionMatches[0].CompletionText | Should -Be ".${separator}${TempDirName}"
+        }
+
+        It 'Escapes backtick properly for path: <LiteralPath>' -TestCases @(
+            @{LiteralPath = 'BacktickTest[';   BacktickSingle = 1; BacktickDouble = 2;  LiteralBacktickSingle = 0; LiteralBacktickDouble = 0}
+            @{LiteralPath = 'BacktickTest`[';  BacktickSingle = 3; BacktickDouble = 6;  LiteralBacktickSingle = 1; LiteralBacktickDouble = 2}
+            @{LiteralPath = 'BacktickTest``['; BacktickSingle = 5; BacktickDouble = 10; LiteralBacktickSingle = 2; LiteralBacktickDouble = 4}
+            @{LiteralPath = 'BacktickTest$';   BacktickSingle = 0; BacktickDouble = 1;  LiteralBacktickSingle = 0; LiteralBacktickDouble = 1}
+            @{LiteralPath = 'BacktickTest`$';  BacktickSingle = 2; BacktickDouble = 3;  LiteralBacktickSingle = 1; LiteralBacktickDouble = 3}
+            @{LiteralPath = 'BacktickTest``$'; BacktickSingle = 4; BacktickDouble = 7;  LiteralBacktickSingle = 2; LiteralBacktickDouble = 5}
+        ) {
+            param($LiteralPath, $BacktickSingle, $BacktickDouble, $LiteralBacktickSingle, $LiteralBacktickDouble)
+            $NewPath = Join-Path -Path $TestDrive -ChildPath $LiteralPath
+            $null = New-Item -Path $NewPath -Force
+            Push-Location $TestDrive
+            
+            $InputText = "Get-ChildItem -Path {0}.${separator}BacktickTest"
+            $InputTextLiteral = "Get-ChildItem -LiteralPath {0}.${separator}BacktickTest"
+
+            $Text = (TabExpansion2 -inputScript ($InputText -f "'")).CompletionMatches[0].CompletionText
+            $Text.Length - $Text.Replace('`','').Length | Should -Be $BacktickSingle
+
+            $Text = (TabExpansion2 -inputScript ($InputText -f '"')).CompletionMatches[0].CompletionText
+            $Text.Length - $Text.Replace('`','').Length | Should -Be $BacktickDouble
+
+            $Text = (TabExpansion2 -inputScript ($InputTextLiteral -f "'")).CompletionMatches[0].CompletionText
+            $Text.Length - $Text.Replace('`','').Length | Should -Be $LiteralBacktickSingle
+
+            $Text = (TabExpansion2 -inputScript ($InputTextLiteral -f '"')).CompletionMatches[0].CompletionText
+            $Text.Length - $Text.Replace('`','').Length | Should -Be $LiteralBacktickDouble
+
+            Remove-Item -LiteralPath $LiteralPath
+        }
     }
 
     Context "Cmdlet name completion" {
@@ -1350,7 +1395,7 @@ class InheritedClassTest : System.Attribute
 
         It "Tab completion for registry" -Skip:(!$IsWindows) {
             $beforeTab = 'registry::HKEY_l'
-            $afterTab = 'registry::HKEY_LOCAL_MACHINE'
+            $afterTab = 'Registry::HKEY_LOCAL_MACHINE'
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
@@ -1358,7 +1403,7 @@ class InheritedClassTest : System.Attribute
 
         It "Tab completion for wsman provider" -Skip:(!$IsWindows) {
             $beforeTab = 'wsman::localh'
-            $afterTab = 'wsman::localhost'
+            $afterTab = 'WSMan::localhost'
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
@@ -1371,7 +1416,7 @@ class InheritedClassTest : System.Attribute
                 New-Item -ItemType Directory -Path "$tempFolder/helloworld" > $null
                 $tempFolder | Should -Exist
                 $beforeTab = 'filesystem::{0}hello' -f $tempFolder
-                $afterTab = 'filesystem::{0}helloworld' -f $tempFolder
+                $afterTab = 'FileSystem::{0}helloworld' -f $tempFolder
                 $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
                 $res.CompletionMatches.Count | Should -BeGreaterThan 0
                 $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
