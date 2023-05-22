@@ -1311,6 +1311,28 @@ namespace System.Management.Automation
 
             return resultType;
         }
+
+        /// <summary>
+        /// Returns only the elements that passed the attribute's validation.
+        /// </summary>
+        /// <param name="elementsToValidate">The objects to validate.</param>
+        internal IEnumerable GetValidatedElements(IEnumerable elementsToValidate)
+        {
+            foreach (var el in elementsToValidate)
+            {
+                try
+                {
+                    ValidateElement(el);
+                }
+                catch (ValidationMetadataException)
+                {
+                    // Element was not in range - drop
+                    continue;
+                }
+
+                yield return el;
+            }
+        }
     }
 
     /// <summary>

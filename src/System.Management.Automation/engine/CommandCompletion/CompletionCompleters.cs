@@ -1796,9 +1796,16 @@ namespace System.Management.Automation
             {
                 RemoveLastNullCompletionResult(result);
 
-                string enumString = LanguagePrimitives.EnumSingleTypeConverter.EnumValues(parameterType);
-                string separator = CultureInfo.CurrentUICulture.TextInfo.ListSeparator;
-                string[] enumArray = enumString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                IEnumerable enumValues = LanguagePrimitives.EnumSingleTypeConverter.GetEnumValues(parameterType);
+
+                // Exclude values not accepted by ValidateRange-attributes
+                foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
+                {
+                    if (att is ValidateRangeAttribute rangeAtt)
+                    {
+                        enumValues = rangeAtt.GetValidatedElements(enumValues);
+                    }
+                }
 
                 string wordToComplete = context.WordToComplete ?? string.Empty;
                 string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
@@ -1806,18 +1813,19 @@ namespace System.Management.Automation
                 var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
                 var enumList = new List<string>();
 
-                foreach (string value in enumArray)
+                foreach (Enum value in enumValues)
                 {
-                    if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
+                    string name = value.ToString();
+                    if (wordToComplete.Equals(name, StringComparison.OrdinalIgnoreCase))
                     {
-                        string completionText = quote == string.Empty ? value : quote + value + quote;
-                        fullMatch = new CompletionResult(completionText, value, CompletionResultType.ParameterValue, value);
+                        string completionText = quote == string.Empty ? name : quote + name + quote;
+                        fullMatch = new CompletionResult(completionText, name, CompletionResultType.ParameterValue, name);
                         continue;
                     }
 
-                    if (pattern.IsMatch(value))
+                    if (pattern.IsMatch(name))
                     {
-                        enumList.Add(value);
+                        enumList.Add(name);
                     }
                 }
 
