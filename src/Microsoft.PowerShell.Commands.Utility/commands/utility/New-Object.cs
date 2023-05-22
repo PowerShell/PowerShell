@@ -325,7 +325,8 @@ namespace Microsoft.PowerShell.Commands
                                 new ErrorRecord(
                                     new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage),
                                     "CannotCreateComTypeConstrainedLanguage",
-                                    ErrorCategory.PermissionDenied, null));
+                                    ErrorCategory.PermissionDenied,
+                                    targetObject: null));
                             return;
                         }
 
