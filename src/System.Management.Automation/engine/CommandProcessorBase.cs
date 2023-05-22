@@ -230,11 +230,10 @@ namespace System.Management.Automation
                     if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                     {
                         ErrorRecord errorRecord = new ErrorRecord(
-                        new NotSupportedException(
-                            DiscoveryExceptions.DotSourceNotSupported),
+                            new NotSupportedException(DiscoveryExceptions.DotSourceNotSupported),
                             "DotSourceNotSupported",
                             ErrorCategory.InvalidOperation,
-                            null);
+                            targetObject: null);
                         errorRecord.SetInvocationInfo(invocationInfo);
                         throw new CmdletInvocationException(errorRecord);
                     }
