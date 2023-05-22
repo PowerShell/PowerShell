@@ -6176,7 +6176,9 @@ namespace Microsoft.PowerShell.Commands
         {
             var input = module.SessionState?.Internal?.ExportedFunctions;
             if ((input == null) || (input.Count == 0))
-            { return; }
+            {
+                return;
+            }
 
             if (systemLockdownPolicy != SystemEnforcementMode.Audit)
             {
