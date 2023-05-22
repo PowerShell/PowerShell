@@ -5648,9 +5648,9 @@ namespace System.Management.Automation
             if (context != null &&
                 ExecutionContext.HasEverUsedConstrainedLanguage && context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                if ((toType != typeof(object)) &&
-                    (toType != typeof(object[])) &&
-                    (!CoreTypes.Contains(toType)))
+                if (toType != typeof(object) &&
+                    toType != typeof(object[]) &&
+                    !CoreTypes.Contains(toType))
                 {
                     if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                     {
