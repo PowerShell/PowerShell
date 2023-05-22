@@ -2332,7 +2332,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // This is trusted input as long as we're in FullLanguage mode
-                bool isTrustedInput = (Context.LanguageMode == PSLanguageMode.FullLanguage);
+                bool isTrustedInput = Context.LanguageMode == PSLanguageMode.FullLanguage;
                 powershell = _scriptBlock.GetPowerShell(isTrustedInput, _args);
             }
             catch (ScriptBlockToPowerShellNotSupportedException)

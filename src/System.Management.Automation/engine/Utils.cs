@@ -1469,27 +1469,40 @@ namespace System.Management.Automation
         /// <returns>The current ExecutionContext language mode.</returns>
         internal static PSLanguageMode EnforceSystemLockDownLanguageMode(ExecutionContext context)
         {
-            if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
+            switch (SystemPolicy.GetSystemLockdownPolicy())
             {
-                switch (context.LanguageMode)
-                {
-                    case PSLanguageMode.FullLanguage:
-                        context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
-                        break;
+                case SystemEnforcementMode.Enforce:
+                    switch (context.LanguageMode)
+                    {
+                        case PSLanguageMode.FullLanguage:
+                            context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                            break;
 
-                    case PSLanguageMode.RestrictedLanguage:
-                        context.LanguageMode = PSLanguageMode.NoLanguage;
-                        break;
+                        case PSLanguageMode.RestrictedLanguage:
+                            context.LanguageMode = PSLanguageMode.NoLanguage;
+                            break;
 
-                    case PSLanguageMode.ConstrainedLanguage:
-                    case PSLanguageMode.NoLanguage:
-                        break;
+                        case PSLanguageMode.ConstrainedLanguage:
+                        case PSLanguageMode.NoLanguage:
+                            break;
 
-                    default:
-                        Diagnostics.Assert(false, "Unexpected PSLanguageMode");
-                        context.LanguageMode = PSLanguageMode.NoLanguage;
-                        break;
-                }
+                        default:
+                            Diagnostics.Assert(false, "Unexpected PSLanguageMode");
+                            context.LanguageMode = PSLanguageMode.NoLanguage;
+                            break;
+                    }
+                    break;
+
+                case SystemEnforcementMode.Audit:
+                    switch (context.LanguageMode)
+                    {
+                        case PSLanguageMode.FullLanguage:
+                            // Set to ConstrainedLanguage mode.  But no restrictions are applied in audit mode
+                            // and only audit messages will be emitted to logs.
+                            context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                            break;
+                    }
+                    break;
             }
 
             return context.LanguageMode;

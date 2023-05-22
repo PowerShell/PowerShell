@@ -13,6 +13,7 @@ using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -25,7 +26,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 using MethodCacheEntry = System.Management.Automation.DotNetAdapter.MethodCacheEntry;
 #if !UNIX
 using System.DirectoryServices;
-using System.Management;
 #endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -4006,9 +4006,21 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
-                            "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
-                        throw rte;
+                        if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+                        {
+                            SystemPolicy.LogWDACAuditMessage(
+                                context: ecFromTLS,
+                                title: ExtendedTypeSystem.WDACHashTypeLogTitle,
+                                message: StringUtil.Format(ExtendedTypeSystem.WDACHashTypeLogMessage, resultType.FullName),
+                                fqid: "LanguageHashtableConversionNotAllowed",
+                                dropIntoDebugger: true);
+                        }
+                        else
+                        {
+                            RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
+                                "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
+                            throw rte;
+                        }
                     }
 
                     return result;
@@ -5645,20 +5657,29 @@ namespace System.Management.Automation
             PSConverter<object> converter = null;
             ConversionRank rank = ConversionRank.None;
 
-            // If we've ever used ConstrainedLanguage, check if the target type is allowed
+            // If we've ever used ConstrainedLanguage, check if the target type is allowed.
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
-
-                if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
+                if (context?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
-                    if ((toType != typeof(object)) &&
-                        (toType != typeof(object[])) &&
-                        (!CoreTypes.Contains(toType)))
+                    if (toType != typeof(object) &&
+                        toType != typeof(object[]) &&
+                        !CoreTypes.Contains(toType))
                     {
-                        converter = ConvertNotSupportedConversion;
-                        rank = ConversionRank.None;
-                        return CacheConversion(fromType, toType, converter, rank);
+                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                        {
+                            converter = ConvertNotSupportedConversion;
+                            rank = ConversionRank.None;
+                            return CacheConversion(fromType, toType, converter, rank);
+                        }
+
+                        SystemPolicy.LogWDACAuditMessage(
+                            context: context,
+                            title: ExtendedTypeSystem.WDACTypeConversionLogTitle,
+                            message: StringUtil.Format(ExtendedTypeSystem.WDACTypeConversionLogMessage, fromType.FullName, toType.FullName),
+                            fqid: "LanguageTypeConversionNotAllowed",
+                            dropIntoDebugger: true);
                     }
                 }
             }

@@ -791,6 +791,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Returns script position message of current execution stack item.
+        /// This is used for WDAC audit mode logging for script information enhancement.
+        /// </summary>
+        /// <returns>Script position message string.</returns>
+        internal virtual string GetCurrentScriptPosition()
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
         /// Passes the debugger command to the internal script debugger command processor.  This
         /// is used internally to handle debugger commands such as list, help, etc.
         /// </summary>
@@ -2517,6 +2527,29 @@ namespace System.Management.Automation
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns script position message of current execution stack item.
+        /// This is used for WDAC audit mode logging for script information enhancement.
+        /// </summary>
+        /// <returns>Script position message string.</returns>
+        internal override string GetCurrentScriptPosition()
+        {
+            using (IEnumerator<CallStackFrame> enumerator = GetCallStack().GetEnumerator())
+            {
+                if (enumerator.MoveNext())
+                {
+                    var functionContext = enumerator.Current.FunctionContext;
+                    if (functionContext is not null)
+                    {
+                        var invocationInfo = new InvocationInfo(commandInfo: null, functionContext.CurrentPosition, _context);
+                        return $"\n{invocationInfo.PositionMessage}";
+                    }
+                }
+            }
+
+            return null;
         }
 
         /// <summary>

@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -146,9 +147,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Prevent additional commands in ConstrainedLanguage mode
-            if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            if (_setSupportedCommand && Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                if (_setSupportedCommand)
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                 {
                     NotSupportedException nse =
                         PSTraceSource.NewNotSupportedException(
@@ -156,6 +157,13 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(
                         new ErrorRecord(nse, "CannotDefineSupportedCommand", ErrorCategory.PermissionDenied, null));
                 }
+                
+                SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
+                    title: ImportLocalizedDataStrings.WDACLogTitle,
+                    message: ImportLocalizedDataStrings.WDACLogMessage,
+                    fqid: "SupportedCommandsDisabled",
+                    dropIntoDebugger: true);
             }
 
             string script = GetScript(path);

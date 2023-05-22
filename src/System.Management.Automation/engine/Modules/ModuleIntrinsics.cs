@@ -1446,19 +1446,6 @@ namespace System.Management.Automation
             return null;
         }
 
-        /// <summary>
-        /// Removes all functions not belonging to the parent module.
-        /// </summary>
-        /// <param name="module">Parent module.</param>
-        internal static void RemoveNestedModuleFunctions(PSModuleInfo module)
-        {
-            var input = module.SessionState?.Internal?.ExportedFunctions;
-            if ((input == null) || (input.Count == 0))
-            { return; }
-
-            input.RemoveAll(fnInfo => !module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase));
-        }
-
 #nullable enable
         private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
         {
