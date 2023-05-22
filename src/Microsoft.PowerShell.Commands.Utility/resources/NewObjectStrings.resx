@@ -151,7 +151,7 @@
     <value>New-Object Cmdlet Type Creation</value>
   </data>
   <data name="TypeWDACLogMessage" xml:space="preserve">
-    <value>The type {0} will not be created in ConstrainedLanguage mode.</value>
+    <value>The type '{0}' will not be created in ConstrainedLanguage mode.</value>
   </data>
   <data name="ComWDACLogTitle" xml:space="preserve">
     <value>New-Object Cmdlet COM Object Creation</value>
