@@ -6139,7 +6139,7 @@ namespace Microsoft.PowerShell.Commands
             var systemLockdownPolicy = SystemPolicy.GetSystemLockdownPolicy();
             if (!manifestWithExplicitFunctionExport && moduleInfo.SessionState.Internal.FunctionsExportedWithWildcard &&
                 (systemLockdownPolicy == SystemEnforcementMode.Enforce || systemLockdownPolicy == SystemEnforcementMode.Audit) &&
-                (scriptInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage))
+                scriptInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage)
             {
                 var dotSourceOperator = scriptInfo.GetScriptBlockAst().FindAll(ast =>
                 {
