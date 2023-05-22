@@ -1985,10 +1985,6 @@ namespace System.Management.Automation
             var context = LocalPipeline.GetExecutionContextFromTLS();
             if (context?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                // Mark untrusted values for assignments to 'Global:' variables, and 'Script:' variables in
-                // a module scope, if it's necessary.
-                ExecutionContext.MarkObjectAsUntrustedForVariableAssignment(variable, this, context.EngineSessionState);
-
                 if (variable.Options.HasFlag(ScopedItemOptions.AllScope))
                 {
                     if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
@@ -2005,6 +2001,10 @@ namespace System.Management.Automation
                         fqid: "AllScopeVariableNotAllowed",
                         dropIntoDebugger: true);
                 }
+
+                // Mark untrusted values for assignments to 'Global:' variables, and 'Script:' variables in
+                // a module scope, if it's necessary.
+                ExecutionContext.MarkObjectAsUntrustedForVariableAssignment(variable, this, context.EngineSessionState);
             }
         }
 

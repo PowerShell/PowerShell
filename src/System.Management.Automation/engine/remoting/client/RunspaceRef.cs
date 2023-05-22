@@ -88,7 +88,6 @@ namespace System.Management.Automation.Remoting
                 // Extract execution context from local runspace.
                 Runspace localRunspace = _runspaceRef.OldValue;
                 ExecutionContext context = localRunspace.ExecutionContext;
-                var localRunspaceLanguageMode = localRunspace.ExecutionContext.LanguageMode;
 
                 // This is trusted input as long as we're in FullLanguage mode
                 // and if we are not in a loopback configuration mode, in which case we always force remote script commands
