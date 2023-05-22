@@ -195,10 +195,11 @@ namespace Microsoft.PowerShell.Commands
                             if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                             {
                                 ThrowTerminatingError(
-                                new ErrorRecord(
-                                    new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), 
-                                    "CannotCreateTypeConstrainedLanguage",
-                                    ErrorCategory.PermissionDenied, null));
+                                    new ErrorRecord(
+                                        new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), 
+                                        "CannotCreateTypeConstrainedLanguage",
+                                        ErrorCategory.PermissionDenied,
+                                        targetObject: null));
                             }
                             
                             SystemPolicy.LogWDACAuditMessage(
