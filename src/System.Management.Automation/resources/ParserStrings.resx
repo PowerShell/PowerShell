@@ -1353,7 +1353,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>The module scope call operator will be denied in Constrained Language mode.</value>
   </data>
   <data name="WDACParserForEachOperatorLogTitle" xml:space="preserve">
-    <value>ForEach Operator Method Invocation</value>
+    <value>ForEach Keyword Method Invocation</value>
   </data>
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
     <value>The ForEach keyword will fail '{0}' iteration item method invocation when run in Constrained Language mode.</value>
