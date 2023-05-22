@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
                                 new PSSecurityException(Modules.CannotCreateModuleWithScriptBlock),
                                 "Modules_CannotCreateModuleWithFullLanguageScriptBlock",
                                 ErrorCategory.SecurityError,
-                                null));
+                                targetObject: null));
                     }
 
                     SystemPolicy.LogWDACAuditMessage(
