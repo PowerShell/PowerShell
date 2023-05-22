@@ -637,7 +637,7 @@
     <value>Module Implicit Function Export</value>
   </data>
   <data name="WDACImplicitFunctionExportLogMessage" xml:space="preserve">
-    <value>Implicit function export for module '{0}' will be denied because it is trusted but the session is in ConstrainedLanguage mode (not trusted). Always export module functions individually by full name.</value>
+    <value>Implicit function export for module '{0}' will be denied because it is trusted (runs in Full Language mode) but the session is not trusted (runs in Constrained Language mode). It is best practice to always export module functions individually by full name.</value>
   </data>
   <data name="WDACScriptFileImportLogTitle" xml:space="preserve">
     <value>Importing Script File as Module</value>

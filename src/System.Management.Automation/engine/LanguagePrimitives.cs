@@ -5644,27 +5644,29 @@ namespace System.Management.Automation
             ConversionRank rank = ConversionRank.None;
 
             // If we've ever used ConstrainedLanguage, check if the target type is allowed.
-            var context = LocalPipeline.GetExecutionContextFromTLS();
-            if (context != null &&
-                ExecutionContext.HasEverUsedConstrainedLanguage && context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            if (ExecutionContext.HasEverUsedConstrainedLanguage)
             {
-                if (toType != typeof(object) &&
-                    toType != typeof(object[]) &&
-                    !CoreTypes.Contains(toType))
+                var context = LocalPipeline.GetExecutionContextFromTLS();
+                if (context?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
-                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    if (toType != typeof(object) &&
+                        toType != typeof(object[]) &&
+                        !CoreTypes.Contains(toType))
                     {
-                        converter = ConvertNotSupportedConversion;
-                        rank = ConversionRank.None;
-                        return CacheConversion(fromType, toType, converter, rank);
-                    }
+                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                        {
+                            converter = ConvertNotSupportedConversion;
+                            rank = ConversionRank.None;
+                            return CacheConversion(fromType, toType, converter, rank);
+                        }
 
-                    SystemPolicy.LogWDACAuditMessage(
-                        context: context,
-                        title: ExtendedTypeSystem.WDACTypeConversionLogTitle,
-                        message: StringUtil.Format(ExtendedTypeSystem.WDACTypeConversionLogMessage, fromType.FullName, toType.FullName),
-                        fqid: "LanguageTypeConversionNotAllowed",
-                        dropIntoDebugger: true);
+                        SystemPolicy.LogWDACAuditMessage(
+                            context: context,
+                            title: ExtendedTypeSystem.WDACTypeConversionLogTitle,
+                            message: StringUtil.Format(ExtendedTypeSystem.WDACTypeConversionLogMessage, fromType.FullName, toType.FullName),
+                            fqid: "LanguageTypeConversionNotAllowed",
+                            dropIntoDebugger: true);
+                    }
                 }
             }
 

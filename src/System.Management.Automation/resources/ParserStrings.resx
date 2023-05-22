@@ -1356,6 +1356,6 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>ForEach Operator Method Invocation</value>
   </data>
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
-    <value>The ForEach keyword will fail '{0}' method invocation when run in Constrained Language mode.</value>
+    <value>The ForEach keyword will fail '{0}' iteration item method invocation when run in Constrained Language mode.</value>
   </data>
 </root>
