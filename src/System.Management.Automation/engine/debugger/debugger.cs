@@ -2028,7 +2028,9 @@ namespace System.Management.Automation
                 return;
 
             if (!_pendingBreakpoints.TryGetValue(currentScriptFile, out var breakpoints) || breakpoints.IsEmpty)
+            {
                 return;
+            }
 
             // Normally we register a script file when the script is run or the module is imported,
             // but if there weren't any breakpoints when the script was run and the script was dotted,
