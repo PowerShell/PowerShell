@@ -1692,7 +1692,7 @@ namespace System.Management.Automation
         }
 
         private readonly ExecutionContext _context;
-        private ConcurrentDictionary<string, ConcurrentDictionary<int, LineBreakpoint>> _pendingBreakpoints;
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<int, LineBreakpoint>> _pendingBreakpoints;
         private readonly ConcurrentDictionary<string, Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>>> _boundBreakpoints;
         private readonly ConcurrentDictionary<int, CommandBreakpoint> _commandBreakpoints;
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<int, VariableBreakpoint>> _variableBreakpoints;
