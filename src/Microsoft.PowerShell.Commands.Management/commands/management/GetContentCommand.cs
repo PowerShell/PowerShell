@@ -43,23 +43,9 @@ namespace Microsoft.PowerShell.Commands
         /// The number of content items to retrieve from the back of the file.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
+        [ValidateRange(0, int.MaxValue)]
         [Alias("Last")]
-        public int Tail
-        {
-            get
-            {
-                return _backCount;
-            }
-
-            set
-            {
-                _backCount = value;
-                _tailSpecified = true;
-            }
-        }
-
-        private int _backCount = -1;
-        private bool _tailSpecified = false;
+        public int Tail { get; set; } = -1;
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
@@ -94,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // TotalCount and Tail should not be specified at the same time.
             // Throw out terminating error if this is the case.
-            if (TotalCount != -1 && _tailSpecified)
+            if (TotalCount != -1 && Tail != -1)
             {
                 string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "TotalCount", "Tail");
                 ErrorRecord error = new(new InvalidOperationException(errMsg), "TailAndHeadCannotCoexist", ErrorCategory.InvalidOperation, null);
@@ -123,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
                         holder.Reader != null,
                         "All holders should have a reader assigned");
 
-                    if (_tailSpecified && holder.Reader is not FileSystemContentReaderWriter)
+                    if (Tail != -1 && holder.Reader is not FileSystemContentReaderWriter)
                     {
                         string errMsg = SessionStateStrings.GetContent_TailNotSupported;
                         ErrorRecord error = new(new InvalidOperationException(errMsg), "TailNotSupported", ErrorCategory.InvalidOperation, Tail);
