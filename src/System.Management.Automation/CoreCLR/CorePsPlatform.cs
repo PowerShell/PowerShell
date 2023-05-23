@@ -933,6 +933,7 @@ namespace System.Management.Automation
                 internal static partial int WaitPid(int pid, [MarshalAs(UnmanagedType.Bool)] bool nohang);
 
                 // This is the struct `private_tm` from setdate.h in libpsl-native.
+                // Packing is set to 4 to match the unmanaged declaration.
                 // https://github.com/PowerShell/PowerShell-Native/blob/c5575ceb064e60355b9fee33eabae6c6d2708d14/src/libpsl-native/src/setdate.h#L23
                 [StructLayout(LayoutKind.Sequential, Pack = 4)]
                 internal unsafe struct UnixTm
