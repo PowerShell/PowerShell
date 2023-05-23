@@ -422,7 +422,6 @@ namespace Microsoft.PowerShell.Commands
     /// when the user only specifies a string and not
     /// an Exception or ErrorRecord.
     /// </summary>
-    [Serializable]
     public class WriteErrorException : SystemException
     {
         #region ctor
@@ -457,20 +456,6 @@ namespace Microsoft.PowerShell.Commands
         {
         }
         #endregion ctor
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WriteErrorException"/> class for serialization.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected WriteErrorException(SerializationInfo info,
-                                      StreamingContext context)
-            : base(info, context)
-        {
-        }
-        #endregion Serialization
     }
     #endregion WriteErrorException
 }

@@ -12,7 +12,6 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the base class for exceptions thrown by the
     /// certificate provider when the specified item cannot be located.
     /// </summary>
-    [Serializable]
     public class CertificateProviderItemNotFoundException : SystemException
     {
         /// <summary>
@@ -52,22 +51,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the CertificateProviderItemNotFoundException
-        /// class with the specified serialization information, and context.
-        /// </summary>
-        /// <param name="info">
-        /// The serialization information.
-        /// </param>
-        /// <param name="context">
-        /// The streaming context.
-        /// </param>
-        protected CertificateProviderItemNotFoundException(SerializationInfo info,
-                                            StreamingContext context)
-            : base(info, context)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the CertificateProviderItemNotFoundException
         /// class with the specified inner exception.
         /// </summary>
         /// <param name="innerException">
@@ -83,7 +66,6 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the exception thrown by the certificate provider
     /// when the specified X509 certificate cannot be located.
     /// </summary>
-    [Serializable]
     public class CertificateNotFoundException
               : CertificateProviderItemNotFoundException
     {
@@ -126,22 +108,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the CertificateNotFoundException
-        /// class with the specified serialization information, and context.
-        /// </summary>
-        /// <param name="info">
-        /// The serialization information.
-        /// </param>
-        /// <param name="context">
-        /// The streaming context.
-        /// </param>
-        protected CertificateNotFoundException(SerializationInfo info,
-                                            StreamingContext context)
-            : base(info, context)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the CertificateNotFoundException
         /// class with the specified inner exception.
         /// </summary>
         /// <param name="innerException">
@@ -157,7 +123,6 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the exception thrown by the certificate provider
     /// when the specified X509 store cannot be located.
     /// </summary>
-    [Serializable]
     public class CertificateStoreNotFoundException
               : CertificateProviderItemNotFoundException
     {
@@ -200,22 +165,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the CertificateStoreNotFoundException
-        /// class with the specified serialization information, and context.
-        /// </summary>
-        /// <param name="info">
-        /// The serialization information.
-        /// </param>
-        /// <param name="context">
-        /// The streaming context.
-        /// </param>
-        protected CertificateStoreNotFoundException(SerializationInfo info,
-                                            StreamingContext context)
-            : base(info, context)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the CertificateStoreNotFoundException
         /// class with the specified inner exception.
         /// </summary>
         /// <param name="innerException">
@@ -231,7 +180,6 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the exception thrown by the certificate provider
     /// when the specified X509 store location cannot be located.
     /// </summary>
-    [Serializable]
     public class CertificateStoreLocationNotFoundException
               : CertificateProviderItemNotFoundException
     {
@@ -269,22 +217,6 @@ namespace Microsoft.PowerShell.Commands
         public CertificateStoreLocationNotFoundException(string message,
                                             Exception innerException)
             : base(message, innerException)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the CertificateStoreLocationNotFoundException
-        /// class with the specified serialization information, and context.
-        /// </summary>
-        /// <param name="info">
-        /// The serialization information.
-        /// </param>
-        /// <param name="context">
-        /// The streaming context.
-        /// </param>
-        protected CertificateStoreLocationNotFoundException(SerializationInfo info,
-                                            StreamingContext context)
-            : base(info, context)
         {
         }
 
