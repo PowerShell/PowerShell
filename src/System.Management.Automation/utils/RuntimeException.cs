@@ -18,7 +18,6 @@ namespace System.Management.Automation
     /// PowerShell Engine.  It is unusual for code outside the PowerShell Engine
     /// to create an instance of this class.
     /// </remarks>
-    [Serializable]
     public class RuntimeException
             : SystemException, IContainsErrorRecord
     {
@@ -31,41 +30,6 @@ namespace System.Management.Automation
             : base()
         {
         }
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the RuntimeException class
-        /// using data serialized via
-        /// <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected RuntimeException(SerializationInfo info,
-                           StreamingContext context)
-                : base(info, context)
-        {
-            _errorId = info.GetString("ErrorId");
-            _errorCategory = (ErrorCategory)info.GetInt32("ErrorCategory");
-        }
-
-        /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("ErrorId", _errorId);
-            info.AddValue("ErrorCategory", (int)_errorCategory);
-        }
-        #endregion Serialization
 
         /// <summary>
         /// Initializes a new instance of the RuntimeException class.

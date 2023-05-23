@@ -2106,7 +2106,6 @@ namespace System.Management.Automation
     /// Container exception for jobs that can map errors and exceptions
     /// to specific lines in their input.
     /// </summary>
-    [Serializable]
     public class JobFailedException : SystemException
     {
         /// <summary>
@@ -2147,18 +2146,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Class constructor.
-        /// </summary>
-        /// <param name="serializationInfo">Serialization info.</param>
-        /// <param name="streamingContext">Streaming context.</param>
-        protected JobFailedException(SerializationInfo serializationInfo, StreamingContext streamingContext)
-            : base(serializationInfo, streamingContext)
-        {
-            _reason = (Exception)serializationInfo.GetValue("Reason", typeof(Exception));
-            _displayScriptPosition = (ScriptExtent)serializationInfo.GetValue("DisplayScriptPosition", typeof(ScriptExtent));
-        }
-
-        /// <summary>
         /// The actual exception that caused this error.
         /// </summary>
         public Exception Reason { get { return _reason; } }
@@ -2171,21 +2158,6 @@ namespace System.Management.Automation
         public ScriptExtent DisplayScriptPosition { get { return _displayScriptPosition; } }
 
         private readonly ScriptExtent _displayScriptPosition;
-
-        /// <summary>
-        /// Gets the information for serialization.
-        /// </summary>
-        /// <param name="info">The standard SerializationInfo.</param>
-        /// <param name="context">The standard StreaminContext.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            ArgumentNullException.ThrowIfNull(info);
-
-            base.GetObjectData(info, context);
-
-            info.AddValue("Reason", _reason);
-            info.AddValue("DisplayScriptPosition", _displayScriptPosition);
-        }
 
         /// <summary>
         /// Returns the reason for this exception.

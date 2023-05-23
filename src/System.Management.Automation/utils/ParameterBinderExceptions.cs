@@ -10,7 +10,6 @@ namespace System.Management.Automation
     /// <summary>
     /// The exception thrown if the specified value can not be bound parameter of a command.
     /// </summary>
-    [Serializable]
     public class ParameterBindingException : RuntimeException
     {
         #region Constructors
@@ -288,51 +287,6 @@ namespace System.Management.Automation
         }
         #endregion Preferred constructors
 
-        #region serialization
-        /// <summary>
-        /// Constructors a ParameterBindingException using serialized data.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        protected ParameterBindingException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-            _message = info.GetString("ParameterBindingException_Message");
-            _parameterName = info.GetString("ParameterName");
-            _line = info.GetInt64("Line");
-            _offset = info.GetInt64("Offset");
-        }
-
-        /// <summary>
-        /// Serializes the exception.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("ParameterBindingException_Message", this.Message);
-            info.AddValue("ParameterName", _parameterName);
-            info.AddValue("Line", _line);
-            info.AddValue("Offset", _offset);
-        }
-        #endregion serialization
-
         #region Do Not Use
 
         /// <summary>
@@ -514,7 +468,6 @@ namespace System.Management.Automation
         #endregion Private
     }
 
-    [Serializable]
     internal class ParameterBindingValidationException : ParameterBindingException
     {
         #region Preferred constructors
@@ -673,25 +626,6 @@ namespace System.Management.Automation
         }
         #endregion Preferred constructors
 
-        #region serialization
-        /// <summary>
-        /// Constructs a ParameterBindingValidationException from serialized data.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        protected ParameterBindingValidationException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-        }
-
-        #endregion serialization
-
         #region Property
 
         /// <summary>
@@ -709,8 +643,7 @@ namespace System.Management.Automation
 
         #endregion Property
     }
-
-    [Serializable]
+    
     internal class ParameterBindingArgumentTransformationException : ParameterBindingException
     {
         #region Preferred constructors
@@ -862,28 +795,9 @@ namespace System.Management.Automation
                 args)
         {
         }
-        #endregion Preferred constructors
-        #region serialization
-        /// <summary>
-        /// Constructs a ParameterBindingArgumentTransformationException using serialized data.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        protected ParameterBindingArgumentTransformationException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-        }
-
-        #endregion serialization
+        #endregion Preferred constructors        
     }
 
-    [Serializable]
     internal class ParameterBindingParameterDefaultValueException : ParameterBindingException
     {
         #region Preferred constructors
@@ -1037,23 +951,5 @@ namespace System.Management.Automation
         }
         #endregion Preferred constructors
 
-        #region serialization
-        /// <summary>
-        /// Constructs a ParameterBindingParameterDefaultValueException using serialized data.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        protected ParameterBindingParameterDefaultValueException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-        }
-
-        #endregion serialization
     }
 }

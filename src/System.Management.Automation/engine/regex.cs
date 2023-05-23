@@ -469,7 +469,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Thrown when a wildcard pattern is invalid.
     /// </summary>
-    [Serializable]
     public class WildcardPatternException : RuntimeException
     {
         /// <summary>
@@ -517,17 +516,6 @@ namespace System.Management.Automation
         public WildcardPatternException(string message,
                                         Exception innerException)
             : base(message, innerException)
-        {
-        }
-
-        /// <summary>
-        /// Constructor for class WildcardPatternException for serialization.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected WildcardPatternException(SerializationInfo info,
-                                        StreamingContext context)
-            : base(info, context)
         {
         }
     }

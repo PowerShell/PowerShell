@@ -11,7 +11,6 @@ namespace System.Management.Automation
     /// <summary>
     /// This exception is thrown when a command cannot be found.
     /// </summary>
-    [Serializable]
     public class CommandNotFoundException : RuntimeException
     {
         /// <summary>
@@ -69,49 +68,6 @@ namespace System.Management.Automation
         /// An exception that led to this exception.
         /// </param>
         public CommandNotFoundException(string message, Exception innerException) : base(message, innerException) { }
-
-        #region Serialization
-        /// <summary>
-        /// Serialization constructor for class CommandNotFoundException.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        protected CommandNotFoundException(SerializationInfo info,
-                                        StreamingContext context)
-            : base(info, context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            _commandName = info.GetString("CommandName");
-        }
-
-        /// <summary>
-        /// Serializes the CommandNotFoundException.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("CommandName", _commandName);
-        }
-        #endregion Serialization
 
         #region Properties
         /// <summary>
@@ -178,7 +134,6 @@ namespace System.Management.Automation
     /// Defines the exception thrown when a script's requirements to run specified by the #requires
     /// statements are not met.
     /// </summary>
-    [Serializable]
     public class ScriptRequiresException : RuntimeException
     {
         /// <summary>
@@ -354,51 +309,6 @@ namespace System.Management.Automation
         /// The exception that led to this exception.
         /// </param>
         public ScriptRequiresException(string message, Exception innerException) : base(message, innerException) { }
-
-        #region Serialization
-        /// <summary>
-        /// Constructs an PSVersionNotCompatibleException using serialized data.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        protected ScriptRequiresException(SerializationInfo info,
-                                        StreamingContext context)
-            : base(info, context)
-        {
-            _commandName = info.GetString("CommandName");
-            _requiresPSVersion = (Version)info.GetValue("RequiresPSVersion", typeof(Version));
-            _missingPSSnapIns = (ReadOnlyCollection<string>)info.GetValue("MissingPSSnapIns", typeof(ReadOnlyCollection<string>));
-            _requiresShellId = info.GetString("RequiresShellId");
-            _requiresShellPath = info.GetString("RequiresShellPath");
-        }
-        /// <summary>
-        /// Gets the serialized data for the exception.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("CommandName", _commandName);
-            info.AddValue("RequiresPSVersion", _requiresPSVersion, typeof(Version));
-            info.AddValue("MissingPSSnapIns", _missingPSSnapIns, typeof(ReadOnlyCollection<string>));
-            info.AddValue("RequiresShellId", _requiresShellId);
-            info.AddValue("RequiresShellPath", _requiresShellPath);
-        }
-        #endregion Serialization
 
         #region Properties
 

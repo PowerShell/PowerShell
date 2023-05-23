@@ -31,7 +31,6 @@ namespace System.Management.Automation
     /// Defines exception which is thrown when state of the PowerShell is different
     /// from the expected state.
     /// </summary>
-    [Serializable]
     public class InvalidPowerShellStateException : SystemException
     {
         /// <summary>
@@ -79,31 +78,6 @@ namespace System.Management.Automation
         {
             _currState = currentState;
         }
-
-        #region ISerializable Members
-
-        // No need to implement GetObjectData
-        // if all fields are static or [NonSerialized]
-
-        /// <summary>
-        /// Initializes a new instance of the InvalidPowerShellStateException
-        /// class with serialized data.
-        /// </summary>
-        /// <param name="info">
-        /// The <see cref="SerializationInfo"/> that holds the serialized object
-        /// data about the exception being thrown.
-        /// </param>
-        /// <param name="context">
-        /// The <see cref="StreamingContext"/> that contains contextual information
-        /// about the source or destination.
-        /// </param>
-        protected
-        InvalidPowerShellStateException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-        {
-        }
-
-        #endregion
 
         /// <summary>
         /// Gets CurrentState of the powershell.

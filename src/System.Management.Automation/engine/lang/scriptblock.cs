@@ -1333,7 +1333,6 @@ namespace System.Management.Automation
     /// Defines the exception thrown when conversion from ScriptBlock to PowerShell is forbidden
     /// (i.e. when the script block has undeclared variables or more than one statement)
     /// </summary>
-    [Serializable]
     public class ScriptBlockToPowerShellNotSupportedException : RuntimeException
     {
         #region ctor
@@ -1380,18 +1379,6 @@ namespace System.Management.Automation
             params object[] arguments)
             : base(string.Format(CultureInfo.CurrentCulture, message, arguments), innerException)
             => this.SetErrorId(errorId);
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException with serialization parameters.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected ScriptBlockToPowerShellNotSupportedException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-        #endregion Serialization
 
         #endregion ctor
 

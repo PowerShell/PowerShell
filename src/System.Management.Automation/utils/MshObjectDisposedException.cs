@@ -16,7 +16,6 @@ namespace System.Management.Automation
     /// PowerShell Engine.  It is unusual for code outside the PowerShell Engine
     /// to create an instance of this class.
     /// </remarks>
-    [Serializable]
     public class PSObjectDisposedException
             : ObjectDisposedException, IContainsErrorRecord
     {
@@ -57,39 +56,7 @@ namespace System.Management.Automation
             : base(message, innerException)
         {
         }
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the PSObjectDisposedException class
-        /// using data serialized via
-        /// <see cref="System.Runtime.Serialization.ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected PSObjectDisposedException(SerializationInfo info,
-                                              StreamingContext context)
-                : base(info, context)
-        {
-            _errorId = info.GetString("ErrorId");
-        }
-
-        /// <summary>
-        /// Serializer for <see cref="System.Runtime.Serialization.ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("ErrorId", _errorId);
-        }
-        #endregion Serialization
+        
         #endregion ctor
 
         /// <summary>

@@ -16,7 +16,6 @@ namespace System.Management.Automation.Runspaces
     /// Exception thrown when state of the runspace pool is different from
     /// expected state of runspace pool.
     /// </summary>
-    [Serializable]
     public class InvalidRunspacePoolStateException : SystemException
     {
         /// <summary>
@@ -73,31 +72,6 @@ namespace System.Management.Automation.Runspaces
             _expectedState = expectedState;
             _currentState = currentState;
         }
-
-        #region ISerializable Members
-
-        // No need to implement GetObjectData
-        // if all fields are static or [NonSerialized]
-
-        /// <summary>
-        /// Initializes a new instance of the InvalidRunspacePoolStateException
-        /// class with serialized data.
-        /// </summary>
-        /// <param name="info">
-        /// The <see cref="SerializationInfo"/> that holds
-        /// the serialized object data about the exception being thrown.
-        /// </param>
-        /// <param name="context">
-        /// The <see cref="StreamingContext"/> that contains
-        /// contextual information about the source or destination.
-        /// </param>
-        protected
-        InvalidRunspacePoolStateException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-
-        #endregion
 
         /// <summary>
         /// Access CurrentState of the runspace pool.

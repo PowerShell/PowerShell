@@ -10,7 +10,6 @@ namespace System.Management.Automation.Host
     /// Defines the exception thrown when the Host cannot complete an operation
     /// such as checking whether there is any input available.
     /// </summary>
-    [Serializable]
     public
     class HostException : RuntimeException
     {
@@ -91,22 +90,6 @@ namespace System.Management.Automation.Host
             SetErrorCategory(errorCategory);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the HostException class and defines the SerializationInfo
-        /// and the StreamingContext.
-        /// </summary>
-        /// <param name="info">
-        /// The object that holds the serialized object data.
-        /// </param>
-        /// <param name="context">
-        /// The contextual information about the source or destination.
-        /// </param>
-        protected
-        HostException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-
         #endregion
         #region private
         private void SetDefaultErrorRecord()
@@ -121,7 +104,6 @@ namespace System.Management.Automation.Host
     /// <summary>
     /// Defines the exception thrown when an error occurs from prompting for a command parameter.
     /// </summary>
-    [Serializable]
     public
     class PromptingException : HostException
     {
@@ -200,21 +182,6 @@ namespace System.Management.Automation.Host
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the HostException class and defines the SerializationInfo
-        /// and the StreamingContext.
-        /// </summary>
-        /// <param name="info">
-        /// The object that holds the serialized object data.
-        /// </param>
-        /// <param name="context">
-        /// The contextual information about the source or destination.
-        /// </param>
-        protected
-        PromptingException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
         #endregion
 
         #region private

@@ -19,7 +19,6 @@ namespace System.Management.Automation
     /// <remarks>
     /// InnerException is the error which the cmdlet hit.
     /// </remarks>
-    [Serializable]
     public class CmdletInvocationException : RuntimeException
     {
         #region ctor
@@ -107,43 +106,6 @@ namespace System.Management.Automation
         {
         }
 
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the CmdletInvocationException class
-        /// using data serialized via
-        /// <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected CmdletInvocationException(SerializationInfo info,
-                                            StreamingContext context)
-                    : base(info, context)
-        {
-            bool hasErrorRecord = info.GetBoolean("HasErrorRecord");
-            if (hasErrorRecord)
-                _errorRecord = (ErrorRecord)info.GetValue("ErrorRecord", typeof(ErrorRecord));
-        }
-
-        /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            bool hasErrorRecord = (_errorRecord != null);
-            info.AddValue("HasErrorRecord", hasErrorRecord);
-            if (hasErrorRecord)
-                info.AddValue("ErrorRecord", _errorRecord);
-        }
-        #endregion Serialization
         #endregion ctor
 
         #region Properties
@@ -178,7 +140,6 @@ namespace System.Management.Automation
     /// This is generally reported from the standard provider navigation cmdlets
     /// such as get-childitem.
     /// </summary>
-    [Serializable]
     public class CmdletProviderInvocationException : CmdletInvocationException
     {
         #region ctor
@@ -207,21 +168,6 @@ namespace System.Management.Automation
         public CmdletProviderInvocationException()
             : base()
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the CmdletProviderInvocationException class
-        /// using data serialized via
-        /// <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected CmdletProviderInvocationException(SerializationInfo info,
-                                                    StreamingContext context)
-            : base(info, context)
-        {
-            _providerInvocationException = InnerException as ProviderInvocationException;
         }
 
         /// <summary>
@@ -306,7 +252,6 @@ namespace System.Management.Automation
     /// handle PipelineStoppedException and instead allow it to propagate to the
     /// PowerShell Engine's call to ProcessRecord, the PowerShell Engine will handle it properly.
     /// </remarks>
-    [Serializable]
     public class PipelineStoppedException : RuntimeException
     {
         #region ctor
@@ -319,22 +264,6 @@ namespace System.Management.Automation
         {
             SetErrorId("PipelineStopped");
             SetErrorCategory(ErrorCategory.OperationStopped);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the PipelineStoppedException class
-        /// using data serialized via
-        /// <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected PipelineStoppedException(SerializationInfo info,
-                                           StreamingContext context)
-                    : base(info, context)
-        {
-            // no properties, nothing more to serialize
-            // no need for a GetObjectData implementation
         }
 
         /// <summary>
@@ -369,7 +298,6 @@ namespace System.Management.Automation
     /// been stopped.
     /// </summary>
     /// <seealso cref="System.Management.Automation.Runspaces.Pipeline.Input"/>
-    [Serializable]
     public class PipelineClosedException : RuntimeException
     {
         #region ctor
@@ -404,22 +332,6 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the PipelineClosedException class
-        /// using data serialized via
-        /// <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected PipelineClosedException(SerializationInfo info,
-                                          StreamingContext context)
-            : base(info, context)
-        {
-        }
-        #endregion Serialization
     }
     #endregion PipelineClosedException
 
@@ -484,58 +396,6 @@ namespace System.Management.Automation
 
             _errorRecord = errorRecord;
         }
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the ActionPreferenceStopException class
-        /// using data serialized via
-        /// <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected ActionPreferenceStopException(SerializationInfo info,
-                                                StreamingContext context)
-                    : base(info, context)
-        {
-            bool hasErrorRecord = info.GetBoolean("HasErrorRecord");
-            if (hasErrorRecord)
-                _errorRecord = (ErrorRecord)info.GetValue("ErrorRecord", typeof(ErrorRecord));
-
-            // fix for BUG: Windows Out Of Band Releases: 906263 and 906264
-            // The interpreter prompt CommandBaseStrings:InquireHalt
-            // should be suppressed when this flag is set.  This will be set
-            // when this prompt has already occurred and Break was chosen,
-            // or for ActionPreferenceStopException in all cases.
-            this.SuppressPromptInInterpreter = true;
-        }
-
-        /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            if (info != null)
-            {
-                bool hasErrorRecord = (_errorRecord != null);
-                info.AddValue("HasErrorRecord", hasErrorRecord);
-                if (hasErrorRecord)
-                {
-                    info.AddValue("ErrorRecord", _errorRecord);
-                }
-            }
-
-            // fix for BUG: Windows Out Of Band Releases: 906263 and 906264
-            // The interpreter prompt CommandBaseStrings:InquireHalt
-            // should be suppressed when this flag is set.  This will be set
-            // when this prompt has already occurred and Break was chosen,
-            // or for ActionPreferenceStopException in all cases.
-            this.SuppressPromptInInterpreter = true;
-        }
-        #endregion Serialization
 
         /// <summary>
         /// Instantiates a new instance of the ActionPreferenceStopException class.
@@ -609,7 +469,6 @@ namespace System.Management.Automation
     /// so that there is not a recursive "containment" relationship
     /// between the PowerShell engine exception and its ErrorRecord.
     /// </remarks>
-    [Serializable]
     public class ParentContainsErrorRecordException : SystemException
     {
         #region Constructors
@@ -664,24 +523,7 @@ namespace System.Management.Automation
             _message = message;
         }
         #endregion Constructors
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the ParentContainsErrorRecordException class
-        /// using data serialized via
-        /// <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Doesn't return.</returns>
-        /// <exception cref="NotImplementedException">Always.</exception>
-        protected ParentContainsErrorRecordException(
-            SerializationInfo info, StreamingContext context)
-                    : base(info, context)
-        {
-            _message = info.GetString("ParentContainsErrorRecordException_Message");
-        }
-        #endregion Serialization
+        
         /// <summary>
         /// Gets the message for the exception.
         /// </summary>
@@ -691,22 +533,6 @@ namespace System.Management.Automation
             {
                 return _message ??= (_wrapperException != null) ? _wrapperException.Message : string.Empty;
             }
-        }
-
-        /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("ParentContainsErrorRecordException_Message", this.Message);
         }
 
         #region Private Data
@@ -728,7 +554,6 @@ namespace System.Management.Automation
     /// <see cref="System.Management.Automation.ErrorRecord.TargetObject"/>
     /// in the ErrorRecord which contains this exception.
     /// </remarks>
-    [Serializable]
     public class RedirectedException : RuntimeException
     {
         #region constructors
@@ -769,19 +594,6 @@ namespace System.Management.Automation
             SetErrorCategory(ErrorCategory.NotSpecified);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the RedirectedException class
-        /// using data serialized via
-        /// <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected RedirectedException(SerializationInfo info,
-                                      StreamingContext context)
-                    : base(info, context)
-        {
-        }
         #endregion constructors
     }
     #endregion RedirectedException
@@ -836,31 +648,6 @@ namespace System.Management.Automation
         }
         #endregion ctor
 
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the ScriptCallDepthException class
-        /// using data serialized via
-        /// <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected ScriptCallDepthException(SerializationInfo info,
-                                           StreamingContext context)
-            : base(info, context)
-        {
-        }
-        /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-        }
-        #endregion Serialization
-
         #region properties
         /// <summary>
         /// See <see cref="System.Management.Automation.IContainsErrorRecord"/>
@@ -904,7 +691,6 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>
     /// </remarks>
-    [Serializable]
     public class PipelineDepthException : SystemException, IContainsErrorRecord
     {
         #region ctor
@@ -939,31 +725,6 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the PipelineDepthException class
-        /// using data serialized via
-        /// <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected PipelineDepthException(SerializationInfo info,
-                                           StreamingContext context)
-            : base(info, context)
-        {
-        }
-        /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-        }
-        #endregion Serialization
 
         #region properties
         /// <summary>
@@ -1016,7 +777,6 @@ namespace System.Management.Automation
     /// Note that HaltCommandException does not define IContainsErrorRecord.
     /// This is because it is not reported to the user.
     /// </remarks>
-    [Serializable]
     public class HaltCommandException : SystemException
     {
         #region ctor
@@ -1051,22 +811,6 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the HaltCommandException class
-        /// using data serialized via
-        /// <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected HaltCommandException(SerializationInfo info,
-                                       StreamingContext context)
-            : base(info, context)
-        {
-        }
-        #endregion Serialization
     }
     #endregion HaltCommandException
 }

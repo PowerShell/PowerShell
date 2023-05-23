@@ -16,7 +16,6 @@ namespace System.Management.Automation
     /// PowerShell Engine.  It is unusual for code outside the PowerShell Engine
     /// to create an instance of this class.
     /// </remarks>
-    [Serializable]
     public class PSArgumentException
             : ArgumentException, IContainsErrorRecord
     {
@@ -59,41 +58,6 @@ namespace System.Management.Automation
         {
             _message = message;
         }
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the PSArgumentException class
-        /// using data serialized via
-        /// <see cref="System.Runtime.Serialization.ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected PSArgumentException(SerializationInfo info,
-                           StreamingContext context)
-                : base(info, context)
-        {
-            _errorId = info.GetString("ErrorId");
-            _message = info.GetString("PSArgumentException_MessageOverride");
-        }
-
-        /// <summary>
-        /// Serializer for <see cref="System.Runtime.Serialization.ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("ErrorId", _errorId);
-            info.AddValue("PSArgumentException_MessageOverride", _message);
-        }
-        #endregion Serialization
 
         /// <summary>
         /// Initializes a new instance of the PSArgumentException class.

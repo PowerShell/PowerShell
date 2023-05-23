@@ -8,7 +8,6 @@ namespace System.Management.Automation
     /// <summary>
     /// This is a wrapper for exception class SecurityException.
     /// </summary>
-    [Serializable]
     public class PSSecurityException : RuntimeException
     {
         #region ctor
@@ -26,27 +25,6 @@ namespace System.Management.Automation
                 null);
             _errorRecord.ErrorDetails = new ErrorDetails(SessionStateStrings.CanNotRun);
             _message = _errorRecord.ErrorDetails.Message;
-        }
-
-        /// <summary>
-        /// Serialization constructor for class PSSecurityException.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        /// <returns>Constructed object.</returns>
-        protected PSSecurityException(SerializationInfo info,
-                           StreamingContext context)
-            : base(info, context)
-        {
-            _errorRecord = new ErrorRecord(
-                new ParentContainsErrorRecordException(this),
-                "UnauthorizedAccess",
-                ErrorCategory.SecurityError,
-                null);
-            _errorRecord.ErrorDetails = new ErrorDetails(SessionStateStrings.CanNotRun);
-            _message = _errorRecord.ErrorDetails.Message;
-            // no fields, nothing more to serialize
-            // no need for a GetObjectData implementation
         }
 
         /// <summary>

@@ -355,17 +355,7 @@ namespace System.Management.Automation.Remoting
         {
             SetDefaultErrorRecord();
         }
-
-        /// <summary>
-        /// This constructor is required by serialization.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        protected PSRemotingDataStructureException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-
+        
         #endregion Constructors
 
         /// <summary>
@@ -381,7 +371,6 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This exception is used by remoting code to indicate an error condition in network operations.
     /// </summary>
-    [Serializable]
     public class PSRemotingTransportException : RuntimeException
     {
         private int _errorCode;
@@ -462,45 +451,7 @@ namespace System.Management.Automation.Remoting
             SetDefaultErrorRecord();
         }
 
-        /// <summary>
-        /// This constructor is required by serialization.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        /// <exception cref="ArgumentNullException">
-        /// 1. info is null.
-        /// </exception>
-        protected PSRemotingTransportException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            _errorCode = info.GetInt32("ErrorCode");
-            _transportMessage = info.GetString("TransportMessage");
-        }
-
         #endregion Constructors
-
-        /// <summary>
-        /// Serializes the exception data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            // If there are simple fields, serialize them with info.AddValue
-            info.AddValue("ErrorCode", _errorCode);
-            info.AddValue("TransportMessage", _transportMessage);
-        }
 
         /// <summary>
         /// Set the default ErrorRecord.
@@ -548,7 +499,6 @@ namespace System.Management.Automation.Remoting
     /// This exception is used by PowerShell's remoting infrastructure to notify a URI redirection
     /// exception.
     /// </summary>
-    [Serializable]
     public class PSRemotingTransportRedirectException : PSRemotingTransportException
     {
         #region Constructor
@@ -605,25 +555,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This constructor is required by serialization.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        /// <exception cref="ArgumentNullException">
-        /// 1. info is null.
-        /// </exception>
-        protected PSRemotingTransportRedirectException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            RedirectLocation = info.GetString("RedirectLocation");
-        }
-
-        /// <summary>
         /// This constructor takes an redirect URI, error id and optional parameters.
         /// </summary>
         /// <param name="redirectLocation">
@@ -642,27 +573,6 @@ namespace System.Management.Automation.Remoting
             : base(errorId, resourceString, args)
         {
             RedirectLocation = redirectLocation;
-        }
-
-        #endregion
-
-        #region Public overrides
-
-        /// <summary>
-        /// Serializes the exception data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            // If there are simple fields, serialize them with info.AddValue
-            info.AddValue("RedirectLocation", RedirectLocation);
         }
 
         #endregion

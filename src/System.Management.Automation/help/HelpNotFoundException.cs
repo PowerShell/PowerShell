@@ -15,7 +15,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The exception that is thrown when there is no help found for a topic.
     /// </summary>
-    [Serializable]
     public class HelpNotFoundException : SystemException, IContainsErrorRecord
     {
         /// <summary>
@@ -111,41 +110,6 @@ namespace Microsoft.PowerShell.Commands
                 return base.Message;
             }
         }
-
-        #region Serialization
-
-        /// <summary>
-        /// Initializes a new instance of the HelpNotFoundException class.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected HelpNotFoundException(SerializationInfo info,
-                                        StreamingContext context)
-            : base(info, context)
-        {
-            _helpTopic = info.GetString("HelpTopic");
-            CreateErrorRecord();
-        }
-
-        /// <summary>
-        /// Populates a <see cref="System.Runtime.Serialization.SerializationInfo"/> with the
-        /// data needed to serialize the HelpNotFoundException object.
-        /// </summary>
-        /// <param name="info">The <see cref="System.Runtime.Serialization.SerializationInfo"/> to populate with data.</param>
-        /// <param name="context">The destination for this serialization.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-
-            info.AddValue("HelpTopic", this._helpTopic);
-        }
-
-        #endregion Serialization
     }
 }
 

@@ -11,7 +11,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown when a syntax error occurs while parsing PowerShell script text.
     /// </summary>
-    [Serializable]
     public class ParseException : RuntimeException
     {
         private const string errorIdString = "Parse";
@@ -25,37 +24,6 @@ namespace System.Management.Automation
         {
             get { return _errors; }
         }
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the ParseException class and defines the serialization information,
-        /// and streaming context.
-        /// </summary>
-        /// <param name="info">The serialization information to use when initializing this object.</param>
-        /// <param name="context">The streaming context to use when initializing this object.</param>
-        /// <returns>Constructed object.</returns>
-        protected ParseException(SerializationInfo info,
-                           StreamingContext context)
-                : base(info, context)
-        {
-            _errors = (ParseError[])info.GetValue("Errors", typeof(ParseError[]));
-        }
-
-        /// <summary>
-        /// Add private data for serialization.
-        /// </summary>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("Errors", _errors);
-        }
-
-        #endregion Serialization
 
         #region ctor
 
@@ -175,7 +143,6 @@ namespace System.Management.Automation
     /// rather than irrecoverably wrong. A host can catch this exception and then prompt for additional
     /// input to complete the parse.
     /// </remarks>
-    [Serializable]
     public class IncompleteParseException
             : ParseException
     {
@@ -184,21 +151,6 @@ namespace System.Management.Automation
         #endregion
 
         #region ctor
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the IncompleteParseException class and defines the serialization information,
-        /// and streaming context.
-        /// </summary>
-        /// <param name="info">The serialization information to use when initializing this object.</param>
-        /// <param name="context">The streaming context to use when initializing this object.</param>
-        /// <returns>Constructed object.</returns>
-        protected IncompleteParseException(SerializationInfo info,
-                           StreamingContext context)
-                : base(info, context)
-        {
-        }
-        #endregion Serialization
 
         /// <summary>
         /// Initializes a new instance of the class IncompleteParseException.

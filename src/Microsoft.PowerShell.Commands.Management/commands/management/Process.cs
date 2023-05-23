@@ -2952,7 +2952,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Non-terminating errors occurring in the process noun commands.
     /// </summary>
-    [Serializable]
     public class ProcessCommandException : SystemException
     {
         #region ctors
@@ -2984,37 +2983,6 @@ namespace Microsoft.PowerShell.Commands
         {
         }
         #endregion ctors
-
-        #region Serialization
-        /// <summary>
-        /// Serialization constructor.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        /// <returns>Constructed object.</returns>
-        protected ProcessCommandException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-            _processName = info.GetString("ProcessName");
-        }
-        /// <summary>
-        /// Serializer.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(
-            SerializationInfo info,
-            StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-
-            ArgumentNullException.ThrowIfNull(info);
-
-            info.AddValue("ProcessName", _processName);
-        }
-        #endregion Serialization
 
         #region Properties
         /// <summary>

@@ -170,44 +170,7 @@ namespace System.Management.Automation
             ProcessId = processId;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with serialized data.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        private NativeCommandExitException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            if (info is null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            Path = info.GetString(nameof(Path));
-            ExitCode = info.GetInt32(nameof(ExitCode));
-            ProcessId = info.GetInt32(nameof(ProcessId));
-        }
-
         #endregion Constructors
-
-        /// <summary>
-        /// Serializes the exception data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info is null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-
-            info.AddValue(nameof(Path), Path);
-            info.AddValue(nameof(ExitCode), ExitCode);
-            info.AddValue(nameof(ProcessId), ProcessId);
-        }
 
         /// <summary>
         /// Gets the path of the native command.
@@ -2345,7 +2308,6 @@ namespace System.Management.Automation
     /// This remote instance of PowerShell can be in a separate process,
     /// appdomain or machine.
     /// </remarks>
-    [Serializable]
     [SuppressMessage("Microsoft.Usage", "CA2240:ImplementISerializableCorrectly")]
     public class RemoteException : RuntimeException
     {
@@ -2407,27 +2369,6 @@ namespace System.Management.Automation
             _serializedRemoteException = serializedRemoteException;
             _serializedRemoteInvocationInfo = serializedRemoteInvocationInfo;
         }
-
-        #region ISerializable Members
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RemoteException"/>
-        ///  class with serialized data.
-        /// </summary>
-        /// <param name="info">
-        /// The <see cref="SerializationInfo"/> that holds the serialized object
-        /// data about the exception being thrown.
-        /// </param>
-        /// <param name="context">
-        /// The <see cref="StreamingContext"/> that contains contextual information
-        /// about the source or destination.
-        /// </param>
-        protected RemoteException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-
-        #endregion
 
         [NonSerialized]
         private readonly PSObject _serializedRemoteException;

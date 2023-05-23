@@ -93,7 +93,6 @@ namespace System.Management.Automation
     /// Defines exception which is thrown when state of the PSJob is different
     /// from the expected state.
     /// </summary>
-    [Serializable]
     public class InvalidJobStateException : SystemException
     {
         /// <summary>
@@ -173,31 +172,6 @@ namespace System.Management.Automation
         {
             _currState = currentState;
         }
-
-        #region ISerializable Members
-
-        // No need to implement GetObjectData
-        // if all fields are static or [NonSerialized]
-
-        /// <summary>
-        /// Initializes a new instance of the InvalidPSJobStateException
-        /// class with serialized data.
-        /// </summary>
-        /// <param name="info">
-        /// The <see cref="SerializationInfo"/> that holds the serialized object
-        /// data about the exception being thrown.
-        /// </param>
-        /// <param name="context">
-        /// The <see cref="StreamingContext"/> that contains contextual information
-        /// about the source or destination.
-        /// </param>
-        protected
-        InvalidJobStateException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-
-        #endregion
 
         /// <summary>
         /// Gets CurrentState of the Job.

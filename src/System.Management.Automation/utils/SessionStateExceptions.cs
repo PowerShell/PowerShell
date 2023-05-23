@@ -12,7 +12,6 @@ namespace System.Management.Automation
     /// callers of the provider APIs to be able to catch a single exception no matter
     /// what any of the various providers may have thrown.
     /// </summary>
-    [Serializable]
     public class ProviderInvocationException : RuntimeException
     {
         #region Constructors
@@ -20,22 +19,6 @@ namespace System.Management.Automation
         /// Constructs a ProviderInvocationException.
         /// </summary>
         public ProviderInvocationException() : base()
-        {
-        }
-
-        /// <summary>
-        /// Constructs a ProviderInvocationException using serialized data.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        protected ProviderInvocationException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
         {
         }
 
@@ -382,7 +365,6 @@ namespace System.Management.Automation
     /// session state objects: variables, aliases, functions, filters,
     /// drives, or providers.
     /// </summary>
-    [Serializable]
     public class SessionStateException : RuntimeException
     {
         #region ctor
@@ -451,37 +433,6 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
-
-        #region Serialization
-        /// <summary>
-        /// Constructs a SessionStateException using serialized data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected SessionStateException(SerializationInfo info,
-                                        StreamingContext context)
-            : base(info, context)
-        {
-            _sessionStateCategory = (SessionStateCategory)info.GetInt32("SessionStateCategory"); // CODEWORK test this
-        }
-
-        /// <summary>
-        /// Serializes the exception data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            // If there are simple fields, serialize them with info.AddValue
-            info.AddValue("SessionStateCategory", (int)_sessionStateCategory);
-        }
-        #endregion Serialization
 
         #region Properties
         /// <summary>
@@ -558,7 +509,6 @@ namespace System.Management.Automation
     /// an object which is declared constant cannot be removed
     /// or made non-constant.
     /// </summary>
-    [Serializable]
     public class SessionStateUnauthorizedAccessException : SessionStateException
     {
         #region ctor
@@ -626,20 +576,6 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
-
-        #region Serialization
-        /// <summary>
-        /// Constructs a SessionStateUnauthorizedAccessException using serialized data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected SessionStateUnauthorizedAccessException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-        }
-        #endregion Serialization
     }
 
     /// <summary>
@@ -720,27 +656,12 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
-
-        #region Serialization
-        /// <summary>
-        /// Constructs a ProviderNotFoundException using serialized data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected ProviderNotFoundException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-        }
-        #endregion Serialization
     }
 
     /// <summary>
     /// ProviderNameAmbiguousException occurs when more than one provider exists
     /// for a given name and the request did not contain the PSSnapin name qualifier.
     /// </summary>
-    [Serializable]
     public class ProviderNameAmbiguousException : ProviderNotFoundException
     {
         #region ctor
@@ -816,20 +737,6 @@ namespace System.Management.Automation
         }
         #endregion ctor
 
-        #region Serialization
-        /// <summary>
-        /// Constructs a ProviderNameAmbiguousException using serialized data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected ProviderNameAmbiguousException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-        }
-        #endregion Serialization
-
         #region public properties
 
         /// <summary>
@@ -853,7 +760,6 @@ namespace System.Management.Automation
     /// DriveNotFoundException occurs when no drive can be found
     /// with the specified name.
     /// </summary>
-    [Serializable]
     public class DriveNotFoundException : SessionStateException
     {
         #region ctor
@@ -915,27 +821,12 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
-
-        #region Serialization
-        /// <summary>
-        /// Constructs a DriveNotFoundException using serialized data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected DriveNotFoundException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-        }
-        #endregion Serialization
     }
 
     /// <summary>
     /// ItemNotFoundException occurs when the path contained no wildcard characters
     /// and an item at that path could not be found.
     /// </summary>
-    [Serializable]
     public class ItemNotFoundException : SessionStateException
     {
         #region ctor
@@ -999,19 +890,5 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
-
-        #region Serialization
-        /// <summary>
-        /// Constructs a ItemNotFoundException using serialized data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected ItemNotFoundException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-        }
-        #endregion Serialization
     }
 }

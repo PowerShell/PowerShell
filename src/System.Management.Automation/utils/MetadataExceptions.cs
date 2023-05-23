@@ -10,21 +10,10 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for all Metadata errors.
     /// </summary>
-    [Serializable]
     public class MetadataException : RuntimeException
     {
         internal const string MetadataMemberInitialization = "MetadataMemberInitialization";
         internal const string BaseName = "Metadata";
-
-        /// <summary>
-        /// Initializes a new instance of MetadataException with serialization parameters.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected MetadataException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            SetErrorCategory(ErrorCategory.MetadataError);
-        }
 
         /// <summary>
         /// Initializes a new instance of MetadataException with the message set
@@ -71,7 +60,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for all Validate attributes.
     /// </summary>
-    [Serializable]
     [SuppressMessage("Microsoft.Usage", "CA2240:ImplementISerializableCorrectly")]
     public class ValidationMetadataException : MetadataException
     {
@@ -103,13 +91,7 @@ namespace System.Management.Automation
         internal const string ValidateSetFailure = "ValidateSetFailure";
         internal const string ValidateVersionFailure = "ValidateVersionFailure";
         internal const string InvalidValueFailure = "InvalidValueFailure";
-
-        /// <summary>
-        /// Initializes a new instance of ValidationMetadataException with serialization parameters.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected ValidationMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        
         /// <summary>
         /// Initializes a new instance of ValidationMetadataException with the message set
         /// to typeof(ValidationMetadataException).FullName.
@@ -167,18 +149,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for all ArgumentTransformation attributes.
     /// </summary>
-    [Serializable]
     public class ArgumentTransformationMetadataException : MetadataException
     {
         internal const string ArgumentTransformationArgumentsShouldBeStrings = "ArgumentTransformationArgumentsShouldBeStrings";
-
-        /// <summary>
-        /// Initializes a new instance of ArgumentTransformationMetadataException with serialization parameters.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected ArgumentTransformationMetadataException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         /// <summary>
         /// Initializes a new instance of ArgumentTransformationMetadataException with the message set
@@ -215,18 +188,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for all parameter binding exceptions related to metadata attributes.
     /// </summary>
-    [Serializable]
     public class ParsingMetadataException : MetadataException
     {
         internal const string ParsingTooManyParameterSets = "ParsingTooManyParameterSets";
-
-        /// <summary>
-        /// Initializes a new instance of ParsingMetadataException with serialization parameters.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected ParsingMetadataException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
 
         /// <summary>
         /// Initializes a new instance of ParsingMetadataException with the message set

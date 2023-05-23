@@ -258,7 +258,6 @@ namespace System.Management.Automation.Internal
     /// to the user when something fails on the remote end, then this
     /// can be turned public</remarks>
     [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic")]
-    [Serializable]
     internal class PSCryptoException : Exception
     {
         #region Private Members
@@ -322,33 +321,7 @@ namespace System.Management.Automation.Internal
             _errorCode = unchecked((uint)-1);
         }
 
-        /// <summary>
-        /// Constructor which has type specific serialization logic.
-        /// </summary>
-        /// <param name="info">Serialization info.</param>
-        /// <param name="context">Context in which this constructor is called.</param>
-        /// <remarks>Currently no custom type-specific serialization logic is
-        /// implemented</remarks>
-        protected PSCryptoException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            _errorCode = unchecked(0xFFFFFFF);
-            Dbg.Assert(false, "type-specific serialization logic not implemented and so this constructor should not be called");
-        }
-
         #endregion Constructors
-
-        #region ISerializable Overrides
-        /// <summary>
-        /// Returns base implementation.
-        /// </summary>
-        /// <param name="info">Serialization info.</param>
-        /// <param name="context">Context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-        }
-        #endregion ISerializable Overrides
     }
 
     /// <summary>

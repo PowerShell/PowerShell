@@ -20,7 +20,6 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// can be scheduled to run through either stand-alone or through the Windows
     /// Task Scheduler.
     /// </summary>
-    [Serializable]
     public sealed class ScheduledJobDefinition : ISerializable, IDisposable
     {
         #region Private Members
@@ -224,74 +223,6 @@ namespace Microsoft.PowerShell.ScheduledJob
             _options.JobDefinition = this;
 
             _credential = credential;
-        }
-
-        #endregion
-
-        #region ISerializable Implementation
-
-        /// <summary>
-        /// Serialization constructor.
-        /// </summary>
-        /// <param name="info">SerializationInfo.</param>
-        /// <param name="context">StreamingContext.</param>
-        private ScheduledJobDefinition(
-            SerializationInfo info,
-            StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException("info");
-            }
-
-            _options = (ScheduledJobOptions)info.GetValue("Options_Member", typeof(ScheduledJobOptions));
-            _globalId = Guid.Parse(info.GetString("GlobalId_Member"));
-            _name = info.GetString("Name_Member");
-            _executionHistoryLength = info.GetInt32("HistoryLength_Member");
-            _enabled = info.GetBoolean("Enabled_Member");
-            _triggers = (Dictionary<Int32, ScheduledJobTrigger>)info.GetValue("Triggers_Member", typeof(Dictionary<Int32, ScheduledJobTrigger>));
-            _currentTriggerId = info.GetInt32("CurrentTriggerId_Member");
-            _definitionFilePath = info.GetString("FilePath_Member");
-            _definitionOutputPath = info.GetString("OutputPath_Member");
-
-            object invocationObject = info.GetValue("InvocationInfo_Member", typeof(object));
-            _invocationInfo = invocationObject as JobInvocationInfo;
-
-            // Set the JobDefinition reference for the ScheduledJobTrigger and
-            // ScheduledJobOptions objects.
-            _options.JobDefinition = this;
-            foreach (ScheduledJobTrigger trigger in _triggers.Values)
-            {
-                trigger.JobDefinition = this;
-            }
-
-            // Instance information.
-            _isDisposed = false;
-        }
-
-        /// <summary>
-        /// Serialization constructor.
-        /// </summary>
-        /// <param name="info">SerializationInfo.</param>
-        /// <param name="context">StreamingContext.</param>
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException("info");
-            }
-
-            info.AddValue("Options_Member", _options);
-            info.AddValue("GlobalId_Member", _globalId.ToString());
-            info.AddValue("Name_Member", _name);
-            info.AddValue("HistoryLength_Member", _executionHistoryLength);
-            info.AddValue("Enabled_Member", _enabled);
-            info.AddValue("Triggers_Member", _triggers);
-            info.AddValue("CurrentTriggerId_Member", _currentTriggerId);
-            info.AddValue("FilePath_Member", _definitionFilePath);
-            info.AddValue("OutputPath_Member", _definitionOutputPath);
-
-            info.AddValue("InvocationInfo_Member", _invocationInfo);
         }
 
         #endregion
@@ -2382,42 +2313,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// ArgumentList parameter.
         /// </summary>
         public const string ArgumentListParameter = "ArgumentList";
-
-        #endregion
-
-        #region ISerializable Implementation
-
-        /// <summary>
-        /// Serialization constructor.
-        /// </summary>
-        /// <param name="info">SerializationInfo.</param>
-        /// <param name="context">StreamingContext.</param>
-        internal ScheduledJobInvocationInfo(
-            SerializationInfo info,
-            StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException("info");
-            }
-
-            DeserializeInvocationInfo(info);
-        }
-
-        /// <summary>
-        /// Serialization implementation.
-        /// </summary>
-        /// <param name="info">SerializationInfo.</param>
-        /// <param name="context">StreamingContext.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException("info");
-            }
-
-            SerializeInvocationInfo(info);
-        }
 
         #endregion
 

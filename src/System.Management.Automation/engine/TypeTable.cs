@@ -1743,7 +1743,6 @@ namespace System.Management.Automation.Runspaces
     /// This exception is used by TypeTable constructor to indicate errors
     /// occurred during construction time.
     /// </summary>
-    [Serializable]
     public class TypeTableLoadException : RuntimeException
     {
         private readonly Collection<string> _errors;
@@ -1800,60 +1799,7 @@ namespace System.Management.Automation.Runspaces
             SetDefaultErrorRecord();
         }
 
-        /// <summary>
-        /// This constructor is required by serialization.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        protected TypeTableLoadException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            int errorCount = info.GetInt32("ErrorCount");
-            if (errorCount > 0)
-            {
-                _errors = new Collection<string>();
-                for (int index = 0; index < errorCount; index++)
-                {
-                    string key = string.Create(CultureInfo.InvariantCulture, $"Error{index}");
-                    _errors.Add(info.GetString(key));
-                }
-            }
-        }
-
         #endregion Constructors
-
-        /// <summary>
-        /// Serializes the exception data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-
-            // If there are simple fields, serialize them with info.AddValue
-            if (_errors != null)
-            {
-                int errorCount = _errors.Count;
-                info.AddValue("ErrorCount", errorCount);
-
-                for (int index = 0; index < errorCount; index++)
-                {
-                    string key = string.Create(CultureInfo.InvariantCulture, $"Error{index}");
-                    info.AddValue(key, _errors[index]);
-                }
-            }
-        }
 
         /// <summary>
         /// Set the default ErrorRecord.

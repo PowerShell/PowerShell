@@ -2523,8 +2523,7 @@ namespace Microsoft.PowerShell.Commands
     #region ServiceCommandException
     /// <summary>
     /// Non-terminating errors occurring in the service noun commands.
-    /// </summary>
-    [Serializable]
+    /// </summary>    
     public class ServiceCommandException : SystemException
     {
         #region ctors
@@ -2558,35 +2557,7 @@ namespace Microsoft.PowerShell.Commands
         {
         }
         #endregion ctors
-
-        #region Serialization
-        /// <summary>
-        /// Serialization constructor.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        /// <returns>Constructed object.</returns>
-        protected ServiceCommandException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            ArgumentNullException.ThrowIfNull(info);
-
-            _serviceName = info.GetString("ServiceName");
-        }
-        /// <summary>
-        /// Serializer.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            ArgumentNullException.ThrowIfNull(info);
-
-            base.GetObjectData(info, context);
-            info.AddValue("ServiceName", _serviceName);
-        }
-        #endregion Serialization
-
+        
         #region Properties
         /// <summary>
         /// Name of the service which could not be found or operated upon.

@@ -8,7 +8,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception that is thrown if a native command fails.
     /// </summary>
-    [Serializable]
     public class ApplicationFailedException : RuntimeException
     {
         #region private
@@ -16,21 +15,6 @@ namespace System.Management.Automation
         #endregion
 
         #region ctor
-
-        #region Serialization
-        /// <summary>
-        /// Initializes a new instance of the ApplicationFailedException class and defines the serialization information,
-        /// and streaming context.
-        /// </summary>
-        /// <param name="info">The serialization information to use when initializing this object.</param>
-        /// <param name="context">The streaming context to use when initializing this object.</param>
-        /// <returns>Constructed object.</returns>
-        protected ApplicationFailedException(SerializationInfo info,
-                           StreamingContext context)
-                : base(info, context)
-        {
-        }
-        #endregion Serialization
 
         /// <summary>
         /// Initializes a new instance of the class ApplicationFailedException.
