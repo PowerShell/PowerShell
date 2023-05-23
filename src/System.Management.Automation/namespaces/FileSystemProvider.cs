@@ -2434,6 +2434,13 @@ namespace Microsoft.PowerShell.Commands
 
                     bool exists = false;
 
+                   // junctions require an absolute path
+                    if (!Path.IsPathRooted(strTargetPath))
+                    {
+                        WriteError(new ErrorRecord(new ArgumentException(FileSystemProviderStrings.JunctionAbsolutePath), "NotAbsolutePath", ErrorCategory.InvalidArgument, strTargetPath));
+                        return;
+                    }
+
                     try
                     {
                         exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
@@ -4908,7 +4915,17 @@ namespace Microsoft.PowerShell.Commands
                 // make sure we return two backslashes so it still results in a UNC path
                 parentPath = "\\\\";
             }
+
+            if (!parentPath.EndsWith(StringLiterals.DefaultPathSeparator)
+                && Utils.PathIsDevicePath(parentPath)
+                && parentPath.Length - parentPath.Replace(StringLiterals.DefaultPathSeparatorString, string.Empty).Length == 3)
+            {
+                // Device paths start with either "\\.\" or "\\?\"
+                // When referring to the root, like: "\\.\CDROM0\" then it needs the trailing separator to be valid.
+                parentPath += StringLiterals.DefaultPathSeparator;
+            }
 #endif
+            s_tracer.WriteLine("GetParentPath returning '{0}'", parentPath);
             return parentPath;
         }
 

@@ -150,4 +150,10 @@
   <data name="AssemblyTypeNotSupported" xml:space="preserve">
     <value>Both the assembly types 'ConsoleApplication' and 'WindowsApplication' are not currently supported.</value>
   </data>
+  <data name="AddTypeLogTitle" xml:space="preserve">
+    <value>Add-Type Cmdlet</value>
+  </data>
+  <data name="AddTypeLogMessage" xml:space="preserve">
+    <value>Add-Type cmdlet will not be allowed in ConstrainedLanguage mode.</value>
+  </data>
 </root>

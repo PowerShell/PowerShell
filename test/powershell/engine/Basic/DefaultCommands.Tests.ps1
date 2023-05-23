@@ -18,7 +18,12 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
         $FullCLR = !$IsCoreCLR
         $CoreWindows = $IsCoreCLR -and $IsWindows
         $CoreUnix = $IsCoreCLR -and !$IsWindows
-        $isPreview = $PSVersionTable.GitCommitId.Contains("preview")
+        # If psversion can be converted to [version], then it is not a preview version.
+        # We can't just use '$psversiontable.psversion -as [version]' because pwsh
+        # will succeed with the conversion and add note properties to the version object.
+        $psVersionAsVersion = $psversiontable.psversion.tostring() -as [version]
+        $isRC = $psversiontable.psversion.tostring() -match "rc"
+        $isPreview = -not ($isRC -or $psVersionAsVersion)
         if ($IsWindows) {
             $configPath = Join-Path -Path $env:USERPROFILE -ChildPath 'Documents' -AdditionalChildPath 'PowerShell'
         }
@@ -613,9 +618,12 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
     }
 
     It "All approved Cmdlets present (no new Cmdlets added, no Cmdlets removed)" {
-        $observedCmdletNames = $currentCmdletList.ForEach({"{0}" -f $_.Name}) | Sort-Object
-        $expectedCmdletNames = $commandHashTableList.ForEach({"{0}" -f $_.Name}) | Sort-Object
-        $observedCmdletNames | Should -Be $expectedCmdletNames
+        $observedCmdletNames = $currentCmdletList.ForEach({"{0}" -f $_.Name})
+        $expectedCmdletNames = $commandHashTableList.ForEach({"{0}" -f $_.Name})
+        $extraCmds = $observedCmdletNames.Where({$expectedCmdletNames -notcontains $_})
+        $missedCmds = $expectedCmdletNames.Where({$observedCmdletNames -notcontains $_})
+        $extraCmds | Should -HaveCount 0 -Because "Extra cmdlets $($extraCmds -join ',')"
+        $missedCmds | Should -HaveCount 0 -Because "Missed cmdlets $($missedCmds -join ',')"
     }
 
     It "'<Name>' Cmdlet should have the correct ConfirmImpact '<ConfirmImpact>'" -TestCases $commandHashtableList {

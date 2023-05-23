@@ -1,6 +1,7 @@
 [
   "PSCommandNotFoundSuggestion",
   "PSCommandWithArgs",
+  "PSConstrainedAuditLogging",
   "PSCustomTableHeaderLabelDecoration",
   "PSFeedbackProvider",
   "PSLoadAssemblyFromNativeCode",

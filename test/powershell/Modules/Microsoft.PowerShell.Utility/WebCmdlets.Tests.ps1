@@ -2157,6 +2157,38 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $jsonResult = $result.output.Content | ConvertFrom-Json
             $jsonResult.SessionId | Should -BeExactly $sessionId
         }
+
+        It "Invoke-WebRequest respects the Retry-After header value in 429 status" {
+
+            $Query = @{
+                statusCode     = 429
+                reposnsephrase = 'Too Many Requests'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+                headers        = '{"Retry-After":"1"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-WebRequest -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
+
+            $verboseFile | Should -FileContentMatch 'Retrying after interval of 1 seconds. Status code for previous attempt: TooManyRequests'
+        }
+
+        It "Invoke-WebRequest ignores the Retry-After header value NOT in 429 status" {
+
+            $Query = @{
+                statusCode     = 409
+                reposnsephrase = 'Conflict'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+                headers        = '{"Retry-After":"1"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-WebRequest -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
+
+            $verboseFile | Should -FileContentMatch 'Retrying after interval of 3 seconds. Status code for previous attempt: Conflict'
+        }
     }
 
     Context "Regex Parsing" {
@@ -4046,6 +4078,38 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $result.output.failureResponsesSent | Should -Be 1
             $result.output.sessionId | Should -BeExactly $sessionId
+        }
+
+        It "Invoke-RestMethod respects the Retry-After header value in 429 status" {
+
+            $Query = @{
+                statusCode     = 429
+                reposnsephrase = 'Too Many Requests'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+                headers        = '{"Retry-After":"1"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-RestMethod -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
+
+            $verboseFile | Should -FileContentMatch 'Retrying after interval of 1 seconds. Status code for previous attempt: TooManyRequests'
+        }
+
+        It "Invoke-RestMethod ignores the Retry-After header value NOT in 429 status" {
+
+            $Query = @{
+                statusCode     = 409
+                reposnsephrase = 'Conflict'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+                headers        = '{"Retry-After":"1"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-RestMethod -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
+
+            $verboseFile | Should -FileContentMatch 'Retrying after interval of 3 seconds. Status code for previous attempt: Conflict'
         }
     }
 }

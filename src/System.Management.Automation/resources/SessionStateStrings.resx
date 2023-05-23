@@ -648,4 +648,10 @@
   <data name="CopyItemRemotelyPathIsNullOrEmpty" xml:space="preserve">
     <value>'{0}' parameter cannot be null or empty.</value>
   </data>
+  <data name="WDACSessionStateVarLogTitle" xml:space="preserve">
+    <value>Session State Variables</value>
+  </data>
+  <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
+    <value>Changing or creating the variable '{0}' scope to AllScope will be prevented in ConstrainedLanguage mode.</value>
+  </data>
 </root>

@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -35,7 +36,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Json.More.Net",
-          "Version": "1.7.0"
+          "Version": "1.8.0"
         }
       },
       "DevelopmentDependency": false
@@ -45,7 +46,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonPointer.Net",
-          "Version": "2.2.1"
+          "Version": "3.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -55,7 +56,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonSchema.Net",
-          "Version": "3.3.2"
+          "Version": "4.1.1"
         }
       },
       "DevelopmentDependency": false
@@ -830,6 +831,5 @@
       },
       "DevelopmentDependency": false
     }
-  ],
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
+  ]
 }

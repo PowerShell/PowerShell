@@ -11,6 +11,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.PSTasks;
+using System.Management.Automation.Security;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -1205,14 +1206,25 @@ namespace Microsoft.PowerShell.Commands
             if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
                 object baseObject = PSObject.Base(inputObject);
+                var objectType = baseObject.GetType();
 
-                if (!CoreTypes.Contains(baseObject.GetType()))
+                if (!CoreTypes.Contains(objectType))
                 {
-                    PSInvalidOperationException exception =
-                        new PSInvalidOperationException(ParserStrings.InvokeMethodConstrainedLanguage);
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        PSInvalidOperationException exception =
+                            new PSInvalidOperationException(ParserStrings.InvokeMethodConstrainedLanguage);
 
-                    WriteError(new ErrorRecord(exception, "MethodInvocationNotSupportedInConstrainedLanguage", ErrorCategory.InvalidOperation, null));
-                    return true;
+                        WriteError(new ErrorRecord(exception, "MethodInvocationNotSupportedInConstrainedLanguage", ErrorCategory.InvalidOperation, null));
+                        return true;
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: Context,
+                        title: InternalCommandStrings.WDACLogTitle,
+                        message: StringUtil.Format(InternalCommandStrings.WDACLogMessage, objectType.FullName),
+                        fqid: "ForEachObjectCmdletMethodInvocationNotAllowed",
+                        dropIntoDebugger: true);
                 }
             }
 

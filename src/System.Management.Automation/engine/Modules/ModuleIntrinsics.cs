@@ -1173,6 +1173,42 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// The available module path scopes.
+        /// </summary>
+        public enum PSModulePathScope
+        {
+            /// <summary>The users module path.</summary>
+            User,
+
+            /// <summary>The Builtin module path. This is where PowerShell is installed (PSHOME).</summary>
+            Builtin,
+
+            /// <summary>The machine module path. This is the shared location for all users of the system.</summary>
+            Machine
+        }
+
+        /// <summary>
+        /// Retrieve the current PSModulePath for the specified scope.
+        /// </summary>
+        /// <param name="scope">The scope of module path to retrieve. This can be User, Builtin, or Machine.</param>
+        /// <returns>The string representing the requested module path type.</returns>
+        public static string GetPSModulePath(PSModulePathScope scope)
+        {
+            if (scope == PSModulePathScope.User)
+            {
+                return GetPersonalModulePath();
+            }
+            else if (scope == PSModulePathScope.Builtin)
+            {
+                return GetPSHomeModulePath();
+            }
+            else
+            {
+                return GetSharedModulePath();
+            }
+        }
+
+        /// <summary>
         /// Checks the various PSModulePath environment string and returns PSModulePath string as appropriate.
         /// </summary>
         public static string GetModulePath(string currentProcessModulePath, string hklmMachineModulePath, string hkcuUserModulePath)
@@ -1444,19 +1480,6 @@ namespace System.Management.Automation
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Removes all functions not belonging to the parent module.
-        /// </summary>
-        /// <param name="module">Parent module.</param>
-        internal static void RemoveNestedModuleFunctions(PSModuleInfo module)
-        {
-            var input = module.SessionState?.Internal?.ExportedFunctions;
-            if ((input == null) || (input.Count == 0))
-            { return; }
-
-            input.RemoveAll(fnInfo => !module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase));
         }
 
 #nullable enable
