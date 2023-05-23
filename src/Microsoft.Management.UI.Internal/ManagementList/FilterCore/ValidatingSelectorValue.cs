@@ -131,11 +131,6 @@ namespace Microsoft.Management.UI.Internal
 
             set
             {
-                if (value != null && !value.GetType().IsSerializable)
-                {
-                    throw new ArgumentException("The DisplayNameConverter must be serializable.", "value");
-                }
-
                 this.displayNameConverter = value;
             }
         }
