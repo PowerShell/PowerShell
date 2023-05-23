@@ -35,22 +35,9 @@ namespace Microsoft.PowerShell.Commands
         /// value is -1 which means read all the content.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
+        [ValidateRange(0, long.MaxValue)]
         [Alias("First", "Head")]
-        public long TotalCount
-        {
-            get
-            {
-                return _totalCount;
-            }
-
-            set
-            {
-                _totalCount = value;
-                _totalCountSpecified = true;
-            }
-        }
-
-        private bool _totalCountSpecified = false;
+        public long TotalCount { get; set; } = -1;
 
         /// <summary>
         /// The number of content items to retrieve from the back of the file.
@@ -98,15 +85,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Parameters
 
-        #region parameter data
-
-        /// <summary>
-        /// The number of content items to retrieve.
-        /// </summary>
-        private long _totalCount = -1;
-
-        #endregion parameter data
-
         #region Command code
 
         /// <summary>
@@ -116,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // TotalCount and Tail should not be specified at the same time.
             // Throw out terminating error if this is the case.
-            if (_totalCountSpecified && _tailSpecified)
+            if (TotalCount != -1 && _tailSpecified)
             {
                 string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "TotalCount", "Tail");
                 ErrorRecord error = new(new InvalidOperationException(errMsg), "TailAndHeadCannotCoexist", ErrorCategory.InvalidOperation, null);
@@ -209,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
                             // I am using TotalCount - countToRead so that I don't
                             // have to worry about overflow
 
-                            if ((TotalCount > 0) && (countToRead == 0 || (TotalCount - countToRead < countRead)))
+                            if (TotalCount > 0 && (countToRead == 0 || TotalCount - countToRead < countRead))
                             {
                                 countToRead = TotalCount - countRead;
                             }
@@ -256,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
                                     WriteContentObject(results, countRead, holder.PathInfo, currentContext);
                                 }
                             }
-                        } while (results != null && results.Count > 0 && ((TotalCount < 0) || countRead < TotalCount));
+                        } while (results != null && results.Count > 0 && (TotalCount < 0 || countRead < TotalCount));
                     }
                 }
             }
