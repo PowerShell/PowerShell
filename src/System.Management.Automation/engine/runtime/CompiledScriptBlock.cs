@@ -2192,7 +2192,7 @@ namespace System.Management.Automation
     }
 
     [Serializable]
-    internal class ScriptBlockSerializationHelper : ISerializable, IObjectReference
+    internal class ScriptBlockSerializationHelper : ISerializable
     {
         private readonly string _scriptText;
 
