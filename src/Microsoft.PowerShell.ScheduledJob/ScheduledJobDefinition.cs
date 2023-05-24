@@ -2385,6 +2385,42 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         #endregion
 
+        #region ISerializable Implementation
+
+        /// <summary>
+        /// Serialization constructor.
+        /// </summary>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
+        internal ScheduledJobInvocationInfo(
+            SerializationInfo info,
+            StreamingContext context)
+        {
+            if (info == null)
+            {
+                throw new PSArgumentNullException("info");
+            }
+
+            DeserializeInvocationInfo(info);
+        }
+
+        /// <summary>
+        /// Serialization implementation.
+        /// </summary>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+            {
+                throw new PSArgumentNullException("info");
+            }
+
+            SerializeInvocationInfo(info);
+        }
+
+        #endregion
+
         #region Private Methods
 
         private void SerializeInvocationInfo(SerializationInfo info)

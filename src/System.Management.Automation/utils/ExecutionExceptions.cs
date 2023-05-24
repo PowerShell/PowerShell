@@ -770,8 +770,8 @@ namespace System.Management.Automation
         protected ScriptCallDepthException(SerializationInfo info,
                                            StreamingContext context)
         {
-            throw new NotSupportedException();            
-        }        
+            throw new NotSupportedException();
+        }
         #endregion Serialization
 
         #region properties

@@ -83,8 +83,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
-        protected FormatTableLoadException(SerializationInfo info, StreamingContext context)            
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
+        protected FormatTableLoadException(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();
         }

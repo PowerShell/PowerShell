@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             throw new NotSupportedException();
         }
-        
+
         #endregion
 
         internal static CimJobException CreateFromCimException(

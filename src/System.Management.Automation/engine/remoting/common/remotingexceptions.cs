@@ -579,7 +579,7 @@ namespace System.Management.Automation.Remoting
         {
         }
 
-         /// <summary>
+        /// <summary>
         /// This constructor is required by serialization.
         /// </summary>
         /// <param name="info"></param>
