@@ -61,7 +61,8 @@ namespace Microsoft.PowerShell.Commands
         /// Negative values mean never timeout.
         /// </summary>
         [Parameter]        
-        public TimeSpan TimeSpan {
+        public TimeSpan TimeSpan
+        {
             get
             {
                 return _timeoutTimespan;
