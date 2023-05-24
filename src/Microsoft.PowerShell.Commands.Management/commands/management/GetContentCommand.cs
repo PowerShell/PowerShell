@@ -173,7 +173,6 @@ namespace Microsoft.PowerShell.Commands
                             // Make sure we only ask for the amount the user wanted
                             // I am using TotalCount - countToRead so that I don't
                             // have to worry about overflow
-
                             if (TotalCount > 0 && (countToRead == 0 || TotalCount - countToRead < countRead))
                             {
                                 countToRead = TotalCount - countRead;
