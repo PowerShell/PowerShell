@@ -4545,9 +4545,8 @@ end {
         /// <summary>
         /// Assigns the default behavior for native argument passing.
         /// If the system is non-Windows, we will return Standard.
-        /// If the PreReleaseLabel is not set, we will return Legacy.
-        /// This is because our preview and daily builds have a PSVersion which
-        /// includes a value for PreReleaseLabel, but our official releases do not.
+        /// If the experimental feature is enabled, we will return Windows.
+        /// Otherwise, we will return Legacy.
         /// </summary>
         private static NativeArgumentPassingStyle GetPassingStyle()
         {
@@ -4557,12 +4556,13 @@ end {
                 return NativeArgumentPassingStyle.Standard;
             }
 
-            if (PSVersionInfo.PSCurrentVersion.PreReleaseLabel is null)
+            // If the experimental feature is enabled return Windows..
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSWindowsNativeCommandArgPassing))
             {
-                return NativeArgumentPassingStyle.Legacy;
+                return NativeArgumentPassingStyle.Windows;
             }
 
-            return NativeArgumentPassingStyle.Windows;
+            return NativeArgumentPassingStyle.Legacy;
         }
 
         internal static readonly SessionStateVariableEntry[] BuiltInVariables;
