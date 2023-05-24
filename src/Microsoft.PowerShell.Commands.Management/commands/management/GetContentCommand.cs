@@ -332,8 +332,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteContentObject(outputList.ToArray(), count, holder.PathInfo, currentContext);
                     }
 
-                    int remainder = tailResultQueue.Count;
-                    if (remainder > 0)
+                    if (tailResultQueue.Count > 0)
                     {
                         // Write out the content as an array of objects
                         WriteContentObject(tailResultQueue.ToArray(), count, holder.PathInfo, currentContext);
