@@ -292,7 +292,10 @@ namespace Microsoft.PowerShell.Commands
                     foreach (object entry in results)
                     {
                         if (tailResultQueue.Count == Tail)
+                        {
                             tailResultQueue.Dequeue();
+                        }
+
                         tailResultQueue.Enqueue(entry);
                     }
                 }
