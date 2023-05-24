@@ -41,6 +41,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The number of content items to retrieve from the back of the file.
+        /// By default this value is -1 which means read all the content.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateRange(0, int.MaxValue)]
