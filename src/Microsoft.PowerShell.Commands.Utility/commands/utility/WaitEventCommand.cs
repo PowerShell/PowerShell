@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                 }
 
-                received = _eventArrived.WaitOne((int)(_timeoutTimespan.TotalMilliseconds / 100));
+                received = _eventArrived.WaitOne((int)(Math.Abs(_timeoutTimespan.TotalMilliseconds) / 100));
 
                 eventManager.ProcessPendingActions();
             }
