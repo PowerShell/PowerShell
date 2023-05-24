@@ -314,7 +314,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Write out the content as single object
                     while (tailResultQueue.Count > 0)
+                    {
                         WriteContentObject(tailResultQueue.Dequeue(), count++, holder.PathInfo, currentContext);
+                    }
                 }
                 else // ReadCount < Queue.Count
                 {
@@ -322,7 +324,10 @@ namespace Microsoft.PowerShell.Commands
                     {
                         var outputList = new List<object>((int)ReadCount);
                         for (int idx = 0; idx < ReadCount; idx++, count++)
+                        {
                             outputList.Add(tailResultQueue.Dequeue());
+                        }
+
                         // Write out the content as an array of objects
                         WriteContentObject(outputList.ToArray(), count, holder.PathInfo, currentContext);
                     }
