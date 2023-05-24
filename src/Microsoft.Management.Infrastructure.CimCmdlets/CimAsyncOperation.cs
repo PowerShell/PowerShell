@@ -344,16 +344,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         protected object GetBaseObject(object value)
         {
-            PSObject psObject = value as PSObject;
-            if (psObject == null)
+            if (value is not PSObject psObject)
             {
                 return value;
             }
             else
             {
                 object baseObject = psObject.BaseObject;
-                var arrayObject = baseObject as object[];
-                if (arrayObject == null)
+                if (baseObject is not object[] arrayObject)
                 {
                     return baseObject;
                 }
@@ -380,8 +378,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns>The object.</returns>
         protected object GetReferenceOrReferenceArrayObject(object value, ref CimType referenceType)
         {
-            PSReference cimReference = value as PSReference;
-            if (cimReference != null)
+            if (value is PSReference cimReference)
             {
                 object baseObject = GetBaseObject(cimReference.Value);
                 if (!(baseObject is CimInstance cimInstance))
@@ -394,8 +391,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
             else
             {
-                object[] cimReferenceArray = value as object[];
-                if (cimReferenceArray == null)
+                if (value is not object[] cimReferenceArray)
                 {
                     return null;
                 }
