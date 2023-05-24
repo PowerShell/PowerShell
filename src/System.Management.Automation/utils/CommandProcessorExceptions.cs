@@ -16,6 +16,22 @@ namespace System.Management.Automation
 
         #region ctor
 
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the ApplicationFailedException class and defines the serialization information,
+        /// and streaming context.
+        /// </summary>
+        /// <param name="info">The serialization information to use when initializing this object.</param>
+        /// <param name="context">The streaming context to use when initializing this object.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ApplicationFailedException(SerializationInfo info,
+                           StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion Serialization
+
         /// <summary>
         /// Initializes a new instance of the class ApplicationFailedException.
         /// </summary>

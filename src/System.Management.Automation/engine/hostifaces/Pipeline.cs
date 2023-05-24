@@ -73,6 +73,24 @@ namespace System.Management.Automation.Runspaces
         // 2005/04/20-JonN No need to implement GetObjectData
         // if all fields are static or [NonSerialized]
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvalidPipelineStateException"/>
+        ///  class with serialized data.
+        /// </summary>
+        /// <param name="info">
+        /// The <see cref="SerializationInfo"/> that holds the serialized object
+        /// data about the exception being thrown.
+        /// </param>
+        /// <param name="context">
+        /// The <see cref="StreamingContext"/> that contains contextual information
+        /// about the source or destination.
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        private InvalidPipelineStateException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
         #endregion
 
         /// <summary>

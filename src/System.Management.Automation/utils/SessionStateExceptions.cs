@@ -11,7 +11,7 @@ namespace System.Management.Automation
     /// An exception that wraps all exceptions that are thrown by providers. This allows
     /// callers of the provider APIs to be able to catch a single exception no matter
     /// what any of the various providers may have thrown.
-    /// </summary>
+    /// </summary>    
     public class ProviderInvocationException : RuntimeException
     {
         #region Constructors
@@ -20,6 +20,23 @@ namespace System.Management.Automation
         /// </summary>
         public ProviderInvocationException() : base()
         {
+        }
+
+        /// <summary>
+        /// Constructs a ProviderInvocationException using serialized data.
+        /// </summary>
+        /// <param name="info">
+        /// serialization information
+        /// </param>
+        /// <param name="context">
+        /// streaming context
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ProviderInvocationException(
+            SerializationInfo info,
+            StreamingContext context)
+        {
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -433,6 +450,17 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
+/// <summary>
+        /// Constructs a SessionStateException using serialized data.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected SessionStateException(SerializationInfo info,
+                                        StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
 
         #region Properties
         /// <summary>
@@ -540,6 +568,19 @@ namespace System.Management.Automation
             : base(itemName, sessionStateCategory,
                     errorIdAndResourceId, resourceStr, ErrorCategory.WriteError)
         {
+        }
+
+        /// <summary>
+        /// Constructs a SessionStateUnauthorizedAccessException using serialized data.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected SessionStateUnauthorizedAccessException(
+            SerializationInfo info,
+            StreamingContext context)
+        {
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -737,6 +778,19 @@ namespace System.Management.Automation
         }
         #endregion ctor
 
+        /// <summary>
+        /// Constructs a ProviderNameAmbiguousException using serialized data.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ProviderNameAmbiguousException(
+            SerializationInfo info,
+            StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
         #region public properties
 
         /// <summary>
@@ -821,6 +875,19 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
+
+        /// <summary>
+        /// Constructs a DriveNotFoundException using serialized data.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected DriveNotFoundException(
+            SerializationInfo info,
+            StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
     }
 
     /// <summary>
@@ -890,5 +957,18 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
+
+        /// <summary>
+        /// Constructs a ItemNotFoundException using serialized data.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ItemNotFoundException(
+            SerializationInfo info,
+            StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
     }
 }

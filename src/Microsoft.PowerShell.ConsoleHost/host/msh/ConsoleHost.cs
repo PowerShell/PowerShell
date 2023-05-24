@@ -3011,6 +3011,15 @@ namespace Microsoft.PowerShell
             {
             }
 
+            [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+            private
+            ConsoleHostStartupException(
+                System.Runtime.Serialization.SerializationInfo info,
+                System.Runtime.Serialization.StreamingContext context)
+            {
+                throw new NotSupportedException();
+            }
+
             internal
             ConsoleHostStartupException(string message, Exception innerException)
                 : base(message, innerException)

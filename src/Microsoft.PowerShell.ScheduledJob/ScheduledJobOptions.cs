@@ -14,6 +14,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// <summary>
     /// This class contains Windows Task Scheduler options.
     /// </summary>
+    [Serializable]
     public sealed class ScheduledJobOptions : ISerializable
     {
         #region Private Members
@@ -282,6 +283,69 @@ namespace Microsoft.PowerShell.ScheduledJob
             _multipleInstancePolicy = copyOptions.MultipleInstancePolicy;
 
             _jobDefAssociation = copyOptions.JobDefinition;
+        }
+
+        #endregion
+
+        #region ISerializable Implementation
+
+        /// <summary>
+        /// Serialization constructor.
+        /// </summary>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
+        private ScheduledJobOptions(
+            SerializationInfo info,
+            StreamingContext context)
+        {
+            if (info == null)
+            {
+                throw new PSArgumentNullException("info");
+            }
+
+            _startIfOnBatteries = info.GetBoolean("StartIfOnBatteries_Value");
+            _stopIfGoingOnBatteries = info.GetBoolean("StopIfGoingOnBatteries_Value");
+            _wakeToRun = info.GetBoolean("WakeToRun_Value");
+            _startIfNotIdle = info.GetBoolean("StartIfNotIdle_Value");
+            _stopIfGoingOffIdle = info.GetBoolean("StopIfGoingOffIdle_Value");
+            _restartOnIdleResume = info.GetBoolean("RestartOnIdleResume_Value");
+            _idleDuration = (TimeSpan)info.GetValue("IdleDuration_Value", typeof(TimeSpan));
+            _idleTimeout = (TimeSpan)info.GetValue("IdleTimeout_Value", typeof(TimeSpan));
+            _showInTaskScheduler = info.GetBoolean("ShowInTaskScheduler_Value");
+            _runElevated = info.GetBoolean("RunElevated_Value");
+            _runWithoutNetwork = info.GetBoolean("RunWithoutNetwork_Value");
+            _donotAllowDemandStart = info.GetBoolean("DoNotAllowDemandStart_Value");
+            _multipleInstancePolicy = (TaskMultipleInstancePolicy)info.GetValue("TaskMultipleInstancePolicy_Value", typeof(TaskMultipleInstancePolicy));
+
+            // Runtime reference and not saved to store.
+            _jobDefAssociation = null;
+        }
+
+        /// <summary>
+        /// GetObjectData for ISerializable implementation.
+        /// </summary>
+        /// <param name="info">SerializationInfo.</param>
+        /// <param name="context">StreamingContext.</param>
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+            {
+                throw new PSArgumentNullException("info");
+            }
+
+            info.AddValue("StartIfOnBatteries_Value", _startIfOnBatteries);
+            info.AddValue("StopIfGoingOnBatteries_Value", _stopIfGoingOnBatteries);
+            info.AddValue("WakeToRun_Value", _wakeToRun);
+            info.AddValue("StartIfNotIdle_Value", _startIfNotIdle);
+            info.AddValue("StopIfGoingOffIdle_Value", _stopIfGoingOffIdle);
+            info.AddValue("RestartOnIdleResume_Value", _restartOnIdleResume);
+            info.AddValue("IdleDuration_Value", _idleDuration);
+            info.AddValue("IdleTimeout_Value", _idleTimeout);
+            info.AddValue("ShowInTaskScheduler_Value", _showInTaskScheduler);
+            info.AddValue("RunElevated_Value", _runElevated);
+            info.AddValue("RunWithoutNetwork_Value", _runWithoutNetwork);
+            info.AddValue("DoNotAllowDemandStart_Value", _donotAllowDemandStart);
+            info.AddValue("TaskMultipleInstancePolicy_Value", _multipleInstancePolicy);
         }
 
         #endregion

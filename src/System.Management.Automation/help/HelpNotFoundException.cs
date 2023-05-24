@@ -110,6 +110,22 @@ namespace Microsoft.PowerShell.Commands
                 return base.Message;
             }
         }
+
+        #region Serialization
+
+        /// <summary>
+        /// Initializes a new instance of the HelpNotFoundException class.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected HelpNotFoundException(SerializationInfo info,
+                                        StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        
+        #endregion Serialization
     }
 }
 

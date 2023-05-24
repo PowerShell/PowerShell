@@ -178,6 +178,19 @@ namespace System.Management.Automation
         {
         }
 
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of MethodInvocationException with serialization parameters.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected MethodInvocationException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion Serialization
+
         #endregion ctor
 
     }
@@ -234,6 +247,19 @@ namespace System.Management.Automation
         {
         }
 
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of GetValueException with serialization parameters.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected GetValueException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion Serialization
+
         #endregion ctor
 
     }
@@ -287,6 +313,19 @@ namespace System.Management.Automation
             : base(errorId, innerException, resourceString, arguments)
         {
         }
+
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of GetValueException with serialization parameters.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PropertyNotFoundException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion Serialization
         #endregion ctor
 
     }
@@ -342,6 +381,20 @@ namespace System.Management.Automation
             : base(errorId, innerException, resourceString, arguments)
         {
         }
+
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of GetValueInvocationException with serialization parameters.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected GetValueInvocationException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion Serialization
+
         #endregion ctor
 
     }
@@ -395,6 +448,19 @@ namespace System.Management.Automation
             : base(errorId, innerException, resourceString, arguments)
         {
         }
+
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of SetValueException with serialization parameters.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected SetValueException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion Serialization
 
         #endregion ctor
 
@@ -450,6 +516,19 @@ namespace System.Management.Automation
         {
         }
 
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of SetValueInvocationException with serialization parameters.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected SetValueInvocationException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion Serialization
+
         #endregion ctor
 
     }
@@ -459,6 +538,17 @@ namespace System.Management.Automation
     /// </summary>
     public class PSInvalidCastException : InvalidCastException, IContainsErrorRecord
     {
+        /// <summary>
+        /// Initializes a new instance of PSInvalidCastException with serialization parameters.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PSInvalidCastException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException with the message set
         /// to typeof(PSInvalidCastException).FullName.

@@ -27,7 +27,13 @@ namespace System.Management.Automation
     /// </summary>
     public abstract class FlowControlException : SystemException
     {
-        internal FlowControlException() { }        
+        internal FlowControlException() { }
+
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        internal FlowControlException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
     }
 
     /// <summary>
@@ -38,6 +44,12 @@ namespace System.Management.Automation
         internal LoopFlowException(string label)
         {
             this.Label = label ?? string.Empty;
+        }
+
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        internal LoopFlowException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
         }
 
         internal LoopFlowException() { }
@@ -85,6 +97,12 @@ namespace System.Management.Automation
             : base(label)
         {
         }
+
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        private BreakException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
     }
 
     /// <summary>
@@ -105,6 +123,12 @@ namespace System.Management.Automation
         internal ContinueException(string label, Exception innerException)
             : base(label)
         {
+        }
+
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        private ContinueException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
         }
     }
 

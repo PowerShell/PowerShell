@@ -59,6 +59,24 @@ namespace System.Management.Automation
             _message = message;
         }
 
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the PSArgumentException class
+        /// using data serialized via
+        /// <see cref="System.Runtime.Serialization.ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PSArgumentException(SerializationInfo info,
+                           StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion Serialization
+
         /// <summary>
         /// Initializes a new instance of the PSArgumentException class.
         /// </summary>

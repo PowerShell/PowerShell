@@ -27,21 +27,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public static FilterRule DeepCopy(this FilterRule rule)
         {
-            ArgumentNullException.ThrowIfNull(rule);
-        
-            MemoryStream ms = new MemoryStream();
-
-            FilterRule copy = null;
-            try
-            {
-                ms.Position = 0;
-            }
-            finally
-            {
-                ms.Close();
-            }
-
-            return copy;
+            throw new NotSupportedException();
         }
     }
 }

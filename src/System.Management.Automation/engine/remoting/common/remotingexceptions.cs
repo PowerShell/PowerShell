@@ -355,7 +355,18 @@ namespace System.Management.Automation.Remoting
         {
             SetDefaultErrorRecord();
         }
-        
+
+        /// <summary>
+        /// This constructor is required by serialization.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PSRemotingDataStructureException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
         #endregion Constructors
 
         /// <summary>
@@ -449,6 +460,20 @@ namespace System.Management.Automation.Remoting
             : base(PSRemotingErrorInvariants.FormatResourceString(resourceString, args), innerException)
         {
             SetDefaultErrorRecord();
+        }
+
+        /// <summary>
+        /// This constructor is required by serialization.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        /// <exception cref="ArgumentNullException">
+        /// 1. info is null.
+        /// </exception>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PSRemotingTransportException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
         }
 
         #endregion Constructors
@@ -552,6 +577,20 @@ namespace System.Management.Automation.Remoting
         internal PSRemotingTransportRedirectException(Exception innerException, string resourceString, params object[] args)
             : base(innerException, resourceString, args)
         {
+        }
+
+         /// <summary>
+        /// This constructor is required by serialization.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        /// <exception cref="ArgumentNullException">
+        /// 1. info is null.
+        /// </exception>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PSRemotingTransportRedirectException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
         }
 
         /// <summary>

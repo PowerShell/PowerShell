@@ -2146,6 +2146,17 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Class constructor.
+        /// </summary>
+        /// <param name="serializationInfo">Serialization info.</param>
+        /// <param name="streamingContext">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected JobFailedException(SerializationInfo serializationInfo, StreamingContext streamingContext)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
         /// The actual exception that caused this error.
         /// </summary>
         public Exception Reason { get { return _reason; } }

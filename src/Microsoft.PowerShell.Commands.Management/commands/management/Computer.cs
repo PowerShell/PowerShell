@@ -85,7 +85,25 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="innerException">
         /// An exception that led to this exception.
         /// </param>
-        public RestartComputerTimeoutException(string message, Exception innerException) : base(message, innerException) { }        
+        public RestartComputerTimeoutException(string message, Exception innerException) : base(message, innerException) { }
+
+        #region Serialization
+        /// <summary>
+        /// Serialization constructor for class RestartComputerTimeoutException.
+        /// </summary>
+        /// <param name="info">
+        /// serialization information
+        /// </param>
+        /// <param name="context">
+        /// streaming context
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        private RestartComputerTimeoutException(SerializationInfo info, StreamingContext context)            
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion Serialization
     }
 
     /// <summary>

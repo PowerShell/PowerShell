@@ -69,6 +69,22 @@ namespace System.Management.Automation
         /// </param>
         public CommandNotFoundException(string message, Exception innerException) : base(message, innerException) { }
 
+        /// <summary>
+        /// Serialization constructor for class CommandNotFoundException.
+        /// </summary>
+        /// <param name="info">
+        /// serialization information
+        /// </param>
+        /// <param name="context">
+        /// streaming context
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected CommandNotFoundException(SerializationInfo info,
+                                        StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
         #region Properties
         /// <summary>
         /// Gets the ErrorRecord information for this exception.
@@ -309,6 +325,25 @@ namespace System.Management.Automation
         /// The exception that led to this exception.
         /// </param>
         public ScriptRequiresException(string message, Exception innerException) : base(message, innerException) { }
+
+        #region Serialization
+        /// <summary>
+        /// Constructs an PSVersionNotCompatibleException using serialized data.
+        /// </summary>
+        /// <param name="info">
+        /// serialization information
+        /// </param>
+        /// <param name="context">
+        /// streaming context
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ScriptRequiresException(SerializationInfo info,
+                                        StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        
+        #endregion Serialization
 
         #region Properties
 

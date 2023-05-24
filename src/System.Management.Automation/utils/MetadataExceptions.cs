@@ -14,7 +14,6 @@ namespace System.Management.Automation
     {
         internal const string MetadataMemberInitialization = "MetadataMemberInitialization";
         internal const string BaseName = "Metadata";
-
         /// <summary>
         /// Initializes a new instance of MetadataException with the message set
         /// to typeof(MetadataException).FullName.
@@ -91,7 +90,18 @@ namespace System.Management.Automation
         internal const string ValidateSetFailure = "ValidateSetFailure";
         internal const string ValidateVersionFailure = "ValidateVersionFailure";
         internal const string InvalidValueFailure = "InvalidValueFailure";
-        
+
+        /// <summary>
+        /// Initializes a new instance of ValidationMetadataException with serialization parameters.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ValidationMetadataException(SerializationInfo info, StreamingContext context) 
+        { 
+            throw new NotSupportedException();
+        }
+
         /// <summary>
         /// Initializes a new instance of ValidationMetadataException with the message set
         /// to typeof(ValidationMetadataException).FullName.
@@ -154,6 +164,17 @@ namespace System.Management.Automation
         internal const string ArgumentTransformationArgumentsShouldBeStrings = "ArgumentTransformationArgumentsShouldBeStrings";
 
         /// <summary>
+        /// Initializes a new instance of ArgumentTransformationMetadataException with serialization parameters.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ArgumentTransformationMetadataException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
         /// Initializes a new instance of ArgumentTransformationMetadataException with the message set
         /// to typeof(ArgumentTransformationMetadataException).FullName.
         /// </summary>
@@ -191,6 +212,17 @@ namespace System.Management.Automation
     public class ParsingMetadataException : MetadataException
     {
         internal const string ParsingTooManyParameterSets = "ParsingTooManyParameterSets";
+
+        /// <summary>
+        /// Initializes a new instance of ParsingMetadataException with serialization parameters.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ParsingMetadataException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
 
         /// <summary>
         /// Initializes a new instance of ParsingMetadataException with the message set

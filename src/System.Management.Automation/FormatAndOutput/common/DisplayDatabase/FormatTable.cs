@@ -20,7 +20,7 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// This exception is used by Formattable constructor to indicate errors
     /// occurred during construction time.
-    /// </summary>
+    /// </summary>    
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
     public class FormatTableLoadException : RuntimeException
     {
@@ -76,6 +76,17 @@ namespace System.Management.Automation.Runspaces
         {
             _errors = new Collection<string>(loadErrors.ToArray());
             SetDefaultErrorRecord();
+        }
+
+        /// <summary>
+        /// This constructor is required by serialization.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected FormatTableLoadException(SerializationInfo info, StreamingContext context)            
+        {
+            throw new NotSupportedException();
         }
 
         #endregion Constructors

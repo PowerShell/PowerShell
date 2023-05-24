@@ -19,6 +19,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This class contains parameters used to define how/when a PowerShell job is
     /// run via the Windows Task Scheduler (WTS).
     /// </summary>
+    [Serializable]
     public sealed class ScheduledJobTrigger : ISerializable
     {
         #region Private Members
@@ -271,6 +272,58 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             // Runtime reference and not saved to store.
             _jobDefAssociation = null;
+        }
+
+        #endregion
+
+        #region ISerializable Implementation
+
+        /// <summary>
+        /// GetObjectData for ISerializable implementation.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+            {
+                throw new PSArgumentNullException("info");
+            }
+
+            if (_time == null)
+            {
+                info.AddValue("Time_Value", DateTime.MinValue);
+            }
+            else
+            {
+                info.AddValue("Time_Value", _time);
+            }
+
+            if (_repInterval == null)
+            {
+                info.AddValue("RepetitionInterval_Value", TimeSpan.Zero);
+            }
+            else
+            {
+                info.AddValue("RepetitionInterval_Value", _repInterval);
+            }
+
+            if (_repDuration == null)
+            {
+                info.AddValue("RepetitionDuration_Value", TimeSpan.Zero);
+            }
+            else
+            {
+                info.AddValue("RepetitionDuration_Value", _repDuration);
+            }
+
+            info.AddValue("DaysOfWeek_Value", _daysOfWeek);
+            info.AddValue("RandomDelay_Value", _randomDelay);
+            info.AddValue("Interval_Value", _interval);
+            info.AddValue("User_Value", _user);
+            info.AddValue("TriggerFrequency_Value", _frequency);
+            info.AddValue("ID_Value", _id);
+            info.AddValue("Enabled_Value", _enabled);
         }
 
         #endregion

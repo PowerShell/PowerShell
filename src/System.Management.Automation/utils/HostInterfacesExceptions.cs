@@ -90,6 +90,23 @@ namespace System.Management.Automation.Host
             SetErrorCategory(errorCategory);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the HostException class and defines the SerializationInfo
+        /// and the StreamingContext.
+        /// </summary>
+        /// <param name="info">
+        /// The object that holds the serialized object data.
+        /// </param>
+        /// <param name="context">
+        /// The contextual information about the source or destination.
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected
+        HostException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
         #endregion
         #region private
         private void SetDefaultErrorRecord()
@@ -103,7 +120,7 @@ namespace System.Management.Automation.Host
 
     /// <summary>
     /// Defines the exception thrown when an error occurs from prompting for a command parameter.
-    /// </summary>
+    /// </summary>    
     public
     class PromptingException : HostException
     {
@@ -182,6 +199,22 @@ namespace System.Management.Automation.Host
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the HostException class and defines the SerializationInfo
+        /// and the StreamingContext.
+        /// </summary>
+        /// <param name="info">
+        /// The object that holds the serialized object data.
+        /// </param>
+        /// <param name="context">
+        /// The contextual information about the source or destination.
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected
+        PromptingException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
         #endregion
 
         #region private

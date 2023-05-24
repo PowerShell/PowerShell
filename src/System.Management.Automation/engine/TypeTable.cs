@@ -1799,6 +1799,17 @@ namespace System.Management.Automation.Runspaces
             SetDefaultErrorRecord();
         }
 
+        /// <summary>
+        /// This constructor is required by serialization.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected TypeTableLoadException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
         #endregion Constructors
 
         /// <summary>

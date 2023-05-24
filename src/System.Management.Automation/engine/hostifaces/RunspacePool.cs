@@ -73,6 +73,32 @@ namespace System.Management.Automation.Runspaces
             _currentState = currentState;
         }
 
+        #region ISerializable Members
+
+        // No need to implement GetObjectData
+        // if all fields are static or [NonSerialized]
+
+        /// <summary>
+        /// Initializes a new instance of the InvalidRunspacePoolStateException
+        /// class with serialized data.
+        /// </summary>
+        /// <param name="info">
+        /// The <see cref="SerializationInfo"/> that holds
+        /// the serialized object data about the exception being thrown.
+        /// </param>
+        /// <param name="context">
+        /// The <see cref="StreamingContext"/> that contains
+        /// contextual information about the source or destination.
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected
+        InvalidRunspacePoolStateException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion
+
         /// <summary>
         /// Access CurrentState of the runspace pool.
         /// </summary>

@@ -16,7 +16,6 @@ namespace System.Management.Automation
     /// PowerShell Engine.  It is unusual for code outside the PowerShell Engine
     /// to create an instance of this class.
     /// </remarks>
-    [Serializable]
     public class PSNotSupportedException
             : NotSupportedException, IContainsErrorRecord
     {
@@ -29,6 +28,24 @@ namespace System.Management.Automation
             : base()
         {
         }
+
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the PSNotSupportedException class
+        /// using data serialized via
+        /// <see cref="System.Runtime.Serialization.ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PSNotSupportedException(SerializationInfo info,
+                                            StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        
+        #endregion Serialization
 
         /// <summary>
         /// Initializes a new instance of the PSNotSupportedException class.

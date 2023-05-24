@@ -287,6 +287,25 @@ namespace System.Management.Automation
         }
         #endregion Preferred constructors
 
+        #region serialization
+        /// <summary>
+        /// Constructors a ParameterBindingException using serialized data.
+        /// </summary>
+        /// <param name="info">
+        /// serialization information
+        /// </param>
+        /// <param name="context">
+        /// streaming context
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ParameterBindingException(
+            SerializationInfo info,
+            StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion serialization
+
         #region Do Not Use
 
         /// <summary>
@@ -467,7 +486,7 @@ namespace System.Management.Automation
 
         #endregion Private
     }
-
+    
     internal class ParameterBindingValidationException : ParameterBindingException
     {
         #region Preferred constructors
@@ -626,6 +645,26 @@ namespace System.Management.Automation
         }
         #endregion Preferred constructors
 
+        #region serialization
+        /// <summary>
+        /// Constructs a ParameterBindingValidationException from serialized data.
+        /// </summary>
+        /// <param name="info">
+        /// serialization information
+        /// </param>
+        /// <param name="context">
+        /// streaming context
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ParameterBindingValidationException(
+            SerializationInfo info,
+            StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion serialization
+
         #region Property
 
         /// <summary>
@@ -643,7 +682,7 @@ namespace System.Management.Automation
 
         #endregion Property
     }
-    
+
     internal class ParameterBindingArgumentTransformationException : ParameterBindingException
     {
         #region Preferred constructors
@@ -795,9 +834,28 @@ namespace System.Management.Automation
                 args)
         {
         }
-        #endregion Preferred constructors        
-    }
+        #endregion Preferred constructors
+        #region serialization
+        /// <summary>
+        /// Constructs a ParameterBindingArgumentTransformationException using serialized data.
+        /// </summary>
+        /// <param name="info">
+        /// serialization information
+        /// </param>
+        /// <param name="context">
+        /// streaming context
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ParameterBindingArgumentTransformationException(
+            SerializationInfo info,
+            StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
 
+        #endregion serialization
+    }
+    
     internal class ParameterBindingParameterDefaultValueException : ParameterBindingException
     {
         #region Preferred constructors
@@ -951,5 +1009,24 @@ namespace System.Management.Automation
         }
         #endregion Preferred constructors
 
+        #region serialization
+        /// <summary>
+        /// Constructs a ParameterBindingParameterDefaultValueException using serialized data.
+        /// </summary>
+        /// <param name="info">
+        /// serialization information
+        /// </param>
+        /// <param name="context">
+        /// streaming context
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ParameterBindingParameterDefaultValueException(
+            SerializationInfo info,
+            StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion serialization
     }
 }

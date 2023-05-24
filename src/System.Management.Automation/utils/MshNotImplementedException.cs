@@ -29,6 +29,23 @@ namespace System.Management.Automation
         {
         }
 
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the PSNotImplementedException class
+        /// using data serialized via
+        /// <see cref="System.Runtime.Serialization.ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PSNotImplementedException(SerializationInfo info,
+                                              StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }        
+        #endregion Serialization
+
         /// <summary>
         /// Initializes a new instance of the PSNotImplementedException class.
         /// </summary>

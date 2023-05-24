@@ -106,6 +106,22 @@ namespace System.Management.Automation
         {
         }
 
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the CmdletInvocationException class
+        /// using data serialized via
+        /// <see cref="ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected CmdletInvocationException(SerializationInfo info,
+                                            StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }        
+        #endregion Serialization
         #endregion ctor
 
         #region Properties
@@ -139,7 +155,7 @@ namespace System.Management.Automation
     /// <see cref="System.Management.Automation.ProviderInvocationException"/>.
     /// This is generally reported from the standard provider navigation cmdlets
     /// such as get-childitem.
-    /// </summary>
+    /// </summary>    
     public class CmdletProviderInvocationException : CmdletInvocationException
     {
         #region ctor
@@ -168,6 +184,21 @@ namespace System.Management.Automation
         public CmdletProviderInvocationException()
             : base()
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CmdletProviderInvocationException class
+        /// using data serialized via
+        /// <see cref="ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected CmdletProviderInvocationException(SerializationInfo info,
+                                                    StreamingContext context)
+        {
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -251,7 +282,7 @@ namespace System.Management.Automation
     /// Catching this exception is optional; if the cmdlet or providers chooses not to
     /// handle PipelineStoppedException and instead allow it to propagate to the
     /// PowerShell Engine's call to ProcessRecord, the PowerShell Engine will handle it properly.
-    /// </remarks>
+    /// </remarks>    
     public class PipelineStoppedException : RuntimeException
     {
         #region ctor
@@ -264,6 +295,21 @@ namespace System.Management.Automation
         {
             SetErrorId("PipelineStopped");
             SetErrorCategory(ErrorCategory.OperationStopped);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the PipelineStoppedException class
+        /// using data serialized via
+        /// <see cref="ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PipelineStoppedException(SerializationInfo info,
+                                           StreamingContext context)
+        {
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -297,7 +343,7 @@ namespace System.Management.Automation
     /// to an asynchronous pipeline source and the pipeline has already
     /// been stopped.
     /// </summary>
-    /// <seealso cref="System.Management.Automation.Runspaces.Pipeline.Input"/>
+    /// <seealso cref="System.Management.Automation.Runspaces.Pipeline.Input"/>    
     public class PipelineClosedException : RuntimeException
     {
         #region ctor
@@ -332,6 +378,23 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
+
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the PipelineClosedException class
+        /// using data serialized via
+        /// <see cref="ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PipelineClosedException(SerializationInfo info,
+                                          StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion Serialization
     }
     #endregion PipelineClosedException
 
@@ -343,8 +406,7 @@ namespace System.Management.Automation
     /// <remarks>
     /// For example, if $WarningPreference is "Stop", the command will fail with
     /// this error if a cmdlet calls WriteWarning.
-    /// </remarks>
-    [Serializable]
+    /// </remarks>    
     public class ActionPreferenceStopException : RuntimeException
     {
         #region ctor
@@ -396,6 +458,23 @@ namespace System.Management.Automation
 
             _errorRecord = errorRecord;
         }
+
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the ActionPreferenceStopException class
+        /// using data serialized via
+        /// <see cref="ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ActionPreferenceStopException(SerializationInfo info,
+                                                StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }        
+        #endregion Serialization
 
         /// <summary>
         /// Instantiates a new instance of the ActionPreferenceStopException class.
@@ -523,7 +602,24 @@ namespace System.Management.Automation
             _message = message;
         }
         #endregion Constructors
-        
+
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the ParentContainsErrorRecordException class
+        /// using data serialized via
+        /// <see cref="ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Doesn't return.</returns>
+        /// <exception cref="NotImplementedException">Always.</exception>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ParentContainsErrorRecordException(
+            SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion Serialization
         /// <summary>
         /// Gets the message for the exception.
         /// </summary>
@@ -553,7 +649,7 @@ namespace System.Management.Automation
     /// The redirected object is available as
     /// <see cref="System.Management.Automation.ErrorRecord.TargetObject"/>
     /// in the ErrorRecord which contains this exception.
-    /// </remarks>
+    /// </remarks>    
     public class RedirectedException : RuntimeException
     {
         #region constructors
@@ -594,6 +690,20 @@ namespace System.Management.Automation
             SetErrorCategory(ErrorCategory.NotSpecified);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the RedirectedException class
+        /// using data serialized via
+        /// <see cref="ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected RedirectedException(SerializationInfo info,
+                                      StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
         #endregion constructors
     }
     #endregion RedirectedException
@@ -610,8 +720,7 @@ namespace System.Management.Automation
     /// call depth to prevent stack overflows.  The maximum call depth is configurable
     /// but generally high enough that scripts which are not deeply recursive
     /// should not have a problem.
-    /// </remarks>
-    [Serializable]
+    /// </remarks>    
     public class ScriptCallDepthException : SystemException, IContainsErrorRecord
     {
         #region ctor
@@ -647,6 +756,23 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
+
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the ScriptCallDepthException class
+        /// using data serialized via
+        /// <see cref="ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ScriptCallDepthException(SerializationInfo info,
+                                           StreamingContext context)
+        {
+            throw new NotSupportedException();            
+        }        
+        #endregion Serialization
 
         #region properties
         /// <summary>
@@ -726,6 +852,23 @@ namespace System.Management.Automation
         }
         #endregion ctor
 
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the PipelineDepthException class
+        /// using data serialized via
+        /// <see cref="ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PipelineDepthException(SerializationInfo info,
+                                           StreamingContext context)            
+        {
+            throw new NotSupportedException();            
+        }
+        #endregion Serialization
+
         #region properties
         /// <summary>
         /// See <see cref="System.Management.Automation.IContainsErrorRecord"/>
@@ -776,7 +919,7 @@ namespace System.Management.Automation
     ///
     /// Note that HaltCommandException does not define IContainsErrorRecord.
     /// This is because it is not reported to the user.
-    /// </remarks>
+    /// </remarks>    
     public class HaltCommandException : SystemException
     {
         #region ctor
@@ -811,6 +954,23 @@ namespace System.Management.Automation
         {
         }
         #endregion ctor
+
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the HaltCommandException class
+        /// using data serialized via
+        /// <see cref="ISerializable"/>
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected HaltCommandException(SerializationInfo info,
+                                       StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion Serialization
     }
     #endregion HaltCommandException
 }

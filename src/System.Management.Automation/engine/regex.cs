@@ -518,6 +518,18 @@ namespace System.Management.Automation
             : base(message, innerException)
         {
         }
+
+        /// <summary>
+        /// Constructor for class WildcardPatternException for serialization.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected WildcardPatternException(SerializationInfo info,
+                                        StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
     }
 
     /// <summary>

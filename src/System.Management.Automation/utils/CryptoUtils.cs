@@ -258,6 +258,7 @@ namespace System.Management.Automation.Internal
     /// to the user when something fails on the remote end, then this
     /// can be turned public</remarks>
     [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic")]
+    [Serializable]
     internal class PSCryptoException : Exception
     {
         #region Private Members
@@ -319,6 +320,19 @@ namespace System.Management.Automation.Internal
             : base(message, innerException)
         {
             _errorCode = unchecked((uint)-1);
+        }
+
+        /// <summary>
+        /// Constructor which has type specific serialization logic.
+        /// </summary>
+        /// <param name="info">Serialization info.</param>
+        /// <param name="context">Context in which this constructor is called.</param>
+        /// <remarks>Currently no custom type-specific serialization logic is
+        /// implemented</remarks>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PSCryptoException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
         }
 
         #endregion Constructors

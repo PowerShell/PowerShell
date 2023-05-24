@@ -450,12 +450,27 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="message"></param>
         /// <param name="innerException"></param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         public WriteErrorException(string message,
                                           Exception innerException)
             : base(message, innerException)
         {
         }
         #endregion ctor
+
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class for serialization.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        /// <returns>Constructed object.</returns>
+        protected WriteErrorException(SerializationInfo info,
+                                      StreamingContext context)            
+        {
+            throw new NotSupportedException();
+        }
+        #endregion Serialization
     }
     #endregion WriteErrorException
 }

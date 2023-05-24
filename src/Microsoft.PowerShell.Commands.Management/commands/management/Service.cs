@@ -2557,7 +2557,21 @@ namespace Microsoft.PowerShell.Commands
         {
         }
         #endregion ctors
-        
+
+        #region Serialization
+        /// <summary>
+        /// Serialization constructor.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        /// <returns>Constructed object.</returns>
+        protected ServiceCommandException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion Serialization
+
         #region Properties
         /// <summary>
         /// Name of the service which could not be found or operated upon.

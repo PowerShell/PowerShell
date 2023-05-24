@@ -18,7 +18,7 @@ namespace System.Management.Automation.Runspaces
     /// Basic information for this exception includes,
     ///     1. PSSnapin name
     ///     2. Inner exception.
-    /// -->    
+    /// -->
     public class PSSnapInException : RuntimeException
     {
         /// <summary>
@@ -163,5 +163,21 @@ namespace System.Management.Automation.Runspaces
                 return base.Message;
             }
         }
+
+        #region Serialization
+
+        /// <summary>
+        /// Initiate a PSSnapInException instance.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected PSSnapInException(SerializationInfo info,
+                                        StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion Serialization
     }
 }

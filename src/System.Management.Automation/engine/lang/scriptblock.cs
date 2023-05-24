@@ -1380,6 +1380,19 @@ namespace System.Management.Automation
             : base(string.Format(CultureInfo.CurrentCulture, message, arguments), innerException)
             => this.SetErrorId(errorId);
 
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException with serialization parameters.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        protected ScriptBlockToPowerShellNotSupportedException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+        #endregion Serialization
+
         #endregion ctor
 
     }
