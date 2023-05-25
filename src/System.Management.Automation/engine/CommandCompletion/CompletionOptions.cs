@@ -27,6 +27,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Specifies if a separator character should automatically be added to container results.
         /// </summary>
+        [Parameter()]
         public bool AddTrailingSeparatorForContainers { get; set; }
 
         /// <summary>
