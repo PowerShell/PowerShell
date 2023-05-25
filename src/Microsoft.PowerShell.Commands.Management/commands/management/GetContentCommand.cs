@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (TotalCount == 0)
+            if (TotalCount == 0 || Tail == 0)
             {
                 // Don't read anything
                 return;
