@@ -106,9 +106,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     long countRead = 0;
 
-                    Dbg.Diagnostics.Assert(
-                        holder.Reader != null,
-                        "All holders should have a reader assigned");
+                    Dbg.Diagnostics.Assert(holder.Reader != null, "All holders should have a reader assigned");
 
                     if (Tail != -1 && holder.Reader is not FileSystemContentReaderWriter)
                     {
@@ -193,15 +191,8 @@ namespace Microsoft.PowerShell.Commands
                                         e);
 
                                 // Log a provider health event
-                                MshLog.LogProviderHealthEvent(
-                                    this.Context,
-                                    holder.PathInfo.Provider.Name,
-                                    providerException,
-                                    Severity.Warning);
-
-                                WriteError(new ErrorRecord(
-                                    providerException.ErrorRecord,
-                                    providerException));
+                                MshLog.LogProviderHealthEvent(this.Context, holder.PathInfo.Provider.Name, providerException, Severity.Warning);
+                                WriteError(new ErrorRecord(providerException.ErrorRecord, providerException));
 
                                 break;
                             }
@@ -248,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var fsReader = holder.Reader as FileSystemContentReaderWriter;
             Dbg.Diagnostics.Assert(fsReader != null, "Tail is only supported for FileSystemContentReaderWriter");
-            var tailResultQueue = new Queue<object>();
+            Queue<object> tailResultQueue = new();
             IList results = null;
             ErrorRecord error = null;
 
@@ -324,7 +315,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     while (tailResultQueue.Count >= ReadCount)
                     {
-                        var outputList = new List<object>((int)ReadCount);
+                        List<object> outputList = new((int)ReadCount);
                         for (int idx = 0; idx < ReadCount; idx++, count++)
                         {
                             outputList.Add(tailResultQueue.Dequeue());
