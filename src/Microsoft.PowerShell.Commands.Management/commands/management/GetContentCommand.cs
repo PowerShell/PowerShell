@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                // close all the content readers
+                // Close all the content readers
 
                 CloseContent(contentStreams, false);
 
