@@ -31,8 +31,7 @@ namespace Microsoft.PowerShell.Commands
         public long ReadCount { get; set; } = 1;
 
         /// <summary>
-        /// The number of content items to retrieve. By default this
-        /// value is -1 which means read all the content.
+        /// The number of content items to retrieve.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateRange(0, long.MaxValue)]
@@ -41,7 +40,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The number of content items to retrieve from the back of the file.
-        /// By default this value is -1 which means read all the content.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateRange(0, int.MaxValue)]
