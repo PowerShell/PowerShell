@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
                     // as reading forwards. So we read forwards in this case.
                     // If Tail is positive, we seek the right position. Or, if the seek failed
                     // because of an unsupported encoding, we scan forward to get the tail content.
-                    if (Tail >= 0)
+                    if (Tail > 0)
                     {
                         bool seekSuccess = false;
 
@@ -160,59 +160,56 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (TotalCount != 0)
+                    IList results = null;
+
+                    do
                     {
-                        IList results = null;
+                        long countToRead = ReadCount;
 
-                        do
+                        // Make sure we only ask for the amount the user wanted
+                        // I am using TotalCount - countToRead so that I don't
+                        // have to worry about overflow
+                        if (TotalCount > 0 && (countToRead == 0 || TotalCount - countToRead < countRead))
                         {
-                            long countToRead = ReadCount;
+                            countToRead = TotalCount - countRead;
+                        }
 
-                            // Make sure we only ask for the amount the user wanted
-                            // I am using TotalCount - countToRead so that I don't
-                            // have to worry about overflow
-                            if (TotalCount > 0 && (countToRead == 0 || TotalCount - countToRead < countRead))
+                        try
+                        {
+                            results = holder.Reader.Read(countToRead);
+                        }
+                        catch (Exception e) // Catch-all OK. 3rd party callout
+                        {
+                            ProviderInvocationException providerException =
+                                new(
+                                    "ProviderContentReadError",
+                                    SessionStateStrings.ProviderContentReadError,
+                                    holder.PathInfo.Provider,
+                                    holder.PathInfo.Path,
+                                    e);
+
+                            // Log a provider health event
+                            MshLog.LogProviderHealthEvent(this.Context, holder.PathInfo.Provider.Name, providerException, Severity.Warning);
+                            WriteError(new ErrorRecord(providerException.ErrorRecord, providerException));
+
+                            break;
+                        }
+
+                        if (results != null && results.Count > 0)
+                        {
+                            countRead += results.Count;
+                            if (ReadCount == 1)
                             {
-                                countToRead = TotalCount - countRead;
+                                // Write out the content as a single object
+                                WriteContentObject(results[0], countRead, holder.PathInfo, currentContext);
                             }
-
-                            try
+                            else
                             {
-                                results = holder.Reader.Read(countToRead);
+                                // Write out the content as an array of objects
+                                WriteContentObject(results, countRead, holder.PathInfo, currentContext);
                             }
-                            catch (Exception e) // Catch-all OK. 3rd party callout
-                            {
-                                ProviderInvocationException providerException =
-                                    new(
-                                        "ProviderContentReadError",
-                                        SessionStateStrings.ProviderContentReadError,
-                                        holder.PathInfo.Provider,
-                                        holder.PathInfo.Path,
-                                        e);
-
-                                // Log a provider health event
-                                MshLog.LogProviderHealthEvent(this.Context, holder.PathInfo.Provider.Name, providerException, Severity.Warning);
-                                WriteError(new ErrorRecord(providerException.ErrorRecord, providerException));
-
-                                break;
-                            }
-
-                            if (results != null && results.Count > 0)
-                            {
-                                countRead += results.Count;
-                                if (ReadCount == 1)
-                                {
-                                    // Write out the content as a single object
-                                    WriteContentObject(results[0], countRead, holder.PathInfo, currentContext);
-                                }
-                                else
-                                {
-                                    // Write out the content as an array of objects
-                                    WriteContentObject(results, countRead, holder.PathInfo, currentContext);
-                                }
-                            }
-                        } while (results != null && results.Count > 0 && (TotalCount < 0 || countRead < TotalCount));
-                    }
+                        }
+                    } while (results != null && results.Count > 0 && (TotalCount == -1 || countRead < TotalCount));
                 }
             }
             finally
