@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    // If Tail is negative, we are supposed to read all content out. This is same
+                    // If Tail is -1, we are supposed to read all content out. This is same
                     // as reading forwards. So we read forwards in this case.
                     // If Tail is positive, we seek the right position. Or, if the seek failed
                     // because of an unsupported encoding, we scan forward to get the tail content.
