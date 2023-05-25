@@ -102,14 +102,7 @@ function Get-UnixSocketName {
     param ()
 
     process {
-        $runningListener = Get-UnixSocket
-        if ($null -ne $runningListener -or $runningListener.GetStatus() -eq 'Running')
-        {
-            return $null
-        }
-        $unixSocketName = [System.IO.Path]::GetTempFileName()
-
-        return $unixSocketName
+        return [System.IO.Path]::GetTempFileName()
     }
 }
 
