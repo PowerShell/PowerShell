@@ -2,7 +2,7 @@
 
 Whether you're a Developer, a DevOps or an IT Professional, this doc will help you getting started with PowerShell.
 In this document we'll cover the following:
-installing PowerShell, samples walkthrough, PowerShell editor, debugger, testing tools and a map book for experienced bash users to get started with PowerShell faster.
+Installing PowerShell, samples walkthrough, PowerShell editor, debugger, testing tools and a map book for experienced bash users to get started with PowerShell faster.
 
 The exercises in this document are intended to give you a solid foundation in how to use PowerShell.
 You won't be a PowerShell guru at the end of reading this material but you will be well on your way with the right set of knowledge to start using PowerShell.

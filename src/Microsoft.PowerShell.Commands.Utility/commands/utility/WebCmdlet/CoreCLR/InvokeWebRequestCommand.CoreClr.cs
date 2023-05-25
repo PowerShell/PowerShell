@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.IO;
 using System.Management.Automation;
@@ -37,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
             Stream responseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
             if (ShouldWriteToPipeline)
             {
-                // creating a MemoryStream wrapper to response stream here to support IsStopping.
+                // Creating a MemoryStream wrapper to response stream here to support IsStopping.
                 responseStream = new WebResponseContentMemoryStream(
                     responseStream,
                     StreamHelper.ChunkSize,
@@ -48,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
                 ro.RelationLink = _relationLink;
                 WriteObject(ro);
 
-                // use the rawcontent stream from WebResponseObject for further
+                // Use the rawcontent stream from WebResponseObject for further
                 // processing of the stream. This is need because WebResponse's
                 // stream can be used only once.
                 responseStream = ro.RawContentStream;

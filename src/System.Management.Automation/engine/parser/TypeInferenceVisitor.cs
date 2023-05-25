@@ -708,6 +708,11 @@ namespace System.Management.Automation
             // [PSObject] @{ Key = "Value" } and the [PSCustomObject] @{ Key = "Value" } case.
             var type = convertExpressionAst.Type.TypeName.GetReflectionType();
 
+            if (type is null && convertExpressionAst.Type.TypeName is TypeName unavailableType && unavailableType._typeDefinitionAst is not null)
+            {
+                return new[] { new PSTypeName(unavailableType._typeDefinitionAst) };
+            }
+
             if (type == typeof(PSObject) && convertExpressionAst.Child is HashtableAst hashtableAst)
             {
                 if (InferTypes(hashtableAst).FirstOrDefault() is PSSyntheticTypeName syntheticTypeName)

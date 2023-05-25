@@ -36,6 +36,7 @@ FunctionsToExport = @(
         'Test-IsVstsLinux'
         'Test-IsVstsWindows'
         'Test-IsWindowsArm64'
+        'Test-IsWinServer2012R2'
         'Test-IsWinWow64'
         'Test-TesthookIsSet'
         'Wait-FileToBePresent'

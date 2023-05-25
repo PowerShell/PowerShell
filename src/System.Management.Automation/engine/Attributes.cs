@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Security;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -1311,6 +1312,28 @@ namespace System.Management.Automation
 
             return resultType;
         }
+
+        /// <summary>
+        /// Returns only the elements that passed the attribute's validation.
+        /// </summary>
+        /// <param name="elementsToValidate">The objects to validate.</param>
+        internal IEnumerable GetValidatedElements(IEnumerable elementsToValidate)
+        {
+            foreach (var el in elementsToValidate)
+            {
+                try
+                {
+                    ValidateElement(el);
+                }
+                catch (ValidationMetadataException)
+                {
+                    // Element was not in range - drop
+                    continue;
+                }
+
+                yield return el;
+            }
+        }
     }
 
     /// <summary>
@@ -1829,11 +1852,21 @@ namespace System.Management.Automation
             {
                 if (ExecutionContext.IsMarkedAsUntrusted(arguments))
                 {
-                    throw new ValidationMetadataException(
-                        "ValidateTrustedDataFailure",
-                        null,
-                        Metadata.ValidateTrustedDataFailure,
-                        arguments);
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateTrustedDataFailure",
+                            null,
+                            Metadata.ValidateTrustedDataFailure,
+                            arguments);
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: null,
+                        title: Metadata.WDACParameterArgNotTrustedLogTitle,
+                        message: StringUtil.Format(Metadata.WDACParameterArgNotTrustedMessage, arguments),
+                        fqid: "ParameterArgumentNotTrusted",
+                        dropIntoDebugger: true);
                 }
             }
         }

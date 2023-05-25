@@ -2157,6 +2157,38 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $jsonResult = $result.output.Content | ConvertFrom-Json
             $jsonResult.SessionId | Should -BeExactly $sessionId
         }
+
+        It "Invoke-WebRequest respects the Retry-After header value in 429 status" {
+
+            $Query = @{
+                statusCode     = 429
+                reposnsephrase = 'Too Many Requests'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+                headers        = '{"Retry-After":"1"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-WebRequest -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
+
+            $verboseFile | Should -FileContentMatch 'Retrying after interval of 1 seconds. Status code for previous attempt: TooManyRequests'
+        }
+
+        It "Invoke-WebRequest ignores the Retry-After header value NOT in 429 status" {
+
+            $Query = @{
+                statusCode     = 409
+                reposnsephrase = 'Conflict'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+                headers        = '{"Retry-After":"1"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-WebRequest -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
+
+            $verboseFile | Should -FileContentMatch 'Retrying after interval of 3 seconds. Status code for previous attempt: Conflict'
+        }
     }
 
     Context "Regex Parsing" {
@@ -4047,6 +4079,38 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.output.failureResponsesSent | Should -Be 1
             $result.output.sessionId | Should -BeExactly $sessionId
         }
+
+        It "Invoke-RestMethod respects the Retry-After header value in 429 status" {
+
+            $Query = @{
+                statusCode     = 429
+                reposnsephrase = 'Too Many Requests'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+                headers        = '{"Retry-After":"1"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-RestMethod -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
+
+            $verboseFile | Should -FileContentMatch 'Retrying after interval of 1 seconds. Status code for previous attempt: TooManyRequests'
+        }
+
+        It "Invoke-RestMethod ignores the Retry-After header value NOT in 429 status" {
+
+            $Query = @{
+                statusCode     = 409
+                reposnsephrase = 'Conflict'
+                contenttype    = 'application/json'
+                body           = '{"message":"oops"}'
+                headers        = '{"Retry-After":"1"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+            $verboseFile = Join-Path $TestDrive -ChildPath verbose.txt
+            $result = Invoke-RestMethod -Uri $uri -MaximumRetryCount 1 -RetryIntervalSec 3 -SkipHttpErrorCheck -Verbose 4>$verbosefile
+
+            $verboseFile | Should -FileContentMatch 'Retrying after interval of 3 seconds. Status code for previous attempt: Conflict'
+        }
     }
 }
 
@@ -4218,26 +4282,32 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
             [string]$Command = 'Invoke-WebRequest',
             [string]$Arguments = '',
             [uri]$Uri,
-            [int]$DelayMs = 100,
+            [int]$DelayBeforeStopSimulationMs = 5000,
             [switch]$WillComplete
         )
 
         $pwsh = [PowerShell]::Create()
         $invoke = "`$result = $Command -Uri `"$Uri`" $Arguments"
         $task = $pwsh.AddScript($invoke).InvokeAsync()
-        Start-Sleep -Milliseconds $DelayMs
+        $delay = [System.Threading.Tasks.Task]::Delay($DelayBeforeStopSimulationMs)
+
+        # Simulate CTRL-C as soon as the timeout expires or the main task ends
+        $null = [System.Threading.Tasks.Task]::WaitAny($task, $delay)
         $task.IsCompleted | Should -Be $WillComplete.ToBool()
         $pwsh.Stop()
+
+        # The download stall is normally 30 seconds from the web listener based
+        # on the first slash separated parameter in the -TestValue provided to
+        # Get-WebListenerUrl -test Stall -TestValue duration/content-type.
         Wait-UntilTrue { [bool]($Task.IsCompleted) } | Should -BeTrue
         $result = $pwsh.Runspace.SessionStateProxy.GetVariable('result')
         $pwsh.Dispose()
-
         return $result
     }
 
     It 'Invoke-WebRequest: CTRL-C Cancels request before request headers received' {
         $uri = Get-WebListenerUrl -test Delay -TestValue 30
-        RunWithCancellation -Uri $uri -DelayMs 0
+        RunWithCancellation -Uri $uri -DelayBeforeStopSimulationMs 1000
     }
 
     It 'Invoke-WebRequest: CTRL-C Cancels request after request headers received' {
@@ -4250,20 +4320,32 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
         RunWithCancellation -Uri $uri -Arguments "-SkipCertificateCheck"
     }
 
-    It 'Invoke-WebRequest: Compression CTRL-C Cancels request after request headers' {
+    It 'Invoke-WebRequest: Brotli Compression CTRL-C Cancels request after request headers' {
         $uri = Get-WebListenerUrl -Test StallBrotli -TestValue '30/application%2fjson'
         RunWithCancellation -Uri $uri
+    }
+
+    It 'Invoke-WebRequest: Gzip Compression CTRL-C Cancels request after request headers' {
         $uri = Get-WebListenerUrl -Test StallGzip -TestValue '30/application%2fjson'
         RunWithCancellation -Uri $uri
+    }
+
+    It 'Invoke-WebRequest: Defalate Compression CTRL-C Cancels request after request headers' {
         $uri = Get-WebListenerUrl -Test StallDeflate -TestValue '30/application%2fjson'
         RunWithCancellation -Uri $uri
     }
 
-    It 'Invoke-WebRequest: HTTPS with compression CTRL-C Cancels request after request headers' {
+    It 'Invoke-WebRequest: HTTPS with Brotli compression CTRL-C Cancels request after request headers' {
         $uri = Get-WebListenerUrl -Https -Test StallBrotli -TestValue '30/application%2fjson'
         RunWithCancellation -Uri $uri -Arguments '-SkipCertificateCheck'
+    }
+
+    It 'Invoke-WebRequest: HTTPS with Gzip compression CTRL-C Cancels request after request headers' {
         $uri = Get-WebListenerUrl -Https -Test StallGzip -TestValue '30/application%2fjson'
         RunWithCancellation -Uri $uri -Arguments '-SkipCertificateCheck'
+    }
+
+    It 'Invoke-WebRequest: HTTPS with Defalte compression CTRL-C Cancels request after request headers' {
         $uri = Get-WebListenerUrl -Https -Test StallDeflate -TestValue '30/application%2fjson'
         RunWithCancellation -Uri $uri -Arguments '-SkipCertificateCheck'
     }
@@ -4271,7 +4353,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
     It 'Invoke-WebRequest: CTRL-C Cancels file download request after request headers received' {
         $uri = Get-WebListenerUrl -Test Stall -TestValue '30'
         $outFile = Join-Path $TestDrive "output.txt"
-        RunWithCancellation -Uri $uri -Arguments "-OutFile $outFile" -DelayMs 300
+        RunWithCancellation -Uri $uri -Arguments "-OutFile $outFile"
         # No guarantee the file will be present since the D/L is interrupted
         if (Test-Path -Path $outFile) {
             Remove-Item -Path $outFile
@@ -4281,14 +4363,14 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
     It 'Invoke-WebRequest: CTRL-C after stalled file download completes gives entire file' {
         $uri = Get-WebListenerUrl -test Stall -TestValue '1'
         $outFile = Join-Path $TestDrive "output.txt"
-        RunWithCancellation -Uri $uri -Arguments "-OutFile $outFile" -DelayMs 1200 -WillComplete
+        RunWithCancellation -Uri $uri -Arguments "-OutFile $outFile" -WillComplete
         Get-content -Path $outFile | should -be 'Hello worldHello world'
         Remove-Item -Path $outFile
     }
 
     It 'Invoke-RestMethod: CTRL-C Cancels request before request headers received' {
         $uri = Get-WebListenerUrl -test Delay -TestValue 30
-        RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -DelayMs 0
+        RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -DelayBeforeStopSimulationMs 1000
     }
 
     It 'Invoke-RestMethod: CTRL-C Cancels request after JSON request headers received' {
@@ -4298,7 +4380,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
 
     It 'Invoke-RestMethod: CTRL-C after stalled JSON download processes JSON response' {
         $uri = Get-WebListenerUrl -test Stall -TestValue '1/application%2fjson'
-        $result = RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -DelayMs 1200 -WillComplete
+        $result = RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -WillComplete
         $result.name3 | should -be 'value3'
     }
 
@@ -4309,7 +4391,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
 
     It 'Invoke-RestMethod: CTRL-C after stalled atom feed download processes atom response' {
         $uri = Get-WebListenerUrl -test Stall -TestValue '1/application%2fxml'
-        $result = RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -DelayMs 1200 -WillComplete
+        $result = RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri -WillComplete
         $result.title | should -be 'Atom-Powered Robots Run Amok'
     }
 
