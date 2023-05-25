@@ -646,7 +646,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // If we're in ConstrainedLanguage mode and the system is in lockdown mode,
             // ensure that they haven't specified a ScriptBlock or InitScript - as
-            // we can't protect that boundary
+            // we can't protect that boundary.
             if ((Context.LanguageMode == PSLanguageMode.ConstrainedLanguage) &&
                 (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Enforce) &&
                 ((ScriptBlock != null) || (InitializationScript != null)))

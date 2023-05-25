@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldWriteToPipeline)
             {
-                using var responseStream = new BufferingStreamReader(baseResponseStream, _cancelToken.Token);
+                using BufferingStreamReader responseStream = new(baseResponseStream, _cancelToken.Token);
 
                 // First see if it is an RSS / ATOM feed, in which case we can
                 // stream it - unless the user has overridden it with a return type of "XML"
@@ -94,37 +94,36 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // Determine the response type
-                    RestReturnType returnType = CheckReturnType(response);
-
                     // Try to get the response encoding from the ContentType header.
                     string? characterSet = WebResponseHelper.GetCharacterSet(response);
 
                     string str = StreamHelper.DecodeStream(responseStream, characterSet, out Encoding encoding, _cancelToken.Token);
 
-                    object? obj = null;
-                    Exception? ex = null;
-
                     string encodingVerboseName;
                     try
                     {
-                        encodingVerboseName = string.IsNullOrEmpty(encoding.HeaderName) ? encoding.EncodingName : encoding.HeaderName;
+                        encodingVerboseName = encoding.HeaderName;
                     }
-                    catch (NotSupportedException)
+                    catch
                     {
-                        encodingVerboseName = encoding.EncodingName;
+                        encodingVerboseName = string.Empty;
                     }
 
                     // NOTE: Tests use this verbose output to verify the encoding.
                     WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"Content encoding: {encodingVerboseName}"));
 
+                    // Determine the response type
+                    RestReturnType returnType = CheckReturnType(response);
+
                     bool convertSuccess = false;
+                    object? obj = null;
+                    Exception? ex = null;
 
                     if (returnType == RestReturnType.Json)
                     {
                         convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
                     }
-                    // default to try xml first since it's more common
+                    // Default to try xml first since it's more common
                     else
                     {
                         convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
@@ -132,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!convertSuccess)
                     {
-                        // fallback to string
+                        // Fallback to string
                         obj = str;
                     }
 
@@ -171,11 +170,8 @@ namespace Microsoft.PowerShell.Commands
 
             RestReturnType rt = RestReturnType.Detect;
             string? contentType = ContentHelper.GetContentType(response);
-            if (string.IsNullOrEmpty(contentType))
-            {
-                rt = RestReturnType.Detect;
-            }
-            else if (ContentHelper.IsJson(contentType))
+
+            if (ContentHelper.IsJson(contentType))
             {
                 rt = RestReturnType.Json;
             }
@@ -272,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
                 XmlReaderSettings settings = GetSecureXmlReaderSettings();
                 XmlReader xmlReader = XmlReader.Create(new StringReader(xml), settings);
 
-                var xmlDoc = new XmlDocument();
+                XmlDocument xmlDoc = new();
                 xmlDoc.PreserveWhitespace = true;
                 xmlDoc.Load(xmlReader);
 
