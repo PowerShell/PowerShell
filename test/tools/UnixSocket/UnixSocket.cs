@@ -12,7 +12,7 @@ namespace UnixSocket
     {
         public static void Main(string[] args)
         {
-            WebApplication builder = WebApplication.CreateBuilder();
+            WebApplicationBuilder builder = WebApplication.CreateBuilder();
             builder.WebHost.ConfigureKestrel(options =>
             {
                 options.ListenUnixSocket(args[0]);
