@@ -360,15 +360,8 @@ namespace System.Management.Automation
                 startTime.Kind == DateTimeKind.Utc,
                 "DateTime arithmetic should always be done in utc mode [to avoid problems when some operands are calculated right before and right after switching to /from a daylight saving time");
 
-            if (startTime > now)
-            {
-                throw new ArgumentOutOfRangeException(nameof(startTime));
-            }
-
-            if (expectedDuration <= TimeSpan.Zero)
-            {
-                throw new ArgumentOutOfRangeException(nameof(expectedDuration));
-            }
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(now, startTime);
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(TimeSpan.Zero, expectedDuration);
 
             /*
              * According to the spec of Checkpoint-Computer
