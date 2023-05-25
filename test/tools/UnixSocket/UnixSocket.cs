@@ -12,22 +12,10 @@ namespace UnixSocket
     {
         public static void Main(string[] args)
         {
-            const string UnixSocketPath = "/tmp/UnixSocket.sock";
-
-            if (!Directory.Exists("/tmp"))
-            {
-                Directory.CreateDirectory("/tmp");
-            }
-
-            if (File.Exists(UnixSocketPath))
-            {
-                File.Delete(UnixSocketPath);
-            }
-
-            var builder = WebApplication.CreateBuilder();
+            WebApplication builder = WebApplication.CreateBuilder();
             builder.WebHost.ConfigureKestrel(options =>
             {
-                options.ListenUnixSocket(UnixSocketPath);
+                options.ListenUnixSocket(args[0]);
             });
 
             var app = builder.Build();

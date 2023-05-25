@@ -31,7 +31,7 @@ function Start-UnixSocket
 {
     [CmdletBinding(ConfirmImpact = 'Low')]
     [OutputType([UnixSocket])]
-    param()
+    param([string] $socketPath)
 
     process
     {
@@ -51,7 +51,7 @@ function Start-UnixSocket
             Push-Location $path -Verbose
             'appEXE: {0}' -f $using:appExe
             $env:ASPNETCORE_ENVIRONMENT = 'Development'
-            & $using:appExe
+            & $using:appExe $socketPath
         }
 
         $Script:UnixSocket = [UnixSocket]@{
@@ -103,11 +103,11 @@ function Get-UnixSocketName {
 
     process {
         $runningListener = Get-UnixSocket
-        if ($null -eq $runningListener -or $runningListener.GetStatus() -ne 'Running')
+        if ($null -ne $runningListener -or $runningListener.GetStatus() -eq 'Running')
         {
             return $null
         }
-        $unixSocketName = "/tmp/UnixSocket.sock"
+        $unixSocketName = [System.IO.Path]::GetTempFileName()
 
         return $unixSocketName
     }
