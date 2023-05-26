@@ -4357,6 +4357,6 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
     }
 
     AfterAll {
-        Remove-Item -Path $unixSocket -Force
+        Remove-Item -Path $unixSocket -Force -ErrorAction Ignore
     }
 }

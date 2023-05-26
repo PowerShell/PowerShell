@@ -102,7 +102,8 @@ function Get-UnixSocketName {
     param ()
 
     process {
-        return [System.IO.Path]::GetTempFileName()
+        $unixSocketName = "UnixSocket.sock"
+        return [System.IO.Path]::Join([System.IO.Path]::GetTempPath(), $unixSocketName)
     }
 }
 
