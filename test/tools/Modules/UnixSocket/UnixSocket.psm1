@@ -51,7 +51,7 @@ function Start-UnixSocket
             Push-Location $path -Verbose
             'appEXE: {0}' -f $using:appExe
             $env:ASPNETCORE_ENVIRONMENT = 'Development'
-            & $using:appExe $socketPath
+            & $using:appExe $using:socketPath
         }
 
         $Script:UnixSocket = [UnixSocket]@{
