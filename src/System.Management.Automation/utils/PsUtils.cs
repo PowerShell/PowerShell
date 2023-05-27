@@ -354,7 +354,7 @@ namespace System.Management.Automation
             }
 
             var pipeline = ast.GetSimplePipeline(false, out _, out _);
-            if (pipeline != null && pipeline.GetPureExpression() is HashtableAst hashtableAst)
+            if (pipeline?.GetPureExpression() is HashtableAst hashtableAst)
             {
                 var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
                 foreach (var pair in hashtableAst.KeyValuePairs)

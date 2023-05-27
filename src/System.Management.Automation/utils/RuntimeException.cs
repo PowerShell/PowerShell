@@ -271,7 +271,7 @@ namespace System.Management.Automation
             set
             {
                 _thrownByThrowStatement = value;
-                if (_errorRecord != null && _errorRecord.Exception is RuntimeException exception)
+                if (_errorRecord?.Exception is RuntimeException exception)
                 {
                     exception.WasThrownFromThrowStatement = value;
                 }
