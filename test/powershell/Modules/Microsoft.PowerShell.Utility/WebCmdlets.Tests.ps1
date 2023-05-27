@@ -4355,8 +4355,4 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
         $result = Invoke-RestMethod  $uri -UnixSocket $unixSocket
         $result | Should -Be "Hello World Unix Socket."
     }
-
-    AfterAll {
-        Remove-Item -Path $unixSocket -Force -ErrorAction Ignore
-    }
 }
