@@ -84,7 +84,7 @@ Describe 'conversion syntax' -Tags "CI" {
     }
     
     It 'Should not convert invalid strings to type name using left-hand side operator' {
-        [Type] 'int]whatever' | Should -Throw
+        {[Type] 'int]whatever'} | Should -Throw
     }
 }
 
