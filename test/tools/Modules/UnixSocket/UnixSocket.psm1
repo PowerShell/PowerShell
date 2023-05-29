@@ -102,7 +102,7 @@ function Get-UnixSocketName {
     param ()
 
     process {
-        return [System.IO.Path]::Join([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName())
+        return [System.IO.Path]::Join([System.IO.Path]::GetTempPath(), [System.IO.Path]::ChangeExtension([System.IO.Path]::GetRandomFileName(), "sock"))
     }
 }
 
