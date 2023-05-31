@@ -281,7 +281,7 @@ namespace System.Management.Automation.Language
             var result = parser.TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out _);
 
             SemanticChecks.CheckArrayTypeNameDepth(result, PositionUtilities.EmptyExtent, parser);
-            if (!ignoreErrors && parser.ErrorList.Count > 0)
+            if (!ignoreErrors && result is not null && (parser.ErrorList.Count > 0 || !result.Extent.Text.Equals(typename, StringComparison.OrdinalIgnoreCase)))
             {
                 result = null;
             }
