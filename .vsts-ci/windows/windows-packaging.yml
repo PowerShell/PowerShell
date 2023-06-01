@@ -61,7 +61,7 @@ resources:
       type: github
       endpoint: PowerShell
       name: PowerShell/compliance
-      ref: master
+      ref: adityapatwardhan-patch-1
 
 stages:
 - stage: PackagingWin
