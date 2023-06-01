@@ -1,5 +1,13 @@
 [
   {
+    "Pattern": "_manifest\\spdx_2.2\\bsi.json",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "_manifest\\spdx_2.2\\manifest.cat",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Accessibility.dll",
     "FileType": "NonProduct"
   },
@@ -868,11 +876,11 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "mscordaccore_*.dll",
+    "Pattern": "mscordaccore.dll",
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "mscordaccore.dll",
+    "Pattern": "mscordaccore_*.dll",
     "FileType": "NonProduct"
   },
   {
@@ -1012,26 +1020,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "PresentationFramework-SystemCore.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemData.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemDrawing.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemXml.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemXmlLinq.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "PresentationFramework.Aero.dll",
     "FileType": "NonProduct"
   },
@@ -1057,6 +1045,26 @@
   },
   {
     "Pattern": "PresentationFramework.Royale.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemCore.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemData.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemDrawing.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemXml.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemXmlLinq.dll",
     "FileType": "NonProduct"
   },
   {
@@ -2056,14 +2064,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas/PSMaml/Maml_HTML_Style.xsl",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Schemas/PSMaml/Maml_HTML.xsl",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Schemas/PSMaml/Maml.rld",
     "FileType": "NonProduct"
   },
@@ -2077,6 +2077,14 @@
   },
   {
     "Pattern": "Schemas/PSMaml/Maml.xsx",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Schemas/PSMaml/Maml_HTML.xsl",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Schemas/PSMaml/Maml_HTML_Style.xsl",
     "FileType": "NonProduct"
   },
   {
