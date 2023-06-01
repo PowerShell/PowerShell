@@ -1,5 +1,13 @@
 [
   {
+    "Pattern": "_manifest\\spdx_2.2\\bsi.json",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "_manifest\\spdx_2.2\\manifest.cat",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Accessibility.dll",
     "FileType": "NonProduct"
   },
@@ -12,11 +20,11 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "api-ms-win-core-com-private-l1-1-0.dll",
+    "Pattern": "api-ms-win-core-comm-l1-1-0.dll",
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "api-ms-win-core-comm-l1-1-0.dll",
+    "Pattern": "api-ms-win-core-com-private-l1-1-0.dll",
     "FileType": "NonProduct"
   },
   {
@@ -272,6 +280,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "API-MS-Win-Core-StringAnsi-L1-1-0.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "api-ms-win-core-string-l1-1-0.dll",
     "FileType": "NonProduct"
   },
@@ -280,23 +292,19 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "api-ms-win-core-string-obsolete-l1-1-0.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "api-ms-win-core-string-obsolete-l1-1-1.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "API-MS-Win-Core-StringAnsi-L1-1-0.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "api-ms-win-core-stringloader-l1-1-0.dll",
     "FileType": "NonProduct"
   },
   {
     "Pattern": "api-ms-win-core-stringloader-l1-1-1.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "api-ms-win-core-string-obsolete-l1-1-0.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "api-ms-win-core-string-obsolete-l1-1-1.dll",
     "FileType": "NonProduct"
   },
   {
@@ -1400,11 +1408,11 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "mscordaccore_*.dll",
+    "Pattern": "mscordaccore.dll",
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "mscordaccore.dll",
+    "Pattern": "mscordaccore_*.dll",
     "FileType": "NonProduct"
   },
   {
@@ -1552,26 +1560,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "PresentationFramework-SystemCore.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemData.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemDrawing.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemXml.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemXmlLinq.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "PresentationFramework.Aero.dll",
     "FileType": "NonProduct"
   },
@@ -1597,6 +1585,26 @@
   },
   {
     "Pattern": "PresentationFramework.Royale.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemCore.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemData.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemDrawing.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemXml.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemXmlLinq.dll",
     "FileType": "NonProduct"
   },
   {
@@ -2580,14 +2588,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Schemas/PSMaml/Maml_HTML_Style.xsl",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Schemas/PSMaml/Maml_HTML.xsl",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Schemas/PSMaml/Maml.rld",
     "FileType": "NonProduct"
   },
@@ -2601,6 +2601,14 @@
   },
   {
     "Pattern": "Schemas/PSMaml/Maml.xsx",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Schemas/PSMaml/Maml_HTML.xsl",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Schemas/PSMaml/Maml_HTML_Style.xsl",
     "FileType": "NonProduct"
   },
   {

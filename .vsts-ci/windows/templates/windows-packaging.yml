@@ -70,6 +70,19 @@ jobs:
       Build_Repository_Uri: $(build.repository.uri)
       displayName: SBOM
       sourceScanPath: '$(repoPath)\tools'
+      signSBOM: false
+
+  - pwsh: |
+      $manifestFolder = Join-Path -Path '$(System.ArtifactsDirectory)/mainBuild' -ChildPath '_manifest'
+
+      if (-not (Test-Path $manifestFolder)) {
+        throw "_manifest folder does not exist under $(System.ArtifactsDirectory)/mainBuild"
+      }
+
+      $null = New-Item -Path "$manifestFolder/spdx_2.2/bsi.json" -Verbose -Force
+      $null = New-Item -Path "$manifestFolder/spdx_2.2/manifest.cat" -Verbose -Force
+
+    displayName: Create fake SBOM manifest signed files
 
   - pwsh: |
       Import-Module .\tools\ci.psm1
