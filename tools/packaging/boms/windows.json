@@ -812,6 +812,22 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules/Microsoft.PowerShell.ThreadJob/*.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.ThreadJob/*.psd1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.ThreadJob/Microsoft.PowerShell.ThreadJob.pdb",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.ThreadJob/en-us/Microsoft.PowerShell.ThreadJob.dll-Help.xml",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1",
     "FileType": "NonProduct"
   },
@@ -865,14 +881,6 @@
   },
   {
     "Pattern": "Modules/PSReadLine/*.txt",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/Microsoft.PowerShell.ThreadJob/*.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/Microsoft.PowerShell.ThreadJob/*.psd1",
     "FileType": "NonProduct"
   },
   {

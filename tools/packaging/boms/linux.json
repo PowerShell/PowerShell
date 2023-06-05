@@ -476,6 +476,14 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules/Microsoft.PowerShell.ThreadJob/Microsoft.PowerShell.ThreadJob.pdb",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.ThreadJob/en-us/Microsoft.PowerShell.ThreadJob.dll-Help.xml",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Modules/ThreadJob/*.dll",
     "FileType": "NonProduct"
   },
