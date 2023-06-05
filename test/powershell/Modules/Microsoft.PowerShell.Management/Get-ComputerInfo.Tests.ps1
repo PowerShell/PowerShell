@@ -7,6 +7,10 @@
 $computerInfoAll = $null
 $testStartTime = Get-Date
 
+$excludedProperties = @(
+    "CsPhysicallyInstalledMemory"
+)
+
 function Get-ComputerInfoForTest
 {
     # NOTE: $forceRefresh only applies to the case where $properties is null
@@ -1041,8 +1045,13 @@ try {
             # easier to debug the problem if we know *all* the failures
             # issue: https://github.com/PowerShell/PowerShell/issues/4762
             #    CsPhysicallyInstalledMemory not available when run in nightly builds
-            It "Test 01. Standard Property test - all properties (<property>)" -testcase $testCases -Pending {
+            It "Test 01. Standard Property test - all properties (<property>)" -testcase $testCases {
                 param ( $property )
+
+                if ($excludedProperties -contains $property) {
+                    Set-ItResult -Pending -Because "'$property' is not available in nightly builds"
+                }
+
                 $specialProperties = "CsNetworkAdapters","CsProcessors","OsHotFixes"
                 if ( $specialProperties -contains $property )
                 {
@@ -1283,7 +1292,7 @@ try {
             }
         }
 
-        It "Test for DeviceGuard properties" -Pending {
+        It "Test for DeviceGuard properties" {
             if (-not (HasDeviceGuardLicense))
             {
                 $observed.DeviceGuardSmartStatus | Should -Be 0
