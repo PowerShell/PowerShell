@@ -377,7 +377,6 @@ namespace System.Management.Automation
             else
             {
                 baseMembersType = new PSTypeName(typeof(object));
-                
             }
 
             results.AddRange(GetMembersByInferredType(baseMembersType, isStatic, filterToCall));
