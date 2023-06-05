@@ -348,6 +348,14 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules/Microsoft.PowerShell.ThreadJob/*.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.ThreadJob/*.psd1",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Modules/ThreadJob/*.dll",
     "FileType": "NonProduct"
   },
