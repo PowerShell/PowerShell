@@ -48,7 +48,7 @@ Describe "Certificate Provider tests" -Tags "CI" {
             param([string] $path)
             $expectedResolvedPath = Resolve-Path -LiteralPath $path
             $result = Get-Item -LiteralPath $path
-            $result | Should -Not -Be null
+            $result | Should -Not -Be $null
             $result | ForEach-Object {
                 $resolvedPath = Resolve-Path $_.PSPath
                 $resolvedPath.Provider | Should -Be $expectedResolvedPath.Provider
@@ -165,7 +165,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
             $cert = (Get-item -LiteralPath $leafPath)
             $cert | Should -Not -Be $null
-            $cert.EnhancedKeyUsageList | Should -Not -Be null
+            $cert.EnhancedKeyUsageList | Should -Not -Be $null
             $cert.EnhancedKeyUsageList.Count | Should -Be 3
             $cert.EnhancedKeyUsageList[0].ObjectId.Length | Should -Not -Be 0
             $cert.EnhancedKeyUsageList[0].ObjectId | Should -Be $expectedOid
@@ -178,8 +178,8 @@ Describe "Certificate Provider tests" -Tags "Feature" {
 
             $allCerts = Get-Item cert:\CurrentUser\My\*
             $codeSignCerts = Get-Item cert:\CurrentUser\My\* -CodeSigningCert
-            $codeSignCerts | Should -Not -Be null
-            $allCerts | Should -Not -Be null
+            $codeSignCerts | Should -Not -Be $null
+            $allCerts | Should -Not -Be $null
             $nonCodeSignCertCount = $allCerts.Count - $codeSignCerts.Count
             $nonCodeSignCertCount | Should -Not -Be 0
         }
@@ -192,8 +192,8 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $allCerts = Get-Item cert:\CurrentUser\My\*
             $testThumbprint = (Get-GoodCertificateObject).Thumbprint
             $allCertsExceptOne = (Get-Item "cert:\currentuser\my\*" -Exclude $testThumbprint)
-            $allCerts | Should -Not -Be null
-            $allCertsExceptOne | Should -Not -Be null
+            $allCerts | Should -Not -Be $null
+            $allCertsExceptOne | Should -Not -Be $null
             $countDifference = $allCerts.Count - $allCertsExceptOne.Count
             $countDifference | Should -Be 1
         }
@@ -210,8 +210,8 @@ Describe "Certificate Provider tests" -Tags "Feature" {
 
             $allCerts = get-ChildItem cert:\CurrentUser\My
             $codeSignCerts = get-ChildItem cert:\CurrentUser\My -CodeSigningCert
-            $codeSignCerts | Should -Not -Be null
-            $allCerts | Should -Not -Be null
+            $codeSignCerts | Should -Not -Be $null
+            $allCerts | Should -Not -Be $null
             $nonCodeSignCertCount = $allCerts.Count - $codeSignCerts.Count
             $nonCodeSignCertCount | Should -Not -Be 0
         }
