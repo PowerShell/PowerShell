@@ -218,7 +218,21 @@ class PSLogItem
         In those cases, a single message is logged in the following format
 
         MMM dd HH:MM:SS machinename id[PID]: message repeated NNN times: [(commitid:TID:CHANNEL) [EventName] Message]
+
+        Alternatively, more recent syslog daemons may change the message format to:
+
+	2023-06-02T22:49:50.513735+00:00 machinename id[PID]: message repeated NNN times: [(commitid:TID:CHANNEL) [EventName] Message]
+
+        the first element of the line may be converted to a datetime, which we can use to convert the input to the expected string.
         #>
+
+        $firstToken = $content.split()[0]
+        $dt = $firstToken -as [DateTime]
+        if ($dt)
+        {
+            $replacement = "{0:MMM} {0:dd} {0:hh}:{0:mm}:{0:ss}" -f $dt
+            $content = $content.replace($firstToken,$replacement)
+        }
 
         # split contents into separate space delimited tokens (first 7) and leave the rest as the message.
         [string[]] $parts = $content.Split(' ', 8, [System.StringSplitOptions]::RemoveEmptyEntries)
