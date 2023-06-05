@@ -839,7 +839,7 @@ function Update-PSSignedBuildFolder
         [string]$BuildPath,
         [Parameter(Mandatory)]
         [string]$SignedFilesPath,
-        [string[]] $RemoveFilter = ('*.pdb', '*.zip')
+        [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap')
     )
 
     # Replace unsigned binaries with signed
