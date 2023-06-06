@@ -48,8 +48,11 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
             Pop-Location
         }
     }
-    It 'Resolve-Path should support user specified base paths' {
+    It 'Resolve-Path should support resolving relative paths with user specified base paths' {
         $Expected = Join-Path -Path .\ -ChildPath fakeroot
-        Resolve-Path -Path $fakeRoot -RelativeBasePath $testRoot | Should -BeExactly $Expected
+        Resolve-Path -Path $fakeRoot -Relative -RelativeBasePath $testRoot | Should -BeExactly $Expected
+    }
+    It 'Resolve-Path should support resolving full paths with user specified base paths' {
+        Resolve-Path -Path ".\fakeroot\file.txt" -RelativeBasePath $testRoot | Select-Object -ExpandProperty ProviderPath | Should -BeExactly $file
     }
 }
