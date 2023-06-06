@@ -188,3 +188,9 @@ firmer guidelines around when PRs should be merged as experimental.
 Experiments should be complete to the extent that they serve as reasonable indicators of the user experience.
 In the case that breaking changes are required of the feature, the break should be made in the prototype
 so that users can experiment with whether or not the break has a significant negative effect.
+
+#### Reporting Working Group members abuse
+
+In some cases, the behavior of working group members might be objectionable, exceed the authority defined in this document or violate the [Code of Conduct](../../CODE_OF_CONDUCT.md). We recommend to report such issues by using the [Report Content](https://docs.github.com/en/communities/maintaining-your-safety-on-github/reporting-abuse-or-spam) mechanism to bring it to the attention of the maintainers.
+
+
