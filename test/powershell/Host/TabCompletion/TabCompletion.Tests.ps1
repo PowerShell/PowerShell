@@ -984,7 +984,6 @@ Verb-Noun -
         $res.CompletionMatches.CompletionText[0] | Should -Be 'value__'
         $res.CompletionMatches.CompletionText | Should -Contain 'HasFlag('
     }
-}
 
     Context "Script name completion" {
         BeforeAll {
