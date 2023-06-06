@@ -542,22 +542,33 @@ namespace Microsoft.PowerShell
 
             // try harder to validate the signature by being explicit about encoding
             // and providing the script contents
-            string verificationContents = Encoding.Unicode.GetString(script.OriginalEncoding.GetPreamble()) + script.ScriptContents;
-            signature = SignatureHelper.GetSignature(path, verificationContents);
+            byte[] bytesWithBom = GetContentBytesWithBom(script.OriginalEncoding, script.ScriptContents);
+            signature = SignatureHelper.GetSignature(path, bytesWithBom);
 
             // A last ditch effort -
             // If the file was originally ASCII or UTF8, the SIP may have added the Unicode BOM
             if (signature.Status != SignatureStatus.Valid
                 && script.OriginalEncoding != Encoding.Unicode)
             {
-                verificationContents = Encoding.Unicode.GetString(Encoding.Unicode.GetPreamble()) + script.ScriptContents;
-                Signature fallbackSignature = SignatureHelper.GetSignature(path, verificationContents);
+                bytesWithBom = GetContentBytesWithBom(Encoding.Unicode, script.ScriptContents);
+                Signature fallbackSignature = SignatureHelper.GetSignature(path, bytesWithBom);
 
                 if (fallbackSignature.Status == SignatureStatus.Valid)
                     signature = fallbackSignature;
             }
 
             return signature;
+        }
+
+        private static byte[] GetContentBytesWithBom(Encoding encoding, string scriptContent)
+        {
+            ReadOnlySpan<byte> bomBytes = encoding.Preamble;
+            byte[] contentBytes = encoding.GetBytes(scriptContent);
+            byte[] bytesWithBom = new byte[bomBytes.Length + contentBytes.Length];
+
+            bomBytes.CopyTo(bytesWithBom);
+            contentBytes.CopyTo(bytesWithBom, index: bomBytes.Length);
+            return bytesWithBom;
         }
 
         #endregion signing check

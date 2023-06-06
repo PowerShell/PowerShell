@@ -13,34 +13,36 @@
 #
 # ------------------ PackageManagement Test  -----------------------------------
 
-$gallery = "https://www.powershellgallery.com/api/v2"
-$source = 'OneGetTestSource'
-
 Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
- BeforeAll{
-    Register-PackageSource -Name Nugettest -provider NuGet -Location https://www.nuget.org/api/v2 -Force
+    BeforeAll {
+        # the package name for testing
+        $packageName = "PowerShell.TestPackage"
 
-    $packageSource = Get-PackageSource -Location $gallery -ErrorAction SilentlyContinue
-    if ($packageSource) {
-        $source = $packageSource.Name
-        Set-PackageSource -Name $source -Trusted
-    } else {
-        Register-PackageSource -Name $source -Location $gallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
+        # register the asset directory
+        $localSourceName = [Guid]::NewGuid().ToString("n")
+        $localSourceLocation = Join-Path $PSScriptRoot assets
+        Register-PackageSource -Name $localSourceName -provider NuGet -Location $localSourceLocation -Force -Trusted
+
+        # register the gallery location
+        $galleryLocation = "https://www.powershellgallery.com/api/v2"
+        $gallerySourceName = [Guid]::newGuid().ToString("n")
+        Register-PackageSource -Name $gallerySourceName -Location $galleryLocation -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
+
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+        }
+
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+        Unregister-PackageSource -Source $localSourceName -ErrorAction Ignore
+        Unregister-PackageSource -Name $gallerySourceName -ErrorAction Ignore
+        Uninstall-Module NanoServerPackage -ErrorAction Ignore -WarningAction SilentlyContinue
     }
 
-    $SavedProgressPreference = $ProgressPreference
-    $ProgressPreference = "SilentlyContinue"
- }
- AfterAll {
-     $ProgressPreference = $SavedProgressPreference
- }
     It "get-packageprovider" {
-
         $gpp = Get-PackageProvider
-
         $gpp.Name | Should -Contain 'NuGet'
-
         $gpp.Name | Should -Contain 'PowerShellGet'
     }
 
@@ -50,32 +52,40 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
     }
 
     It "install-packageprovider, Expect succeed" {
-        $ipp = (Install-PackageProvider -Name NanoServerPackage -Force -Source $source -Scope CurrentUser).name
+        Set-ItResult -Pending -Because "local test package provider not installable"
+		$ippArgs = @{
+			Name = "NanoServerPackage"
+			Force = $true
+			Source = $galleryLocation
+			Scope  = "CurrentUser"
+			WarningAction = "SilentlyContinue"
+		}
+        $ipp = (Install-PackageProvider @ippArgs).name
         $ipp | Should -Contain "NanoServerPackage"
     }
 
     It "Find-package"  {
-        $f = Find-Package -ProviderName NuGet -Name jquery -Source Nugettest
-        $f.Name | Should -Contain "jquery"
+        $f = Find-Package -ProviderName NuGet -Name $packageName -Source $localSourceName
+        $f.Name | Should -Contain "$packageName"
 	}
 
     It "Install-package"  {
-        $i = Install-Package -ProviderName NuGet -Name jquery -Force -Source Nugettest -Scope CurrentUser
-        $i.Name | Should -Contain "jquery"
+        $i = Install-Package -ProviderName NuGet -Name $packageName -Force -Source $localSourceName -Scope CurrentUser
+        $i.Name | Should -Contain "$packageName"
 	}
 
     It "Get-package"  {
-        $g = Get-Package -ProviderName NuGet -Name jquery
-        $g.Name | Should -Contain "jquery"
+        $g = Get-Package -ProviderName NuGet -Name $packageName
+        $g.Name | Should -Contain "$packageName"
 	}
 
     It "save-package"  {
-        $s = Save-Package -ProviderName NuGet -Name jquery -Path $TestDrive -Force -Source Nugettest
-        $s.Name | Should -Contain "jquery"
+        $s = Save-Package -ProviderName NuGet -Name $packageName -Path $TestDrive -Force -Source $localSourceName
+        $s.Name | Should -Contain "$packageName"
 	}
 
     It "uninstall-package"  {
-        $u = Uninstall-Package -ProviderName NuGet -Name jquery
-        $u.Name | Should -Contain "jquery"
+        $u = Uninstall-Package -ProviderName NuGet -Name $packageName
+        $u.Name | Should -Contain "$packageName"
 	}
 }

@@ -492,7 +492,7 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "NJsonSchema.dll",
+    "Pattern": "JsonSchema.Net.dll",
     "FileType": "NonProduct"
   },
   {

@@ -291,8 +291,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Get DACL
-            CommonObjectSecurity cos = sd as CommonObjectSecurity;
-            if (cos != null)
+            if (sd is CommonObjectSecurity cos)
             {
                 return cos.GetAccessRules(true, true, typeof(NTAccount));
             }
@@ -326,8 +325,7 @@ namespace Microsoft.PowerShell.Commands
                 PSTraceSource.NewArgumentException(nameof(instance));
             }
 
-            CommonObjectSecurity cos = sd as CommonObjectSecurity;
-            if (cos != null)
+            if (sd is CommonObjectSecurity cos)
             {
                 return cos.GetAuditRules(true, true, typeof(NTAccount));
             }

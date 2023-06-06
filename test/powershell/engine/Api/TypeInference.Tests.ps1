@@ -1406,6 +1406,14 @@ Describe "Type inference Tests" -tags "CI" {
         $res = [AstTypeInference]::InferTypeOf( { pwsh }.Ast)
         $res.Name | Should -Be 'System.String'
     }
+
+    It 'Should not throw when inferring $_ in switch condition' {
+        $FoundAst = { switch($_){default{}} }.Ast.Find(
+            {param($Ast) $Ast -is [Language.VariableExpressionAst]},
+            $true
+        )
+        $null = [AstTypeInference]::InferTypeOf($FoundAst)
+    }
 }
 
 Describe "AstTypeInference tests" -Tags CI {

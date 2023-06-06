@@ -1244,8 +1244,9 @@ namespace System.Management.Automation
                         // However, we don't allow Hashtable-to-Object conversion (PSObject and IDictionary) because
                         // those can lead to property setters that probably aren't expected. This is enforced by
                         // setting 'Context.LanguageModeTransitionInParameterBinding' to true before the conversion.
+                        var currentLanguageMode = Context.LanguageMode;
                         bool changeLanguageModeForTrustedCommand =
-                            Context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                            currentLanguageMode == PSLanguageMode.ConstrainedLanguage &&
                             this.Command.CommandInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage;
                         bool oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
 
@@ -1263,7 +1264,7 @@ namespace System.Management.Automation
                         {
                             if (changeLanguageModeForTrustedCommand)
                             {
-                                Context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                                Context.LanguageMode = currentLanguageMode;
                                 Context.LanguageModeTransitionInParameterBinding = oldLangModeTransitionStatus;
                             }
                         }

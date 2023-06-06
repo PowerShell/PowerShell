@@ -30,7 +30,7 @@ function UpdateHelpFromLocalContentPath {
         throw "Unable to find help content at '$helpContentPath'"
     }
 
-    # Test files are 'en-US', set explicit culture so test does not help on non-US systems
+    # Test files are 'en-US', set explicit culture so test does not fail on non-US systems
     Update-Help -Module $ModuleName -SourcePath $helpContentPath -UICulture 'en-US' -Force -ErrorAction Stop -Scope $Scope
 }
 
@@ -633,5 +633,56 @@ Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
 
     It 'help renders when using a PAGER with a space in the path' {
         help Get-Command | Should -Be "R2V0LUNvbW1hbmQ="
+    }
+}
+
+Describe 'Update-Help allows partial culture matches' -Tags 'CI' {
+    BeforeAll {
+        function Test-UpdateHelpAux($UICulture, $Pass)
+        {
+            # If null (in system culture tests), omit entirely
+            $CultureArg = $UICulture ? @{ UICulture = $UICulture } : @{}
+            $Args = @{
+                Module = 'Microsoft.PowerShell.Core'
+                SourcePath = Join-Path $PSScriptRoot 'assets'
+                Force = $true
+                ErrorAction = $Pass ? 'Stop' : 'SilentlyContinue'
+                ErrorVariable = 'ErrorVariable'
+            }
+
+            Update-Help @Args @CultureArg
+
+            if (-not $Pass) {
+                $ErrorVariable | Should -Match 'Failed to update Help for the module.*'
+            }
+        }
+    }
+
+    AfterEach {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('CurrentUICulture', $null)
+    }
+
+    It 'Checks culture match against en-US: <UICulture>' -TestCases @(
+        @{ UICulture = 'en-US' }
+        @{ UICulture = 'en' }
+        @{ UICulture = 'en-GB'; Pass = $false }
+        @{ UICulture = 'de-DE'; Pass = $false }
+    ) {
+        param($UICulture, $Pass = $true)
+
+        Test-UpdateHelpAux $UICulture $Pass
+    }
+
+    # When using system culture, "en-GB" will use "en" as fallback, so passes
+    It 'Checks system culture match against en-US: <UICulture>' -TestCases @(
+        @{ UICulture = 'en-US' }
+        @{ UICulture = 'en' }
+        @{ UICulture = 'en-GB' }
+        @{ UICulture = 'de-DE'; Pass = $false }
+    ) {
+        param($UICulture, $Pass = $true)
+
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('CurrentUICulture', [System.Globalization.CultureInfo]::new($UICulture))
+        Test-UpdateHelpAux $null $Pass
     }
 }
