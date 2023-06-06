@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
                 Collection<PathInfo> result = null;
                 try
                 {
-                    if (!string.IsNullOrEmpty(_relativeBasePath))
+                    if (MyInvocation.BoundParameters.ContainsKey("RelativeBasePath"))
                     {
                         SessionState.Path.PushCurrentLocation(string.Empty);
                         _ = SessionState.Path.SetLocation(_relativeBasePath);
