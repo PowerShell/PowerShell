@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether to enable detailed output mode while running a TCP connection test.
         /// Without this flag, the TCP test will return a boolean result.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = TcpPortParameterSet)]
         public SwitchParameter Detailed;
 
         /// <summary>

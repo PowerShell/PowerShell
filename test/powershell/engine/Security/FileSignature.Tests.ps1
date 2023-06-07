@@ -22,9 +22,15 @@ Describe "Windows platform file signatures" -Tags 'Feature' {
 }
 
 Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWindows') {
-    $PSDefaultParameterValues = @{ "It:Skip" = (-not $IsWindows) }
+    $shouldSkip = (-not $IsWindows) -or (Test-IsWinServer2012R2)
+
+    $PSDefaultParameterValues = @{ "It:Skip" = $shouldSkip }
 
     BeforeAll {
+        if ($shouldSkip) {
+            return
+        }
+
         $session = New-PSSession -UseWindowsPowerShell
         try {
             # New-SelfSignedCertificate runs in implicit remoting so do all the
@@ -83,6 +89,11 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
     }
 
     AfterAll {
+
+        if ($shouldSkip) {
+            return
+        }
+
         Remove-Item -Path Cert:\LocalMachine\Root\$caRootThumbprint -Force
         Remove-Item -Path Cert:\LocalMachine\TrustedPublisher\$signingThumbprint -Force
         Remove-Item -Path Cert:\CurrentUser\My\$signingThumbprint -Force

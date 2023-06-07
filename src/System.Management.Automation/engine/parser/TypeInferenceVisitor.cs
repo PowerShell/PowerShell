@@ -364,7 +364,22 @@ namespace System.Management.Automation
                 filterToCall = filter;
             }
 
-            results.AddRange(GetMembersByInferredType(new PSTypeName(typeof(object)), isStatic, filterToCall));
+            PSTypeName baseMembersType;
+            if (typename.TypeDefinitionAst.IsEnum)
+            {
+                if (!isStatic)
+                {
+                    results.Add(new PSInferredProperty("value__", new PSTypeName(typeof(int))));
+                }
+
+                baseMembersType = new PSTypeName(typeof(Enum));
+            }
+            else
+            {
+                baseMembersType = new PSTypeName(typeof(object));
+            }
+
+            results.AddRange(GetMembersByInferredType(baseMembersType, isStatic, filterToCall));
         }
 
         internal void AddMembersByInferredTypeCimType(PSTypeName typename, List<object> results, Func<object, bool> filterToCall)

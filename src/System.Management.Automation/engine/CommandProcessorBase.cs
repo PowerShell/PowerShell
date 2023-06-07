@@ -4,7 +4,7 @@
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Language;
+using System.Management.Automation.Security;
 using System.Runtime.InteropServices;
 
 namespace System.Management.Automation
@@ -194,11 +194,11 @@ namespace System.Management.Automation
         /// be used when a script block is being dotted.
         /// </summary>
         /// <param name="scriptBlock">The script block being dotted.</param>
-        /// <param name="languageMode">The current language mode.</param>
+        /// <param name="context">The current execution context.</param>
         /// <param name="invocationInfo">The invocation info about the command.</param>
         protected static void ValidateCompatibleLanguageMode(
             ScriptBlock scriptBlock,
-            PSLanguageMode languageMode,
+            ExecutionContext context,
             InvocationInfo invocationInfo)
         {
             // If we are in a constrained language mode (Core or Restricted), block it.
@@ -207,10 +207,11 @@ namespace System.Management.Automation
             //      functions that were never designed to handle untrusted data.
             // This function won't be called for NoLanguage mode so the only direction checked is trusted
             // (FullLanguage mode) script running in a constrained/restricted session.
-            if ((scriptBlock.LanguageMode.HasValue) &&
-                (scriptBlock.LanguageMode != languageMode) &&
-                ((languageMode == PSLanguageMode.RestrictedLanguage) ||
-                (languageMode == PSLanguageMode.ConstrainedLanguage)))
+            var languageMode = context.LanguageMode;
+            if (scriptBlock.LanguageMode.HasValue &&
+                scriptBlock.LanguageMode != languageMode &&
+                (languageMode == PSLanguageMode.RestrictedLanguage ||
+                 languageMode == PSLanguageMode.ConstrainedLanguage))
             {
                 // Finally check if script block is really just PowerShell commands plus parameters.
                 // If so then it is safe to dot source across language mode boundaries.
@@ -226,14 +227,24 @@ namespace System.Management.Automation
 
                 if (!isSafeToDotSource)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(
-                    new NotSupportedException(
-                        DiscoveryExceptions.DotSourceNotSupported),
-                        "DotSourceNotSupported",
-                        ErrorCategory.InvalidOperation,
-                        null);
-                    errorRecord.SetInvocationInfo(invocationInfo);
-                    throw new CmdletInvocationException(errorRecord);
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        ErrorRecord errorRecord = new ErrorRecord(
+                            new NotSupportedException(DiscoveryExceptions.DotSourceNotSupported),
+                            "DotSourceNotSupported",
+                            ErrorCategory.InvalidOperation,
+                            targetObject: null);
+                        errorRecord.SetInvocationInfo(invocationInfo);
+                        throw new CmdletInvocationException(errorRecord);
+                    }
+
+                    string scriptBlockId = scriptBlock.GetFileName() ?? string.Empty;
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: context,
+                        title: CommandBaseStrings.WDACLogTitle,
+                        message: StringUtil.Format(CommandBaseStrings.WDACLogMessage, scriptBlockId, scriptBlock.LanguageMode, languageMode),
+                        fqid: "ScriptBlockDotSourceNotAllowed",
+                        dropIntoDebugger: true);
                 }
             }
         }
