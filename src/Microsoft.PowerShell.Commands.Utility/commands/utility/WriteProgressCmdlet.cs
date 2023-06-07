@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -18,20 +19,7 @@ namespace Microsoft.PowerShell.Commands
             Position = 0,
             HelpMessageBaseName = HelpMessageBaseName,
             HelpMessageResourceId = "ActivityParameterHelpMessage")]
-        public string Activity
-        {
-            get
-            {
-                return _activity;
-            }
-
-            set
-            {
-                // Activity used to be mandatory and the underlying API expects a value
-                // so we use a whitespace value as a default value.
-                _activity = string.IsNullOrEmpty(value) ? " " : value;
-            }
-        }
+        public string Activity { get; set; }
 
         /// <summary>
         /// Describes the current state of the activity.
@@ -107,7 +95,28 @@ namespace Microsoft.PowerShell.Commands
         void
         ProcessRecord()
         {
-            ProgressRecord pr = new(Id, Activity, Status);
+            ProgressRecord pr;
+            if (string.IsNullOrEmpty(Activity))
+            {
+                if (!Completed)
+                {
+                    ThrowTerminatingError(new ErrorRecord(
+                    new ArgumentException("Missing value for mandatory parameter.", nameof(Activity)),
+                    "MissingActivity",
+                    ErrorCategory.InvalidArgument,
+                    Activity));
+                    return;
+                }
+                else
+                {
+                    pr = new(Id);
+                }
+            }
+            else
+            {
+                pr = new(Id, Activity, Status);
+            }
+
             pr.ParentActivityId = ParentId;
             pr.PercentComplete = PercentComplete;
             pr.SecondsRemaining = SecondsRemaining;
@@ -118,7 +127,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _completed;
-        private string _activity = " ";
 
         private const string HelpMessageBaseName = "WriteProgressResourceStrings";
     }
