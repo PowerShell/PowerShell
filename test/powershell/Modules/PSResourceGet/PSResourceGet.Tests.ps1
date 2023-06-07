@@ -100,10 +100,10 @@ function Initialize
 
 function Remove-InstalledModules
 {
-    Get-InstalledPSResource -Name $TestModule -Version '*' -ErrorAction SilentlyContinue | PowerShellGet\Uninstall-PSResource -Force
+    Get-InstalledPSResource -Name $TestModule -Version '*' -ErrorAction SilentlyContinue | PSResourceGet\Uninstall-PSResource -Force
 }
 
-Describe "PowerShellGet - Module tests" -tags "Feature" {
+Describe "PSResourceGet - Module tests" -tags "Feature" {
 
     BeforeAll {
         if ($script:Initialized -eq $false) {
@@ -140,7 +140,7 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
     }
 }
 
-Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "PSResourceGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
 
     BeforeAll {
         if ($script:Initialized -eq $false) {
@@ -176,7 +176,7 @@ function Remove-InstalledScripts
     Get-InstalledPSResource -Name $TestScript -ErrorAction SilentlyContinue | Uninstall-PSResource -Force
 }
 
-Describe "PowerShellGet - Script tests" -tags "Feature" {
+Describe "PSResourceGet - Script tests" -tags "Feature" {
 
     BeforeAll {
         if ($script:Initialized -eq $false) {
@@ -209,7 +209,7 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
     }
 }
 
-Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
 
     BeforeAll {
         if ($script:Initialized -eq $false) {
