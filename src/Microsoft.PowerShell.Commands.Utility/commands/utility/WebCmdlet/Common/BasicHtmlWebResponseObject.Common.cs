@@ -3,6 +3,7 @@
 
 #nullable enable
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -26,8 +27,9 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class.
         /// </summary>
         /// <param name="response">The response.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public BasicHtmlWebResponseObject(HttpResponseMessage response, CancellationToken cancellationToken) : this(response, null, cancellationToken) { }
+        public BasicHtmlWebResponseObject(HttpResponseMessage response, TimeSpan perReadTimeout, CancellationToken cancellationToken) : this(response, null, perReadTimeout, cancellationToken) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class
@@ -35,8 +37,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="response">The response.</param>
         /// <param name="contentStream">The content stream associated with the response.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream? contentStream, CancellationToken cancellationToken) : base(response, contentStream, cancellationToken)
+        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream? contentStream, TimeSpan perReadTimeout, CancellationToken cancellationToken) : base(response, contentStream, perReadTimeout, cancellationToken)
         {
             InitializeContent(cancellationToken);
             InitializeRawContent(response);
@@ -157,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
                 // Fill the Content buffer
                 string? characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
 
-                Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding, cancellationToken);
+                Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding, perReadTimeout, cancellationToken);
                 Encoding = encoding;
             }
             else
