@@ -192,7 +192,6 @@ so that users can experiment with whether or not the break has a significant neg
 #### Reporting Working Group members abuse
 
 Working group members are individuals and in many cases volunteers.
-There may be situations where a working group member might exhibit behavior that is objectionable, exceed the authority defined in this document or violate the [Code of Conduct](../../CODE_OF_CONDUCT.md).
+There may be situations where a working group member might exhibit behavior that is objectionable,
+exceed the authority defined in this document or violate the [Code of Conduct](../../CODE_OF_CONDUCT.md).
 We recommend to report such issues by using the [Report Content](https://docs.github.com/communities/maintaining-your-safety-on-github/reporting-abuse-or-spam) mechanism to bring it to the attention of the maintainers to review.
-
-
