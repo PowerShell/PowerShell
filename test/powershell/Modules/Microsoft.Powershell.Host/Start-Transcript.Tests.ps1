@@ -197,7 +197,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
-        $transcriptFilePath | Should -Not -FileContentMatch $message
+        $transcriptFilePath | Should -Not -FileContentMatch $message -Because (get-content $transcriptFilePath)
     }
 
     It "Transcription should not record Write-Information output when InformationAction is set to Ignore" {
