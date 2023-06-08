@@ -83,11 +83,9 @@ $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path
 
 function Initialize
 {
-    $repo = Get-PSResourceRepository -ErrorAction SilentlyContinue |
-                Where-Object {$_.SourceLocation.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}
+    $repo = Get-PSResourceRepository $RepositoryName -ErrorAction SilentlyContinue
     if($repo)
     {
-        $script:RepositoryName = $repo.Name
         Set-PSResourceRepository -Name $repo.Name -Trusted
     }
     else
