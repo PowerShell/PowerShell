@@ -360,6 +360,14 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules/PSResourceGet/LICENSE",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/PSResourceGet/Notice.txt",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Modules/ThreadJob/*.dll",
     "FileType": "NonProduct"
   },
