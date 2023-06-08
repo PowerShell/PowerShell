@@ -100,7 +100,7 @@ function Initialize
 
 function Remove-InstalledModules
 {
-    Get-InstalledPSResource -Name $TestModule -Version '*' -ErrorAction SilentlyContinue | PSResourceGet\Uninstall-PSResource -Force
+    Get-InstalledPSResource -Name $TestModule -Version '*' -ErrorAction SilentlyContinue | PSResourceGet\Uninstall-PSResource
 }
 
 Describe "PSResourceGet - Module tests" -tags "Feature" {
@@ -173,7 +173,7 @@ Describe "PSResourceGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
 function Remove-InstalledScripts
 {
-    Get-InstalledPSResource -Name $TestScript -ErrorAction SilentlyContinue | Uninstall-PSResource -Force
+    Get-InstalledPSResource -Name $TestScript -ErrorAction SilentlyContinue | Uninstall-PSResource
 }
 
 Describe "PSResourceGet - Script tests" -tags "Feature" {
