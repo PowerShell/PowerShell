@@ -31,6 +31,8 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
+
+        Get-PackageSource | Out-String -Stream | Write-Verbose -Verbose
         }
 
     AfterAll {
@@ -66,12 +68,12 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
     It "Find-package"  {
         $f = Find-Package -ProviderName NuGet -Name $packageName -Source $localSourceName
-        $f.Name | Should -Contain "$packageName"
+        $f.Name | Should -Contain "$packageName" -Because ((Get-PackageSource $localSourceName).Location | Get-ChildItem)
 	}
 
     It "Install-package"  {
         $i = Install-Package -ProviderName NuGet -Name $packageName -Force -Source $localSourceName -Scope CurrentUser
-        $i.Name | Should -Contain "$packageName"
+        $i.Name | Should -Contain "$packageName" -Because ((Get-PackageSource $localSourceName).Location | Get-ChildItem)
 	}
 
     It "Get-package"  {
@@ -81,7 +83,7 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
     It "save-package"  {
         $s = Save-Package -ProviderName NuGet -Name $packageName -Path $TestDrive -Force -Source $localSourceName
-        $s.Name | Should -Contain "$packageName"
+        $s.Name | Should -Contain "$packageName" -Because (Get-ChildItem $TestDrive)
 	}
 
     It "uninstall-package"  {
