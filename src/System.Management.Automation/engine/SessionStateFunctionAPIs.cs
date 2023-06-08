@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -184,7 +185,7 @@ namespace System.Management.Automation
 
             // Early out.
             // Always allow built-in functions needed for command line debugging.
-            if ((this.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage) ||
+            if (this.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage ||
                 (fnInfo == null) ||
                 (fnInfo.Name.Equals("prompt", StringComparison.OrdinalIgnoreCase)) ||
                 (fnInfo.Name.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase)) ||

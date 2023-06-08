@@ -1976,9 +1976,6 @@ namespace System.Management.Automation.Language
                 RequiredPSEditions = requiredEditions != null
                                                     ? new ReadOnlyCollection<string>(requiredEditions)
                                                     : ScriptRequirements.EmptyEditionCollection,
-                RequiresPSSnapIns = requiredSnapins != null
-                                                   ? new ReadOnlyCollection<PSSnapInSpecification>(requiredSnapins)
-                                                   : ScriptRequirements.EmptySnapinCollection,
                 RequiredAssemblies = requiredAssemblies != null
                                                     ? new ReadOnlyCollection<string>(requiredAssemblies)
                                                     : ScriptRequirements.EmptyAssemblyCollection,

@@ -369,5 +369,6 @@ stages:
             Get-Content "$(Build.StagingDirectory)\release.json"
             Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"
           displayName: Create and upload release.json file to build artifact
+          retryCountOnTaskFailure: 2
 
         - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

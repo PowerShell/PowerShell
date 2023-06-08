@@ -428,10 +428,7 @@ namespace Microsoft.PowerShell.Commands
             /// <exception cref="ArgumentOutOfRangeException">If <paramref name="capacity"/> is negative.</exception>
             public CircularBuffer(int capacity)
             {
-                if (capacity < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(capacity));
-                }
+                ArgumentOutOfRangeException.ThrowIfNegative(capacity);
 
                 _items = new T[capacity];
                 Clear();
@@ -532,12 +529,8 @@ namespace Microsoft.PowerShell.Commands
 
             public void CopyTo(T[] array, int arrayIndex)
             {
-                ArgumentNullException.ThrowIfNull(array); 
-
-                if (arrayIndex < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(arrayIndex));
-                }
+                ArgumentNullException.ThrowIfNull(array);
+                ArgumentOutOfRangeException.ThrowIfNegative(arrayIndex);
 
                 if (Count > (array.Length - arrayIndex))
                 {

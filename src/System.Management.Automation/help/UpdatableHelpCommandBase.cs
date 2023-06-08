@@ -557,7 +557,8 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 catch (UpdatableHelpSystemException e)
                 {
-                    if (e.FullyQualifiedErrorId == "HelpCultureNotSupported")
+                    if (e.FullyQualifiedErrorId == "HelpCultureNotSupported"
+                            || e.FullyQualifiedErrorId == "UnableToRetrieveHelpInfoXml")
                     {
                         installed = false;
 
@@ -672,7 +673,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Culture check
-            if (!newHelpInfo.IsCultureSupported(culture))
+            if (!newHelpInfo.IsCultureSupported(culture.Name))
             {
                 throw new UpdatableHelpSystemException("HelpCultureNotSupported",
                     StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupported,

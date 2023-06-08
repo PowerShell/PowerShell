@@ -529,6 +529,43 @@ Describe "Handling of globbing patterns" -Tags "CI" {
             Test-Path -LiteralPath $testPath2 | Should -BeTrue
         }
     }
+
+    Context "Device paths" {
+        # The globber is overly greedy somewhere so you need to escape the escape backtick to preserve the question mark issue https://github.com/PowerShell/PowerShell/issues/19627
+        It "Handle device paths: <path>" -Skip:(!$IsWindows) -TestCases @(
+            @{ path = "\\.\${env:SystemDrive}\" }
+            @{ path = "\\.\${env:SystemDrive}\*" }
+            @{ path = "\\``?\${env:SystemDrive}\" }
+            @{ path = "\\``?\${env:SystemDrive}\*" }
+        ) {
+            param($path)
+            $expected = Get-ChildItem -Path ${env:SystemDrive}\
+            $result = Get-ChildItem -Path $path
+            $result.Count | Should -Be $expected.Count
+        }
+
+        It "Handle folders within a device path: <path>" -Skip:(!$IsWindows) -TestCases @(
+            @{ path = "\\.\${env:SystemRoot}\" }
+            @{ path = "\\.\${env:SystemRoot}\*" }
+            @{ path = "\\``?\${env:SystemRoot}\" }
+            @{ path = "\\``?\${env:SystemRoot}\*" }
+        ) {
+            param($path)
+            $expected = Get-ChildItem -Path ${env:SystemRoot}
+            $result = Get-ChildItem -Path $path
+            $result.Count | Should -Be $expected.Count
+        }
+
+        It "Fails for invalid device path: <path>" -Skip:(!$IsWindows) -TestCases @(
+            @{ path = "\\.\INVALID0\" }
+            @{ path = "\\``?\INVALID0\" }
+            # @{ path = "\\.\INVALID0\*" }  // problem in globber where this fails but is ignored issue https://github.com/PowerShell/PowerShell/issues/19626
+            # @{ path = "\\``?\INVALID0\*" }
+        ) {
+            param($path)
+            { Get-ChildItem -Path $path -ErrorAction Stop } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand'
+        }
+    }
 }
 
 Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows" {
@@ -550,6 +587,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         $nonFile = Join-Path $TestPath "not-a-file"
         $fileContent = "some text"
         $realDir = Join-Path $TestPath "subdir"
+        $realDir2 = Join-Path $TestPath "second-subdir"
         $nonDir = Join-Path $TestPath "not-a-dir"
         $hardLinkToFile = Join-Path $TestPath "hard-to-file.txt"
         $symLinkToFile = Join-Path $TestPath "sym-link-to-file.txt"
@@ -560,6 +598,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
 
         New-Item -ItemType File -Path $realFile -Value $fileContent > $null
         New-Item -ItemType Directory -Path $realDir > $null
+        New-Item -ItemType Directory -Path $realDir2 > $null
     }
 
     Context "New-Item and hard/symbolic links" {
@@ -611,6 +650,17 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Test-Path $junctionToDir | Should -BeTrue
         }
 
+        It 'New-Item fails creating junction with relative path' -Skip:(!$IsWindows) {
+            try {
+                Push-Location $TestDrive
+                1 > 1.txt
+                { New-Item -ItemType Junction -Path 2.txt -Target 1.txt -ErrorAction Stop } | Should -Throw -ErrorId "NotAbsolutePath,Microsoft.PowerShell.Commands.NewItemCommand"
+            }
+            finally {
+                Pop-Location
+            }
+        }
+
         It 'New-Item can create hardlink with relative path' {
             try {
                 Push-Location $TestDrive
@@ -627,6 +677,17 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         It 'New-Item will fail to forcibly create hardlink to itself' {
             $i = New-Item -ItemType File -Path "$TestDrive\file.txt" -Force -ErrorAction Ignore
             { New-Item -ItemType HardLink -Path $i -Target $i -Force -ErrorAction Stop } | Should -Throw -ErrorId "TargetIsSameAsLink,Microsoft.PowerShell.Commands.NewItemCommand"
+        }
+
+        It "New-Item -Force can overwrite a junction" -Skip:(-Not $IsWindows){
+            $rd2 = Get-Item -Path $realDir2
+            New-Item -Name testfile.txt -ItemType file -Path $realDir
+            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
+            Test-Path $junctionToDir | Should -BeTrue
+            { New-Item -ItemType Junction -Path $junctionToDir -Value $realDir -ErrorAction Stop > $null } | Should -Throw -ErrorId "DirectoryNotEmpty,Microsoft.PowerShell.Commands.NewItemCommand"
+            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir2 -Force > $null
+            $Junction = Get-Item -Path $junctionToDir
+            $Junction.Target | Should -BeExactly $rd2.ToString()
         }
     }
 

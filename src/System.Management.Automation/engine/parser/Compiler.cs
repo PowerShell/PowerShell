@@ -782,7 +782,7 @@ namespace System.Management.Automation.Language
         internal ExecutionContext _executionContext;
         internal Pipe _outputPipe;
         internal BitArray _breakPoints;
-        internal List<LineBreakpoint> _boundBreakpoints;
+        internal Dictionary<int, List<LineBreakpoint>> _boundBreakpoints;
         internal int _currentSequencePointIndex;
         internal MutableTuple _localsTuple;
         internal List<Tuple<Type[], Action<FunctionContext>[], Type[]>> _traps = new List<Tuple<Type[], Action<FunctionContext>[], Type[]>>();
@@ -3601,7 +3601,7 @@ namespace System.Management.Automation.Language
             var dispatchTargets = new List<LabelTarget>();
             var tryBodyExprs = new List<Expression>()
             {
-                null, // Add a slot for the inital switch/case that we'll come back to
+                null, // Add a slot for the initial switch/case that we'll come back to
             };
 
             // L0: dispatchIndex = 1; pipeline1

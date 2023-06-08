@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>

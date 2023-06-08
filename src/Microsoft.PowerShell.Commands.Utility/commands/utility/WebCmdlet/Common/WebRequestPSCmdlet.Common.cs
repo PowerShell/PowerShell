@@ -568,8 +568,8 @@ namespace Microsoft.PowerShell.Commands
                             string contentType = ContentHelper.GetContentType(response);
                             long? contentLength = response.Content.Headers.ContentLength;
                             string respVerboseMsg = contentLength is null
-                                ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, contentType)
-                                : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, contentLength, contentType);
+                                ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, response.Version, contentType)
+                                : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, response.Version, contentLength, contentType);
                             
                             WriteVerbose(respVerboseMsg);
 
@@ -592,12 +592,20 @@ namespace Microsoft.PowerShell.Commands
                                 OutFile = null;
                             }
 
-                            // Detect insecure redirection
-                            if (!AllowInsecureRedirect && response.RequestMessage.RequestUri.Scheme == "https" && response.Headers.Location?.Scheme == "http")
+                            // Detect insecure redirection.
+                            if (!AllowInsecureRedirect)
                             {
-                                ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
-                                er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
-                                ThrowTerminatingError(er);
+                                // We will skip detection if either of the URIs is relative, because the 'Scheme' property is not supported on a relative URI.
+                                // If we have to skip the check, an error may be thrown later if it's actually an insecure https-to-http redirect.
+                                bool originIsHttps = response.RequestMessage.RequestUri.IsAbsoluteUri && response.RequestMessage.RequestUri.Scheme == "https";
+                                bool destinationIsHttp = response.Headers.Location is not null && response.Headers.Location.IsAbsoluteUri && response.Headers.Location.Scheme == "http";
+
+                                if (originIsHttps && destinationIsHttp)
+                                {
+                                    ErrorRecord er = new(new InvalidOperationException(), "InsecureRedirection", ErrorCategory.InvalidOperation, request);
+                                    er.ErrorDetails = new ErrorDetails(WebCmdletStrings.InsecureRedirection);
+                                    ThrowTerminatingError(er);
+                                }
                             }
 
                             if (ShouldCheckHttpStatus && !_isSuccess)
@@ -613,7 +621,7 @@ namespace Microsoft.PowerShell.Commands
                                 string detailMsg = string.Empty;
                                 try
                                 {
-                                    string error = StreamHelper.GetResponseString(response);
+                                    string error = StreamHelper.GetResponseString(response, _cancelToken.Token);
                                     detailMsg = FormatErrorMessage(error, contentType);
                                 }
                                 catch
@@ -657,6 +665,11 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             ThrowTerminatingError(er);
+                        }
+                        finally 
+                        {
+                            _cancelToken?.Dispose();
+                            _cancelToken = null;
                         }
 
                         if (_followRelLink)
@@ -1326,7 +1339,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // If the status code is 429 get the retry interval from the Headers.
                     // Ignore broken header and its value.
-                    if (response.StatusCode is HttpStatusCode.Conflict && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter))
+                    if (response.StatusCode is HttpStatusCode.TooManyRequests && response.Headers.TryGetValues(HttpKnownHeaderNames.RetryAfter, out IEnumerable<string> retryAfter))
                     {
                         try
                         {

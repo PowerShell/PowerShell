@@ -98,16 +98,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Dbg.Assert(jobContext != null, "Caller should verify jobContext != null");
             Dbg.Assert(inner != null, "Caller should verify inner != null");
 
-            CimException cimException = inner as CimException;
-            if (cimException != null)
+            if (inner is CimException cimException)
             {
                 return CreateFromCimException(jobDescription, jobContext, cimException);
             }
 
             string message = BuildErrorMessage(jobDescription, jobContext, inner.Message);
             CimJobException cimJobException = new(message, inner);
-            var containsErrorRecord = inner as IContainsErrorRecord;
-            if (containsErrorRecord != null)
+            if (inner is IContainsErrorRecord containsErrorRecord)
             {
                 cimJobException.InitializeErrorRecord(
                     jobContext,
@@ -356,8 +354,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get
             {
-                var cimException = this.InnerException as CimException;
-                if ((cimException == null) || (cimException.ErrorData == null))
+                if ((this.InnerException is not CimException cimException) || (cimException.ErrorData == null))
                 {
                     return false;
                 }

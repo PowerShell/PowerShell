@@ -364,7 +364,22 @@ namespace System.Management.Automation
                 filterToCall = filter;
             }
 
-            results.AddRange(GetMembersByInferredType(new PSTypeName(typeof(object)), isStatic, filterToCall));
+            PSTypeName baseMembersType;
+            if (typename.TypeDefinitionAst.IsEnum)
+            {
+                if (!isStatic)
+                {
+                    results.Add(new PSInferredProperty("value__", new PSTypeName(typeof(int))));
+                }
+
+                baseMembersType = new PSTypeName(typeof(Enum));
+            }
+            else
+            {
+                baseMembersType = new PSTypeName(typeof(object));
+            }
+
+            results.AddRange(GetMembersByInferredType(baseMembersType, isStatic, filterToCall));
         }
 
         internal void AddMembersByInferredTypeCimType(PSTypeName typename, List<object> results, Func<object, bool> filterToCall)
@@ -707,6 +722,11 @@ namespace System.Management.Automation
             // The reflection type of PSCustomObject is PSObject, so this covers both the
             // [PSObject] @{ Key = "Value" } and the [PSCustomObject] @{ Key = "Value" } case.
             var type = convertExpressionAst.Type.TypeName.GetReflectionType();
+
+            if (type is null && convertExpressionAst.Type.TypeName is TypeName unavailableType && unavailableType._typeDefinitionAst is not null)
+            {
+                return new[] { new PSTypeName(unavailableType._typeDefinitionAst) };
+            }
 
             if (type == typeof(PSObject) && convertExpressionAst.Child is HashtableAst hashtableAst)
             {

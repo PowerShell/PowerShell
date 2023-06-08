@@ -1128,7 +1128,7 @@
         {
           "name": "assignToGitHubUserGroup",
           "parameters": {
-            "groupId": "5dd8713b90bf2e113c0e885e",
+            "groupId": "wr87plQOBSdssuPwnMk9T",
             "skipOpener": true
           }
         }
@@ -1165,7 +1165,7 @@
         {
           "name": "assignToGitHubUserGroup",
           "parameters": {
-            "groupId": "5dd8713b90bf2e113c0e885e"
+            "groupId": "wr87plQOBSdssuPwnMk9T"
           }
         }
       ]
