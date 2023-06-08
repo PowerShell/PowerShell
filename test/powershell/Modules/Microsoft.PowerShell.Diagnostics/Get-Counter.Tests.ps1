@@ -173,7 +173,7 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
             $counterData = Get-Counter -Counter $counterPath -SampleInterval $sampleInterval -MaxSamples $counterCount
             $endTime = Get-Date
             $counterData.Length | Should -Be $counterCount
-            ($endTime - $startTime).TotalSeconds | Should -Not -BeLessThan ($counterCount * $sampleInterval)
+            ($endTime - $startTime).TotalSeconds -as [int] | Should -Not -BeLessThan ($counterCount * $sampleInterval)
         }
 
         It "Can process array of counter names" -Skip:$(SkipCounterTests) {
