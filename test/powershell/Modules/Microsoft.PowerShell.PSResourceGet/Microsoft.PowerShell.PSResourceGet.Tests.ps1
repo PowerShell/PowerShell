@@ -97,7 +97,7 @@ function Initialize
 
 function Remove-InstalledModules
 {
-    Get-InstalledPSResource -Name $TestModule -Version '*' -ErrorAction SilentlyContinue | PSResourceGet\Uninstall-PSResource
+    Get-InstalledPSResource -Name $TestModule -Version '*' -ErrorAction SilentlyContinue | Microsoft.PowerShell.PSResourceGet\Uninstall-PSResource
 }
 
 Describe "PSResourceGet - Module tests" -tags "Feature" {
