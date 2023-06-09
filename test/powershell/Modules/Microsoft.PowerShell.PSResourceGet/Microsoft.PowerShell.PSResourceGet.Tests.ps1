@@ -5,7 +5,6 @@
 $ProgressPreference = "SilentlyContinue"
 
 $RepositoryName = 'PSGallery'
-$SourceLocation = 'https://www.powershellgallery.com'
 $TestModule = 'newTestModule'
 $TestScript = 'TestTestScript'
 $Initialized = $false
