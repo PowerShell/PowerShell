@@ -34,7 +34,7 @@ Describe "Wait-Process" {
     It "Should wait until all processes have exited" {
         Wait-Process -InputObject $Processes
 
-        $Processes.Where({$_.HasExited -eq $true}).Count    | Should -Be $Processes.Count
+        $Processes.Where({$_.HasExited -eq $true}).Count  | Should -Be $Processes.Count
     }
 
     It "Should wait until one process has exited" {

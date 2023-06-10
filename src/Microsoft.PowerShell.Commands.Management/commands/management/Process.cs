@@ -822,6 +822,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the Wait-process command.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Wait, "Process", DefaultParameterSetName = "Name", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097146")]
+    [OutputType(typeof(Process))]
     public sealed class WaitProcessCommand : ProcessBaseCommand
     {
         #region Parameters
@@ -1042,7 +1043,7 @@ namespace Microsoft.PowerShell.Commands
             
             if (PassThru)
             {
-                WriteObject(_processList, true);
+                WriteObject(_processList, enumerateCollection: true);
             }
         }
 
