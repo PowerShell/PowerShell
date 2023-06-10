@@ -73,11 +73,11 @@ Describe "Get-Content" -Tags "CI" {
     }
 
     It 'Verifies -TotalCount reports a ParameterArgumentValidationError error for negative values' {
-        Get-Content -Path $testPath2 -TotalCount -2 | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetContentCommand'
+        {Get-Content -Path $testPath2 -TotalCount -2} | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetContentCommand'
     }
 
     It 'Verifies -Tail reports a ParameterArgumentValidationError error for negative values' {
-        Get-Content -Path $testPath2 -Tail -2 | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetContentCommand'
+        {Get-Content -Path $testPath2 -Tail -2} | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetContentCommand'
     }
 
     It "Should be able to get content within a different drive" {
