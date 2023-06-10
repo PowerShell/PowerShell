@@ -153,13 +153,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Run a command.
         /// </summary>
-        protected void RunCommand(String command, String args) {
+        protected void RunCommand(String command = "/sbin/shutdown", String args = string.Empty) {
             _process = new Process()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "/sbin/shutdown",
-                    Arguments = string.Empty,
+                    FileName = command,
+                    Arguments = args,
                     RedirectStandardOutput = false,
                     UseShellExecute = false,
                     CreateNoWindow = true,
