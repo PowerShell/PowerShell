@@ -40,20 +40,20 @@ Describe "Wait-Process" {
     It "Should wait until one process has exited" {
         Wait-Process -InputObject $Processes -Any
 
-        $Processes.Where({$_.HasExited -eq $true}).Count     | Should -Be 1
-        $Processes.Where({$_.HasExited -eq $false}).Count    | Should -Be ($Processes.Count - 1)
+        $Processes.Where({$_.HasExited -eq $true}).Count   | Should -Be 1
+        $Processes.Where({$_.HasExited -eq $false}).Count  | Should -Be ($Processes.Count - 1)
     }
 
     It "Should passthru all processes when all processes have exited" {
         $PassThruProcesses = Wait-Process -InputObject $Processes -PassThru
 
-        $PassThruProcesses.Where({$_.HasExited -eq $true}).Count    | Should -Be $Processes.Count
+        $PassThruProcesses.Where({$_.HasExited -eq $true}).Count  | Should -Be $Processes.Count
     }
 
     It "Should passthru all processes when one process has exited" {
         $PassThruProcesses = Wait-Process -InputObject $Processes -Any -PassThru
 
-        $PassThruProcesses.Where({$_.HasExited -eq $true}).Count     | Should -Be 1
-        $PassThruProcesses.Where({$_.HasExited -eq $false}).Count    | Should -Be ($Processes.Count - 1)
+        $PassThruProcesses.Where({$_.HasExited -eq $true}).Count   | Should -Be 1
+        $PassThruProcesses.Where({$_.HasExited -eq $false}).Count  | Should -Be ($Processes.Count - 1)
     }
 }
