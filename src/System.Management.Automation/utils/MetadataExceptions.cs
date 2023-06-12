@@ -14,6 +14,18 @@ namespace System.Management.Automation
     {
         internal const string MetadataMemberInitialization = "MetadataMemberInitialization";
         internal const string BaseName = "Metadata";
+
+        /// <summary>
+        /// Initializes a new instance of MetadataException with serialization parameters.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
+        protected MetadataException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            SetErrorCategory(ErrorCategory.MetadataError);
+        }
+
         /// <summary>
         /// Initializes a new instance of MetadataException with the message set
         /// to typeof(MetadataException).FullName.
@@ -96,9 +108,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
-        protected ValidationMetadataException(SerializationInfo info, StreamingContext context) 
-        { 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
+        protected ValidationMetadataException(SerializationInfo info, StreamingContext context)
+        {
             throw new NotSupportedException();
         }
 
@@ -168,7 +180,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ArgumentTransformationMetadataException(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();
@@ -218,7 +230,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ParsingMetadataException(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();

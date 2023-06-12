@@ -11,7 +11,7 @@ namespace System.Management.Automation
     /// An exception that wraps all exceptions that are thrown by providers. This allows
     /// callers of the provider APIs to be able to catch a single exception no matter
     /// what any of the various providers may have thrown.
-    /// </summary>    
+    /// </summary>
     public class ProviderInvocationException : RuntimeException
     {
         #region Constructors
@@ -31,7 +31,7 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ProviderInvocationException(
             SerializationInfo info,
             StreamingContext context)
@@ -455,7 +455,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected SessionStateException(SerializationInfo info,
                                         StreamingContext context)
         {
@@ -575,7 +575,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected SessionStateUnauthorizedAccessException(
             SerializationInfo info,
             StreamingContext context)
@@ -783,7 +783,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ProviderNameAmbiguousException(
             SerializationInfo info,
             StreamingContext context)
@@ -881,7 +881,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected DriveNotFoundException(
             SerializationInfo info,
             StreamingContext context)
@@ -963,7 +963,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ItemNotFoundException(
             SerializationInfo info,
             StreamingContext context)

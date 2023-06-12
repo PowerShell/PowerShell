@@ -25,6 +25,24 @@ namespace System.Management.Automation
             get { return _errors; }
         }
 
+        #region Serialization
+        /// <summary>
+        /// Initializes a new instance of the ParseException class and defines the serialization information,
+        /// and streaming context.
+        /// </summary>
+        /// <param name="info">The serialization information to use when initializing this object.</param>
+        /// <param name="context">The streaming context to use when initializing this object.</param>
+        /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
+        protected ParseException(SerializationInfo info,
+                           StreamingContext context)
+                : base(info, context)
+        {
+            _errors = (ParseError[])info.GetValue("Errors", typeof(ParseError[]));
+        }
+
+        #endregion Serialization
+
         #region ctor
 
         /// <summary>
@@ -160,7 +178,7 @@ namespace System.Management.Automation
         /// <param name="info">The serialization information to use when initializing this object.</param>
         /// <param name="context">The streaming context to use when initializing this object.</param>
         /// <returns>Constructed object.</returns>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected IncompleteParseException(SerializationInfo info,
                            StreamingContext context)
         {
