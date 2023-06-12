@@ -187,9 +187,10 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
     It "Transcription should not record Write-Information output when InformationAction is set to SilentlyContinue" {
         [String]$message = New-Guid
+        $traceData = Join-Path $TESTDRIVE tracedata.txt
         $script = {
             Start-Transcript -Path $transcriptFilePath
-            Write-Information -Message $message -InformationAction SilentlyContinue
+            Trace-Command -File $traceData -Name param* { -Write-Information -Message $message -InformationAction SilentlyContinue }
             Stop-Transcript
         }
 
@@ -197,7 +198,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
-        $transcriptFilePath | Should -Not -FileContentMatch $message -Because (get-content $transcriptFilePath)
+        $transcriptFilePath | Should -Not -FileContentMatch $message -Because (get-content $transcriptFilePath,$traceData)
     }
 
     It "Transcription should not record Write-Information output when InformationAction is set to Ignore" {
