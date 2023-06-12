@@ -56,7 +56,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonSchema.Net",
-          "Version": "4.1.1"
+          "Version": "4.1.2"
         }
       },
       "DevelopmentDependency": false
@@ -106,7 +106,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.5.0"
+          "Version": "4.6.0"
         }
       },
       "DevelopmentDependency": false
@@ -116,7 +116,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.5.0"
+          "Version": "4.6.0"
         }
       },
       "DevelopmentDependency": false
@@ -166,7 +166,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.PowerShell.MarkdownRender",
-          "Version": "7.2.0"
+          "Version": "7.2.1"
         }
       },
       "DevelopmentDependency": false
@@ -376,7 +376,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Collections.Immutable",
-          "Version": "6.0.0"
+          "Version": "7.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -606,7 +606,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Reflection.Metadata",
-          "Version": "6.0.1"
+          "Version": "7.0.0"
         }
       },
       "DevelopmentDependency": false

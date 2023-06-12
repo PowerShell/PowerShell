@@ -99,6 +99,7 @@ jobs:
       inputs:
         pathToPublish: '$(Build.SourcesDirectory)/ReleaseFileHash.csv'
         artifactName: ReleaseFilesHash
+      retryCountOnTaskFailure: 2
 
     - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@2
       displayName: 'Run APIScan'

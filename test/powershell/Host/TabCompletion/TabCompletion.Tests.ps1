@@ -961,6 +961,12 @@ class InheritedClassTest : System.Attribute
         $res.CompletionMatches.CompletionText | Should -Contain '-ProgressAction'
     }
 
+    it 'Should complete enum class members for Enums in script text' {
+        $res = TabExpansion2 -inputScript 'enum Test1 {Val1};([Test1]"").'
+        $res.CompletionMatches.CompletionText[0] | Should -Be 'value__'
+        $res.CompletionMatches.CompletionText | Should -Contain 'HasFlag('
+    }
+
     Context "Script name completion" {
         BeforeAll {
             Setup -f 'install-powershell.ps1' -Content ""
