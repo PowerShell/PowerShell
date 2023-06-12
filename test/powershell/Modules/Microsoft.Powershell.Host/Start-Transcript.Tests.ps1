@@ -190,7 +190,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $traceData = Join-Path $TESTDRIVE tracedata.txt
         $script = {
             Start-Transcript -Path $transcriptFilePath
-            Trace-Command -File $traceData -Name param* { -Write-Information -Message $message -InformationAction SilentlyContinue }
+            Trace-Command -File $traceData -Name param* { Write-Information -Message $message -InformationAction SilentlyContinue }
             Stop-Transcript
         }
 
