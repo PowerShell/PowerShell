@@ -2191,8 +2191,7 @@ namespace System.Management.Automation
         internal bool HasCleanBlock { get => AstInternal.Body.CleanBlock != null; }
     }
 
-    [Serializable]
-    internal class ScriptBlockSerializationHelper : ISerializable
+    internal class ScriptBlockSerializationHelper
     {
         private readonly string _scriptText;
 

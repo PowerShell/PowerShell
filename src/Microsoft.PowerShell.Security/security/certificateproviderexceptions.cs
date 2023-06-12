@@ -51,6 +51,23 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Initializes a new instance of the CertificateProviderItemNotFoundException
+        /// class with the specified serialization information, and context.
+        /// </summary>
+        /// <param name="info">
+        /// The serialization information.
+        /// </param>
+        /// <param name="context">
+        /// The streaming context.
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
+        protected CertificateProviderItemNotFoundException(SerializationInfo info,
+                                                        StreamingContext context)
+            : base(info, context)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CertificateProviderItemNotFoundException
         /// class with the specified inner exception.
         /// </summary>
         /// <param name="innerException">
@@ -116,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="context">
         /// The streaming context.
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected CertificateNotFoundException(SerializationInfo info,
                                             StreamingContext context)
         {
@@ -162,9 +179,9 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="context">
         /// The streaming context.
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected CertificateStoreNotFoundException(SerializationInfo info,
-                                            StreamingContext context)         
+                                            StreamingContext context)
         {
             throw new NotSupportedException();
         }
@@ -223,6 +240,23 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public CertificateStoreLocationNotFoundException()
             : base()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CertificateStoreLocationNotFoundException
+        /// class with the specified serialization information, and context.
+        /// </summary>
+        /// <param name="info">
+        /// The serialization information.
+        /// </param>
+        /// <param name="context">
+        /// The streaming context.
+        /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
+        protected CertificateStoreLocationNotFoundException(SerializationInfo info,
+                                                        StreamingContext context)
+            : base(info, context)
         {
         }
 

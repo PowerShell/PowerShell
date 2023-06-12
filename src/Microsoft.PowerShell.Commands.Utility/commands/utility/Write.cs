@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "ErrorRecord", Mandatory = true)]
         public ErrorRecord ErrorRecord { get; set; }
-        
+
         /// <summary>
         /// ErrorRecord.CategoryInfo.Category.
         /// </summary>
@@ -450,7 +450,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="message"></param>
         /// <param name="innerException"></param>
         /// <returns>Constructed object.</returns>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         public WriteErrorException(string message,
                                           Exception innerException)
             : base(message, innerException)
@@ -465,8 +464,9 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected WriteErrorException(SerializationInfo info,
-                                      StreamingContext context)            
+                                      StreamingContext context)
         {
             throw new NotSupportedException();
         }
