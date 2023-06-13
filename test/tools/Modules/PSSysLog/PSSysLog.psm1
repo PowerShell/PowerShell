@@ -182,6 +182,7 @@ class PSLogItem
     [string] $EventId = [string]::Empty
     [string] $Message = [string]::Empty
     [int] $Count = 1
+    [System.Collections.Generic.List[String]]$ParseErrors = [System.Collections.Generic.List[string]]::new()
 
     hidden static $monthNames = @('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
 
@@ -316,7 +317,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count) -> $content"
+            $item.ParseErrors.Add("Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count) -> $content")
         }
 
         # (commitid:TID:ChannelID)
@@ -331,7 +332,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count) -> $content"
+            $item.ParseErrors.Add("Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count) -> $content")
         }
 
         # nameid[PID]
@@ -345,7 +346,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split LogId $($item.LogId) on '[]:' Count:$($subparts.Count) -> $content"
+            $item.ParseErrors.Add("Could not split LogId $($item.LogId) on '[]:' Count:$($subparts.Count) -> $content")
         }
 
         return $item
@@ -465,7 +466,7 @@ class PSLogItem
             }
             else
             {
-                Write-Warning -Message "Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count)"
+                $item.ParseErrors.Add("Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count)")
             }
 
             # [EventId]
@@ -478,7 +479,7 @@ class PSLogItem
             }
             else
             {
-                Write-Warning -Message "Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count)"
+                $item.ParseErrors.Add("Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count)")
             }
 
             $result = $item
