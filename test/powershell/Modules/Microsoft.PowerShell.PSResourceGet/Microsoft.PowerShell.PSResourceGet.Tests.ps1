@@ -9,27 +9,13 @@ $TestModule = 'newTestModule'
 $TestScript = 'TestTestScript'
 $Initialized = $false
 
-#region Utility functions
-
-function IsInbox { $PSHOME.EndsWith('\WindowsPowerShell\v1.0', [System.StringComparison]::OrdinalIgnoreCase) }
-function IsWindows { $PSVariable = Get-Variable -Name IsWindows -ErrorAction Ignore; return (-not $PSVariable -or $PSVariable.Value) }
-function IsCoreCLR { $PSVersionTable.ContainsKey('PSEdition') -and $PSVersionTable.PSEdition -eq 'Core' }
-
-#endregion
-
 #region Install locations for modules and scripts
 
-if(IsInbox)
-{
-    $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
+if($IsWindows) {
+    $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath 'PowerShell'
 }
-elseif(IsCoreCLR) {
-    if(IsWindows) {
-        $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath 'PowerShell'
-    }
-    else {
-        $script:ProgramFilesPSPath = Split-Path -Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory('SHARED_MODULES')) -Parent
-    }
+else {
+    $script:ProgramFilesPSPath = Split-Path -Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory('SHARED_MODULES')) -Parent
 }
 
 try
@@ -41,21 +27,10 @@ catch
     $script:MyDocumentsFolderPath = $null
 }
 
-if(IsInbox)
+
+if($IsWindows)
 {
     $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
-                                {
-                                    Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath "WindowsPowerShell"
-                                }
-                                else
-                                {
-                                    Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
-                                }
-}
-elseif(IsCoreCLR) {
-    if(IsWindows)
-    {
-        $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
         {
             Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath 'PowerShell'
         }
@@ -63,12 +38,12 @@ elseif(IsCoreCLR) {
         {
             Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath "Documents\PowerShell"
         }
-    }
-    else
-    {
-        $script:MyDocumentsPSPath = Split-Path -Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory('USER_MODULES')) -Parent
-    }
 }
+else
+{
+    $script:MyDocumentsPSPath = Split-Path -Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory('USER_MODULES')) -Parent
+}
+
 
 $script:ProgramFilesModulesPath = Microsoft.PowerShell.Management\Join-Path -Path $script:ProgramFilesPSPath -ChildPath 'Modules'
 $script:MyDocumentsModulesPath = Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsPSPath -ChildPath 'Modules'
