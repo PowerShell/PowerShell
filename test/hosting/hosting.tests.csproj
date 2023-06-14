@@ -15,12 +15,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="XunitXml.TestLogger" Version="2.0.0" />
     <!-- The version of Microsoft.PowerShell.SDK should be the version we are releasing, so the tests use the correct SDK before publishing to NuGet.org -->
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="$(RELEASE_VERSION)" />
-    <PackageReference Include="Xunit.SkippableFact" Version="1.3.6" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
+    <PackageReference Include="Xunit.SkippableFact" Version="1.3.12" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
   </ItemGroup>
 

@@ -1,13 +1,13 @@
 {
   "sdk": {
-    "channel": "6.0.2xx",
+    "channel": "6.0.4xx",
     "quality": "ga",
     "qualityFallback": "daily",
     "packageVersionPattern": "6.0.0",
-    "sdkImageVersion": "6.0.202",
-    "nextChannel": "6.0.2xx",
+    "sdkImageVersion": "6.0.410",
+    "nextChannel": "6.0.4xx",
     "azureFeed": "",
-    "sdkImageOverride": ""
+    "sdkImageOverride": "6.0.410"
   },
   "internalfeed" : {
     "url": ""
