@@ -430,13 +430,7 @@ Fix steps:
         ForMinimalSize=$ForMinimalSize
     }
 
-    Write-Verbose "Start-PSBuild(): Runtime before calling New-PSOptions() $Runtime" -Verbose
-    Write-Verbose "Start-PSBuild(): Output before calling New-PSOptions() $Output" -Verbose
-
     $script:Options = New-PSOptions @OptionsArguments
-
-    Write-Verbose "Start-PSBuild(): Runtime after calling New-PSOptions() $Runtime" -Verbose
-    Write-Verbose "Start-PSBuild(): Output after calling New-PSOptions() $($Options.Output)" -Verbose
 
     if ($StopDevPowerShell) {
         Stop-DevPowerShell
@@ -489,11 +483,9 @@ Fix steps:
 
     if (-not $SMAOnly -and $Options.Runtime -notlike 'fxdependent*') {
         # libraries should not have runtime
-        Write-Verbose "Start-PSBuild() runtime cond 1: $($Options.Runtime)" -Verbose
         $Arguments += "--runtime", $Options.Runtime
     } elseif ($Options.Runtime -match $optimizedFddRegex) {
         $runtime = $Options.Runtime -replace 'fxdependent-', ''
-        Write-Verbose "Start-PSBuild() runtime cond 2: $runtime" -Verbose
         $Arguments += "--runtime", $runtime
     }
 
@@ -506,10 +498,8 @@ Fix steps:
         $Arguments += "/property:RunAnalyzersDuringBuild=false"
     }
 
-    Write-Verbose -Verbose "StartPSBuild(): before Restore-PSPackage() output is $($options.Output)"
     # handle Restore
     Restore-PSPackage -Options $Options -Force:$Restore -InteractiveAuth:$InteractiveAuth
-    Write-Verbose -Verbose "StartPSBuild(): after Restore-PSPackage() output is $($options.Output)"
 
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
@@ -522,7 +512,6 @@ Fix steps:
     # .inc file name must be different for Windows and Linux to allow build on Windows and WSL.
     $runtime = $Options.Runtime
     if ($Options.Runtime -match $optimizedFddRegex) {
-        Write-Verbose -Verbose "Start-PSBuild() handle type gen condition, so runtime: $runtime"
         $runtime = $Options.Runtime -replace 'fxdependent-', ''
     }
 
@@ -535,12 +524,9 @@ Fix steps:
     # Get the folder path where pwsh.exe is located.
     if ((Split-Path $Options.Output -Leaf) -like "pwsh*") {
         $publishPath = Split-Path $Options.Output -Parent
-        Write-Verbose -Verbose "Start-PSBuild() cond 1 output: $($Options.Output)"
-        Write-Verbose -Verbose "Start-PSBuild() cond 1 publishPath $publishPath"
     }
     else {
         $publishPath = $Options.Output
-        Write-Verbose -Verbose "Start-PSBuild() cond 2 publishPath $publishPath"
     }
 
     try {
@@ -559,7 +545,7 @@ Fix steps:
             $Arguments += "/property:SDKToUse=$sdkToUse"
 
             Write-Log -message "Run dotnet $Arguments from $PWD"
-            Start-NativeExecution { dotnet $Arguments } # this is the dotnet publish command actually being run!
+            Start-NativeExecution { dotnet $Arguments }
             Write-Log -message "PowerShell output: $($Options.Output)"
         } else {
             Write-Verbose "Building with shim" -Verbose
@@ -935,8 +921,8 @@ function New-PSOptions {
         $Configuration = 'Debug'
     }
 
-    Write-Verbose "New-PSOptions() Using configuration '$Configuration'"
-    Write-Verbose "New-PSOptions() Using framework '$Framework'"
+    Write-Verbose "Using configuration '$Configuration'"
+    Write-Verbose "Using framework '$Framework'"
 
     if (-not $Runtime) {
         $Platform, $Architecture = dotnet --info |
@@ -988,20 +974,11 @@ function New-PSOptions {
 
     # Build the Output path
     if (!$Output) {
-        Write-Verbose "New-PSOptions(): runtime $Runtime"
-        $isW = $environment.IsWindows
-        Write-Verbose "New-PSOptions(): env is windows: $isW"
-        $isNotFxDepLinux = -not $Runtime -like 'fxdependent*linux*'
-        Write-Verbose "New-PSOptions(): runtime is not like fxdependentlinux: $isNotFxDepLinux"
         if ($Runtime -like 'fxdependent*' -and -not $Runtime -like 'fxdependent*linux*') {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, "publish", $Executable)
-            Write-Verbose "New-PSOptions(): like fxdependent so out path is: $Output"
         } elseif ($Runtime -like 'fxdependent*' -and $Runtime -like 'fxdependent*linux*') {
-            Write-Verbose "New-PSOptions() building output path, before trimming: $Runtime"
             $outputRuntime = $Runtime -replace 'fxdependent-', ''
-            Write-Verbose "New-PSOptions() building output path, after trimming: $outputRuntime"
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $outputRuntime, "publish", $Executable)
-            Write-Verbose "New-PSOptions(): not like first case, so out path is $Output"
         } else {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
         }
@@ -1028,9 +1005,6 @@ function New-PSOptions {
     {
         $RootInfo['IsValid'] = $true
     }
-
-    Write-Verbose "Runtime at the end of method: $Runtime"
-    Write-Verbose "Outout at the end of the method: $Output"
 
     return New-PSOptionsObject `
                 -RootInfo ([PSCustomObject]$RootInfo) `
@@ -2345,7 +2319,6 @@ function Start-DevPowerShell {
 
     try {
         if (-not $BinDir) {
-            Write-Verbose "Start-DevPowershell() New-PSOptions() is indeed called, look into this.."
             $BinDir = Split-Path (New-PSOptions -Configuration $Configuration).Output
         }
 

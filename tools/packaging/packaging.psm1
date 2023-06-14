@@ -100,19 +100,16 @@ function Start-PSPackage {
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine") {
             New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm") {
-            Write-Verbose "type $Type means runtime is linux-arm64 first"
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm64") {
             if ($IsMacOS) {
                 New-PSOptions -Configuration "Release" -Runtime "osx-arm64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             } else {
-                Write-Verbose "type $Type means runtime is linux-arm64"
                 New-PSOptions -Configuration "Release" -Runtime "Linux-ARM64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-arm64-fxdependent") {
-            Write-Verbose "type $Type means runtime is fxdependent-linux-arm64"
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-arm64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
         else {
@@ -241,7 +238,6 @@ function Start-PSPackage {
 
         # Use Git tag if not given a version
         if (-not $Version) {
-            Write-Verbose -Verbose "$RepoRoot"
             $Version = (git --git-dir="$RepoRoot/.git" describe) -Replace '^v'
         }
 
@@ -654,7 +650,6 @@ function Start-PSPackage {
                     $Arguments["Distribution"] = $Distro
                     if ($PSCmdlet.ShouldProcess("Create RPM Package for $Distro")) {
                         Write-Verbose -Verbose "Creating RPM Package for $Distro"
-                        Write-Verbose -Verbose "Params are: PackageSourcePath $Source, Name $Name, Version $Version, Force $Force, NoSudo $NoSudo, LTS $LTS"
                         New-UnixPackage @Arguments
                     }
                 }
@@ -1083,11 +1078,7 @@ function New-UnixPackage {
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
         if ($PSCmdlet.ShouldProcess("Create staging folder")) {
-            Write-Verbose -Verbose "created staging folder"
             New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
-            Write-Verbose -Verbose "start of staging folder contents"
-            Get-ChildItem -Path $Staging -Recurse
-            Write-Verbose -Verbose "end of staging folder contents"
         }
 
         # Follow the Filesystem Hierarchy Standard for Linux and macOS
@@ -1100,14 +1091,11 @@ function New-UnixPackage {
         # Destination for symlink to powershell executable
         $Link = Get-PwshExecutablePath -IsPreview:$IsPreview
 
-        Write-Verbose -Verbose "link: $Link"
         $links = @(New-LinkInfo -LinkDestination $Link -LinkTarget "$Destination/pwsh")
 
         if($LTS) {
             $links += New-LinkInfo -LinkDestination (Get-PwshExecutablePath -IsLTS:$LTS) -LinkTarget "$Destination/pwsh"
         }
-
-        Write-Verbose -Verbose "Dest $Destination"
 
         if ($PSCmdlet.ShouldProcess("Create package file system"))
         {
@@ -1130,8 +1118,6 @@ function New-UnixPackage {
 
             # Generate gzip of man file
             $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview -IsLTS:$LTS
-
-            Write-Verbose -Verbose "Staging $Staging"
 
             # Change permissions for packaging
             Write-Log "Setting permissions..."
@@ -1607,7 +1593,6 @@ function New-AfterScripts
     Write-Verbose -Message "AfterScript Distribution: $Distribution" -Verbose
 
     if ($Distribution -in $script:RedHatDistributions) {
-        Write-Verbose -Verbose "distro is in RHD"
         $AfterInstallScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $AfterRemoveScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $packagingStrings.RedHatAfterInstallScript -f "$Link", $Destination  | Out-File -FilePath $AfterInstallScript -Encoding ascii
