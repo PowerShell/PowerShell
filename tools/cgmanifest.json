@@ -25,7 +25,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Markdig.Signed",
-          "Version": "0.22.1"
+          "Version": "0.31.0"
         }
       },
       "DevelopmentDependency": false
@@ -155,7 +155,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.PowerShell.MarkdownRender",
-          "Version": "7.2.0"
+          "Version": "7.2.1"
         }
       },
       "DevelopmentDependency": false
@@ -205,7 +205,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "6.0.4"
+          "Version": "6.0.6"
         }
       },
       "DevelopmentDependency": false
@@ -505,7 +505,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.Protocols",
-          "Version": "6.0.1"
+          "Version": "6.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -565,7 +565,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Management",
-          "Version": "6.0.1"
+          "Version": "6.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -675,7 +675,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Pkcs",
-          "Version": "6.0.2"
+          "Version": "6.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -785,7 +785,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceProcess.ServiceController",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
