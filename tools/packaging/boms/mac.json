@@ -368,7 +368,11 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/PSResourceGet/_manifest/spdx_2.2*",
+    "Pattern": "Modules/PSResourceGet/_manifest/spdx_2.2/*.json*",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/PSResourceGet/_manifest/spdx_2.2/*.cat",
     "FileType": "NonProduct"
   },
   {
