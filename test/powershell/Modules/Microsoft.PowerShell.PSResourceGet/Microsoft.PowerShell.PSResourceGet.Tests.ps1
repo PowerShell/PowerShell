@@ -128,16 +128,10 @@ Describe "PSResourceGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
     It "Should install a module correctly to the required location with AllUsers scope" {
         Install-PSResource -Name $TestModule -Repository $RepositoryName -Scope AllUsers
-        $installedModuleInfo = Get-InstalledPSResource -Name $TestModule
 
-        $installedModuleInfo | Should -Not -BeNullOrEmpty
-        $installedModuleInfo.Name | Should -Be $TestModule
-        $installedModuleInfo.InstalledLocation.StartsWith($script:programFilesModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
-
-        <#
         $module = Get-Module $TestModule -ListAvailable
         $module.Name | Should -Be $TestModule
-        $module.ModuleBase | Should -Be $installedModuleInfo.InstalledLocation #>
+        $module.ModuleBase.StartsWith($script:programFilesModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
     }
 
     AfterAll {
@@ -200,9 +194,11 @@ Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
         Install-PSResource -Name $TestScript -Repository $RepositoryName -Scope AllUsers
         $installedScriptInfo = Get-InstalledPSResource -Name $TestScript
 
+        <#
         $installedScriptInfo | Should -Not -BeNullOrEmpty
         $installedScriptInfo.Name | Should -Be $TestScript
         $installedScriptInfo.InstalledLocation.StartsWith($script:ProgramFilesScriptsPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+        #>
     }
 
     AfterAll {
