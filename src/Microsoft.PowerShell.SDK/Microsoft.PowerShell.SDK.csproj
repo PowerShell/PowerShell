@@ -17,7 +17,7 @@
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="7.0.5" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="7.0.7" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="7.0.1" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="7.0.1" />
@@ -36,7 +36,7 @@
     <PackageReference Include="System.ServiceModel.Security" Version="4.10.2" />
     <PackageReference Include="System.Private.ServiceModel" Version="4.10.2" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.3" />
   </ItemGroup>
 
 </Project>

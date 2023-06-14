@@ -10,7 +10,7 @@
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
     <ProjectReference Include="..\Microsoft.WSMan.Runtime\Microsoft.WSMan.Runtime.csproj" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.0" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.1" />
   </ItemGroup>
 
   <PropertyGroup>
