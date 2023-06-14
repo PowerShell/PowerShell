@@ -3164,8 +3164,6 @@
   </Fragment>
   <Fragment>
     <ComponentGroup Id="ApplicationFiles">
-      <ComponentRef Id="cmp0D4E9EF66B6048D8917247B7AE8BF06F" />
-      <ComponentRef Id="cmp7651DF69D31E48C4908A2E8F97710CDC" />
       <ComponentRef Id="cmpCBE3857586454EB3B634B118E8EBD1D1" />
       <ComponentRef Id="cmp22EA8B65E9784BB197A5CC42FBFF1788" />
       <ComponentRef Id="cmp9F22B503FD4D4F0286514A511718FD7A" />
@@ -4174,11 +4172,12 @@
       <ComponentRef Id="cmp3CF3F69A352F4438B8F2F73EBBD12996" />
       <ComponentRef Id="cmp09155DA101E1424B98832A789E93E835" />
       <ComponentRef Id="cmp22840874A8C84AA796496634FBEBF09C" />
-      <ComponentRef Id="cmp67BD9092B046498294EB7689F85B33E8" />
       <ComponentRef Id="cmp6986F8B66C514347A25E03DD3096B5AE" />
       <ComponentRef Id="cmp96588875574749E295496861FFC1DB58" />
       <ComponentRef Id="cmp6986F8B66C514347A25E03DD3096B5AE" />
       <ComponentRef Id="cmp96588875574749E295496861FFC1DB58" />
+      <ComponentRef Id="cmp0D4E9EF66B6048D8917247B7AE8BF06F" />
+      <ComponentRef Id="cmp7651DF69D31E48C4908A2E8F97710CDC" />
     </ComponentGroup>
   </Fragment>
 </Wix>
