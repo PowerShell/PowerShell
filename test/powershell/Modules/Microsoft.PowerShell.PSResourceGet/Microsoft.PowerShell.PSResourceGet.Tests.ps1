@@ -51,6 +51,17 @@ $script:MyDocumentsModulesPath = Microsoft.PowerShell.Management\Join-Path -Path
 $script:ProgramFilesScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path $script:ProgramFilesPSPath -ChildPath 'Scripts'
 $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsPSPath -ChildPath 'Scripts'
 
+$script:ProgramFilesScriptsInfoPath = Microsoft.PowerShell.Management\Join-Path -Path $script:ProgramFilesScriptsPath -ChildPath 'InstalledScriptInfos'
+$script:MyDocumentsScriptsInfoPath = Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsScriptsPath -ChildPath 'InstalledScriptInfos'
+
+if (!(Microsoft.PowerShell.Management\Test-Path $script:ProgramFilesScriptsInfoPath)) {
+    Microsoft.PowerShell.Management\New-Item -Path $script:ProgramFilesScriptsInfoPath -ItemType Directory
+}
+
+if (!(Microsoft.PowerShell.Management\Test-Path $script:MyDocumentsScriptsPath)) {
+    Microsoft.PowerShell.Management\New-Item -Path $script:MyDocumentsScriptsPath -ItemType Directory
+}
+
 #endregion
 
 #region Register a test repository
