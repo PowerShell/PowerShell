@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
             var args = "-P now";
             if (Platform.IsMacOS)
             {
-                args = "now";
+                args = "-h now";
             }
             if (InternalTestHooks.TestStopComputer)
             {
