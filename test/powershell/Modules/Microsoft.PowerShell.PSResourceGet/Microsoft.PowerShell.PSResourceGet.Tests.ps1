@@ -54,12 +54,15 @@ $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path
 $script:ProgramFilesScriptsInfoPath = Microsoft.PowerShell.Management\Join-Path -Path $script:ProgramFilesScriptsPath -ChildPath 'InstalledScriptInfos'
 $script:MyDocumentsScriptsInfoPath = Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsScriptsPath -ChildPath 'InstalledScriptInfos'
 
-if (!(Microsoft.PowerShell.Management\Test-Path $script:ProgramFilesScriptsInfoPath)) {
-    Microsoft.PowerShell.Management\New-Item -Path $script:ProgramFilesScriptsInfoPath -ItemType Directory
+write-host $script:ProgramFilesScriptsInfoPath
+write-host $script:MyDocumentsScriptsInfoPath
+
+if (!(Test-Path $script:ProgramFilesScriptsInfoPath)) {
+    New-Item -Path $script:ProgramFilesScriptsInfoPath -ItemType Directory
 }
 
-if (!(Microsoft.PowerShell.Management\Test-Path $script:MyDocumentsScriptsPath)) {
-    Microsoft.PowerShell.Management\New-Item -Path $script:MyDocumentsScriptsPath -ItemType Directory
+if (!(Test-Path $script:MyDocumentsScriptsPath)) {
+    New-Item -Path $script:MyDocumentsScriptsInfoPath -ItemType Directory
 }
 
 #endregion
