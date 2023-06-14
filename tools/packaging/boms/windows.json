@@ -212,6 +212,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "es-ES\\JsonSchema.Net.resources.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "es/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -293,10 +297,6 @@
   },
   {
     "Pattern": "es/WindowsFormsIntegration.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "es\\JsonSchema.Net.resources.dll",
     "FileType": "NonProduct"
   },
   {
@@ -892,11 +892,11 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "mscordaccore.dll",
+    "Pattern": "mscordaccore_*.dll",
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "mscordaccore_*.dll",
+    "Pattern": "mscordaccore.dll",
     "FileType": "NonProduct"
   },
   {
@@ -913,6 +913,10 @@
   },
   {
     "Pattern": "msquic.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "nb-NO\\JsonSchema.Net.resources.dll",
     "FileType": "NonProduct"
   },
   {
@@ -1036,6 +1040,26 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "PresentationFramework-SystemCore.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemData.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemDrawing.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemXml.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemXmlLinq.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "PresentationFramework.Aero.dll",
     "FileType": "NonProduct"
   },
@@ -1061,26 +1085,6 @@
   },
   {
     "Pattern": "PresentationFramework.Royale.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemCore.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemData.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemDrawing.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemXml.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemXmlLinq.dll",
     "FileType": "NonProduct"
   },
   {
@@ -2080,6 +2084,14 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Schemas/PSMaml/Maml_HTML_Style.xsl",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Schemas/PSMaml/Maml_HTML.xsl",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Schemas/PSMaml/Maml.rld",
     "FileType": "NonProduct"
   },
@@ -2093,14 +2105,6 @@
   },
   {
     "Pattern": "Schemas/PSMaml/Maml.xsx",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Schemas/PSMaml/Maml_HTML.xsl",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Schemas/PSMaml/Maml_HTML_Style.xsl",
     "FileType": "NonProduct"
   },
   {
@@ -2153,6 +2157,10 @@
   },
   {
     "Pattern": "sni.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "sv-SE\\JsonSchema.Net.resources.dll",
     "FileType": "NonProduct"
   },
   {

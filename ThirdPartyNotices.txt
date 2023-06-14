@@ -238,7 +238,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonSchema.Net 4.1.1 - MIT
+JsonSchema.Net 4.1.2 - MIT
 
 
 (c) Microsoft 2023
@@ -361,6 +361,8 @@ SOFTWARE.
 Microsoft.CodeAnalysis.Common 4.6.0 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) .NET Foundation and Contributors
 
 MIT License
 
@@ -379,6 +381,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.CodeAnalysis.CSharp 4.6.0 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) Microsoft Corporation
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) Microsoft Corporation. Alle Rechte
 
 MIT License
 
@@ -432,10 +438,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.PowerShell.MarkdownRender 7.2.0 - MIT
+Microsoft.PowerShell.MarkdownRender 7.2.1 - MIT
 
 
-(c) Microsoft Corporation.
+(c) Microsoft Corporation
 (c) Microsoft Corporation. PowerShell's Markdown Rendering project PowerShell Markdown Renderer
 
 MIT License

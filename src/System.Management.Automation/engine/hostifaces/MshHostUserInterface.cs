@@ -892,7 +892,7 @@ namespace System.Management.Automation.Host
                     {
                         // System transcripts can have high contention. Do exponential back-off on writing
                         // if needed.
-                        int delay = new Random().Next(10) + 1;
+                        int delay = Random.Shared.Next(10) + 1;
                         bool written = false;
 
                         while (!written)
