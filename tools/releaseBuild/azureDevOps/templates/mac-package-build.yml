@@ -107,6 +107,8 @@ jobs:
       Write-Host ("sending " + $vstsCommandString)
       Write-Host "##$vstsCommandString"
     displayName: Compress signed files
+    retryCountOnTaskFailure: 2
+
 
   - pwsh: |
       try {

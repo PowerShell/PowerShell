@@ -80,6 +80,7 @@ jobs:
       storage: '$(StorageAccount)'
       ContainerName: $(tpnContainer)
       resourceGroup: '$(StorageResourceGroup)'
+    retryCountOnTaskFailure: 2
 
   - task: PublishPipelineArtifact@1
     inputs:
@@ -87,3 +88,4 @@ jobs:
       artifactName: notice
     displayName: Publish notice artifacts
     condition: always()
+    retryCountOnTaskFailure: 2

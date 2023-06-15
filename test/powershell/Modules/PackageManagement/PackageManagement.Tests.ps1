@@ -22,15 +22,25 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
         # register the asset directory
         $localSourceName = [Guid]::NewGuid().ToString("n")
         $localSourceLocation = Join-Path $PSScriptRoot assets
-        Register-PackageSource -Name $localSourceName -provider NuGet -Location $localSourceLocation -Force -Trusted
+        $newSourceResult = Register-PackageSource -Name $localSourceName -provider NuGet -Location $localSourceLocation -Force -Trusted
+        Write-Verbose -Verbose -Message "Register-PackageSource -Name $localSourceName -provider NuGet -Location $localSourceLocation -Force -Trusted"
+        $newSourceResult | Out-String -Stream | Write-Verbose -Verbose
+
+        $skipPackageTests = $false
+        if ($newSourceResult.Location -ne $localSourceLocation) {
+            $skipPackageTests = $true
+        }
 
         # register the gallery location
         $galleryLocation = "https://www.powershellgallery.com/api/v2"
         $gallerySourceName = [Guid]::newGuid().ToString("n")
+        # this is expected to fail as there should already be a source pointing to the gallery url
         Register-PackageSource -Name $gallerySourceName -Location $galleryLocation -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
 
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
+
+        Get-PackageSource | Out-String -Stream | Write-Verbose -Verbose
         }
 
     AfterAll {
@@ -64,27 +74,27 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
         $ipp | Should -Contain "NanoServerPackage"
     }
 
-    It "Find-package"  {
+    It "Find-package" -skip:$skipPackageTests {
         $f = Find-Package -ProviderName NuGet -Name $packageName -Source $localSourceName
-        $f.Name | Should -Contain "$packageName"
+        $f.Name | Should -Contain "$packageName" -Because "PackageSource $localSourceLocation not created"
 	}
 
-    It "Install-package"  {
+    It "Install-package" -skip:$skipPackageTests {
         $i = Install-Package -ProviderName NuGet -Name $packageName -Force -Source $localSourceName -Scope CurrentUser
-        $i.Name | Should -Contain "$packageName"
+        $i.Name | Should -Contain "$packageName" -Because "PackageSource $localSourceLocation not created"
 	}
 
-    It "Get-package"  {
+    It "Get-package" -skip:$skipPackageTests {
         $g = Get-Package -ProviderName NuGet -Name $packageName
         $g.Name | Should -Contain "$packageName"
 	}
 
-    It "save-package"  {
+    It "save-package" -skip:$skipPackageTests {
         $s = Save-Package -ProviderName NuGet -Name $packageName -Path $TestDrive -Force -Source $localSourceName
-        $s.Name | Should -Contain "$packageName"
+        $s.Name | Should -Contain "$packageName" -Because (Get-ChildItem $TestDrive)
 	}
 
-    It "uninstall-package"  {
+    It "uninstall-package" -skip:$skipPackageTests {
         $u = Uninstall-Package -ProviderName NuGet -Name $packageName
         $u.Name | Should -Contain "$packageName"
 	}

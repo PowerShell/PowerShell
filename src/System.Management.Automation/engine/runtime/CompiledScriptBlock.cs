@@ -1466,7 +1466,7 @@ namespace System.Management.Automation
                     // But split the segments into random sizes (10k + between 0 and 10kb extra)
                     // so that attackers can't creatively force their scripts to span well-known
                     // segments (making simple rules less reliable).
-                    int segmentSize = 10000 + (new Random()).Next(10000);
+                    int segmentSize = 10000 + Random.Shared.Next(10000);
                     int segments = (int)Math.Floor((double)(scriptBlockText.Length / segmentSize)) + 1;
                     int currentLocation = 0;
                     int currentSegmentSize = 0;

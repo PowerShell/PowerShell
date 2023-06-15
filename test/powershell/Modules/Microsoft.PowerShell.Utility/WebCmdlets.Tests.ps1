@@ -1598,6 +1598,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $file2Path = Join-Path $testdrive $file2Name
             $file2Contents = "Test456"
             $file2Contents | Set-Content $file2Path -Force
+
+            $file3Name = "Kündigung_Mustermann_Max.TTA_2023_01_30.txt"
+            $file3Path = Join-Path $testdrive $file3Name
+            $file3Contents = "Test789"
+            $file3Contents | Set-Content $file3Path -Force
         }
 
         It "Verifies Invoke-WebRequest Supports Multipart String Values" {
@@ -1671,6 +1676,23 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Files[0].FileName | Should -BeExactly $file1Name
             $result.Files[0].ContentType | Should -BeExactly 'application/octet-stream'
             $result.Files[0].Content | Should -Match $file1Contents
+        }
+
+        It "Verifies Invoke-WebRequest -Form sets Content-Disposition FileName and FileNameStar." {
+            $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
+            $ContentDisposition.FileName = $fileName
+            $ContentDisposition.FileNameStar = $fileName
+
+            $form = @{TestFile = [System.IO.FileInfo]$file3Path}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
+            $result.Files.Count | Should -Be 1
+
+            $result.Files[0].ContentDisposition.FileName | Should -Be $ContentDisposition.FileName
+            $result.Files[0].ContentDisposition.FileNameStar | Should -Be $ContentDisposition.FileNameStar
         }
 
         It "Verifies Invoke-WebRequest -Form supports a collection of file values" {
@@ -3378,6 +3400,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $file2Path = Join-Path $testdrive $file2Name
             $file2Contents = "Test456"
             $file2Contents | Set-Content $file2Path -Force
+
+            $file3Name = "Kündigung_Mustermann_Max.TTA_2023_01_30.txt"
+            $file3Path = Join-Path $testdrive $file3Name
+            $file3Contents = "Test789"
+            $file3Contents | Set-Content $file3Path -Force
         }
 
         It "Verifies Invoke-RestMethod Supports Multipart String Values" {
@@ -3445,6 +3472,22 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result.Files[0].FileName | Should -Be $file1Name
             $result.Files[0].ContentType | Should -Be 'application/octet-stream'
             $result.Files[0].Content | Should -Match $file1Contents
+        }
+
+        It "Verifies Invoke-RestMethod -Form sets Content-Disposition FileName and FileNameStar." {
+            $ContentDisposition = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("attachment")
+            $ContentDisposition.FileName = $fileName
+            $ContentDisposition.FileNameStar = $fileName
+
+            $form = @{TestFile = [System.IO.FileInfo]$file3Path}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Form $form -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should -Match 'multipart/form-data'
+            $result.Files.Count | Should -Be 1
+
+            $result.Files[0].ContentDisposition.FileName | Should -Be $ContentDisposition.FileName
+            $result.Files[0].ContentDisposition.FileNameStar | Should -Be $ContentDisposition.FileNameStar
         }
 
         It "Verifies Invoke-RestMethod -Form supports a collection of file values" {

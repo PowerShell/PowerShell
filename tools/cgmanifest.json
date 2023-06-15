@@ -56,7 +56,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonSchema.Net",
-          "Version": "4.1.1"
+          "Version": "4.1.5"
         }
       },
       "DevelopmentDependency": false
@@ -166,7 +166,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.PowerShell.MarkdownRender",
-          "Version": "7.2.0"
+          "Version": "7.2.1"
         }
       },
       "DevelopmentDependency": false
@@ -226,7 +226,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "7.0.1"
+          "Version": "7.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -486,7 +486,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.Protocols",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -546,7 +546,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Management",
-          "Version": "7.0.1"
+          "Version": "7.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -646,7 +646,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Pkcs",
-          "Version": "7.0.1"
+          "Version": "7.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -756,7 +756,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceProcess.ServiceController",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false

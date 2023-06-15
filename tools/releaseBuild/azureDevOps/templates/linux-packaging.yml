@@ -254,6 +254,8 @@ jobs:
     displayName: Publish artifacts
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
+    retryCountOnTaskFailure: 2
+
 
   - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
 
@@ -388,6 +390,7 @@ jobs:
         Destination: AzureBlob
         storage: '$(StorageAccount)'
         ContainerName: '$(AzureVersion)'
+      retryCountOnTaskFailure: 2
 
   - template: upload-final-results.yml
     parameters:
@@ -403,6 +406,7 @@ jobs:
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)-gc'
     condition: and(eq(variables['buildName'], 'DEB'), succeeded())
+    retryCountOnTaskFailure: 2
 
   - template: upload-final-results.yml
     parameters:
@@ -419,6 +423,7 @@ jobs:
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
     condition: and(and(succeeded(), ne(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+    retryCountOnTaskFailure: 2
 
   # requires windows
   - task: AzureFileCopy@4
@@ -430,6 +435,7 @@ jobs:
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
     condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+    retryCountOnTaskFailure: 2
 
   - template: upload-final-results.yml
     parameters:
