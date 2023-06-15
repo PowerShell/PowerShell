@@ -1437,3 +1437,5 @@ BenchmarkDotNet
  - docs/community/working-group-definitions.md
 TobiasPSP
 jdhitsolutions
+ - tools/clearlyDefined/readme.md
+ClearlyDefined
