@@ -5592,6 +5592,17 @@ namespace System.Management.Automation
                 return AstVisitAction.Continue;
             }
 
+            public override AstVisitAction VisitForEachStatement(ForEachStatementAst forEachStatementAst)
+            {
+                if (forEachStatementAst.Extent.StartOffset > StopSearchOffset || forEachStatementAst.Variable == CompletionVariableAst)
+                {
+                    return AstVisitAction.StopVisit;
+                }
+
+                SaveVariableInfo(forEachStatementAst.Variable.VariablePath.UserPath, variableType: null, isConstraint: false);
+                return AstVisitAction.Continue;
+            }
+
             public override AstVisitAction VisitAttribute(AttributeAst attributeAst)
             {
                 // Attributes can't assign values to variables so they aren't interesting.

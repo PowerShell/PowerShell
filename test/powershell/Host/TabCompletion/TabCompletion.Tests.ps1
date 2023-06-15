@@ -74,6 +74,11 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'pscustomobject'
     }
 
+    It 'Should complete foreach variable' {
+        $res = TabExpansion2 -inputScript 'foreach ($CurrentItem in 1..10){$CurrentIt'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$CurrentItem'
+    }
+
     foreach ($Operator in [System.Management.Automation.CompletionCompleters]::CompleteOperator(""))
     {
         It "Should complete $($Operator.CompletionText)" {
