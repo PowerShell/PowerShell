@@ -54,8 +54,8 @@ $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path
 $script:ProgramFilesScriptsInfoPath = Microsoft.PowerShell.Management\Join-Path -Path $script:ProgramFilesScriptsPath -ChildPath 'InstalledScriptInfos'
 $script:MyDocumentsScriptsInfoPath = Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsScriptsPath -ChildPath 'InstalledScriptInfos'
 
-write-host $script:ProgramFilesScriptsInfoPath
-write-host $script:MyDocumentsScriptsInfoPath
+Write-Host "ProgramFilesScriptsInfoPath: $script:ProgramFilesScriptsInfoPath"
+Write-Host "MyDocumentsScriptsInfoPath: $script:MyDocumentsScriptsInfoPath"
 
 if (!(Test-Path $script:ProgramFilesScriptsInfoPath)) {
     New-Item -Path $script:ProgramFilesScriptsInfoPath -ItemType Directory
@@ -116,10 +116,9 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
         $installedModuleInfo.Name | Should -Be $TestModule
         $installedModuleInfo.InstalledLocation.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
 
-        <#
         $module = Get-Module $TestModule -ListAvailable
         $module.Name | Should -Be $TestModule
-        $module.ModuleBase | Should -Be $installedModuleInfo.InstalledLocation #>
+        $module.ModuleBase.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
     }
 
     AfterAll {
@@ -206,7 +205,7 @@ Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
     It "Should install a script correctly to the required location with AllUsers scope" {
         Install-PSResource -Name $TestScript -Repository $RepositoryName -Scope AllUsers
-        $installedScriptInfo = Get-InstalledPSResource -Name $TestScript
+        #$installedScriptInfo = Get-InstalledPSResource -Name $TestScript
 
         <#
         $installedScriptInfo | Should -Not -BeNullOrEmpty
