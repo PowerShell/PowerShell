@@ -109,7 +109,7 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
         Install-PSResource -Name $TestModule -Repository $RepositoryName
         $installedModuleInfo = Get-InstalledPSResource -Name $TestModule
 
-        if (!$macOS) {
+        if (!$IsMacOS) {
             $installedModuleInfo | Should -Not -BeNullOrEmpty
             $installedModuleInfo.Name | Should -Be $TestModule
             $installedModuleInfo.InstalledLocation.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
@@ -179,7 +179,7 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
         Install-PSResource -Name $TestScript -Repository $RepositoryName -Verbose
         $installedScriptInfo = Get-InstalledPSResource -Name $TestScript
 
-        if (!$macOS)
+        if (!$IsMacOS)
         {
             $installedScriptInfo | Should -Not -BeNullOrEmpty
             $installedScriptInfo.Name | Should -Be $TestScript
