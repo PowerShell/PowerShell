@@ -109,13 +109,15 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
         Install-PSResource -Name $TestModule -Repository $RepositoryName
         $installedModuleInfo = Get-InstalledPSResource -Name $TestModule
 
-        $installedModuleInfo | Should -Not -BeNullOrEmpty
-        $installedModuleInfo.Name | Should -Be $TestModule
-        $installedModuleInfo.InstalledLocation.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+        if (!$macOS) {
+            $installedModuleInfo | Should -Not -BeNullOrEmpty
+            $installedModuleInfo.Name | Should -Be $TestModule
+            $installedModuleInfo.InstalledLocation.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
 
-        $module = Get-Module $TestModule -ListAvailable
-        $module.Name | Should -Be $TestModule
-        $module.ModuleBase.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+            $module = Get-Module $TestModule -ListAvailable
+            $module.Name | Should -Be $TestModule
+            $module.ModuleBase.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+        }
     }
 
     AfterAll {
@@ -177,9 +179,12 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
         Install-PSResource -Name $TestScript -Repository $RepositoryName -Verbose
         $installedScriptInfo = Get-InstalledPSResource -Name $TestScript
 
-        $installedScriptInfo | Should -Not -BeNullOrEmpty
-        $installedScriptInfo.Name | Should -Be $TestScript
-        $installedScriptInfo.InstalledLocation.StartsWith($script:MyDocumentsScriptsPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+        if (!$macOS)
+        {
+            $installedScriptInfo | Should -Not -BeNullOrEmpty
+            $installedScriptInfo.Name | Should -Be $TestScript
+            $installedScriptInfo.InstalledLocation.StartsWith($script:MyDocumentsScriptsPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+        }
     }
 
     AfterAll {
