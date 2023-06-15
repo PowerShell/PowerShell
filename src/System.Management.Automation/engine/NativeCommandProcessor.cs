@@ -1691,7 +1691,7 @@ namespace System.Management.Automation
 
             if (_runStandAlone)
             {
-                if (s_supportScreenScrape == null)
+                if (s_supportScreenScrape == null && Platform.IsWindows)
                 {
                     try
                     {
