@@ -63,7 +63,10 @@ if ($Clean.IsPresent)
 
     if (Test-Path "${SrcPath}/code/obj")
     {
-        Remove-Item -Path "${SrcPath}/code/obj" -Recurse -Force -ErrorAction Stop -Verbose
+        Remove-Item -Path "${SrcPath}/code/obj" -Recurse -Force -ErrorAction Stop -Verbose -Exclude 'project.assets.json'
+        $packagePath = "${SrcPath}/code/obj/project.assets.json"
+        Write-Host "Uploading $packagePath"
+        Write-Host "##vso[artifact.upload containerfolder=namedpipe;artifactname=namedpipe]$packagePath"
     }
 }
 
