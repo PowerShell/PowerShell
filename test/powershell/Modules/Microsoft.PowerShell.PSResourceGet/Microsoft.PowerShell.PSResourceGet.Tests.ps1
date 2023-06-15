@@ -114,6 +114,7 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
 
         $installedModuleInfo | Should -Not -BeNullOrEmpty
         $installedModuleInfo.Name | Should -Be $TestModule
+        Write-host "installedModuleInfo installed Location is: $($installedModuleInfo.InstalledLocation)"
         $installedModuleInfo.InstalledLocation.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
 
         $module = Get-Module $TestModule -ListAvailable
@@ -177,7 +178,7 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
     }
 
     It "Should install a script correctly to the required location with default CurrentUser scope" {
-        Install-PSResource -Name $TestScript -Repository $RepositoryName
+        Install-PSResource -Name $TestScript -Repository $RepositoryName -Verbose
         $installedScriptInfo = Get-InstalledPSResource -Name $TestScript
 
         $installedScriptInfo | Should -Not -BeNullOrEmpty
