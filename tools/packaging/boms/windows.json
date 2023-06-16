@@ -244,6 +244,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "es-ES\\JsonSchema.Net.resources.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "es/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -988,11 +992,43 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "mscordaccore.dll",
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/_manifest/spdx_2.2/manifest.cat",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/LICENSE",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Notice.txt",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/dependencies/*.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psd1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/PSGet.Format.ps1xml",
     "FileType": "NonProduct"
   },
   {
     "Pattern": "mscordaccore_*.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "mscordaccore_*.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "mscordaccore.dll",
     "FileType": "NonProduct"
   },
   {
@@ -1009,6 +1045,10 @@
   },
   {
     "Pattern": "msquic.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "nb-NO\\JsonSchema.Net.resources.dll",
     "FileType": "NonProduct"
   },
   {
@@ -1148,6 +1188,26 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "PresentationFramework-SystemCore.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemData.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemDrawing.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemXml.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "PresentationFramework-SystemXmlLinq.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "PresentationFramework.Aero.dll",
     "FileType": "NonProduct"
   },
@@ -1173,26 +1233,6 @@
   },
   {
     "Pattern": "PresentationFramework.Royale.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemCore.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemData.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemDrawing.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemXml.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "PresentationFramework-SystemXmlLinq.dll",
     "FileType": "NonProduct"
   },
   {
@@ -2224,6 +2264,14 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Schemas/PSMaml/Maml_HTML_Style.xsl",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Schemas/PSMaml/Maml_HTML.xsl",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Schemas/PSMaml/Maml.rld",
     "FileType": "NonProduct"
   },
@@ -2237,14 +2285,6 @@
   },
   {
     "Pattern": "Schemas/PSMaml/Maml.xsx",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Schemas/PSMaml/Maml_HTML.xsl",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Schemas/PSMaml/Maml_HTML_Style.xsl",
     "FileType": "NonProduct"
   },
   {
@@ -2297,6 +2337,10 @@
   },
   {
     "Pattern": "sni.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "sv-SE\\JsonSchema.Net.resources.dll",
     "FileType": "NonProduct"
   },
   {
