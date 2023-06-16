@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         /// Force the operation to take place if possible.
         /// </summary>
         [Parameter]
-        public SwitchParameter Force { get; set; } = false;
+        public SwitchParameter Force { get; set; };
 
 #endregion "Parameters"
 
@@ -39,14 +39,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            string const unixRestartCommand = "/sbin/shutdown";
-            string const unixRestartArgs = "-r now";
+            const string unixRestartCommand = "/sbin/shutdown";
+            const string unixRestartArgs = "-r now";
             
-            string const macOSRestartCommand = "osascript";
-            string const macOSRestartArgs = @"-e 'tell application ""System Events"" to restart'";
+            const string macOSRestartCommand = "osascript";
+            const string macOSRestartArgs = @"-e 'tell application ""System Events"" to restart'";
 
-            string const macOSForceRestartCommand = "/sbin/shutdown";
-            string const macOSForceRestartArgs = "-r now";            
+            const string macOSForceRestartCommand = "/sbin/shutdown";
+            const string macOSForceRestartArgs = "-r now";            
 
             string command;
             string args;
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         /// Force the operation to take place if possible.
         /// </summary>
         [Parameter]
-        public SwitchParameter Force { get; set; } = false;
+        public SwitchParameter Force { get; set; };
 
 #endregion "Parameters"
         
@@ -117,14 +117,14 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
 
-            string const unixStopCommand = "/sbin/shutdown";
-            string const unixStopArgs = "-P now";
+            const string unixStopCommand = "/sbin/shutdown";
+            const string unixStopArgs = "-P now";
             
-            string const macOSStopCommand = "osascript";
-            string const macOSStopArgs = @"-e 'tell application ""System Events"" to shut down'";
+            const string macOSStopCommand = "osascript";
+            const string macOSStopArgs = @"-e 'tell application ""System Events"" to shut down'";
 
-            string const macOSForceStopCommand = "/sbin/shutdown";
-            string const macOSForceStopArgs = "-h now";            
+            const string macOSForceStopCommand = "/sbin/shutdown";
+            const string macOSForceStopArgs = "-h now";            
 
             string command;
             string args;
