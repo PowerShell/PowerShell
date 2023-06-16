@@ -68,7 +68,7 @@ Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdmi
     It 'Verifies timeout error when trying to connect to pwsh process with current connection' -Skip:(!$IsWindows) {
 
         if ($markAsPending) {
-            Set-ItResult -Pending 'Marked as pending as this test does not work currently.'
+            Set-ItResult -Pending -Because 'Marked as pending as this test does not work currently.'
         }
 
         $brokenSession = New-NamedPipeSession -ProcessId $script:PwshProcId -ConnectingTimeout 2 -Name CustomNPConnection -ErrorAction Stop
