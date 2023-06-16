@@ -8,6 +8,7 @@
  */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -2745,9 +2746,15 @@ namespace System.Management.Automation.Remoting.Client
                     // If we initialized with thread impersonation, make sure de-initialize is run with the same.
                     if (_identityToImpersonate != null)
                     {
+                        try {
                         result = WindowsIdentity.RunImpersonated(
                             _identityToImpersonate.AccessToken,
                             () => WSManNativeApi.WSManDeinitialize(_handle, 0));
+                        }
+                        catch (ObjectDisposedException ex)
+                        {
+                            Debug.Assert(true, string.Format(CultureInfo.InvariantCulture, "WSManDeinitialize threw ObjectDisposedException when using access token. Exception: {0}", ex.Message));
+                        }
                     }
                     else
                     {
