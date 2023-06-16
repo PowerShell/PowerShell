@@ -1691,8 +1691,11 @@ namespace System.Management.Automation
 
             if (_runStandAlone)
             {
-                if (s_supportScreenScrape == null && Platform.IsWindows)
+                if (s_supportScreenScrape == null)
                 {
+#if UNIX
+                    s_supportScreenScrape = false;
+#else
                     try
                     {
                         _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
@@ -1704,6 +1707,7 @@ namespace System.Management.Automation
                     {
                         s_supportScreenScrape = false;
                     }
+#endif
                 }
 
                 // if screen scraping isn't supported, we enable redirection so that the output is still transcribed
