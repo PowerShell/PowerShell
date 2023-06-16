@@ -25,7 +25,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Markdig.Signed",
-          "Version": "0.30.4"
+          "Version": "0.31.0"
         }
       },
       "DevelopmentDependency": false
@@ -105,7 +105,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "7.0.5"
+          "Version": "7.0.7"
         }
       },
       "DevelopmentDependency": false
@@ -145,7 +145,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.PowerShell.MarkdownRender",
-          "Version": "7.2.0"
+          "Version": "7.2.1"
         }
       },
       "DevelopmentDependency": false
@@ -205,7 +205,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "7.0.1"
+          "Version": "7.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -215,7 +215,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Namotion.Reflection",
-          "Version": "2.1.1"
+          "Version": "2.1.2"
         }
       },
       "DevelopmentDependency": false
@@ -485,7 +485,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.Protocols",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -545,7 +545,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Management",
-          "Version": "7.0.1"
+          "Version": "7.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -655,7 +655,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Pkcs",
-          "Version": "7.0.1"
+          "Version": "7.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -765,7 +765,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceProcess.ServiceController",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
