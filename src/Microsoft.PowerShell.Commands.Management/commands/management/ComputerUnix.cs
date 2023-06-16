@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         /// Force the operation to take place if possible.
         /// </summary>
         [Parameter]
-        public SwitchParameter Force { get; set; };
+        public SwitchParameter Force { get; set; } = false;
 
 #endregion "Parameters"
 
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         /// Force the operation to take place if possible.
         /// </summary>
         [Parameter]
-        public SwitchParameter Force { get; set; };
+        public SwitchParameter Force { get; set; } = false;
 
 #endregion "Parameters"
         
