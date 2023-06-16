@@ -638,7 +638,6 @@ function Start-PSPackage {
             }
             'rpm-arm64-fxdependent' {
             $HostArchitecture = "aarch64"
-            Write-Verbose "HostArchitecture = $HostArchitecture" -Verbose
                 $Arguments = @{
                     Type = 'rpm-arm64-fxdependent'
                     PackageSourcePath = $Source
