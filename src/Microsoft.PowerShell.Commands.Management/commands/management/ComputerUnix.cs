@@ -21,6 +21,16 @@ namespace Microsoft.PowerShell.Commands
     public sealed class RestartComputerCommand : CommandLineCmdletBase
     {
         // TODO: Support remote computers?
+        
+#region "Parameters"
+
+        /// <summary>
+        /// Force the operation to take place if possible.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Force { get; set; } = false;
+
+#endregion "Parameters"
 
 #region "Overrides"
 
@@ -29,6 +39,36 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            string unixRestartCommand = "/sbin/shutdown";
+            string unixRestartArgs = "-r now";
+            
+            string macOSRestartCommand = "osascript";
+            string macOSRestartArgs = @"-e 'tell application ""System Events"" to restart'";
+
+            string macOSForceRestartCommand = "/sbin/shutdown";
+            string macOSForceRestartArgs = "-r now";            
+
+            string command;
+            string args;
+
+            if (Platform.IsMacOS)
+            {
+                if (Force.IsPresent)
+                {
+                    command = macOSForceRestartCommand;
+                    args = macOSForceRestartArgs;
+                } 
+                else 
+                {
+                    command = macOSRestartCommand;
+                    args = macOSRestartArgs;  
+                }
+            } 
+            else {
+                command = unixRestartCommand;
+                args = unixRestartArgs;
+            }
+            
             if (InternalTestHooks.TestStopComputer)
             {
                 var retVal = InternalTestHooks.TestStopComputerResults;
@@ -42,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            RunCommand("/sbin/shutdown", "-r now");
+            RunCommand(command, args);
         }
 #endregion "Overrides"
     }
@@ -58,7 +98,17 @@ namespace Microsoft.PowerShell.Commands
     public sealed class StopComputerCommand : CommandLineCmdletBase
     {
         // TODO: Support remote computers?
+        
+#region "Parameters"
 
+        /// <summary>
+        /// Force the operation to take place if possible.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Force { get; set; } = false;
+
+#endregion "Parameters"
+        
 #region "Overrides"
 
         /// <summary>
@@ -66,11 +116,38 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            var args = "-P now";
+
+            string unixStopCommand = "/sbin/shutdown";
+            string unixStopArgs = "-P now";
+            
+            string macOSStopCommand = "osascript";
+            string macOSStopArgs = @"-e 'tell application ""System Events"" to shut down'";
+
+            string macOSForceStopCommand = "/sbin/shutdown";
+            string macOSForceStopArgs = "-h now";            
+
+            string command;
+            string args;
+            
             if (Platform.IsMacOS)
             {
-                args = "-h now";
+                if (Force.IsPresent)
+                {
+                    command = macOSForceStopCommand;
+                    args = macOSForceStopArgs;
+                } 
+                else
+                {
+                    command = macOSStopCommand;
+                    args = macOSStopArgs;
+                }
             }
+            else
+            {
+                command = unixStopCommand;
+                args = unixStopArgs;
+            }
+            
             if (InternalTestHooks.TestStopComputer)
             {
                 var retVal = InternalTestHooks.TestStopComputerResults;
@@ -84,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            RunCommand("/sbin/shutdown", args);
+            RunCommand(command, args);
         }
 #endregion "Overrides"
     }
