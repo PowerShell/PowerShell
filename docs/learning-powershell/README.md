@@ -121,7 +121,6 @@ Note that all bash commands should continue working on PowerShell session.
 [why-learn-powershell]: https://blogs.technet.microsoft.com/heyscriptingguy/2014/10/18/weekend-scripter-why-learn-powershell/
 [ebook-from-Idera]:https://www.idera.com/resourcecentral/whitepapers/powershell-ebook
 [channel9-learn-powershell]: https://channel9.msdn.com/Search?term=powershell#ch9Search
-[idera-learn-powershell]: https://community.idera.com/database-tools/powershell/video_library/
 [quick-reference]: https://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
 [script-guy-how-to]:https://blogs.technet.microsoft.com/tommypatterson/2015/09/04/ed-wilsons-powershell5-videos-now-on-channel9-2/
 [basic-cookbooks]:https://docs.microsoft.com/powershell/scripting/samples/sample-scripts-for-administration

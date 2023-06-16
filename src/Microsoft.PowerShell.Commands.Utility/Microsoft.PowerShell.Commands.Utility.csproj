@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Namotion.Reflection" Version="2.1.1" />
+    <PackageReference Include="Namotion.Reflection" Version="2.1.2" />
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-    <PackageReference Include="Markdig.Signed" Version="0.30.4" />
-    <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.0" />
+    <PackageReference Include="Markdig.Signed" Version="0.31.0" />
+    <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.1" />
   </ItemGroup>
 
   <PropertyGroup>
