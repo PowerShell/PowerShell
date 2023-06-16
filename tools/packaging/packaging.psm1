@@ -637,8 +637,10 @@ function Start-PSPackage {
                 }
             }
             'rpm-arm64-fxdependent' {
+            $HostArchitecture = "aarch64"
+            Write-Verbose "HostArchitecture = $HostArchitecture" -Verbose
                 $Arguments = @{
-                    Type = 'rpm'
+                    Type = 'rpm-arm64-fxdependent'
                     PackageSourcePath = $Source
                     Name = $Name
                     Version = $Version
@@ -648,6 +650,7 @@ function Start-PSPackage {
                 }
                 foreach ($Distro in $Script:RedhatFddDistributions) {
                     $Arguments["Distribution"] = $Distro
+                    $Arguments["HostArchitecture"] = $HostArchitecture
                     if ($PSCmdlet.ShouldProcess("Create RPM Package for $Distro")) {
                         Write-Verbose -Verbose "Creating RPM Package for $Distro"
                         New-UnixPackage @Arguments
@@ -926,7 +929,7 @@ function New-UnixPackage {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param(
         [Parameter(Mandatory)]
-        [ValidateSet("deb", "osxpkg", "rpm")]
+        [ValidateSet("deb", "osxpkg", "rpm", "rpm-arm64-fxdependent")]
         [string]$Type,
 
         [Parameter(Mandatory)]
@@ -958,6 +961,22 @@ function New-UnixPackage {
     )
 
     DynamicParam {
+        $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
+        if ($Type -eq "rpm-arm64-fxdependent")
+        {
+            # Add a dynamic parameter '-HostArchitecture' when the specified package type is 'rpm-fxdependent-arm64'.
+            # The '-HostArchitecture' parameter is used to indicate which Mac processor this package is targeting,
+            # Intel (x86_64) or arm (aarch64).
+            $ParameterAttrHA = New-Object "System.Management.Automation.ParameterAttribute"
+            $ValidateSetAttrHA = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList "x86_64", "aarch64"
+            $AttributesHA = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
+            $AttributesHA.Add($ParameterAttrHA) > $null
+            $AttributesHA.Add($ValidateSetAttrHA) > $null
+            $ParameterHA = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("HostArchitecture", [string], $AttributesHA)
+            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
+            $Dict.Add("HostArchitecture", $ParameterHA) > $null
+            $Type = "rpm"
+        }
         if ($Type -eq "deb" -or $Type -like 'rpm*') {
             # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
             # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
@@ -975,7 +994,7 @@ function New-UnixPackage {
             $Attributes.Add($ValidateSetAttr) > $null
 
             $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
-            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
+            # $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
             $Dict.Add("Distribution", $Parameter) > $null
             return $Dict
         } elseif ($Type -eq "osxpkg") {
@@ -1100,6 +1119,7 @@ function New-UnixPackage {
         if ($PSCmdlet.ShouldProcess("Create package file system"))
         {
             # Generate After Install and After Remove scripts
+            Write-Verbose -Verbose "About to call New-AfterScripts() with Distribution $DebDistro"
             $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro -Destination $Destination
 
             # there is a weird bug in fpm
@@ -1150,7 +1170,14 @@ function New-UnixPackage {
         # Setup package dependencies
         $Dependencies = @(Get-PackageDependencies @packageDependenciesParams)
 
-        $Arguments = Get-FpmArguments `
+        $Arguments = @()
+
+        if ($HostArchitecture -and $Type -eq "rpm")
+        {
+            $Arguments += @("-a", $HostArchitecture)
+        }
+
+        $Arguments += Get-FpmArguments `
             -Name $Name `
             -Version $packageVersion `
             -Iteration $Iteration `
