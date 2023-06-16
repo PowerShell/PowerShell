@@ -235,9 +235,9 @@ namespace System.Management.Automation.Internal
             // [2], [3]                         // RESERVED - Always 0
             blob[4] = (byte)CALG_AES_256;       // AES-256 algo id (0x10)
             blob[5] = 0x66;                     // ??
-            // [6], [7], [8]                    // 0x00 
+            // [6], [7], [8]                    // 0x00
             blob[9] = (byte)CALG_RSA_KEYX;      // 0xa4
-            // [10], [11]                       // 0x00 
+            // [10], [11]                       // 0x00
 
             // create a reversed copy and add the encrypted key
             byte[] reversedKey = CreateReverseByteArray(encryptedKey);
@@ -258,7 +258,6 @@ namespace System.Management.Automation.Internal
     /// to the user when something fails on the remote end, then this
     /// can be turned public</remarks>
     [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic")]
-    [Serializable]
     internal class PSCryptoException : Exception
     {
         #region Private Members
@@ -329,7 +328,7 @@ namespace System.Management.Automation.Internal
         /// <param name="context">Context in which this constructor is called.</param>
         /// <remarks>Currently no custom type-specific serialization logic is
         /// implemented</remarks>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected PSCryptoException(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();
@@ -352,7 +351,7 @@ namespace System.Management.Automation.Internal
         // handle to the AES provider object (houses session key and iv)
         private readonly Aes _aes;
 
-        // this flag indicates that this class has a key imported from the 
+        // this flag indicates that this class has a key imported from the
         // remote end and so can be used for encryption
         private bool _canEncrypt;
 
@@ -410,7 +409,7 @@ namespace System.Management.Automation.Internal
             {
                 if (!_sessionKeyGenerated)
                 {
-                    // Aes object gens key automatically on construction, so this is somewhat redundant, 
+                    // Aes object gens key automatically on construction, so this is somewhat redundant,
                     // but at least the actionable key will not be in-memory until it's requested fwiw.
                     _aes.GenerateKey();
                     _sessionKeyGenerated = true;

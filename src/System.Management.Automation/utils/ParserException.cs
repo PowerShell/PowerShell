@@ -36,9 +36,8 @@ namespace System.Management.Automation
         [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ParseException(SerializationInfo info,
                            StreamingContext context)
-                : base(info, context)
         {
-            _errors = (ParseError[])info.GetValue("Errors", typeof(ParseError[]));
+            throw new NotSupportedException();
         }
 
         #endregion Serialization

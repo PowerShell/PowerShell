@@ -21,9 +21,9 @@ namespace System.Management.Automation
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
-        protected MetadataException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected MetadataException(SerializationInfo info, StreamingContext context)
         {
-            SetErrorCategory(ErrorCategory.MetadataError);
+            throw new NotSupportedException();
         }
 
         /// <summary>

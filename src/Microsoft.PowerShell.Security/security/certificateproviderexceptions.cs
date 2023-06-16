@@ -62,8 +62,8 @@ namespace Microsoft.PowerShell.Commands
         [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected CertificateProviderItemNotFoundException(SerializationInfo info,
                                                         StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -256,8 +256,8 @@ namespace Microsoft.PowerShell.Commands
         [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected CertificateStoreLocationNotFoundException(SerializationInfo info,
                                                         StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         /// <summary>

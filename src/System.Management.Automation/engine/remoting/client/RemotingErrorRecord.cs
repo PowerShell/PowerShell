@@ -54,21 +54,6 @@ namespace System.Management.Automation.Runspaces
             _originInfo = originInfo;
         }
 
-        #region ISerializable implementation
-
-        /// <summary>
-        /// Deserializer constructor.
-        /// </summary>
-        /// <param name="info">Serializer information.</param>
-        /// <param name="context">Streaming context.</param>
-        protected RemotingErrorRecord(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            _originInfo = (OriginInfo)info.GetValue("RemoteErrorRecord_OriginInfo", typeof(OriginInfo));
-        }
-
-        #endregion
-
         #region Override
 
         /// <summary>

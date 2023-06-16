@@ -2193,25 +2193,12 @@ namespace System.Management.Automation
 
     internal class ScriptBlockSerializationHelper
     {
-        private readonly string _scriptText;
-
-        private ScriptBlockSerializationHelper(SerializationInfo info, StreamingContext context)
-        {
-            ArgumentNullException.ThrowIfNull(info);
-
-            _scriptText = info.GetValue("ScriptText", typeof(string)) as string;
-            if (_scriptText == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(info));
-            }
-        }
-
         /// <summary>
         /// Returns a script block that corresponds to the version deserialized.
         /// </summary>
         /// <param name="context">The streaming context for this instance.</param>
         /// <returns>A script block that corresponds to the version deserialized.</returns>
-        public object GetRealObject(StreamingContext context) => ScriptBlock.Create(_scriptText);
+        public object GetRealObject(StreamingContext context) => throw new NotSupportedException();
 
         /// <summary>
         /// Implements the ISerializable contract for serializing a scriptblock.

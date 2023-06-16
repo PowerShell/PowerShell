@@ -282,7 +282,6 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This exception is used by remoting code to indicated a data structure handler related error.
     /// </summary>
-    [Serializable]
     public class PSRemotingDataStructureException : RuntimeException
     {
         #region Constructors
@@ -361,7 +360,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected PSRemotingDataStructureException(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();
@@ -470,7 +469,7 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentNullException">
         /// 1. info is null.
         /// </exception>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected PSRemotingTransportException(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();
@@ -587,7 +586,7 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentNullException">
         /// 1. info is null.
         /// </exception>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected PSRemotingTransportRedirectException(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();
