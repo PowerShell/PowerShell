@@ -269,6 +269,21 @@ switch ($x)
         $completionText -join ' ' | Should -BeExactly 'Ascending Descending Expression'
     }
 
+    It 'Should complete variable assigned in other scriptblock' {
+        $res = TabExpansion2 -inputScript 'ForEach-Object -Begin {$Test1 = "Hello"} -Process {$Test'
+        $res.CompletionMatches[0].CompletionText | Should -Be '$Test1'
+    }
+
+    It 'Should complete variable assigned in an array of scriptblocks' {
+        $res = TabExpansion2 -inputScript 'ForEach-Object -Process @({"Block1"},{$Test1="Hello"});$Test'
+        $res.CompletionMatches[0].CompletionText | Should -Be '$Test1'
+    }
+
+    It 'Should not complete variable assigned in an ampersand executed scriptblock' {
+        $res = TabExpansion2 -inputScript '& {$Test1 = "Hello"};$Test'
+        $res.CompletionMatches.Count | Should -Be 0
+    }
+
     context TypeConstructionWithHashtable {
         BeforeAll {
             class RandomTestType {

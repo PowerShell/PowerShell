@@ -5605,12 +5605,29 @@ namespace System.Management.Automation
 
             public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
             {
-                return scriptBlockExpressionAst != Top ? AstVisitAction.SkipChildren : AstVisitAction.Continue;
-            }
+                if (scriptBlockExpressionAst == Top)
+                {
+                    return AstVisitAction.Continue;
+                }
 
-            public override AstVisitAction VisitScriptBlock(ScriptBlockAst scriptBlockAst)
-            {
-                return scriptBlockAst != Top ? AstVisitAction.SkipChildren : AstVisitAction.Continue;
+                Ast parent = scriptBlockExpressionAst.Parent;
+                // This loop checks if the scriptblock is used as a command, or an argument for a command, eg: ForEach-Object -Process {$Var1 = "Hello"}, {Var2 = $true}
+                while (true)
+                {
+                    if (parent is CommandAst cmdAst)
+                    {
+                        return cmdAst.CommandElements[0] is ScriptBlockExpressionAst && cmdAst.InvocationOperator == TokenKind.Ampersand
+                            ? AstVisitAction.SkipChildren
+                            : AstVisitAction.Continue;
+                    }
+
+                    if (parent is not CommandExpressionAst and not PipelineAst and not StatementBlockAst and not ArrayExpressionAst and not ArrayLiteralAst)
+                    {
+                        return AstVisitAction.SkipChildren;
+                    }
+
+                    parent = parent.Parent;
+                }
             }
         }
 
