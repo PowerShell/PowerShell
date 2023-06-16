@@ -385,6 +385,8 @@ Once you sign a CLA, all your existing and future pull requests will have the st
 
 Reports of abuse will be reviewed by the PS-Committee and if it has been determined that violations of the
 Code of Conduct has occurred, then a temporary ban may be imposed.
+The duration of the temporary ban will depend on the impact and/or severity of the infraction.
+This can vary from 1 day, a few days, a week, and up to 30 days.
 Repeat offenses may result in a permanent ban from the PowerShell org.
 
 [testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
