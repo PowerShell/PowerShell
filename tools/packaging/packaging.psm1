@@ -994,7 +994,6 @@ function New-UnixPackage {
             $Attributes.Add($ValidateSetAttr) > $null
 
             $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
-            # $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
             $Dict.Add("Distribution", $Parameter) > $null
             return $Dict
         } elseif ($Type -eq "osxpkg") {
@@ -1119,7 +1118,6 @@ function New-UnixPackage {
         if ($PSCmdlet.ShouldProcess("Create package file system"))
         {
             # Generate After Install and After Remove scripts
-            Write-Verbose -Verbose "About to call New-AfterScripts() with Distribution $DebDistro"
             $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro -Destination $Destination
 
             # there is a weird bug in fpm
