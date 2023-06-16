@@ -3268,6 +3268,14 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "_manifest\\spdx_2.2\\bsi.json",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "_manifest\\spdx_2.2\\manifest.cat",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "assets/Powershell_av_colors.ico",
     "FileType": "Product"
   },
