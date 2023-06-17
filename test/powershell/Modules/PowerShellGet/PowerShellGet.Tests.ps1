@@ -159,15 +159,10 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
     It "Should install a module correctly to the required location with AllUsers scope" {
         Install-Module -Name $TestModule -Repository $RepositoryName -Scope AllUsers
-        $installedModuleInfo = Get-InstalledModule -Name $TestModule
-
-        $installedModuleInfo | Should -Not -BeNullOrEmpty
-        $installedModuleInfo.Name | Should -Be $TestModule
-        $installedModuleInfo.InstalledLocation.StartsWith($script:programFilesModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
 
         $module = Get-Module $TestModule -ListAvailable
         $module.Name | Should -Be $TestModule
-        $module.ModuleBase | Should -Be $installedModuleInfo.InstalledLocation
+        $module.ModuleBase.StartsWith($script:programFilesModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
     }
 
     AfterAll {

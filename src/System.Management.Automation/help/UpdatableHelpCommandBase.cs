@@ -210,9 +210,7 @@ namespace Microsoft.PowerShell.Commands
             _exceptions = new Dictionary<string, UpdatableHelpExceptionContext>();
             _helpSystem.OnProgressChanged += HandleProgressChanged;
 
-            Random rand = new Random();
-
-            activityId = rand.Next();
+            activityId = Random.Shared.Next();
         }
 
         #endregion
