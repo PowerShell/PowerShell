@@ -269,8 +269,22 @@ namespace Microsoft.PowerShell.Commands
             }
 
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            cts.CancelAfter(readTimeout);
-            return await stream.ReadAsync(buffer, cts.Token).ConfigureAwait(false);
+            try
+            {
+                cts.CancelAfter(readTimeout);
+                return await stream.ReadAsync(buffer, cts.Token).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cts.IsCancellationRequested)
+                {
+                    throw new TimeoutException($"The request was canceled due to the configured OperationTimeout of {readTimeout.TotalSeconds} seconds elapsing", ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         internal static async Task CopyToAsync(this Stream source, Stream destination, TimeSpan perReadTimeout, CancellationToken cancellationToken)
@@ -302,6 +316,17 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     await destination.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken).ConfigureAwait(false);
+                }
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cts.IsCancellationRequested)
+                {
+                    throw new TimeoutException($"The request was canceled due to the configured OperationTimeout of {perReadTimeout.TotalSeconds} seconds elapsing", ex);
+                }
+                else
+                {
+                    throw;
                 }
             }
             finally

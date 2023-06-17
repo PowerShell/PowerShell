@@ -613,7 +613,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-WebRequest -Uri '$uri' -ConnectionTimeoutSeconds 2"
 
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $result.Error.FullyQualifiedErrorId | Should -Be "ConnectionTimeoutReached,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     It "Invoke-WebRequest validate TimeoutSec alias" {
@@ -621,7 +621,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2"
 
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $result.Error.FullyQualifiedErrorId | Should -Be "ConnectionTimeoutReached,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     It "Validate Invoke-WebRequest error with -Proxy and -NoProxy option" {
@@ -2663,7 +2663,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -ConnectionTimeoutSeconds 2"
 
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result.Error.FullyQualifiedErrorId | Should -Be "ConnectionTimeoutReached,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     It "Invoke-RestMethod validate TimeoutSec alias" {
@@ -2671,7 +2671,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 2"
 
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result.Error.FullyQualifiedErrorId | Should -Be "ConnectionTimeoutReached,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     It "Validate Invoke-RestMethod error with -Proxy and -NoProxy option" {
@@ -4409,7 +4409,7 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
         RunWithCancellation -Uri $uri -Arguments '-SkipCertificateCheck'
     }
 
-    It 'Invoke-WebRequest: HTTPS with Defalte compression CTRL-C Cancels request after request headers' {
+    It 'Invoke-WebRequest: HTTPS with Deflate compression CTRL-C Cancels request after request headers' {
         $uri = Get-WebListenerUrl -Https -Test StallDeflate -TestValue '30/application%2fjson'
         RunWithCancellation -Uri $uri -Arguments '-SkipCertificateCheck'
     }
@@ -4494,6 +4494,8 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support OperationTimeoutSecond
         $result = ExecuteWebCommand -command $invoke
         if ($WillTimeout) {
             $result.Error | Should -Not -BeNullOrEmpty
+            $fqErrorClass = if ($Command -eq 'Invoke-WebRequest') { 'InvokeWebRequestCommand'} else { 'InvokeRestMethodCommand'}
+            $result.Error.FullyQualifiedErrorId | Should -Be "OperationTimeoutReached,Microsoft.PowerShell.Commands.$fqErrorClass"
             $result.Output | Should -BeNullOrEmpty
         } else {
             $result.Error | Should -BeNullOrEmpty

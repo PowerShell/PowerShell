@@ -677,6 +677,11 @@ namespace Microsoft.PowerShell.Commands
                                 WriteError(er);
                             }
                         }
+                        catch (TimeoutException ex)
+                        {
+                            ErrorRecord er = new(ex, "OperationTimeoutReached", ErrorCategory.OperationTimeout, null);
+                            ThrowTerminatingError(er);
+                        }
                         catch (HttpRequestException ex)
                         {
                             ErrorRecord er = new(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
@@ -1284,8 +1289,24 @@ namespace Microsoft.PowerShell.Commands
                 Uri currentUri = currentRequest.RequestUri;
 
                 _cancelToken = new CancellationTokenSource();
-                response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+                try
+                {
+                    response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+                }
+                catch (TaskCanceledException ex)
+                {
+                    if (ex.InnerException is TimeoutException)
+                    {
+                        // HTTP Request timed out
+                        ErrorRecord er = new(ex, "ConnectionTimeoutReached", ErrorCategory.OperationTimeout, null);
+                        ThrowTerminatingError(er);
+                    }
+                    else
+                    {
+                        throw;
+                    }
 
+                }
                 if (handleRedirect
                     && _maximumRedirection is not 0
                     && IsRedirectCode(response.StatusCode)
