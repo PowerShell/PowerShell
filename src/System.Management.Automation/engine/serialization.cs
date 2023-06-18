@@ -2159,7 +2159,10 @@ namespace System.Management.Automation
                     }
 
                     Dbg.Assert(key != null, "Dictionary keys should never be null");
-                    if (key == null) break;
+                    if (key == null)
+                    {
+                        break;
+                    }
 
                     WriteStartElement(SerializationStrings.DictionaryEntryTag);
                     WriteOneObject(key, null, SerializationStrings.DictionaryKey, depth);
@@ -5119,7 +5122,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// A class for identifying types which are treated as KnownType by Monad.
-    /// A KnownType is guranteed to be available on machine on which monad is
+    /// A KnownType is guaranteed to be available on machine on which monad is
     /// running.
     /// </summary>
     internal static class KnownTypes

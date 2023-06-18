@@ -726,8 +726,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // handle recognized types of exceptions first
             //
-            RemoteException remoteException = runtimeException as RemoteException;
-            if ((remoteException != null) && (remoteException.SerializedRemoteException != null))
+            if ((runtimeException is RemoteException remoteException) && (remoteException.SerializedRemoteException != null))
             {
                 if (Deserializer.IsInstanceOfType(remoteException.SerializedRemoteException, typeof(CommandNotFoundException)))
                 {
@@ -1575,8 +1574,7 @@ namespace Microsoft.PowerShell.Commands
             powerShell.AddParameter("TypeName", this.FormatTypeName);
 
             // For remote PS version 5.1 and greater, we need to include the new -PowerShellVersion parameter
-            RemoteRunspace remoteRunspace = Session.Runspace as RemoteRunspace;
-            if ((remoteRunspace != null) && (remoteRunspace.ServerVersion != null) &&
+            if ((Session.Runspace is RemoteRunspace remoteRunspace) && (remoteRunspace.ServerVersion != null) &&
                 (remoteRunspace.ServerVersion >= new Version(5, 1)))
             {
                 powerShell.AddParameter("PowerShellVersion", PSVersionInfo.PSVersion);
@@ -1942,20 +1940,17 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Connection URI associated with the remote runspace.</returns>
         private string GetConnectionString()
         {
-            WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (connectionInfo != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is WSManConnectionInfo connectionInfo)
             {
                 return connectionInfo.ConnectionUri.ToString();
             }
 
-            VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
-            if (vmConnectionInfo != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is VMConnectionInfo vmConnectionInfo)
             {
                 return vmConnectionInfo.ComputerName;
             }
 
-            ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
-            if (containerConnectionInfo != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is ContainerConnectionInfo containerConnectionInfo)
             {
                 return containerConnectionInfo.ComputerName;
             }
@@ -2244,8 +2239,7 @@ function Get-PSImplicitRemotingSessionOption
         {
             StringBuilder result = new("& $script:NewPSSessionOption ");
 
-            RunspaceConnectionInfo runspaceConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as RunspaceConnectionInfo;
-            if (runspaceConnectionInfo != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is RunspaceConnectionInfo runspaceConnectionInfo)
             {
                 result.Append(null, $"-Culture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture.ToString())}' ");
                 result.Append(null, $"-UICulture '{CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.UICulture.ToString())}' ");
@@ -2256,22 +2250,42 @@ function Get-PSImplicitRemotingSessionOption
                 result.Append(null, $"-OperationTimeOut {runspaceConnectionInfo.OperationTimeout} ");
             }
 
-            WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (wsmanConnectionInfo != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is WSManConnectionInfo wsmanConnectionInfo)
             {
-                if (!wsmanConnectionInfo.UseCompression) { result.Append("-NoCompression "); }
+                if (!wsmanConnectionInfo.UseCompression)
+                {
+                    result.Append("-NoCompression ");
+                }
 
-                if (wsmanConnectionInfo.NoEncryption) { result.Append("-NoEncryption "); }
+                if (wsmanConnectionInfo.NoEncryption)
+                {
+                    result.Append("-NoEncryption ");
+                }
 
-                if (wsmanConnectionInfo.NoMachineProfile) { result.Append("-NoMachineProfile "); }
+                if (wsmanConnectionInfo.NoMachineProfile)
+                {
+                    result.Append("-NoMachineProfile ");
+                }
 
-                if (wsmanConnectionInfo.UseUTF16) { result.Append("-UseUTF16 "); }
+                if (wsmanConnectionInfo.UseUTF16)
+                {
+                    result.Append("-UseUTF16 ");
+                }
 
-                if (wsmanConnectionInfo.SkipCACheck) { result.Append("-SkipCACheck "); }
+                if (wsmanConnectionInfo.SkipCACheck)
+                {
+                    result.Append("-SkipCACheck ");
+                }
 
-                if (wsmanConnectionInfo.SkipCNCheck) { result.Append("-SkipCNCheck "); }
+                if (wsmanConnectionInfo.SkipCNCheck)
+                {
+                    result.Append("-SkipCNCheck ");
+                }
 
-                if (wsmanConnectionInfo.SkipRevocationCheck) { result.Append("-SkipRevocationCheck "); }
+                if (wsmanConnectionInfo.SkipRevocationCheck)
+                {
+                    result.Append("-SkipRevocationCheck ");
+                }
 
                 if (wsmanConnectionInfo.MaximumReceivedDataSizePerCommand.HasValue)
                 {
@@ -2501,8 +2515,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateNewRunspaceExpression()
         {
-            VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
-            if (vmConnectionInfo != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is VMConnectionInfo vmConnectionInfo)
             {
                 string vmConfigurationName = vmConnectionInfo.ConfigurationName;
                 return string.Format(
@@ -2514,8 +2527,7 @@ function Get-PSImplicitRemotingSession
             }
             else
             {
-                ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
-                if (containerConnectionInfo != null)
+                if (_remoteRunspaceInfo.Runspace.ConnectionInfo is ContainerConnectionInfo containerConnectionInfo)
                 {
                     string containerConfigurationName = containerConnectionInfo.ContainerProc.ConfigurationName;
                     return string.Format(
@@ -2557,19 +2569,16 @@ function Get-PSImplicitRemotingSession
         /// <returns></returns>
         private string GenerateConnectionStringForNewRunspace()
         {
-            WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (connectionInfo == null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo is not WSManConnectionInfo connectionInfo)
             {
-                VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
-                if (vmConnectionInfo != null)
+                if (_remoteRunspaceInfo.Runspace.ConnectionInfo is VMConnectionInfo vmConnectionInfo)
                 {
                     return string.Format(CultureInfo.InvariantCulture,
                         VMIdParameterTemplate,
                         CodeGeneration.EscapeSingleQuotedStringContent(vmConnectionInfo.VMGuid.ToString()));
                 }
 
-                ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
-                if (containerConnectionInfo != null)
+                if (_remoteRunspaceInfo.Runspace.ConnectionInfo is ContainerConnectionInfo containerConnectionInfo)
                 {
                     return string.Format(CultureInfo.InvariantCulture,
                         ContainerIdParameterTemplate,

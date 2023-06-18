@@ -903,8 +903,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner == null
+                if (e.InnerException is not Win32Exception eInner
                     || eInner.NativeErrorCode != NativeMethods.ERROR_SERVICE_ALREADY_RUNNING)
                 {
                     exception = e;
@@ -1020,9 +1019,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner =
-                    e.InnerException as Win32Exception;
-                if (eInner == null
+                if (e.InnerException is not Win32Exception eInner
                     || eInner.NativeErrorCode != NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     exception = e;
@@ -1117,8 +1114,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner != null
+                if (e.InnerException is Win32Exception eInner
                     && eInner.NativeErrorCode == NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     serviceNotRunning = true;
@@ -1198,8 +1194,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner != null
+                if (e.InnerException is Win32Exception eInner
                     && eInner.NativeErrorCode == NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     serviceNotRunning = true;
@@ -2775,22 +2770,6 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         [DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
         internal static extern IntPtr CreateJobObject(IntPtr lpJobAttributes, string lpName);
-
-        /// <summary>
-        /// AssignProcessToJobObject API is used to assign a process to an existing job object.
-        /// </summary>
-        /// <param name="hJob">
-        /// A handle to the job object to which the process will be associated.
-        /// </param>
-        /// <param name="hProcess">
-        /// A handle to the process to associate with the job object.
-        /// </param>
-        /// <returns>If the function succeeds, the return value is nonzero.
-        /// If the function fails, the return value is zero.
-        /// </returns>
-        [DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool AssignProcessToJobObject(SafeHandle hJob, IntPtr hProcess);
 
         /// <summary>
         /// Retrieves job state information from the job object.

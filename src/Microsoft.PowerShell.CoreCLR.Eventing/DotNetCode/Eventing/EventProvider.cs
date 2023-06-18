@@ -131,7 +131,10 @@ namespace System.Diagnostics.Eventing
             //
             // check if the object has been already disposed
             //
-            if (_disposed == 1) return;
+            if (_disposed == 1)
+            {
+                return;
+            }
 
             if (Interlocked.Exchange(ref _disposed, 1) != 0)
             {
@@ -291,8 +294,7 @@ namespace System.Diagnostics.Eventing
         {
             dataDescriptor->Reserved = 0;
 
-            string sRet = data as string;
-            if (sRet != null)
+            if (data is string sRet)
             {
                 dataDescriptor->Size = (uint)((sRet.Length + 1) * 2);
                 return sRet;

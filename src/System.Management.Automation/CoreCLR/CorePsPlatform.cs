@@ -80,7 +80,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isNanoServer.HasValue) { return _isNanoServer.Value; }
+                if (_isNanoServer.HasValue)
+                {
+                    return _isNanoServer.Value;
+                }
 
                 _isNanoServer = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels"))
@@ -110,7 +113,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isIoT.HasValue) { return _isIoT.Value; }
+                if (_isIoT.HasValue)
+                {
+                    return _isIoT.Value;
+                }
 
                 _isIoT = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion"))
@@ -140,7 +146,10 @@ namespace System.Management.Automation
 #if UNIX
                 return false;
 #else
-                if (_isWindowsDesktop.HasValue) { return _isWindowsDesktop.Value; }
+                if (_isWindowsDesktop.HasValue)
+                {
+                    return _isWindowsDesktop.Value;
+                }
 
                 _isWindowsDesktop = !IsNanoServer && !IsIoT;
                 return _isWindowsDesktop.Value;
@@ -934,8 +943,10 @@ namespace System.Management.Automation
                 [LibraryImport(psLib)]
                 internal static partial int WaitPid(int pid, [MarshalAs(UnmanagedType.Bool)] bool nohang);
 
-                // This is a struct tm from <time.h>.
-                [StructLayout(LayoutKind.Sequential)]
+                // This is the struct `private_tm` from setdate.h in libpsl-native.
+                // Packing is set to 4 to match the unmanaged declaration.
+                // https://github.com/PowerShell/PowerShell-Native/blob/c5575ceb064e60355b9fee33eabae6c6d2708d14/src/libpsl-native/src/setdate.h#L23
+                [StructLayout(LayoutKind.Sequential, Pack = 4)]
                 internal unsafe struct UnixTm
                 {
                     /// <summary>Seconds (0-60).</summary>
@@ -982,7 +993,7 @@ namespace System.Management.Automation
                     return tm;
                 }
 
-                [LibraryImport(psLib)]
+                [LibraryImport(psLib, SetLastError = true)]
                 internal static unsafe partial int SetDate(UnixTm* tm);
 
                 [LibraryImport(psLib, StringMarshalling = StringMarshalling.Utf8)]

@@ -62,11 +62,17 @@ namespace System.Management.Automation
 
         internal Collection<PSObject> ExecuteCurrentPowerShell(out Exception exceptionThrown, IEnumerable input = null)
         {
+            return ExecuteCurrentPowerShell(out exceptionThrown, out _, input);
+        }
+
+        internal Collection<PSObject> ExecuteCurrentPowerShell(out Exception exceptionThrown, out bool hadErrors, IEnumerable input = null)
+        {
             exceptionThrown = null;
 
             // This flag indicates a previous call to this method had its pipeline cancelled
             if (CancelTabCompletion)
             {
+                hadErrors = false;
                 return new Collection<PSObject>();
             }
 
@@ -89,6 +95,7 @@ namespace System.Management.Automation
             }
             finally
             {
+                hadErrors = CurrentPowerShell.HadErrors;
                 CurrentPowerShell.Commands.Clear();
             }
 

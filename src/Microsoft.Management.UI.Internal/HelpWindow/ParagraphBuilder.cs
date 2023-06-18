@@ -276,15 +276,8 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="length">Highlight length.</param>
         private void AddHighlight(int start, int length)
         {
-            if (start < 0)
-            {
-                throw new ArgumentOutOfRangeException("start");
-            }
-
-            if (start + length > this.textBuilder.Length)
-            {
-                throw new ArgumentOutOfRangeException("length");
-            }
+            ArgumentOutOfRangeException.ThrowIfNegative(start);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(this.textBuilder.Length, start + length, nameof(length));
 
             this.highlightedSpans.Add(new TextSpan(start, length));
         }
@@ -324,15 +317,8 @@ namespace Microsoft.Management.UI.Internal
             /// <param name="length">Index of the last character in the span.</param>
             internal TextSpan(int start, int length)
             {
-                if (start < 0)
-                {
-                    throw new ArgumentOutOfRangeException("start");
-                }
-
-                if (length < 1)
-                {
-                    throw new ArgumentOutOfRangeException("length");
-                }
+                ArgumentOutOfRangeException.ThrowIfNegative(start);
+                ArgumentOutOfRangeException.ThrowIfLessThan(1, length);
 
                 this.start = start;
                 this.end = start + length - 1;

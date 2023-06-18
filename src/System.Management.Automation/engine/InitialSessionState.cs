@@ -4044,6 +4044,7 @@ namespace System.Management.Automation.Runspaces
 [OutputType([System.Management.Automation.CommandCompletion])]
 Param(
     [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 0)]
+    [AllowEmptyString()]
     [string] $inputScript,
 
     [Parameter(ParameterSetName = 'ScriptInputSet', Position = 1)]
@@ -4081,7 +4082,7 @@ End
             <#options#>          $options)
     }
 }
-        ";
+";
 
         /// <summary>
         /// This is the default function to use for clear-host.
@@ -5237,7 +5238,11 @@ end {
                             // the users of the cmdlet, instead of the author, should have control of what options applied to an alias
                             // ('ScopedItemOptions.ReadOnly' and/or 'ScopedItemOptions.AllScopes').
                             var aliasEntry = new SessionStateAliasEntry(alias, cmdletName, description: string.Empty, ScopedItemOptions.None);
-                            if (psSnapInInfo != null) { aliasEntry.SetPSSnapIn(psSnapInInfo); }
+
+                            if (psSnapInInfo != null)
+                            {
+                                aliasEntry.SetPSSnapIn(psSnapInInfo);
+                            }
 
                             if (moduleInfo != null)
                             {

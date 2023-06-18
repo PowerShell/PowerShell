@@ -294,19 +294,13 @@ namespace System.Management.Automation.Help
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
 
-            while (culture != null)
+            // Allow tests to override system culture
+            if (InternalTestHooks.CurrentUICulture != null)
             {
-                if (string.IsNullOrEmpty(culture.Name))
-                {
-                    yield break;
-                }
-
-                yield return culture.Name;
-
-                culture = culture.Parent;
+                culture = InternalTestHooks.CurrentUICulture;
             }
 
-            yield break;
+            return CultureSpecificUpdatableHelp.GetCultureFallbackChain(culture);
         }
 
         #region Help Metadata Retrieval
@@ -555,7 +549,10 @@ namespace System.Management.Automation.Help
             }
             catch (XmlException e)
             {
-                if (ignoreValidationException) { return null; }
+                if (ignoreValidationException)
+                {
+                    return null;
+                }
 
                 throw new UpdatableHelpSystemException(HelpInfoXmlValidationFailure,
                     e.Message, ErrorCategory.InvalidData, null, e);
@@ -591,13 +588,9 @@ namespace System.Management.Automation.Help
 
             if (!string.IsNullOrEmpty(currentCulture))
             {
-                IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(
-                    globPatterns: new[] { currentCulture },
-                    options: WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
-
                 for (int i = 0; i < updatableHelpItem.Length; i++)
                 {
-                    if (SessionStateUtilities.MatchesAnyWildcardPattern(updatableHelpItem[i].Culture.Name, patternList, true))
+                    if (updatableHelpItem[i].IsCultureSupported(currentCulture))
                     {
                         helpInfo.HelpContentUriCollection.Add(new UpdatableHelpUri(moduleName, moduleGuid, updatableHelpItem[i].Culture, uri));
                     }

@@ -15,8 +15,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <Reference Include="System.Management.Automation">
-      <HintPath>.\Ref\System.Management.Automation.dll</HintPath>
-    </Reference>
+    <PackageReference Include="System.Management.Automation" Version="7.4.0-preview.2" />
   </ItemGroup>
 </Project>

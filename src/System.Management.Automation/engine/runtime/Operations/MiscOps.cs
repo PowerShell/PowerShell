@@ -13,6 +13,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -54,13 +55,24 @@ namespace System.Management.Automation
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                         null, "CantInvokeInNonImportedModule", ParserStrings.CantInvokeInNonImportedModule, mi.Name);
                 }
-                else if (((invocationToken == TokenKind.Ampersand) || (invocationToken == TokenKind.Dot)) && (mi.LanguageMode != context.LanguageMode))
+                else if ((invocationToken == TokenKind.Ampersand || invocationToken == TokenKind.Dot) && mi.LanguageMode != context.LanguageMode)
                 {
-                    // Disallow FullLanguage "& (Get-Module MyModule) MyPrivateFn" from ConstrainedLanguage because it always
-                    // runs "internal" origin and so has access to all functions, including non-exported functions.
-                    // Otherwise we end up leaking non-exported functions that run in FullLanguage.
-                    throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null,
-                        "CantInvokeCallOperatorAcrossLanguageBoundaries", ParserStrings.CantInvokeCallOperatorAcrossLanguageBoundaries);
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        // Disallow FullLanguage "& (Get-Module MyModule) MyPrivateFn" from ConstrainedLanguage because it always
+                        // runs "internal" origin and so has access to all functions, including non-exported functions.
+                        // Otherwise we end up leaking non-exported functions that run in FullLanguage.
+                        throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null,
+                            "CantInvokeCallOperatorAcrossLanguageBoundaries", ParserStrings.CantInvokeCallOperatorAcrossLanguageBoundaries);
+                    }
+
+                    // In audit mode, report but don't enforce.
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: context,
+                        title: ParserStrings.WDACParserModuleScopeCallOperatorLogTitle,
+                        message: ParserStrings.WDACParserModuleScopeCallOperatorLogMessage,
+                        fqid: "ModuleScopeCallOperatorNotAllowed",
+                        dropIntoDebugger: true);
                 }
 
                 commandSessionState = mi.SessionState.Internal;
@@ -162,6 +174,7 @@ namespace System.Management.Automation
                                              (cmd is ScriptCommand || cmd is PSScriptCmdlet);
 
             bool isNativeCommand = commandProcessor is NativeCommandProcessor;
+
             for (int i = commandIndex + 1; i < commandElements.Length; ++i)
             {
                 var cpi = commandElements[i];
@@ -208,9 +221,27 @@ namespace System.Management.Automation
             bool redirectedInformation = false;
             if (redirections != null)
             {
-                foreach (var redirection in redirections)
+                bool shouldProcessMergesFirst = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
+                    && isNativeCommand;
+
+                if (shouldProcessMergesFirst)
                 {
-                    redirection.Bind(pipe, commandProcessor, context);
+                    foreach (CommandRedirection redirection in redirections)
+                    {
+                        if (redirection is MergingRedirection)
+                        {
+                            redirection.Bind(pipe, commandProcessor, context);
+                        }
+                    }
+                }
+
+                foreach (CommandRedirection redirection in redirections)
+                {
+                    if (!shouldProcessMergesFirst || redirection is not MergingRedirection)
+                    {
+                        redirection.Bind(pipe, commandProcessor, context);
+                    }
+
                     switch (redirection.FromStream)
                     {
                         case RedirectionStream.Error:
@@ -1050,6 +1081,18 @@ namespace System.Management.Automation
         //    dir > out
         internal override void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context)
         {
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+            {
+                if (commandProcessor is NativeCommandProcessor nativeCommand
+                    && nativeCommand.CommandRuntime.ErrorMergeTo is not MshCommandRuntime.MergeDataStream.Output
+                    && FromStream is RedirectionStream.Output
+                    && !string.IsNullOrWhiteSpace(File))
+                {
+                    nativeCommand.StdOutDestination = FileBytePipe.Create(File, Appending);
+                    return;
+                }
+            }
+
             Pipe pipe = GetRedirectionPipe(context, pipelineProcessor);
 
             switch (FromStream)
@@ -1444,7 +1487,10 @@ namespace System.Management.Automation
             int handler = FindMatchingHandlerByType(exception.GetType(), types);
 
             // If no handler was found, return without changing the current result.
-            if (handler == -1) { return; }
+            if (handler == -1)
+            {
+                return;
+            }
 
             // New handler was found.
             //  - If new-rank is less than current-rank -- meaning the new handler is more specific,
@@ -2991,8 +3037,18 @@ namespace System.Management.Automation
                                 {
                                     if (!CoreTypes.Contains(basedCurrent.GetType()))
                                     {
-                                        throw InterpreterError.NewInterpreterException(current, typeof(PSInvalidOperationException),
-                                            null, "MethodInvocationNotSupportedInConstrainedLanguage", ParserStrings.InvokeMethodConstrainedLanguage);
+                                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                                        {
+                                            throw InterpreterError.NewInterpreterException(current, typeof(PSInvalidOperationException),
+                                                null, "MethodInvocationNotSupportedInConstrainedLanguage", ParserStrings.InvokeMethodConstrainedLanguage);
+                                        }
+
+                                        SystemPolicy.LogWDACAuditMessage(
+                                            context: context,
+                                            title: ParserStrings.WDACParserForEachOperatorLogTitle,
+                                            message: StringUtil.Format(ParserStrings.WDACParserForEachOperatorLogMessage, method.Name ?? string.Empty),
+                                            fqid: "ForEachOperatorMethodInvocationNotAllowed",
+                                            dropIntoDebugger: true);
                                     }
                                 }
 
@@ -3624,7 +3680,7 @@ namespace System.Management.Automation
             }
             catch (PSSecurityException)
             {
-                // ReportContent() will throw PSSecurityException if AMSI detects malware, which 
+                // ReportContent() will throw PSSecurityException if AMSI detects malware, which
                 // must be propagated.
                 throw;
             }

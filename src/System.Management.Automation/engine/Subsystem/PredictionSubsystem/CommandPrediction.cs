@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Threading;
 using System.Threading.Tasks;
@@ -249,7 +248,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="suggestionText">The accepted suggestion text.</param>
         public static void OnSuggestionAccepted(PredictionClient client, Guid predictorId, uint session, string suggestionText)
         {
-            Requires.NotNullOrEmpty(suggestionText, nameof(suggestionText));
+            ArgumentException.ThrowIfNullOrEmpty(suggestionText);
 
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)

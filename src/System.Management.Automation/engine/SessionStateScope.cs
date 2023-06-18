@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 
 namespace System.Management.Automation
 {
@@ -421,7 +422,10 @@ namespace System.Management.Automation
             bool varExists = TryGetVariable(name, origin, true, out variable);
 
             // Initialize the private variable dictionary if it's not yet
-            if (_variables == null) { GetPrivateVariables(); }
+            if (_variables == null)
+            {
+                GetPrivateVariables();
+            }
 
             if (!asValue && variableToSet != null)
             {
@@ -1639,9 +1643,14 @@ namespace System.Management.Automation
 
         internal Type LookupType(string name)
         {
-            if (TypeTable == null) return null;
+            if (TypeTable == null)
+            {
+                return null;
+            }
+
             Type result;
             TypeTable.TryGetValue(name, out result);
+
             return result;
         }
 
@@ -1682,12 +1691,18 @@ namespace System.Management.Automation
 
             // Then use the creation constructors - workflows don't get here because the workflow info
             // is created during compilation.
-            else if (function.IsFilter) { newValue = new FilterInfo(name, function, options, context, helpFile); }
+            else if (function.IsFilter)
+            {
+                newValue = new FilterInfo(name, function, options, context, helpFile);
+            }
             else if (function.IsConfiguration)
             {
                 newValue = new ConfigurationInfo(name, function, options, context, helpFile, function.IsMetaConfiguration());
             }
-            else newValue = new FunctionInfo(name, function, options, context, helpFile);
+            else
+            {
+                newValue = new FunctionInfo(name, function, options, context, helpFile);
+            }
 
             return newValue;
         }
@@ -1970,11 +1985,21 @@ namespace System.Management.Automation
             var context = LocalPipeline.GetExecutionContextFromTLS();
             if (context?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                if ((variable.Options & ScopedItemOptions.AllScope) == ScopedItemOptions.AllScope)
+                if (variable.Options.HasFlag(ScopedItemOptions.AllScope))
                 {
-                    // Don't let people set AllScope variables in ConstrainedLanguage, as they can be used to
-                    // interfere with the session state of trusted commands.
-                    throw new PSNotSupportedException();
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        // Don't let people set AllScope variables in ConstrainedLanguage, as they can be used to
+                        // interfere with the session state of trusted commands.
+                        throw new PSNotSupportedException();
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: context,
+                        title: SessionStateStrings.WDACSessionStateVarLogTitle,
+                        message: StringUtil.Format(SessionStateStrings.WDACSessionStateVarLogMessage, variable.Name),
+                        fqid: "AllScopeVariableNotAllowed",
+                        dropIntoDebugger: true);
                 }
 
                 // Mark untrusted values for assignments to 'Global:' variables, and 'Script:' variables in

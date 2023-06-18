@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Globalization;
 using System.Management.Automation;
@@ -14,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public static class PSUserAgent
     {
-        private static string s_windowsUserAgent;
+        private static string? s_windowsUserAgent;
 
         // Format the user-agent string from the various component parts
         internal static string UserAgent => string.Create(CultureInfo.InvariantCulture, $"{Compatibility} ({PlatformName}; {OS}; {Culture}) {App}");
