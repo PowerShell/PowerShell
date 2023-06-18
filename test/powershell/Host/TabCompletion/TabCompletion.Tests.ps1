@@ -280,7 +280,7 @@ switch ($x)
     }
 
     It 'Should not complete variable assigned in an ampersand executed scriptblock' {
-        $res = TabExpansion2 -inputScript '& {$Test1 = "Hello"};$Test'
+        $res = TabExpansion2 -inputScript '& {$AmpeersandVarCompletionTest = "Hello"};$AmpeersandVarCompletionTes'
         $res.CompletionMatches.Count | Should -Be 0
     }
 
