@@ -382,7 +382,7 @@ Describe "Native application invocation and getting cursor position" -Tags 'CI' 
         }
         if ($missing.count -ne 0) {
             $message = "missing command(s) {0}" -f ($missing -join ", ")
-            Set-ItResult -Pending $message
+            Set-ItResult -Pending -Because $message
         }
 
         $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
