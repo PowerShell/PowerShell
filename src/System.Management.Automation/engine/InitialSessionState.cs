@@ -4550,19 +4550,16 @@ end {
         /// </summary>
         private static NativeArgumentPassingStyle GetPassingStyle()
         {
-            // If non-Windows, use the standard passing style
-            if (!Platform.IsWindows)
-            {
-                return NativeArgumentPassingStyle.Standard;
-            }
-
-            // If the experimental feature is enabled return Windows..
+#if UNIX
+            return NativeArgumentPassingStyle.Standard;
+#else
             if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSWindowsNativeCommandArgPassing))
             {
                 return NativeArgumentPassingStyle.Windows;
             }
 
             return NativeArgumentPassingStyle.Legacy;
+#endif
         }
 
         internal static readonly SessionStateVariableEntry[] BuiltInVariables;
