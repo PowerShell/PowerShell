@@ -5375,6 +5375,20 @@ namespace System.Management.Automation
             "pv"
         };
 
+        private static readonly HashSet<string> s_localScopeCommandNames = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Microsoft.PowerShell.Core\\ForEach-Object",
+            "ForEach-Object",
+            "foreach",
+            "%",
+            "Microsoft.PowerShell.Core\\Where-Object",
+            "Where-Object",
+            "where",
+            "?",
+            "BeforeAll",
+            "BeforeEach"
+        };
+
         private sealed class VariableInfo
         {
             internal Type LastDeclaredConstraint;
@@ -5616,12 +5630,31 @@ namespace System.Management.Automation
 
             public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
             {
-                return scriptBlockExpressionAst != Top ? AstVisitAction.SkipChildren : AstVisitAction.Continue;
-            }
+                if (scriptBlockExpressionAst == Top)
+                {
+                    return AstVisitAction.Continue;
+                }
 
-            public override AstVisitAction VisitScriptBlock(ScriptBlockAst scriptBlockAst)
-            {
-                return scriptBlockAst != Top ? AstVisitAction.SkipChildren : AstVisitAction.Continue;
+                Ast parent = scriptBlockExpressionAst.Parent;
+                // This loop checks if the scriptblock is used as a command, or an argument for a command, eg: ForEach-Object -Process {$Var1 = "Hello"}, {Var2 = $true}
+                while (true)
+                {
+                    if (parent is CommandAst cmdAst)
+                    {
+                        string cmdName = cmdAst.GetCommandName();
+                        return s_localScopeCommandNames.Contains(cmdName)
+                            || (cmdAst.CommandElements[0] is ScriptBlockExpressionAst && cmdAst.InvocationOperator == TokenKind.Dot)
+                            ? AstVisitAction.Continue
+                            : AstVisitAction.SkipChildren;
+                    }
+
+                    if (parent is not CommandExpressionAst and not PipelineAst and not StatementBlockAst and not ArrayExpressionAst and not ArrayLiteralAst)
+                    {
+                        return AstVisitAction.SkipChildren;
+                    }
+
+                    parent = parent.Parent;
+                }
             }
         }
 
