@@ -5375,6 +5375,18 @@ namespace System.Management.Automation
             "pv"
         };
 
+        private static readonly HashSet<string> s_localScopeCommandNames = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Microsoft.PowerShell.Core\\ForEach-Object",
+            "ForEach-Object",
+            "foreach",
+            "%",
+            "Microsoft.PowerShell.Core\\Where-Object",
+            "Where-Object",
+            "where",
+            "?"
+        };
+
         private sealed class VariableInfo
         {
             internal Type LastDeclaredConstraint;
@@ -5616,9 +5628,11 @@ namespace System.Management.Automation
                 {
                     if (parent is CommandAst cmdAst)
                     {
-                        return cmdAst.CommandElements[0] is ScriptBlockExpressionAst && cmdAst.InvocationOperator == TokenKind.Ampersand
-                            ? AstVisitAction.SkipChildren
-                            : AstVisitAction.Continue;
+                        string cmdName = cmdAst.GetCommandName();
+                        return s_localScopeCommandNames.Contains(cmdName)
+                            || (cmdAst.CommandElements[0] is ScriptBlockExpressionAst && cmdAst.InvocationOperator == TokenKind.Dot)
+                            ? AstVisitAction.Continue
+                            : AstVisitAction.SkipChildren;
                     }
 
                     if (parent is not CommandExpressionAst and not PipelineAst and not StatementBlockAst and not ArrayExpressionAst and not ArrayLiteralAst)
