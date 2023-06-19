@@ -797,7 +797,7 @@ $result
 
             if (Wait)
             {
-                _activityId = (new Random()).Next();
+                _activityId = Random.Shared.Next();
                 if (_timeout == -1 || _timeout >= int.MaxValue / 1000)
                 {
                     _timeoutInMilliseconds = int.MaxValue;

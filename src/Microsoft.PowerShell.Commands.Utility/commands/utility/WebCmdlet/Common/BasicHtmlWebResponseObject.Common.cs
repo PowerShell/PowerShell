@@ -1,8 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using System.Net.Http;
@@ -23,8 +27,9 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class.
         /// </summary>
         /// <param name="response">The response.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public BasicHtmlWebResponseObject(HttpResponseMessage response, CancellationToken cancellationToken) : this(response, null, cancellationToken) { }
+        public BasicHtmlWebResponseObject(HttpResponseMessage response, TimeSpan perReadTimeout, CancellationToken cancellationToken) : this(response, null, perReadTimeout, cancellationToken) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BasicHtmlWebResponseObject"/> class
@@ -32,8 +37,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="response">The response.</param>
         /// <param name="contentStream">The content stream associated with the response.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream contentStream, CancellationToken cancellationToken) : base(response, contentStream, cancellationToken)
+        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream? contentStream, TimeSpan perReadTimeout, CancellationToken cancellationToken) : base(response, contentStream, perReadTimeout, cancellationToken)
         {
             InitializeContent(cancellationToken);
             InitializeRawContent(response);
@@ -60,9 +66,9 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding of the response body from the <c>Content-Type</c> header,
         /// or <see langword="null"/> if the encoding could not be determined.
         /// </value>
-        public Encoding Encoding { get; private set; }
+        public Encoding? Encoding { get; private set; }
 
-        private WebCmdletElementCollection _inputFields;
+        private WebCmdletElementCollection? _inputFields;
 
         /// <summary>
         /// Gets the HTML input field elements parsed from <see cref="Content"/>.
@@ -87,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private WebCmdletElementCollection _links;
+        private WebCmdletElementCollection? _links;
 
         /// <summary>
         /// Gets the HTML a link elements parsed from <see cref="Content"/>.
@@ -112,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private WebCmdletElementCollection _images;
+        private WebCmdletElementCollection? _images;
 
         /// <summary>
         /// Gets the HTML img elements parsed from <see cref="Content"/>.
@@ -145,15 +151,16 @@ namespace Microsoft.PowerShell.Commands
         /// Reads the response content from the web response.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
+        [MemberNotNull(nameof(Content))]
         protected void InitializeContent(CancellationToken cancellationToken)
         {
-            string contentType = ContentHelper.GetContentType(BaseResponse);
+            string? contentType = ContentHelper.GetContentType(BaseResponse);
             if (ContentHelper.IsText(contentType))
             {
                 // Fill the Content buffer
-                string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
+                string? characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
 
-                Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding, cancellationToken);
+                Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding, perReadTimeout, cancellationToken);
                 Encoding = encoding;
             }
             else
@@ -204,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
                     string name = nvMatches.Groups[1].Value;
 
                     // The value (if any) is captured by group #2, #3, or #4, depending on quoting or lack thereof
-                    string value = null;
+                    string? value = null;
                     if (nvMatches.Groups[2].Success)
                     {
                         value = nvMatches.Groups[2].Value;

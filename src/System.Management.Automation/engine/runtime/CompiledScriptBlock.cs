@@ -10,6 +10,7 @@ using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -1051,12 +1052,11 @@ namespace System.Management.Automation
             var oldScopeOrigin = context.EngineSessionState.CurrentScope.ScopeOrigin;
             var oldSessionState = context.EngineSessionState;
 
-            // If the script block has a different language mode than the current,
+            // If the script block has a different language mode than the current context,
             // change the language mode.
             PSLanguageMode? oldLanguageMode = null;
             PSLanguageMode? newLanguageMode = null;
-            if (this.LanguageMode.HasValue
-                && this.LanguageMode != context.LanguageMode)
+            if (this.LanguageMode.HasValue && this.LanguageMode != context.LanguageMode)
             {
                 // Don't allow context: ConstrainedLanguage -> FullLanguage transition if
                 // this is dot sourcing into the current scope, unless it is within a trusted module scope.
@@ -1064,6 +1064,20 @@ namespace System.Management.Automation
                     || createLocalScope
                     || context.EngineSessionState.Module?.LanguageMode == PSLanguageMode.FullLanguage)
                 {
+                    oldLanguageMode = context.LanguageMode;
+                    newLanguageMode = this.LanguageMode;
+                }
+                else if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+                {
+                    string scriptBlockId = this.GetFileName() ?? string.Empty;
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: context,
+                        title: AutomationExceptions.WDACCompiledScriptBlockLogTitle,
+                        message: StringUtil.Format(AutomationExceptions.WDACCompiledScriptBlockLogMessage, scriptBlockId, this.LanguageMode, context.LanguageMode),
+                        fqid: "ScriptBlockDotSourceNotAllowed",
+                        dropIntoDebugger: true);
+
+                    // Since we are in audit mode, go ahead and allow the language transition.
                     oldLanguageMode = context.LanguageMode;
                     newLanguageMode = this.LanguageMode;
                 }
@@ -1452,7 +1466,7 @@ namespace System.Management.Automation
                     // But split the segments into random sizes (10k + between 0 and 10kb extra)
                     // so that attackers can't creatively force their scripts to span well-known
                     // segments (making simple rules less reliable).
-                    int segmentSize = 10000 + (new Random()).Next(10000);
+                    int segmentSize = 10000 + Random.Shared.Next(10000);
                     int segments = (int)Math.Floor((double)(scriptBlockText.Length / segmentSize)) + 1;
                     int currentLocation = 0;
                     int currentSegmentSize = 0;
@@ -2360,8 +2374,8 @@ namespace System.Management.Automation
             // change the language mode.
             PSLanguageMode? oldLanguageMode = null;
             PSLanguageMode? newLanguageMode = null;
-            if (_scriptBlock.LanguageMode.HasValue
-                && _scriptBlock.LanguageMode != Context.LanguageMode)
+            if (_scriptBlock.LanguageMode.HasValue &&
+                _scriptBlock.LanguageMode != Context.LanguageMode)
             {
                 oldLanguageMode = Context.LanguageMode;
                 newLanguageMode = _scriptBlock.LanguageMode;

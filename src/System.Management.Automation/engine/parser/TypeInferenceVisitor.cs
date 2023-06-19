@@ -364,7 +364,22 @@ namespace System.Management.Automation
                 filterToCall = filter;
             }
 
-            results.AddRange(GetMembersByInferredType(new PSTypeName(typeof(object)), isStatic, filterToCall));
+            PSTypeName baseMembersType;
+            if (typename.TypeDefinitionAst.IsEnum)
+            {
+                if (!isStatic)
+                {
+                    results.Add(new PSInferredProperty("value__", new PSTypeName(typeof(int))));
+                }
+
+                baseMembersType = new PSTypeName(typeof(Enum));
+            }
+            else
+            {
+                baseMembersType = new PSTypeName(typeof(object));
+            }
+
+            results.AddRange(GetMembersByInferredType(baseMembersType, isStatic, filterToCall));
         }
 
         internal void AddMembersByInferredTypeCimType(PSTypeName typename, List<object> results, Func<object, bool> filterToCall)
@@ -707,6 +722,11 @@ namespace System.Management.Automation
             // The reflection type of PSCustomObject is PSObject, so this covers both the
             // [PSObject] @{ Key = "Value" } and the [PSCustomObject] @{ Key = "Value" } case.
             var type = convertExpressionAst.Type.TypeName.GetReflectionType();
+
+            if (type is null && convertExpressionAst.Type.TypeName is TypeName unavailableType && unavailableType._typeDefinitionAst is not null)
+            {
+                return new[] { new PSTypeName(unavailableType._typeDefinitionAst) };
+            }
 
             if (type == typeof(PSObject) && convertExpressionAst.Child is HashtableAst hashtableAst)
             {
@@ -2101,11 +2121,6 @@ namespace System.Management.Automation
                 parent = parent.Parent;
             }
 
-            if (parent.Parent is FunctionDefinitionAst)
-            {
-                parent = parent.Parent;
-            }
-
             int startOffset = variableExpressionAst.Extent.StartOffset;
             var targetAsts = (List<Ast>)AstSearcher.FindAll(
                 parent,
@@ -2145,9 +2160,9 @@ namespace System.Management.Automation
 
             // If any of the assignments lhs use a type constraint, then we use that.
             // Otherwise, we use the rhs of the "nearest" assignment
-            foreach (var assignAst in assignAsts)
+            for (int i = assignAsts.Length - 1; i >= 0; i--)
             {
-                if (assignAst.Left is ConvertExpressionAst lhsConvert)
+                if (assignAsts[i].Left is ConvertExpressionAst lhsConvert)
                 {
                     inferredTypes.Add(new PSTypeName(lhsConvert.Type.TypeName));
                     return;
@@ -2572,7 +2587,8 @@ namespace System.Management.Automation
             if (parameterAst != null)
             {
                 return variableAstVariablePath.IsUnscopedVariable &&
-                       parameterAst.Name.VariablePath.UnqualifiedPath.Equals(variableAstVariablePath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase);
+                       parameterAst.Name.VariablePath.UnqualifiedPath.Equals(variableAstVariablePath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase) &&
+                       parameterAst.Parent.Parent.Extent.EndOffset > variableAst.Extent.StartOffset;
             }
 
             if (ast is ForEachStatementAst foreachAst)

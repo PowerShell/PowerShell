@@ -145,6 +145,20 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
+        /// Provider interface function for logging WDAC audit event.
+        /// </summary>
+        /// <param name="title">Title of WDAC audit event.</param>
+        /// <param name="message">WDAC audit event message.</param>
+        /// <param name="fqid">FullyQualifiedId of WDAC audit event.</param>
+        internal static void LogWDACAuditEvent(
+            string title,
+            string message,
+            string fqid)
+        {
+            provider.LogWDACAuditEvent(title, message, fqid);
+        }
+
+        /// <summary>
         /// Provider interface function for logging settings event.
         /// </summary>
         /// <param name="logContext"></param>

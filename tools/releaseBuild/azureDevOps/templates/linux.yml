@@ -160,81 +160,95 @@ jobs:
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
         artifactName: pwshLinuxBuild.tar.gz
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
         artifactName: pwshLinuxBuild-meta
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz'
         artifactName: pwshLinuxBuildMinSize.tar.gz
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize-meta'
         artifactName: pwshLinuxBuildMinSize-meta
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz'
         artifactName: pwshLinuxBuildArm32.tar.gz
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32-meta'
         artifactName: pwshLinuxBuildArm32-meta
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz'
         artifactName: pwshLinuxBuildArm64.tar.gz
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64-meta'
         artifactName: pwshLinuxBuildArm64-meta
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'rpm') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz'
         artifactName: pwshMarinerBuildAmd64.tar.gz
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'rpm') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64-meta'
         artifactName: pwshMarinerBuildAmd64-meta
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'alpine') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
         artifactName: pwshLinuxBuildAlpine.tar.gz
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'alpine') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
         artifactName: pwshLinuxBuildAlpine-meta
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
         artifactName: pwshLinuxBuildFxdependent.tar.gz
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: PublishPipelineArtifact@1
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
         artifactName: pwshLinuxBuildFxdependent-meta
+      retryCountOnTaskFailure: 2

@@ -1,5 +1,95 @@
 # Current preview release
 
+## [7.4.0-preview.3] - 2023-04-20
+
+### Breaking Changes
+
+- Remove code related to `#requires -pssnapin` (#19320)
+
+### Engine Updates and Fixes
+
+- Change the arrow used in feedback suggestion to a more common Unicode character (#19534)
+- Support trigger registration in feedback provider (#19525)
+- Update the `ICommandPredictor` interface to reduce boilerplate code from predictor implementation (#19414)
+- Fix a crash in the type inference code (#19400) (Thanks @MartinGC94!)
+
+### Performance
+
+- Speed up `Resolve-Path` relative path resolution (#19171) (Thanks @MartinGC94!)
+
+### General Cmdlet Updates and Fixes
+
+- Infer external application output as strings (#19193) (Thanks @MartinGC94!)
+- Fix a race condition in `Add-Type` (#19471)
+- Detect insecure `https-to-http` redirect only if both URIs are absolute (#19468) (Thanks @CarloToso!)
+- Support `Ctrl+c` when connection hangs while reading data in WebCmdlets (#19330) (Thanks @stevenebutler!)
+- Enable type conversion of `AutomationNull` to `$null` for assignment (#19415)
+- Add the parameter `-Environment` to `Start-Process` (#19374)
+- Add the parameter `-RelativeBasePath` to `Resolve-Path` (#19358) (Thanks @MartinGC94!)
+- Exclude redundant parameter aliases from completion results (#19382) (Thanks @MartinGC94!)
+- Allow using a folder path in WebCmdlets' `-OutFile` parameter (#19007) (Thanks @CarloToso!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@eltociear, @CarloToso</p>
+
+</summary>
+
+<ul>
+<li>Fix typo in <code>typeDataXmlLoader.cs</code> (#19319) (Thanks @eltociear!)</li>
+<li>Fix typo in <code>Compiler.cs</code> (#19491) (Thanks @eltociear!)</li>
+<li>Inline the <code>GetResponseObject</code> method (#19380) (Thanks @CarloToso!)</li>
+<li>Simplify <code>ContentHelper</code> methods (#19367) (Thanks @CarloToso!)</li>
+<li>Initialize regex lazily in <code>BasicHtmlWebResponseObject</code> (#19361) (Thanks @CarloToso!)</li>
+<li>Fix codefactor issue in if-statement (part 5) (#19286) (Thanks @CarloToso!)</li>
+<li>Add nullable annotations in <code>WebRequestSession.cs</code> (#19291) (Thanks @CarloToso!)</li>
+</ul>
+
+</details>
+
+### Tests
+
+- Harden the default command test (#19416)
+- Skip VT100 tests on Windows Server 2012R2 as console does not support it (#19413)
+- Improve package management acceptance tests by not going to the gallery (#19412)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@dkattan</p>
+
+</summary>
+
+<ul>
+<li>Fixing MSI checkbox (#19325)</li>
+<li>Update the experimental feature JSON files (#19297)</li>
+<li>Update the cgmanifest (#19459, #19465)</li>
+<li>Update .NET SDK version to <code>8.0.100-preview.3.23178.7</code> (#19381)</li>
+<li>Force updating the transitive dependency on <code>Microsoft.CSharp</code> (#19514)</li>
+<li>Update <code>DotnetRuntimeMetadata.json</code> to consume the .NET 8.0.0-preview.3 release (#19529)</li>
+<li>Move PSGallery sync to a pool (#19523)</li>
+<li>Fix the regex used for package name check in vPack build (#19511)</li>
+<li>Make the vPack PAT library more obvious (#19505)</li>
+<li>Change <code>Microsoft.CodeAnalysis.CSharp</code> back to 4.5.0 (#19464) (Thanks @dkattan!)</li>
+<li>Update to the latest NOTICES file (#19332)</li>
+<li>Add <code>PoolNames</code> variable group to compliance pipeline (#19408)</li>
+<li>Fix stage dependencies and typo in release build (#19353)</li>
+<li>Fix issues in release build and release pipeline (#19338)</li>
+</ul>
+
+</details>
+
+[7.4.0-preview.3]: https://github.com/PowerShell/PowerShell/compare/v7.4.0-preview.2...v7.4.0-preview.3
+
 ## [7.4.0-preview.2] - 2023-03-14
 
 ### Breaking Changes

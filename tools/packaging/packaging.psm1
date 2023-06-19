@@ -61,6 +61,8 @@ function Start-PSPackage {
         [ValidateScript({$Environment.IsMacOS})]
         [string] $MacOSRuntime,
 
+        [switch] $Private,
+
         [Switch] $Force,
 
         [Switch] $SkipReleaseChecks,
@@ -473,6 +475,7 @@ function Start-PSPackage {
                     ProductVersion = $Version
                     Architecture = $WindowsRuntime.Split('-')[1]
                     Force = $Force
+                    Private = $Private
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create MSIX Package")) {
@@ -836,7 +839,7 @@ function Update-PSSignedBuildFolder
         [string]$BuildPath,
         [Parameter(Mandatory)]
         [string]$SignedFilesPath,
-        [string[]] $RemoveFilter = ('*.pdb', '*.zip')
+        [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap')
     )
 
     # Replace unsigned binaries with signed
@@ -3602,6 +3605,9 @@ function New-MSIXPackage
         [ValidateSet('x64','x86','arm','arm64')]
         [string] $Architecture,
 
+        # Produce private package for testing in Store
+        [Switch] $Private,
+
         # Force overwrite of package
         [Switch] $Force,
 
@@ -3630,13 +3636,20 @@ function New-MSIXPackage
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
     $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
     $packageName = $productSemanticVersionWithName
+    if ($Private) {
+        $ProductNameSuffix = 'Private'
+    }
+
     if ($ProductNameSuffix) {
         $packageName += "-$ProductNameSuffix"
     }
 
     $displayName = $productName
 
-    if ($ProductSemanticVersion.Contains('-')) {
+    if ($Private) {
+        $ProductName = 'PowerShell-Private'
+        $displayName = 'PowerShell-Private'
+    } elseif ($ProductSemanticVersion.Contains('-')) {
         $ProductName += 'Preview'
         $displayName += ' Preview'
     }
@@ -3658,7 +3671,15 @@ function New-MSIXPackage
 
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
     $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName).Replace('$PUBLISHER$', $releasePublisher)
-    Set-Content -Path "$ProductSourcePath\AppxManifest.xml" -Value $appxManifest -Force
+    $xml = [xml]$appxManifest
+    if ($isPreview) {
+        Write-Verbose -Verbose "Adding pwsh-preview.exe alias"
+        $aliasNode = $xml.Package.Applications.Application.Extensions.Extension.AppExecutionAlias.ExecutionAlias.Clone()
+        $aliasNode.alias = "pwsh-preview.exe"
+        $xml.Package.Applications.Application.Extensions.Extension.AppExecutionAlias.AppendChild($aliasNode) | Out-Null
+    }
+    $xml.Save("$ProductSourcePath\AppxManifest.xml")
+
     # Necessary image assets need to be in source assets folder
     $assets = @(
         'Square150x150Logo'

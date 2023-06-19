@@ -60,6 +60,25 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Initializes a new instance of the ProgressRecord class and defines the activity Id.
+        /// </summary>
+        /// <param name="activityId">
+        /// A unique numeric key that identifies the activity to which this record applies.
+        /// </param>
+        public
+        ProgressRecord(int activityId)
+        {
+            if (activityId < 0)
+            {
+                // negative Ids are reserved to indicate "no id" for parent Ids.
+
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(activityId), activityId, ProgressRecordStrings.ArgMayNotBeNegative, "activityId");
+            }
+
+            this.id = activityId;
+        }
+
+        /// <summary>
         /// Cloning constructor (all fields are value types - can treat our implementation of cloning as "deep" copy)
         /// </summary>
         /// <param name="other"></param>
@@ -360,15 +379,8 @@ namespace System.Management.Automation
                 startTime.Kind == DateTimeKind.Utc,
                 "DateTime arithmetic should always be done in utc mode [to avoid problems when some operands are calculated right before and right after switching to /from a daylight saving time");
 
-            if (startTime > now)
-            {
-                throw new ArgumentOutOfRangeException(nameof(startTime));
-            }
-
-            if (expectedDuration <= TimeSpan.Zero)
-            {
-                throw new ArgumentOutOfRangeException(nameof(expectedDuration));
-            }
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(now, startTime);
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(TimeSpan.Zero, expectedDuration);
 
             /*
              * According to the spec of Checkpoint-Computer
@@ -488,9 +500,13 @@ namespace System.Management.Automation
         /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting()
         {
-            PSObject progressAsPSObject = RemotingEncoder.CreateEmptyPSObject();
+            // Activity used to be mandatory but that's no longer the case.
+            // We ensure the string has a value to maintain compatibility with older versions.
+            string activity = string.IsNullOrEmpty(Activity) ? " " : Activity;
 
-            progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_Activity, this.Activity));
+            PSObject progressAsPSObject = RemotingEncoder.CreateEmptyPSObject();
+            
+            progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_Activity, activity));
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_ActivityId, this.ActivityId));
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_StatusDescription, this.StatusDescription));
 

@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -26,14 +28,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or protected sets the response body content.
         /// </summary>
-        public byte[] Content { get; protected set; }
+        public byte[]? Content { get; protected set; }
 
         /// <summary>
         /// Gets the Headers property.
         /// </summary>
         public Dictionary<string, IEnumerable<string>> Headers => _headers ??= WebResponseHelper.GetHeadersDictionary(BaseResponse);
 
-        private Dictionary<string, IEnumerable<string>> _headers = null;
+        private Dictionary<string, IEnumerable<string>>? _headers;
 
         /// <summary>
         /// Gets or protected sets the full response content.
@@ -41,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>
         /// Full response content, including the HTTP status line, headers, and body.
         /// </value>
-        public string RawContent { get; protected set; }
+        public string? RawContent { get; protected set; }
 
         /// <summary>
         /// Gets the length (in bytes) of <see cref="RawContentStream"/>.
@@ -56,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the RelationLink property.
         /// </summary>
-        public Dictionary<string, string> RelationLink { get; internal set; }
+        public Dictionary<string, string>? RelationLink { get; internal set; }
 
         /// <summary>
         /// Gets the response status code.
@@ -70,15 +72,24 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Properties
 
+        #region Protected Fields
+
+        /// <summary>
+        /// Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.
+        /// </summary>
+        protected TimeSpan perReadTimeout;
+
+        #endregion Protected Fields
+
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
         /// </summary>
         /// <param name="response">The Http response.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public WebResponseObject(HttpResponseMessage response, CancellationToken cancellationToken) : this(response, null, cancellationToken)
-        { }
+        public WebResponseObject(HttpResponseMessage response, TimeSpan perReadTimeout, CancellationToken cancellationToken) : this(response, null, perReadTimeout, cancellationToken) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebResponseObject"/> class
@@ -86,9 +97,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="response">Http response.</param>
         /// <param name="contentStream">The http content stream.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public WebResponseObject(HttpResponseMessage response, Stream contentStream, CancellationToken cancellationToken)
+        public WebResponseObject(HttpResponseMessage response, Stream? contentStream, TimeSpan perReadTimeout, CancellationToken cancellationToken)
         {
+            this.perReadTimeout = perReadTimeout;
             SetResponse(response, contentStream, cancellationToken);
             InitializeContent();
             InitializeRawContent(response);
@@ -111,9 +124,9 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
 
             // Use ASCII encoding for the RawContent visual view of the content.
-            if (Content.Length > 0)
+            if (Content?.Length > 0)
             {
-                raw.Append(this.ToString());
+                raw.Append(ToString());
             }
 
             RawContent = raw.ToString();
@@ -125,33 +138,30 @@ namespace Microsoft.PowerShell.Commands
                                                 || char.IsSymbol(c)
                                                 || char.IsWhiteSpace(c);
 
-        private void SetResponse(HttpResponseMessage response, Stream contentStream, CancellationToken cancellationToken)
+        [MemberNotNull(nameof(RawContentStream))]
+        [MemberNotNull(nameof(BaseResponse))]
+        private void SetResponse(HttpResponseMessage response, Stream? contentStream, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(response);
 
             BaseResponse = response;
 
-            MemoryStream ms = contentStream as MemoryStream;
-            if (ms is not null)
+            if (contentStream is MemoryStream ms)
             {
                 RawContentStream = ms;
             }
             else
             {
-                Stream st = contentStream;
-                if (contentStream is null)
-                {
-                    st = StreamHelper.GetResponseStream(response, cancellationToken);
-                }
+                Stream st = contentStream ?? StreamHelper.GetResponseStream(response, cancellationToken);
 
-                long contentLength = response.Content.Headers.ContentLength.Value;
+                long contentLength = response.Content.Headers.ContentLength.GetValueOrDefault();
                 if (contentLength <= 0)
                 {
                     contentLength = StreamHelper.DefaultReadBuffer;
                 }
 
                 int initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
-                RawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, cmdlet: null, response.Content.Headers.ContentLength.GetValueOrDefault(), cancellationToken);
+                RawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, cmdlet: null, response.Content.Headers.ContentLength.GetValueOrDefault(), perReadTimeout, cancellationToken);
             }
 
             // Set the position of the content stream to the beginning
@@ -164,7 +174,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The string representation of this web response.</returns>
         public sealed override string ToString()
         {
-            char[] stringContent = System.Text.Encoding.ASCII.GetChars(Content);
+            if (Content is null)
+            {
+                return string.Empty;
+            }
+
+            char[] stringContent = Encoding.ASCII.GetChars(Content);
             for (int counter = 0; counter < stringContent.Length; counter++)
             {
                 if (!IsPrintable(stringContent[counter]))

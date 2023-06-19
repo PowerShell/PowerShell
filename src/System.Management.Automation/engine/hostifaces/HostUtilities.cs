@@ -42,7 +42,7 @@ namespace System.Management.Automation
     {
         #region Internal Access
 
-        private static readonly char s_actionIndicator = HostSupportUnicode() ? '\u2b9e' : '>';
+        private static readonly char s_actionIndicator = HostSupportUnicode() ? '\u27a4' : '>';
 
         private static readonly string s_checkForCommandInCurrentDirectoryScript = @"
             [System.Diagnostics.DebuggerHidden()]

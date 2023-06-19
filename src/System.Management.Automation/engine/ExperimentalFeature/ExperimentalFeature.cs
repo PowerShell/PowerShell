@@ -22,10 +22,12 @@ namespace System.Management.Automation
 
         internal const string EngineSource = "PSEngine";
         internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
+        internal const string PSNativeCommandPreserveBytePipe = "PSNativeCommandPreserveBytePipe";
         internal const string PSModuleAutoLoadSkipOfflineFilesFeatureName = "PSModuleAutoLoadSkipOfflineFiles";
         internal const string PSCustomTableHeaderLabelDecoration = "PSCustomTableHeaderLabelDecoration";
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
         internal const string PSCommandWithArgs = "PSCommandWithArgs";
+        internal const string PSConstrainedAuditLogging = "PSConstrainedAuditLogging";
 
         #endregion
 
@@ -127,11 +129,17 @@ namespace System.Management.Automation
                     name: PSCustomTableHeaderLabelDecoration,
                     description: "Formatting differentiation for table header labels that aren't property members"),
                 new ExperimentalFeature(
+                    name: PSNativeCommandPreserveBytePipe,
+                    description: "Byte output is retained when piping between two or more native commands"),
+                new ExperimentalFeature(
                     name: PSFeedbackProvider,
                     description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
                 new ExperimentalFeature(
                     name: PSCommandWithArgs,
                     description: "Enable `-CommandWithArgs` parameter for pwsh"),
+                new ExperimentalFeature(
+                    name: PSConstrainedAuditLogging,
+                    description: "PowerShell restriction logging when WDAC (Windows Defender Application Control) Code Integrity policy is set to Audit mode.")
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

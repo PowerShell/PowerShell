@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -19,6 +20,46 @@
         }
       },
       "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "JetBrains.Annotations",
+          "Version": "2021.2.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Json.More.Net",
+          "Version": "1.8.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "JsonPointer.Net",
+          "Version": "3.0.1"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "JsonSchema.Net",
+          "Version": "4.1.5"
+        }
+      },
+      "DevelopmentDependency": false
     },
     {
       "Component": {
@@ -65,7 +106,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.5.0"
+          "Version": "4.6.0"
         }
       },
       "DevelopmentDependency": false
@@ -75,17 +116,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.5.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "Microsoft.CSharp",
-          "Version": "4.3.0"
+          "Version": "4.6.0"
         }
       },
       "DevelopmentDependency": false
@@ -134,28 +165,8 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "Microsoft.NETCore.Platforms",
-          "Version": "1.1.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "Microsoft.NETCore.Targets",
-          "Version": "1.1.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "Microsoft.PowerShell.MarkdownRender",
-          "Version": "7.2.0"
+          "Version": "7.2.1"
         }
       },
       "DevelopmentDependency": false
@@ -215,17 +226,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "7.0.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "Namotion.Reflection",
-          "Version": "2.1.0"
+          "Version": "7.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -236,166 +237,6 @@
         "Nuget": {
           "Name": "Newtonsoft.Json",
           "Version": "13.0.3"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "NJsonSchema",
-          "Version": "10.8.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.any.System.Collections",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.any.System.Globalization",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.any.System.IO",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.any.System.Reflection.Extensions",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.any.System.Reflection.Primitives",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.any.System.Reflection",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.any.System.Resources.ResourceManager",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.any.System.Runtime.Handles",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.any.System.Runtime.InteropServices",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.any.System.Runtime",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.any.System.Text.Encoding",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.any.System.Threading.Tasks",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.fedora.23-x64.runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.fedora.24-x64.runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
         }
       },
       "DevelopmentDependency": false
@@ -454,46 +295,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.native.System",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.opensuse.13.2-x64.runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.opensuse.42.1-x64.runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "runtime.osx-arm64.runtime.native.System.IO.Ports",
           "Version": "7.0.0"
         }
@@ -506,86 +307,6 @@
         "Nuget": {
           "Name": "runtime.osx-x64.runtime.native.System.IO.Ports",
           "Version": "7.0.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.rhel.7-x64.runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.ubuntu.14.04-x64.runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.ubuntu.16.04-x64.runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.ubuntu.16.10-x64.runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.unix.System.Diagnostics.Debug",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.unix.System.Private.Uri",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.unix.System.Runtime.Extensions",
-          "Version": "4.3.0"
         }
       },
       "DevelopmentDependency": false
@@ -616,36 +337,6 @@
         "Nuget": {
           "Name": "runtime.win-x86.runtime.native.System.Data.SqlClient.sni",
           "Version": "4.4.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win.System.Diagnostics.Debug",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win.System.Runtime.Extensions",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win7.System.Private.Uri",
-          "Version": "4.3.0"
         }
       },
       "DevelopmentDependency": false
@@ -685,17 +376,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Collections.Immutable",
-          "Version": "6.0.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Collections",
-          "Version": "4.3.0"
+          "Version": "7.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -764,16 +445,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "System.Diagnostics.Debug",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "System.Diagnostics.DiagnosticSource",
           "Version": "7.0.2"
         }
@@ -815,7 +486,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.Protocols",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -844,28 +515,8 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "System.Dynamic.Runtime",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "System.Formats.Asn1",
           "Version": "7.0.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Globalization",
-          "Version": "4.3.0"
         }
       },
       "DevelopmentDependency": false
@@ -894,38 +545,8 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "System.IO",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Linq.Expressions",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Linq",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "System.Management",
-          "Version": "7.0.0"
+          "Version": "7.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -954,28 +575,8 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "System.ObjectModel",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "System.Private.ServiceModel",
-          "Version": "4.10.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Private.Uri",
-          "Version": "4.3.0"
+          "Version": "4.10.2"
         }
       },
       "DevelopmentDependency": false
@@ -1004,88 +605,8 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "System.Reflection.Emit.ILGeneration",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Reflection.Emit.Lightweight",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Reflection.Emit",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Reflection.Extensions",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "System.Reflection.Metadata",
-          "Version": "6.0.1"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Reflection.Primitives",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Reflection.TypeExtensions",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Reflection",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Resources.ResourceManager",
-          "Version": "4.3.0"
+          "Version": "7.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -1114,46 +635,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "System.Runtime.Extensions",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Runtime.Handles",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Runtime.InteropServices",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Runtime",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "System.Security.AccessControl",
           "Version": "6.0.0"
         }
@@ -1165,7 +646,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Pkcs",
-          "Version": "7.0.1"
+          "Version": "7.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -1234,16 +715,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "System.ServiceModel.NetFramingBase",
-          "Version": "6.0.0-preview1.23060.3"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "System.ServiceModel.NetTcp",
           "Version": "4.10.2"
         }
@@ -1285,7 +756,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceProcess.ServiceController",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -1314,16 +785,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "System.Text.Encoding",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "System.Text.Encodings.Web",
           "Version": "7.0.0"
         }
@@ -1334,38 +795,18 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "System.Text.Json",
+          "Version": "6.0.2"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "System.Threading.AccessControl",
           "Version": "7.0.1"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Threading.Tasks.Extensions",
-          "Version": "4.5.4"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Threading.Tasks",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Threading",
-          "Version": "4.3.0"
         }
       },
       "DevelopmentDependency": false
@@ -1390,6 +831,5 @@
       },
       "DevelopmentDependency": false
     }
-  ],
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
+  ]
 }
