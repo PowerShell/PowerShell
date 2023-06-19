@@ -5456,11 +5456,11 @@ namespace System.Management.Automation
 
         private static readonly string[] s_requiresModuleSpecKeys = new string[]
         {
-            "ModuleName",
             "GUID",
+            "MaximumVersion",
+            "ModuleName",
             "ModuleVersion",
-            "RequiredVersion",
-            "MaximumVersion"
+            "RequiredVersion"
         };
 
         private static readonly char[] s_hashtableKeyPrefixes = new[]
@@ -5587,44 +5587,44 @@ namespace System.Management.Automation
 
         private static readonly string[] s_commentHelpKeywords = new string[]
         {
-            "SYNOPSIS",
-            "DESCRIPTION",
-            "PARAMETER",
-            "EXAMPLE",
-            "INPUTS",
-            "OUTPUTS",
-            "NOTES",
-            "LINK",
             "COMPONENT",
-            "ROLE",
-            "FUNCTIONALITY",
-            "FORWARDHELPTARGETNAME",
+            "DESCRIPTION",
+            "EXAMPLE",
+            "EXTERNALHELP",
             "FORWARDHELPCATEGORY",
+            "FORWARDHELPTARGETNAME",
+            "FUNCTIONALITY",
+            "INPUTS",
+            "LINK",
+            "NOTES",
+            "OUTPUTS",
+            "PARAMETER",
             "REMOTEHELPRUNSPACE",
-            "EXTERNALHELP"
+            "ROLE",
+            "SYNOPSIS"
         };
 
         private static readonly HashSet<string> s_commentHelpAllowedDuplicateKeywords = new(StringComparer.OrdinalIgnoreCase)
         {
-            "PARAMETER",
             "EXAMPLE",
-            "LINK"
+            "LINK",
+            "PARAMETER"
         };
 
         private static readonly string[] s_commentHelpForwardCategories = new string[]
         {
             "Alias",
+            "All",
             "Cmdlet",
-            "HelpFile",
-            "Function",
-            "Provider",
-            "General",
-            "FAQ",
-            "Glossary",
-            "ScriptCommand",
             "ExternalScript",
+            "FAQ",
             "Filter",
-            "All"
+            "Function",
+            "General",
+            "Glossary",
+            "HelpFile",
+            "Provider",
+            "ScriptCommand"
         };
 
         private static FunctionDefinitionAst GetCommentHelpFunctionTarget(CompletionContext context)
