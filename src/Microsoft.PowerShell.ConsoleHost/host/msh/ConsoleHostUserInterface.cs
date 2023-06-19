@@ -1206,9 +1206,6 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteDebugLine(string message)
         {
-            // don't lock here as WriteLine is already protected.
-            message = HostUtilities.RemoveGuidFromMessage(message, out _);
-
             // We should write debug to error stream only if debug is redirected.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
@@ -1266,9 +1263,6 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteVerboseLine(string message)
         {
-            // don't lock here as WriteLine is already protected.
-            message = HostUtilities.RemoveGuidFromMessage(message, out _);
-
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
@@ -1309,9 +1303,6 @@ namespace Microsoft.PowerShell
         /// </exception>
         public override void WriteWarningLine(string message)
         {
-            // don't lock here as WriteLine is already protected.
-            message = HostUtilities.RemoveGuidFromMessage(message, out _);
-
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
@@ -1344,13 +1335,6 @@ namespace Microsoft.PowerShell
             {
                 // Do not write progress bar when the stdout is redirected.
                 return;
-            }
-
-            bool matchPattern;
-            string currentOperation = HostUtilities.RemoveIdentifierInfoFromMessage(record.CurrentOperation, out matchPattern);
-            if (matchPattern)
-            {
-                record = new ProgressRecord(record) { CurrentOperation = currentOperation };
             }
 
             // We allow only one thread at a time to update the progress state.)
@@ -1491,7 +1475,10 @@ namespace Microsoft.PowerShell
             result = ReadLineResult.endedOnEnter;
 
             // If the test hook is set, read from it.
-            if (s_h != null) return s_h.ReadLine();
+            if (s_h != null)
+            {
+                return s_h.ReadLine();
+            }
 
             string restOfLine = null;
 
@@ -1536,14 +1523,21 @@ namespace Microsoft.PowerShell
                 }
 
                 var c = unchecked((char)inC);
-                if (!NoPrompt) Console.Out.Write(c);
+                if (!NoPrompt)
+                {
+                    Console.Out.Write(c);
+                }
 
                 if (c == '\r')
                 {
                     // Treat as newline, but consume \n if there is one.
                     if (consoleIn.Peek() == '\n')
                     {
-                        if (!NoPrompt) Console.Out.Write('\n');
+                        if (!NoPrompt)
+                        {
+                            Console.Out.Write('\n');
+                        }
+
                         consoleIn.Read();
                     }
 

@@ -892,7 +892,7 @@ namespace System.Management.Automation.Host
                     {
                         // System transcripts can have high contention. Do exponential back-off on writing
                         // if needed.
-                        int delay = new Random().Next(10) + 1;
+                        int delay = Random.Shared.Next(10) + 1;
                         bool written = false;
 
                         while (!written)
@@ -1294,7 +1294,10 @@ namespace System.Management.Automation.Host
         /// </summary>
         public void Dispose()
         {
-            if (_disposed) { return; }
+            if (_disposed)
+            {
+                return;
+            }
 
             // Wait for any pending output to be flushed to disk so that Stop-Transcript
             // can be trusted to immediately have all content from that session in the file)

@@ -26,8 +26,8 @@
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
-    <PackageReference Include="XunitXml.TestLogger" Version="3.0.70" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
+    <PackageReference Include="XunitXml.TestLogger" Version="3.0.78" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -76,10 +76,7 @@ namespace Microsoft.WSMan.Management
         /// <returns>False, if operation failed.</returns>
         public bool RefreshCurrentConfiguration(string responseOfGet)
         {
-            if (string.IsNullOrEmpty(responseOfGet))
-            {
-                throw new ArgumentNullException(nameof(responseOfGet));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(responseOfGet);
 
             this.rootDocument.LoadXml(responseOfGet);
             this.documentElement = this.rootDocument.DocumentElement;
@@ -98,10 +95,7 @@ namespace Microsoft.WSMan.Management
         /// <returns>False, if operation is not successful.</returns>
         public void PutConfigurationOnServer(string resourceUri)
         {
-            if (string.IsNullOrEmpty(resourceUri))
-            {
-                throw new ArgumentNullException(nameof(resourceUri));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(resourceUri);
 
             this.serverSession.Put(resourceUri, this.rootDocument.InnerXml, 0);
         }
@@ -145,12 +139,7 @@ namespace Microsoft.WSMan.Management
         public void UpdateOneConfiguration(string pathToNodeFromRoot, string configurationName, string configurationValue)
         {
             ArgumentNullException.ThrowIfNull(pathToNodeFromRoot);
-
-            if (string.IsNullOrEmpty(configurationName))
-            {
-                throw new ArgumentNullException(nameof(configurationName));
-            }
-
+            ArgumentException.ThrowIfNullOrEmpty(configurationName);
             ArgumentNullException.ThrowIfNull(configurationValue);
 
             XmlNode nodeToUpdate =

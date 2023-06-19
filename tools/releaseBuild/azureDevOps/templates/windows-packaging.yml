@@ -12,9 +12,8 @@ jobs:
 - job: sign_windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
   displayName: Package Windows - ${{ parameters.Architecture }} ${{ parameters.BuildConfiguration }}
   condition: succeeded()
-  dependsOn: ${{ parameters.parentJob }}
   pool:
-    name: PowerShell1ES
+    name: $(windowsPool)
     demands:
     - ImageOverride -equals PSMMS2019-Secure
   variables:
@@ -236,6 +235,8 @@ jobs:
       Write-Host ("sending " + $vstsCommandString)
       Write-Host "##$vstsCommandString"
     displayName: Compress signed files
+    retryCountOnTaskFailure: 2
+
 
   - pwsh: |
       $runtime = switch ($env:Architecture)
@@ -269,6 +270,7 @@ jobs:
         Write-Host "##vso[artifact.upload containerfolder=signed;artifactname=signed]$packagePath"
       }
     displayName: Upload unsigned packages
+    retryCountOnTaskFailure: 2
 
   - ${{ if and(ne(variables['BuildConfiguration'],'minSize'), in(variables['Architecture'], 'x64', 'x86')) }}:
     - template: EsrpSign.yml@ComplianceRepo
@@ -290,6 +292,7 @@ jobs:
           Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$packagePath"
         }
       displayName: Upload signed MSI to finalResults
+      retryCountOnTaskFailure: 2
 
     - task: AzureFileCopy@4
       displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
@@ -300,6 +303,7 @@ jobs:
         storage: '$(StorageAccount)'
         ContainerName: '$(AzureVersion)'
         resourceGroup: '$(StorageResourceGroup)'
+      retryCountOnTaskFailure: 2
 
     - pwsh: |
         cd $(PowerShellRoot)
@@ -346,6 +350,7 @@ jobs:
           Write-Host "##vso[artifact.upload containerfolder=signed;artifactname=signed]$packagePath"
         }
       displayName: Upload unsigned exe
+      retryCountOnTaskFailure: 2
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

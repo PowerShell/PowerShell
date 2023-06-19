@@ -1548,7 +1548,10 @@ namespace System.Management.Automation
                 Dbg.Assert(_refCount > 0, "RefCount cannot be <= 0");
 
                 _refCount--;
-                if (_refCount != 0 && (!_blockingEnumerator || _refCount != 1)) return;
+                if (_refCount != 0 && (!_blockingEnumerator || _refCount != 1))
+                {
+                    return;
+                }
 
                 // release threads blocked on waithandle
                 _readWaitHandle?.Set();

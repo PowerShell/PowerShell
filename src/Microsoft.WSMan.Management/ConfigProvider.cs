@@ -617,7 +617,10 @@ namespace Microsoft.WSMan.Management
                 SessionObjCache.TryGetValue(host, out sessionobj);
 
                 XmlDocument xmlResource = FindResourceValue(sessionobj, uri, null);
-                if (xmlResource == null) { return; }
+                if (xmlResource == null)
+                {
+                    return;
+                }
 
                 // if endswith '\', removes it.
                 if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -1021,20 +1024,15 @@ namespace Microsoft.WSMan.Management
                         strPathChk = strPathChk + WSManStringLiterals.containerPlugin + WSManStringLiterals.DefaultPathSeparator;
                         if (path.EndsWith(strPathChk + currentpluginname, StringComparison.OrdinalIgnoreCase))
                         {
-                            if (WSManStringLiterals.ConfigRunAsUserName.Equals(ChildName, StringComparison.OrdinalIgnoreCase))
+                            if (WSManStringLiterals.ConfigRunAsUserName.Equals(ChildName, StringComparison.OrdinalIgnoreCase)  && value is PSCredential runAsCredentials)
                             {
-                                PSCredential runAsCredentials = value as PSCredential;
+                                // UserName
+                                value = runAsCredentials.UserName;
 
-                                if (runAsCredentials != null)
-                                {
-                                    // UserName
-                                    value = runAsCredentials.UserName;
-
-                                    pluginConfiguration.UpdateOneConfiguration(
-                                        ".",
-                                        WSManStringLiterals.ConfigRunAsPasswordName,
-                                        GetStringFromSecureString(runAsCredentials.Password));
-                                }
+                                pluginConfiguration.UpdateOneConfiguration(
+                                    ".",
+                                    WSManStringLiterals.ConfigRunAsPasswordName,
+                                    GetStringFromSecureString(runAsCredentials.Password));
                             }
 
                             if (WSManStringLiterals.ConfigRunAsPasswordName.Equals(ChildName, StringComparison.OrdinalIgnoreCase))
@@ -1301,8 +1299,7 @@ namespace Microsoft.WSMan.Management
                                     }
                                 }
 
-                                WSManProviderSetItemDynamicParameters dynParams = DynamicParameters as WSManProviderSetItemDynamicParameters;
-                                if (dynParams != null)
+                                if (DynamicParameters is WSManProviderSetItemDynamicParameters dynParams)
                                 {
                                     if (dynParams.Concatenate)
                                     {
@@ -1965,9 +1962,8 @@ namespace Microsoft.WSMan.Management
         private void NewItemCreateComputerConnection(string Name)
         {
             helper = new WSManHelper(this);
-            WSManProviderNewItemComputerParameters dynParams = DynamicParameters as WSManProviderNewItemComputerParameters;
             string parametersetName = "ComputerName";
-            if (dynParams != null)
+            if (DynamicParameters is WSManProviderNewItemComputerParameters dynParams)
             {
                 if (dynParams.ConnectionURI != null)
                 {
@@ -2064,8 +2060,7 @@ namespace Microsoft.WSMan.Management
             // to create a new plugin
             if (path.EndsWith(strPathChk, StringComparison.OrdinalIgnoreCase))
             {
-                WSManProviderNewItemPluginParameters niParams = DynamicParameters as WSManProviderNewItemPluginParameters;
-                if (niParams != null)
+                if (DynamicParameters is WSManProviderNewItemPluginParameters niParams)
                 {
                     if (string.IsNullOrEmpty(niParams.File))
                     {
@@ -2155,8 +2150,7 @@ namespace Microsoft.WSMan.Management
                     strPathChk += WSManStringLiterals.containerResources;
                     if (path.EndsWith(strPathChk, StringComparison.OrdinalIgnoreCase))
                     {
-                        WSManProviderNewItemResourceParameters niParams = DynamicParameters as WSManProviderNewItemResourceParameters;
-                        if (niParams != null)
+                        if (DynamicParameters is WSManProviderNewItemResourceParameters niParams)
                         {
                             mshObj.Properties.Add(new PSNoteProperty("Resource", niParams.ResourceUri));
                             mshObj.Properties.Add(new PSNoteProperty("Capability", niParams.Capability));
@@ -3413,10 +3407,7 @@ namespace Microsoft.WSMan.Management
         /// </exception>
         private PSObject GetItemValue(string path)
         {
-            if (string.IsNullOrEmpty(path))
-            {
-                throw new ArgumentNullException(path);
-            }
+            ArgumentException.ThrowIfNullOrEmpty(path);
 
             // if endswith '\', removes it.
             if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -5193,10 +5184,9 @@ namespace Microsoft.WSMan.Management
         /// <param name="propertyValue">Value to append.</param>
         private static string GetStringFromSecureString(object propertyValue)
         {
-            SecureString value = propertyValue as SecureString;
             string passwordValueToAdd = string.Empty;
 
-            if (value != null)
+            if (propertyValue is SecureString value)
             {
                 IntPtr ptr = Marshal.SecureStringToBSTR(value);
                 passwordValueToAdd = Marshal.PtrToStringAuto(ptr);

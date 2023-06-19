@@ -592,7 +592,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
-        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
+        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If that's
         /// not specified as well, then "WSMAN" will be used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -2332,7 +2332,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // This is trusted input as long as we're in FullLanguage mode
-                bool isTrustedInput = (Context.LanguageMode == PSLanguageMode.FullLanguage);
+                bool isTrustedInput = Context.LanguageMode == PSLanguageMode.FullLanguage;
                 powershell = _scriptBlock.GetPowerShell(isTrustedInput, _args);
             }
             catch (ScriptBlockToPowerShellNotSupportedException)

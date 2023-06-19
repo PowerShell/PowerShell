@@ -123,6 +123,9 @@
   <data name="ShellBannerCLMode" xml:space="preserve">
     <value>[Constrained Language Mode]</value>
   </data>
+  <data name="ShellBannerCLAuditMode" xml:space="preserve">
+    <value>[Constrained Language AUDIT Mode : No Restrictions]</value>
+  </data>
   <data name="ShellBannerNLMode" xml:space="preserve">
     <value>[No Language Mode]</value>
   </data>
@@ -443,7 +446,7 @@ All parameters are case-insensitive.</value>
 
     Example: "pwsh -o XML -c Get-Date"
 
-    When called withing a PowerShell session, you get deserialized objects as
+    When called within a PowerShell session, you get deserialized objects as
     output rather plain strings. When called from other shells, the output is
     string data formatted as CLIXML text.
 

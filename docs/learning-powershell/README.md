@@ -2,7 +2,7 @@
 
 Whether you're a Developer, a DevOps or an IT Professional, this doc will help you getting started with PowerShell.
 In this document we'll cover the following:
-installing PowerShell, samples walkthrough, PowerShell editor, debugger, testing tools and a map book for experienced bash users to get started with PowerShell faster.
+Installing PowerShell, samples walkthrough, PowerShell editor, debugger, testing tools and a map book for experienced bash users to get started with PowerShell faster.
 
 The exercises in this document are intended to give you a solid foundation in how to use PowerShell.
 You won't be a PowerShell guru at the end of reading this material but you will be well on your way with the right set of knowledge to start using PowerShell.
@@ -97,7 +97,7 @@ Note that all bash commands should continue working on PowerShell session.
 - [The Guide to Learning PowerShell][ebook-from-Idera] by Tobias Weltner
 - [PowerShell-related Videos][channel9-learn-powershell] on Channel 9
 - [PowerShell Quick Reference Guides][quick-reference] by PowerShellMagazine.com
-- [Learn PowerShell Video Library][idera-learn-powershell] from Idera
+- [PowerShell Tips][idera-powershell-tips] from Idera
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
 - [PowerShell Documentation](https://docs.microsoft.com/powershell)
 - [Interactive learning with PSKoans](https://aka.ms/pskoans)
@@ -121,7 +121,7 @@ Note that all bash commands should continue working on PowerShell session.
 [why-learn-powershell]: https://blogs.technet.microsoft.com/heyscriptingguy/2014/10/18/weekend-scripter-why-learn-powershell/
 [ebook-from-Idera]:https://www.idera.com/resourcecentral/whitepapers/powershell-ebook
 [channel9-learn-powershell]: https://channel9.msdn.com/Search?term=powershell#ch9Search
-[idera-learn-powershell]: https://community.idera.com/database-tools/powershell/video_library/
+[idera-powershell-tips]: https://blog.idera.com/database-tools/powershell/powertips/
 [quick-reference]: https://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
 [script-guy-how-to]:https://blogs.technet.microsoft.com/tommypatterson/2015/09/04/ed-wilsons-powershell5-videos-now-on-channel9-2/
 [basic-cookbooks]:https://docs.microsoft.com/powershell/scripting/samples/sample-scripts-for-administration

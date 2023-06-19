@@ -107,8 +107,7 @@ namespace Microsoft.PowerShell
         private void AsyncPipelineFailureHandler(Exception ex)
         {
             ErrorRecord er = null;
-            IContainsErrorRecord cer = ex as IContainsErrorRecord;
-            if (cer != null)
+            if (ex is IContainsErrorRecord cer)
             {
                 er = cer.ErrorRecord;
                 // Exception inside the error record is ParentContainsErrorRecordException which
@@ -483,8 +482,7 @@ namespace Microsoft.PowerShell
                 // And convert the base object into a string. We can't use the proxied
                 // ToString() on the PSObject because there is no default runspace
                 // available.
-                PSObject msho = streamResults[0] as PSObject;
-                if (msho != null)
+                if (streamResults[0] is PSObject msho)
                     result = msho.BaseObject.ToString();
                 else
                     result = streamResults[0].ToString();
@@ -585,8 +583,7 @@ namespace Microsoft.PowerShell
 
         internal void BlockCommandOutput()
         {
-            RemotePipeline remotePipeline = _pipeline as RemotePipeline;
-            if (remotePipeline != null)
+            if (_pipeline is RemotePipeline remotePipeline)
             {
                 // Waits until queued data is handled.
                 remotePipeline.DrainIncomingData();

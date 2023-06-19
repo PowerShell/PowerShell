@@ -807,7 +807,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             foreach (string moduleDir in modulePathList)
             {
-                if (!Directory.Exists(moduleDir)) continue;
+                if (!Directory.Exists(moduleDir))
+                {
+                    continue;
+                }
 
                 var dscResourcesPath = Path.Combine(moduleDir, "DscResources");
                 if (Directory.Exists(dscResourcesPath))
@@ -2532,9 +2535,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         out embeddedInstanceType, embeddedInstanceTypes, ref enumNames);
                 }
 
+                string mofAttr = MapAttributesToMof(enumNames, attributes, embeddedInstanceType);
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
 
-                sb.Append(CultureInfo.InvariantCulture, $"    {MapAttributesToMof(enumNames, attributes, embeddedInstanceType)}{mofType} {member.Name}{arrayAffix};\n");
+                sb.Append(
+                    CultureInfo.InvariantCulture,
+                    $"    {mofAttr}{mofType} {member.Name}{arrayAffix};\n");
             }
         }
 
@@ -2598,7 +2604,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     for (int i = 0; i < typeAst.Attributes.Count; i++)
                     {
                         var a = typeAst.Attributes[i];
-                        if (a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)) return true;
+                        if (a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute))
+                        {
+                            return true;
+                        }
                     }
                 }
 
@@ -2652,7 +2661,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                 }
 
-                if (skip) continue;
+                if (skip)
+                {
+                    continue;
+                }
 
                 // Parse the Resource Attribute to see if RunAs behavior is specified for the resource.
                 DSCResourceRunAsCredential runAsBehavior = DSCResourceRunAsCredential.Default;
@@ -2907,19 +2919,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     if (dscProperty.Key)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}key");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}key", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
 
                     if (dscProperty.Mandatory)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}required");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}required", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
 
                     if (dscProperty.NotConfigurable)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}read");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}read", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
 
@@ -2931,13 +2943,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     bool valueMapComma = false;
                     StringBuilder sbValues = new(", Values{");
-                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}ValueMap{{");
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
                     needComma = true;
 
                     foreach (var value in validateSet.ValidValues)
                     {
-                        sb.Append(CultureInfo.InvariantCulture, $"{(valueMapComma ? ", " : string.Empty)}\"{value}\"");
-                        sbValues.Append(CultureInfo.InvariantCulture, $"{(valueMapComma ? ", " : string.Empty)}\"{value}\"");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
+                        sbValues.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
                         valueMapComma = true;
                     }
 
@@ -2956,11 +2968,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (enumNames != null)
             {
-                sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}ValueMap{{");
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
                 needComma = false;
                 foreach (var name in enumNames)
                 {
-                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}\"{name}\"");
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
                     needComma = true;
                 }
 
@@ -2968,7 +2980,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 needComma = false;
                 foreach (var name in enumNames)
                 {
-                    sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}\"{name}\"");
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
                     needComma = true;
                 }
 
@@ -2976,7 +2988,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             else if (embeddedInstanceType != null)
             {
-                sb.Append(CultureInfo.InvariantCulture, $"{(needComma ? ", " : string.Empty)}EmbeddedInstance(\"{embeddedInstanceType}\")");
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}EmbeddedInstance(\"{1}\")", needComma ? ", " : string.Empty, embeddedInstanceType);
             }
 
             sb.Append(']');
@@ -3082,16 +3094,21 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
 
                 // TODO - validate type and name
-                bool isArrayType;
-                string embeddedInstanceType;
-                string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType,
+                string mofType = MapTypeToMofType(
+                    memberType,
+                    member.Name,
+                    className,
+                    out bool isArrayType,
+                    out string embeddedInstanceType,
                     embeddedInstanceTypes);
+
+                var enumNames = memberType.IsEnum ? Enum.GetNames(memberType) : null;
+                string mofAttr = MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType);
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
 
-                var enumNames = memberType.IsEnum
-                    ? Enum.GetNames(memberType)
-                    : null;
-                sb.Append(CultureInfo.InvariantCulture, $"    {MapAttributesToMof(enumNames, member.GetCustomAttributes(true), embeddedInstanceType)}{mofType} {member.Name}{arrayAffix};\n");
+                sb.Append(
+                    CultureInfo.InvariantCulture,
+                    $"    {mofAttr}{mofType} {member.Name}{arrayAffix};\n");
             }
         }
 
@@ -3122,7 +3139,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                 }
 
-                if (skip) continue;
+                if (skip)
+                {
+                    continue;
+                }
 
                 var mof = GenerateMofForType(r);
 

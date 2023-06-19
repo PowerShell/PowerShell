@@ -23,7 +23,7 @@ namespace Engine
 
         static Compiler()
         {
-            string pattern = string.Create($"{Path.DirectorySeparatorChar}test{Path.DirectorySeparatorChar}perf{Path.DirectorySeparatorChar}benchmarks");
+            string pattern = string.Format("{0}test{0}perf{0}benchmarks", Path.DirectorySeparatorChar);
             string location = typeof(Compiler).Assembly.Location;
             string testFilePath = null;
 
@@ -58,7 +58,7 @@ namespace Engine
 
             // Run it once to get the C# code jitted.
             // The first call to this takes relatively too long, which makes the BDN's heuristic incorrectly
-            // believe that there is no need to run many ops in each interation. However, the subsequent runs
+            // believe that there is no need to run many ops in each iteration. However, the subsequent runs
             // of this method is much faster than the first run, and this causes 'MinIterationTime' warnings
             // to our benchmarks and make the benchmark results not reliable.
             // Calling this method once in 'GlobalSetup' is a workaround. 

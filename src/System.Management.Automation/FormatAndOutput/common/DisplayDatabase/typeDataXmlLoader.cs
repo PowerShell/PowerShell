@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="typeDefinition">The ExtendedTypeDefinition instance to load formatting data from.</param>
         /// <param name="db">Database instance to load the formatting data into.</param>
         /// <param name="expressionFactory">Expression factory to validate the script block.</param>
-        /// <param name="isBuiltInFormatData">Do we implicitly trust the script blocks (so they should run in full langauge mode)?</param>
+        /// <param name="isBuiltInFormatData">Do we implicitly trust the script blocks (so they should run in full language mode)?</param>
         /// <param name="isForHelp">True when the view is for help output.</param>
         /// <returns></returns>
         internal bool LoadFormattingData(
@@ -436,7 +436,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ViewDefinition view = LoadViewFromObjectModel(typeDefinition.TypeNames, formatView, viewIndex++);
                 if (view != null)
                 {
-                    ReportTrace(string.Create(CultureInfo.InvariantCulture, $"{ControlBase.GetControlShapeName(view.mainControl)} view {view.name} is loaded from the 'FormatViewDefinition' at index {viewIndex - 1} in 'ExtendedTypeDefinition' with type name {typeDefinition.TypeName}"));
+                    ReportTrace(string.Format(
+                        CultureInfo.InvariantCulture,
+                        "{0} view {1} is loaded from the 'FormatViewDefinition' at index {2} in 'ExtendedTypeDefinition' with type name {3}",
+                        ControlBase.GetControlShapeName(view.mainControl),
+                        view.name,
+                        viewIndex - 1,
+                        typeDefinition.TypeName));
 
                     // we are fine, add the view to the list
                     db.viewDefinitionsSection.viewDefinitionList.Add(view);

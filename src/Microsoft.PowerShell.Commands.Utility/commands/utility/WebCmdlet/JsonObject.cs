@@ -571,15 +571,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        IDictionary dict = obj as IDictionary;
-                        if (dict != null)
+                        if (obj is IDictionary dict)
                         {
                             rv = ProcessDictionary(dict, currentDepth, in context);
                         }
                         else
                         {
-                            IEnumerable enumerable = obj as IEnumerable;
-                            if (enumerable != null)
+                            if (obj is IEnumerable enumerable)
                             {
                                 rv = ProcessEnumerable(enumerable, currentDepth, in context);
                             }
@@ -626,9 +624,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             bool wasDictionary = true;
-            IDictionary dict = obj as IDictionary;
 
-            if (dict == null)
+            if (obj is not IDictionary dict)
             {
                 wasDictionary = false;
                 dict = new Dictionary<string, object>();

@@ -127,7 +127,7 @@ namespace System.Management.Automation.Tracing
                         if (newState == CommandState.Stopped ||
                             newState == CommandState.Terminated)
                         {
-                            // When state is stopped or termianted only log the CommandName
+                            // When state is stopped or terminated only log the CommandName
                             payload.AppendLine(StringUtil.Format(EtwLoggingStrings.CommandStateChange, logContext, newState.ToString()));
                         }
                         else
@@ -216,6 +216,20 @@ namespace System.Management.Automation.Tracing
             int queryResult)
         {
             WriteEvent(PSEventId.WDAC_Query, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, PSTask.WDAC, (PSKeyword)0x0, queryName, fileName, querySuccess, queryResult);
+        }
+
+        /// <summary>
+        /// Provider interface function for logging WDAC audit event.
+        /// </summary>
+        /// <param name="title">Title of WDAC audit event.</param>
+        /// <param name="message">WDAC audit event message.</param>
+        /// <param name="fqid">FullyQualifiedId of WDAC audit event.</param>
+        internal override void LogWDACAuditEvent(
+            string title,
+            string message,
+            string fqid)
+        {
+            WriteEvent(PSEventId.WDAC_Audit, PSChannel.Operational, PSOpcode.Method, PSLevel.Informational, PSTask.WDACAudit, (PSKeyword)0x0, title, message, fqid);
         }
 
         /// <summary>
