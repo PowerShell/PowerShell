@@ -161,11 +161,21 @@ namespace Microsoft.PowerShell.Commands
                     FileName = "/sbin/shutdown",
                     Arguments = string.Empty,
                     RedirectStandardOutput = false,
+                    RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
                 }
             };
             _process.Start();
+            _process.WaitForExit();
+            if (_process.ExitCode != 0)
+            {
+                string stderr = _process.StandardError.ReadToEnd();
+                string errMsg = StringUtil.Format("Command returned 0x{0:X}: {1}", _process.ExitCode, stderr);
+                ErrorRecord error = new ErrorRecord(
+                    new InvalidOperationException(errMsg), "CommandFailed", ErrorCategory.OperationStopped, null);
+                WriteError(error);
+            }
         }
 #endregion
     }

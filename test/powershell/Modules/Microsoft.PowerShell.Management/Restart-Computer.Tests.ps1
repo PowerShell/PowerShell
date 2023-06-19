@@ -107,3 +107,9 @@ finally
     Disable-Testhook -testhookName $restartTesthookName
     Set-TesthookResult -testhookName $restartTesthookResultName -value 0
 }
+
+Describe 'Non-admin on Unix' {
+    It 'Reports error if not run under sudo' -Skip:($IsWindows) {
+        { Restart-Computer -ErrorAction Stop } | Should -Throw -ErrorId "CommandFailed,Microsoft.PowerShell.Commands.RestartComputerCommand"
+    }
+}

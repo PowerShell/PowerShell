@@ -58,3 +58,9 @@ finally
     Disable-Testhook -testhookName $stopTesthook
     Set-TesthookResult -testhookName $stopTesthookResultName -Value $DefaultResultValue
 }
+
+Describe 'Non-admin on Unix' {
+    It 'Reports error if not run under sudo' -Skip:($IsWindows) {
+        { Stop-Computer -ErrorAction Stop } | Should -Throw -ErrorId "CommandFailed,Microsoft.PowerShell.Commands.StopComputerCommand"
+    }
+}
