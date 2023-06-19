@@ -513,43 +513,25 @@ namespace System.Management.Automation
                 List<CompletionResult> results = null;
 
                 {
-                    /* BROKEN code commented out, fix sometime
                     // If we were invoked from TabExpansion2, we want to "remove" TabExpansion2 and anything it calls
                     // from our results.  We do this by faking out the session so that TabExpansion2 isn't anywhere to be found.
-                    MutableTuple tupleForFrameToSkipPast = null;
-                    foreach (var stackEntry in context.Debugger.GetCallStack())
+                    SessionStateScope scopeToRestore;
+                    if (context.CurrentCommandProcessor.Command.CommandInfo.Name.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase)
+                        && context.CurrentCommandProcessor.UseLocalScope
+                        && context.EngineSessionState.CurrentScope.Parent is not null)
                     {
-                        dynamic stackEntryAsPSObj = PSObject.AsPSObject(stackEntry);
-                        if (stackEntryAsPSObj.Command.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase))
-                        {
-                            tupleForFrameToSkipPast = stackEntry.FunctionContext._localsTuple;
-                            break;
-                        }
-                    }
-
-                    SessionStateScope scopeToRestore = null;
-                    if (tupleForFrameToSkipPast != null)
-                    {
-                        // Find this tuple in the scope stack.
                         scopeToRestore = context.EngineSessionState.CurrentScope;
-                        var scope = context.EngineSessionState.CurrentScope;
-                        while (scope != null && scope.LocalsTuple != tupleForFrameToSkipPast)
-                        {
-                            scope = scope.Parent;
-                        }
-
-                        if (scope != null)
-                        {
-                            context.EngineSessionState.CurrentScope = scope.Parent;
-                        }
+                        context.EngineSessionState.CurrentScope = scopeToRestore.Parent;
+                    }
+                    else
+                    {
+                        scopeToRestore = null;
                     }
 
                     try
                     {
-                    */
-                    var completionAnalysis = new CompletionAnalysis(ast, tokens, positionOfCursor, options);
-                    results = completionAnalysis.GetResults(powershell, out replacementIndex, out replacementLength);
-                    /*
+                        var completionAnalysis = new CompletionAnalysis(ast, tokens, positionOfCursor, options);
+                        results = completionAnalysis.GetResults(powershell, out replacementIndex, out replacementLength);
                     }
                     finally
                     {
@@ -558,7 +540,6 @@ namespace System.Management.Automation
                             context.EngineSessionState.CurrentScope = scopeToRestore;
                         }
                     }
-                    */
                 }
 
                 var completionResults = results ?? EmptyCompletionResult;

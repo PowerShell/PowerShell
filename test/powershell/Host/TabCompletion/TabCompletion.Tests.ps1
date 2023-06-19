@@ -952,6 +952,11 @@ Verb-Noun -Param1 Hello ^
         $res.CompletionMatches[0].CompletionText | Should -Be "Get-ChildItem"
     }
 
+    it 'Should not complete TabExpansion2 variables' {
+        $res = TabExpansion2 -inputScript '$' -cursorColumn 1
+        $res.CompletionMatches.CompletionText | Should -Not -Contain '$positionOfCursor'
+    }
+
     it 'Should prefer the default parameterset when completing positional parameters' {
         $ScriptInput = 'Get-ChildItem | Where-Object '
         $res = TabExpansion2 -inputScript $ScriptInput -cursorColumn $ScriptInput.Length
