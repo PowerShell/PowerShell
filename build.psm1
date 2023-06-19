@@ -954,8 +954,7 @@ function New-PSOptions {
         }
     }
 
-    # $PowerShellDir = if ($Runtime -like 'win*' -or ($Runtime -like 'fxdependent*' -and $environment.IsWindows)) {
-    $PowerShellDir = if (($Runtime -like 'win*' -or ($Runtime -like 'fxdependent*' -and $environment.IsWindows)) -and (-not $Runtime -like 'fxdependent*linux*')) {
+    $PowerShellDir = if (($Runtime -like 'win*' -or ($Runtime -like 'fxdependent*' -and $environment.IsWindows)) -and -not ($Runtime -like 'fxdependent*linux*')) {
         "powershell-win-core"
     } else {
         "powershell-unix"
