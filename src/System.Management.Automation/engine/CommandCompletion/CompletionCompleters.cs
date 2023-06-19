@@ -5384,7 +5384,9 @@ namespace System.Management.Automation
             "Microsoft.PowerShell.Core\\Where-Object",
             "Where-Object",
             "where",
-            "?"
+            "?",
+            "BeforeAll",
+            "BeforeEach"
         };
 
         private sealed class VariableInfo
