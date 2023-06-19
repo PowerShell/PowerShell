@@ -664,3 +664,20 @@ Describe "Parsing using statement with alias and linebreak and comma" -Tag CI {
         }
     }
 }
+
+It "Should correctly parse array literals for index expressions in method calls" {
+    $tks = $null
+    $ers = $null
+    $Script = '[string]::join(" ", (0, 1, 2)[0, 1])'
+    $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+    $result.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments[1].Index.Elements.Count | Should -Be 2
+    $ers.Count | Should -Be 0
+}
+
+It "Should correctly parse array types that are used as arguments without brackets in generic type" {
+    $tks = $null
+    $ers = $null
+    $Script = '[System.Tuple[System.String[],System.Int32[]]]'
+    $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+    $result.EndBlock.Statements[0].PipelineElements[0].Expression.TypeName.FullName | Should -Be 'System.Tuple[System.String[],System.Int32[]]'
+}

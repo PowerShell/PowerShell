@@ -36,7 +36,12 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Script file is allowed to run in ConstrainedLanguage mode only.
         /// </summary>
-        AllowConstrained = 3
+        AllowConstrained = 3,
+
+        /// <summary>
+        /// Script file is allowed to run in FullLanguage mode but will emit ConstrainedLanguage restriction audit logs.
+        /// </summary>
+        AllowConstrainedAudit = 4
     }
 
     /// <summary>
@@ -66,6 +71,65 @@ namespace System.Management.Automation.Security
     {
         private SystemPolicy()
         {
+        }
+
+        /// <summary>
+        /// Writes to PowerShell WDAC Audit mode ETW log.
+        /// </summary>
+        /// <param name="context">Current execution context.</param>
+        /// <param name="title">Audit message title.</param>
+        /// <param name="message">Audit message message.</param>
+        /// <param name="fqid">Fully Qualified ID.</param>
+        /// <param name="dropIntoDebugger">Stops code execution and goes into debugger mode.</param>
+        internal static void LogWDACAuditMessage(
+            ExecutionContext context,
+            string title,
+            string message,
+            string fqid,
+            bool dropIntoDebugger = false)
+        {
+            string messageToWrite = message;
+
+            // Augment the log message with current script information from the script debugger, if available.
+            context ??= System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
+            bool debuggerAvailable = context is not null &&
+                                     context._debugger is not null &&
+                                     context._debugger is ScriptDebugger;
+
+            if (debuggerAvailable)
+            {
+                var scriptPosMessage = context._debugger.GetCurrentScriptPosition();
+                if (!string.IsNullOrEmpty(scriptPosMessage))
+                {
+                    messageToWrite = message + scriptPosMessage;
+                }
+            }
+
+            PSEtwLog.LogWDACAuditEvent(title, messageToWrite, fqid);
+
+            // We drop into the debugger only if requested and we are running in the interactive host session runspace (Id == 1).
+            if (debuggerAvailable &&
+                dropIntoDebugger is true && 
+                context._debugger.DebugMode.HasFlag(DebugModes.LocalScript) &&
+                System.Management.Automation.Runspaces.Runspace.DefaultRunspace.Id == 1 &&
+                context.DebugPreferenceVariable.HasFlag(ActionPreference.Break) &&
+                context.InternalHost?.UI is not null)
+            {
+                try
+                {
+                    context.InternalHost.UI.WriteLine();
+                    context.InternalHost.UI.WriteLine("WDAC Audit Log:");
+                    context.InternalHost.UI.WriteLine($"Title: {title}");
+                    context.InternalHost.UI.WriteLine($"Message: {message}");
+                    context.InternalHost.UI.WriteLine($"FullyQualifedId: {fqid}");
+                    context.InternalHost.UI.WriteLine("Stopping script execution in debugger...");
+                    context.InternalHost.UI.WriteLine();
+
+                    context._debugger.Break();
+                }
+                catch
+                { }
+            }
         }
 
         /// <summary>
@@ -109,10 +173,12 @@ namespace System.Management.Automation.Security
             System.IO.FileStream fileStream)
         {
             SafeHandle fileHandle = fileStream.SafeFileHandle;
+            var systemLockdownPolicy = SystemPolicy.GetSystemLockdownPolicy();
 
-            // First check latest WDAC APIs if available. Also revert to legacy APIs if debug hook is in effect.
+            // First check latest WDAC APIs if available.
+            // Revert to legacy APIs if system policy is in AUDIT mode or debug hook is in effect.
             Exception errorException = null;
-            if (s_wldpCanExecuteAvailable && !s_allowDebugOverridePolicy)
+            if (s_wldpCanExecuteAvailable && systemLockdownPolicy == SystemEnforcementMode.Enforce)
             {
                 try
                 {
@@ -170,24 +236,30 @@ namespace System.Management.Automation.Security
             }
 
             // Original (legacy) WDAC and AppLocker system checks.
-            if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.None)
+            if (systemLockdownPolicy == SystemEnforcementMode.None)
             {
-                switch (SystemPolicy.GetLockdownPolicy(filePath, fileHandle))
-                {
-                    case SystemEnforcementMode.Enforce:
-                        return SystemScriptFileEnforcement.AllowConstrained;
-
-                    case SystemEnforcementMode.None:
-                    case SystemEnforcementMode.Audit:
-                        return SystemScriptFileEnforcement.Allow;
-
-                    default:
-                        System.Diagnostics.Debug.Assert(false, "GetFilePolicyEnforcement: Unknown SystemEnforcementMode.");
-                        return SystemScriptFileEnforcement.Block;
-                }
+                return SystemScriptFileEnforcement.None;
             }
 
-            return SystemScriptFileEnforcement.None;
+            // Check policy for file.
+            switch (SystemPolicy.GetLockdownPolicy(filePath, fileHandle))
+            {
+                case SystemEnforcementMode.Enforce:
+                    // File is not allowed by policy enforcement and must run in CL mode.
+                    return SystemScriptFileEnforcement.AllowConstrained;
+
+                case SystemEnforcementMode.Audit:
+                    // File is allowed but would be run in CL mode if policy was enforced and not audit.
+                    return SystemScriptFileEnforcement.AllowConstrainedAudit;
+
+                case SystemEnforcementMode.None:
+                    // No restrictions, file will run in FL mode.
+                    return SystemScriptFileEnforcement.Allow;
+
+                default:
+                    System.Diagnostics.Debug.Assert(false, "GetFilePolicyEnforcement: Unknown SystemEnforcementMode.");
+                    return SystemScriptFileEnforcement.Block;
+            }
         }
 
         /// <summary>

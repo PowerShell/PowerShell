@@ -13,3 +13,5 @@ steps:
                 }
     displayName: Upload ${{ parameters.artifactName }} Artifacts ${{ parameters.artifactFilter }} from ${{ parameters.artifactPath }}
     condition: ${{ parameters.condition }}
+    retryCountOnTaskFailure: 2
+

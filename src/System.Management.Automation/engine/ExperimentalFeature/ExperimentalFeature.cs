@@ -27,6 +27,7 @@ namespace System.Management.Automation
         internal const string PSCustomTableHeaderLabelDecoration = "PSCustomTableHeaderLabelDecoration";
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
         internal const string PSCommandWithArgs = "PSCommandWithArgs";
+        internal const string PSConstrainedAuditLogging = "PSConstrainedAuditLogging";
 
         #endregion
 
@@ -136,6 +137,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSCommandWithArgs,
                     description: "Enable `-CommandWithArgs` parameter for pwsh"),
+                new ExperimentalFeature(
+                    name: PSConstrainedAuditLogging,
+                    description: "PowerShell restriction logging when WDAC (Windows Defender Application Control) Code Integrity policy is set to Audit mode.")
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

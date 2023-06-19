@@ -791,6 +791,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Returns script position message of current execution stack item.
+        /// This is used for WDAC audit mode logging for script information enhancement.
+        /// </summary>
+        /// <returns>Script position message string.</returns>
+        internal virtual string GetCurrentScriptPosition()
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
         /// Passes the debugger command to the internal script debugger command processor.  This
         /// is used internally to handle debugger commands such as list, help, etc.
         /// </summary>
@@ -971,7 +981,8 @@ namespace System.Management.Automation
             _context = context;
             _inBreakpoint = false;
             _idToBreakpoint = new ConcurrentDictionary<int, Breakpoint>();
-            _pendingBreakpoints = new ConcurrentDictionary<int, LineBreakpoint>();
+            // The string key is function context file path. The int key is sequencePoint index.
+            _pendingBreakpoints = new ConcurrentDictionary<string, ConcurrentDictionary<int, LineBreakpoint>>();
             _boundBreakpoints = new ConcurrentDictionary<string, Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>>>(StringComparer.OrdinalIgnoreCase);
             _commandBreakpoints = new ConcurrentDictionary<int, CommandBreakpoint>();
             _variableBreakpoints = new ConcurrentDictionary<string, ConcurrentDictionary<int, VariableBreakpoint>>(StringComparer.OrdinalIgnoreCase);
@@ -1174,7 +1185,7 @@ namespace System.Management.Automation
         private void SetupBreakpoints(FunctionContext functionContext)
         {
             var scriptDebugData = _mapScriptToBreakpoints.GetValue(functionContext._sequencePoints,
-                                                                   _ => Tuple.Create(new List<LineBreakpoint>(),
+                                                                   _ => Tuple.Create(new Dictionary<int, List<LineBreakpoint>>(),
                                                                                      new BitArray(functionContext._sequencePoints.Length)));
             functionContext._boundBreakpoints = scriptDebugData.Item1;
             functionContext._breakPoints = scriptDebugData.Item2;
@@ -1254,8 +1265,17 @@ namespace System.Management.Automation
         private LineBreakpoint AddLineBreakpoint(LineBreakpoint breakpoint)
         {
             AddBreakpointCommon(breakpoint);
-            _pendingBreakpoints[breakpoint.Id] = breakpoint;
+            AddPendingBreakpoint(breakpoint);
+
             return breakpoint;
+        }
+
+        private void AddPendingBreakpoint(LineBreakpoint breakpoint)
+        {
+            _pendingBreakpoints.AddOrUpdate(
+                breakpoint.Script,
+                new ConcurrentDictionary<int, LineBreakpoint> { [breakpoint.Id] = breakpoint },
+                (_, dictionary) => { dictionary.TryAdd(breakpoint.Id, breakpoint); return dictionary; });
         }
 
         private void AddNewBreakpoint(Breakpoint breakpoint)
@@ -1310,13 +1330,9 @@ namespace System.Management.Automation
                     return;
                 }
 
-                foreach ((int breakpointId, LineBreakpoint item) in _pendingBreakpoints)
+                if (_pendingBreakpoints.TryGetValue(functionContext._file, out var dictionary) && !dictionary.IsEmpty)
                 {
-                    if (item.IsScriptBreakpoint && item.Script.Equals(functionContext._file, StringComparison.OrdinalIgnoreCase))
-                    {
-                        SetPendingBreakpoints(functionContext);
-                        break;
-                    }
+                    SetPendingBreakpoints(functionContext);
                 }
             }
         }
@@ -1342,7 +1358,11 @@ namespace System.Management.Automation
 
         internal bool RemoveLineBreakpoint(LineBreakpoint breakpoint)
         {
-            bool removed = _pendingBreakpoints.Remove(breakpoint.Id, out _);
+            bool removed = false;
+            if (_pendingBreakpoints.TryGetValue(breakpoint.Script, out var dictionary))
+            {
+                removed = dictionary.Remove(breakpoint.Id, out _);
+            }
 
             Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>> value;
             if (_boundBreakpoints.TryGetValue(breakpoint.Script, out value))
@@ -1360,8 +1380,8 @@ namespace System.Management.Automation
         // The bit array is used to detect if a breakpoint is set or not for a given scriptblock.  This bit array
         // is checked when hitting sequence points.  Enabling/disabling a line breakpoint is as simple as flipping
         // the bit.
-        private readonly ConditionalWeakTable<IScriptExtent[], Tuple<List<LineBreakpoint>, BitArray>> _mapScriptToBreakpoints =
-            new ConditionalWeakTable<IScriptExtent[], Tuple<List<LineBreakpoint>, BitArray>>();
+        private readonly ConditionalWeakTable<IScriptExtent[], Tuple<Dictionary<int, List<LineBreakpoint>>, BitArray>> _mapScriptToBreakpoints =
+            new ConditionalWeakTable<IScriptExtent[], Tuple<Dictionary<int, List<LineBreakpoint>>, BitArray>>();
 
         /// <summary>
         /// Checks for command breakpoints.
@@ -1462,9 +1482,9 @@ namespace System.Management.Automation
 
         // Return the line breakpoints bound in a specific script block (used when a sequence point
         // is hit, to find which breakpoints are set on that sequence point.)
-        internal List<LineBreakpoint> GetBoundBreakpoints(IScriptExtent[] sequencePoints)
+        internal Dictionary<int, List<LineBreakpoint>> GetBoundBreakpoints(IScriptExtent[] sequencePoints)
         {
-            Tuple<List<LineBreakpoint>, BitArray> tuple;
+            Tuple<Dictionary<int, List<LineBreakpoint>>, BitArray> tuple;
             if (_mapScriptToBreakpoints.TryGetValue(sequencePoints, out tuple))
             {
                 return tuple.Item1;
@@ -1550,16 +1570,25 @@ namespace System.Management.Automation
             {
                 if (functionContext._breakPoints[functionContext._currentSequencePointIndex])
                 {
-                    var breakpoints = (from breakpoint in functionContext._boundBreakpoints
-                                       where
-                                           breakpoint.SequencePointIndex == functionContext._currentSequencePointIndex &&
-                                           breakpoint.Enabled
-                                       select breakpoint).ToList<Breakpoint>();
-
-                    breakpoints = TriggerBreakpoints(breakpoints);
-                    if (breakpoints.Count > 0)
+                    if (functionContext._boundBreakpoints.TryGetValue(functionContext._currentSequencePointIndex, out var sequencePointBreakpoints))
                     {
-                        StopOnSequencePoint(functionContext, breakpoints);
+                        var enabledBreakpoints = new List<Breakpoint>();
+                        foreach (Breakpoint breakpoint in sequencePointBreakpoints)
+                        {
+                            if (breakpoint.Enabled)
+                            {
+                                enabledBreakpoints.Add(breakpoint);
+                            }
+                        }
+
+                        if (enabledBreakpoints.Count > 0)
+                        {
+                            enabledBreakpoints = TriggerBreakpoints(enabledBreakpoints);
+                            if (enabledBreakpoints.Count > 0)
+                            {
+                                StopOnSequencePoint(functionContext, enabledBreakpoints);
+                            }
+                        }
                     }
                 }
             }
@@ -1673,7 +1702,7 @@ namespace System.Management.Automation
         }
 
         private readonly ExecutionContext _context;
-        private ConcurrentDictionary<int, LineBreakpoint> _pendingBreakpoints;
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<int, LineBreakpoint>> _pendingBreakpoints;
         private readonly ConcurrentDictionary<string, Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>>> _boundBreakpoints;
         private readonly ConcurrentDictionary<int, CommandBreakpoint> _commandBreakpoints;
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<int, VariableBreakpoint>> _variableBreakpoints;
@@ -1981,16 +2010,20 @@ namespace System.Management.Automation
             foreach (var breakpoint in boundBreakpoints)
             {
                 // Also remove unbound breakpoints from the script to breakpoint map.
-                Tuple<List<LineBreakpoint>, BitArray> lineBreakTuple;
+                Tuple<Dictionary<int, List<LineBreakpoint>>, BitArray> lineBreakTuple;
                 if (_mapScriptToBreakpoints.TryGetValue(breakpoint.SequencePoints, out lineBreakTuple))
                 {
-                    lineBreakTuple.Item1.Remove(breakpoint);
+                    if (lineBreakTuple.Item1.TryGetValue(breakpoint.SequencePointIndex, out var lineBreakList))
+                    {
+                        lineBreakList.Remove(breakpoint);
+                    }
                 }
 
                 breakpoint.SequencePoints = null;
                 breakpoint.SequencePointIndex = -1;
                 breakpoint.BreakpointBitArray = null;
-                _pendingBreakpoints[breakpoint.Id] = breakpoint;
+
+                AddPendingBreakpoint(breakpoint);
             }
 
             boundBreakpoints.Clear();
@@ -1998,15 +2031,16 @@ namespace System.Management.Automation
 
         private void SetPendingBreakpoints(FunctionContext functionContext)
         {
-            if (_pendingBreakpoints.IsEmpty)
-                return;
-
-            var newPendingBreakpoints = new Dictionary<int, LineBreakpoint>();
             var currentScriptFile = functionContext._file;
 
             // If we're not in a file, we can't have any line breakpoints.
             if (currentScriptFile == null)
                 return;
+
+            if (!_pendingBreakpoints.TryGetValue(currentScriptFile, out var breakpoints) || breakpoints.IsEmpty)
+            {
+                return;
+            }
 
             // Normally we register a script file when the script is run or the module is imported,
             // but if there weren't any breakpoints when the script was run and the script was dotted,
@@ -2014,7 +2048,7 @@ namespace System.Management.Automation
             // breakpoints in the script.
             RegisterScriptFile(currentScriptFile, functionContext.CurrentPosition.StartScriptPosition.GetFullScript());
 
-            Tuple<List<LineBreakpoint>, BitArray> tuple;
+            Tuple<Dictionary<int, List<LineBreakpoint>>, BitArray> tuple;
             if (!_mapScriptToBreakpoints.TryGetValue(functionContext._sequencePoints, out tuple))
             {
                 Diagnostics.Assert(false, "If the script block is still alive, the entry should not be collected.");
@@ -2022,7 +2056,7 @@ namespace System.Management.Automation
 
             Diagnostics.Assert(tuple.Item1 == functionContext._boundBreakpoints, "What's up?");
 
-            foreach ((int breakpointId, LineBreakpoint breakpoint) in _pendingBreakpoints)
+            foreach ((int breakpointId, LineBreakpoint breakpoint) in breakpoints)
             {
                 bool bound = false;
                 if (breakpoint.TrySetBreakpoint(currentScriptFile, functionContext))
@@ -2033,21 +2067,32 @@ namespace System.Management.Automation
                     }
 
                     bound = true;
-                    tuple.Item1.Add(breakpoint);
 
+                    if (tuple.Item1.TryGetValue(breakpoint.SequencePointIndex, out var list))
+                    {
+                        list.Add(breakpoint);
+                    }
+                    else
+                    {
+                        tuple.Item1.Add(breakpoint.SequencePointIndex, new List<LineBreakpoint> { breakpoint });
+                    } 
+                    
                     // We need to keep track of any breakpoints that are bound in each script because they may
                     // need to be rebound if the script changes.
                     var boundBreakpoints = _boundBreakpoints[currentScriptFile].Item2;
                     boundBreakpoints[breakpoint.Id] = breakpoint;
                 }
 
-                if (!bound)
+                if (bound)
                 {
-                    newPendingBreakpoints.Add(breakpoint.Id, breakpoint);
+                    breakpoints.TryRemove(breakpointId, out _);
                 }
             }
 
-            _pendingBreakpoints = new ConcurrentDictionary<int, LineBreakpoint>(newPendingBreakpoints);
+            // Here could check if all breakpoints for the current functionContext were bound, but because there is no atomic
+            // api for conditional removal we either need to lock, or do some trickery that has possibility of race conditions. 
+            // Instead we keep the item in the dictionary with 0 breakpoint count. This should not be a big issue,
+            // because it is single entry per file that had breakpoints, so there won't be thousands of files in a session.
         }
 
         private void StopOnSequencePoint(FunctionContext functionContext, List<Breakpoint> breakpoints)
@@ -2517,6 +2562,29 @@ namespace System.Management.Automation
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns script position message of current execution stack item.
+        /// This is used for WDAC audit mode logging for script information enhancement.
+        /// </summary>
+        /// <returns>Script position message string.</returns>
+        internal override string GetCurrentScriptPosition()
+        {
+            using (IEnumerator<CallStackFrame> enumerator = GetCallStack().GetEnumerator())
+            {
+                if (enumerator.MoveNext())
+                {
+                    var functionContext = enumerator.Current.FunctionContext;
+                    if (functionContext is not null)
+                    {
+                        var invocationInfo = new InvocationInfo(commandInfo: null, functionContext.CurrentPosition, _context);
+                        return $"\n{invocationInfo.PositionMessage}";
+                    }
+                }
+            }
+
+            return null;
         }
 
         /// <summary>

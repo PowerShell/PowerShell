@@ -205,7 +205,9 @@
               <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
                   <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)" Name="SemanticVersion" KeyPath="yes"/>
                   <RegistryValue Type="string" Value="[VersionFolder]" Name="InstallLocation" />
+                  <RegistryValue Type="string" Value="[ProductCode]" Name="ProductCode" />
               </RegistryKey>
+
             </Component>
             <Component Id="SharedRegistryEntries">
               <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
@@ -286,7 +288,7 @@
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.PowerShellFileContextSubMenuDialogText)"/>
                 <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe" KeyPath="yes"/>
                 <RegistryKey Key="Command">
-                  <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe -Command &quot;$host.UI.RawUI.WindowTitle = '$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))'; if((Get-ExecutionPolicy ) -ne 'AllSigned') { Set-ExecutionPolicy -Scope Process Bypass }; &amp; '%1'&quot;"/>
+                  <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe -Command &quot;$host.UI.RawUI.WindowTitle = '$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))'; &amp; '%1'&quot;"/>
                 </RegistryKey>
               </RegistryKey>
             </Component>

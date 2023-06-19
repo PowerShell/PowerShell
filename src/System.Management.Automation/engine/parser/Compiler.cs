@@ -782,7 +782,7 @@ namespace System.Management.Automation.Language
         internal ExecutionContext _executionContext;
         internal Pipe _outputPipe;
         internal BitArray _breakPoints;
-        internal List<LineBreakpoint> _boundBreakpoints;
+        internal Dictionary<int, List<LineBreakpoint>> _boundBreakpoints;
         internal int _currentSequencePointIndex;
         internal MutableTuple _localsTuple;
         internal List<Tuple<Type[], Action<FunctionContext>[], Type[]>> _traps = new List<Tuple<Type[], Action<FunctionContext>[], Type[]>>();

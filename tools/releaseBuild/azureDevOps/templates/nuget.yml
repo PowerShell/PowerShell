@@ -261,6 +261,7 @@ jobs:
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)-nuget'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+    retryCountOnTaskFailure: 2
 
   - task: AzureFileCopy@4
     displayName: 'Upload global tool packages to Azure'
@@ -272,6 +273,7 @@ jobs:
       ContainerName: 'tool'
       blobPrefix: '$(Version)'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+    retryCountOnTaskFailure: 2
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

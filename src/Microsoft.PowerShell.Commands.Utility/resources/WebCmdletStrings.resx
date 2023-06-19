@@ -235,16 +235,16 @@
     <value>Following rel link {0}</value>
   </data>
   <data name="WebMethodInvocationVerboseMsg" xml:space="preserve">
-    <value>HTTP/{0} {1} with {2}-byte payload</value>
+    <value>Requested HTTP/{0} {1} with {2}-byte payload</value>
   </data>
   <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
     <value>The remote server indicated it could not resume downloading. The local file will be overwritten.</value>
   </data>
   <data name="WebResponseVerboseMsg" xml:space="preserve">
-    <value>received {0}-byte response of content type {1}</value>
+    <value>Received HTTP/{0} {1}-byte response of content type {2}</value>
   </data>
   <data name="WebResponseNoSizeVerboseMsg" xml:space="preserve">
-    <value>received response of content type {0} of unknown size</value>
+    <value>Received HTTP/{0} response of content type {1} of unknown size</value>
   </data>
   <data name="RetryVerboseMsg" xml:space="preserve">
     <value>Retrying after interval of {0} seconds. Status code for previous attempt: {1}</value>

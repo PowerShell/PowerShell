@@ -17,7 +17,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(
             Position = 0,
-            Mandatory = true,
             HelpMessageBaseName = HelpMessageBaseName,
             HelpMessageResourceId = "ActivityParameterHelpMessage")]
         public string Activity { get; set; }
@@ -96,7 +95,29 @@ namespace Microsoft.PowerShell.Commands
         void
         ProcessRecord()
         {
-            ProgressRecord pr = new(Id, Activity, Status);
+            ProgressRecord pr;
+            if (string.IsNullOrEmpty(Activity))
+            {
+                if (!Completed)
+                {
+                    ThrowTerminatingError(new ErrorRecord(
+                    new ArgumentException("Missing value for mandatory parameter.", nameof(Activity)),
+                    "MissingActivity",
+                    ErrorCategory.InvalidArgument,
+                    Activity));
+                    return;
+                }
+                else
+                {
+                    pr = new(Id);
+                    pr.StatusDescription = Status;
+                }
+            }
+            else
+            {
+                pr = new(Id, Activity, Status);
+            }
+
             pr.ParentActivityId = ParentId;
             pr.PercentComplete = PercentComplete;
             pr.SecondsRemaining = SecondsRemaining;

@@ -1352,4 +1352,34 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="NamespaceExpected" xml:space="preserve">
     <value>Namespace expected.</value>
   </data>
+  <data name="WDACParserConfigKeywordLogTitle" xml:space="preserve">
+    <value>Parser Configuration Keyword</value>
+  </data>
+  <data name="WDACParserConfigKeywordLogMessage" xml:space="preserve">
+    <value>The Configuration keyword will not be allowed in Constrained Language mode for untrusted script.</value>
+  </data>
+  <data name="WDACParserClassKeywordLogTitle" xml:space="preserve">
+    <value>Parser Class Keyword</value>
+  </data>
+  <data name="WDACParserClassKeywordLogMessage" xml:space="preserve">
+    <value>The Class keyword will not be allowed in Constrained Language mode for untrusted script.</value>
+  </data>
+  <data name="WDACParserDSSupportedCommandLogTitle" xml:space="preserve">
+    <value>Parser Data Section SupportedCommand</value>
+  </data>
+  <data name="WDACParserDSSupportedCommandLogMessage" xml:space="preserve">
+    <value>The Data Section that includes the SupportedCommand parameter would be disallowed in Constrained Language mode for untrusted script.</value>
+  </data>
+  <data name="WDACParserModuleScopeCallOperatorLogTitle" xml:space="preserve">
+    <value>Module Scope Call Operator</value>
+  </data>
+  <data name="WDACParserModuleScopeCallOperatorLogMessage" xml:space="preserve">
+    <value>The module scope call operator will be denied in Constrained Language mode.</value>
+  </data>
+  <data name="WDACParserForEachOperatorLogTitle" xml:space="preserve">
+    <value>ForEach Keyword Method Invocation</value>
+  </data>
+  <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
+    <value>The ForEach keyword will fail '{0}' iteration item method invocation when run in Constrained Language mode.</value>
+  </data>
 </root>
