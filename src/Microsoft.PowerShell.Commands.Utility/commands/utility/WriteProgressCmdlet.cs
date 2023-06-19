@@ -110,6 +110,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     pr = new(Id);
+                    pr.StatusDescription = Status;
                 }
             }
             else
