@@ -147,8 +147,6 @@ These modules include:
 * @SteveL-MSFT
 * @jdhitsolutions
 * @TobiasPSP
-* @doctordns
-* @jhoneill
 
 ## Security
 
