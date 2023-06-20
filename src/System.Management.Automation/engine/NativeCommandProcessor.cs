@@ -169,17 +169,6 @@ namespace System.Management.Automation
             ProcessId = processId;
         }
 
-        // <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with serialized data.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
-        private NativeCommandExitException(SerializationInfo info, StreamingContext context)
-        {
-            throw new NotSupportedException();
-        }
-
         #endregion Constructors
 
         /// <summary>
@@ -2394,7 +2383,7 @@ namespace System.Management.Automation
         /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected RemoteException(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();
