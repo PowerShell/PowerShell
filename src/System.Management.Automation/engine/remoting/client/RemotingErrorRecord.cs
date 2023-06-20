@@ -61,6 +61,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serializer information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected RemotingErrorRecord(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();

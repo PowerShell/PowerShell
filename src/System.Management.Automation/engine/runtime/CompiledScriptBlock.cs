@@ -712,21 +712,6 @@ namespace System.Management.Automation
             return sbText;
         }
 
-        /// <summary>
-        /// Support for <see cref="ISerializable"/>.
-        /// </summary>
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(info));
-            }
-
-            string serializedContent = this.ToString();
-            info.AddValue("ScriptText", serializedContent);
-            info.SetType(typeof(ScriptBlockSerializationHelper));
-        }
-
         internal PowerShell GetPowerShellImpl(
             ExecutionContext context,
             Dictionary<string, object> variables,
@@ -2199,14 +2184,6 @@ namespace System.Management.Automation
         /// <param name="context">The streaming context for this instance.</param>
         /// <returns>A script block that corresponds to the version deserialized.</returns>
         public object GetRealObject(StreamingContext context) => throw new NotSupportedException();
-
-        /// <summary>
-        /// Implements the ISerializable contract for serializing a scriptblock.
-        /// </summary>
-        /// <param name="info">Serialization information for this instance.</param>
-        /// <param name="context">The streaming context for this instance.</param>
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-            => throw new NotSupportedException();
     }
 
     internal sealed class PSScriptCmdlet : PSCmdlet, IDynamicParameters, IDisposable
