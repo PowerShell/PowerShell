@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
                 {                    
                     string cultureString = string.IsNullOrEmpty(CultureInfo.CurrentCulture.Name) ? CultureInfo.CurrentCulture.DisplayName : CultureInfo.CurrentCulture.Name;
                     string errMsg = StringUtil.Format(HelpDisplayStrings.FailedToUpdateHelpWithLocaleNoUICulture, cultureString);
-                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "FailedToUpdateHelpWithLocaleNoUICulture", ErrorCategory.InvalidOperation, null);                    
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "FailedToUpdateHelpWithLocaleNoUICulture", ErrorCategory.InvalidOperation, targetObject: null);                    
                     ThrowTerminatingError(error);
                 }
 
