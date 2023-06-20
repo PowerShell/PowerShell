@@ -5656,6 +5656,18 @@ namespace System.Management.Automation
                     parent = parent.Parent;
                 }
             }
+
+            public override AstVisitAction VisitDataStatement(DataStatementAst dataStatementAst)
+            {
+                if (dataStatementAst.Extent.StartOffset >= StopSearchOffset)
+                {
+                    return AstVisitAction.StopVisit;
+                }
+
+                SaveVariableInfo(dataStatementAst.Variable, variableType: null, isConstraint: false);
+                return AstVisitAction.SkipChildren;
+            }
+
         }
 
         private static readonly Lazy<SortedSet<string>> s_specialVariablesCache = new Lazy<SortedSet<string>>(BuildSpecialVariablesCache);
