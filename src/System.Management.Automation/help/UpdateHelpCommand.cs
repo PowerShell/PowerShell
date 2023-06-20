@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Help;
 using System.Management.Automation.Internal;
@@ -180,6 +181,16 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     _isInitialized = true;
+                }
+                
+                // check if there is an UI, if not Throw out terminating error. 
+                var cultures = _language ?? _helpSystem.GetCurrentUICulture();
+                if (!cultures.Any()) 
+                {                    
+                    string cultureString = string.IsNullOrEmpty(CultureInfo.CurrentCulture.Name) ? CultureInfo.CurrentCulture.DisplayName : CultureInfo.CurrentCulture.Name;
+                    string errMsg = StringUtil.Format(HelpDisplayStrings.FailedToUpdateHelpWithLocaleNoUICulture, cultureString);
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "FailedToUpdateHelpWithLocaleNoUICulture", ErrorCategory.InvalidOperation, null);                    
+                    ThrowTerminatingError(error);
                 }
 
                 base.Process(_module, FullyQualifiedModule);
