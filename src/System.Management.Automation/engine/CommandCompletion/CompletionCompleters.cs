@@ -5341,7 +5341,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static readonly HashSet<string> s_varModificationCommands = new(StringComparer.OrdinalIgnoreCase)
+        internal static readonly HashSet<string> s_varModificationCommands = new(StringComparer.OrdinalIgnoreCase)
         {
             "New-Variable",
             "nv",
@@ -5350,13 +5350,13 @@ namespace System.Management.Automation
             "sv"
         };
 
-        private static readonly string[] s_varModificationParameters = new string[]
+        internal static readonly string[] s_varModificationParameters = new string[]
         {
             "Name",
             "Value"
         };
 
-        private static readonly string[] s_outVarParameters = new string[]
+        internal static readonly string[] s_outVarParameters = new string[]
         {
             "ErrorVariable",
             "ev",
@@ -5369,13 +5369,13 @@ namespace System.Management.Automation
 
         };
 
-        private static readonly string[] s_pipelineVariableParameters = new string[]
+        internal static readonly string[] s_pipelineVariableParameters = new string[]
         {
             "PipelineVariable",
             "pv"
         };
 
-        private static readonly HashSet<string> s_localScopeCommandNames = new(StringComparer.OrdinalIgnoreCase)
+        internal static readonly HashSet<string> s_localScopeCommandNames = new(StringComparer.OrdinalIgnoreCase)
         {
             "Microsoft.PowerShell.Core\\ForEach-Object",
             "ForEach-Object",
