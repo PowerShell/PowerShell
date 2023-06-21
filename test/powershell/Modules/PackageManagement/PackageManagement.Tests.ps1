@@ -45,7 +45,11 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
             else {
                 Write-Verbose "LocalSourceCheck is null"
             }
-            Get-ChildItem "$HOME/.config" -Recurse -File | out-string -str | Write-Verbose -Verbose
+
+            if (-not $IsWindows) {
+                Get-ChildItem "$HOME/.config" -Recurse -File | out-string -str | Write-Verbose -Verbose
+            }
+
             $skipPackageTests = $true
         }
 
