@@ -67,7 +67,7 @@ namespace System.Management.Automation
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
         [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
-        protected PSObjectDisposedException(SerializationInfo info, StreamingContext context)
+        protected PSObjectDisposedException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             throw new NotSupportedException();
         }
