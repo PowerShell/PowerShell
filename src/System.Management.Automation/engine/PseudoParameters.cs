@@ -214,7 +214,6 @@ namespace System.Management.Automation
     /// <seealso cref="RuntimeDefinedParameter"/>
     /// <seealso cref="IDynamicParameters"/>
     /// <seealso cref="IDynamicParameters.GetDynamicParameters"/>
-    [Serializable]
     public class RuntimeDefinedParameterDictionary : Dictionary<string, RuntimeDefinedParameter>
     {
         /// <summary>

@@ -138,7 +138,6 @@ namespace System.Management.Automation
     /// This exception is used by the NativeCommandProcessor to indicate an error
     /// when a native command retuns a non-zero exit code.
     /// </summary>
-    [Serializable]
     public sealed class NativeCommandExitException : RuntimeException
     {
         // NOTE:
@@ -170,44 +169,7 @@ namespace System.Management.Automation
             ProcessId = processId;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with serialized data.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        private NativeCommandExitException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            if (info is null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            Path = info.GetString(nameof(Path));
-            ExitCode = info.GetInt32(nameof(ExitCode));
-            ProcessId = info.GetInt32(nameof(ProcessId));
-        }
-
         #endregion Constructors
-
-        /// <summary>
-        /// Serializes the exception data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info is null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-
-            info.AddValue(nameof(Path), Path);
-            info.AddValue(nameof(ExitCode), ExitCode);
-            info.AddValue(nameof(ProcessId), ProcessId);
-        }
 
         /// <summary>
         /// Gets the path of the native command.
@@ -2354,7 +2316,6 @@ namespace System.Management.Automation
     /// This remote instance of PowerShell can be in a separate process,
     /// appdomain or machine.
     /// </remarks>
-    [Serializable]
     [SuppressMessage("Microsoft.Usage", "CA2240:ImplementISerializableCorrectly")]
     public class RemoteException : RuntimeException
     {
@@ -2431,9 +2392,10 @@ namespace System.Management.Automation
         /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected RemoteException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion

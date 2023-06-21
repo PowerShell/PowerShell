@@ -18,7 +18,6 @@ namespace System.Management.Automation
     /// PowerShell Engine.  It is unusual for code outside the PowerShell Engine
     /// to create an instance of this class.
     /// </remarks>
-    [Serializable]
     public class RuntimeException
             : SystemException, IContainsErrorRecord
     {
@@ -41,30 +40,12 @@ namespace System.Management.Automation
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected RuntimeException(SerializationInfo info,
                            StreamingContext context)
-                : base(info, context)
         {
-            _errorId = info.GetString("ErrorId");
-            _errorCategory = (ErrorCategory)info.GetInt32("ErrorCategory");
-        }
-
-        /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("ErrorId", _errorId);
-            info.AddValue("ErrorCategory", (int)_errorCategory);
-        }
+            throw new NotSupportedException();
+        }        
         #endregion Serialization
 
         /// <summary>

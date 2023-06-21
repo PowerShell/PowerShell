@@ -24,7 +24,6 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// the scheduled job and so can run an instance of the scheduled
     /// job and optionally save results to file.
     /// </summary>
-    [Serializable]
     public sealed class ScheduledJob : Job2, ISerializable
     {
         #region Private Members
@@ -957,8 +956,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         #endregion
 
         #region Private ResultsInfo class
-
-        [Serializable]
         private sealed class ResultsInfo : ISerializable
         {
             // Private Members
@@ -1112,8 +1109,6 @@ namespace Microsoft.PowerShell.ScheduledJob
     }
 
     #region Internal StatusInfo Class
-
-    [Serializable]
     internal class StatusInfo : ISerializable
     {
         // Private Members
