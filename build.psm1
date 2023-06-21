@@ -954,7 +954,8 @@ function New-PSOptions {
         }
     }
 
-    $PowerShellDir = if (($Runtime -like 'win*' -or ($Runtime -like 'fxdependent*' -and $environment.IsWindows)) -and -not ($Runtime -like 'fxdependent*linux*')) {
+    $PowerShellDir = if ($Runtime -like 'win*' -or ($Runtime -like 'fxdependent*' -and $environment.IsWindows)) {
+    # $PowerShellDir = if (($Runtime -like 'win*' -or ($Runtime -like 'fxdependent*' -and $environment.IsWindows)) -and -not ($Runtime -like 'fxdependent*linux*')) {
         "powershell-win-core"
     } else {
         "powershell-unix"
@@ -973,12 +974,19 @@ function New-PSOptions {
 
     # Build the Output path
     if (!$Output) {
-        if ($Runtime -like 'fxdependent*' -and -not $Runtime -like 'fxdependent*linux*') {
-            $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, "publish", $Executable)
-        } elseif ($Runtime -like 'fxdependent*' -and $Runtime -like 'fxdependent*linux*') {
+        # if ($Runtime -like 'fxdependent*' -and -not $Runtime -like 'fxdependent*linux*') {
+        if ($Runtime -like 'fxdependent*' -and $Runtime -like 'fxdependent*linux*') {
             $outputRuntime = $Runtime -replace 'fxdependent-', ''
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $outputRuntime, "publish", $Executable)
-        } else {
+        }
+        elseif ($Runtime -like 'fxdependent*') {
+            $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, "publish", $Executable)
+        }
+        # elseif ($Runtime -like 'fxdependent*' -and $Runtime -like 'fxdependent*linux*') {
+        #     $outputRuntime = $Runtime -replace 'fxdependent-', ''
+        #     $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $outputRuntime, "publish", $Executable)
+        # }
+        else {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
         }
     } else {
