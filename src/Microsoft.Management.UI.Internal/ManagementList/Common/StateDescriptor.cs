@@ -12,7 +12,7 @@ namespace Microsoft.Management.UI.Internal
     /// Base proxy class for other classes which wish to have save and restore functionality.
     /// </summary>
     /// <typeparam name="T">There are no restrictions on T.</typeparam>
-    [Serializable]
+
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public abstract class StateDescriptor<T>
     {

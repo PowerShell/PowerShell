@@ -627,7 +627,6 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This exception is used by PowerShell Direct errors.
     /// </summary>
-    [Serializable]
     public class PSDirectException : RuntimeException
     {
         #region Constructor

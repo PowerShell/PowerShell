@@ -276,7 +276,6 @@ namespace System.Management.Automation.Remoting
     /// In case of output objects, the information
     /// should directly be added to the object as
     /// properties</remarks>
-    [Serializable]
     [DataContract()]
     public class OriginInfo
     {

@@ -187,7 +187,6 @@ namespace System.Management.Automation.Interpreter
     {
     }
 
-    [Serializable]
     internal class DebugInfo
     {
         // TODO: readonly
@@ -248,7 +247,6 @@ namespace System.Management.Automation.Interpreter
 
     // TODO:
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
-    [Serializable]
     internal readonly struct InterpretedFrameInfo
     {
         public readonly string MethodName;

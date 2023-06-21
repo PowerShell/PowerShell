@@ -623,7 +623,6 @@ namespace System.Management.Automation
     /// ProviderNotFoundException occurs when no provider can be found
     /// with the specified name.
     /// </summary>
-    [Serializable]
     public class ProviderNotFoundException : SessionStateException
     {
         #region ctor

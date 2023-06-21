@@ -20,7 +20,6 @@ namespace System.Management.Automation.Runspaces
     ///     1. PSSnapin name
     ///     2. Inner exception.
     /// -->
-    [Serializable]
     public class PSConsoleLoadException : SystemException, IContainsErrorRecord
     {
         /// <summary>
