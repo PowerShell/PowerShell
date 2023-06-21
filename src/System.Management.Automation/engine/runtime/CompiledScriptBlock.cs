@@ -539,8 +539,7 @@ namespace System.Management.Automation
         }
     }
 
-    [Serializable]
-    public partial class ScriptBlock : ISerializable
+    public partial class ScriptBlock
     {
         private readonly CompiledScriptBlockData _scriptBlockData;
 
@@ -573,6 +572,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Protected constructor to support ISerializable.
         /// </summary>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ScriptBlock(SerializationInfo info, StreamingContext context)
         {
         }
@@ -2174,16 +2174,6 @@ namespace System.Management.Automation
         internal bool HasEndBlock { get => AstInternal.Body.EndBlock != null; }
 
         internal bool HasCleanBlock { get => AstInternal.Body.CleanBlock != null; }
-    }
-
-    internal class ScriptBlockSerializationHelper
-    {
-        /// <summary>
-        /// Returns a script block that corresponds to the version deserialized.
-        /// </summary>
-        /// <param name="context">The streaming context for this instance.</param>
-        /// <returns>A script block that corresponds to the version deserialized.</returns>
-        public object GetRealObject(StreamingContext context) => throw new NotSupportedException();
     }
 
     internal sealed class PSScriptCmdlet : PSCmdlet, IDynamicParameters, IDisposable
