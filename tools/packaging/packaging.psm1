@@ -592,6 +592,7 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "amd64"
                 }
                 foreach ($Distro in $Script:DebianDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -609,6 +610,7 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "x86_64"
                 }
                 foreach ($Distro in $Script:RedhatFullDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -627,6 +629,7 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "x86_64"
                 }
                 foreach ($Distro in $Script:RedhatFddDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -637,15 +640,15 @@ function Start-PSPackage {
                 }
             }
             'rpm-arm64-fxdependent' {
-            $HostArchitecture = "aarch64"
                 $Arguments = @{
-                    Type = 'rpm-arm64-fxdependent'
+                    Type = 'rpm'
                     PackageSourcePath = $Source
                     Name = $Name
                     Version = $Version
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "aarch64"
                 }
                 foreach ($Distro in $Script:RedhatFddDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -688,6 +691,7 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "all"
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create $_ Package")) {
@@ -928,7 +932,7 @@ function New-UnixPackage {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param(
         [Parameter(Mandatory)]
-        [ValidateSet("deb", "osxpkg", "rpm", "rpm-arm64-fxdependent")]
+        [ValidateSet("deb", "osxpkg", "rpm")]
         [string]$Type,
 
         [Parameter(Mandatory)]
@@ -946,6 +950,10 @@ function New-UnixPackage {
         # This is a string because strings are appended to it
         [string]$Iteration = "1",
 
+        [string]
+        [ValidateSet("x86_64", "amd64", "aarch64", "native", "all", "noarch", "any")]
+        $HostArchitecture,
+
         [Switch]
         $Force,
 
@@ -960,22 +968,21 @@ function New-UnixPackage {
     )
 
     DynamicParam {
-        $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
-        if ($Type -eq "rpm-arm64-fxdependent")
-        {
-            # Add a dynamic parameter '-HostArchitecture' when the specified package type is 'rpm-fxdependent-arm64'.
-            # The '-HostArchitecture' parameter is used to indicate which Mac processor this package is targeting,
-            # Intel (x86_64) or arm (aarch64).
-            $ParameterAttrHA = New-Object "System.Management.Automation.ParameterAttribute"
-            $ValidateSetAttrHA = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList "x86_64", "aarch64"
-            $AttributesHA = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
-            $AttributesHA.Add($ParameterAttrHA) > $null
-            $AttributesHA.Add($ValidateSetAttrHA) > $null
-            $ParameterHA = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("HostArchitecture", [string], $AttributesHA)
-            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
-            $Dict.Add("HostArchitecture", $ParameterHA) > $null
-            $Type = "rpm"
-        }
+        # if ($Type -eq "rpm-arm64-fxdependent")
+        # {
+        #     # Add a dynamic parameter '-HostArchitecture' when the specified package type is 'rpm-fxdependent-arm64'.
+        #     # The '-HostArchitecture' parameter is used to indicate which Mac processor this package is targeting,
+        #     # Intel (x86_64) or arm (aarch64).
+        #     $ParameterAttrHA = New-Object "System.Management.Automation.ParameterAttribute"
+        #     $ValidateSetAttrHA = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList "x86_64", "aarch64"
+        #     $AttributesHA = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
+        #     $AttributesHA.Add($ParameterAttrHA) > $null
+        #     $AttributesHA.Add($ValidateSetAttrHA) > $null
+        #     $ParameterHA = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("HostArchitecture", [string], $AttributesHA)
+        #     $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
+        #     $Dict.Add("HostArchitecture", $ParameterHA) > $null
+        #     $Type = "rpm"
+        # }
         if ($Type -eq "deb" -or $Type -like 'rpm*') {
             # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
             # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
@@ -991,8 +998,9 @@ function New-UnixPackage {
             $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
             $Attributes.Add($ParameterAttr) > $null
             $Attributes.Add($ValidateSetAttr) > $null
-
+            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
             $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
+
             $Dict.Add("Distribution", $Parameter) > $null
             return $Dict
         } elseif ($Type -eq "osxpkg") {
@@ -1169,10 +1177,10 @@ function New-UnixPackage {
 
         $Arguments = @()
 
-        if ($HostArchitecture -and $Type -eq "rpm")
-        {
-            $Arguments += @("-a", $HostArchitecture)
-        }
+        # if ($HostArchitecture -and $Type -eq "rpm")
+        # {
+        #     $Arguments += @("-a", $HostArchitecture)
+        # }
 
         $Arguments += Get-FpmArguments `
             -Name $Name `
@@ -1190,6 +1198,7 @@ function New-UnixPackage {
             -LinkInfo $Links `
             -AppsFolder $AppsFolder `
             -Distribution $DebDistro `
+            -HostArchitecture $HostArchitecture `
             -ErrorAction Stop
 
         # Build package
@@ -1441,7 +1450,8 @@ function Get-FpmArguments
             return $true
         })]
         [String]$AppsFolder,
-        [String]$Distribution = 'rhel.7'
+        [String]$Distribution = 'rhel.7',
+        [string]$HostArchitecture
     )
 
     $Arguments = @(
@@ -1453,6 +1463,7 @@ function Get-FpmArguments
         "--vendor", "Microsoft Corporation",
         "--url", "https://microsoft.com/powershell",
         "--description", $Description,
+        "--architecture", $HostArchitecture,
         "--category", "shells",
         "-t", $Type,
         "-s", "dir"
