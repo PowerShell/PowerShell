@@ -27,7 +27,7 @@
     <!--PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" /-->
     <PackageReference Include="System.Management" Version="7.0.2" />
     <PackageReference Include="System.Security.AccessControl" Version="6.0.2-mauipre.1.22102.15" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.2" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.3" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="7.0.1" />
     <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
