@@ -1594,7 +1594,7 @@ namespace System.Management.Automation
                 //    $powershell.AddScript('ipconfig.exe')
                 //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
-                // we should not count it as a redirection. Unless the native command has it's stdout redirected
+                // we should not count it as a redirection. Unless the native command has its stdout redirected
                 // for example:
                 //    cmd.exe /c "echo test" > somefile.log
                 // in that case we want to keep output redirection even though Out-Default is the only
