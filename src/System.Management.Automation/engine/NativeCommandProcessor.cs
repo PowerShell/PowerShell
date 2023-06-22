@@ -1594,8 +1594,12 @@ namespace System.Management.Automation
                 //    $powershell.AddScript('ipconfig.exe')
                 //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
-                // we should not count it as a redirection.
-                if (IsDownstreamOutDefault(this.commandRuntime.OutputPipe))
+                // we should not count it as a redirection. Unless the native command has it's stdout redirected
+                // for example:
+                //    cmd.exe /c "echo test" > somefile.log
+                // in that case we want to keep output redirection even though Out-Default is the only
+                // downstream command.
+                if (IsDownstreamOutDefault(this.commandRuntime.OutputPipe) && StdOutDestination is null)
                 {
                     redirectOutput = false;
                 }
@@ -1612,7 +1616,9 @@ namespace System.Management.Automation
                 //    $powershell.AddScript('ipconfig.exe')
                 //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
-                // we should not count that as a redirection.
+                // we should not count that as a redirection. We do not need to worry
+                // about StdOutDestination here as if error is redirected then it's assumed
+                // to be text based and Out-File will be added to the pipeline instead.
                 if (IsDownstreamOutDefault(this.commandRuntime.ErrorOutputPipe))
                 {
                     redirectError = false;
