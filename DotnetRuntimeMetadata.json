@@ -4,10 +4,10 @@
     "quality": "ga",
     "qualityFallback": "daily",
     "packageVersionPattern": "6.0.0",
-    "sdkImageVersion": "6.0.410",
+    "sdkImageVersion": "6.0.411",
     "nextChannel": "6.0.4xx",
     "azureFeed": "",
-    "sdkImageOverride": "6.0.410"
+    "sdkImageOverride": "6.0.411"
   },
   "internalfeed" : {
     "url": ""
