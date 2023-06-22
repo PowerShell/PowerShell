@@ -992,7 +992,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    if (!process.HasExited)
+                    // Check for processes that exit too soon for us to add an event.
+                    if (Any && process.HasExited)
+                    {
+                        _waitHandle.Set();
+                    }
+
+                    else if (!process.HasExited)
                     {
                         process.EnableRaisingEvents = true;
                         process.Exited += myProcess_Exited;

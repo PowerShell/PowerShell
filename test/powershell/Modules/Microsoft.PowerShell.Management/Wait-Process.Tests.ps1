@@ -24,7 +24,7 @@ Describe "Wait-Process" {
     }
 
     BeforeEach {
-        $Processes = @( 1..3 | ForEach-Object { longPing } ) + (shortPing)
+        $Processes = @( 1..3 | ForEach-Object { longPing } ) + ($shortPing = shortPing)
     }
 
     AfterEach {
@@ -35,6 +35,28 @@ Describe "Wait-Process" {
         Wait-Process -InputObject $Processes
 
         $Processes.Where({$_.HasExited -eq $true}).Count  | Should -Be $Processes.Count
+    }
+
+    It "Should return after all processes have exited, even if some exit before the wait starts." {
+        Wait-UntilTrue -sb { $shortPing.HasExited -eq $true } -IntervalInMilliseconds 100
+        Wait-Process -InputObject $Processes
+
+        $Processes.Where({$_.HasExited -eq $true}).Count  | Should -Be $Processes.Count
+    }
+
+    It "Should return immediately if all processes have exited before the wait starts" {
+        Wait-UntilTrue -sb { $Processes.HasExited -NotContains $false } -IntervalInMilliseconds 100
+        Wait-Process -InputObject $Processes
+
+        $Processes.Where({$_.HasExited -eq $true}).Count  | Should -Be $Processes.Count
+    }
+
+    It "Should return immediately if at least one process has exited before the wait starts" {
+        Wait-UntilTrue -sb { $shortPing.HasExited -eq $true } -IntervalInMilliseconds 100
+        Wait-Process -InputObject $Processes -Any
+
+        $Processes.Where({$_.HasExited -eq $true}).Count   | Should -Be 1
+        $Processes.Where({$_.HasExited -eq $false}).Count  | Should -Be ($Processes.Count - 1)
     }
 
     It "Should wait until any one process has exited" {
@@ -50,7 +72,7 @@ Describe "Wait-Process" {
         $PassThruProcesses.Where({$_.HasExited -eq $true}).Count  | Should -Be $Processes.Count
     }
 
-    It "Should passthru all processes when one process has exited" {
+    It "Should passthru all processes when any one process has exited" {
         $PassThruProcesses = Wait-Process -InputObject $Processes -Any -PassThru
 
         $PassThruProcesses.Where({$_.HasExited -eq $true}).Count   | Should -Be 1
