@@ -1594,7 +1594,7 @@ namespace System.Management.Automation
                 //    $powershell.AddScript('ipconfig.exe')
                 //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
-                // we should not count it as a redirection. Unless the native command has it's stdout redirected
+                // we should not count it as a redirection. Unless the native command has its stdout redirected
                 // for example:
                 //    cmd.exe /c "echo test" > somefile.log
                 // in that case we want to keep output redirection even though Out-Default is the only
@@ -1606,7 +1606,7 @@ namespace System.Management.Automation
             }
 
             // See if the error output stream has been redirected, either through an explicit 2> foo.txt or
-            // my merging error into output through 2>&1.
+            // by merging error into output through 2>&1.
             if (CommandRuntime.ErrorMergeTo != MshCommandRuntime.MergeDataStream.Output)
             {
                 // If the error output pipe is the default outputter, for example, calling the native command from command-line host,
