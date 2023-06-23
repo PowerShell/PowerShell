@@ -997,7 +997,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _waitHandle.Set();
                     }
-
                     else if (!process.HasExited)
                     {
                         process.EnableRaisingEvents = true;
