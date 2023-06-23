@@ -269,6 +269,9 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         [bool] $IsSupportedEnvironment = $IsMacOS
         [bool] $persistenceEnabled = $false
 
+        $currentWarningPreference = $WarningPreference
+        $WarningPreference = "SilentlyContinue"
+
         if ($IsSupportedEnvironment)
         {
             # Check the current state.
@@ -306,6 +309,7 @@ Path:.*
     }
 
     AfterAll {
+        $WarningPreference = $currentWarningPreference
         if ($IsSupportedEnvironment -and !$persistenceEnabled)
         {
             # disable persistence if it wasn't enabled
@@ -444,6 +448,10 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsWindows
         [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
+
+        $currentWarningPreference = $WarningPreference
+        $WarningPreference = "SilentlyContinue"
+
         $scriptBlockLoggingCases = @(
             @{
                 name = 'normal script block'
@@ -461,6 +469,10 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
         {
             & "$PSHOME\RegisterManifest.ps1"
         }
+    }
+
+    AfterAll {
+        $WarningPreference = $currentWarningPreference
     }
 
     BeforeEach {

@@ -9,7 +9,6 @@ namespace Microsoft.Management.UI.Internal
     /// The TextDoesNotContainFilterRule class evaluates a string item to
     /// check if it is does not contain the rule's value within it.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class TextDoesNotContainFilterRule : TextContainsFilterRule
     {

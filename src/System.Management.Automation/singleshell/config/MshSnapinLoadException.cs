@@ -19,7 +19,6 @@ namespace System.Management.Automation.Runspaces
     ///     1. PSSnapin name
     ///     2. Inner exception.
     /// -->
-    [Serializable]
     public class PSSnapInException : RuntimeException
     {
         /// <summary>
@@ -172,32 +171,11 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected PSSnapInException(SerializationInfo info,
                                         StreamingContext context)
-            : base(info, context)
         {
-            _PSSnapin = info.GetString("PSSnapIn");
-            _reason = info.GetString("Reason");
-
-            CreateErrorRecord();
-        }
-
-        /// <summary>
-        /// Get object data from serialization information.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-
-            info.AddValue("PSSnapIn", _PSSnapin);
-            info.AddValue("Reason", _reason);
+            throw new NotSupportedException();
         }
 
         #endregion Serialization

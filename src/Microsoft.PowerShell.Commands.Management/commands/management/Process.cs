@@ -2980,7 +2980,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Non-terminating errors occurring in the process noun commands.
     /// </summary>
-    [Serializable]
     public class ProcessCommandException : SystemException
     {
         #region ctors
@@ -3020,28 +3019,14 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info"></param>
         /// <param name="context"></param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ProcessCommandException(
             SerializationInfo info,
             StreamingContext context)
-            : base(info, context)
         {
-            _processName = info.GetString("ProcessName");
+            throw new NotSupportedException();
         }
-        /// <summary>
-        /// Serializer.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(
-            SerializationInfo info,
-            StreamingContext context)
-        {
-            base.GetObjectData(info, context);
 
-            ArgumentNullException.ThrowIfNull(info);
-
-            info.AddValue("ProcessName", _processName);
-        }
         #endregion Serialization
 
         #region Properties
