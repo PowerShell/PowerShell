@@ -69,6 +69,11 @@ Describe 'Native command byte piping tests' -Tags 'CI' {
         Get-Content -LiteralPath $TestDrive/content.bin -AsByteStream | Should -Be 0xFFuy
     }
 
+    It 'Bytes are retained when redirecting to a file and Out-Default is downstream' {
+        testexe -writebytes FF > $TestDrive/content2.bin | Out-Default
+        Get-Content -LiteralPath $TestDrive/content2.bin -AsByteStream | Should -Be 0xFFuy
+    }
+
     It 'Redirecting to $null should emit no output' {
         testexe -writebytes FF > $null | Should -BeNullOrEmpty
     }
