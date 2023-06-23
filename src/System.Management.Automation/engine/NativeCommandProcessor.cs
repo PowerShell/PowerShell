@@ -1594,15 +1594,19 @@ namespace System.Management.Automation
                 //    $powershell.AddScript('ipconfig.exe')
                 //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
-                // we should not count it as a redirection.
-                if (IsDownstreamOutDefault(this.commandRuntime.OutputPipe))
+                // we should not count it as a redirection. Unless the native command has its stdout redirected
+                // for example:
+                //    cmd.exe /c "echo test" > somefile.log
+                // in that case we want to keep output redirection even though Out-Default is the only
+                // downstream command.
+                if (IsDownstreamOutDefault(this.commandRuntime.OutputPipe) && StdOutDestination is null)
                 {
                     redirectOutput = false;
                 }
             }
 
             // See if the error output stream has been redirected, either through an explicit 2> foo.txt or
-            // my merging error into output through 2>&1.
+            // by merging error into output through 2>&1.
             if (CommandRuntime.ErrorMergeTo != MshCommandRuntime.MergeDataStream.Output)
             {
                 // If the error output pipe is the default outputter, for example, calling the native command from command-line host,
@@ -1612,7 +1616,9 @@ namespace System.Management.Automation
                 //    $powershell.AddScript('ipconfig.exe')
                 //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
-                // we should not count that as a redirection.
+                // we should not count that as a redirection. We do not need to worry
+                // about StdOutDestination here as if error is redirected then it's assumed
+                // to be text based and Out-File will be added to the pipeline instead.
                 if (IsDownstreamOutDefault(this.commandRuntime.ErrorOutputPipe))
                 {
                     redirectError = false;
