@@ -136,7 +136,7 @@ namespace System.Management.Automation
     #nullable enable
     /// <summary>
     /// This exception is used by the NativeCommandProcessor to indicate an error
-    /// when a native command retuns a non-zero exit code.
+    /// when a native command returns a non-zero exit code.
     /// </summary>
     public sealed class NativeCommandExitException : RuntimeException
     {
