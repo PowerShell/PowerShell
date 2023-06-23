@@ -543,6 +543,10 @@ function Invoke-CIFinish
                     $runPackageTest = $false
                     $packageTypes = 'zip', 'zip-pdb', 'msix'
                 }
+                'fxdependent-linux-arm64' {
+                    $runPackageTest = $true
+                    $packageTypes = 'rpm'
+                }
             }
             $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
