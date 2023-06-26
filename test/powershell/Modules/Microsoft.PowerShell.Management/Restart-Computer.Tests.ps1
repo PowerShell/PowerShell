@@ -110,13 +110,15 @@ finally
 
 Describe 'Non-admin on Unix' {
     BeforeAll {
-        if ($IsWindows -or (id -u) -eq 0) {
+        if ($IsWindows -or (id -g) -eq 0) {
             $IsWindowsOrSudo = $true
         }
         else {
             $IsWindowsOrSudo = $false
         }
 
+        Write-Verbose -Verbose "user id: $(id -u)"
+        Write-Verbose -Verbose "group id: $(id -g)"
         Write-Verbose -Verbose "IsWindowsOrSudo: $IsWindowsOrSudo"
     }
 
