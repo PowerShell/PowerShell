@@ -124,6 +124,6 @@ Describe 'Non-admin on Unix' {
 
     It 'Reports error if not run under sudo' -Skip:($IsWindowsOrSudo) {
         $error.Clear()
-        { Restart-Computer -ErrorAction Stop } | Should -Throw -ErrorId "CommandFailed,Microsoft.PowerShell.Commands.RestartComputerCommand" -Because (Get-Error)
+        { Restart-Computer -ErrorAction Stop } | Should -Throw -ErrorId "CommandFailed,Microsoft.PowerShell.Commands.RestartComputerCommand" -Because (Get-Error | Out-String)
     }
 }
