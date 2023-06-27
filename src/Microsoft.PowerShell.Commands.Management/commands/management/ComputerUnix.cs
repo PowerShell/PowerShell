@@ -5,6 +5,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Runtime.InteropServices;
@@ -36,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string errMsg = StringUtil.Format("Command returned 0x{0:X}", retVal);
                     ErrorRecord error = new ErrorRecord(
-                        new InvalidOperationException(errMsg), "Command Failed", ErrorCategory.OperationStopped, "localhost");
+                        new InvalidOperationException(errMsg), "CommandFailed", ErrorCategory.OperationStopped, "localhost");
                     WriteError(error);
                 }
                 return;
@@ -78,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string errMsg = StringUtil.Format("Command returned 0x{0:X}", retVal);
                     ErrorRecord error = new ErrorRecord(
-                        new InvalidOperationException(errMsg), "Command Failed", ErrorCategory.OperationStopped, "localhost");
+                        new InvalidOperationException(errMsg), "CommandFailed", ErrorCategory.OperationStopped, "localhost");
                     WriteError(error);
                 }
                 return;
@@ -154,11 +155,26 @@ namespace Microsoft.PowerShell.Commands
         /// Run a command.
         /// </summary>
         protected void RunCommand(String command, String args) {
+            string shutdownPath = "/sbin/shutdown";
+            const string altShutdownPath = "/usr/sbin/shutdown";
+
+            if (!File.Exists(shutdownPath) && File.Exists(altShutdownPath))
+            {
+                shutdownPath = altShutdownPath;
+            }
+            else
+            {
+                ErrorRecord error = new ErrorRecord(
+                    new InvalidOperationException(ComputerResources.ShutdownCommandNotFound), "CommandNotFound", ErrorCategory.ObjectNotFound, null);
+                WriteError(error);
+                return;
+            }
+
             _process = new Process()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "/sbin/shutdown",
+                    FileName = shutdownPath,
                     Arguments = string.Empty,
                     RedirectStandardOutput = false,
                     RedirectStandardError = true,
@@ -171,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
             if (_process.ExitCode != 0)
             {
                 string stderr = _process.StandardError.ReadToEnd();
-                string errMsg = StringUtil.Format("Command returned 0x{0:X}: {1}", _process.ExitCode, stderr);
+                string errMsg = StringUtil.Format(ComputerResources.CommandFailed, _process.ExitCode, stderr);
                 ErrorRecord error = new ErrorRecord(
                     new InvalidOperationException(errMsg), "CommandFailed", ErrorCategory.OperationStopped, null);
                 WriteError(error);

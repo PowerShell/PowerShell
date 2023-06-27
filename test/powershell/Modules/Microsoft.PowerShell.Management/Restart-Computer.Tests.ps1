@@ -116,10 +116,6 @@ Describe 'Non-admin on Unix' {
         else {
             $IsWindowsOrSudo = $false
         }
-
-        Write-Verbose -Verbose "user id: $(id -u)"
-        Write-Verbose -Verbose "group id: $(id -g)"
-        Write-Verbose -Verbose "IsWindowsOrSudo: $IsWindowsOrSudo"
     }
 
     It 'Reports error if not run under sudo' -Skip:($IsWindowsOrSudo) {

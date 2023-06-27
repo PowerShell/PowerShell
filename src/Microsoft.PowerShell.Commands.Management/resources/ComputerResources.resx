@@ -387,4 +387,10 @@
   <data name="InvalidParameterForCoreClr" xml:space="preserve">
     <value>The {0} parameter is not supported for CoreCLR.</value>
   </data>
+  <data name="CommandFailed" xml:space="preserve">
+    <value>Command failed with exit code {0}: {1}</value>
+  </data>
+  <data name="ShutdownCommandNotFound" xml:space="preserve">
+    <value>'shutdown' command was not found and required.</value>
+  </data>
 </root>
