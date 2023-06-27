@@ -1425,6 +1425,11 @@ rtm.21527.11
 SKUs
 vmImage
 Ubuntu22.04
+PoolNames
+wxs
+backport
+penimc_cor3.dll
+releaseTools.psm1
  - CHANGELOG/7.0.md
 codesign
 release-BuildJson
