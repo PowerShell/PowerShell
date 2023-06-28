@@ -118,7 +118,7 @@ Describe 'Non-admin on Unix' {
         }
 
         $shutdown = Get-Command shutdown -ErrorAction Ignore
-        Write-Verbose "shutdown: $shutdown" -Verbose
+        Write-Verbose "shutdown: $($shutdown.path)" -Verbose
     }
 
     It 'Reports error if not run under sudo' -Skip:($IsWindowsOrSudo) {
