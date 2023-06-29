@@ -1,20 +1,38 @@
 # Documentation Migration
 
-The docs folder in this repo contains a lot of documentation about the PowerShell source code and build environment.
-It also has contained documentation about installing and using PowerShell.
-That documentation belongs in the [PowerShell/PowerShell-Docs](https://github.com/PowerShell/PowerShell-Docs) repo.
+The docs folder in this repo contains documentation about the PowerShell source code and build
+environment.
 
-We are in the process of migrating the user-focused articles to the docs repo.
-This file records which files have been migrated.
+User-focused documentation has been moved to the [MicrosoftDocs/PowerShell-Docs][01] repo.
 
-## 2018-05-18
+The files from the `learning-powershell` folder have been removed from this repo. This list provides
+links to suitable replacements.
 
-The following files have been moved to the PowerShell/PowerShell-Docs repo.
+- **create-powershell-scripts.md**
+  - [about_Scripts][06]
+- **debugging-from-commandline.md**
+  - [about_Debuggers][04]
+- **powershell-beginners-guide.md**
+  - [PowerShell 101][09]
+- **README.md**
+  - [Install PowerShell on Windows, Linux, and macOS][07]
+  - [Using Visual Studio Code (VS Code)][11]
+  - [Pester Guides][02]
+  - [Writing Pester Tests Guidelines][03]
+  - [PowerShell learning resources][08]
+- **working-with-powershell-objects.md**
+  - [about_Object_Creation][05]
+  - [Crescendo overview][10]
 
-| Original file location         | New location in PowerShell/PowerShell-Docs                                 |
-|--------------------------------|----------------------------------------------------------------------------|
-| `docs/installation/linux.md`   | `reference/docs-conceptual/setup/Installing-PowerShell-Core-on-Linux.md`   |
-| `docs/installation/macos.md`   | `reference/docs-conceptual/setup/Installing-PowerShell-Core-on-macOS.md`   |
-| `docs/installation/windows.md` | `reference/docs-conceptual/setup/Installing-PowerShell-Core-on-Windows.md` |
-| `docs/BREAKINGCHANGES.md`      | `reference/docs-conceptual/whats-new/breaking-changes-ps6.md`              |
-| `docs/KNOWNISSUES.md`          | `reference/docs-conceptual/whats-new/known-issues-ps6.md`                  |
+<!-- link references -->
+[01]: https://github.com/MicrosoftDocs/PowerShell-Docs
+[02]: https://github.com/pester/Pester
+[03]: https://github.com/PowerShell/PowerShell/blob/master/docs/testing-guidelines/WritingPesterTests.md
+[04]: https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_debuggers
+[05]: https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_object_creation
+[06]: https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_scripts
+[07]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell
+[08]: https://learn.microsoft.com/powershell/scripting/learn/more-powershell-learning
+[09]: https://learn.microsoft.com/powershell/scripting/learn/ps101/00-introduction
+[10]: https://learn.microsoft.com/powershell/utility-modules/crescendo/overview?view=ps-modules
+[11]: https://learn.microsoft.com/powershell/scripting/dev-cross-plat/vscode/using-vscode
