@@ -543,10 +543,6 @@ function Invoke-CIFinish
                     $runPackageTest = $false
                     $packageTypes = 'zip', 'zip-pdb', 'msix'
                 }
-                'fxdependent-linux-arm64' {
-                    $runPackageTest = $true
-                    $packageTypes = 'rpm'
-                }
             }
             $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
@@ -788,7 +784,7 @@ function New-LinuxPackage
 
     # Only build packages for PowerShell/PowerShell repository
     # branches, not pull requests
-    $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks -Type deb, rpm, tar)
+    $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks -Type deb, rpm, rpm-arm64-fxdependent, tar)
     foreach($package in $packages)
     {
         if (Test-Path $package)
