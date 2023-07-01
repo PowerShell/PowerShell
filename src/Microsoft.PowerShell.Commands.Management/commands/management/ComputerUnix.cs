@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            RunCommand("/sbin/shutdown", "-r now");
+            RunShutdown("-r now");
         }
 #endregion "Overrides"
     }
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            RunCommand("/sbin/shutdown", args);
+            RunShutdown(args);
         }
 #endregion "Overrides"
     }
@@ -152,9 +152,9 @@ namespace Microsoft.PowerShell.Commands
 #region "Internals"
 
         /// <summary>
-        /// Run a command.
+        /// Run shutdown command
         /// </summary>
-        protected void RunCommand(String command, String args) {
+        protected void RunShutdown(String args) {
             string shutdownPath = "/sbin/shutdown";
             const string altShutdownPath = "/usr/sbin/shutdown";
 

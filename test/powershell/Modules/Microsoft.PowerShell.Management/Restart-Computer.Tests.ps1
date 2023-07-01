@@ -116,13 +116,9 @@ Describe 'Non-admin on Unix' {
         else {
             $IsWindowsOrSudo = $false
         }
-
-        $shutdown = Get-Command shutdown -ErrorAction Ignore
-        Write-Verbose "shutdown: $($shutdown.path)" -Verbose
     }
 
     It 'Reports error if not run under sudo' -Skip:($IsWindowsOrSudo) {
-        $error.Clear()
-        { Restart-Computer -ErrorAction Stop } | Should -Throw -ErrorId "CommandFailed,Microsoft.PowerShell.Commands.RestartComputerCommand" -Because (Get-Error | Out-String)
+        { Restart-Computer -ErrorAction Stop } | Should -Throw -ErrorId "CommandFailed,Microsoft.PowerShell.Commands.RestartComputerCommand"
     }
 }

@@ -60,7 +60,16 @@ finally
 }
 
 Describe 'Non-admin on Unix' {
-    It 'Reports error if not run under sudo' -Skip:($IsWindows) {
+    BeforeAll {
+        if ($IsWindows -or (id -g) -eq 0) {
+            $IsWindowsOrSudo = $true
+        }
+        else {
+            $IsWindowsOrSudo = $false
+        }
+    }
+
+    It 'Reports error if not run under sudo' -Skip:($IsWindowsOrSudo) {
         { Stop-Computer -ErrorAction Stop } | Should -Throw -ErrorId "CommandFailed,Microsoft.PowerShell.Commands.StopComputerCommand"
     }
 }
