@@ -43,6 +43,7 @@ param(
     [Parameter(ParameterSetName = "Daily")]
     [Parameter(ParameterSetName = "Version")]
     [Parameter(ParameterSetName = "LTS")]
+    [Parameter(ParameterSetName = 'Preview')]
     [switch] $DoNotOverwrite,
 
     [Parameter(ParameterSetName = "Daily")]
@@ -62,6 +63,7 @@ param(
     [Parameter(ParameterSetName = "MSI")]
     [switch] $EnablePSRemoting,
 
+    [Parameter(ParameterSetName = "MSI")]
     [Parameter(ParameterSetName = 'Preview')]
     [switch] $Preview
 
