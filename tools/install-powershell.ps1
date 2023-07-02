@@ -27,15 +27,27 @@
 [CmdletBinding(DefaultParameterSetName = "Daily")]
 param(
     [Parameter(ParameterSetName = "Daily")]
+    [Parameter(ParameterSetName = "Version")]
+    [Parameter(ParameterSetName = "LTS")]
     [string] $Destination,
+
+    [Parameter(ParameterSetName = "Version")]
+    [string] $Version,
+
+    [Parameter(ParameterSetName = "LTS")]
+    [switch] $LTS,
 
     [Parameter(ParameterSetName = "Daily")]
     [switch] $Daily,
 
     [Parameter(ParameterSetName = "Daily")]
+    [Parameter(ParameterSetName = "Version")]
+    [Parameter(ParameterSetName = "LTS")]
     [switch] $DoNotOverwrite,
 
     [Parameter(ParameterSetName = "Daily")]
+    [Parameter(ParameterSetName = "Version")]
+    [Parameter(ParameterSetName = "LTS")]
     [switch] $AddToPath,
 
     [Parameter(ParameterSetName = "MSI")]
@@ -50,8 +62,9 @@ param(
     [Parameter(ParameterSetName = "MSI")]
     [switch] $EnablePSRemoting,
 
-    [Parameter()]
+    [Parameter(ParameterSetName = 'Preview')]
     [switch] $Preview
+
 )
 
 Set-StrictMode -Version 3.0
@@ -67,10 +80,13 @@ if (-not $Destination) {
     } else {
         $Destination = "~/.powershell"
     }
-
-    if ($Daily) {
-        $Destination = "${Destination}-daily"
-    }
+}
+if ($version) {
+    $Destination = "${Destination}-${version}"
+} elseif ($Daily) {
+    $Destination = "${Destination}-daily"
+} elseif ($LTS) {
+    $Destination = "${Destination}-LTS"
 }
 
 $Destination = $PSCmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
@@ -82,10 +98,10 @@ if (-not $UseMSI) {
         throw "-UseMSI is only supported on Windows"
     } else {
         $MSIArguments = @()
-        if($AddExplorerContextMenu) {
+        if ($AddExplorerContextMenu) {
             $MSIArguments += "ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1"
         }
-        if($EnablePSRemoting) {
+        if ($EnablePSRemoting) {
             $MSIArguments += "ENABLE_PSREMOTING=1"
         }
     }
@@ -100,16 +116,13 @@ function Expand-ArchiveInternal {
         $DestinationPath
     )
 
-    if((Get-Command -Name Expand-Archive -ErrorAction Ignore))
-    {
+    if ((Get-Command -Name Expand-Archive -ErrorAction Ignore)) {
         Expand-Archive -Path $Path -DestinationPath $DestinationPath
-    }
-    else
-    {
+    } else {
         Add-Type -AssemblyName System.IO.Compression.FileSystem
         $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
         $resolvedDestinationPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($DestinationPath)
-        [System.IO.Compression.ZipFile]::ExtractToDirectory($resolvedPath,$resolvedDestinationPath)
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($resolvedPath, $resolvedDestinationPath)
     }
 }
 
@@ -201,7 +214,7 @@ Function Add-PathTToSettings {
     param(
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [ValidateNotNullOrEmpty()]
-        [ValidateScript({Test-PathNotInSettings $_})]
+        [ValidateScript({ Test-PathNotInSettings $_ })]
         [string] $Path,
 
         [Parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
@@ -271,12 +284,12 @@ try {
         $blobName = $metadata.BlobName
 
         # Get version from currently installed PowerShell Daily if available.
-        $pwshPath = if ($IsWinEnv) {Join-Path $Destination "pwsh.exe"} else {Join-Path $Destination "pwsh"}
-        $currentlyInstalledVersion = if(Test-Path $pwshPath) {
+        $pwshPath = if ($IsWinEnv) { Join-Path $Destination "pwsh.exe" } else { Join-Path $Destination "pwsh" }
+        $currentlyInstalledVersion = if (Test-Path $pwshPath) {
             ((& $pwshPath -version) -split " ")[1]
         }
 
-        if($currentlyInstalledVersion -eq $release) {
+        if ($currentlyInstalledVersion -eq $release) {
             Write-Verbose "Latest PowerShell Daily already installed." -Verbose
             return
         }
@@ -322,16 +335,16 @@ try {
         if ($IsWinEnv) {
             if ($UseMSI -and $Quiet) {
                 Write-Verbose "Performing quiet install"
-                $ArgumentList=@("/i", $packagePath, "/quiet")
-                if($MSIArguments) {
-                    $ArgumentList+=$MSIArguments
+                $ArgumentList = @("/i", $packagePath, "/quiet")
+                if ($MSIArguments) {
+                    $ArgumentList += $MSIArguments
                 }
                 $process = Start-Process msiexec -ArgumentList $ArgumentList -Wait -PassThru
                 if ($process.exitcode -ne 0) {
                     throw "Quiet install failed, please rerun install without -Quiet switch or ensure you have administrator rights"
                 }
             } elseif ($UseMSI) {
-                if($MSIArguments) {
+                if ($MSIArguments) {
                     Start-Process $packagePath -ArgumentList $MSIArguments -Wait
                 } else {
                     Start-Process $packagePath -Wait
@@ -346,6 +359,10 @@ try {
         $metadata = Invoke-RestMethod https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json
         if ($Preview) {
             $release = $metadata.PreviewReleaseTag -replace '^v'
+        } elseif ($version) {
+            $release = $version
+        } elseif ($LTS) {
+            $release = $metadata.LTSReleaseTag -replace '^v'
         } else {
             $release = $metadata.ReleaseTag -replace '^v'
         }
@@ -392,16 +409,16 @@ try {
                 Add-AppxPackage -Path $packagePath
             } elseif ($UseMSI -and $Quiet) {
                 Write-Verbose "Performing quiet install"
-                $ArgumentList=@("/i", $packagePath, "/quiet")
-                if($MSIArguments) {
-                    $ArgumentList+=$MSIArguments
+                $ArgumentList = @("/i", $packagePath, "/quiet")
+                if ($MSIArguments) {
+                    $ArgumentList += $MSIArguments
                 }
                 $process = Start-Process msiexec -ArgumentList $ArgumentList -Wait -PassThru
                 if ($process.exitcode -ne 0) {
                     throw "Quiet install failed, please rerun install without -Quiet switch or ensure you have administrator rights"
                 }
             } elseif ($UseMSI) {
-                if($MSIArguments) {
+                if ($MSIArguments) {
                     Start-Process $packagePath -ArgumentList $MSIArguments -Wait
                 } else {
                     Start-Process $packagePath -Wait
