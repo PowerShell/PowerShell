@@ -74,6 +74,25 @@ $IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux
 $IsMacOSEnv = (Get-Variable -Name "IsMacOS" -ErrorAction Ignore) -and $IsMacOS
 $IsWinEnv = !$IsLinuxEnv -and !$IsMacOSEnv
 
+if ($version) {
+    # if version doesnt contains v prefix, add it
+    if ($version -notmatch "^v") {
+        $version = "v$version"
+    }
+
+    Write-Verbose "Checking if release version '$version' is available" -Verbose
+    $releaseVersions = Invoke-RestMethod https://api.github.com/repos/PowerShell/PowerShell/releases -Verbose:$false
+
+    if ("$version" -notin $releaseVersions.tag_name) {
+        throw "Version '$version' is not available. Available versions: $($releaseVersions.tag_name -join ', ')"
+    } else {
+        Write-Verbose "Version '$version' is available. Installing as requested"
+    }
+
+    # if version contains v prefix, remove it
+    $version = $version -replace "^v", ""
+}
+
 if (-not $Destination) {
     if ($IsWinEnv) {
         $Destination = "$env:LOCALAPPDATA\Microsoft\powershell"
