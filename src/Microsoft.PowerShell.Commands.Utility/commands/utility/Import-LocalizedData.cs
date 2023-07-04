@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             List<CultureInfo> cultureList = new List<CultureInfo> { culture };
-            if (_uiculture == null)
+            if (_uiculture == null && culture.Name != "en-US")
             {
                 // .NET 4.8 presents en-US as a parent of any current culture when accessed via the CurrentUICulture
                 // property.
