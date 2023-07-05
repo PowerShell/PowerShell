@@ -1162,10 +1162,6 @@ function New-UnixPackage {
 
         $Arguments = @()
 
-        # if ($HostArchitecture -and $Type -eq "rpm")
-        # {
-        #     $Arguments += @("-a", $HostArchitecture)
-        # }
 
         $Arguments += Get-FpmArguments `
             -Name $Name `
