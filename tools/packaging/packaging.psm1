@@ -50,7 +50,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-arm64-fxdependent", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size")]
         [string[]]$Type,
 
         # Generate windows downlevel package
