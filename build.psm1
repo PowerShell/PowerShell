@@ -973,7 +973,6 @@ function New-PSOptions {
 
     # Build the Output path
     if (!$Output) {
-        # if ($Runtime -like 'fxdependent*' -and -not $Runtime -like 'fxdependent*linux*') {
         if ($Runtime -like 'fxdependent*' -and $Runtime -like 'fxdependent*linux*') {
             $outputRuntime = $Runtime -replace 'fxdependent-', ''
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $outputRuntime, "publish", $Executable)
