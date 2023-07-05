@@ -968,21 +968,6 @@ function New-UnixPackage {
     )
 
     DynamicParam {
-        # if ($Type -eq "rpm-arm64-fxdependent")
-        # {
-        #     # Add a dynamic parameter '-HostArchitecture' when the specified package type is 'rpm-fxdependent-arm64'.
-        #     # The '-HostArchitecture' parameter is used to indicate which Mac processor this package is targeting,
-        #     # Intel (x86_64) or arm (aarch64).
-        #     $ParameterAttrHA = New-Object "System.Management.Automation.ParameterAttribute"
-        #     $ValidateSetAttrHA = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList "x86_64", "aarch64"
-        #     $AttributesHA = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
-        #     $AttributesHA.Add($ParameterAttrHA) > $null
-        #     $AttributesHA.Add($ValidateSetAttrHA) > $null
-        #     $ParameterHA = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("HostArchitecture", [string], $AttributesHA)
-        #     $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
-        #     $Dict.Add("HostArchitecture", $ParameterHA) > $null
-        #     $Type = "rpm"
-        # }
         if ($Type -eq "deb" -or $Type -like 'rpm*') {
             # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
             # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
