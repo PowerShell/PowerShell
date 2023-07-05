@@ -639,7 +639,7 @@ function Start-PSPackage {
                     }
                 }
             }
-            'rpm-arm64-fxdependent' {
+            'rpm-fxdependent-arm64' {
                 $Arguments = @{
                     Type = 'rpm'
                     PackageSourcePath = $Source
