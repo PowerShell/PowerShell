@@ -26,6 +26,7 @@ jobs:
       statuses: write
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
     - name: Lint Markdown
       uses: super-linter/super-linter@v5
       env:
