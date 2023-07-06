@@ -42,6 +42,8 @@ string2=string2
             @{ Script = 'data d { if ($(Get-Command)) {} }' }
             @{ Script = 'data d { @(Get-Command) }' }
         ) {
+            param ( $Script )
+
             { Invoke-Expression $Script } | Should -Throw -ErrorId 'CmdletNotInAllowedListForDataSection,Microsoft.PowerShell.Commands.InvokeExpressionCommand'
         }
     }
@@ -90,6 +92,8 @@ string2=string2
 
     Context 'UICulture parameter' {
         It 'Imports specific culture (<UICulture>) defined by the UICulture parameter' -TestCases $testCultures {
+            param ( $UICulture )
+
             [System.Globalization.CultureInfo]::CurrentUICulture = $UICulture
 
             Import-LocalizedData @defaultParams -UICulture $UICulture
@@ -110,6 +114,8 @@ string2=string2
             @{ UICulture = 'en-GB'; ExpectedString = 'en' }
             @{ UICulture = 'no-NL'; ExpectedString = 'fallback' }
         ) {
+            param ( $UICulture, $ExpectedString )
+
             [System.Globalization.CultureInfo]::CurrentUICulture = $UICulture
 
             $data = Import-LocalizedData -UICulture $UICulture
@@ -137,6 +143,8 @@ string2=string2
         }
 
         It 'Imports from the "foo" file name when then FileName parameter is specified (<UICulture>)' -TestCases $testCultures {
+            param ( $UICulture )
+
             [System.Globalization.CultureInfo]::CurrentUICulture = $UICulture
 
             Import-LocalizedData @defaultParams @fileName -UICulture $UICulture
@@ -146,6 +154,8 @@ string2=string2
         }
 
         It 'Imports from the "I18n_altfilename" directory when the BaseDirectory parameter is specified (<UICulture>)' -TestCases $testCultures {
+            param ( $UICulture )
+
             [System.Globalization.CultureInfo]::CurrentUICulture = $UICulture
 
             Import-LocalizedData @defaultParams @baseDirectory -UICulture $UICulture
@@ -155,6 +165,8 @@ string2=string2
         }
 
         It 'Imports from the "I18n_altfilename" file name and "I18n_altbase" directory when both FileName and BaseDirectory are specified (<UICulture>)' -TestCases $testCultures {
+            param ( $UICulture )
+
             [System.Globalization.CultureInfo]::CurrentUICulture = $UICulture
 
             Import-LocalizedData @defaultParams @fileName @baseDirectory -UICulture $UICulture
