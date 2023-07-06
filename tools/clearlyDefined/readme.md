@@ -1,4 +1,4 @@
-# ClearlyDefined
+ClearlyDefined
 
 ## Purpose
 
