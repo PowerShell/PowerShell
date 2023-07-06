@@ -20,6 +20,10 @@ jobs:
         check-modified-files-only: 'yes'
         config-file: .github/workflows/markdown-link/config.json
   markdown-lint:
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
     runs-on: ubuntu-latest
     steps:
     - name: Lint Markdown
@@ -28,3 +32,5 @@ jobs:
         VALIDATE_ALL_CODEBASE: false
         DEFAULT_BRANCH: master
         FILTER_REGEX_INCLUDE: .*\.md
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
