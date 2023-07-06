@@ -127,6 +127,8 @@ string2=string2
         It 'When the UICulture parameter is not specified and no files exist falls back on en-US and parent cultures' -TestCases @(
             @{ UICulture = 'no-NL'; ExpectedString = 'en-US' }
         ) {
+            param ( $UICulture, $ExpectedString )
+
             [System.Globalization.CultureInfo]::CurrentUICulture = $UICulture
 
             $data = Import-LocalizedData -FileName 'I18n_altfilename'
