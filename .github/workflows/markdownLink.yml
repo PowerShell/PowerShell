@@ -4,7 +4,7 @@ on:
       - master
       - 'release/**'
 
-name: Check links for modified files
+name: Check modififed markdown files
 permissions:
   contents: read
 
@@ -19,3 +19,12 @@ jobs:
         use-verbose-mode: 'yes'
         check-modified-files-only: 'yes'
         config-file: .github/workflows/markdown-link/config.json
+  markdown-lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Lint Markdown
+      uses: super-linter/super-linter@v5
+      env:
+        VALIDATE_ALL_CODEBASE: false
+        DEFAULT_BRANCH: master
+        FILTER_REGEX_INCLUDE: .*\.md
