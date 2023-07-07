@@ -6,7 +6,10 @@ on:
     paths:
       - '**.md'
 
-name: Check links for modified files
+name: Check modified markdown files
+permissions:
+  contents: read
+
 jobs:
   markdown-link-check:
     runs-on: ubuntu-latest
