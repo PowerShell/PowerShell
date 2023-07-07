@@ -102,7 +102,7 @@ string2=string2
             $data.string2 | Should -BeExactly ('string2 {0}' -f $UICulture)
         }
 
-        It 'Throws an error if the specified UICulture does not exist' {
+        It 'Throws an error if the specified UICulture does not exist' -Skip:(-not $IsWindows) {
             { Import-LocalizedData @defaultParams -UICulture none-none -ErrorAction Stop } |
                 Should -Throw -ExceptionType 'System.Management.Automation.PSArgumentException'
         }
