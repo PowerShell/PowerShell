@@ -33,21 +33,6 @@ steps:
   env:
     NugetConfigDir: ${{ parameters.repoRoot }}
 
-- pwsh: |
-    # delete unused nuget.config files
-    git rm test/perf/nuget.config
-    git rm docs/host-powershell/sample/NuGet.config
-    git rm test/hosting/NuGet.Config
-    git rm test/tools/Modules/nuget.config
-    git rm test/tools/NamedPipeConnection/nuget.config
-    
-    # commit the changes - this is a temporary workaround until we can get the 1ES team to fix the tooling
-    git add -A
-    git commit -m "commit nuget.config for Azure DevOps feed"
-  displayName: 'Commit nuget changes'
-  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
-  workingDirectory: ${{ parameters.repoRoot }}
-
 - task: nuget-security-analysis@0
   displayName: 'Run Secure Supply Chain analysis'
   condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''), ne(variables['AzDevOpsFeed'], ''))
