@@ -4,7 +4,7 @@ on:
       - master
       - 'release/**'
 
-name: Check modififed markdown files
+name: Check modified markdown files
 permissions:
   contents: read
 
