@@ -305,7 +305,13 @@ configuration:
       - isAction:
           action: Opened
       then:
-      - assignTo: {}
+      - assignTo:
+          users:
+              - TravisEz13
+              - daxian-dbw
+              - adityapatwardhan
+              - iSazonov
+              - SeeminglyScience       
       description: 
     - if:
       - payloadType: Issue_Comment
