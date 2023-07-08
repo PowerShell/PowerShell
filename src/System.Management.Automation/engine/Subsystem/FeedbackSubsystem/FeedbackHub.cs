@@ -98,6 +98,7 @@ namespace System.Management.Automation.Subsystem.Feedback
             }
 
             int count = providers.Count;
+            int maximumTimeoutMilliseconds = millisecondsTimeout;
             IFeedbackProvider? generalFeedback = null;
             List<Task<FeedbackResult?>>? tasks = null;
             CancellationTokenSource? cancellationSource = null;
@@ -105,6 +106,11 @@ namespace System.Management.Automation.Subsystem.Feedback
 
             foreach (IFeedbackProvider provider in providers)
             {
+                if (provider.TimeoutMilliseconds > maximumTimeoutMilliseconds)
+                {
+                    maximumTimeoutMilliseconds = provider.TimeoutMilliseconds;
+                }
+
                 if (!provider.Trigger.HasFlag(feedbackContext.Trigger))
                 {
                     continue;
@@ -138,7 +144,7 @@ namespace System.Management.Automation.Subsystem.Feedback
             {
                 waitTask = Task.WhenAny(
                     Task.WhenAll(tasks),
-                    Task.Delay(millisecondsTimeout, cancellationSource!.Token));
+                    Task.Delay(maximumTimeoutMilliseconds, cancellationSource!.Token));
             }
 
             List<FeedbackResult>? resultList = null;

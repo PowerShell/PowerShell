@@ -228,6 +228,14 @@ namespace System.Management.Automation.Subsystem.Feedback
         FeedbackTrigger Trigger => FeedbackTrigger.CommandNotFound;
 
         /// <summary>
+        /// Gets the timeout in milliseconds for this feedback provider.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation is set to 0ms which will be overridden by the default in <see cref="FeedbackHub.GetFeedback(Runspace, int)"/>.
+        /// </remarks>
+        int TimeoutMilliseconds => 0;
+
+        /// <summary>
         /// Gets feedback based on the given commandline and error record.
         /// </summary>
         /// <param name="context">The context for the feedback call.</param>
