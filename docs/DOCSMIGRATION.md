@@ -1,12 +1,12 @@
 # Documentation Migration
 
-The docs folder in this repo contains documentation about the PowerShell source code and build
+The docs folder in this repository contains documentation about the PowerShell source code and build
 environment.
 
-User-focused documentation has been moved to the [MicrosoftDocs/PowerShell-Docs][01] repo.
+User-focused documentation has been moved to the [MicrosoftDocs/PowerShell-Docs][01] repository.
 
-The files from the `learning-powershell` folder have been removed from this repo. This list provides
-links to suitable replacements.
+The files from the `learning-powershell` folder have been removed from this repository. This list
+provides links to suitable replacements.
 
 - **create-powershell-scripts.md**
   - [about_Scripts][06]
