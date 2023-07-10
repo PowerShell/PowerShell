@@ -1,2 +1,4 @@
 # Ignore in-line code blocks
 `[^`]*`
+# Ignore thanks messages
+\(Thanks @([^\)]*)\)
