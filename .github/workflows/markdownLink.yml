@@ -69,6 +69,7 @@ jobs:
         checkout: false
         extra_dictionaries:
           cspell:software-terms/src/software-terms.txt
+          cspell:cpp/src/cpp.txt
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # only_check_changed_files: 1
         
