@@ -15,6 +15,13 @@
           "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
       },
       {
+          "url": "microsoft-rhel9.0-prod",
+          "distribution": [
+              "stable"
+          ],
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
+      },
+      {
           "url": "microsoft-rhel7.3-prod",
           "distribution": [
               "trusty"
