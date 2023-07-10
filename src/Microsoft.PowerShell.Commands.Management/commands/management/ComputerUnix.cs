@@ -151,12 +151,13 @@ namespace Microsoft.PowerShell.Commands
 
 #region "Internals"
 
+        private static string shutdownPath = "/usr/sbin/shutdown";
+
         /// <summary>
         /// Run shutdown command.
         /// </summary>
         protected void RunShutdown(String args) {
-            string shutdownPath = "/sbin/shutdown";
-            const string altShutdownPath = "/usr/sbin/shutdown";
+            const string altShutdownPath = "/sbin/shutdown";
 
             if (!File.Exists(shutdownPath) && File.Exists(altShutdownPath))
             {

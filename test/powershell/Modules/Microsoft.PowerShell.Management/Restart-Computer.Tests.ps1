@@ -110,7 +110,7 @@ finally
 
 Describe 'Non-admin on Unix' {
     BeforeAll {
-        if ($IsWindows -or (id -g) -eq 0) {
+        if ([environment]::IsPrivilegedProcess) {
             $IsWindowsOrSudo = $true
         }
         else {
