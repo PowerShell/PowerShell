@@ -381,6 +381,14 @@ When your pull request is created, it is checked by the CLA bot.
 If you have signed the CLA, the status check will be set to `passing`.  Otherwise, it will stay at `pending`.
 Once you sign a CLA, all your existing and future pull requests will have the status check automatically set at `passing`.
 
+## Code of Conduct Enforcement
+
+Reports of abuse will be reviewed by the PS-Committee and if it has been determined that violations of the
+Code of Conduct has occurred, then a temporary ban may be imposed.
+The duration of the temporary ban will depend on the impact and/or severity of the infraction.
+This can vary from 1 day, a few days, a week, and up to 30 days.
+Repeat offenses may result in a permanent ban from the PowerShell org.
+
 [testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
 [running-tests-outside-of-ci]: ../docs/testing-guidelines/testing-guidelines.md#running-tests-outside-of-ci
 [issue-management]: ../docs/maintainers/issue-management.md

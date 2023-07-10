@@ -764,12 +764,10 @@ namespace Microsoft.PowerShell.Commands
                 while (!_deserializer.Done() && count < first)
                 {
                     object result = _deserializer.Deserialize();
-                    PSObject psObject = result as PSObject;
 
-                    if (psObject != null)
+                    if (result is PSObject psObject)
                     {
-                        ICollection c = psObject.BaseObject as ICollection;
-                        if (c != null)
+                        if (psObject.BaseObject is ICollection c)
                         {
                             foreach (object o in c)
                             {

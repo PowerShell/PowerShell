@@ -4044,6 +4044,7 @@ namespace System.Management.Automation.Runspaces
 [OutputType([System.Management.Automation.CommandCompletion])]
 Param(
     [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 0)]
+    [AllowEmptyString()]
     [string] $inputScript,
 
     [Parameter(ParameterSetName = 'ScriptInputSet', Position = 1)]
@@ -4081,7 +4082,7 @@ End
             <#options#>          $options)
     }
 }
-        ";
+";
 
         /// <summary>
         /// This is the default function to use for clear-host.
@@ -4533,12 +4534,32 @@ end {
             builtinVariables.Add(
                 new SessionStateVariableEntry(
                     SpecialVariables.NativeArgumentPassing,
-                    Platform.IsWindows ? NativeArgumentPassingStyle.Windows : NativeArgumentPassingStyle.Standard,
+                    GetPassingStyle(),
                     RunspaceInit.NativeCommandArgumentPassingDescription,
                     ScopedItemOptions.None,
                     new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
 
             BuiltInVariables = builtinVariables.ToArray();
+        }
+
+        /// <summary>
+        /// Assigns the default behavior for native argument passing.
+        /// If the system is non-Windows, we will return Standard.
+        /// If the experimental feature is enabled, we will return Windows.
+        /// Otherwise, we will return Legacy.
+        /// </summary>
+        private static NativeArgumentPassingStyle GetPassingStyle()
+        {
+#if UNIX
+            return NativeArgumentPassingStyle.Standard;
+#else
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSWindowsNativeCommandArgPassing))
+            {
+                return NativeArgumentPassingStyle.Windows;
+            }
+
+            return NativeArgumentPassingStyle.Legacy;
+#endif
         }
 
         internal static readonly SessionStateVariableEntry[] BuiltInVariables;

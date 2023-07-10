@@ -234,8 +234,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             outputCredential = null;
             if (options != null)
             {
-                DComSessionOptions dcomOptions = options as DComSessionOptions;
-                if (dcomOptions != null)
+                if (options is DComSessionOptions dcomOptions)
                 {
                     bool conflict = false;
                     string parameterName = string.Empty;

@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _skipCertificateCheck;
         private bool _noProxy;
         private bool _disposed;
-        private int _timeoutSec;
+        private TimeSpan _connectionTimeout;
         private UnixDomainSocketEndPoint? _unixSocket;
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal bool SkipCertificateCheck { set => SetStructVar(ref _skipCertificateCheck, value); }
 
-        internal int TimeoutSec { set => SetStructVar(ref _timeoutSec, value); }
+        internal TimeSpan ConnectionTimeout { set => SetStructVar(ref _connectionTimeout, value); }
 
         internal UnixDomainSocketEndPoint UnixSocket { set => SetClassVar(ref _unixSocket, value); }
 
@@ -254,7 +254,7 @@ namespace Microsoft.PowerShell.Commands
             // Check timeout setting (in seconds)
             return new HttpClient(handler)
             {
-                Timeout = _timeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : TimeSpan.FromSeconds(_timeoutSec)
+                Timeout = _connectionTimeout
             };
         }
 

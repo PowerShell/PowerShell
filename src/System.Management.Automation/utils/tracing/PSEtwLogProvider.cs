@@ -219,6 +219,20 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
+        /// Provider interface function for logging WDAC audit event.
+        /// </summary>
+        /// <param name="title">Title of WDAC audit event.</param>
+        /// <param name="message">WDAC audit event message.</param>
+        /// <param name="fqid">FullyQualifiedId of WDAC audit event.</param>
+        internal override void LogWDACAuditEvent(
+            string title,
+            string message,
+            string fqid)
+        {
+            WriteEvent(PSEventId.WDAC_Audit, PSChannel.Operational, PSOpcode.Method, PSLevel.Informational, PSTask.WDACAudit, (PSKeyword)0x0, title, message, fqid);
+        }
+
+        /// <summary>
         /// Provider interface function for logging provider lifecycle event.
         /// </summary>
         /// <param name="logContext"></param>

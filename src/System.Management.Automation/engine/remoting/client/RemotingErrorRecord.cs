@@ -11,7 +11,6 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Error record in remoting cases.
     /// </summary>
-    [Serializable]
     public class RemotingErrorRecord : ErrorRecord
     {
         /// <summary>
@@ -58,31 +57,14 @@ namespace System.Management.Automation.Runspaces
         #region ISerializable implementation
 
         /// <summary>
-        /// Serializer method for class.
-        /// </summary>
-        /// <param name="info">Serializer information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-
-            info.AddValue("RemoteErrorRecord_OriginInfo", _originInfo);
-        }
-
-        /// <summary>
         /// Deserializer constructor.
         /// </summary>
         /// <param name="info">Serializer information.</param>
         /// <param name="context">Streaming context.</param>
-        protected RemotingErrorRecord(SerializationInfo info, StreamingContext context)
-            : base(info, context)
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
+        protected RemotingErrorRecord(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            _originInfo = (OriginInfo)info.GetValue("RemoteErrorRecord_OriginInfo", typeof(OriginInfo));
+            throw new NotSupportedException();
         }
 
         #endregion
@@ -294,7 +276,6 @@ namespace System.Management.Automation.Remoting
     /// In case of output objects, the information
     /// should directly be added to the object as
     /// properties</remarks>
-    [Serializable]
     [DataContract()]
     public class OriginInfo
     {

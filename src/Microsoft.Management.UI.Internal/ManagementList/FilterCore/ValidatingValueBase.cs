@@ -15,7 +15,6 @@ namespace Microsoft.Management.UI.Internal
     /// The ValidatingValueBase class provides basic services for base
     /// classes to support validation via the IDataErrorInfo interface.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public abstract class ValidatingValueBase : IDataErrorInfo, INotifyPropertyChanged
     {

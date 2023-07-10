@@ -1,10 +1,13 @@
 [
   "PSCommandNotFoundSuggestion",
   "PSCommandWithArgs",
+  "PSConstrainedAuditLogging",
   "PSCustomTableHeaderLabelDecoration",
   "PSFeedbackProvider",
   "PSLoadAssemblyFromNativeCode",
   "PSModuleAutoLoadSkipOfflineFiles",
   "PSNativeCommandErrorActionPreference",
-  "PSSubsystemPluginModel"
+  "PSNativeCommandPreserveBytePipe",
+  "PSSubsystemPluginModel",
+  "PSWindowsNativeCommandArgPassing"
 ]

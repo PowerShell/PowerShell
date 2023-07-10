@@ -19,7 +19,6 @@ namespace System.Management.Automation.Runspaces
     /// Exception thrown when state of the runspace is different from
     /// expected state of runspace.
     /// </summary>
-    [Serializable]
     public class InvalidRunspaceStateException : SystemException
     {
         /// <summary>
@@ -96,9 +95,10 @@ namespace System.Management.Automation.Runspaces
         /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected InvalidRunspaceStateException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion

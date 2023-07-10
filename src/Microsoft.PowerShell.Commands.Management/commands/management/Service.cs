@@ -903,8 +903,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner == null
+                if (e.InnerException is not Win32Exception eInner
                     || eInner.NativeErrorCode != NativeMethods.ERROR_SERVICE_ALREADY_RUNNING)
                 {
                     exception = e;
@@ -1020,9 +1019,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner =
-                    e.InnerException as Win32Exception;
-                if (eInner == null
+                if (e.InnerException is not Win32Exception eInner
                     || eInner.NativeErrorCode != NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     exception = e;
@@ -1117,8 +1114,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner != null
+                if (e.InnerException is Win32Exception eInner
                     && eInner.NativeErrorCode == NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     serviceNotRunning = true;
@@ -1198,8 +1194,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException e)
             {
-                Win32Exception eInner = e.InnerException as Win32Exception;
-                if (eInner != null
+                if (e.InnerException is Win32Exception eInner
                     && eInner.NativeErrorCode == NativeMethods.ERROR_SERVICE_NOT_ACTIVE)
                 {
                     serviceNotRunning = true;
@@ -2524,7 +2519,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Non-terminating errors occurring in the service noun commands.
     /// </summary>
-    [Serializable]
     public class ServiceCommandException : SystemException
     {
         #region ctors
@@ -2566,25 +2560,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info"></param>
         /// <param name="context"></param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8, hence this method is now marked as obsolete", DiagnosticId = "SYSLIB0051")]
         protected ServiceCommandException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-            ArgumentNullException.ThrowIfNull(info);
-
-            _serviceName = info.GetString("ServiceName");
+            throw new NotSupportedException();
         }
-        /// <summary>
-        /// Serializer.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            ArgumentNullException.ThrowIfNull(info);
 
-            base.GetObjectData(info, context);
-            info.AddValue("ServiceName", _serviceName);
-        }
         #endregion Serialization
 
         #region Properties

@@ -4,6 +4,7 @@
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -41,6 +42,16 @@ namespace Microsoft.PowerShell.Commands
             if (Context.HasRunspaceEverUsedConstrainedLanguageMode)
             {
                 myScriptBlock.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+            }
+
+            if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+            {
+                SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
+                    title: UtilityCommonStrings.IEXWDACLogTitle,
+                    message: UtilityCommonStrings.IEXWDACLogMessage,
+                    fqid: "InvokeExpressionCmdletConstrained",
+                    dropIntoDebugger: true);
             }
 
             var emptyArray = Array.Empty<object>();
