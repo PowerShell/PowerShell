@@ -31,8 +31,8 @@ The [PoshCode][03] unofficial guide is our reference.
 
 ## Why didn't an error throw an exception?
 
-Error handling in PowerShell is a bit weird, as not all errors result in catchable exceptions by
-default. Setting `$ErrorActionPreference = 'Stop'` will likely do what you want; that is, cause
+Error handling in PowerShell is unique, as not all errors result in catchable exceptions by default.
+Setting `$ErrorActionPreference = 'Stop'` will likely do what you want; that is, cause
 non-terminating errors instead to terminate. Read the [GitHub issue][02] for more information.
 
 ## Where do I get the PowerShell Core SDK package?
