@@ -70,6 +70,9 @@ jobs:
         extra_dictionaries:
           cspell:software-terms/src/software-terms.txt
           cspell:cpp/src/cpp.txt
+          cspell:powershell/powershell.txt
+          cspell:win32/src/win32.txt
+          cspell:filetypes/filetypes.txt
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # only_check_changed_files: 1
         
