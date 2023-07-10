@@ -4627,7 +4627,9 @@ namespace System.Management.Automation
                         int index = pathInfo.Drive.Root.EndsWith(provider.ItemSeparator)
                             ? pathInfo.Drive.Root.Length - 1
                             : pathInfo.Drive.Root.Length;
-                        basePath = string.Concat(pathInfo.Drive.Name, ":", pathInfo.ProviderPath.AsSpan(index));
+                        basePath = pathInfo.Drive.VolumeSeparatedByColon
+                            ? string.Concat(pathInfo.Drive.Name, ":", pathInfo.ProviderPath.AsSpan(index))
+                            : string.Concat(pathInfo.Drive.Name, pathInfo.ProviderPath.AsSpan(index));
                     }
 
                     basePath = basePath.EndsWith(provider.ItemSeparator)
