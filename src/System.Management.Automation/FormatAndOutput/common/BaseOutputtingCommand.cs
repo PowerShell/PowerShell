@@ -1383,9 +1383,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <param name="fed">FormatEntryData to process.</param>
             internal override void ProcessPayload(FormatEntryData fed)
             {
-                if (fed.formatEntryInfo is not ComplexViewEntry cve || cve.formatValueList == null)
-                    return;
-                _writer.WriteObject(cve.formatValueList);
+                if (fed.formatEntryInfo is ComplexViewEntry cve && cve.formatValueList is not null)
+                {
+                    _writer.WriteObject(cve.formatValueList);
+                }
             }
 
             private readonly ComplexWriter _writer = new ComplexWriter();
