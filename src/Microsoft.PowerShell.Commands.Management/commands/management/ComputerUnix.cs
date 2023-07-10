@@ -10,6 +10,8 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Runtime.InteropServices;
 
+#nullable enable
+
 namespace Microsoft.PowerShell.Commands
 {
 #region Restart-Computer
@@ -96,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
     public class CommandLineCmdletBase : PSCmdlet, IDisposable
     {
 #region Private Members
-        private Process _process = null;
+        private Process? _process = null;
 #endregion
 
 #region "IDisposable Members"
@@ -151,24 +153,29 @@ namespace Microsoft.PowerShell.Commands
 
 #region "Internals"
 
-        private static string shutdownPath = "/usr/sbin/shutdown";
+        private static string? shutdownPath;
 
         /// <summary>
         /// Run shutdown command.
         /// </summary>
         protected void RunShutdown(String args) {
-            const string altShutdownPath = "/sbin/shutdown";
+            if (shutdownPath is null)
+            {
+                CommandInfo cmdinfo = CommandDiscovery.LookupCommandInfo(
+                    "shutdown", CommandTypes.Application,
+                    SearchResolutionOptions.None, CommandOrigin.Internal, this.Context);
 
-            if (!File.Exists(shutdownPath) && File.Exists(altShutdownPath))
-            {
-                shutdownPath = altShutdownPath;
-            }
-            else
-            {
-                ErrorRecord error = new ErrorRecord(
-                    new InvalidOperationException(ComputerResources.ShutdownCommandNotFound), "CommandNotFound", ErrorCategory.ObjectNotFound, targetObject: null);
-                WriteError(error);
-                return;
+                if (cmdinfo is not null)
+                {
+                    shutdownPath = cmdinfo.Definition;
+                }
+                else
+                {
+                    ErrorRecord error = new ErrorRecord(
+                        new InvalidOperationException(ComputerResources.ShutdownCommandNotFound), "CommandNotFound", ErrorCategory.ObjectNotFound, targetObject: null);
+                    WriteError(error);
+                    return;
+                }
             }
 
             _process = new Process()

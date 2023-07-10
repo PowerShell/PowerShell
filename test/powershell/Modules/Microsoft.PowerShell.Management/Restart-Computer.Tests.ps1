@@ -116,6 +116,8 @@ Describe 'Non-admin on Unix' {
         else {
             $IsWindowsOrSudo = $false
         }
+
+        Write-Verbose -Verbose (Get-Command shutdown | Format-List | Out-String)
     }
 
     It 'Reports error if not run under sudo' -Skip:($IsWindowsOrSudo) {
