@@ -1,3 +1,5 @@
+corehost
+PSKoans
 Invoke-PerfviewPS
 JIT.Regions.xml
 PowerShell.Regions.xml
@@ -6,3 +8,7 @@ PowerShell.wpaProfile
 PowerShell.wprp
 wpa
 wpaProfile
+2.x.
+benchmarked
+BenchmarkDotNet
+ClearlyDefined
