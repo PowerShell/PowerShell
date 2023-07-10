@@ -38,7 +38,7 @@ jobs:
       env:
         VALIDATE_ALL_CODEBASE: false
         DEFAULT_BRANCH: master
-        FILTER_REGEX_INCLUDE: .*\.md
+        FILTER_REGEX_INCLUDE: .*\.md$
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   markdown-spelling:
     runs-on: ubuntu-latest
