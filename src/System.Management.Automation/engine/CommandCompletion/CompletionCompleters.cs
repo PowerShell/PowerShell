@@ -4618,9 +4618,21 @@ namespace System.Management.Automation
                 string basePath;
                 if (!relativePaths)
                 {
-                    basePath = dirInfo.FullName.EndsWith(provider.ItemSeparator)
-                        ? providerPrefix + dirInfo.FullName
-                        : providerPrefix + dirInfo.FullName + provider.ItemSeparator;
+                    if (pathInfo.Drive is null)
+                    {
+                        basePath = pathInfo.ProviderPath;
+                    }
+                    else
+                    {
+                        int index = pathInfo.Drive.Root.EndsWith(provider.ItemSeparator)
+                            ? pathInfo.Drive.Root.Length - 1
+                            : pathInfo.Drive.Root.Length;
+                        basePath = string.Concat(pathInfo.Drive.Name, ":", pathInfo.ProviderPath.AsSpan(index));
+                    }
+
+                    basePath = basePath.EndsWith(provider.ItemSeparator)
+                        ? providerPrefix + basePath
+                        : providerPrefix + basePath + provider.ItemSeparator;
                     basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
                 }
                 else

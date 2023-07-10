@@ -1254,6 +1254,13 @@ class InheritedClassTest : System.Attribute
         }
     }
 
+    It 'Should keep custom drive names when completing file paths' {
+        $TempDriveName = "asdf"
+        $null = New-PSDrive -Name $TempDriveName -PSProvider FileSystem -Root $HOME
+        (TabExpansion2 -inputScript "${TempDriveName}:\").CompletionMatches[0].CompletionText | Should -BeLike "${TempDriveName}:*"
+        Remove-PSDrive -Name $TempDriveName
+    }
+
     Context "Cmdlet name completion" {
         BeforeAll {
             $testCases = @(
