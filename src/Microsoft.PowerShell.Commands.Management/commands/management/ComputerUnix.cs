@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
 #region "Internals"
 
         /// <summary>
-        /// Run shutdown command
+        /// Run shutdown command.
         /// </summary>
         protected void RunShutdown(String args) {
             string shutdownPath = "/sbin/shutdown";
