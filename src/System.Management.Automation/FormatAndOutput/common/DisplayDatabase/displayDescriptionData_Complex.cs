@@ -231,10 +231,6 @@ namespace System.Management.Automation
                 return cie;
             }
 
-            if (token is FieldPropertyToken fpt)
-            {
-            }
-
             Diagnostics.Assert(false, "Unexpected formatting token kind");
 
             return null;
