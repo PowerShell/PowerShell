@@ -65,7 +65,6 @@ jobs:
         suppress_push_for_open_pull_request: 1
         post_comment: 0
         use_sarif: 1
-        experimental_path: introspected
         unknown_word_limit: 10
         checkout: false
         extra_dictionaries:
