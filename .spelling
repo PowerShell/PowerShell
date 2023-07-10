@@ -1338,6 +1338,13 @@ microsoft.extensions.objectpool
 microsoft.codeanalysis.analyzers
 benchmarkdotnet
 winforms
+MicrosoftDocs
+about_Scripts
+debugging-from-commandline
+about_Object_Creation
+about_Functions_Advanced
+Microsoft.PowerShell.SDK
+NuGet.org.
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1740,3 +1747,9 @@ preview.3.23178.7
 PoolNames
 techguy16
 sdwheeler
+MicrosoftDocs
+about_Scripts
+about_Object_Creation
+about_Functions_Advanced
+Microsoft.PowerShell.SDK
+NuGet.org.
