@@ -110,17 +110,13 @@ finally
 
 Describe 'Non-admin on Unix' {
     BeforeAll {
-        if ([environment]::IsPrivilegedProcess) {
-            $IsWindowsOrSudo = $true
+        $skip = $false
+        if ($IsWindows -or [environment]::IsPrivilegedProcess -or ($null -eq (Get-Command shutdown -CommandType Application -ErrorAction Ignore))) {
+            $skip = $true
         }
-        else {
-            $IsWindowsOrSudo = $false
-        }
-
-        Write-Verbose -Verbose (Get-Command shutdown | Format-List | Out-String)
     }
 
-    It 'Reports error if not run under sudo' -Skip:($IsWindowsOrSudo) {
+    It 'Reports error if not run under sudo' -Skip:($skip) {
         { Restart-Computer -ErrorAction Stop } | Should -Throw -ErrorId "CommandFailed,Microsoft.PowerShell.Commands.RestartComputerCommand"
     }
 }

@@ -61,15 +61,14 @@ finally
 
 Describe 'Non-admin on Unix' {
     BeforeAll {
-        if ([environment]::IsPrivilegedProcess) {
-            $IsWindowsOrSudo = $true
+        BeforeAll {
+            $skip = $false
+            if ($IsWindows -or [environment]::IsPrivilegedProcess -or ($null -eq (Get-Command shutdown -CommandType Application -ErrorAction Ignore))) {
+                $skip = $true
+            }
         }
-        else {
-            $IsWindowsOrSudo = $false
-        }
-    }
 
-    It 'Reports error if not run under sudo' -Skip:($IsWindowsOrSudo) {
+    It 'Reports error if not run under sudo' -Skip:($skip) {
         { Stop-Computer -ErrorAction Stop } | Should -Throw -ErrorId "CommandFailed,Microsoft.PowerShell.Commands.StopComputerCommand"
     }
 }
