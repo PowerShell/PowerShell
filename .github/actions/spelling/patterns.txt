@@ -1,4 +1,8 @@
 # Ignore in-line code blocks
 `[^`]*`
+
 # Ignore thanks messages
 \(Thanks @([^\)]*)\)
+
+# Ignore anything in all caps
+[\p{P}\p{S}\s][A-Z]*[\p{P}\p{S}\s]
