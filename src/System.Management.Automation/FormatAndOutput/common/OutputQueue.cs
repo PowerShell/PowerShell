@@ -119,10 +119,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // add only of it's not a control message
             // and it's not out of band
-            if (o is not FormatEntryData fed || fed.outOfBand)
-                return;
-
-            _currentObjectCount++;
+            if (o is FormatEntryData fed && !fed.outOfBand)
+            {
+                _currentObjectCount++;
+            }
         }
 
         private void Notify()
