@@ -212,7 +212,10 @@ namespace System.Management.Automation
 
             InvocationInfo invocationInfo = null;
             if (exception is IContainsErrorRecord icer && icer.ErrorRecord != null)
+            {
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
+            }
+
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {
                 if (NeedToLogEngineHealthEvent(provider, executionContext))
