@@ -48,12 +48,6 @@ string2=string2
         }
     }
 
-    Context 'Data files' {
-        It 'Imports a data file' {
-            $daa
-        }
-    }
-
     Context 'BindingVariable parameter' {
         It 'BindingVariable binds positionally' {
             Import-LocalizedData data
