@@ -9,7 +9,7 @@ It includes a command-line shell, an associated scripting language and a framewo
 
 ## Windows PowerShell vs. PowerShell Core
 
-Although this repository started as a fork of the Windows PowerShell code base, changes made in this repository do not make their way back to Windows PowerShell 5.1 automatically.
+Although this repository started as a fork of the Windows PowerShell codebase, changes made in this repository do not make their way back to Windows PowerShell 5.1 automatically.
 This also means that [issues tracked here][issues] are only for PowerShell Core 6 and higher.
 Windows PowerShell specific issues should be reported with the [Feedback Hub app][feedback-hub], by choosing "Apps > PowerShell" in category.
 
