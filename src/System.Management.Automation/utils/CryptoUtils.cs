@@ -866,12 +866,10 @@ namespace System.Management.Automation.Internal
 
         internal override string EncryptSecureString(SecureString secureString)
         {
-            ServerRemoteSession session = Session as ServerRemoteSession;
-
             // session!=null check required for DRTs TestEncryptSecureString* entries in CryptoUtilsTest/UTUtils.dll
             // for newer clients, server will never initiate key exchange.
             // for server, just the session key is required to encrypt/decrypt anything
-            if ((session != null) && (session.Context.ClientCapability.ProtocolVersion >= RemotingConstants.ProtocolVersionWin8RTM))
+            if (Session is ServerRemoteSession session && session.Context.ClientCapability.ProtocolVersion >= RemotingConstants.ProtocolVersionWin8RTM)
             {
                 _rsaCryptoProvider.GenerateSessionKey();
             }
