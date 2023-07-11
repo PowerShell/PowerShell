@@ -4618,18 +4618,22 @@ namespace System.Management.Automation
                 string basePath;
                 if (!relativePaths)
                 {
-                    if (pathInfo.Drive is null)
+                    string providerName = $"{provider.ModuleName}\\{provider.Name}::";
+                    if (pathInfo.Path.StartsWith(providerName, StringComparison.OrdinalIgnoreCase))
                     {
-                        basePath = pathInfo.ProviderPath;
+                        basePath = pathInfo.Path.Substring(providerName.Length);
                     }
                     else
                     {
-                        int index = pathInfo.Drive.Root.EndsWith(provider.ItemSeparator)
-                            ? pathInfo.Drive.Root.Length - 1
-                            : pathInfo.Drive.Root.Length;
-                        basePath = pathInfo.Drive.VolumeSeparatedByColon
-                            ? string.Concat(pathInfo.Drive.Name, ":", pathInfo.ProviderPath.AsSpan(index))
-                            : string.Concat(pathInfo.Drive.Name, pathInfo.ProviderPath.AsSpan(index));
+                        providerName = $"{provider.Name}::";
+                        if (pathInfo.Path.StartsWith(providerName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            basePath = pathInfo.Path.Substring(providerName.Length);
+                        }
+                        else
+                        {
+                            basePath = pathInfo.Path;
+                        }
                     }
 
                     basePath = basePath.EndsWith(provider.ItemSeparator)
