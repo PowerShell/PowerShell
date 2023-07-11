@@ -20,7 +20,7 @@ Windows PowerShell specific issues should be reported with the [Feedback Hub app
 
 If you are new to PowerShell and would like to learn more, we recommend reviewing the [getting started][] documentation.
 
-[getting started]: https://github.com/PowerShell/PowerShell/tree/master/docs/learning-powershell
+[getting started]: https://learn.microsoft.com/powershell/scripting/learn/more-powershell-learning
 
 ## Get PowerShell
 
