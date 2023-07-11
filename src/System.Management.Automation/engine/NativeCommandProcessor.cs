@@ -70,7 +70,6 @@ namespace System.Management.Automation
         internal static MinishellStream ToMinishellStream(string stream)
         {
             Dbg.Assert(stream != null, "caller should validate the parameter");
-
             MinishellStream ms = MinishellStream.Unknown;
             if (OutputStream.Equals(stream, StringComparison.OrdinalIgnoreCase))
             {
@@ -134,7 +133,7 @@ namespace System.Management.Automation
         }
     }
 
-    #nullable enable
+#nullable enable
     /// <summary>
     /// This exception is used by the NativeCommandProcessor to indicate an error
     /// when a native command returns a non-zero exit code.
@@ -188,7 +187,7 @@ namespace System.Management.Automation
         public int ProcessId { get; }
 
     }
-    #nullable restore
+#nullable restore
 
     /// <summary>
     /// Provides way to create and execute native commands.
@@ -605,19 +604,6 @@ namespace System.Management.Automation
                     {
                         _nativeProcess = new Process() { StartInfo = startInfo };
                         _nativeProcess.Start();
-                        if (UpstreamIsNativeCommand)
-                        {
-                            SemaphoreSlim processInitialized = _processInitialized;
-                            if (processInitialized is null)
-                            {
-                                lock (_sync)
-                                {
-                                    processInitialized = _processInitialized ??= new SemaphoreSlim(0, 1);
-                                }
-                            }
-
-                            processInitialized?.Release();
-                        }
                     }
                     catch (Win32Exception)
                     {
@@ -696,6 +682,20 @@ namespace System.Management.Automation
                         }
 #endif
                     }
+                }
+
+                if (UpstreamIsNativeCommand)
+                {
+                    SemaphoreSlim processInitialized = _processInitialized;
+                    if (processInitialized is null)
+                    {
+                        lock (_sync)
+                        {
+                            processInitialized = _processInitialized ??= new SemaphoreSlim(0, 1);
+                        }
+                    }
+
+                    processInitialized?.Release();
                 }
 
                 if (this.Command.MyInvocation.PipelinePosition < this.Command.MyInvocation.PipelineLength)
@@ -1720,6 +1720,7 @@ namespace System.Management.Automation
                 ? (stackalloc Range[0x20]).Slice(0, extensionCount)
                 : new Range[extensionCount];
 
+            extensions.Clear();
             extensions = extensions.Slice(0, extensionList.Split(extensions, ';'));
             foreach (Range extension in extensions)
             {
