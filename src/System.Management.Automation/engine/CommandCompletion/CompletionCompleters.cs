@@ -4618,9 +4618,27 @@ namespace System.Management.Automation
                 string basePath;
                 if (!relativePaths)
                 {
-                    basePath = dirInfo.FullName.EndsWith(provider.ItemSeparator)
-                        ? providerPrefix + dirInfo.FullName
-                        : providerPrefix + dirInfo.FullName + provider.ItemSeparator;
+                    string providerName = $"{provider.ModuleName}\\{provider.Name}::";
+                    if (pathInfo.Path.StartsWith(providerName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        basePath = pathInfo.Path.Substring(providerName.Length);
+                    }
+                    else
+                    {
+                        providerName = $"{provider.Name}::";
+                        if (pathInfo.Path.StartsWith(providerName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            basePath = pathInfo.Path.Substring(providerName.Length);
+                        }
+                        else
+                        {
+                            basePath = pathInfo.Path;
+                        }
+                    }
+
+                    basePath = basePath.EndsWith(provider.ItemSeparator)
+                        ? providerPrefix + basePath
+                        : providerPrefix + basePath + provider.ItemSeparator;
                     basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
                 }
                 else
