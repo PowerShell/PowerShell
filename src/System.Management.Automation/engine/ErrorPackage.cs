@@ -523,7 +523,6 @@ namespace System.Management.Automation
     /// It is permitted to subclass <see cref="ErrorDetails"/>
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
-    [Serializable]
     public class ErrorDetails : ISerializable
     {
         #region Constructor
@@ -982,7 +981,6 @@ namespace System.Management.Automation
     /// <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>.
     /// rather than the actual exception, to avoid the mutual references.
     /// </remarks>
-    [Serializable]
     public class ErrorRecord : ISerializable
     {
         #region Constructor

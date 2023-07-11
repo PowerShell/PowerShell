@@ -1,0 +1,387 @@
+id: 
+name: GitOps.PullRequestIssueManagement
+description: GitOps.PullRequestIssueManagement primitive
+owner: 
+resource: repository
+disabled: false
+where: 
+configuration:
+  resourceManagementConfiguration:
+    scheduledSearches:
+    - description: 
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isPullRequest
+      - isOpen
+      - hasLabel:
+          label: Waiting on Author
+      - hasLabel:
+          label: Stale
+      - noActivitySince:
+          days: 10
+      actions:
+      - closeIssue
+    - description: 
+      frequencies:
+      - hourly:
+          hour: 3
+      filters:
+      - isPullRequest
+      - isOpen
+      - hasLabel:
+          label: Waiting on Author
+      - noActivitySince:
+          days: 15
+      - isNotLabeledWith:
+          label: Stale
+      actions:
+      - addLabel:
+          label: Stale
+      - addReply:
+          reply: This pull request has been automatically marked as stale because it has been marked as requiring author feedback but has not had any activity for **15 days**. It will be closed if no further activity occurs **within 10 days of this comment**.
+    - description: 
+      frequencies:
+      - hourly:
+          hour: 3
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-Duplicate
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as duplicate and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    - description: 
+      frequencies:
+      - hourly:
+          hour: 3
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-External
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as external and has not had any activity for **1 day**. It has been be closed for housekeeping purposes.
+      - closeIssue
+    - description: 
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-Answered
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as answered and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    - description: 
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-Fixed
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as fixed and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    - description: 
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isPullRequest
+      - isOpen
+      - isNotLabeledWith:
+          label: Waiting on Author
+      - noActivitySince:
+          days: 7
+      - isNotLabeledWith:
+          label: Stale
+      - isNotLabeledWith:
+          label: Review - Needed
+      - isNotLabeledWith:
+          label: Review - Committee
+      - isNotDraftPullRequest
+      actions:
+      - addLabel:
+          label: Review - Needed
+      - addReply:
+          reply: >-
+            This pull request has been automatically marked as Review Needed because it has been there has not been any activity for **7 days**.
+
+            Maintainer, please provide feedback and/or mark it as `Waiting on Author`
+    - description: 
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isOpen
+      - isDraftPullRequest
+      - isNotLabeledWith:
+          label: Review - Committee
+      - isNotLabeledWith:
+          label: Waiting on Author
+      - isNotLabeledWith:
+          label: Stale
+      - noActivitySince:
+          days: 3
+      actions:
+      - addLabel:
+          label: Waiting on Author
+    - description: 
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-Declined
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as declined and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    - description: 
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-By Design
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as by-design and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    - description: 
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-Won't Fix
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as won't fix and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    - description: 
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isOpen
+      - isIssue
+      - hasLabel:
+          label: Waiting on Author
+      - noActivitySince:
+          days: 7
+      actions:
+      - addReply:
+          reply: This issue has been marked as "Waiting on Author" and has not had any activity for **7 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    eventResponderTasks:
+    - if:
+      - payloadType: Pull_Request
+      - hasLabel:
+          label: AutoMerge
+      then:
+      - enableAutoMerge:
+          mergeMethod: Squash
+      description: 
+    - if:
+      - payloadType: Pull_Request
+      - labelRemoved:
+          label: AutoMerge
+      then:
+      - disableAutoMerge
+      description: 
+    - if:
+      - payloadType: Pull_Request_Review
+      - isAction:
+          action: Submitted
+      - isReviewState:
+          reviewState: Changes_requested
+      then:
+      - addLabel:
+          label: Waiting on Author
+      - removeLabel:
+          label: Review - Needed
+      description: 
+    - if:
+      - payloadType: Pull_Request
+      - isActivitySender:
+          issueAuthor: True
+      - not:
+          isAction:
+            action: Closed
+      - hasLabel:
+          label: Waiting on Author
+      - not:
+          titleContains:
+            pattern: "(WIP|Work in progress|\U0001F6A7)"
+            isRegex: True
+      then:
+      - removeLabel:
+          label: Waiting on Author
+      description: 
+    - if:
+      - payloadType: Issue_Comment
+      - isActivitySender:
+          issueAuthor: True
+      - hasLabel:
+          label: Waiting on Author
+      then:
+      - removeLabel:
+          label: Waiting on Author
+      description: 
+    - if:
+      - payloadType: Pull_Request_Review
+      - isActivitySender:
+          issueAuthor: True
+      - hasLabel:
+          label: Waiting on Author
+      then:
+      - removeLabel:
+          label: Waiting on Author
+      description: 
+    - if:
+      - payloadType: Pull_Request
+      - not:
+          isAction:
+            action: Closed
+      - hasLabel:
+          label: Stale
+      - isActivitySender:
+          issueAuthor: True
+      then:
+      - removeLabel:
+          label: Stale
+      description: 
+    - if:
+      - payloadType: Issue_Comment
+      - hasLabel:
+          label: Stale
+      then:
+      - removeLabel:
+          label: Stale
+      description: 
+    - if:
+      - payloadType: Pull_Request_Review
+      - hasLabel:
+          label: Stale
+      then:
+      - removeLabel:
+          label: Stale
+      description: 
+    - if:
+      - payloadType: Pull_Request
+      - not: isAssignedToSomeone
+      - isAction:
+          action: Opened
+      then:
+      - assignTo:
+          users:
+              - TravisEz13
+              - daxian-dbw
+              - adityapatwardhan
+              - iSazonov
+              - SeeminglyScience       
+      description: 
+    - if:
+      - payloadType: Issue_Comment
+      then:
+      - cleanEmailReply
+      description: 
+    - if:
+      - payloadType: Pull_Request
+      - hasLabel:
+          label: Review - Needed
+      - or:
+        - isAction:
+            action: Null
+        - isAction:
+            action: Closed
+        - isAction:
+            action: Reopened
+        - isAction:
+            action: Assigned
+        - isAction:
+            action: Unassigned
+        - isAction:
+            action: Unlabeled
+      - or:
+        - activitySenderHasPermission:
+            permission: Admin
+        - isActivitySender:
+            user: iSazonov
+            issueAuthor: False
+      then:
+      - removeLabel:
+          label: Review - Needed
+      description: 
+    - if:
+      - payloadType: Issue_Comment
+      - hasLabel:
+          label: Review - Needed
+      - or:
+        - activitySenderHasPermission:
+            permission: Admin
+        - isActivitySender:
+            user: iSazonov
+            issueAuthor: False
+      then:
+      - removeLabel:
+          label: Review - Needed
+      description: 
+    - if:
+      - payloadType: Issues
+      - isAction:
+          action: Closed
+      then:
+      - removeLabel:
+          label: Needs-Triage
+      description: 
+    - if:
+      - payloadType: Pull_Request
+      then:
+      - inPrLabel:
+          label: In-PR
+      description: 
+    - if:
+      - payloadType: Issue_Comment
+      - isActivitySender:
+          issueAuthor: True
+      - hasLabel:
+          label: Waiting on Author
+      then:
+      - removeLabel:
+          label: Waiting on Author
+      description: 
+onFailure: 
+onSuccess: 

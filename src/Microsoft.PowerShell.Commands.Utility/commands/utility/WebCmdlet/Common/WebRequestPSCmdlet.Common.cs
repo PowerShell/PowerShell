@@ -266,11 +266,25 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter DisableKeepAlive { get; set; }
 
         /// <summary>
-        /// Gets or sets the TimeOut property.
+        /// Gets or sets the ConnectionTimeoutSeconds property.
         /// </summary>
+        /// <remarks>
+        /// This property applies to sending the request and receiving the response headers only.
+        /// </remarks>
+        [Alias("TimeoutSec")]
         [Parameter]
         [ValidateRange(0, int.MaxValue)]
-        public virtual int TimeoutSec { get; set; }
+        public virtual int ConnectionTimeoutSeconds { get; set; }
+
+        /// <summary>
+        /// Gets or sets the OperationTimeoutSeconds property.
+        /// </summary>
+        /// <remarks>
+        /// This property applies to each read operation when receiving the response body.
+        /// </remarks>
+        [Parameter]
+        [ValidateRange(0, int.MaxValue)]
+        public virtual int OperationTimeoutSeconds { get; set; }
 
         /// <summary>
         /// Gets or sets the Headers property.
@@ -570,7 +584,7 @@ namespace Microsoft.PowerShell.Commands
                             string respVerboseMsg = contentLength is null
                                 ? string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseNoSizeVerboseMsg, response.Version, contentType)
                                 : string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.WebResponseVerboseMsg, response.Version, contentLength, contentType);
-                            
+
                             WriteVerbose(respVerboseMsg);
 
                             bool _isSuccess = response.IsSuccessStatusCode;
@@ -621,12 +635,19 @@ namespace Microsoft.PowerShell.Commands
                                 string detailMsg = string.Empty;
                                 try
                                 {
-                                    string error = StreamHelper.GetResponseString(response, _cancelToken.Token);
+                                    // We can't use ReadAsStringAsync because it doesn't have per read timeouts
+                                    TimeSpan perReadTimeout = ConvertTimeoutSecondsToTimeSpan(OperationTimeoutSeconds);
+                                    string characterSet = WebResponseHelper.GetCharacterSet(response);
+                                    var responseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
+                                    int initialCapacity = (int)Math.Min(contentLength ?? StreamHelper.DefaultReadBuffer, StreamHelper.DefaultReadBuffer);
+                                    var bufferedStream = new WebResponseContentMemoryStream(responseStream, initialCapacity, this, contentLength, perReadTimeout, _cancelToken.Token);
+                                    string error = StreamHelper.DecodeStream(bufferedStream, characterSet, out Encoding encoding, perReadTimeout, _cancelToken.Token);
                                     detailMsg = FormatErrorMessage(error, contentType);
                                 }
-                                catch
+                                catch (Exception ex)
                                 {
                                     // Catch all
+                                    er.ErrorDetails = new ErrorDetails(ex.ToString());
                                 }
 
                                 if (!string.IsNullOrEmpty(detailMsg))
@@ -656,6 +677,11 @@ namespace Microsoft.PowerShell.Commands
                                 WriteError(er);
                             }
                         }
+                        catch (TimeoutException ex)
+                        {
+                            ErrorRecord er = new(ex, "OperationTimeoutReached", ErrorCategory.OperationTimeout, null);
+                            ThrowTerminatingError(er);
+                        }
                         catch (HttpRequestException ex)
                         {
                             ErrorRecord er = new(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
@@ -666,7 +692,7 @@ namespace Microsoft.PowerShell.Commands
 
                             ThrowTerminatingError(er);
                         }
-                        finally 
+                        finally
                         {
                             _cancelToken?.Dispose();
                             _cancelToken = null;
@@ -970,7 +996,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        webProxy.UseDefaultCredentials =  ProxyUseDefaultCredentials;
+                        webProxy.UseDefaultCredentials = ProxyUseDefaultCredentials;
                     }
 
                     // We don't want to update the WebSession unless the proxies are different
@@ -1020,7 +1046,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
             }
 
-            WebSession.TimeoutSec = TimeoutSec;
+            WebSession.ConnectionTimeout = ConvertTimeoutSecondsToTimeSpan(ConnectionTimeoutSeconds);
         }
 
         internal virtual HttpClient GetHttpClient(bool handleRedirect)
@@ -1263,8 +1289,24 @@ namespace Microsoft.PowerShell.Commands
                 Uri currentUri = currentRequest.RequestUri;
 
                 _cancelToken = new CancellationTokenSource();
-                response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+                try
+                {
+                    response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+                }
+                catch (TaskCanceledException ex)
+                {
+                    if (ex.InnerException is TimeoutException)
+                    {
+                        // HTTP Request timed out
+                        ErrorRecord er = new(ex, "ConnectionTimeoutReached", ErrorCategory.OperationTimeout, null);
+                        ThrowTerminatingError(er);
+                    }
+                    else
+                    {
+                        throw;
+                    }
 
+                }
                 if (handleRedirect
                     && _maximumRedirection is not 0
                     && IsRedirectCode(response.StatusCode)
@@ -1388,6 +1430,9 @@ namespace Microsoft.PowerShell.Commands
         #endregion Virtual Methods
 
         #region Helper Methods
+
+        internal static TimeSpan ConvertTimeoutSecondsToTimeSpan(int timeout) => timeout > 0 ? TimeSpan.FromSeconds(timeout) : Timeout.InfiniteTimeSpan;
+
         private Uri PrepareUri(Uri uri)
         {
             uri = CheckProtocol(uri);
@@ -1720,9 +1765,7 @@ namespace Microsoft.PowerShell.Commands
         private static StringContent GetMultipartStringContent(object fieldName, object fieldValue)
         {
             ContentDispositionHeaderValue contentDisposition = new("form-data");
-
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
+            contentDisposition.Name = LanguagePrimitives.ConvertTo<string>(fieldName);
 
             StringContent result = new(LanguagePrimitives.ConvertTo<string>(fieldValue));
             result.Headers.ContentDisposition = contentDisposition;
@@ -1738,9 +1781,7 @@ namespace Microsoft.PowerShell.Commands
         private static StreamContent GetMultipartStreamContent(object fieldName, Stream stream)
         {
             ContentDispositionHeaderValue contentDisposition = new("form-data");
-
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<string>(fieldName) + "\"";
+            contentDisposition.Name = LanguagePrimitives.ConvertTo<string>(fieldName);
 
             StreamContent result = new(stream);
             result.Headers.ContentDisposition = contentDisposition;
@@ -1758,8 +1799,8 @@ namespace Microsoft.PowerShell.Commands
         {
             StreamContent result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
 
-            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
-            result.Headers.ContentDisposition.FileName = "\"" + file.Name + "\"";
+            result.Headers.ContentDisposition.FileName = file.Name;
+            result.Headers.ContentDisposition.FileNameStar = file.Name;
 
             return result;
         }

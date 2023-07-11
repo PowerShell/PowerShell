@@ -9,7 +9,6 @@ namespace Microsoft.Management.UI.Internal
     /// <summary>
     /// The base class for all filtering rules.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public abstract class FilterRule : IEvaluate
     {
@@ -39,11 +38,6 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         protected FilterRule()
         {
-            // HACK : Is there a way to statically enforce this? No... not ISerializable...
-            if (!this.GetType().IsSerializable)
-            {
-                throw new InvalidOperationException("FilterRules must be serializable.");
-            }
         }
 
         /// <summary>

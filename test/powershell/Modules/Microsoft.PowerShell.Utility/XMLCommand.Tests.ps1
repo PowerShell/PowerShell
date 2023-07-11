@@ -244,11 +244,15 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 	}
 
 	It "Import-Clixml StopProcessing should succeed" {
-		1,2,3 | Export-Clixml -Path $testfile
+        # create a file to use for import. It should have some complexity
+		Get-Process -Id $PID | Export-Clixml -Path $testfile
+        # create a large number of files to import
+        $script = '$f = ,"' + $testfile + '" * 1000'
 		$ps = [PowerShell]::Create()
-		$ps.AddCommand("Get-Process")
-		$ps.AddCommand("Import-CliXml")
-		$ps.AddParameter("Path", $testfile)
+        $ps.AddScript($script)
+		$ps.Invoke()
+        $ps.Commands.Clear()
+		$ps.AddScript('$null = Import-CliXml -Path $f')
 		$ps.BeginInvoke()
 		$ps.Stop()
 		$ps.InvocationStateInfo.State | Should -Be "Stopped"

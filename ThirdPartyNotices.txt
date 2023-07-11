@@ -238,34 +238,19 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonSchema.Net 4.1.1 - MIT
+JsonSchema.Net 4.1.5 - MIT
 
 
-(c) Microsoft 2023
-Copyright (c) 2022 Greg Dennis
 
 MIT License
 
-Copyright (c) 2022 Greg Dennis
+Copyright (c) <year> <copyright holders>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---------------------------------------------------------
 
@@ -361,6 +346,8 @@ SOFTWARE.
 Microsoft.CodeAnalysis.Common 4.6.0 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) .NET Foundation and Contributors
 
 MIT License
 
@@ -379,6 +366,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.CodeAnalysis.CSharp 4.6.0 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) Microsoft Corporation
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) Microsoft Corporation. Alle Rechte
 
 MIT License
 
@@ -432,10 +423,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.PowerShell.MarkdownRender 7.2.0 - MIT
+Microsoft.PowerShell.MarkdownRender 7.2.1 - MIT
 
 
-(c) Microsoft Corporation.
+(c) Microsoft Corporation
 (c) Microsoft Corporation. PowerShell's Markdown Rendering project PowerShell Markdown Renderer
 
 MIT License
@@ -705,7 +696,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 7.0.1 - MIT
+Microsoft.Windows.Compatibility 7.0.4 - MIT
 
 
 (c) Microsoft Corporation
@@ -2384,7 +2375,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.DirectoryServices.Protocols 7.0.0 - MIT
+System.DirectoryServices.Protocols 7.0.1 - MIT
 
 
 (c) Microsoft Corporation
@@ -2789,7 +2780,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Management 7.0.1 - MIT
+System.Management 7.0.2 - MIT
 
 
 (c) Microsoft Corporation
@@ -3470,7 +3461,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.Pkcs 7.0.1 - MIT
+System.Security.Cryptography.Pkcs 7.0.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -4124,7 +4115,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceProcess.ServiceController 7.0.0 - MIT
+System.ServiceProcess.ServiceController 7.0.1 - MIT
 
 
 (c) Microsoft Corporation
@@ -4603,12 +4594,9 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Web.Services.Description 4.9.0 - MIT
+System.Web.Services.Description 4.10.0 - MIT
 
 
-(c) Microsoft Corporation.
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
 
 The MIT License (MIT)
 

@@ -611,7 +611,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the name and version tuple of a PSSnapin.
     /// </summary>
-    [Serializable]
     public class PSSnapInSpecification
     {
         internal PSSnapInSpecification(string psSnapinName)
