@@ -191,18 +191,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         token = rowItem.formatTokenList[0];
                     if (token != null)
                     {
-                        FieldPropertyToken fpt = token as FieldPropertyToken;
-                        if (fpt != null)
+                        if (token is FieldPropertyToken fpt)
                         {
                             ci.label = fpt.expression.expressionValue;
                         }
-                        else
+                        else if (token is TextToken tt)
                         {
-                            TextToken tt = token as TextToken;
-                            if (tt != null)
-                            {
-                                ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
-                            }
+                            ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                         }
                     }
                     else
