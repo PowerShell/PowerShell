@@ -682,20 +682,12 @@ namespace System.Management.Automation
                         }
 #endif
                     }
-                }
 
-                if (UpstreamIsNativeCommand)
-                {
-                    SemaphoreSlim processInitialized = _processInitialized;
-                    if (processInitialized is null)
+                    if (UpstreamIsNativeCommand)
                     {
-                        lock (_sync)
-                        {
-                            processInitialized = _processInitialized ??= new SemaphoreSlim(0, 1);
-                        }
+                        _processInitialized ??= new SemaphoreSlim(0, 1);
+                        _processInitialized.Release();
                     }
-
-                    processInitialized?.Release();
                 }
 
                 if (this.Command.MyInvocation.PipelinePosition < this.Command.MyInvocation.PipelineLength)
