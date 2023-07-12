@@ -13,7 +13,6 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
@@ -1701,7 +1700,6 @@ namespace System.Management.Automation
             "Performance",
             "CA1822:Mark members as static",
             Justification = "Accesses instance members in preprocessor branch.")]
-        [SkipLocalsInit]
         private bool IsExecutable(string path)
         {
 #if UNIX
@@ -1709,22 +1707,21 @@ namespace System.Management.Automation
 #else
 
             string myExtension = System.IO.Path.GetExtension(path);
-            string pathext = Environment.GetEnvironmentVariable("PATHEXT");
 
-            ReadOnlySpan<char> extensionList = string.IsNullOrEmpty(pathext)
-                ? ".exe;.com;.bat;.cmd"
-                : pathext;
-
-            int extensionCount = extensionList.Count(';') + 1;
-            Span<Range> extensions = extensionCount < 0x20
-                ? (stackalloc Range[0x20]).Slice(0, extensionCount)
-                : new Range[extensionCount];
-
-            extensions.Clear();
-            extensions = extensions.Slice(0, extensionList.Split(extensions, ';'));
-            foreach (Range extension in extensions)
+            var pathext = Environment.GetEnvironmentVariable("PATHEXT");
+            string[] extensionList;
+            if (string.IsNullOrEmpty(pathext))
             {
-                if (extensionList[extension].Equals(myExtension, StringComparison.OrdinalIgnoreCase))
+                extensionList = new string[] { ".exe", ".com", ".bat", ".cmd" };
+            }
+            else
+            {
+                extensionList = pathext.Split(';');
+            }
+
+            foreach (string extension in extensionList)
+            {
+                if (string.Equals(extension, myExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
