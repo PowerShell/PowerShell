@@ -616,7 +616,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 6.0.6 - MIT
+Microsoft.Windows.Compatibility 6.0.7 - MIT
 
 
 (c) Microsoft Corporation
@@ -3141,7 +3141,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.Pkcs 6.0.3 - MIT
+System.Security.Cryptography.Pkcs 6.0.4 - MIT
 
 
 (c) Microsoft Corporation
