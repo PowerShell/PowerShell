@@ -50,6 +50,12 @@ jobs:
 
   - task: DownloadPipelineArtifact@2
     inputs:
+      artifact: pwshMarinerBuildArm64.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/linuxTars
+    displayName: Download mariner arm64 build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
       artifact: pwshLinuxBuildAlpine.tar.gz
       path: $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz
     displayName: Download alpine build

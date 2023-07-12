@@ -4330,6 +4330,7 @@ ${minSizeLinuxBuildFolder} = 'pwshLinuxBuildMinSize'
 ${arm32LinuxBuildFolder} = 'pwshLinuxBuildArm32'
 ${arm64LinuxBuildFolder} = 'pwshLinuxBuildArm64'
 ${amd64MarinerBuildFolder} = 'pwshMarinerBuildAmd64'
+${arm64MarinerBuildFolder} = 'pwshMarinerBuildArm64' #TODO: (Anam) ask
 
 <#
     Used in Azure DevOps Yaml to package all the linux packages for a channel.
@@ -4345,7 +4346,7 @@ function Invoke-AzDevOpsLinuxPackageCreation {
         [string]$ReleaseTag,
 
         [Parameter(Mandatory)]
-        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
+        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm', 'rpm-fxdependent-arm64')]
         [String]$BuildType
     )
 
@@ -4373,6 +4374,10 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             }
             'rpm' {
                 Start-PSPackage -Type 'rpm' @releaseTagParam -LTS:$LTS
+            }
+            'rpm-fxdependent-arm64' {
+                # TODO: (Anam) ask
+                Start-PSPackage -Type 'rpm-arm64-fxdependent' @releaseTagParam -LTS:$LTS
             }
             default {
                 $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
@@ -4418,6 +4423,17 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             Write-Verbose -Verbose "options.Top $($options.Top)"
 
             Start-PSPackage -Type rpm-fxdependent @releaseTagParam -LTS:$LTS
+        }
+        elseif ($BuildType -eq 'rpm-fxdependent-arm64') {
+            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\psoptions.json"
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}"
+
+            Write-Verbose -Verbose "---- rpm-fxdependent-arm64 ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+
+            Start-PSPackage -Type rpm-arm64-fxdependent @releaseTagParam -LTS:$LTS
         }
     }
     catch {
