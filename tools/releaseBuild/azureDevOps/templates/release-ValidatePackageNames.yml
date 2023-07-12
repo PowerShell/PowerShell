@@ -31,7 +31,7 @@ steps:
 - pwsh: |
     $message = @()
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.rpm | ForEach-Object {
-        if($_.Name -notmatch 'powershell\-(preview-|lts-)?\d+\.\d+\.\d+(_[a-z]*\.\d+)?-1.(rh|cm).x86_64\.rpm')
+        if($_.Name -notmatch 'powershell\-(preview-|lts-)?\d+\.\d+\.\d+(_[a-z]*\.\d+)?-1.(rh|cm).(x86_64|aarch64)\.rpm')
         {
             $messageInstance = "$($_.Name) is not a valid package name"
             $message += $messageInstance
