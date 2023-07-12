@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -105,7 +106,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "7.0.7"
+          "Version": "7.0.9"
         }
       },
       "DevelopmentDependency": false
@@ -205,7 +206,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "7.0.3"
+          "Version": "7.0.4"
         }
       },
       "DevelopmentDependency": false
@@ -345,7 +346,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers.Unstable",
-          "Version": "1.2.0.435"
+          "Version": "1.2.0.507"
         }
       },
       "DevelopmentDependency": true
@@ -655,7 +656,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Pkcs",
-          "Version": "7.0.2"
+          "Version": "7.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -840,6 +841,5 @@
       },
       "DevelopmentDependency": false
     }
-  ],
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
+  ]
 }
