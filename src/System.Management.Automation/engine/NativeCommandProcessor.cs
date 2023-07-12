@@ -69,6 +69,7 @@ namespace System.Management.Automation
         internal static MinishellStream ToMinishellStream(string stream)
         {
             Dbg.Assert(stream != null, "caller should validate the parameter");
+
             MinishellStream ms = MinishellStream.Unknown;
             if (OutputStream.Equals(stream, StringComparison.OrdinalIgnoreCase))
             {
@@ -132,7 +133,7 @@ namespace System.Management.Automation
         }
     }
 
-#nullable enable
+    #nullable enable
     /// <summary>
     /// This exception is used by the NativeCommandProcessor to indicate an error
     /// when a native command returns a non-zero exit code.
@@ -186,7 +187,7 @@ namespace System.Management.Automation
         public int ProcessId { get; }
 
     }
-#nullable restore
+    #nullable restore
 
     /// <summary>
     /// Provides way to create and execute native commands.
