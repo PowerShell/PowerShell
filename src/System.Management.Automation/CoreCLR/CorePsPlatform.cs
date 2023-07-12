@@ -935,8 +935,10 @@ namespace System.Management.Automation
                 [DllImport(psLib)]
                 internal static extern int WaitPid(int pid, bool nohang);
 
-                // This is a struct tm from <time.h>.
-                [StructLayout(LayoutKind.Sequential)]
+                // This is the struct `private_tm` from setdate.h in libpsl-native.
+                // Packing is set to 4 to match the unmanaged declaration.
+                // https://github.com/PowerShell/PowerShell-Native/blob/c5575ceb064e60355b9fee33eabae6c6d2708d14/src/libpsl-native/src/setdate.h#L23
+                [StructLayout(LayoutKind.Sequential, Pack = 4)]
                 internal unsafe struct UnixTm
                 {
                     /// <summary>Seconds (0-60).</summary>
