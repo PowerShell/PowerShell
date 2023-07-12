@@ -170,6 +170,12 @@ stages:
             unsignedBuildArtifactName: pwshLinuxBuild.tar.gz
             signedBuildArtifactName: pwshLinuxBuildAlpine.tar.gz
             signedArtifactContainer: authenticode-signed
+          linux-x64-Alpine-Fxdependent:
+            runtime: linux-x64-Alpine-Fxdependent
+            unsignedBuildArtifactContainer: pwshAlpineFxdBuildAmd64.tar.gz
+            unsignedBuildArtifactName: pwshAlpineFxdBuildAmd64.tar.gz
+            signedBuildArtifactName: pwshAlpineFxdBuildAmd64.tar.gz
+            signedArtifactContainer: authenticode-signed
           linux-arm32:
             runtime: linux-arm32
             unsignedBuildArtifactContainer: pwshLinuxBuildArm32.tar.gz
