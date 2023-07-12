@@ -144,27 +144,32 @@ Describe -Name "Windows MSI" -Fixture {
             Write-Verbose "cr-$channel-$runtime" -Verbose
             $pwshPath = Join-Path $env:ProgramFiles -ChildPath "PowerShell"
             $pwshx86Path = Join-Path ${env:ProgramFiles(x86)} -ChildPath "PowerShell"
+            $regKeyPath = "HKLM:\SOFTWARE\Microsoft\PowerShellCore\InstalledVersions"
 
             switch ("$channel-$runtime") {
                 "preview-win7-x64" {
                     $versionPath = Join-Path -Path $pwshPath -ChildPath '7-preview'
                     $revisionRange = 0, 99
                     $msiUpgradeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
+                    $regKeyPath = Join-Path $regKeyPath -ChildPath $msiUpgradeCode
                 }
                 "stable-win7-x64" {
                     $versionPath = Join-Path -Path $pwshPath -ChildPath '7'
                     $revisionRange = 500, 500
                     $msiUpgradeCode = '31ab5147-9a97-4452-8443-d9709f0516e1'
+                    $regKeyPath = Join-Path $regKeyPath -ChildPath $msiUpgradeCode
                 }
                 "preview-win7-x86" {
                     $versionPath = Join-Path -Path $pwshx86Path -ChildPath '7-preview'
                     $revisionRange = 0, 99
                     $msiUpgradeCode = '86abcfbd-1ccc-4a88-b8b2-0facfde29094'
+                    $regKeyPath = Join-Path $regKeyPath -ChildPath $msiUpgradeCode
                 }
                 "stable-win7-x86" {
                     $versionPath = Join-Path -Path $pwshx86Path -ChildPath '7'
                     $revisionRange = 500, 500
                     $msiUpgradeCode = '1d00683b-0f84-4db8-a64f-2f98ad42fe06'
+                    $regKeyPath = Join-Path $regKeyPath -ChildPath $msiUpgradeCode
                 }
                 default {
                     throw "'$_' not a valid channel runtime combination"
@@ -194,6 +199,27 @@ Describe -Name "Windows MSI" -Fixture {
             Write-Verbose "pwsh.dll version: $version" -Verbose
             $version.Revision | Should -BeGreaterOrEqual $revisionRange[0] -Because "$channel revision should between $($revisionRange[0]) and $($revisionRange[1])"
             $version.Revision | Should -BeLessOrEqual $revisionRange[1] -Because "$channel revision should between $($revisionRange[0]) and $($revisionRange[1])"
+        }
+
+        It 'MSI should add ProductCode in registry' -Skip:(!(Test-Elevated)) {
+
+            $productCode = if ($msiUpgradeCode -eq '39243d76-adaf-42b1-94fb-16ecf83237c8' -or
+                $msiUpgradeCode -eq '31ab5147-9a97-4452-8443-d9709f0516e1') {
+                # x64
+                $regKeyPath | Should -Exist
+                Get-ItemPropertyValue -Path $regKeyPath -Name 'ProductCode'
+            } elseif ($msiUpgradeCode -eq '86abcfbd-1ccc-4a88-b8b2-0facfde29094' -or
+                $msiUpgradeCode -eq '1d00683b-0f84-4db8-a64f-2f98ad42fe06') {
+                # x86 - need to open the 32bit reghive
+                $wow32RegKey = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry32)
+                $subKey = $wow32RegKey.OpenSubKey("Software\Microsoft\PowerShellCore\InstalledVersions\$msiUpgradeCode")
+                $subKey.GetValue("ProductCode")
+            }
+
+            $productCode | Should -Not -BeNullOrEmpty
+            $productCodeGuid = [Guid]$productCode
+            $productCodeGuid | Should -BeOfType "Guid"
+            $productCodeGuid.Guid | Should -Not -Be $msiUpgradeCode
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
