@@ -205,7 +205,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "6.0.6"
+          "Version": "6.0.7"
         }
       },
       "DevelopmentDependency": false
@@ -365,7 +365,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers.Unstable",
-          "Version": "1.2.0.435"
+          "Version": "1.2.0.507"
         }
       },
       "DevelopmentDependency": true
@@ -675,7 +675,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Pkcs",
-          "Version": "6.0.3"
+          "Version": "6.0.4"
         }
       },
       "DevelopmentDependency": false
