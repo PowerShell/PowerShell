@@ -1820,14 +1820,16 @@ namespace System.Management.Automation
         None = 0x0,
 
         /// <summary>
+        /// <para>
         /// WhatIf behavior was requested.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// In the host, WhatIf behavior can be requested explicitly
         /// for one cmdlet instance using the -WhatIf commandline parameter,
         /// or implicitly for all SupportsShouldProcess cmdlets with $WhatIfPreference.
         /// Other hosts may have other ways to request WhatIf behavior.
-        /// </remarks>
+        /// </para>
+        /// </summary>
         WhatIf = 0x1,
     }
 }
