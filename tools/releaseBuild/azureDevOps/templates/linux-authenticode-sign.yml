@@ -93,6 +93,10 @@ jobs:
       New-Item -Path $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64 -ItemType Directory
       tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshMarinerBuildAmd64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
 
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshMarinerBuildArm64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64"
+      New-Item -Path $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64 -ItemType Directory
+      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshMarinerBuildArm64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64
+
       Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz/pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine"
       New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine -ItemType Directory
       tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz/pwshLinuxBuild.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine
@@ -147,7 +151,12 @@ jobs:
   - template: signBuildFiles.yml
     parameters:
       binLocation: pwshMarinerBuildAmd64
-      buildPrefixName: 'PowerShell Linux x64 Framework Dependent'
+      buildPrefixName: 'PowerShell Linux x64 (Mariner) Framework Dependent'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshMarinerBuildArm64
+      buildPrefixName: 'PowerShell Linux arm64 (Mariner) Framework Dependent'
 
   - template: signBuildFiles.yml
     parameters:

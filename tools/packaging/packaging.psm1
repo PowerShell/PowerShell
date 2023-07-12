@@ -4330,7 +4330,7 @@ ${minSizeLinuxBuildFolder} = 'pwshLinuxBuildMinSize'
 ${arm32LinuxBuildFolder} = 'pwshLinuxBuildArm32'
 ${arm64LinuxBuildFolder} = 'pwshLinuxBuildArm64'
 ${amd64MarinerBuildFolder} = 'pwshMarinerBuildAmd64'
-${arm64MarinerBuildFolder} = 'pwshMarinerBuildArm64' #TODO: (Anam) ask
+${arm64MarinerBuildFolder} = 'pwshMarinerBuildArm64'
 
 <#
     Used in Azure DevOps Yaml to package all the linux packages for a channel.
@@ -4346,7 +4346,7 @@ function Invoke-AzDevOpsLinuxPackageCreation {
         [string]$ReleaseTag,
 
         [Parameter(Mandatory)]
-        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm', 'rpm-fxdependent-arm64')]
+        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
         [String]$BuildType
     )
 
@@ -4374,10 +4374,6 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             }
             'rpm' {
                 Start-PSPackage -Type 'rpm' @releaseTagParam -LTS:$LTS
-            }
-            'rpm-fxdependent-arm64' {
-                # TODO: (Anam) ask
-                Start-PSPackage -Type 'rpm-arm64-fxdependent' @releaseTagParam -LTS:$LTS
             }
             default {
                 $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\linuxFilePermission.json"
@@ -4414,6 +4410,8 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}"
             Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
         } elseif ($BuildType -eq 'rpm') {
+            # Generate mariner amd64 package
+            Write-Verbose -Verbose "Generating mariner amd64 package"
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\psoptions.json"
             $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\linuxFilePermission.json"
             Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}"
@@ -4423,8 +4421,9 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             Write-Verbose -Verbose "options.Top $($options.Top)"
 
             Start-PSPackage -Type rpm-fxdependent @releaseTagParam -LTS:$LTS
-        }
-        elseif ($BuildType -eq 'rpm-fxdependent-arm64') {
+
+            # Generate mariner arm64 package
+            Write-Verbose -Verbose "Generating mariner arm64 package"
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\psoptions.json"
             $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\linuxFilePermission.json"
             Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}"
