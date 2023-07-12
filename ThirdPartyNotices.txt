@@ -229,7 +229,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Extensions.ObjectPool 7.0.7 - MIT
+Microsoft.Extensions.ObjectPool 7.0.9 - MIT
 
 
 (c) Microsoft Corporation
@@ -587,7 +587,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 7.0.3 - MIT
+Microsoft.Windows.Compatibility 7.0.4 - MIT
 
 
 (c) Microsoft Corporation
@@ -3416,7 +3416,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.Pkcs 7.0.2 - MIT
+System.Security.Cryptography.Pkcs 7.0.3 - MIT
 
 
 (c) Microsoft Corporation
