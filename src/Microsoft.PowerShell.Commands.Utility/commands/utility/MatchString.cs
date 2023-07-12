@@ -154,9 +154,6 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// It will be "InputStream" if the object came from the input stream.
         /// </remarks>
-        /// <remarks>
-        /// It will be "InputStream" if the object came from the input stream.
-        /// </remarks>
         /// <value>The path name.</value>
         public string Path
         {
