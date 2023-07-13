@@ -26,7 +26,7 @@ steps:
 
     Import-Module -Name $env:REPOROOT\build.psm1
     Import-Module -Name $env:REPOROOT\tools\packaging
-    Start-PrepForGlobalToolNupkg -LinuxBinPath '${{ parameters.LinuxBinPath }}' -WindowsBinPath '${{ parameters.WindowsBinPath }}' -WindowsDesktopBinPath '${{ parameters.WindowsDesktopBinPath }}'
+    Start-PrepForGlobalToolNupkg -LinuxBinPath '${{ parameters.LinuxBinPath }}' -WindowsBinPath '${{ parameters.WindowsBinPath }}' -WindowsDesktopBinPath '${{ parameters.WindowsDesktopBinPath }}' -AlpineBinPath '${{ parameters.AlpineBinPath }}'
   displayName: 'Preparation for Global Tools package creation.'
 
 # NOTE: The Unified package must always be created first, and so must always be first in ListOfPackageTypes.
