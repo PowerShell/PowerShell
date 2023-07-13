@@ -137,7 +137,7 @@ jobs:
       parameters:
         BuildDropPath: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64'
         Build_Repository_Uri: $(Github_Build_Repository_Uri)
-        displayName: Arm64 SBOM
+        displayName: Alpine FXD SBOM
         PackageName: PowerShell Alpine Framework Dependent AMD64
         PackageVersion: $(Version)
         sourceScanPath: '$(PowerShellRoot)/tools'
