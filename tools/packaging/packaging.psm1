@@ -462,6 +462,7 @@ function Start-PSPackage {
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
                             R2RState = 'R2R'
+                            OperatingSystem = "Linux"
                         }
                     }
 
