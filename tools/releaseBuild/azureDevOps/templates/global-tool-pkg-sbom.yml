@@ -40,7 +40,7 @@ steps:
       # Create global tool NuSpec source for package.
       Import-Module -Name $env:REPOROOT\build.psm1
       Import-Module -Name $env:REPOROOT\tools\packaging
-      New-GlobalToolNupkgSource -PackageType $PackageType -PackageVersion '${{ parameters.PackageVersion }}' -LinuxBinPath '${{ parameters.LinuxBinPath }}' -WindowsBinPath '${{ parameters.WindowsBinPath }}' -WindowsDesktopBinPath '${{ parameters.WindowsDesktopBinPath }}'
+      New-GlobalToolNupkgSource -PackageType $PackageType -PackageVersion '${{ parameters.PackageVersion }}' -LinuxBinPath '${{ parameters.LinuxBinPath }}' -WindowsBinPath '${{ parameters.WindowsBinPath }}' -WindowsDesktopBinPath '${{ parameters.WindowsDesktopBinPath }}' -AlpineBinPath '${{ parameters.AlpineBinPath }}'
     displayName: 'Create global tool NuSpec source for package.'
 
   - pwsh: |
