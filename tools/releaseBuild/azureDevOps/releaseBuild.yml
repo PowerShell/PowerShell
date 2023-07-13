@@ -194,7 +194,7 @@ stages:
             unsignedBuildArtifactName: pwshMarinerBuildAmd64.tar.gz
             signedBuildArtifactName: pwshMarinerBuildAmd64.tar.gz
             signedArtifactContainer: authenticode-signed
-          linux-mariner:
+          linux-arm64-mariner:
             runtime: linux-arm64-mariner
             unsignedBuildArtifactContainer: pwshMarinerBuildArm64.tar.gz
             unsignedBuildArtifactName: pwshMarinerBuildArm64.tar.gz
