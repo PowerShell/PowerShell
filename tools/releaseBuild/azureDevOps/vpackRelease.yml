@@ -17,7 +17,6 @@ variables:
     value: 1
   - name: nugetMultiFeedWarnLevel
     value: none
-
   
   - group: Azure Blob variable group
   # adds the pat to publish the vPack
