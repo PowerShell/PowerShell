@@ -4517,19 +4517,37 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             Remove-Item "${buildFolder}\*.pdb" -Force
             Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
         } elseif ($BuildType -eq 'rpm') {
-            ## Build for Mariner
+            ## Build for Mariner amd64
             $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Mariner ----"
+            Write-Verbose -Verbose "---- Mariner x64 ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
             Write-Verbose -Verbose "options.Top $($options.Top)"
             $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
             if (Test-Path -Path $binDir) {
-                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner package"
+                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner x64 package"
                 Remove-Item -Path $binDir -Recurse -Force
             }
 
             $buildParams['Runtime'] = 'fxdependent-linux-x64'
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64MarinerBuildFolder}"
+            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            # Remove symbol files, xml document files.
+            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
+
+            ## Build for Mariner arm64
+            $options = Get-PSOptions
+            Write-Verbose -Verbose "---- Mariner arm64 ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
+            if (Test-Path -Path $binDir) {
+                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner arm64 package"
+                Remove-Item -Path $binDir -Recurse -Force
+            }
+
+            $buildParams['Runtime'] = 'fxdependent-linux-arm64'
+            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64MarinerBuildFolder}"
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files, xml document files.
             Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
