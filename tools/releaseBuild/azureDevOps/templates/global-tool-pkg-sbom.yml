@@ -3,7 +3,7 @@ parameters:
   - name: LinuxBinPath
   - name: WindowsBinPath
   - name: WindowsDesktopBinPath
-  - name: alpineBinPath
+  - name: AlpineBinPath
   - name: DestinationPath
   - name: ListOfPackageTypes
     type: object
@@ -22,7 +22,7 @@ steps:
     Write-Verbose -Verbose 'LinuxBinPath path: ${{ parameters.LinuxBinPath }}'
     Write-Verbose -Verbose 'WindowsBinPath path: ${{ parameters.WindowsBinPath }}'
     Write-Verbose -Verbose 'WindowsDesktopBinPath path: ${{ parameters.WindowsDesktopBinPath }}'
-    Write-Verbose -Verbose 'alpineBinPath path: ${{ parameters.alpineBinPath }}'
+    Write-Verbose -Verbose 'AlpineBinPath path: ${{ parameters.AlpineBinPath }}'
 
     Import-Module -Name $env:REPOROOT\build.psm1
     Import-Module -Name $env:REPOROOT\tools\packaging

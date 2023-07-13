@@ -145,6 +145,7 @@ jobs:
       LinuxBinPath: $(linuxFxdPath)
       WindowsBinPath: $(winFxdPath)
       WindowsDesktopBinPath: $(winFxdWinDesktopPath)
+      AlpineBinPath: $(alpineFxdPath)
       DestinationPath: $(PackagePath)\globaltool
 
   - pwsh: |
