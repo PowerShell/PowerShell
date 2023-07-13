@@ -4432,7 +4432,7 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             Write-Verbose -Verbose "options.Output: $($options.Output)"
             Write-Verbose -Verbose "options.Top $($options.Top)"
 
-            Start-PSPackage -Type rpm-arm64-fxdependent @releaseTagParam -LTS:$LTS
+            Start-PSPackage -Type rpm-fxdependent-arm64 @releaseTagParam -LTS:$LTS
         }
     }
     catch {
