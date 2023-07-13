@@ -165,6 +165,12 @@ jobs:
         tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz *
       displayName: Compress pwshMarinerBuildAmd64
 
+  - ${{ if eq(variables.build,'alpine') }} :
+    - pwsh: |
+        Set-Location '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz *
+      displayName: Compress pwshAlpineFxdBuildAmd64
+
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
       inputs:
