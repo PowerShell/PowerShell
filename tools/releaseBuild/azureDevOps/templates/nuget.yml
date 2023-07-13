@@ -32,6 +32,8 @@ jobs:
       value: '$(System.ArtifactsDirectory)/winFxdWinDesktop'
     - name: linuxFxdPath
       value: '$(System.ArtifactsDirectory)/linuxFxd'
+    - name: alpineFxdPath
+      value: '$(System.ArtifactsDirectory)/alpineFxd'
     - group: DotNetPrivateBuildAccess
 
   steps:
@@ -106,6 +108,12 @@ jobs:
       archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-fxdependent.tar.gz'
       destinationFolder: '$(linuxFxdPath)'
 
+  - task: ExtractFiles@1
+    displayName: 'Extract files alpine-fxdependent'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-alpine-fxdependent.tar.gz'
+      destinationFolder: '$(alpineFxdPath)'
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -127,6 +135,7 @@ jobs:
       Get-ChildItem $(linuxFxdPath)
       Get-ChildItem $(winFxdPath)
       Get-ChildItem $(winFxdWinDesktopPath)
+      Get-ChildItem $(alpineFxdPath)
     displayName: Capture fxd folders
 
   # Create Global Tool packages along with SBOM manifests

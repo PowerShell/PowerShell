@@ -4060,7 +4060,8 @@ function Start-PrepForGlobalToolNupkg
     param(
         [Parameter(Mandatory)] [string] $LinuxBinPath,
         [Parameter(Mandatory)] [string] $WindowsBinPath,
-        [Parameter(Mandatory)] [string] $WindowsDesktopBinPath
+        [Parameter(Mandatory)] [string] $WindowsDesktopBinPath,
+        [Parameter(Mandatory)] [string] $AlpineBinPath
     )
 
     Write-Log "Start-PrepForGlobalToolNupkg: Running clean up for New-GlobalToolNupkg package creation."
@@ -4077,7 +4078,7 @@ function Start-PrepForGlobalToolNupkg
     }
 
     # Remove unnecessary xml files
-    Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath, $WindowsDesktopBinPath -Filter *.xml | Remove-Item -Verbose
+    Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath, $WindowsDesktopBinPath, $AlpineBinPath -Filter *.xml | Remove-Item -Verbose
 }
 
 <#
@@ -4112,6 +4113,7 @@ function New-GlobalToolNupkgSource
         [Parameter(Mandatory)] [string] $LinuxBinPath,
         [Parameter(Mandatory)] [string] $WindowsBinPath,
         [Parameter(Mandatory)] [string] $WindowsDesktopBinPath,
+        [Parameter(Mandatory)] [string] $AlpineBinPath,
         [Parameter(Mandatory)] [string] $PackageVersion
     )
 
@@ -4121,6 +4123,9 @@ function New-GlobalToolNupkgSource
 
         Write-Log "New-GlobalToolNupkgSource: Reducing size of Linux package"
         ReduceFxDependentPackage -Path $LinuxBinPath
+
+        Write-Log "New-GlobalToolNupkgSource: Reducing size of Alpine package"
+        ReduceFxDependentPackage -Path $AlpineBinPath
 
         Write-Log "New-GlobalToolNupkgSource: Reducing size of Windows package"
         ReduceFxDependentPackage -Path $WindowsBinPath -KeepWindowsRuntimes
@@ -4171,8 +4176,9 @@ function New-GlobalToolNupkgSource
 
             $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
 
-            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $LinuxBinPath for $PackageType"
-            Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $AlpineBinPath for $PackageType"
+            Copy-Item "$AlpineBinPath/*" -Destination $ridFolder -Recurse
+            Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
             Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
             Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
             Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
