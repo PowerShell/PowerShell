@@ -57,7 +57,6 @@ variables:
   __SuppressAnsiEscapeSequences: 1
   nugetMultiFeedWarnLevel: none
 
-
 resources:
   repositories:
     - repository: Docker
