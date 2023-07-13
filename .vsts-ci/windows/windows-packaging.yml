@@ -57,7 +57,6 @@ variables:
   - name: nugetMultiFeedWarnLevel
     value: none
 
-
 resources:
   repositories:
     - repository: ComplianceRepo
