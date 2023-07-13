@@ -54,6 +54,9 @@ variables:
   - group: fakeNugetKey
   - name: SBOMGenerator_Formats
     value: spdx:2.2
+  - name: nugetMultiFeedWarnLevel
+    value: none
+
 
 resources:
   repositories:
