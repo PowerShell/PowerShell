@@ -340,7 +340,7 @@ stages:
 
   - stage: nuget_and_json
     displayName: NuGet Packaging and Build Json
-    dependsOn: ['nuget_and_json']
+    dependsOn: ['package_signing']
     jobs:
       - template: templates/nuget.yml
       - template: templates/json.yml
