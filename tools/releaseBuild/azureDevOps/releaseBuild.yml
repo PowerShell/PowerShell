@@ -324,9 +324,16 @@ stages:
         Architecture: fxdependentWinDesktop
         parentJob: build_windows_fxdependentWinDesktop_release
 
+  - stage: nuget_and_json
+    displayName: NuGet Packaging and Build Json
+    dependsOn: [SignFiles]
+    jobs:
+      - template: templates/nuget.yml
+      - template: templates/json.yml
+
   - stage: package_signing
     displayName: Package Signing
-    dependsOn: ['mac_packaging', 'linux_packaging', 'win_packaging']
+    dependsOn: ['mac_packaging', 'linux_packaging', 'win_packaging', 'nuget_and_json']
     jobs:
     - template: templates/windows-package-signing.yml
 
@@ -343,13 +350,6 @@ stages:
     dependsOn: ['package_signing']
     jobs:
       - template: templates/compliance.yml
-
-  - stage: nuget_and_json
-    displayName: NuGet Packaging and Build Json
-    dependsOn: [package_signing]
-    jobs:
-      - template: templates/nuget.yml
-      - template: templates/json.yml
 
   - stage: test_and_release_artifacts
     displayName: Test and Release Artifacts
