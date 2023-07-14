@@ -655,7 +655,6 @@ function Start-PSPackage {
                 }
                 foreach ($Distro in $Script:RedhatFddDistributions) {
                     $Arguments["Distribution"] = $Distro
-                    $Arguments["HostArchitecture"] = $HostArchitecture
                     if ($PSCmdlet.ShouldProcess("Create RPM Package for $Distro")) {
                         Write-Verbose -Verbose "Creating RPM Package for $Distro"
                         New-UnixPackage @Arguments
