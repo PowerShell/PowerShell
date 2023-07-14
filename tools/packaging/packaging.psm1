@@ -4006,6 +4006,13 @@ function ReduceFxDependentPackage
     $runtimeFolder = Get-ChildItem $Path -Recurse -Directory -Filter 'runtimes'
 
     $runtimeFolderPath = $runtimeFolder | Out-String
+
+    if ($runtimeFolder.Count -eq 0)
+    {
+        Write-Log -message "No runtimes folder found under $Path. Completing cleanup."
+        return
+    }
+
     Write-Log -message $runtimeFolderPath
 
     if ($runtimeFolder.Count -eq 0)
