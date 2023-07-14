@@ -324,16 +324,9 @@ stages:
         Architecture: fxdependentWinDesktop
         parentJob: build_windows_fxdependentWinDesktop_release
 
-  - stage: nuget_and_json
-    displayName: NuGet Packaging and Build Json
-    dependsOn: ['mac_packaging', 'linux_packaging', 'win_packaging']
-    jobs:
-      - template: templates/nuget.yml
-      - template: templates/json.yml
-
   - stage: package_signing
     displayName: Package Signing
-    dependsOn: ['nuget_and_json']
+    dependsOn: ['mac_packaging', 'linux_packaging', 'win_packaging']
     jobs:
     - template: templates/windows-package-signing.yml
 
@@ -344,6 +337,13 @@ stages:
     - template: templates/mac-package-signing.yml
       parameters:
         buildArchitecture: arm64
+
+  - stage: nuget_and_json
+    displayName: NuGet Packaging and Build Json
+    dependsOn: ['nuget_and_json']
+    jobs:
+      - template: templates/nuget.yml
+      - template: templates/json.yml
 
   # This is done late so that we dont use resources before the big signing and packaging tasks.
   - stage: compliance
