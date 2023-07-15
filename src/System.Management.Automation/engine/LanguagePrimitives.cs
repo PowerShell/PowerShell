@@ -21,6 +21,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Security;
 
 using Dbg = System.Management.Automation.Diagnostics;
 using MethodCacheEntry = System.Management.Automation.DotNetAdapter.MethodCacheEntry;
@@ -4918,8 +4919,25 @@ namespace System.Management.Automation
 
             typeConversion.WriteLine("Type Conversion failed.");
             errorId = "ConvertToFinalInvalidCastException";
-            errorMsg = StringUtil.Format(ExtendedTypeSystem.InvalidCastException, valueToConvert.ToString(),
-                                         ObjectToTypeNameString(valueToConvert), resultType.ToString());
+
+            string valueToConvertTypeName = ObjectToTypeNameString(valueToConvert);
+            string resultTypeName = resultType.ToString();
+
+            if (resultType == typeof(SecureString)) {
+                errorMsg = StringUtil.Format(
+                    ExtendedTypeSystem.InvalidCastExceptionWithoutValue,
+                    valueToConvertTypeName,
+                    resultTypeName);
+            }
+            else 
+            {
+                errorMsg = StringUtil.Format(
+                    ExtendedTypeSystem.InvalidCastException,
+                    valueToConvert.ToString(),
+                    valueToConvertTypeName,
+                    resultTypeName);
+            }
+
             return Tuple.Create(errorId, errorMsg);
         }
 
