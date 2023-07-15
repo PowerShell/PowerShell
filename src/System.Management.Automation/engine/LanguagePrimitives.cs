@@ -4923,13 +4923,14 @@ namespace System.Management.Automation
             string valueToConvertTypeName = ObjectToTypeNameString(valueToConvert);
             string resultTypeName = resultType.ToString();
 
-            if (resultType == typeof(SecureString)) {
+            if (resultType == typeof(SecureString))
+            {
                 errorMsg = StringUtil.Format(
                     ExtendedTypeSystem.InvalidCastExceptionWithoutValue,
                     valueToConvertTypeName,
                     resultTypeName);
             }
-            else 
+            else
             {
                 errorMsg = StringUtil.Format(
                     ExtendedTypeSystem.InvalidCastException,
