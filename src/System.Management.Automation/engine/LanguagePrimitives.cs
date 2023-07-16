@@ -4923,7 +4923,7 @@ namespace System.Management.Automation
             string valueToConvertTypeName = ObjectToTypeNameString(valueToConvert);
             string resultTypeName = resultType.ToString();
 
-            if (resultType == typeof(SecureString))
+            if (resultType == typeof(SecureString) || resultType == typeof(PSCredential))
             {
                 errorMsg = StringUtil.Format(
                     ExtendedTypeSystem.InvalidCastExceptionWithoutValue,
