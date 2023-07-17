@@ -179,7 +179,7 @@ Additional references:
   * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
   * Instead of "Fixed for server connection issue", write "Fix server connection issue".
 
-  This form is akin to giving commands to the code base
+  This form is akin to giving commands to the codebase
   and is recommended by the Git SCM developers.
   It is also used in the [Git commit messages](#common-engineering-practices).
 * If the change is related to a specific resource, please prefix the description with the resource name:
@@ -298,7 +298,7 @@ In these cases:
    - If the *reviewer*'s comments are very minor, merge the change, fix the code immediately, and create a new PR with the fixes addressing the minor comments.
    - If the changes required to merge the pull request are significant but needed, *assignee* creates a new branch with the changes and open an issue to merge the code into the dev branch.
    Mention the original pull request ID in the description of the new issue and close the abandoned pull request.
-   - If the changes in an abandoned pull request are no longer needed (e.g. due to refactoring of the code base or a design change), *assignee* will simply close the pull request.
+   - If the changes in an abandoned pull request are no longer needed (e.g. due to refactoring of the codebase or a design change), *assignee* will simply close the pull request.
 
 ## Making Breaking Changes
 
