@@ -4236,7 +4236,12 @@ param(
                 else {
                     # This approach will preserve all the pagers args.
                     $pagerCommand = $customPagerCommand
-                    $pagerArgs = if ($tokens.Count -gt 1) {$env:PAGER.Substring($tokens[1].Start)} else {$null}
+                    $pagerArgs = if ($tokens.Count -gt 1) {
+                        $env:PAGER.Substring($tokens[1].Start)
+                    } 
+                    else {
+                        $null
+                    }
                 }
             }
         }
