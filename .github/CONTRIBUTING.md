@@ -12,8 +12,8 @@ Please read the rest of this document to ensure a smooth contribution process.
 
 * Make sure you have a [GitHub account](https://github.com/signup/free).
 * Learning Git:
-    * GitHub Help: [Good Resources for Learning Git and GitHub][good-git-resources]
-    * [Git Basics](../docs/git/basics.md): install and getting started
+  * GitHub Help: [Good Resources for Learning Git and GitHub][good-git-resources]
+  * [Git Basics](../docs/git/basics.md): install and getting started
 * [GitHub Flow Guide](https://guides.github.com/introduction/flow/):
   step-by-step instructions of GitHub Flow
 
@@ -52,17 +52,17 @@ if you don't have it -
 `Install-Module PlatyPS`.
 1. Clone the
 [`MicrosoftDocs/PowerShell-Docs`](https://github.com/MicrosoftDocs/PowerShell-Docs)
-repo if you don't already have it.
+repository if you don't already have it.
 1. Start your local build of PowerShell
 (with the change to the cmdlet you made).
-1. Find the cmdlet's markdown file in PowerShell Docs - usually under
+1. Find the cmdlet's Markdown file in PowerShell Docs - usually under
 `PowerShell-Docs/reference/<latest powershell version>/<module cmdlet is a part of>/<your changed cmdlet>.md`
 (Ex. `PowerShell-Docs/reference/7/Microsoft.PowerShell.Utility/Select-String.md`)
 1. Run
-`Update-MarkdownHelp -Path <path to cmdlet markdown file>`
+`Update-MarkdownHelp -Path <path to cmdlet Markdown file>`
 which will update the documentation for you.
 1. Make any additional changes needed for the cmdlet to be properly documented.
-1. Send a Pull Request to the PowerShell Docs repo with the changes that
+1. Send a Pull Request to the PowerShell Docs repository with the changes that
 `PlatyPS`
 made.
 1. Link your Docs PR to your original change PR.
@@ -71,35 +71,34 @@ made.
 
 * When writing Markdown documentation, use [semantic linefeeds][].
   In most cases, it means "one clause/idea per line".
-* Otherwise, these issues should be treated like any other issue in this repo.
+* Otherwise, these issues should be treated like any other issue in this repository.
 
 #### Spellchecking documentation
 
 Documentation is spellchecked. We use the
-[markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) command line tool,
-which can be run in interactive mode to correct typos or add words to the ignore list
-(`.spelling` at the repository root).
+[textlint](https://github.com/textlint/textlint/wiki/Collection-of-textlint-rule) command-line tool,
+which can be run in interactive mode to correct typos.
 
 To run the spellchecker, follow these steps:
 
 * install [Node.js](https://nodejs.org/en/) (v10 or up)
-* install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
-  `npm install -g markdown-spellcheck` (v0.11.0 or up)
-* run `mdspell "**/*.md" "!**/dotnet-tools/**/*.md" --ignore-numbers --ignore-acronyms --en-us`.
-    - The folder `dotnet-tools` is excluded because files in that folder are copied from the `dotnet/performance` repository
-      and will need to be synchronized from time to time.
-* if the `.spelling` file is updated, commit and push it
+* install [textlint](https://github.com/textlint/textlint/wiki/Collection-of-textlint-rule) by
+  `npm install -g textlint textlint-rule-terminology`
+* run `textlint --rule terminology <changedFileName>`,
+  adding `--fix` will accept all the recommendations.
+
+If you need to add a term or disable checking part of a file see the [configuration sections of the rule](https://github.com/sapegin/textlint-rule-terminology).
 
 #### Checking links in documentation
 
 Documentation is link-checked. We make use of the
-markdown-link-check command line tool,
+`markdown-link-check` command-line tool,
 which can be run to see if any links are dead.
 
 To run the link-checker, follow these steps:
 
 * install [Node.js](https://nodejs.org/en/) (v10 or up)
-* install markdown-link-check by
+* install `markdown-link-check` by
   `npm install -g markdown-link-check@3.8.5`
 * run `find . \*.md -exec markdown-link-check {} \;`
 
@@ -177,14 +176,14 @@ Additional references:
   See [this][closing-via-message] for more details.
 
 * Please use the present tense and imperative mood when describing your changes:
-    * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
-    * Instead of "Fixed for server connection issue", write "Fix server connection issue".
+  * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
+  * Instead of "Fixed for server connection issue", write "Fix server connection issue".
 
-  This form is akin to giving commands to the code base
+  This form is akin to giving commands to the codebase
   and is recommended by the Git SCM developers.
   It is also used in the [Git commit messages](#common-engineering-practices).
 * If the change is related to a specific resource, please prefix the description with the resource name:
-    * Instead of "New parameter 'ConnectionCredential' in New-SqlConnection",
+  * Instead of "New parameter 'ConnectionCredential' in New-SqlConnection",
   write "New-SqlConnection: add parameter 'ConnectionCredential'".
 * If your change warrants an update to user-facing documentation,
   a Maintainer will add the `Documentation Needed` label to your PR and add an issue to the [PowerShell-Docs repository][PowerShell-Docs],
@@ -195,7 +194,7 @@ Additional references:
   (See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell) for more info.)
 * If your change adds a new source file, ensure the appropriate copyright and license headers is on top.
   It is standard practice to have both a copyright and license notice for each source file.
-    * For `.h`, `.cpp`, and `.cs` files use the copyright header with empty line after it:
+  * For `.h`, `.cpp`, and `.cs` files use the copyright header with empty line after it:
 
     ```c#
         // Copyright (c) Microsoft Corporation.
@@ -203,7 +202,7 @@ Additional references:
         <Add empty line here>
     ```
 
-    * For `.ps1` and `.psm1` files use the copyright header with empty line after it:
+  * For `.ps1` and `.psm1` files use the copyright header with empty line after it:
 
     ```powershell
         # Copyright (c) Microsoft Corporation.
@@ -235,8 +234,8 @@ Additional references:
 * After submitting your pull request,
   our [CI system (Azure DevOps Pipelines)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
-* Our CI contains automated spellchecking and link checking for markdown files. If there is any false-positive,
-  [run the spellchecker command line tool in interactive mode](#spellchecking-documentation)
+* Our CI contains automated spellchecking and link checking for Markdown files. If there is any false-positive,
+  [run the spellchecker command-line tool in interactive mode](#spellchecking-documentation)
   to add words to the `.spelling` file.
 * Our packaging test may not pass and ask you to update `files.wxs` file if you add/remove/update nuget package references or add/remove assert files.
 
@@ -280,7 +279,7 @@ Additional references:
    - `Approve` if you believe your feedback has been addressed or the code is fine as-is, it is customary (although not required) to leave a simple "Looks good to me" (or "LGTM") as the comment for approval.
    - `Comment` if you are making suggestions that the *author* does not have to accept.
    Early in the review, it is acceptable to provide feedback on coding formatting based on the published [Coding Guidelines][coding-guidelines], however,
-   after the PR has been approved, it is generally _not_ recommended to focus on formatting issues unless they go against the [Coding Guidelines][coding-guidelines].
+   after the PR has been approved, it is generally *not* recommended to focus on formatting issues unless they go against the [Coding Guidelines][coding-guidelines].
    Non-critical late feedback (after PR has been approved) can be submitted as a new issue or new pull request from the *reviewer*.
 1. *Assignees* who are always *Maintainers* ensure that proper review has occurred and if they believe one approval is not sufficient, the *maintainer* is responsible to add more reviewers.
    An *assignee* may also be a reviewer, but the roles are distinct.
@@ -299,7 +298,7 @@ In these cases:
    - If the *reviewer*'s comments are very minor, merge the change, fix the code immediately, and create a new PR with the fixes addressing the minor comments.
    - If the changes required to merge the pull request are significant but needed, *assignee* creates a new branch with the changes and open an issue to merge the code into the dev branch.
    Mention the original pull request ID in the description of the new issue and close the abandoned pull request.
-   - If the changes in an abandoned pull request are no longer needed (e.g. due to refactoring of the code base or a design change), *assignee* will simply close the pull request.
+   - If the changes in an abandoned pull request are no longer needed (e.g. due to refactoring of the codebase or a design change), *assignee* will simply close the pull request.
 
 ## Making Breaking Changes
 
@@ -381,11 +380,17 @@ When your pull request is created, it is checked by the CLA bot.
 If you have signed the CLA, the status check will be set to `passing`.  Otherwise, it will stay at `pending`.
 Once you sign a CLA, all your existing and future pull requests will have the status check automatically set at `passing`.
 
-[testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
+## Code of Conduct Enforcement
+
+Reports of abuse will be reviewed by the PS-Committee and if it has been determined that violations of the
+Code of Conduct has occurred, then a temporary ban may be imposed.
+The duration of the temporary ban will depend on the impact and/or severity of the infraction.
+This can vary from 1 day, a few days, a week, and up to 30 days.
+Repeat offenses may result in a permanent ban from the PowerShell org.
+
 [running-tests-outside-of-ci]: ../docs/testing-guidelines/testing-guidelines.md#running-tests-outside-of-ci
 [issue-management]: ../docs/maintainers/issue-management.md
 [vuln-reporting]: ./SECURITY.md
-[governance]: ../docs/community/governance.md
 [using-prs]: https://help.github.com/articles/using-pull-requests/
 [fork-a-repo]: https://help.github.com/articles/fork-a-repo/
 [closing-via-message]: https://help.github.com/articles/closing-issues-via-commit-messages/
