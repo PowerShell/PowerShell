@@ -170,18 +170,23 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (string path in Path)
             {
-                bool popLocation = false;
                 Collection<PathInfo> result = null;
                 try
                 {
                     if (MyInvocation.BoundParameters.ContainsKey("RelativeBasePath"))
                     {
-                        SessionState.Path.PushCurrentLocation(string.Empty);
-                        _ = SessionState.Path.SetLocation(_relativeBasePath);
-                        popLocation = true;
-                        result = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
-                        _ = SessionState.Path.PopLocation(string.Empty);
-                        popLocation = false;
+                        // Pushing and popping the location is done because GetResolvedPSPathFromPSPath uses the current path to resolve relative paths.
+                        // It's important that we pop the location before writing an object to the pipeline to avoid affecting downstream commands.
+                        try
+                        {
+                            SessionState.Path.PushCurrentLocation(string.Empty);
+                            _ = SessionState.Path.SetLocation(_relativeBasePath);
+                            result = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
+                        }
+                        finally
+                        {
+                            _ = SessionState.Path.PopLocation(string.Empty);
+                        }
                     }
                     else
                     {
@@ -261,13 +266,6 @@ namespace Microsoft.PowerShell.Commands
                             pathNotFound.ErrorRecord,
                             pathNotFound));
                     continue;
-                }
-                finally
-                {
-                    if (popLocation)
-                    {
-                        _ = SessionState.Path.PopLocation(string.Empty);
-                    }
                 }
 
                 if (!_relative)

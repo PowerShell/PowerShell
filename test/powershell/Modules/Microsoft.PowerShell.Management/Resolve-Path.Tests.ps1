@@ -89,22 +89,28 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         
         if ($null -eq $Expected)
         {
-            {Resolve-Path -Path $Path -RelativeBasePath $BasePath -ErrorAction Stop} | Should -Throw
-            {Resolve-Path -Path $Path -RelativeBasePath $BasePath -ErrorAction Stop -Relative} | Should -Throw
+            {Resolve-Path -Path $Path -RelativeBasePath $BasePath -ErrorAction Stop} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
+            {Resolve-Path -Path $Path -RelativeBasePath $BasePath -ErrorAction Stop -Relative} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
         }
         else
         {
-            $OldLocation = if ($null -ne $CD)
+            try
             {
-                $PWD
-                Set-Location $CD
-            }
+                $OldLocation = if ($null -ne $CD)
+                {
+                    $PWD
+                    Set-Location $CD
+                }
 
-            (Resolve-Path -Path $Path -RelativeBasePath $BasePath).ProviderPath | Should -BeExactly $Expected[0]
-            Resolve-Path -Path $Path -RelativeBasePath $BasePath -Relative | Should -BeExactly $Expected[1]
-            if ($null -ne $OldLocation)
+                (Resolve-Path -Path $Path -RelativeBasePath $BasePath).ProviderPath | Should -BeExactly $Expected[0]
+                Resolve-Path -Path $Path -RelativeBasePath $BasePath -Relative | Should -BeExactly $Expected[1]
+            }
+            finally
             {
-                Set-Location $OldLocation
+                if ($null -ne $OldLocation)
+                {
+                    Set-Location $OldLocation
+                }
             }
         }
     }
