@@ -7,7 +7,7 @@
 
 param(
     [switch] $Fix,
-    [switch] $IsRelease
+    [switch] $IsStable
 )
 
 Import-Module dotnet.project.assets
