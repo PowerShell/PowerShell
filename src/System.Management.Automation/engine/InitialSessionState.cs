@@ -4126,17 +4126,7 @@ Switch-Process -WithCommand $args
         }
 #endif
 
-        /// <summary>
-        /// This is the default function to use for man/help. It uses
-        /// splatting to pass in the parameters.
-        /// </summary>
-#if !UNIX
-        internal static string GetHelpPagingFunctionText()
-        {
-            // We used to generate the text for this function so you could add a parameter
-            // to Get-Help and not worry about adding it here.  That was a little slow at
-            // startup, so it's hard coded, with a test to make sure the parameters match.
-            return @"
+        internal const string WindowsHelpFunctionText = @"
 <#
 .FORWARDHELPTARGETNAME Get-Help
 .FORWARDHELPCATEGORY Cmdlet
@@ -4238,7 +4228,7 @@ param(
                     $pagerCommand = $customPagerCommand
                     $pagerArgs = if ($tokens.Count -gt 1) {
                         $env:PAGER.Substring($tokens[1].Start)
-                    } 
+                    }
                     else {
                         $null
                     }
@@ -4267,15 +4257,8 @@ param(
         }
     }
 ";
-        }
-#else
-        internal static string GetHelpPagingFunctionText()
-        {
-            // We used to generate the text for this function so you could add a parameter
-            // to Get-Help and not worry about adding it here.  That was a little slow at
-            // startup, so it's hard coded, with a test to make sure the parameters match.
-            // This version removes the -ShowWindow parameter since it is not supported on Linux.
-            return @"
+
+        internal const string UnixHelpFunctionText = @"
 <#
 .FORWARDHELPTARGETNAME Get-Help
 .FORWARDHELPCATEGORY Cmdlet
@@ -4393,8 +4376,31 @@ param(
         }
     }
 ";
+
+        /// <summary>
+        /// This is the default function to use for man/help. It uses
+        /// splatting to pass in the parameters.
+        /// </summary>
+#if !UNIX
+        internal static string GetHelpPagingFunctionText()
+        {
+            // We used to generate the text for this function so you could add a parameter
+            // to Get-Help and not worry about adding it here.  That was a little slow at
+            // startup, so it's hard coded, with a test to make sure the parameters match.
+            return WindowsHelpFunctionText;
+        }
+
+#else
+        internal static string GetHelpPagingFunctionText()
+        {
+            // We used to generate the text for this function so you could add a parameter
+            // to Get-Help and not worry about adding it here.  That was a little slow at
+            // startup, so it's hard coded, with a test to make sure the parameters match.
+            // This version removes the -ShowWindow parameter since it is not supported on Linux.
+            return UnixHelpFunctionText;
         }
 #endif
+
         internal static string GetMkdirFunctionText()
         {
             return @"
