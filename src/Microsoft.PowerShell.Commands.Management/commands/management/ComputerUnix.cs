@@ -158,7 +158,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Run shutdown command.
         /// </summary>
-        protected void RunShutdown(String args) {
+        protected void RunShutdown(String args)
+        {
             if (shutdownPath is null)
             {
                 CommandInfo cmdinfo = CommandDiscovery.LookupCommandInfo(
