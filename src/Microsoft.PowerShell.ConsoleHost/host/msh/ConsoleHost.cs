@@ -1634,7 +1634,7 @@ namespace Microsoft.PowerShell
             if (Platform.IsWindowsDesktop)
             {
                 // Note: this API can detect if a third-party screen reader is active, such as NVDA, but not the in-box Windows Narrator.
-                // Quoted from https://docs.microsoft.com/windows/win32/api/winuser/nf-winuser-systemparametersinfoa about the
+                // Quoted from https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-systemparametersinfoa about the
                 // accessibility parameter 'SPI_GETSCREENREADER':
                 // "Narrator, the screen reader that is included with Windows, does not set the SPI_SETSCREENREADER or SPI_GETSCREENREADER flags."
                 bool enabled = false;
