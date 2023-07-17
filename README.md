@@ -109,25 +109,25 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [pv-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.4.0-preview.4/powershell-7.4.0-preview.4-linux-arm64.tar.gz
 [pv-snap]: https://snapcraft.io/powershell-preview
 
-[in-windows]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-windows
-[in-ubuntu16]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-1604
-[in-ubuntu18]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-1804
-[in-ubuntu20]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-2004
+[in-windows]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-windows
+[in-ubuntu16]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-1604
+[in-ubuntu18]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-1804
+[in-ubuntu20]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#ubuntu-2004
 [in-ubuntu22]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-linux?view=powershell-7.3#ubuntu
-[in-deb10]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#debian-10
-[in-centos]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#centos-7
-[in-rhel7]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#red-hat-enterprise-linux-rhel-7
-[in-opensuse]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#opensuse
-[in-fedora]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#fedora
-[in-archlinux]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#arch-linux
-[in-macos]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-macos
+[in-deb10]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#debian-10
+[in-centos]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#centos-7
+[in-rhel7]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#red-hat-enterprise-linux-rhel-7
+[in-opensuse]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#opensuse
+[in-fedora]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#fedora
+[in-archlinux]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#arch-linux
+[in-macos]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-macos
 [in-docker]: https://github.com/PowerShell/PowerShell-Docker
-[in-kali]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#kali
-[in-windows-zip]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-windows#zip
-[in-tar-linux]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#binary-archives
-[in-tar-macos]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-macos#binary-archives
-[in-raspbian]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#raspbian
-[in-arm]: https://docs.microsoft.com/powershell/scripting/install/powershell-core-on-arm
+[in-kali]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#kali
+[in-windows-zip]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-windows#zip
+[in-tar-linux]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#binary-archives
+[in-tar-macos]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-macos#binary-archives
+[in-raspbian]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#raspbian
+[in-arm]: https://learn.microsoft.com/powershell/scripting/install/powershell-core-on-arm
 [corefx-win]:https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md#windows
 [corefx-linux]:https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md#linux
 [corefx-macos]:https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md#macos
@@ -237,7 +237,7 @@ License: By requesting and using the Container OS Image for Windows containers, 
 
 ### Telemetry
 
-Please visit our [about_Telemetry](https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_telemetry)
+Please visit our [about_Telemetry](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_telemetry)
 topic to read details about telemetry gathered by PowerShell.
 
 ## Governance
