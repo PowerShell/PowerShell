@@ -55,11 +55,11 @@ if you don't have it -
 repository if you don't already have it.
 1. Start your local build of PowerShell
 (with the change to the cmdlet you made).
-1. Find the cmdlet's markdown file in PowerShell Docs - usually under
+1. Find the cmdlet's Markdown file in PowerShell Docs - usually under
 `PowerShell-Docs/reference/<latest powershell version>/<module cmdlet is a part of>/<your changed cmdlet>.md`
 (Ex. `PowerShell-Docs/reference/7/Microsoft.PowerShell.Utility/Select-String.md`)
 1. Run
-`Update-MarkdownHelp -Path <path to cmdlet markdown file>`
+`Update-MarkdownHelp -Path <path to cmdlet Markdown file>`
 which will update the documentation for you.
 1. Make any additional changes needed for the cmdlet to be properly documented.
 1. Send a Pull Request to the PowerShell Docs repository with the changes that
@@ -92,13 +92,13 @@ If you need to add a term or disable checking part of a file see the [configurat
 #### Checking links in documentation
 
 Documentation is link-checked. We make use of the
-markdown-link-check command line tool,
+`markdown-link-check` command line tool,
 which can be run to see if any links are dead.
 
 To run the link-checker, follow these steps:
 
 * install [Node.js](https://nodejs.org/en/) (v10 or up)
-* install markdown-link-check by
+* install `markdown-link-check` by
   `npm install -g markdown-link-check@3.8.5`
 * run `find . \*.md -exec markdown-link-check {} \;`
 
@@ -234,7 +234,7 @@ Additional references:
 * After submitting your pull request,
   our [CI system (Azure DevOps Pipelines)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
-* Our CI contains automated spellchecking and link checking for markdown files. If there is any false-positive,
+* Our CI contains automated spellchecking and link checking for Markdown files. If there is any false-positive,
   [run the spellchecker command line tool in interactive mode](#spellchecking-documentation)
   to add words to the `.spelling` file.
 * Our packaging test may not pass and ask you to update `files.wxs` file if you add/remove/update nuget package references or add/remove assert files.
