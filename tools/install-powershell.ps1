@@ -29,9 +29,11 @@ param(
     [Parameter(ParameterSetName = "Daily")]
     [Parameter(ParameterSetName = "Version")]
     [Parameter(ParameterSetName = "LTS")]
+    [Parameter(ParameterSetName = "Preview")]
     [string] $Destination,
 
     [Parameter(ParameterSetName = "Version")]
+    [Parameter(ParameterSetName = "MSI")]
     [string] $Version,
 
     [Parameter(ParameterSetName = "LTS")]
@@ -51,6 +53,8 @@ param(
     [Parameter(ParameterSetName = "LTS")]
     [switch] $AddToPath,
 
+    [Parameter(ParameterSetName = "Version")]
+    [Parameter(ParameterSetName = "LTS")]
     [Parameter(ParameterSetName = "MSI")]
     [switch] $UseMSI,
 
