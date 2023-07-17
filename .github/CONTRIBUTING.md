@@ -76,19 +76,18 @@ made.
 #### Spellchecking documentation
 
 Documentation is spellchecked. We use the
-[markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) command line tool,
-which can be run in interactive mode to correct typos or add words to the ignore list
-(`.spelling` at the repository root).
+[textlint](https://github.com/textlint/textlint/wiki/Collection-of-textlint-rule) command line tool,
+which can be run in interactive mode to correct typos.
 
 To run the spellchecker, follow these steps:
 
 * install [Node.js](https://nodejs.org/en/) (v10 or up)
-* install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
-  `npm install -g markdown-spellcheck` (v0.11.0 or up)
-* run `mdspell "**/*.md" "!**/dotnet-tools/**/*.md" --ignore-numbers --ignore-acronyms --en-us`.
-    - The folder `dotnet-tools` is excluded because files in that folder are copied from the `dotnet/performance` repository
-      and will need to be synchronized from time to time.
-* if the `.spelling` file is updated, commit and push it
+* install [textlint](https://github.com/textlint/textlint/wiki/Collection-of-textlint-rule) by
+  `npm install -g textlint textlint-rule-terminology`
+* run `textlint --rule terminology <changedFileName>`,
+  adding `--fix` will accept all the recommendations.
+
+If you need to add a term or disable checking part of a file see the [configuration sections of the rule](https://github.com/sapegin/textlint-rule-terminology).
 
 #### Checking links in documentation
 
