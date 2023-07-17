@@ -175,7 +175,6 @@ namespace Microsoft.PowerShell.Commands
                     ErrorRecord error = new ErrorRecord(
                         new InvalidOperationException(ComputerResources.ShutdownCommandNotFound), "CommandNotFound", ErrorCategory.ObjectNotFound, targetObject: null);
                     ThrowTerminatingError(error);
-                    return;
                 }
             }
 
