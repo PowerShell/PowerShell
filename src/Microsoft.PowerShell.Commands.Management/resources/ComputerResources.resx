@@ -391,6 +391,6 @@
     <value>Command failed with exit code {0}: {1}</value>
   </data>
   <data name="ShutdownCommandNotFound" xml:space="preserve">
-    <value>Required 'shutdown' command was not found.</value>
+    <value>The required native command 'shutdown' was not found.</value>
   </data>
 </root>
