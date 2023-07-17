@@ -52,7 +52,7 @@ if you don't have it -
 `Install-Module PlatyPS`.
 1. Clone the
 [`MicrosoftDocs/PowerShell-Docs`](https://github.com/MicrosoftDocs/PowerShell-Docs)
-repo if you don't already have it.
+repository if you don't already have it.
 1. Start your local build of PowerShell
 (with the change to the cmdlet you made).
 1. Find the cmdlet's markdown file in PowerShell Docs - usually under
@@ -62,7 +62,7 @@ repo if you don't already have it.
 `Update-MarkdownHelp -Path <path to cmdlet markdown file>`
 which will update the documentation for you.
 1. Make any additional changes needed for the cmdlet to be properly documented.
-1. Send a Pull Request to the PowerShell Docs repo with the changes that
+1. Send a Pull Request to the PowerShell Docs repository with the changes that
 `PlatyPS`
 made.
 1. Link your Docs PR to your original change PR.
@@ -71,7 +71,7 @@ made.
 
 * When writing Markdown documentation, use [semantic linefeeds][].
   In most cases, it means "one clause/idea per line".
-* Otherwise, these issues should be treated like any other issue in this repo.
+* Otherwise, these issues should be treated like any other issue in this repository.
 
 #### Spellchecking documentation
 
