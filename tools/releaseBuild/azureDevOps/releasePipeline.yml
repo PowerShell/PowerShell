@@ -22,6 +22,8 @@ resources:
 variables:
   - name: runCodesignValidationInjection
     value : false
+  - name: nugetMultiFeedWarnLevel
+    value: none
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - name: skipComponentGovernanceDetection

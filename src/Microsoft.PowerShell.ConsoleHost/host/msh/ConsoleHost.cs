@@ -2984,7 +2984,6 @@ namespace Microsoft.PowerShell
             private static readonly Stack<InputLoop> s_instanceStack = new Stack<InputLoop>();
         }
 
-        [Serializable]
         [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic", Justification =
             "This exception cannot be used outside of the console host application. It is not thrown by a library routine, only by an application.")]
         private sealed class ConsoleHostStartupException : Exception
@@ -2998,14 +2997,6 @@ namespace Microsoft.PowerShell
             internal
             ConsoleHostStartupException(string message)
                 : base(message)
-            {
-            }
-
-            private
-            ConsoleHostStartupException(
-                System.Runtime.Serialization.SerializationInfo info,
-                System.Runtime.Serialization.StreamingContext context)
-                : base(info, context)
             {
             }
 

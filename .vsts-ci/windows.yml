@@ -46,6 +46,7 @@ variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   __SuppressAnsiEscapeSequences: 1
   NugetSecurityAnalysisWarningLevel: none
+  nugetMultiFeedWarnLevel: none
 
 resources:
 - repo: self

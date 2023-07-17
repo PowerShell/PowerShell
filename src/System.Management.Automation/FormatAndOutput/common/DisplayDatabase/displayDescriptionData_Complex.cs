@@ -179,14 +179,12 @@ namespace System.Management.Automation
                 return new CustomItemNewline();
             }
 
-            var textToken = token as TextToken;
-            if (textToken != null)
+            if (token is TextToken textToken)
             {
                 return new CustomItemText { Text = textToken.text };
             }
 
-            var frameToken = token as FrameToken;
-            if (frameToken != null)
+            if (token is FrameToken frameToken)
             {
                 var frame = new CustomItemFrame
                 {
@@ -211,8 +209,7 @@ namespace System.Management.Automation
                 return frame;
             }
 
-            var cpt = token as CompoundPropertyToken;
-            if (cpt != null)
+            if (token is CompoundPropertyToken cpt)
             {
                 var cie = new CustomItemExpression { EnumerateCollection = cpt.enumerateCollection };
 
@@ -232,11 +229,6 @@ namespace System.Management.Automation
                 }
 
                 return cie;
-            }
-
-            var fpt = token as FieldPropertyToken;
-            if (fpt != null)
-            {
             }
 
             Diagnostics.Assert(false, "Unexpected formatting token kind");

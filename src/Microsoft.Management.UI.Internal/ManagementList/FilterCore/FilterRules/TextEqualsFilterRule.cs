@@ -10,7 +10,6 @@ namespace Microsoft.Management.UI.Internal
     /// The TextEqualsFilterRule class evaluates a string item to
     /// check if it is equal to the rule's value.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class TextEqualsFilterRule : TextFilterRule
     {

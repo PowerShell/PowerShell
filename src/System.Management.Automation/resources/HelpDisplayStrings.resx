@@ -392,6 +392,9 @@ English-US help content is available and can be saved using: Save-Help -UICultur
     <value>Failed to update Help for the module(s) '{0}' with UI culture(s) {{{1}}} : {2}.
 English-US help content is available and can be installed using: Update-Help -UICulture en-US.</value>
   </data>
+  <data name="FailedToUpdateHelpWithLocaleNoUICulture" xml:space="preserve">
+    <value>Your current culture is ({0}), which is not associated with any language, consider changing your system culture or install the English-US help content using: Update-Help -UICulture en-US.</value>
+  </data>
   <data name="FalseShort" xml:space="preserve">
     <value>false</value>
   </data>

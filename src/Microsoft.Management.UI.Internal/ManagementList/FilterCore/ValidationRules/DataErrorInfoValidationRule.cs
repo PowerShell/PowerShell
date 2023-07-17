@@ -8,7 +8,6 @@ namespace Microsoft.Management.UI.Internal
     /// <summary>
     /// Provides a way to create a custom rule in order to check the validity of user input.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public abstract class DataErrorInfoValidationRule
     {

@@ -310,6 +310,7 @@ function Start-PSBuild {
         [ValidateSet("alpine-x64",
                      "fxdependent",
                      "fxdependent-linux-x64",
+                     "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
                      "linux-arm",
                      "linux-arm64",
@@ -428,6 +429,7 @@ Fix steps:
         PSModuleRestore=$PSModuleRestore
         ForMinimalSize=$ForMinimalSize
     }
+
     $script:Options = New-PSOptions @OptionsArguments
 
     if ($StopDevPowerShell) {
@@ -886,6 +888,7 @@ function New-PSOptions {
                      "alpine-x64",
                      "fxdependent",
                      "fxdependent-linux-x64",
+                     "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
                      "linux-arm",
                      "linux-arm64",
@@ -970,9 +973,14 @@ function New-PSOptions {
 
     # Build the Output path
     if (!$Output) {
-        if ($Runtime -like 'fxdependent*') {
+        if ($Runtime -like 'fxdependent*' -and $Runtime -like 'fxdependent*linux*') {
+            $outputRuntime = $Runtime -replace 'fxdependent-', ''
+            $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $outputRuntime, "publish", $Executable)
+        }
+        elseif ($Runtime -like 'fxdependent*') {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, "publish", $Executable)
-        } else {
+        }
+        else {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
         }
     } else {

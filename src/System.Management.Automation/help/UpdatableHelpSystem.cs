@@ -28,7 +28,6 @@ namespace System.Management.Automation.Help
     /// <summary>
     /// Updatable help system exception.
     /// </summary>
-    [Serializable]
     internal class UpdatableHelpSystemException : Exception
     {
         /// <summary>

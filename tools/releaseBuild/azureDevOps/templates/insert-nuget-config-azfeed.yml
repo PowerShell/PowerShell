@@ -4,25 +4,34 @@ parameters:
 
 steps:
 - pwsh: |
+      $configPath = "${env:NugetConfigDir}/nuget.config"
       Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination '${{ parameters.repoRoot }}/src/Modules'
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
 
-      if(-not (Test-Path "${{ parameters.repoRoot }}/src/Modules/nuget.config"))
+      if(-not (Test-Path $configPath))
       {
           throw "nuget.config is not created"
       }
+      Get-Content $configPath | Write-Verbose -Verbose
   displayName: 'Add nuget.config for Azure DevOps feed for PSGallery modules'
   condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
-- pwsh: |
-      Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination '${{ parameters.repoRoot }}'
+  env:
+    NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
 
-      if(-not (Test-Path "${{ parameters.repoRoot }}/nuget.config"))
+- pwsh: |
+      $configPath = "${env:NugetConfigDir}/nuget.config"
+      Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
+      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
+
+      if(-not (Test-Path $configPath))
       {
           throw "nuget.config is not created"
       }
+      Get-Content $configPath | Write-Verbose -Verbose
   displayName: 'Add nuget.config for Azure DevOps feed for packages'
   condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
+  env:
+    NugetConfigDir: ${{ parameters.repoRoot }}
 
 - task: nuget-security-analysis@0
   displayName: 'Run Secure Supply Chain analysis'
