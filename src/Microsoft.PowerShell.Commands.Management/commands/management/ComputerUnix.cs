@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ErrorRecord error = new ErrorRecord(
                         new InvalidOperationException(ComputerResources.ShutdownCommandNotFound), "CommandNotFound", ErrorCategory.ObjectNotFound, targetObject: null);
-                    WriteError(error);
+                    ThrowTerminatingError(error);
                     return;
                 }
             }
@@ -196,10 +196,9 @@ namespace Microsoft.PowerShell.Commands
             if (_process.ExitCode != 0)
             {
                 string stderr = _process.StandardError.ReadToEnd();
-                string errMsg = StringUtil.Format(ComputerResources.CommandFailed, _process.ExitCode, stderr);
                 ErrorRecord error = new ErrorRecord(
-                    new InvalidOperationException(errMsg), "CommandFailed", ErrorCategory.OperationStopped, null);
-                WriteError(error);
+                    new InvalidOperationException(stderr), "CommandFailed", ErrorCategory.OperationStopped, null);
+                ThrowTerminatingError(error);
             }
         }
 #endregion
