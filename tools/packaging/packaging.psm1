@@ -4185,10 +4185,6 @@ function New-GlobalToolNupkgSource
 
             Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $AlpineBinPath for $PackageType"
             Copy-Item "$AlpineBinPath/*" -Destination $ridFolder -Recurse
-            Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
-            Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
-            Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
-            Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
             $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
         }
 
