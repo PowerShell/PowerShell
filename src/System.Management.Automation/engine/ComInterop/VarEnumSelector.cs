@@ -431,7 +431,7 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Get the COM Variant type that argument should be marshalled as for a call to COM.
         /// </summary>
-        private VariantBuilder GetVariantBuilder(Type argumentType)
+        private static VariantBuilder GetVariantBuilder(Type argumentType)
         {
             //argumentType is coming from MarshalType, null means the dynamic object holds
             //a null value and not byref

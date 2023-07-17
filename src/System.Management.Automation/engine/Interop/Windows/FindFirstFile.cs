@@ -41,7 +41,7 @@ internal static partial class Interop
 
         internal sealed class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            private SafeFindHandle() : base(true) { }
+            public SafeFindHandle() : base(true) { }
 
             protected override bool ReleaseHandle()
             {
