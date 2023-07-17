@@ -110,10 +110,6 @@ stages:
 
       - template: templates/windows-hosted-build.yml
         parameters:
-          Architecture: arm
-
-      - template: templates/windows-hosted-build.yml
-        parameters:
           Architecture: arm64
 
       - template: templates/windows-hosted-build.yml
@@ -303,11 +299,6 @@ stages:
       parameters:
         Architecture: x86
         parentJob: build_windows_x86_release
-
-    - template: templates/windows-packaging.yml
-      parameters:
-        Architecture: arm
-        parentJob: build_windows_arm_release
 
     - template: templates/windows-packaging.yml
       parameters:
