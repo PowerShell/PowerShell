@@ -76,7 +76,7 @@ made.
 #### Spellchecking documentation
 
 Documentation is spellchecked. We use the
-[textlint](https://github.com/textlint/textlint/wiki/Collection-of-textlint-rule) command line tool,
+[textlint](https://github.com/textlint/textlint/wiki/Collection-of-textlint-rule) command-line tool,
 which can be run in interactive mode to correct typos.
 
 To run the spellchecker, follow these steps:
@@ -92,7 +92,7 @@ If you need to add a term or disable checking part of a file see the [configurat
 #### Checking links in documentation
 
 Documentation is link-checked. We make use of the
-`markdown-link-check` command line tool,
+`markdown-link-check` command-line tool,
 which can be run to see if any links are dead.
 
 To run the link-checker, follow these steps:
@@ -235,7 +235,7 @@ Additional references:
   our [CI system (Azure DevOps Pipelines)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
 * Our CI contains automated spellchecking and link checking for Markdown files. If there is any false-positive,
-  [run the spellchecker command line tool in interactive mode](#spellchecking-documentation)
+  [run the spellchecker command-line tool in interactive mode](#spellchecking-documentation)
   to add words to the `.spelling` file.
 * Our packaging test may not pass and ask you to update `files.wxs` file if you add/remove/update nuget package references or add/remove assert files.
 
