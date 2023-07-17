@@ -352,7 +352,7 @@ namespace System.Management.Automation.ComInterop
         // We will try VT_DISPATCH and then call GetNativeVariantForObject.
         private const VarEnum VT_DEFAULT = VarEnum.VT_RECORD;
 
-        private VarEnum GetComType(ref Type argumentType)
+        private static VarEnum GetComType(ref Type argumentType)
         {
             if (argumentType == typeof(Missing))
             {
