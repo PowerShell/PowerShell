@@ -797,7 +797,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path">Path to resolve.</param>
         /// <returns>A list of directories.</returns>
-        private IEnumerable<string> RecursiveResolvePathHelper(string path)
+        private static IEnumerable<string> RecursiveResolvePathHelper(string path)
         {
             if (System.IO.Directory.Exists(path))
             {
