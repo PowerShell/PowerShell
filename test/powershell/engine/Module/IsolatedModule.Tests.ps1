@@ -31,7 +31,7 @@ Describe "Isolated module scenario - load the whole module in custom ALC" -Tag '
         ## The exact version of NewtonSoft.Json should be loaded to the custom ALC.
         $foo = [Test.Isolated.Nested.Foo]::new("Hello", "World")
         $version = Test-NestedCommand -Param $foo
-        $version | Should -BeExactly "Hello-World-Newtonsoft.Json, Version=10.0.3.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed" -Because $version
+        $version | Should -BeExactly "Hello-World-Newtonsoft.Json, Version=13.0.1.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed" -Because $version
 
         ## The type 'Test.Isolated.Root.Red' from the root module can be resolved and should be from the same load context.
         $context3 = [System.Runtime.Loader.AssemblyLoadContext]::GetLoadContext($rootCmd.ImplementingType.Assembly)
