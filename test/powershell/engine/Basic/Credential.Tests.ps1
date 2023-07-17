@@ -7,9 +7,7 @@ Describe "Credential tests" -Tags "CI" {
     }
 
     It "Explicit credential cast with string produces an exception message without value" {
-        { [pscredential]"1234" } |
-            Should -Throw `
-            -ErrorId "ConvertToFinalInvalidCastException" `
-            -ExpectedMessage 'Cannot convert the value of type "System.String" to type "System.Management.Automation.PSCredential".'
+        $ex = { [pscredential]"1234" } | Should -Throw -ErrorId "ConvertToFinalInvalidCastException" -PassThru
+        $ex.Exception.Message | Should -Not -Match "1234"
     }
 }

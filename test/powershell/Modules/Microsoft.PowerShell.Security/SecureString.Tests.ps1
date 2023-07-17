@@ -43,16 +43,12 @@ Describe "SecureString conversion tests" -Tags "CI" {
     }
 
     It "Using invalid secure string with ConvertFrom-SecureString produces an exception message without value" {
-        { ConvertFrom-SecureString "1234" } |
-            Should -Throw `
-                -ErrorId "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand" `
-                -ExpectedMessage 'Cannot bind parameter ''SecureString''. Cannot convert the value of type "System.String" to type "System.Security.SecureString".'
+        $ex = { ConvertFrom-SecureString "1234" } | Should -Throw -ErrorId "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand" -PassThru
+        $ex.Exception.Message | Should -Not -Match "1234"
     }
 
     It "Using invalid securestring with cast produces an exception message without value" {
-        { [securestring]"1234" } |
-            Should -Throw `
-            -ErrorId "ConvertToFinalInvalidCastException" `
-            -ExpectedMessage 'Cannot convert the value of type "System.String" to type "System.Security.SecureString".'
+        $ex = { [securestring]"1234" } | Should -Throw -ErrorId "ConvertToFinalInvalidCastException" -PassThru
+        $ex.Exception.Message | Should -Not -Match "1234"
     }
 }
