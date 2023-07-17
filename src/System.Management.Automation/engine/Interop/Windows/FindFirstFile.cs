@@ -41,6 +41,7 @@ internal static partial class Interop
 
         internal sealed class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
+            // .NET 8 requires the default constructor to be public
             public SafeFindHandle() : base(true) { }
 
             protected override bool ReleaseHandle()
