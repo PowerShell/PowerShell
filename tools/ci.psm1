@@ -189,7 +189,7 @@ function Invoke-CIxUnit
     )
     $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
     $path = "$env:CoreOutput\pwsh.exe"
-    if($IsMacOS -or $IsLinux)
+    if($IsMacOS -or $IsLinux -or $IsFreeBSD)
     {
         $path = "$env:CoreOutput\pwsh"
     }
@@ -243,7 +243,7 @@ function Invoke-CITest
         }
     }
 
-    if($IsLinux -or $IsMacOS)
+    if($IsLinux -or $IsMacOS -or $IsFreeBSD)
     {
         return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet -TitlePrefix $TitlePrefix
     }
@@ -480,7 +480,7 @@ function Invoke-CIFinish
         [string[]] $Stage = ('Build','Package')
     )
 
-    if ($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS) -and $Stage -contains 'Build') {
+    if ($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS -or $IsFreeBSD) -and $Stage -contains 'Build') {
         return New-LinuxPackage
     }
 

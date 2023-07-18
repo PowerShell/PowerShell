@@ -11,6 +11,7 @@ class PlatformInfo
     [bool] $isLinux
     [bool] $isOSX
     [bool] $isWindows
+    [bool] $isFreeBSD
 
     [bool] $isAdmin
 
@@ -41,13 +42,16 @@ function DetectPlatform
         $platformInfo.isLinux = $Runtime::IsOSPlatform($OSPlatform::Linux)
         $platformInfo.isOSX = $Runtime::IsOSPlatform($OSPlatform::OSX)
         $platformInfo.isWindows = $Runtime::IsOSPlatform($OSPlatform::Windows)
+        $platformInfo.isFreeBSD = $Runtime::IsOSPlatform($OSPlatform::FreeBSD)
     }
     catch
     {
         $platformInfo.isCoreCLR = $false
         $platformInfo.isLinux = $false
         $platformInfo.isOSX = $false
+        $platformInfo.isFreeBSD = $false
         $platformInfo.isWindows = $true
+
     }
 
     if ($platformInfo.isWindows)

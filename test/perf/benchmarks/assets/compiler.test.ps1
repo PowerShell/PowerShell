@@ -135,6 +135,7 @@ function Start-PSBuild {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "freebsd-x64"
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -178,7 +179,7 @@ function Start-PSBuild {
             throw "Build for the minimal size requires the minimal disk footprint, so `CrossGen` is not allowed"
         }
 
-        if ($Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
+        if ($Runtime -and "linux-x64", "win7-x64", "osx-x64", "freebsd-x64" -notcontains $Runtime) {
             throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
         }
     }
@@ -520,6 +521,7 @@ function New-PSOptions {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "freebsd-x64"
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -562,6 +564,13 @@ function New-PSOptions {
             }
             else {
                 $Runtime = "osx-x64"
+            }
+        } elseif ($environment.IsFreeBSD) {
+            if ($PSVersionTable.OS.Contains('ARM64')) {
+                $Runtime = "freebsd-arm64"
+            }
+            else {
+                $Runtime = "freebsd-x64"
             }
         } else {
             $RID = dotnet --info | ForEach-Object {
@@ -1018,13 +1027,13 @@ function Install-Dotnet {
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
-    if ($environment.IsLinux -or $environment.IsMacOS) {
+    if ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
         $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
 
         # Uninstall all previous dotnet packages
         $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
             "dotnet-uninstall-debian-packages.sh"
-        } elseif ($environment.IsMacOS) {
+        } elseif ($environment.IsMacOS -or $environment.IsFreeBSD) {
             "dotnet-uninstall-pkgs.sh"
         }
 
@@ -1034,7 +1043,7 @@ function Install-Dotnet {
                 Invoke-Expression "$sudo bash ./$uninstallScript"
             }
         } else {
-            Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
+            Write-Warning "This script only removes prior versions of dotnet for Ubunt, OS X, and FreeBSD"
         }
 
         # Install new dotnet 1.1.0 preview packages
@@ -1137,7 +1146,7 @@ function Start-PSBootstrap {
     Push-Location $PSScriptRoot/tools
 
     try {
-        if ($environment.IsLinux -or $environment.IsMacOS) {
+        if ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
             # This allows sudo install to be optional; needed when running in containers / as root
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
@@ -1318,6 +1327,7 @@ function Start-CrossGen {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "freebsd-x64"
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -1345,6 +1355,7 @@ function Start-CrossGen {
                 "linux-arm",
                 "linux-arm64",
                 "linux-x64",
+                "freebsd-x64"
                 "osx-arm64",
                 "osx-x64",
                 "win-arm",
@@ -2145,6 +2156,8 @@ function Start-PSPackage {
                 }
             } elseif ($Environment.IsMacOS) {
                 "osxpkg", "nupkg", "tar"
+            } elseif ($Environment.IsFreeBSD) {
+                "nupkg", "tar"
             } elseif ($Environment.IsWindows) {
                 "msi", "nupkg", "msix"
             }
