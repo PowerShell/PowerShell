@@ -72,14 +72,24 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Properties
 
+        #region Protected Fields
+
+        /// <summary>
+        /// Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.
+        /// </summary>
+        protected TimeSpan perReadTimeout;
+
+        #endregion Protected Fields
+
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebResponseObject"/> class.
         /// </summary>
         /// <param name="response">The Http response.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public WebResponseObject(HttpResponseMessage response, CancellationToken cancellationToken) : this(response, null, cancellationToken) { }
+        public WebResponseObject(HttpResponseMessage response, TimeSpan perReadTimeout, CancellationToken cancellationToken) : this(response, null, perReadTimeout, cancellationToken) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebResponseObject"/> class
@@ -87,9 +97,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="response">Http response.</param>
         /// <param name="contentStream">The http content stream.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        public WebResponseObject(HttpResponseMessage response, Stream? contentStream, CancellationToken cancellationToken)
+        public WebResponseObject(HttpResponseMessage response, Stream? contentStream, TimeSpan perReadTimeout, CancellationToken cancellationToken)
         {
+            this.perReadTimeout = perReadTimeout;
             SetResponse(response, contentStream, cancellationToken);
             InitializeContent();
             InitializeRawContent(response);
@@ -149,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 int initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
-                RawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, cmdlet: null, response.Content.Headers.ContentLength.GetValueOrDefault(), cancellationToken);
+                RawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, cmdlet: null, response.Content.Headers.ContentLength.GetValueOrDefault(), perReadTimeout, cancellationToken);
             }
 
             // Set the position of the content stream to the beginning

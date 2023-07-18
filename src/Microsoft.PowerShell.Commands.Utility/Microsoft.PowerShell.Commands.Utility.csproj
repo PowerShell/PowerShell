@@ -32,10 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.6.0" />
-    <PackageReference Include="System.Threading.AccessControl" Version="8.0.0-preview.3.23174.8" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.0-preview.2.23128.3" />
-    <PackageReference Include="JsonSchema.Net" Version="4.1.5" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0-2.final" />
+    <PackageReference Include="System.Threading.AccessControl" Version="8.0.0-preview.4.23259.5" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0-preview.4.23259.4" />
+    <PackageReference Include="JsonSchema.Net" Version="4.1.6" />
   </ItemGroup>
 
 </Project>

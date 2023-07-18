@@ -225,16 +225,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the data needed to seralize the Hashtable.
-        /// </summary>
-        /// <param name="info">The serialization info.</param>
-        /// <param name="context">The serialization context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            _orderedDictionary.GetObjectData(info, context);
-        }
-
-        /// <summary>
         /// Removes the specified key from the hashtable.
         /// </summary>
         /// <param name="key">The key to remove.</param>

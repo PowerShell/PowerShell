@@ -1,5 +1,161 @@
 # Current preview release
 
+## [7.4.0-preview.4] - 2023-06-29
+
+### Breaking Changes
+
+- `Test-Json`: Use `JsonSchema.Net` (`System.Text.Json`) instead of `NJsonSchema` (`Newtonsoft.Json`) (#18141) (Thanks @gregsdennis!)
+- `Test-Connection`: Increase output detail when performing a TCP test (#11452) (Thanks @jackdcasey!)
+
+### Engine Updates and Fixes
+
+- Fix native executables not redirecting to file (#19842)
+- Add a new experimental feature to control native argument passing style on Windows (#18706)
+- Fix `TabExpansion2` variable leak when completing variables (#18763) (Thanks @MartinGC94!)
+- Enable completion of variables across ScriptBlock scopes (#19819) (Thanks @MartinGC94!)
+- Fix completion of the `foreach` statement variable (#19814) (Thanks @MartinGC94!)
+- Fix variable type inference precedence (#18691) (Thanks @MartinGC94!)
+- Fix member completion for PowerShell Enum class (#19740) (Thanks @MartinGC94!)
+- Fix parsing for array literals in index expressions in method calls (#19224) (Thanks @MartinGC94!)
+- Fix incorrect string to type conversion (#19560) (Thanks @MartinGC94!)
+- Fix slow execution when many breakpoints are used (#14953) (Thanks @nohwnd!)
+- Add a public API for getting locations of `PSModulePath` elements (#19422)
+- Add WDAC Audit logging (#19641)
+- Improve path completion (#19489) (Thanks @MartinGC94!)
+- Fix an indexing out of bound error in `CompleteInput` for empty script input (#19501) (Thanks @MartinGC94!)
+- Improve variable completion performance (#19595) (Thanks @MartinGC94!)
+- Allow partial culture matching in `Update-Help` (#18037) (Thanks @dkaszews!)
+- Fix the check when reading input in `NativeCommandProcessor` (#19614)
+- Add support of respecting `$PSStyle.OutputRendering` on the remote host (#19601)
+- Support byte stream piping between native commands and file redirection (#17857)
+
+### General Cmdlet Updates and Fixes
+
+- Disallow negative values for `Get-Content` cmdlet parameters `-Head` and `-Tail`  (#19715) (Thanks @CarloToso!)
+- Make `Update-Help` throw proper error when current culture is not associated with a language (#19765) (Thanks @josea!)
+- Do not require activity when creating a completed progress record (#18474) (Thanks @MartinGC94!)
+- WebCmdlets: Add alias for `-TimeoutSec` to `-ConnectionTimeoutSeconds` and add `-OperationTimeoutSeconds` (#19558) (Thanks @stevenebutler!)
+- Avoid checking screen scraping on non-Windows platforms before launching native app (#19812)
+- Add reference to PSResourceGet (#19597)
+- Add `FileNameStar` to `MultipartFileContent` in WebCmdlets (#19467) (Thanks @CarloToso!)
+- Add `ParameterSetName` for the `-Detailed` parameter of `Test-Connection` (#19727)
+- Remove the property disabling optimization (#19701)
+- Filter completion for enum parameter against `ValidateRange` attributes (#17750) (Thanks @fflaten!)
+- Small cleanup `Invoke-RestMethod` (#19490) (Thanks @CarloToso!)
+- Fix wildcard globbing in root of device paths (#19442) (Thanks @MartinGC94!)
+- Add specific error message that creating Junctions requires absolute path (#19409)
+- Fix array type parsing in generic types (#19205) (Thanks @MartinGC94!)
+- Improve the verbose message of WebCmdlets to show correct HTTP version (#19616) (Thanks @CarloToso!)
+- Fix HTTP status from 409 to 429 for WebCmdlets to get retry interval from Retry-After header. (#19622) (Thanks @mkht!)
+- Remove minor versions from `PSCompatibleVersions` (#18635) (Thanks @xtqqczze!)
+- Update `JsonSchema.Net` version to 4.1.0 (#19610) (Thanks @gregsdennis!)
+- Allow combining of `-Skip` and `-SkipLast` parameters in `Select-Object` cmdlet. (#18849) (Thanks @ArmaanMcleod!)
+- Fix constructing `PSModulePath` if a sub-path has trailing separator (#13147)
+- Add `Get-SecureRandom` cmdlet (#19587)
+- Fix `New-Item` to re-create `Junction` when `-Force` is specified (#18311) (Thanks @GigaScratch!)
+- Improve Hashtable key completion for type constrained variable assignments, nested Hashtables and more (#17660) (Thanks @MartinGC94!)
+- `Set-Clipboard -AsOSC52` for remote usage (#18222) (Thanks @dkaszews!)
+- Refactor `MUIFileSearcher.AddFiles` in the help related code (#18825) (Thanks @xtqqczze!)
+- Set `SetLastError` to `true` for symbolic and hard link native APIs (#19566)
+- Fix `Get-AuthenticodeSignature -Content` to not roundtrip the bytes to a Unicode string and then back to bytes (#18774) (Thanks @jborean93!)
+- WebCmdlets: Rename `-TimeoutSec` to `-ConnectionTimeoutSeconds` (with alias) and add `-OperationTimeoutSeconds` (#19558) (Thanks @stevenebutler!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@eltociear, @ArmaanMcleod, @turbedi, @CarloToso, @Molkree, @xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Fix typo in <code>NativeCommandProcessor.cs</code> (#19846) (Thanks @eltociear!)</li>
+<li>Rename file from <code>PingPathCommand.cs</code> to <code>TestPathCommand.cs</code> (#19782) (Thanks @ArmaanMcleod!)</li>
+<li>Make use of the new <code>Random.Shared</code> property (#18417) (Thanks @turbedi!)</li>
+<li>six files (#19695) (Thanks @CarloToso!)</li>
+<li>Apply IDE0019: <code>InlineAsTypeCheck</code> in Microsoft.PowerShell.Commands (#19688)(#19690)(#19687)(#19689) (Thanks @Molkree!)</li>
+<li>Remove <code>PSv2CompletionCompleter</code> as part of the PowerShell v2 code cleanup (#18337) (Thanks @xtqqczze!)</li>
+<li>Enable more nullable annotations in WebCmdlets (#19359) (Thanks @CarloToso!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Add Git mailmap for Andy Jordan (#19469)
+- Add backport function to release tools (#19568)
+
+### Tests
+
+- Improve reliability of the `Ctrl+c` tests for WebCmdlets (#19532) (Thanks @stevenebutler!)
+- Fix logic for `Import-CliXml` test (#19805)
+- Add some debugging to the transcript test for `SilentlyContinue` (#19770)
+- Re-enable `Get-ComputerInfo` pending tests (#19746)
+- Update syslog parser to handle modern formats. (#19737)
+- Pass `-UserScope` as required by `RunUpdateHelpTests` (#13400) (Thanks @yecril71pl!)
+- Change how `isPreview` is determined for default cmdlets tests (#19650)
+- Skip file signature tests on 2012R2 where PKI cmdlet do not work (#19643)
+- Change logic for testing missing or extra cmdlets. (#19635)
+- Fix incorrect test cases in `ExecutionPolicy.Tests.ps1` (#19485) (Thanks @xtqqczze!)
+- Fixing structure typo in test setup (#17458) (Thanks @powercode!)
+- Fix test failures on Windows for time zone and remoting (#19466)
+- Harden 'All approved Cmdlets present' test (#19530)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+<p>Updated to .NET 8 Preview 4
+<p>We thank the following contributors!</p>
+<p>@krishnayalavarthi</p>
+
+</summary>
+
+<ul>
+<li>Update to the latest NOTICES file (#19537)(#19820)(#19784)(#19720)(#19644)(#19620)(#19605)(#19546)</li>
+<li>Bump Microsoft.NET.Test.Sdk from 17.5.0 to 17.6.3 (#19867)(#19762)(#19733)(#19668)(#19613)</li>
+<li>Update the cgmanifest (#19847)(#19800)(#19792)(#19776)(#19763)(#19697)(#19631)</li>
+<li>Bump StyleCop.Analyzers from 1.2.0-beta.406 to 1.2.0-beta.507 (#19837)</li>
+<li>Bump Microsoft.CodeAnalysis.CSharp from 4.6.0-1.final to 4.7.0-2.final (#19838)(#19667)</li>
+<li>Update to .NET 8 Preview 4 (#19696)</li>
+<li>Update experimental-feature json files (#19828)</li>
+<li>Bump JsonSchema.Net from 4.1.1 to 4.1.5 (#19790)(#19768)(#19788)</li>
+<li>Update group to assign PRs in <code>fabricbot.json</code> (#19759)</li>
+<li>Add retry on failure for all upload tasks in Azure Pipelines (#19761)</li>
+<li>Bump Microsoft.PowerShell.MarkdownRender from 7.2.0 to 7.2.1 (#19751)(#19752)</li>
+<li>Delete symbols on Linux as well (#19735)</li>
+<li>Update <code>windows.json</code> packaging BOM (#19728)</li>
+<li>Disable SBOM signing for CI and add extra files for packaging tests (#19729)</li>
+<li>Update experimental-feature json files (#19698(#19588))</li>
+<li>Add ProductCode in registry for MSI install (#19590)</li>
+<li>Runas format changed (#15434) (Thanks @krishnayalavarthi!)</li>
+<li>For Preview releases, add <code>pwsh-preview.exe</code> alias to MSIX package (#19602)</li>
+<li>Add prompt to fix conflict during backport (#19583)</li>
+<li>Add comment in wix detailing use of <code>UseMU</code> (#19371)</li>
+<li>Verify that packages have license data (#19543)</li>
+<li>Add an explicit manual stage for changelog update (#19551)</li>
+<li>Update the team member list in <code>releaseTools.psm1</code> (#19544)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update `metadata.json` and `README.md` for upcoming releases (#19863)(#19542)
+- Update message to use the actual parameter name (#19851)
+- Update `CONTRIBUTING.md` to include Code of Conduct enforcement (#19810)
+- Update `working-group-definitions.md` (#19809)(#19561)
+- Update `working-group.md` to add section about reporting working group members (#19758)
+- Correct capitalization in readme (#19666) (Thanks @Aishat452!)
+- Updated the public dashboard link (#19634)
+- Fix a typo in `serialization.cs` (#19598) (Thanks @eltociear!)
+
+[7.4.0-preview.4]: https://github.com/PowerShell/PowerShell/compare/v7.4.0-preview.3...v7.4.0-preview.4
+
 ## [7.4.0-preview.3] - 2023-04-20
 
 ### Breaking Changes

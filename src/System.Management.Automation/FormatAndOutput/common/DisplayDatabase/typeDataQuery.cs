@@ -143,9 +143,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 int currentMatch = BestMatchIndexUndefined;
-                TypeReference tr = r as TypeReference;
 
-                if (tr != null)
+                if (r is TypeReference tr)
                 {
                     // we have a type
                     currentMatch = MatchTypeIndex(tr.name, currentObject, ex);
@@ -486,9 +485,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 foreach (TypeOrGroupReference togr in vd.appliesTo.referenceList)
                 {
                     StringBuilder sb = new StringBuilder();
-                    TypeReference tr = togr as TypeReference;
                     sb.Append(isMatched ? "MATCH FOUND" : "NOT MATCH");
-                    if (tr != null)
+                    if (togr is TypeReference tr)
                     {
                         sb.AppendFormat(
                             CultureInfo.InvariantCulture,
@@ -601,8 +599,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (TypeOrGroupReference r in appliesTo.referenceList)
             {
                 // if it is a type reference, just add the type name
-                TypeReference tr = r as TypeReference;
-                if (tr != null)
+                if (r is TypeReference tr)
                 {
                     if (!allTypes.Contains(tr.name))
                         allTypes.Add(tr.name);

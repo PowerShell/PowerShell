@@ -5910,7 +5910,6 @@ namespace System.Management.Automation
     /// 2) values that can be serialized and deserialized during PowerShell remoting handshake
     ///    (in major-version compatible versions of PowerShell remoting)
     /// </summary>
-    [Serializable]
     public sealed class PSPrimitiveDictionary : Hashtable
     {
         #region Constructors

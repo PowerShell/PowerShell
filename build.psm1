@@ -312,6 +312,7 @@ function Start-PSBuild {
         [ValidateSet("alpine-x64",
                      "fxdependent",
                      "fxdependent-linux-x64",
+                     "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
                      "linux-arm",
                      "linux-arm64",
@@ -431,6 +432,7 @@ Fix steps:
         PSModuleRestore=$PSModuleRestore
         ForMinimalSize=$ForMinimalSize
     }
+
     $script:Options = New-PSOptions @OptionsArguments
 
     if ($StopDevPowerShell) {
@@ -889,6 +891,7 @@ function New-PSOptions {
                      "alpine-x64",
                      "fxdependent",
                      "fxdependent-linux-x64",
+                     "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
                      "linux-arm",
                      "linux-arm64",
@@ -973,9 +976,14 @@ function New-PSOptions {
 
     # Build the Output path
     if (!$Output) {
-        if ($Runtime -like 'fxdependent*') {
+        if ($Runtime -like 'fxdependent*' -and $Runtime -like 'fxdependent*linux*') {
+            $outputRuntime = $Runtime -replace 'fxdependent-', ''
+            $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $outputRuntime, "publish", $Executable)
+        }
+        elseif ($Runtime -like 'fxdependent*') {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, "publish", $Executable)
-        } else {
+        }
+        else {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
         }
     } else {
@@ -1617,7 +1625,7 @@ function Publish-TestResults
         # NUnit allowed values are: Passed, Failed, Inconclusive or Ignored (the spec says Skipped but it doesn' work with Azure DevOps)
         # https://github.com/nunit/docs/wiki/Test-Result-XML-Format
         # Azure DevOps Reporting is so messed up for NUnit V2 and doesn't follow their own spec
-        # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
+        # https://learn.microsoft.com/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
         # So, we will map skipped to the actual value in the NUnit spec and they will ignore all results for tests which were not executed
         Get-Content $Path | ForEach-Object {
             $_ -replace 'result="Ignored"', 'result="Skipped"'

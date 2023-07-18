@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _skipCertificateCheck;
         private bool _noProxy;
         private bool _disposed;
-        private int _timeoutSec;
+        private TimeSpan _connectionTimeout;
 
         /// <summary>
         /// Contains true if an existing HttpClient had to be disposed and recreated since the WebSession was last used.
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal bool SkipCertificateCheck { set => SetStructVar(ref _skipCertificateCheck, value); }
 
-        internal int TimeoutSec { set => SetStructVar(ref _timeoutSec, value); }
+        internal TimeSpan ConnectionTimeout { set => SetStructVar(ref _connectionTimeout, value); }
 
         internal bool NoProxy
         {
@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
             // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
             return new HttpClient(handler)
             {
-                Timeout = _timeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : TimeSpan.FromSeconds(_timeoutSec)
+                Timeout = _connectionTimeout
             };
         }
 

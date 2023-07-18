@@ -74,6 +74,11 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'pscustomobject'
     }
 
+    It 'Should complete foreach variable' {
+        $res = TabExpansion2 -inputScript 'foreach ($CurrentItem in 1..10){$CurrentIt'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$CurrentItem'
+    }
+
     foreach ($Operator in [System.Management.Automation.CompletionCompleters]::CompleteOperator(""))
     {
         It "Should complete $($Operator.CompletionText)" {
@@ -267,6 +272,21 @@ switch ($x)
         $res.CompletionMatches | Should -HaveCount 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
         $completionText -join ' ' | Should -BeExactly 'Ascending Descending Expression'
+    }
+
+    It 'Should complete variable assigned in other scriptblock' {
+        $res = TabExpansion2 -inputScript 'ForEach-Object -Begin {$Test1 = "Hello"} -Process {$Test'
+        $res.CompletionMatches[0].CompletionText | Should -Be '$Test1'
+    }
+
+    It 'Should complete variable assigned in an array of scriptblocks' {
+        $res = TabExpansion2 -inputScript 'ForEach-Object -Process @({"Block1"},{$Test1="Hello"});$Test'
+        $res.CompletionMatches[0].CompletionText | Should -Be '$Test1'
+    }
+
+    It 'Should not complete variable assigned in an ampersand executed scriptblock' {
+        $res = TabExpansion2 -inputScript '& {$AmpeersandVarCompletionTest = "Hello"};$AmpeersandVarCompletionTes'
+        $res.CompletionMatches.Count | Should -Be 0
     }
 
     context TypeConstructionWithHashtable {
@@ -637,6 +657,12 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
     }
 
+    It 'Should complete variable assigned with Data statement' {
+        $TestString = 'data MyDataVar {"Hello"};$MyDatav'
+        $res = TabExpansion2 -inputScript $TestString
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyDataVar'
+    }
+
     it 'Should complete "Value" parameter value in "Where-Object" for Enum property with no input' {
         $res = TabExpansion2 -inputScript 'Get-Command | where-Object CommandType -eq '
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Alias
@@ -930,6 +956,11 @@ Verb-Noun -Param1 Hello ^
     it 'Should complete command with an empty arrayexpression element' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem @()' -cursorColumn 1
         $res.CompletionMatches[0].CompletionText | Should -Be "Get-ChildItem"
+    }
+
+    it 'Should not complete TabExpansion2 variables' {
+        $res = TabExpansion2 -inputScript '$' -cursorColumn 1
+        $res.CompletionMatches.CompletionText | Should -Not -Contain '$positionOfCursor'
     }
 
     it 'Should prefer the default parameterset when completing positional parameters' {
@@ -1227,6 +1258,13 @@ class InheritedClassTest : System.Attribute
 
             Remove-Item -LiteralPath $LiteralPath
         }
+    }
+
+    It 'Should keep custom drive names when completing file paths' {
+        $TempDriveName = "asdf"
+        $null = New-PSDrive -Name $TempDriveName -PSProvider FileSystem -Root $HOME
+        (TabExpansion2 -inputScript "${TempDriveName}:\").CompletionMatches[0].CompletionText | Should -BeLike "${TempDriveName}:*"
+        Remove-PSDrive -Name $TempDriveName
     }
 
     Context "Cmdlet name completion" {
