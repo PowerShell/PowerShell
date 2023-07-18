@@ -50,7 +50,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "alpine-fxdependent")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "tar-alpine-fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -114,7 +114,7 @@ function Start-PSPackage {
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-fxdependent-arm64") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-arm64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
-        elseif ($Type.Count -eq 1 -and $Type[0] -eq "alpine-fxdependent") {
+        elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-alpine-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
         else {
@@ -452,7 +452,7 @@ function Start-PSPackage {
                     }
                 }
             }
-            "alpine-fxdependent" {
+            "tar-alpine-fxdependent" {
                 if ($Environment.IsLinux) {
                     $Arguments = @{
                         PackageSourcePath = $Source
@@ -4455,11 +4455,11 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}-meta\linuxFilePermission.json"
             Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}"
 
-            Write-Verbose -Verbose "---- alpine-fxdependent ----"
+            Write-Verbose -Verbose "---- tar-alpine-fxdependent ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
             Write-Verbose -Verbose "options.Top $($options.Top)"
 
-            Start-PSPackage -Type alpine-fxdependent @releaseTagParam -LTS:$LTS
+            Start-PSPackage -Type tar-alpine-fxdependent @releaseTagParam -LTS:$LTS
         }
     }
     catch {
