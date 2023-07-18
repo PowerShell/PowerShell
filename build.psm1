@@ -275,7 +275,7 @@ function Test-IsReleaseCandidate
     return $false
 }
 
-$optimizedFddRegex = 'fxdependent-(linux|alpine|win|win7|osx)-(x64|x86|arm64|arm)'
+$optimizedFddRegex = 'fxdependent-(linux|alpine|win|win7|osx|freebsd)-(x64|x86|arm64|arm)'
 
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName="Default")]
@@ -356,7 +356,7 @@ function Start-PSBuild {
     }
 
     if ($ForMinimalSize) {
-        if ($Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
+        if ($Runtime -and "linux-x64", "win7-x64", "osx-x64", "freebsd-x64" -notcontains $Runtime) {
             throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
         }
     }
@@ -734,6 +734,10 @@ function Test-ShouldGenerateExperimentalFeatures
         $runtimePattern = '^linux.*-'
     }
 
+    if ($environment.IsFreeBSD) {
+        $runtimePattern = '^freebsd.*-'
+    }
+
     $runtimePattern += $environment.OSArchitecture.ToString()
     Write-Verbose "runtime pattern check: $Runtime -match $runtimePattern" -Verbose
     if ($Runtime -match $runtimePattern) {
@@ -896,6 +900,7 @@ function New-PSOptions {
                      "linux-arm",
                      "linux-arm64",
                      "linux-x64",
+                     "freebsd-x64"
                      "osx-arm64",
                      "osx-x64",
                      "win-arm",
@@ -947,6 +952,10 @@ function New-PSOptions {
 
             'Darwin' {
                 $Runtime = "osx-${Architecture}"
+            }
+
+            'FreeBSD' {
+                $Runtime = "freebsd-${Architecture}"
             }
         }
 
@@ -1919,14 +1928,14 @@ function Install-Dotnet {
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
-    if ($environment.IsLinux -or $environment.IsMacOS) {
+    if ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
         $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
 
         # Attempt to uninstall previous dotnet packages if requested
         if ($RemovePreviousVersion) {
             $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
                 "dotnet-uninstall-debian-packages.sh"
-            } elseif ($environment.IsMacOS) {
+            } elseif ($environment.IsMacOS -or $environment.IsFreeBSD) {
                 "dotnet-uninstall-pkgs.sh"
             }
 
@@ -1936,7 +1945,7 @@ function Install-Dotnet {
                     Invoke-Expression "$sudo bash ./$uninstallScript"
                 }
             } else {
-                Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
+                Write-Warning "This script only removes prior versions of dotnet for Ubuntu, OS X, and FreeBSD"
             }
         }
 

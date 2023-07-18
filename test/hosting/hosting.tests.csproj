@@ -5,7 +5,7 @@
   <PropertyGroup>
     <Description>PowerShell hosting SDK xUnit Tests</Description>
     <AssemblyName>powershell-hosting-tests</AssemblyName>
-    <!--RuntimeIdentifiers>win7-x86;win7-x64;osx.10.13-x64;linux-x64</RuntimeIdentifiers-->
+    <!--RuntimeIdentifiers>win7-x86;win7-x64;osx.10.13-x64;linux-x64;freebsd-x64</RuntimeIdentifiers-->
   </PropertyGroup>
 
   <PropertyGroup>

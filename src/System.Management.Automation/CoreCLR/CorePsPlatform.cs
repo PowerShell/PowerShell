@@ -66,7 +66,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD);
+                return OperatingSystem.IsFreeBSD();
             }
         }
 
