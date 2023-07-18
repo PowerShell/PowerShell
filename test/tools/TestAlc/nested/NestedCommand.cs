@@ -14,7 +14,7 @@ namespace Test.Isolated.Nested
 
         protected override void ProcessRecord()
         {
-            WriteObject($"{Param.Name}-{Param.Path}-{typeof(StringEscapeHandling).Assembly.FullName}");
+            WriteObject($"{Param.Name}-{Param.Path}-{typeof(StringEscapeHandling).Assembly.Location}");
         }
     }
 
