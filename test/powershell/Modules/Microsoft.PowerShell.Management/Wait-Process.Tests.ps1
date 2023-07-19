@@ -4,19 +4,12 @@
 Describe "Wait-Process" {
 
     BeforeAll {
-        $isNanoServer = [System.Management.Automation.Platform]::IsNanoServer
-        $isIot = [System.Management.Automation.Platform]::IsIoT
-        $isFullWin = $IsWindows -and !$isNanoServer -and !$isIot
-
         $pingCommandPath = (Get-Command -CommandType Application ping)[0].Definition
 
         $startProcessArgs = @{
             FilePath = $pingCommandPath
             PassThru = $true
-        }
-        if ($isFullWin) {
-            $startProcessArgs.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
-        }
+        }        
         $nc = $IsWindows ? "-n" : "-c"
 
         function longPing { Start-Process @startProcessArgs -ArgumentList "$nc 10 localhost" }
