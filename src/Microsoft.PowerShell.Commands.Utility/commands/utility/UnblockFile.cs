@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (Platform.IsFreeBSD))
+            if (Platform.IsFreeBSD)
             {
                 string errorMessage = UnblockFileStrings.FreeBSDNotSupported;
                 Exception e = new PlatformNotSupportedException(errorMessage);
