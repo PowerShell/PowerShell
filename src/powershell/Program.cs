@@ -57,7 +57,6 @@ namespace Microsoft.PowerShell
         private const int MACOS_KERN_PROCARGS2 = 49;
         private const int MACOS_PROC_PIDPATHINFO_MAXSIZE = 4096;
 
-
         // FreeBSD p/Invoke constants
         private const int FREEBSD_CTL_KERN = 1;
         private const int FREEBSD_KERN_PROC = 14;
