@@ -31,7 +31,7 @@ Describe "Unblock-File" -Tags "CI" {
                 }
             }
 
-            if ( $IsLinux )
+            if ( $IsLinux -or $IsFreeBSD )
             {
                 $origDefaults = $PSDefaultParameterValues.Clone()
                 $PSDefaultParameterValues['it:skip'] = $true
@@ -42,7 +42,7 @@ Describe "Unblock-File" -Tags "CI" {
         }
 
         AfterAll {
-            if ( $IsLinux ){
+            if ( $IsLinux -or $IsFreeBSD){
                 $global:PSDefaultParameterValues = $origDefaults
             }
         }
@@ -89,9 +89,9 @@ Describe "Unblock-File" -Tags "CI" {
         }
     }
 
-    Context "Linux" {
+    Context "Linux and FreeBSD" {
         BeforeAll {
-            if ( ! $IsLinux )
+            if ( !$IsLinux -or !$IsFreeBSD)
             {
                 $origDefaults = $PSDefaultParameterValues.Clone()
                 $PSDefaultParameterValues['it:skip'] = $true
@@ -103,11 +103,10 @@ Describe "Unblock-File" -Tags "CI" {
         }
 
         AfterAll {
-            if ( ! $IsLinux ){
+            if ( !$IsLinux -or !$IsFreeBSD){
                 $global:PSDefaultParameterValues = $origDefaults
             }
         }
-
 
         It "With '-Path': no file exist" {
             { Unblock-File -Path nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"
@@ -117,12 +116,26 @@ Describe "Unblock-File" -Tags "CI" {
             { Unblock-File -LiteralPath nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"
         }
 
-        It "With '-LiteralPath': file exist" {
-            { Unblock-File -LiteralPath $testfilepath -ErrorAction Stop } | Should -Throw -ErrorId "LinuxNotSupported,Microsoft.PowerShell.Commands.UnblockFileCommand"
+        if ($IsLinux) {
+
+            It "With '-LiteralPath': file exist" {
+                { Unblock-File -LiteralPath $testfilepath -ErrorAction Stop } | Should -Throw -ErrorId "LinuxNotSupported,Microsoft.PowerShell.Commands.UnblockFileCommand"
+            }
+
+            It "With '-Path': file exist" {
+                { Unblock-File -Path $testfilepath -ErrorAction Stop } | Should -Throw -ErrorId "LinuxNotSupported,Microsoft.PowerShell.Commands.UnblockFileCommand"
+            }
         }
 
-        It "With '-Path': file exist" {
-            { Unblock-File -Path $testfilepath -ErrorAction Stop } | Should -Throw -ErrorId "LinuxNotSupported,Microsoft.PowerShell.Commands.UnblockFileCommand"
+        if ($IsFreeBSD) {
+
+            It "With '-LiteralPath': file exist" {
+                { Unblock-File -LiteralPath $testfilepath -ErrorAction Stop } | Should -Throw -ErrorId "FreeBSDNotSupported,Microsoft.PowerShell.Commands.UnblockFileCommand"
+            }
+
+            It "With '-Path': file exist" {
+                { Unblock-File -Path $testfilepath -ErrorAction Stop } | Should -Throw -ErrorId "FreeBSDNotSupported,Microsoft.PowerShell.Commands.UnblockFileCommand"
+            }
         }
     }
 }

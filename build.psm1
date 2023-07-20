@@ -160,6 +160,10 @@ function Get-EnvironmentInformation
         }
     }
 
+    if ($environment.IsFreeBSD) {
+        $environment += @{ 'OSArchitecture' = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture }
+    }
+
     if ($environment.IsLinux) {
         $environment += @{ 'OSArchitecture' = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture }
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData

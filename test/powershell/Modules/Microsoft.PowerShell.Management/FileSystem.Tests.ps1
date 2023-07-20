@@ -918,7 +918,7 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
     BeforeAll {
         # For now, we'll assume the tests are running the platform's
         # native filesystem, in its default mode
-        $isCaseSensitive = $IsLinux
+        $isCaseSensitive = ($IsLinux -or $IsFreeBSD)
 
         # The name of the key in an exception's Data dictionary when an
         # attempt is made to copy an item onto itself.

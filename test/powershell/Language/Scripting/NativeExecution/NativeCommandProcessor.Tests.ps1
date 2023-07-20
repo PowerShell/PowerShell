@@ -288,7 +288,7 @@ Categories=Application;
             "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
             'tell application "TextEdit" to quit' | osascript
         }
-        elseif ($IsLinux) {
+        elseif ($IsLinux -or $IsFreeBSD) {
             # Validate on Linux by reassociating default app for text file
             & $TestFile
             # It may take time for handler to start
