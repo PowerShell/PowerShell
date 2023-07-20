@@ -97,7 +97,17 @@ jobs:
       parameters:
         BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
         Build_Repository_Uri: $(Github_Build_Repository_Uri)
-        displayName: Mariner SBOM
+        displayName: Mariner x64 SBOM
+        PackageName: PowerShell Linux Framework Dependent
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Mariner arm64 SBOM
         PackageName: PowerShell Linux Framework Dependent
         PackageVersion: $(Version)
         sourceScanPath: '$(PowerShellRoot)/tools'
@@ -154,6 +164,12 @@ jobs:
         Set-Location '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
         tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz *
       displayName: Compress pwshMarinerBuildAmd64
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - pwsh: |
+        Set-Location '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz *
+      displayName: Compress pwshMarinerBuildArm64
 
   - ${{ if eq(variables.build,'deb') }} :
     - task: PublishPipelineArtifact@1
@@ -214,6 +230,20 @@ jobs:
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64-meta'
         artifactName: pwshMarinerBuildAmd64-meta
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz'
+        artifactName: pwshMarinerBuildArm64.tar.gz
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64-meta'
+        artifactName: pwshMarinerBuildArm64-meta
+      retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'alpine') }} :
     - task: PublishPipelineArtifact@1
