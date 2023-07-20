@@ -4474,6 +4474,7 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             Write-Verbose -Verbose "options.Top $($options.Top)"
 
             Start-PSPackage -Type tar-alpine-fxdependent @releaseTagParam -LTS:$LTS
+        }
     }
     catch {
         Get-Error -InputObject $_
