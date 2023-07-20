@@ -800,9 +800,10 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             & $powershell -CustomPipeName $pipeName -Command "Test-Path '$pipePath'" | Should -BeTrue
         }
 
-        It "Should throw if CustomPipeName is too long on Linux or macOS" -Skip:($IsWindows) {
+        It "Should throw if CustomPipeName is too long on non-Windows" -Skip:($IsWindows) {
             # Generate a string that is larger than the max pipe name length.
-            $longPipeName = [string]::new("A", 200)
+            # FreeBSD allows for an almost five times larger pipe name length.
+            $longPipeName = [string]::new("A", 2000)
 
             "`$PID" | & $powershell -CustomPipeName $longPipeName -c -
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter

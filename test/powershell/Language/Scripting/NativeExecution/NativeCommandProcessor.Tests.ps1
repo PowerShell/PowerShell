@@ -269,7 +269,8 @@ Categories=Application;
         }
     }
 
-    It "Should open text file without error" -Skip:(!$supportedEnvironment) {
+    It "Should open text file without error" -Skip:(!$supportedEnvironment -or $IsFreeBSD) {
+        #FreeBSD requires `xdg-mime` to be installed
         if ($IsMacOS) {
             Set-TestInconclusive -Message "AppleScript is not currently reliable on Az Pipelines"
             $expectedTitle = Split-Path $TestFile -Leaf
@@ -288,7 +289,7 @@ Categories=Application;
             "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
             'tell application "TextEdit" to quit' | osascript
         }
-        elseif ($IsLinux -or $IsFreeBSD) {
+        elseif ($IsLinux) {
             # Validate on Linux by reassociating default app for text file
             & $TestFile
             # It may take time for handler to start

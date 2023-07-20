@@ -99,7 +99,7 @@ Describe "Get-Process" -Tags "CI" {
         { Get-Process -FileVersionInfo -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateFileVer,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
-    It "Should return CommandLine property" -Skip:($IsMacOS - or $IsFreeBSD) {
+    It "Should return CommandLine property" -Skip:($IsMacOS -or $IsFreeBSD) {
         if ($IsWindows) {
             # Windows will convert the bound parameters and quote them if it
             # contains whitespace. Any inner double quotes are escaped with \".
