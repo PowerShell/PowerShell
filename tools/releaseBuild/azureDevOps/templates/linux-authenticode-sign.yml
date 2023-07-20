@@ -1,0 +1,169 @@
+jobs:
+- job: sign_linux_builds
+  displayName: Sign all linux builds
+  condition: succeeded()
+  pool:
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
+  dependsOn: ['build_fxdependent', 'build_rpm']
+  variables:
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - group: ESRP
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuild.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/linuxTars
+    displayName: Download deb build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildMinSize.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/linuxTars
+    displayName: Download min-size build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildArm32.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/linuxTars
+    displayName: Download arm32 build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildArm64.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/linuxTars
+    displayName: Download arm64 build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshMarinerBuildAmd64.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/linuxTars
+    displayName: Download mariner build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshMarinerBuildArm64.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/linuxTars
+    displayName: Download mariner arm64 build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildAlpine.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz
+    displayName: Download alpine build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: pwshLinuxBuildFxdependent.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildFxdependent.tar.gz
+    displayName: Download fxdependent build
+
+  - pwsh: |
+      Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/linuxTars
+    displayName: Capture downloaded tars
+
+  - pwsh: |
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuild"
+      New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild -ItemType Directory
+      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuild.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
+      Write-Verbose -Verbose "File permisions after expanding"
+      Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildMinSize.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize"
+      New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize -ItemType Directory
+      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildMinSize.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildArm32.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32"
+      New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32 -ItemType Directory
+      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildArm32.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildArm64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64"
+      New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64 -ItemType Directory
+      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildArm64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshMarinerBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64"
+      New-Item -Path $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64 -ItemType Directory
+      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshMarinerBuildAmd64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshMarinerBuildArm64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64"
+      New-Item -Path $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64 -ItemType Directory
+      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshMarinerBuildArm64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz/pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine"
+      New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine -ItemType Directory
+      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz/pwshLinuxBuild.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildFxdependent.tar.gz/pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent"
+      New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent -ItemType Directory
+      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildFxdependent.tar.gz/pwshLinuxBuild.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent
+    displayName: Expand builds
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: cloneToOfficialPath.yml
+
+  - template: insert-nuget-config-azfeed.yml
+    parameters:
+      repoRoot: $(PowerShellRoot)
+
+  - pwsh: |
+      Set-Location $env:POWERSHELLROOT
+      import-module "$env:POWERSHELLROOT/build.psm1"
+      Sync-PSTags -AddRemoteIfMissing
+    displayName: SyncTags
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+
+  - checkout: ComplianceRepo
+    clean: true
+
+  - template: shouldSign.yml
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuild
+      buildPrefixName: 'PowerShell Linux'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuildMinSize
+      buildPrefixName: 'PowerShell Linux Minimum Size'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuildArm32
+      buildPrefixName: 'PowerShell Linux Arm32'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuildArm64
+      buildPrefixName: 'PowerShell Linux Arm64'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshMarinerBuildAmd64
+      buildPrefixName: 'PowerShell Linux x64 (Mariner) Framework Dependent'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshMarinerBuildArm64
+      buildPrefixName: 'PowerShell Linux arm64 (Mariner) Framework Dependent'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuildAlpine
+      buildPrefixName: 'PowerShell Linux Alpine x64'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuildFxdependent
+      buildPrefixName: 'PowerShell Linux Framework Dependent'
