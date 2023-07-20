@@ -5,7 +5,7 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
         (Get-Process -Id $PID -IncludeUserName).UserName | Should -Match $env:USERNAME
     }
 
-    It "Should support -Module" -Pending:$IsMacOS {
+    It "Should support -Module" -Pending:($IsMacOS -or $IsFreeBSD) {
         $modules = Get-Process -Id $PID -Module
         $modules.GetType() | Should -BeExactly "System.Object[]"
         foreach ($module in $modules) {

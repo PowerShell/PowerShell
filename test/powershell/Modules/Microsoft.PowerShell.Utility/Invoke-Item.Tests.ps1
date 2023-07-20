@@ -237,13 +237,17 @@ Categories=Application;
                 ## close the windows explorer
                 $item.Quit()
             }
-            elseif ($IsLinux -or $IsFreeBSD)
+            elseif ($IsLinux)
             {
                 # validate on Unix by reassociating default app for directories
                 Invoke-Item -Path $PSHOME
                 # may take time for handler to start
                 Wait-FileToBePresent -File "$HOME/InvokeItemTest.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100 | Should -BeTrue
                 Get-Content $HOME/InvokeItemTest.Success | Should -Be $PSHOME
+            }
+            elseif ($IsFreeBSD)
+            {
+                Set-TestInconclusive -Message "This test can not be handled on FreeBSD at this time"
             }
             else
             {
