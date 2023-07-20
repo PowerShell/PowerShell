@@ -76,7 +76,7 @@ Describe "Set-Location" -Tags "CI" {
         $(Get-Location).Path | Should -BeExactly $testPath.FullName
     }
 
-    It "Should use actual casing of folder on case-sensitive filesystem: <dir>" -Skip:!($IsLinux -or $IsFreeBSD) {
+    It "Should use actual casing of folder on case-sensitive filesystem: <dir>" -Skip:(!$IsLinux -or !$IsFreeBSD) {
         $dir = "teST"
         $testPathLower = New-Item -ItemType Directory -Path (Join-Path $TestDrive $dir.ToLower())
         $testPathUpper = New-Item -ItemType Directory -Path (Join-Path $TestDrive $dir.ToUpper())

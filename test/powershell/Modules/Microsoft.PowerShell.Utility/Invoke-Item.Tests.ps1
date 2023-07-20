@@ -147,10 +147,10 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
                 $notepadProcess.Name | Should -BeIn $notepadProcessName
                 Stop-Process -InputObject $notepadProcess
             }
-        elseif ($IsFreeBSD) {
+        }
+        if ($IsFreeBSD) {
             & $powershell -noprofile -c "Invoke-Item '$ping'" 2> $redirectFile
             Get-Content $redirectFile -Raw | Should -Match "usage:"
-        }
         } else {
             ## On Unix, we use `UseShellExecute = false`
             ## 'ping' on Unix write out usage to stderr
@@ -237,7 +237,7 @@ Categories=Application;
                 ## close the windows explorer
                 $item.Quit()
             }
-            elseif ($IsLinux)
+            elseif ($IsLinux -or $IsFreeBSD)
             {
                 # validate on Unix by reassociating default app for directories
                 Invoke-Item -Path $PSHOME
