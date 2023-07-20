@@ -420,6 +420,12 @@ namespace Microsoft.PowerShell
                 return Exec("/bin/zsh", execArgs);
             }
 
+            // On FreeBSD, sh does not support login so we run bash
+            if (isFreeBSD)
+            {
+                return Exec("/usr/local/bin/bash", execArgs);
+            }
+
             return Exec("/bin/sh", execArgs);
         }
 
