@@ -71,9 +71,33 @@ namespace System.Management.Automation
         {
             bool sawVerbatimArgumentMarker = false;
             bool first = true;
-            foreach (CommandParameterInternal parameter in parameters)
+            bool noArgumentSpace;
+            for (int i = 0; i < parameters.Count; i++)
             {
-                if (!first)
+                noArgumentSpace = false;
+                CommandParameterInternal parameter = parameters[i];
+
+                if (i > 0)
+                {
+                    int? end = parameters[i - 1]?.ArgumentAst?.Extent?.EndOffset;
+                    int? start = parameter?.ArgumentAst?.Extent?.StartOffset;
+                    // if (parameters[i - 1]?.ArgumentAst.Extent.EndOffset == parameter?.ArgumentAst.Extent.StartOffset)
+                    if (end.HasValue && start.HasValue && end.Value == start.Value)
+                    {
+                        // If the current parameter's argument starts at the same offset as the previous parameter's argument,
+                        // then we need to not add a space between them.
+                        noArgumentSpace = true;
+                        // remove the space in the arguments string if there is one.
+                        // this is equivalent to the AddToArgumentList call below,
+                        // but the space was added already because we don't look forward
+                        if (_arguments[_arguments.Length - 1] == ' ')
+                        {
+                            _arguments.Remove(_arguments.Length - 1, 1);
+                        }   
+                    }
+                }
+
+                if (!first && !noArgumentSpace)
                 {
                     _arguments.Append(' ');
                 }
@@ -83,12 +107,14 @@ namespace System.Management.Automation
                 if (parameter.ParameterNameSpecified)
                 {
                     Diagnostics.Assert(!parameter.ParameterText.Contains(' '), "Parameters cannot have whitespace");
-                    PossiblyGlobArg(parameter.ParameterText, parameter, usedQuotes: false);
-
+                    var globbedArgs = PossiblyGlobArg(parameter.ParameterText, usedQuotes: false);
+                    _arguments.Append(string.Join(' ', globbedArgs));
                     if (parameter.SpaceAfterParameter)
                     {
                         _arguments.Append(' ');
                     }
+
+                    globbedArgs.ForEach(s => AddToArgumentList(parameter, s, noArgumentSpace));
                 }
 
                 if (parameter.ArgumentSpecified)
@@ -123,7 +149,7 @@ namespace System.Management.Automation
                                 break;
                         }
 
-                        AppendOneNativeArgument(Context, parameter, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, usedQuotes);
+                        AppendOneNativeArgument(Context, parameter, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, usedQuotes, noArgumentSpace);
                     }
                 }
             }
@@ -159,7 +185,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="parameter">The parameter associated with the operation.</param>
         /// <param name="argument">The value used with parameter.</param>
-        internal void AddToArgumentList(CommandParameterInternal parameter, string argument)
+        /// <param name="noArgumentSpace">True if the argument should be appended to the previous argument in the list.</param>
+        internal void AddToArgumentList(CommandParameterInternal parameter, string argument, bool noArgumentSpace)
         {
             if (parameter.ParameterNameSpecified && parameter.ParameterText.EndsWith(":"))
             {
@@ -180,7 +207,14 @@ namespace System.Management.Automation
             }
             else
             {
-                _argumentList.Add(argument);
+                if (noArgumentSpace)
+                {
+                    _argumentList[_argumentList.Count - 1] += argument;
+                }
+                else
+                {
+                    _argumentList.Add(argument);
+                }
             }
         }
 
@@ -222,7 +256,8 @@ namespace System.Management.Automation
         /// <param name="argArrayAst">If the argument was an array literal, the Ast, otherwise null.</param>
         /// <param name="sawVerbatimArgumentMarker">True if the argument occurs after --%.</param>
         /// <param name="usedQuotes">True if the argument was a quoted string (single or double).</param>
-        private void AppendOneNativeArgument(ExecutionContext context, CommandParameterInternal parameter, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, bool usedQuotes)
+        /// <param name="noArgumentSpace">True if the argument should be appended to the previous argument.</param>
+        private void AppendOneNativeArgument(ExecutionContext context, CommandParameterInternal parameter, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, bool usedQuotes, bool noArgumentSpace)
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(obj);
 
@@ -287,7 +322,7 @@ namespace System.Management.Automation
                         if (NeedQuotes(arg))
                         {
                             _arguments.Append('"');
-                            AddToArgumentList(parameter, arg);
+                            AddToArgumentList(parameter, arg, noArgumentSpace);
 
                             // need to escape all trailing backslashes so the native command receives it correctly
                             // according to http://www.daviddeley.com/autohotkey/parameters/parameters.htm#WINCRULESDOC
@@ -306,14 +341,27 @@ namespace System.Management.Automation
                                 // We have a literal array, so take the extent, break it on spaces and add them to the argument list.
                                 foreach (string element in argArrayAst.Extent.Text.Split(' ', StringSplitOptions.RemoveEmptyEntries))
                                 {
-                                    PossiblyGlobArg(element, parameter, usedQuotes);
+                                    var globbedArgs = PossiblyGlobArg(element, usedQuotes);
+                                    _arguments.Append(string.Join(' ', globbedArgs));
+                                    globbedArgs.ForEach(s => AddToArgumentList(parameter, s, noArgumentSpace));
                                 }
 
                                 break;
                             }
                             else
                             {
-                                PossiblyGlobArg(arg, parameter, usedQuotes);
+                                foreach (string s in PossiblyGlobArg(arg, usedQuotes))
+                                {
+                                    _arguments.Append(s);
+                                    if (!noArgumentSpace)
+                                    {
+                                        if (argArrayAst is null)
+                                        {
+                                            _arguments.Append(' ');
+                                        }
+                                    }
+                                    AddToArgumentList(parameter, s?.Trim('"'), noArgumentSpace);
+                                }
                             }
                         }
                     }
@@ -321,7 +369,7 @@ namespace System.Management.Automation
                 else if (ArgumentPassingStyle != NativeArgumentPassingStyle.Legacy && currentObj != null)
                 {
                     // add empty strings to arglist, but not nulls
-                    AddToArgumentList(parameter, arg);
+                    AddToArgumentList(parameter, arg, noArgumentSpace);
                 }
             }
             while (list != null);
@@ -332,11 +380,13 @@ namespace System.Management.Automation
         /// On Unix, do globbing as appropriate, otherwise just append <paramref name="arg"/>.
         /// </summary>
         /// <param name="arg">The argument that possibly needs expansion.</param>
-        /// <param name="parameter">The parameter associated with the operation.</param>
         /// <param name="usedQuotes">True if the argument was a quoted string (single or double).</param>
-        private void PossiblyGlobArg(string arg, CommandParameterInternal parameter, bool usedQuotes)
+        /// returns the possibly globbed argument
+        private List<string> PossiblyGlobArg(string arg, bool usedQuotes)
         {
             var argExpanded = false;
+            StringBuilder globbedArg = new StringBuilder();
+            List<string> globbedArgs = new List<string>();
 
 #if UNIX
             // On UNIX systems, we expand arguments containing wildcard expressions against
@@ -370,28 +420,31 @@ namespace System.Management.Automation
                         var sep = string.Empty;
                         foreach (var path in paths)
                         {
-                            _arguments.Append(sep);
-                            sep = " ";
                             var expandedPath = (path.BaseObject as FileSystemInfo).FullName;
                             if (normalizePath)
                             {
-                                expandedPath =
-                                    Context.SessionState.Path.NormalizeRelativePath(expandedPath, cwdinfo.ProviderPath);
+                                expandedPath = Context.SessionState.Path.NormalizeRelativePath(expandedPath, cwdinfo.ProviderPath);
                             }
                             // If the path contains spaces, then add quotes around it.
                             if (NeedQuotes(expandedPath))
                             {
-                                _arguments.Append('"');
-                                _arguments.Append(expandedPath);
-                                _arguments.Append('"');
+                                globbedArg.Append('"');
+                                globbedArg.Append(expandedPath);
+                                globbedArg.Append('"');
                             }
                             else
                             {
-                                _arguments.Append(expandedPath);
+                                globbedArg.Append(expandedPath);
                             }
 
-                            AddToArgumentList(parameter, expandedPath);
+                            globbedArgs.Add(globbedArg.ToString());
+                            globbedArg.Clear();
                             argExpanded = true;
+                        }
+
+                        if (argExpanded)
+                        {
+                            return globbedArgs;
                         }
                     }
                 }
@@ -404,25 +457,20 @@ namespace System.Management.Automation
                 string home = fileSystemProvider.Home;
                 if (string.Equals(arg, "~"))
                 {
-                    _arguments.Append(home);
-                    AddToArgumentList(parameter, home);
-                    argExpanded = true;
+                    globbedArgs.Add(home);
+                    return globbedArgs;
                 }
                 else if (arg.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
                 {
                     var replacementString = string.Concat(home, arg.AsSpan(1));
-                    _arguments.Append(replacementString);
-                    AddToArgumentList(parameter, replacementString);
-                    argExpanded = true;
+                    globbedArgs.Add(replacementString);
+                    return globbedArgs;
                 }
             }
 #endif // UNIX
 
-            if (!argExpanded)
-            {
-                _arguments.Append(arg);
-                AddToArgumentList(parameter, arg);
-            }
+            globbedArgs.Add(arg);
+            return globbedArgs;
         }
 
         /// <summary>
