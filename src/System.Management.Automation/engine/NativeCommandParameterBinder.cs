@@ -384,11 +384,11 @@ namespace System.Management.Automation
         /// returns the possibly globbed argument
         private List<string> PossiblyGlobArg(string arg, bool usedQuotes)
         {
-            var argExpanded = false;
             StringBuilder globbedArg = new StringBuilder();
             List<string> globbedArgs = new List<string>();
 
 #if UNIX
+            var argExpanded = false;
             // On UNIX systems, we expand arguments containing wildcard expressions against
             // the file system just like bash, etc.
             if (!usedQuotes && WildcardPattern.ContainsWildcardCharacters(arg))
