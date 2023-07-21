@@ -370,6 +370,7 @@ namespace Microsoft.PowerShell
         /// </returns>
         private static int ExecPwshLogin(string[] args, string pwshPath, bool isMacOS)
         {
+            bool isFreeBSD = Platform.IsFreeBSD;
             // Create input for /bin/sh that execs pwsh
             int quotedPwshPathLength = GetQuotedPathLength(pwshPath);
 
