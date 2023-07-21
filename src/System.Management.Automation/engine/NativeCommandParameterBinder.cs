@@ -109,7 +109,7 @@ namespace System.Management.Automation
                 if (parameter.ParameterNameSpecified)
                 {
                     Diagnostics.Assert(!parameter.ParameterText.Contains(' '), "Parameters cannot have whitespace");
-                    var globbedArgs = PossiblyGlobArg(parameter.ParameterText, usedQuotes: false);
+                    var globbedArgs = PossiblyGlobArg(Context, parameter.ParameterText, usedQuotes: false);
                     _arguments.Append(string.Join(' ', globbedArgs));
                     if (parameter.SpaceAfterParameter)
                     {
@@ -343,7 +343,7 @@ namespace System.Management.Automation
                                 // We have a literal array, so take the extent, break it on spaces and add them to the argument list.
                                 foreach (string element in argArrayAst.Extent.Text.Split(' ', StringSplitOptions.RemoveEmptyEntries))
                                 {
-                                    var globbedArgs = PossiblyGlobArg(element, usedQuotes);
+                                    var globbedArgs = PossiblyGlobArg(Context, element, usedQuotes);
                                     _arguments.Append(string.Join(' ', globbedArgs));
                                     globbedArgs.ForEach(s => AddToArgumentList(parameter, s, noArgumentSpace));
                                 }
@@ -352,7 +352,7 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                foreach (string s in PossiblyGlobArg(arg, usedQuotes))
+                                foreach (string s in PossiblyGlobArg(Context, arg, usedQuotes))
                                 {
                                     _arguments.Append(s);
                                     if (!noArgumentSpace)
@@ -382,10 +382,11 @@ namespace System.Management.Automation
         /// On Windows, just append <paramref name="arg"/>.
         /// On Unix, do globbing as appropriate, otherwise just append <paramref name="arg"/>.
         /// </summary>
+        /// <param name="context">The engine context used in expansion.</param>
         /// <param name="arg">The argument that possibly needs expansion.</param>
         /// <param name="usedQuotes">True if the argument was a quoted string (single or double).</param>
         /// <returns>Returns the possibly globbed argument as a list of strings.</returns>
-        private List<string> PossiblyGlobArg(string arg, bool usedQuotes)
+        private static List<string> PossiblyGlobArg(ExecutionContext context, string arg, bool usedQuotes)
         {
             StringBuilder globbedArg = new StringBuilder();
             List<string> globbedArgs = new List<string>();
@@ -398,7 +399,7 @@ namespace System.Management.Automation
             {
                 // See if the current working directory is a filesystem provider location
                 // We won't do the expansion if it isn't since native commands can only access the file system.
-                var cwdinfo = Context.EngineSessionState.CurrentLocation;
+                var cwdinfo = context.EngineSessionState.CurrentLocation;
 
                 // If it's a filesystem location then expand the wildcards
                 if (cwdinfo.Provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
@@ -410,7 +411,7 @@ namespace System.Management.Automation
                     Collection<PSObject> paths = null;
                     try
                     {
-                        paths = Context.EngineSessionState.InvokeProvider.ChildItem.Get(arg, false);
+                        paths = context.EngineSessionState.InvokeProvider.ChildItem.Get(arg, false);
                     }
                     catch
                     {
@@ -426,7 +427,7 @@ namespace System.Management.Automation
                             var expandedPath = (path.BaseObject as FileSystemInfo).FullName;
                             if (normalizePath)
                             {
-                                expandedPath = Context.SessionState.Path.NormalizeRelativePath(expandedPath, cwdinfo.ProviderPath);
+                                expandedPath = context.SessionState.Path.NormalizeRelativePath(expandedPath, cwdinfo.ProviderPath);
                             }
                             // If the path contains spaces, then add quotes around it.
                             if (NeedQuotes(expandedPath))
@@ -456,7 +457,7 @@ namespace System.Management.Automation
             {
                 // Even if there are no wildcards, we still need to possibly
                 // expand ~ into the filesystem provider home directory path
-                ProviderInfo fileSystemProvider = Context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
+                ProviderInfo fileSystemProvider = context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
                 string home = fileSystemProvider.Home;
                 if (string.Equals(arg, "~"))
                 {
