@@ -81,19 +81,21 @@ namespace System.Management.Automation
                 {
                     int? end = parameters[i - 1]?.ArgumentAst?.Extent?.EndOffset;
                     int? start = parameter?.ArgumentAst?.Extent?.StartOffset;
+
                     // if (parameters[i - 1]?.ArgumentAst.Extent.EndOffset == parameter?.ArgumentAst.Extent.StartOffset)
                     if (end.HasValue && start.HasValue && end.Value == start.Value)
                     {
                         // If the current parameter's argument starts at the same offset as the previous parameter's argument,
                         // then we need to not add a space between them.
                         noArgumentSpace = true;
+
                         // remove the space in the arguments string if there is one.
                         // this is equivalent to the AddToArgumentList call below,
                         // but the space was added already because we don't look forward
                         if (_arguments[_arguments.Length - 1] == ' ')
                         {
                             _arguments.Remove(_arguments.Length - 1, 1);
-                        }   
+                        }
                     }
                 }
 
@@ -360,6 +362,7 @@ namespace System.Management.Automation
                                             _arguments.Append(' ');
                                         }
                                     }
+
                                     AddToArgumentList(parameter, s?.Trim('"'), noArgumentSpace);
                                 }
                             }
@@ -381,7 +384,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="arg">The argument that possibly needs expansion.</param>
         /// <param name="usedQuotes">True if the argument was a quoted string (single or double).</param>
-        /// returns the possibly globbed argument
+        /// <returns>Returns the possibly globbed argument as a list of strings.</returns>
         private List<string> PossiblyGlobArg(string arg, bool usedQuotes)
         {
             StringBuilder globbedArg = new StringBuilder();
@@ -524,7 +527,7 @@ namespace System.Management.Automation
             afterPrev -= arrayExtent.StartOffset;
             beforeNext -= arrayExtent.StartOffset;
 
-            if (arrayText[afterPrev] == ',') 
+            if (arrayText[afterPrev] == ',')
             {
                 return ", ";
             }
@@ -533,7 +536,7 @@ namespace System.Management.Automation
             {
                 return " ,";
             }
-            
+
             return " , ";
         }
 
