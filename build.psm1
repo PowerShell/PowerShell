@@ -2230,6 +2230,18 @@ function Start-PSBootstrap {
                 Start-NativeExecution {
                     Invoke-Expression "apk add $Deps"
                 }
+            } elseif ($environment.IsFreeBSD) {
+                $Deps += 'libunwind', 'curl', 'bash', 'git', 'curl', 'wget'
+                $PackageManager = "pkg install --yes"
+                $baseCommand = "$sudo $PackageManager"
+
+                if($NoSudo)
+                {
+                    $baseCommand = $PackageManager
+                }
+                Start-NativeExecution {
+                    Invoke-Expression "$baseCommand $Deps"
+                }
             }
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)

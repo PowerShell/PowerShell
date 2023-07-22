@@ -394,7 +394,7 @@ function Enable-SSHRemoting
     {
         $SSHDFound = $null -ne (Get-Service -Name sshd -ErrorAction SilentlyContinue)
     }
-    elseif ($platformInfo.IsLinux)
+    elseif ($platformInfo.IsLinux -or $IsFreeBSD)
     {
         $sshdStatus = sudo service ssh status
         $SSHDFound = $null -ne $sshdStatus
@@ -418,7 +418,7 @@ function Enable-SSHRemoting
         {
             $SSHDConfigFilePath = Join-Path -Path $env:ProgramData -ChildPath 'ssh' -AdditionalChildPath 'sshd_config'
         }
-        elseif ($platformInfo.isLinux)
+        elseif ($platformInfo.isLinux -or $platformInfo.isFreeBSD)
         {
             $SSHDConfigFilePath = '/etc/ssh/sshd_config'
         }

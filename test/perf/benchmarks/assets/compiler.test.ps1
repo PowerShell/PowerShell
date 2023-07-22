@@ -40,6 +40,10 @@ function Get-EnvInformation
         }
     }
 
+    if ($environment.IsFreeBSD) {
+        $environment += @{ 'OSArchitecture' = [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture }
+    }
+
     if ($environment.IsLinux) {
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
         $lsb_release = Get-Command lsb_release -Type Application -ErrorAction Ignore | Select-Object -First 1
@@ -1250,6 +1254,18 @@ function Start-PSBootstrap {
 
                 Start-NativeExecution {
                     Invoke-Expression "apk add $Deps"
+                }
+            } elseif ($environment.IsFreeBSD) {
+                $Deps += 'libunwind', 'curl', 'bash', 'git', 'curl', 'wget'
+                $PackageManager = "pkg install --yes"
+                $baseCommand = "$sudo $PackageManager"
+
+                if($NoSudo)
+                {
+                    $baseCommand = $PackageManager
+                }
+                Start-NativeExecution {
+                    Invoke-Expression "$baseCommand $Deps"
                 }
             }
 
