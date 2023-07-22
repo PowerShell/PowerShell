@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Management.Automation;
 
@@ -24,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrWhiteSpace]
-        public string FromString { get; set; }
+        public string? FromString { get; set; }
 
         /// <summary>
         /// Returns a Guid.
