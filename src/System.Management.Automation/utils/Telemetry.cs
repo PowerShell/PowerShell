@@ -444,6 +444,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "Microsoft.PowerShell.Management",
                         "Microsoft.PowerShell.ODataUtils",
                         "Microsoft.PowerShell.Operation.Validation",
+                        "Microsoft.PowerShell.PSResourceGet",
                         "Microsoft.PowerShell.RemotingTools",
                         "Microsoft.PowerShell.SecretManagement",
                         "Microsoft.PowerShell.SecretStore",
@@ -806,7 +807,7 @@ namespace Microsoft.PowerShell.Telemetry
             // This is the payload for the parameter data which is sent as a metric.
             var parameters = new Dictionary<string, double>();
 
-            // The variable POWERSHELL_DISTRIBUTION_CHANNEL is set in our docker images and 
+            // The variable POWERSHELL_DISTRIBUTION_CHANNEL is set in our docker images and
             // by various other environments. This allows us to track the actual docker OS as
             // OSDescription provides only "linuxkit" which has limited usefulness.
             var channel = Environment.GetEnvironmentVariable("POWERSHELL_DISTRIBUTION_CHANNEL");
@@ -900,7 +901,7 @@ namespace Microsoft.PowerShell.Telemetry
             catch
             {
                 // There was a problem in creating the directory for the file, do not attempt to create the file.
-                // We don't send telemetry here because there are valid reasons for the directory to not exist 
+                // We don't send telemetry here because there are valid reasons for the directory to not exist
                 // and not be able to be created.
                 attemptFileCreation = false;
             }

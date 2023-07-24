@@ -604,19 +604,6 @@ namespace System.Management.Automation
                     {
                         _nativeProcess = new Process() { StartInfo = startInfo };
                         _nativeProcess.Start();
-                        if (UpstreamIsNativeCommand)
-                        {
-                            SemaphoreSlim processInitialized = _processInitialized;
-                            if (processInitialized is null)
-                            {
-                                lock (_sync)
-                                {
-                                    processInitialized = _processInitialized ??= new SemaphoreSlim(0, 1);
-                                }
-                            }
-
-                            processInitialized?.Release();
-                        }
                     }
                     catch (Win32Exception)
                     {
@@ -694,6 +681,12 @@ namespace System.Management.Automation
                             }
                         }
 #endif
+                    }
+
+                    if (UpstreamIsNativeCommand)
+                    {
+                        _processInitialized ??= new SemaphoreSlim(0, 1);
+                        _processInitialized.Release();
                     }
                 }
 

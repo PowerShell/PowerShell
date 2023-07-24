@@ -6,7 +6,8 @@
 # Requires the module dotnet.project.assets from the PowerShell Gallery authored by @TravisEz13
 
 param(
-    [switch] $Fix
+    [switch] $Fix,
+    [switch] $IsStable
 )
 
 Import-Module dotnet.project.assets
@@ -273,6 +274,17 @@ foreach ($runtime in "win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win-arm"
 }
 
 $newRegistrations = $registrations.Keys | Sort-Object | ForEach-Object { $registrations[$_] }
+
+if ($IsStable) {
+    foreach ($registion in $newRegistrations) {
+        $name = $registion.Component.Name()
+        $version = $registion.Component.Version()
+        $developmentDependency = $registion.DevelopmentDependency
+        if ($version -match '-' -and !$developmentDependency) {
+            throw "Version $version of $name is preview.  This is not allowed."
+        }
+    }
+}
 
 $count = $newRegistrations.Count
 $newJson = @{

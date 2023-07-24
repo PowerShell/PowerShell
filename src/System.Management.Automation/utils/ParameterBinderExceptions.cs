@@ -637,8 +637,7 @@ namespace System.Management.Automation
                 errorId,
                 args)
         {
-            ValidationMetadataException validationException = innerException as ValidationMetadataException;
-            if (validationException != null && validationException.SwallowException)
+            if (innerException is ValidationMetadataException validationException && validationException.SwallowException)
             {
                 _swallowException = true;
             }

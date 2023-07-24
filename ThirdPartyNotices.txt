@@ -238,7 +238,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonSchema.Net 4.1.5 - MIT
+JsonSchema.Net 4.1.6 - MIT
 
 
 

@@ -6038,8 +6038,8 @@ namespace System.Management.Automation.Language
         /// <para>Returns the name of the command invoked by this ast.</para>
         /// <para>This command name may not be known statically, in which case null is returned.</para>
         /// <para>
-        /// For example, if the command name is in a variable: <example>&amp; $foo</example>, then the parser cannot know which command is executed.
-        /// Similarly, if the command is being invoked in a module: <example>&amp; (gmo SomeModule) Bar</example>, then the parser does not know the
+        /// For example, if the command name is in a variable: <code>&amp; $foo</code>, then the parser cannot know which command is executed.
+        /// Similarly, if the command is being invoked in a module: <code>&amp; (gmo SomeModule) Bar</code>, then the parser does not know the
         /// command name is Bar because the parser can't determine that the expression <code>(gmo SomeModule)</code> returns a module instead
         /// of a string.
         /// </para>

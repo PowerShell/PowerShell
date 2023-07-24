@@ -657,6 +657,12 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
     }
 
+    It 'Should complete variable assigned with Data statement' {
+        $TestString = 'data MyDataVar {"Hello"};$MyDatav'
+        $res = TabExpansion2 -inputScript $TestString
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyDataVar'
+    }
+
     it 'Should complete "Value" parameter value in "Where-Object" for Enum property with no input' {
         $res = TabExpansion2 -inputScript 'Get-Command | where-Object CommandType -eq '
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Alias
@@ -1252,6 +1258,13 @@ class InheritedClassTest : System.Attribute
 
             Remove-Item -LiteralPath $LiteralPath
         }
+    }
+
+    It 'Should keep custom drive names when completing file paths' {
+        $TempDriveName = "asdf"
+        $null = New-PSDrive -Name $TempDriveName -PSProvider FileSystem -Root $HOME
+        (TabExpansion2 -inputScript "${TempDriveName}:\").CompletionMatches[0].CompletionText | Should -BeLike "${TempDriveName}:*"
+        Remove-PSDrive -Name $TempDriveName
     }
 
     Context "Cmdlet name completion" {
