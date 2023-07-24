@@ -5,6 +5,9 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
       - uses: wow-actions/auto-assign@v3
         with:
