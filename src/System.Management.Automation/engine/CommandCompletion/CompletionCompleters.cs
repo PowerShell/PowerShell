@@ -4495,9 +4495,23 @@ namespace System.Management.Automation
                 basePath = EscapePath(basePath, stringType, useLiteralPath, out _);
             }
 
-            _ = context.Helper
+            PowerShell currentPS = context.Helper
                 .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Resolve-Path")
                 .AddParameter("Path", basePath);
+
+            string relativeBasePath;
+            var lastAst = context.RelatedAsts[^1];
+            if (lastAst.Parent is UsingStatementAst usingStatement
+                && usingStatement.UsingStatementKind is UsingStatementKind.Module or UsingStatementKind.Assembly
+                && lastAst.Extent.File is not null)
+            {
+                relativeBasePath = Directory.GetParent(lastAst.Extent.File).FullName;
+                _ = currentPS.AddParameter("RelativeBasePath", relativeBasePath);
+            }
+            else
+            {
+                relativeBasePath = context.ExecutionContext.SessionState.Internal.CurrentLocation.ProviderPath;
+            }
 
             var resolvedPaths = context.Helper.ExecuteCurrentPowerShell(out _);
             if (resolvedPaths is null || resolvedPaths.Count == 0)
@@ -4542,7 +4556,8 @@ namespace System.Management.Automation
                         useLiteralPath,
                         inputUsedHomeChar,
                         providerPrefix,
-                        stringType);
+                        stringType,
+                        relativeBasePath);
                     break;
 
                 default:
@@ -4577,6 +4592,7 @@ namespace System.Management.Automation
         /// <param name="inputUsedHome"></param>
         /// <param name="providerPrefix"></param>
         /// <param name="stringType"></param>
+        /// <param name="relativeBasePath"></param>
         /// <returns></returns>
         private static List<CompletionResult> GetFileSystemProviderResults(
             CompletionContext context,
@@ -4589,7 +4605,8 @@ namespace System.Management.Automation
             bool literalPaths,
             bool inputUsedHome,
             string providerPrefix,
-            StringConstantType stringType)
+            StringConstantType stringType,
+            string relativeBasePath)
         {
 #if DEBUG
             Diagnostics.Assert(provider.Name.Equals(FileSystemProvider.ProviderName), "Provider should be filesystem provider.");
@@ -4667,7 +4684,7 @@ namespace System.Management.Automation
                     {
                         basePath = context.ExecutionContext.EngineSessionState.NormalizeRelativePath(
                             entry.FullName,
-                            context.ExecutionContext.SessionState.Internal.CurrentLocation.ProviderPath);
+                            relativeBasePath);
                         if (!basePath.StartsWith($"..{provider.ItemSeparator}", StringComparison.Ordinal))
                         {
                             basePath = $".{provider.ItemSeparator}{basePath}";

@@ -1214,6 +1214,43 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
         }
 
+        It "Relative path completion for using <UsingKind> statement when AST extent has file identity" -TestCases @(
+            @{UsingKind = "module";  ExpectedFileName = 'UsingFileCompletionModuleTest.psm1'}
+            @{UsingKind = "assembly";ExpectedFileName = 'UsingFileCompletionAssemblyTest.dll'}
+        ) -test {
+            param($UsingKind, $ExpectedFileName)
+            $scriptText = "using $UsingKind .\UsingFileCompletion"
+            $tokens = $null
+            $scriptAst = [System.Management.Automation.Language.Parser]::ParseInput(
+                $scriptText,
+                $PSCommandPath,
+                [ref] $tokens,
+                [ref] $null)
+
+            $cursorPosition = $scriptAst.Extent.StartScriptPosition.
+                GetType().
+                GetMethod('CloneWithNewOffset', [System.Reflection.BindingFlags]'NonPublic, Instance').
+                Invoke($scriptAst.Extent.StartScriptPosition, @($scriptText.Length - 1))
+
+            $ScriptParentPath = Split-Path -LiteralPath $cursorPosition.File
+            $TestFile = Join-Path -Path $ScriptParentPath -ChildPath $ExpectedFileName
+            $OldLocation = $PWD
+            Set-Location -LiteralPath $PSHOME
+            try
+            {
+                $null = New-Item -Path $TestFile
+                $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
+            }
+            finally
+            {
+                Set-Location -LiteralPath $OldLocation
+                Remove-Item -LiteralPath $TestFile
+            }
+            
+            $ExpectedPath = Join-Path -Path '.\' -ChildPath $ExpectedFileName
+            $res.CompletionMatches[0].CompletionText | Should -Be $ExpectedPath
+        }
+
         It "Should keep '~' in completiontext when it's used to refer to home in input" {
             $res = TabExpansion2 -inputScript "~$separator"
             $res.CompletionMatches[0].CompletionText | Should -BeLike "~$separator*"
