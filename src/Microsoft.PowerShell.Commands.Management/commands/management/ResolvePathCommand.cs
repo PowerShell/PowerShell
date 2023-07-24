@@ -22,8 +22,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Parameter(Position = 0, ParameterSetName = "PathWithRelativeBase",
-                   Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
             get
@@ -41,8 +39,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the literal path parameter to the command.
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
-                   Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
-        [Parameter(ParameterSetName = "LiteralPathWithRelativeBase",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
@@ -83,8 +79,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the path the resolved relative path should be based off.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "PathWithRelativeBase")]
-        [Parameter(Mandatory = true, ParameterSetName = "LiteralPathWithRelativeBase")]
+        [Parameter]
         public string RelativeBasePath
         { 
             get
@@ -94,7 +89,6 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _relative = true;
                 _relativeBasePath = value;
             }
         }
@@ -121,52 +115,50 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (_relative)
+            if (!string.IsNullOrEmpty(RelativeBasePath))
             {
-                if (!string.IsNullOrEmpty(RelativeBasePath))
+                try
                 {
-                    try
-                    {
-                        _relativeBasePath = SessionState.Internal.Globber.GetProviderPath(RelativeBasePath, CmdletProviderContext, out _, out _relativeDrive);
-                    }
-                    catch (ProviderNotFoundException providerNotFound)
-                    {
-                        ThrowTerminatingError(
-                            new ErrorRecord(
-                                providerNotFound.ErrorRecord,
-                                providerNotFound));
-                    }
-                    catch (DriveNotFoundException driveNotFound)
-                    {
-                        ThrowTerminatingError(
-                            new ErrorRecord(
-                                driveNotFound.ErrorRecord,
-                                driveNotFound));
-                    }
-                    catch (ProviderInvocationException providerInvocation)
-                    {
-                        ThrowTerminatingError(
-                            new ErrorRecord(
-                                providerInvocation.ErrorRecord,
-                                providerInvocation));
-                    }
-                    catch (NotSupportedException notSupported)
-                    {
-                        ThrowTerminatingError(
-                            new ErrorRecord(notSupported, "ProviderIsNotNavigationCmdletProvider", ErrorCategory.InvalidArgument, RelativeBasePath));
-                    }
-                    catch (InvalidOperationException invalidOperation)
-                    {
-                        ThrowTerminatingError(
-                            new ErrorRecord(invalidOperation, "InvalidHomeLocation", ErrorCategory.InvalidOperation, RelativeBasePath));
-                    }
-
-                    return;
+                    _relativeBasePath = SessionState.Internal.Globber.GetProviderPath(RelativeBasePath, CmdletProviderContext, out _, out _relativeDrive);
+                }
+                catch (ProviderNotFoundException providerNotFound)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            providerNotFound.ErrorRecord,
+                            providerNotFound));
+                }
+                catch (DriveNotFoundException driveNotFound)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            driveNotFound.ErrorRecord,
+                            driveNotFound));
+                }
+                catch (ProviderInvocationException providerInvocation)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            providerInvocation.ErrorRecord,
+                            providerInvocation));
+                }
+                catch (NotSupportedException notSupported)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(notSupported, "ProviderIsNotNavigationCmdletProvider", ErrorCategory.InvalidArgument, RelativeBasePath));
+                }
+                catch (InvalidOperationException invalidOperation)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(invalidOperation, "InvalidHomeLocation", ErrorCategory.InvalidOperation, RelativeBasePath));
                 }
 
+                return;
+            }
+            else if (_relative)
+            {
                 _relativeDrive = SessionState.Path.CurrentLocation.Drive;
                 _relativeBasePath = SessionState.Path.CurrentLocation.ProviderPath;
-                return;
             }
         }
 
@@ -181,7 +173,25 @@ namespace Microsoft.PowerShell.Commands
                 Collection<PathInfo> result = null;
                 try
                 {
-                    result = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
+                    if (MyInvocation.BoundParameters.ContainsKey("RelativeBasePath"))
+                    {
+                        // Pushing and popping the location is done because GetResolvedPSPathFromPSPath uses the current path to resolve relative paths.
+                        // It's important that we pop the location before writing an object to the pipeline to avoid affecting downstream commands.
+                        try
+                        {
+                            SessionState.Path.PushCurrentLocation(string.Empty);
+                            _ = SessionState.Path.SetLocation(_relativeBasePath);
+                            result = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
+                        }
+                        finally
+                        {
+                            _ = SessionState.Path.PopLocation(string.Empty);
+                        }
+                    }
+                    else
+                    {
+                        result = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
+                    }
 
                     if (_relative)
                     {
