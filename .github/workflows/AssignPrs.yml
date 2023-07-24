@@ -15,9 +15,8 @@ jobs:
             daxian-dbw
             adityapatwardhan
             iSazonov
-            SeeminglyScience 
+            SeeminglyScience
           skipDraft: true
           skipKeywords: wip, draft
           addReviewers: false
           numberOfAssignees: 1
-          
