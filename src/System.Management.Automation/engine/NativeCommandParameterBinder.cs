@@ -352,7 +352,8 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                foreach (string s in PossiblyGlobArg(Context, arg, usedQuotes))
+                                var result = PossiblyGlobArg(Context, arg, usedQuotes);
+                                foreach (string s in result)
                                 {
                                     _arguments.Append(s);
                                     if (!noArgumentSpace)
