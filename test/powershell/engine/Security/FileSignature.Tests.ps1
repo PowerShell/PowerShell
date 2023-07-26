@@ -89,14 +89,22 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
     }
 
     AfterAll {
-
         if ($shouldSkip) {
             return
         }
 
-        Remove-Item -Path Cert:\LocalMachine\Root\$caRootThumbprint -Force
-        Remove-Item -Path Cert:\LocalMachine\TrustedPublisher\$signingThumbprint -Force
-        Remove-Item -Path Cert:\CurrentUser\My\$signingThumbprint -Force
+        $paths = @(
+            "Cert:\LocalMachine\Root\$caRootThumbprint"
+            "Cert:\LocalMachine\TrustedPublisher\$signingThumbprint"
+            "Cert:\CurrentUser\My\$signingThumbprint"
+        )
+
+        foreach($path in $paths) {
+            if (Test-Path $path) {
+                # failing to remove is not fatal
+                Remove-Item -Force -Path $path -ErrorAction Continue
+            }
+        }
     }
 
     It "Validates signature using path on even char count with Encoding <Encoding>" -TestCases @(
