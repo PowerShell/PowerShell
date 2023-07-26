@@ -456,6 +456,12 @@ function Start-PSPackage {
                     $TargetArchitecture = "x86"
                     $r2rArchitecture = "i386"
                 }
+                elseif ($Runtime -match "-arm64")
+                {
+                    $TargetArchitecture = "arm64"
+                    $r2rArchitecture = "TODO ANAM"
+                }
+
                 Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
 
                 $Arguments = @{
@@ -3267,7 +3273,7 @@ function New-MSIPackage
 
         # Architecture to use when creating the MSI
         [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64")]
+        [ValidateSet("x86", "x64", "arm64")]
         [ValidateNotNullOrEmpty()]
         [string] $ProductTargetArchitecture,
 
@@ -3314,6 +3320,11 @@ function New-MSIPackage
     {
         $fileArchitecture = 'x86'
         $ProductProgFilesDir = "ProgramFilesFolder"
+    }
+    elseif ($ProductTargetArchitecture -eq "arm64")
+    {
+        $fileArchitecture = 'arm64'
+        $ProductProgFilesDir = "TODO ANAM"
     }
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"

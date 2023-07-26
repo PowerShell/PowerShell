@@ -20,6 +20,17 @@
     <?else?>
       <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
     <?endif?>
+  <?elseif $(sys.BUILDARCH) = "ARM64"?>
+    <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))"?>
+    <?define UpgradeCodePreview = "39243d76-adaf-42b1-94fb-16ecf83237c8"?>
+    <?define UpgradeCodeRelease = "31ab5147-9a97-4452-8443-d9709f0516e1"?>
+    <?if $(var.IsPreview)=True?>
+      <?define UpgradeCode = $(var.UpgradeCodePreview)?>
+    <?else?>
+      <?define UpgradeCode = $(var.UpgradeCodeRelease)?>
+    <?endif?>
+    <!-- <?define ProgramFilesFolder = "ProgramFiles64Folder"?> -->
+    <?define UpgradeCode = "5D153A07-920A-4978-8B33-8447DD4C42F9"?>
   <?else?>
     <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))"?>
     <?define UpgradeCodePreview = "86abcfbd-1ccc-4a88-b8b2-0facfde29094"?>
