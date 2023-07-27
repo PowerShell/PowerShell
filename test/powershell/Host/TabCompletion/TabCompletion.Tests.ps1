@@ -1216,7 +1216,8 @@ class InheritedClassTest : System.Attribute
 
         It "Should keep '~' in completiontext when it's used to refer to home in input" {
             $res = TabExpansion2 -inputScript "~$separator"
-            $res.CompletionMatches[0].CompletionText | Should -BeLike "~$separator*"
+            $completedText = $res.CompletionMatches.CompletionText -join ","
+            $res.CompletionMatches[0].CompletionText | Should -BeLike "~$separator*" -Because "$completedText"
         }
 
         It "Should use '~' as relative filter text when not followed by separator" {
@@ -1240,7 +1241,7 @@ class InheritedClassTest : System.Attribute
             $NewPath = Join-Path -Path $TestDrive -ChildPath $LiteralPath
             $null = New-Item -Path $NewPath -Force
             Push-Location $TestDrive
-            
+
             $InputText = "Get-ChildItem -Path {0}.${separator}BacktickTest"
             $InputTextLiteral = "Get-ChildItem -LiteralPath {0}.${separator}BacktickTest"
 
@@ -1263,7 +1264,9 @@ class InheritedClassTest : System.Attribute
     It 'Should keep custom drive names when completing file paths' {
         $TempDriveName = "asdf"
         $null = New-PSDrive -Name $TempDriveName -PSProvider FileSystem -Root $HOME
-        (TabExpansion2 -inputScript "${TempDriveName}:\").CompletionMatches[0].CompletionText | Should -BeLike "${TempDriveName}:*"
+        $completions = (TabExpansion2 -inputScript "${TempDriveName}:\").CompletionMatches
+        $completionText = $completions.CompletionText -join ","
+        $completions[0].CompletionText | Should -BeLike "${TempDriveName}:*" -Because "$completionText"
         Remove-PSDrive -Name $TempDriveName
     }
 
@@ -2296,6 +2299,7 @@ dir -Recurse `
 
     Context "Tab completion help test" {
         BeforeAll {
+            New-Item -ItemType File (Join-Path ${TESTDRIVE} "pwsh.xml")
             if ($IsWindows) {
                 $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
             } else {
@@ -2469,10 +2473,10 @@ dir -Recurse `
             }
             @{
                 Intent = 'Complete help keyword EXTERNALHELP argument'
-                Expected = Join-Path $PSHOME "pwsh.xml"
+                Expected = Join-Path $TESTDRIVE "pwsh.xml"
                 TestString = @"
 <#
-.EXTERNALHELP $PSHOME\pwsh.^
+.EXTERNALHELP $TESTDRIVE\pwsh.^
 #>
 "@
             }
