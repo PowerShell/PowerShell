@@ -10,7 +10,7 @@ Example entry:
 ```
 -->
 
-This is a list of adopters of using PowerShell in production or in their products (in alphabetical order):
+This is a list of adopters using PowerShell in production or in their products (in alphabetical order):
 
 * [Azure Cloud Shell](https://shell.azure.com/) provides a batteries-included browser-based PowerShell environment used by Azure administrators to manage their environment.
   It includes up-to-date PowerShell modules for `Azure`, `AzureAD`, `Exchange`, `Teams`, and many more.
