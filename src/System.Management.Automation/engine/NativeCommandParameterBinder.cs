@@ -71,35 +71,30 @@ namespace System.Management.Automation
         {
             bool sawVerbatimArgumentMarker = false;
             bool first = true;
-            bool noArgumentSpace;
+            string compositeArg = string.Empty;
             for (int i = 0; i < parameters.Count; i++)
             {
-                noArgumentSpace = false;
                 CommandParameterInternal parameter = parameters[i];
 
-                if (i > 0)
+                if (i < parameters.Count - 1)
                 {
-                    int? end = parameters[i - 1]?.ArgumentAst?.Extent?.EndOffset;
-                    int? start = parameter?.ArgumentAst?.Extent?.StartOffset;
-
-                    // if (parameters[i - 1]?.ArgumentAst.Extent.EndOffset == parameter?.ArgumentAst.Extent.StartOffset)
-                    if (end.HasValue && start.HasValue && end.Value == start.Value)
+                    int? end = parameter?.ArgumentAst?.Extent?.EndOffset;
+                    int? start = parameters[i + 1]?.ArgumentAst?.Extent?.StartOffset;
+                    if (end is not null && start is not null && end == start)
                     {
-                        // If the current parameter's argument starts at the same offset as the previous parameter's argument,
-                        // then we need to not add a space between them.
-                        noArgumentSpace = true;
-
-                        // remove the space in the arguments string if there is one.
-                        // this is equivalent to the AddToArgumentList call below,
-                        // but the space was added already because we don't look forward
-                        if (_arguments[_arguments.Length - 1] == ' ')
-                        {
-                            _arguments.Remove(_arguments.Length - 1, 1);
-                        }
+                        // nibble the next argument value
+                        compositeArg = parameter.ArgumentAst?.Extent?.Text + parameters[i + 1].ArgumentAst?.Extent?.Text;
+                        var compositeArgumentValue = string.Format("{0}{1}", parameter.ArgumentValue, parameters[i + 1].ArgumentValue);
+                        // skip the next "parameter"
+                        // cook up a new extent for the the current parameter which is the composite of the two
+                        var ast = Parser.ParseInput(compositeArgumentValue, out Token[] _, out ParseError[] _).Find(ast => ast is StringConstantExpressionAst, true);
+                        var compositeParameter = CommandParameterInternal.CreateArgument(compositeArgumentValue, ast, false);
+                        parameter = compositeParameter;
+                        i++;
                     }
                 }
 
-                if (!first && !noArgumentSpace)
+                if (!first)
                 {
                     _arguments.Append(' ');
                 }
@@ -116,14 +111,16 @@ namespace System.Management.Automation
                         _arguments.Append(' ');
                     }
 
-                    globbedArgs.ForEach(s => AddToArgumentList(parameter, s, noArgumentSpace));
+                    globbedArgs.ForEach(s => AddToArgumentList(parameter, s, false));
                 }
 
                 if (parameter.ArgumentSpecified)
                 {
                     // If this is the verbatim argument marker, we don't pass it on to the native command.
                     // We do need to remember it though - we'll expand environment variables in subsequent args.
-                    object argValue = parameter.ArgumentValue;
+                    object argValue;
+                    argValue =  parameter.ArgumentValue;
+                    
                     if (string.Equals("--%", argValue as string, StringComparison.OrdinalIgnoreCase))
                     {
                         sawVerbatimArgumentMarker = true;
@@ -151,7 +148,7 @@ namespace System.Management.Automation
                                 break;
                         }
 
-                        AppendOneNativeArgument(Context, parameter, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, usedQuotes, noArgumentSpace);
+                        AppendOneNativeArgument(Context, parameter, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, usedQuotes, false);
                     }
                 }
             }
@@ -187,8 +184,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="parameter">The parameter associated with the operation.</param>
         /// <param name="argument">The value used with parameter.</param>
-        /// <param name="noArgumentSpace">True if the argument should be appended to the previous argument in the list.</param>
-        internal void AddToArgumentList(CommandParameterInternal parameter, string argument, bool noArgumentSpace)
+        internal void AddToArgumentList(CommandParameterInternal parameter, string argument)
         {
             if (parameter.ParameterNameSpecified && parameter.ParameterText.EndsWith(":"))
             {
@@ -209,14 +205,7 @@ namespace System.Management.Automation
             }
             else
             {
-                if (noArgumentSpace)
-                {
-                    _argumentList[_argumentList.Count - 1] += argument;
-                }
-                else
-                {
-                    _argumentList.Add(argument);
-                }
+                _argumentList.Add(argument);
             }
         }
 
@@ -258,8 +247,7 @@ namespace System.Management.Automation
         /// <param name="argArrayAst">If the argument was an array literal, the Ast, otherwise null.</param>
         /// <param name="sawVerbatimArgumentMarker">True if the argument occurs after --%.</param>
         /// <param name="usedQuotes">True if the argument was a quoted string (single or double).</param>
-        /// <param name="noArgumentSpace">True if the argument should be appended to the previous argument.</param>
-        private void AppendOneNativeArgument(ExecutionContext context, CommandParameterInternal parameter, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, bool usedQuotes, bool noArgumentSpace)
+        private void AppendOneNativeArgument(ExecutionContext context, CommandParameterInternal parameter, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, bool usedQuotes)
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(obj);
 
@@ -324,7 +312,7 @@ namespace System.Management.Automation
                         if (NeedQuotes(arg))
                         {
                             _arguments.Append('"');
-                            AddToArgumentList(parameter, arg, noArgumentSpace);
+                            AddToArgumentList(parameter, arg);
 
                             // need to escape all trailing backslashes so the native command receives it correctly
                             // according to http://www.daviddeley.com/autohotkey/parameters/parameters.htm#WINCRULESDOC
@@ -345,7 +333,7 @@ namespace System.Management.Automation
                                 {
                                     var globbedArgs = PossiblyGlobArg(Context, element, usedQuotes);
                                     _arguments.Append(string.Join(' ', globbedArgs));
-                                    globbedArgs.ForEach(s => AddToArgumentList(parameter, s, noArgumentSpace));
+                                    globbedArgs.ForEach(s => AddToArgumentList(parameter, s);
                                 }
 
                                 break;
@@ -356,15 +344,13 @@ namespace System.Management.Automation
                                 foreach (string s in result)
                                 {
                                     _arguments.Append(s);
-                                    if (!noArgumentSpace)
+                                    // NOT SURE
+                                    if (argArrayAst is null)
                                     {
-                                        if (argArrayAst is null)
-                                        {
-                                            _arguments.Append(' ');
-                                        }
+                                        _arguments.Append(' ');
                                     }
 
-                                    AddToArgumentList(parameter, s?.Trim('"'), noArgumentSpace);
+                                    AddToArgumentList(parameter, s?.Trim('"'));
                                 }
                             }
                         }
@@ -373,7 +359,7 @@ namespace System.Management.Automation
                 else if (ArgumentPassingStyle != NativeArgumentPassingStyle.Legacy && currentObj != null)
                 {
                     // add empty strings to arglist, but not nulls
-                    AddToArgumentList(parameter, arg, noArgumentSpace);
+                    AddToArgumentList(parameter, arg, false);
                 }
             }
             while (list != null);
