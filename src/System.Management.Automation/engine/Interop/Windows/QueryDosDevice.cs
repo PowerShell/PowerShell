@@ -88,7 +88,8 @@ internal static partial class Interop
                         }
                         else
                         {
-                            Diagnostics.Assert(false, "Really it is a dead code since GetDosDevice() is called only if PSDrive.DriveType == DriveType.Network");
+                            // TODO: This actually hit in a Parallels VM, so it's not quite dead yet!
+                            // Diagnostics.Assert(false, "Really it is a dead code since GetDosDevice() is called only if PSDrive.DriveType == DriveType.Network");
 
                             // The drive name is not a substed path, then we return the root path of the drive
                             // "C:\0" -> "C:\\"
