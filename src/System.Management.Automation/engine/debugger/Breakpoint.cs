@@ -482,6 +482,9 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(SequencePointIndex == -1, "shouldn't be trying to set on a pending breakpoint");
 
+            if (!scriptFile.Equals(this.Script, StringComparison.OrdinalIgnoreCase))
+                return false;
+
             // A quick check to see if the breakpoint is within the scriptblock.
             bool couldBeInNestedScriptBlock;
             var scriptBlock = functionContext._scriptBlock;
@@ -592,11 +595,11 @@ namespace System.Management.Automation
                 var boundBreakPoints = debugger.GetBoundBreakpoints(this.SequencePoints);
                 if (boundBreakPoints != null)
                 {
-                    Diagnostics.Assert(boundBreakPoints[this.SequencePointIndex].Contains(this),
+                    Diagnostics.Assert(boundBreakPoints.Contains(this),
                                        "If we set _scriptBlock, we should have also added the breakpoint to the bound breakpoint list");
-                    boundBreakPoints[this.SequencePointIndex].Remove(this);
+                    boundBreakPoints.Remove(this);
 
-                    if (boundBreakPoints[this.SequencePointIndex].All(breakpoint => breakpoint.SequencePointIndex != this.SequencePointIndex))
+                    if (boundBreakPoints.All(breakpoint => breakpoint.SequencePointIndex != this.SequencePointIndex))
                     {
                         // No other line breakpoints are at the same sequence point, so disable the breakpoint so
                         // we don't go looking for breakpoints the next time we hit the sequence point.
