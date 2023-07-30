@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.New, "Guid", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097130")]
     [OutputType(typeof(Guid))]
     public class NewGuidCommand : Cmdlet
-    {      
+    {
         /// <summary>
         /// Generates an instance of the Guid structure whose value is all zeros.
         /// </summary>
