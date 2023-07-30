@@ -18,13 +18,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Generates an instance of the Guid structure whose value is all zeros.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "Empty")]
         public SwitchParameter Empty { get; set; }
 
         /// <summary>
         /// Converts a string to a Guid.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "FromString")]
         [ValidateNotNullOrWhiteSpace]
         public string? FromString { get; set; }
 
@@ -33,13 +33,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (Empty.IsPresent && FromString is not null)
-            {
-                ValidationMetadataException ex = new("The cmdlet cannot run because the following conflicting parameters are specified: Empty and FromString.");
-                ErrorRecord error = new(ex, "NewGuidParameterException", ErrorCategory.InvalidArgument, this);
-                ThrowTerminatingError(error);
-            }
-
             Guid guid = Empty.IsPresent ? Guid.Empty : Guid.NewGuid();
 
             if (FromString is not null)
