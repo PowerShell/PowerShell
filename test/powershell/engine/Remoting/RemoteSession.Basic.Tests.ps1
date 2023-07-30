@@ -59,11 +59,11 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
 
 Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnWindows') {
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $originalDefaultParameterValues = $global:PSDefaultParameterValues.Clone()
 
         if ( ! $IsWindows -or !(Test-CanWriteToPsHome))
         {
-            $PSDefaultParameterValues["it:skip"] = $true
+            $global:PSDefaultParameterValues["it:skip"] = $true
         }
         else
         {
@@ -101,11 +101,11 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
 
 Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $originalDefaultParameterValues = $global:PSDefaultParameterValues.Clone()
 
         if ( ! $IsWindows -or !(Test-CanWriteToPsHome))
         {
-            $PSDefaultParameterValues["it:skip"] = $true
+            $global:PSDefaultParameterValues["it:skip"] = $true
         }
         else
         {
@@ -141,16 +141,22 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
 Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
 
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $originalDefaultParameterValues = $global:PSDefaultParameterValues.Clone()
 
         if ( ! $IsWindows )
         {
-            $PSDefaultParameterValues["it:skip"] = $true
+            $global:PSDefaultParameterValues["it:skip"] = $true
         }
         else
         {
             Enable-PSRemoting -SkipNetworkProfileCheck
-            $endPoint = (Get-PSSessionConfiguration -Name "PowerShell.$(${PSVersionTable}.GitCommitId)").Name
+            $configName = "PowerShell." + $PSVersionTable.GitCommitId
+            $configuration = Get-PSSessionConfiguration -Name $configName -ErrorAction Ignore
+            if ($null -eq $configuration) {
+                $global:PSDefaultParameterValues["it:skip"] = $true
+                return
+            }
+            $endPoint = $configuration.Name
             $disconnectedSession = New-RemoteSession -ConfigurationName $endPoint -ComputerName localhost | Disconnect-PSSession
             $closedSession = New-RemoteSession -ConfigurationName $endPoint -ComputerName localhost
             $closedSession.Runspace.Close()

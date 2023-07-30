@@ -11,6 +11,7 @@ using System.Management.Automation;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography;
@@ -366,20 +367,22 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
-        public virtual string CustomMethod
-        {
-            get => _custommethod;
+        public virtual string CustomMethod { get => _customMethod; set => _customMethod = value.ToUpperInvariant(); }
 
-            set => _custommethod = value.ToUpperInvariant();
-        }
-
-        private string _custommethod;
+        private string _customMethod;
 
         /// <summary>
         /// Gets or sets the PreserveHttpMethodOnRedirect property.
         /// </summary>
         [Parameter]
         public virtual SwitchParameter PreserveHttpMethodOnRedirect { get; set; }
+
+        /// <summary>
+        /// Gets or sets the UnixSocket property.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public virtual UnixDomainSocketEndPoint UnixSocket { get; set; }
 
         #endregion Method
 
@@ -1018,6 +1021,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebSession.MaximumRedirection = MaximumRedirection;
             }
+
+            WebSession.UnixSocket = UnixSocket;
 
             WebSession.SkipCertificateCheck = SkipCertificateCheck.IsPresent;
 

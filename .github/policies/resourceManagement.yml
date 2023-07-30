@@ -300,20 +300,6 @@ configuration:
           label: Stale
       description: 
     - if:
-      - payloadType: Pull_Request
-      - not: isAssignedToSomeone
-      - isAction:
-          action: Opened
-      then:
-      - assignTo:
-          users:
-              - TravisEz13
-              - daxian-dbw
-              - adityapatwardhan
-              - iSazonov
-              - SeeminglyScience       
-      description: 
-    - if:
       - payloadType: Issue_Comment
       then:
       - cleanEmailReply

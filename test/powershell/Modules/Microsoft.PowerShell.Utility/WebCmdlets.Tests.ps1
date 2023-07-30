@@ -4465,6 +4465,26 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
     }
 }
 
+Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
+    BeforeAll {
+        $unixSocket = Get-UnixSocketName
+        $WebListener = Start-UnixSocket $unixSocket
+    }
+
+    It "Execute Invoke-WebRequest with -UnixSocket" {
+        $uri = Get-UnixSocketUri
+        $result = Invoke-WebRequest $uri -UnixSocket $unixSocket
+        $result.StatusCode | Should -Be "200"
+        $result.Content | Should -Be "Hello World Unix Socket."
+    }
+
+    It "Execute Invoke-RestMethod with -UnixSocket" {
+        $uri = Get-UnixSocketUri
+        $result = Invoke-RestMethod  $uri -UnixSocket $unixSocket
+        $result | Should -Be "Hello World Unix Socket."
+    }
+}
+
 Describe 'Invoke-WebRequest and Invoke-RestMethod support OperationTimeoutSeconds' -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
         $oldProgress = $ProgressPreference
