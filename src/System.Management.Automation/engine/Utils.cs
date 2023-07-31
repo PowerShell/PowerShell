@@ -1559,6 +1559,9 @@ namespace System.Management.Automation.Internal
         internal static bool SetConsoleWidthToZero;
         internal static bool SetConsoleHeightToZero;
 
+        // Simulate 'MyDocuments' returning empty string
+        internal static bool SetMyDocumentsSpecialFolderToBlank;
+
         internal static bool SetDate;
 
         // A location to test PSEdition compatibility functionality for Windows PowerShell modules with
