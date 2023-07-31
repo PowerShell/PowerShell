@@ -73,6 +73,9 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a clone of the SelectorFilterRule instance.
         /// </summary>
+        /// <returns>
+        /// Returns a clone of the SelectorFilterRule instance.
+        /// </returns>
         public override FilterRule Clone()
         {
             SelectorFilterRule clone = new SelectorFilterRule();

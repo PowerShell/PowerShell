@@ -27,6 +27,9 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a clone of the TextEndsWithFilterRule instance.
         /// </summary>
+        /// <returns>
+        /// Returns a clone of the TextEndsWithFilterRule instance.
+        /// </returns>
         public override FilterRule Clone()
         {
             TextEndsWithFilterRule rule = new TextEndsWithFilterRule();

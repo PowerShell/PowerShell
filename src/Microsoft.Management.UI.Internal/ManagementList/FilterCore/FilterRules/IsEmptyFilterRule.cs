@@ -21,8 +21,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Creates a clone of the IsEmptyFilterRule.
+        /// Creates a clone of the IsEmptyFilterRule instance.
         /// </summary>
+        /// <returns>
+        /// A clone of IsEmptyFilterRule instance.
+        /// </returns>
         public override FilterRule Clone()
         {
             IsEmptyFilterRule rule = new IsEmptyFilterRule();

@@ -123,6 +123,9 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a clone of the PropertyValueSelectorFilterRule instance.
         /// </summary>
+        /// <returns>
+        /// Returns a clone of the PropertyValueSelectorFilterRule instance.
+        /// </returns>
         public override FilterRule Clone()
         {
             return new PropertyValueSelectorFilterRule<T>(this.PropertyName, this.DisplayName, this.AvailableRules.AvailableValues);

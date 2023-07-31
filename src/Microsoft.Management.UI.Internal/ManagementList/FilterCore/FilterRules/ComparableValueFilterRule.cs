@@ -64,6 +64,9 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a clone of the ComparableValueFilterRule instance.
         /// </summary>
+        /// <returns>
+        /// Returns a clone of the ComparableValueFilterRule instance.
+        /// </returns>
         public override FilterRule Clone()
         {
             ComparableValueFilterRule<T> rule = (ComparableValueFilterRule<T>)Activator.CreateInstance(this.GetType());

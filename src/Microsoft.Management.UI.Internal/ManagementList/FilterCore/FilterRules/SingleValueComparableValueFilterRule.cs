@@ -56,6 +56,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a clone of the FilterRule.
         /// </summary>
+        /// <returns>A clone of the FilterRule.</returns>
         public override FilterRule Clone()
         {
             return base.Clone();

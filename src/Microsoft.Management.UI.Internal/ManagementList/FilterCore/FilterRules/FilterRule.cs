@@ -51,6 +51,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a clone of this FilterRule.
         /// </summary>
+        /// <returns>Returns a clone of this FilterRule.</returns>
         public abstract FilterRule Clone();
 
         #region EvaluationResultInvalidated

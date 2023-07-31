@@ -24,6 +24,9 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a clone of the TextDoesNotEqualFilterRule instance.
         /// </summary>
+        /// <returns>
+        /// Returns a clone of the TextDoesNotEqualFilterRule instance.
+        /// </returns>
         public override FilterRule Clone()
         {
             TextDoesNotEqualFilterRule rule = new TextDoesNotEqualFilterRule();

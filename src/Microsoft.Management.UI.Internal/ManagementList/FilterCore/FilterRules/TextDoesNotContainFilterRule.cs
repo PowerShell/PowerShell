@@ -24,6 +24,9 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a clone of the TextDoesNotContainFilterRule instance.
         /// </summary>
+        /// <returns>
+        /// A clone of the TextDoesNotContainFilterRule instance.
+        /// </returns>
         public override FilterRule Clone()
         {
             TextDoesNotContainFilterRule rule = new TextDoesNotContainFilterRule();

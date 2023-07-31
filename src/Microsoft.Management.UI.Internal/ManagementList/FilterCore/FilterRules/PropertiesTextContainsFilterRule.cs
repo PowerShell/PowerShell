@@ -40,6 +40,9 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a clone of this <see cref="PropertiesTextContainsFilterRule"/>.
         /// </summary>
+        /// <returns>
+        /// A clone of this <see cref="PropertiesTextContainsFilterRule"/>.
+        /// </returns>
         public override FilterRule Clone()
         {
             PropertiesTextContainsFilterRule clone = new PropertiesTextContainsFilterRule();

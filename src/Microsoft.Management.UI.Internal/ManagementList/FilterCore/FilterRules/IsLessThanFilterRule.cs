@@ -27,6 +27,9 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Creates a new IsLessThanFilterRule that is a clone of the current instance.
         /// </summary>
+        /// <returns>
+        /// A new IsLessThanFilterRule that is a clone of the current instance.
+        /// </returns>
         public override FilterRule Clone()
         {
             IsLessThanFilterRule<T> rule = new IsLessThanFilterRule<T>();
