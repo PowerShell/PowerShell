@@ -229,7 +229,7 @@ phases:
   parameters:
     scriptName: |
       pwsh -c ./tools/install-powershell.ps1 -AddToPath -Stable 
-    jobName: InstallPowerShellWindows
+    jobName: InstallPowerShellWindowsStable
     pool: windows-latest
     verification: |
       $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell\pwsh -v
