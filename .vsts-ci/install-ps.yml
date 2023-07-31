@@ -159,3 +159,84 @@ phases:
       {
         throw "powershell was not upgraded: $newVersion"
       }
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: |
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Version 7.3.6
+    jobName: InstallPowerShellWindowsVersion
+    pool: windows-latest
+    verification: |
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-7.3.6\pwsh -v
+      $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
+      $versionOnly = $Matches[2]
+      Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
+      if ([Version]$versionOnly -lt [version]"7.0.0")
+      {
+        throw "powershell was not upgraded: $newVersion"
+      }
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: |
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Version 7.3.6 -Destination $env:LOCALAPPDATA\Microsoft\pwsh
+    jobName: InstallPowerShellWindowsVersionDestination
+    pool: windows-latest
+    verification: |
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\pwsh-7.3.6\pwsh -v
+      $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
+      $versionOnly = $Matches[2]
+      Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
+      if ([Version]$versionOnly -ne [version]"7.3.6")
+      {
+        throw "powershell $newVersion wasn't installed to custom destination"
+      }
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: |
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -LTS 
+    jobName: InstallPowerShellWindowsLTS
+    pool: windows-latest
+    verification: |
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-lts\pwsh -v
+      $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
+      $versionOnly = $Matches[2]
+      Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
+      if ([Version]$versionOnly -lt [version]"7.0.0")
+      {
+        throw "powershell was not upgraded: $newVersion"
+      }
+
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: |
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Preview 
+    jobName: InstallPowerShellWindowsPreview
+    pool: windows-latest
+    verification: |
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-preview\pwsh -v
+      $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
+      $versionOnly = $Matches[2]
+      Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
+      if ([Version]$versionOnly -lt [version]"7.0.0")
+      {
+        throw "powershell was not upgraded: $newVersion"
+      }
+
+- template: templates/install-ps-phase.yml
+  parameters:
+    scriptName: |
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Stable 
+    jobName: InstallPowerShellWindows
+    pool: windows-latest
+    verification: |
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell\pwsh -v
+      $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
+      $versionOnly = $Matches[2]
+      Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
+      if ([Version]$versionOnly -lt [version]"7.0.0")
+      {
+        throw "powershell was not upgraded: $newVersion"
+      }
