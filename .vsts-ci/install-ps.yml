@@ -195,7 +195,7 @@ phases:
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: |
-      pwsh -c ./tools/install-powershell.ps1 -AddToPath -LTS 
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -LTS
     jobName: InstallPowerShellWindowsLTS
     pool: windows-latest
     verification: |
@@ -212,7 +212,7 @@ phases:
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: |
-      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Preview 
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Preview
     jobName: InstallPowerShellWindowsPreview
     pool: windows-latest
     verification: |
@@ -228,7 +228,7 @@ phases:
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: |
-      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Stable 
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Stable
     jobName: InstallPowerShellWindowsStable
     pool: windows-latest
     verification: |
