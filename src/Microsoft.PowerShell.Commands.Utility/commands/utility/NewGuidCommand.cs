@@ -24,9 +24,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Converts a string to a Guid.
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true, ParameterSetName = "FromString")]
+        [Parameter(Position = 0, ValueFromPipeline = true, ParameterSetName = "InputObject")]
         [System.Diagnostics.CodeAnalysis.AllowNull]
-        public string FromString { get; set; }
+        public string InputObject { get; set; }
 
         /// <summary>
         /// Returns a Guid.
@@ -35,11 +35,11 @@ namespace Microsoft.PowerShell.Commands
         {
             Guid guid;
 
-            if (ParameterSetName is "FromString")
+            if (ParameterSetName is "InputObject")
             {
                 try
                 {
-                    guid = new(FromString);
+                    guid = new(InputObject);
                 }
                 catch (Exception ex)
                 {
