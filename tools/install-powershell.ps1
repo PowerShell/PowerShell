@@ -26,35 +26,41 @@
 #>
 [CmdletBinding(DefaultParameterSetName = "Daily")]
 param(
-    [Parameter(ParameterSetName = "Daily")]
-    [Parameter(ParameterSetName = "Version")]
-    [Parameter(ParameterSetName = "LTS")]
-    [Parameter(ParameterSetName = "Preview")]
-    [string] $Destination,
-
-    [Parameter(ParameterSetName = "Version")]
+    [Parameter(ParameterSetName = "Version" )]
     [Parameter(ParameterSetName = "MSI")]
     [string] $Version,
 
+    [Parameter(ParameterSetName = "Stable")]
+    [Parameter(ParameterSetName = "MSI")]
+    [switch] $Stable,
+
     [Parameter(ParameterSetName = "LTS")]
+    [Parameter(ParameterSetName = "MSI")]
     [switch] $LTS,
 
     [Parameter(ParameterSetName = "Daily")]
     [switch] $Daily,
 
+    [Parameter(ParameterSetName = 'Preview')]
+    [Parameter(ParameterSetName = "MSI")]
+    [switch] $Preview,
+
+    [Parameter(ParameterSetName = "Daily" )]
+    [Parameter(ParameterSetName = "Version")]
+    [Parameter(ParameterSetName = "LTS")]
+    [Parameter(ParameterSetName = "Preview")]
+    [Parameter(ParameterSetName = "Stable")]
+    [string] $Destination,
+
     [Parameter(ParameterSetName = "Daily")]
     [Parameter(ParameterSetName = "Version")]
     [Parameter(ParameterSetName = "LTS")]
     [Parameter(ParameterSetName = 'Preview')]
+    [Parameter(ParameterSetName = "Stable")]
     [switch] $DoNotOverwrite,
 
-    [Parameter(ParameterSetName = "Daily")]
-    [Parameter(ParameterSetName = "Version")]
-    [Parameter(ParameterSetName = "LTS")]
     [switch] $AddToPath,
 
-    [Parameter(ParameterSetName = "Version")]
-    [Parameter(ParameterSetName = "LTS")]
     [Parameter(ParameterSetName = "MSI")]
     [switch] $UseMSI,
 
@@ -65,12 +71,7 @@ param(
     [switch] $AddExplorerContextMenu,
 
     [Parameter(ParameterSetName = "MSI")]
-    [switch] $EnablePSRemoting,
-
-    [Parameter(ParameterSetName = "MSI")]
-    [Parameter(ParameterSetName = 'Preview')]
-    [switch] $Preview
-
+    [switch] $EnablePSRemoting
 )
 
 Set-StrictMode -Version 3.0
@@ -111,7 +112,11 @@ if ($version) {
 } elseif ($Daily) {
     $Destination = "${Destination}-daily"
 } elseif ($LTS) {
-    $Destination = "${Destination}-LTS"
+    $Destination = "${Destination}-lts"
+} elseif ($Preview) {
+    $Destination = "${Destination}-preview"
+} elseif ($Stable) {
+    $Destination = "${Destination}"
 }
 
 $Destination = $PSCmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
