@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.New, "Guid", DefaultParameterSetName = "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097130")]
     [OutputType(typeof(Guid))]
-    public class NewGuidCommand : Cmdlet
+    public class NewGuidCommand : PSCmdlet
     {
         /// <summary>
         /// Generates an instance of the Guid structure whose value is all zeros.
@@ -24,18 +24,18 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Converts a string to a Guid.
         /// </summary>
-        [Parameter(ParameterSetName = "FromString")]
-        [ValidateNotNullOrWhiteSpace]
-        public string? FromString { get; set; }
+        [Parameter(Position = 0, ValueFromPipeline = true, ParameterSetName = "FromString")]
+        [System.Diagnostics.CodeAnalysis.AllowNull]
+        public string FromString { get; set; }
 
         /// <summary>
         /// Returns a Guid.
         /// </summary>
         protected override void EndProcessing()
         {
-            Guid guid = Empty.IsPresent ? Guid.Empty : Guid.NewGuid();
+            Guid guid;
 
-            if (FromString is not null)
+            if (ParameterSetName is "FromString")
             {
                 try
                 {
@@ -47,6 +47,8 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(error);
                 }  
             }
+
+            guid = ParameterSetName is "Empty" ? Guid.Empty : Guid.NewGuid();
 
             WriteObject(guid);
         }
