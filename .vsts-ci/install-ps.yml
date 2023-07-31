@@ -179,7 +179,7 @@ phases:
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: |
-      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Version 7.3.6 -Destination $env:LOCALAPPDATA\Microsoft\pwsh
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Version 7.3.6 -Destination "$env:LOCALAPPDATA/Microsoft/pwsh"
     jobName: InstallPowerShellWindowsVersionDestination
     pool: windows-latest
     verification: |
