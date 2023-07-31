@@ -61,7 +61,7 @@ param(
 
     [switch] $AddToPath,
 
-    [Parameter(ParameterSetName = "MSI")]
+    [Parameter(ParameterSetName = "MSI", Mandatory)]
     [switch] $UseMSI,
 
     [Parameter(ParameterSetName = "MSI")]
@@ -116,7 +116,7 @@ if ($version) {
 } elseif ($Preview) {
     $Destination = "${Destination}-preview"
 } elseif ($Stable) {
-    $Destination = "${Destination}"
+    $Destination = "${Destination}-stable"
 }
 
 $Destination = $PSCmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
