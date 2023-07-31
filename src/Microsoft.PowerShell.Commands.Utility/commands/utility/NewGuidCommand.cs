@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            Guid guid;
+            Guid? guid = null;
 
             if (ParameterSetName is "InputObject")
             {
@@ -47,8 +47,10 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(error);
                 }  
             }
-
-            guid = ParameterSetName is "Empty" ? Guid.Empty : Guid.NewGuid();
+            else
+            {
+                guid = ParameterSetName is "Empty" ? Guid.Empty : Guid.NewGuid();
+            }
 
             WriteObject(guid);
         }
