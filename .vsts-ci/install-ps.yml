@@ -179,7 +179,7 @@ phases:
 - template: templates/install-ps-phase.yml
   parameters:
     scriptName: |
-      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Version 7.3.6 -Destination "$env:LOCALAPPDATA/Microsoft/pwsh"
+      pwsh -c ./tools/install-powershell.ps1 -AddToPath -Version 7.3.6 -Destination "$($env:LOCALAPPDATA)/Microsoft/pwsh"
     jobName: InstallPowerShellWindowsVersionDestination
     pool: windows-latest
     verification: |
@@ -232,7 +232,7 @@ phases:
     jobName: InstallPowerShellWindowsStable
     pool: windows-latest
     verification: |
-      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell\pwsh -v
+      $newVersion = &$env:LOCALAPPDATA\Microsoft\powershell-stable\pwsh -v
       $newVersion -match '^PowerShell ((\d*\.\d*\.\d*)(-\w*(\.\d*)?)?){1}'
       $versionOnly = $Matches[2]
       Write-verbose "$newVersion; versionOnly: $versionOnly" -verbose
