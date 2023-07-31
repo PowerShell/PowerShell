@@ -26,7 +26,7 @@ Describe "New-Guid" -Tags "CI" {
         $guid1.ToString() | Should -BeExactly $guid3.ToString()
     }
 
-    It "Should convert a string to a guid value from pipeline" {
+    It "Should convert a string to a guid, value from pipeline" {
         $guid1 = New-Guid
         $guid2 = $guid1.ToString() | New-Guid
         $guid2 | Should -BeOfType System.Guid
