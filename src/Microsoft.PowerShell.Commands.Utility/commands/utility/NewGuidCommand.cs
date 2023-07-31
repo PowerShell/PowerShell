@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns a Guid.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void ProcessRecord()
         {
             Guid? guid = null;
 
