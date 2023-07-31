@@ -120,6 +120,14 @@ namespace Microsoft.Management.UI.Internal
             return this.AvailableRules.SelectedValue.Evaluate(propertyValue);
         }
 
+        /// <summary>
+        /// Creates a clone of the PropertyValueSelectorFilterRule instance.
+        /// </summary>
+        public override FilterRule Clone()
+        {
+            return new PropertyValueSelectorFilterRule<T>(this.PropertyName, this.DisplayName, this.AvailableRules.AvailableValues);
+        }
+
         #endregion Public Methods
 
         #region Private Methods

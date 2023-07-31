@@ -25,6 +25,17 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Creates a new IsGreaterThanFilterRule that is a clone of the current instance.
+        /// </summary>
+        public override FilterRule Clone()
+        {
+            IsGreaterThanFilterRule<T> rule = new IsGreaterThanFilterRule<T>();
+            rule.Value = this.Value;
+            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            return rule;
+        }
+
+        /// <summary>
         /// Determines if item is greater than Value.
         /// </summary>
         /// <param name="data">

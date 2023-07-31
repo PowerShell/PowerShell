@@ -48,6 +48,11 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>Returns true if the item meets the criteria. False otherwise.</returns>
         public abstract bool Evaluate(object item);
 
+        /// <summary>
+        /// Creates a clone of this FilterRule.
+        /// </summary>
+        public abstract FilterRule Clone();
+
         #region EvaluationResultInvalidated
 
         /// <summary>

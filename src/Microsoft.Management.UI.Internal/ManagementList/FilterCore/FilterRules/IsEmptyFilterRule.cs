@@ -21,6 +21,15 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Creates a clone of the IsEmptyFilterRule.
+        /// </summary>
+        public override FilterRule Clone()
+        {
+            IsEmptyFilterRule rule = new IsEmptyFilterRule();
+            return rule;
+        }
+
+        /// <summary>
         /// Gets a values indicating whether the supplied item is empty.
         /// </summary>
         /// <param name="item">The item to evaluate.</param>

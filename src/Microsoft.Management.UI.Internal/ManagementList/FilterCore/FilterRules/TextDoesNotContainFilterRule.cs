@@ -22,6 +22,17 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Creates a clone of the TextDoesNotContainFilterRule instance.
+        /// </summary>
+        public override FilterRule Clone()
+        {
+            TextDoesNotContainFilterRule rule = new TextDoesNotContainFilterRule();
+            rule.Value = this.Value;
+            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            return rule;
+        }
+
+        /// <summary>
         /// Determines if Value is not contained within data.
         /// </summary>
         /// <param name="data">

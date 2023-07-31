@@ -25,6 +25,14 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Creates a clone of the TextStartsWithFilterRule instance.
+        /// </summary>
+        public override FilterRule Clone()
+        {
+            return base.Clone();
+        }
+
+        /// <summary>
         /// Determines if data starts with Value.
         /// </summary>
         /// <param name="data">

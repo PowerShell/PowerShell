@@ -62,6 +62,16 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Creates a clone of the ComparableValueFilterRule instance.
+        /// </summary>
+        public override FilterRule Clone()
+        {
+            ComparableValueFilterRule<T> rule = (ComparableValueFilterRule<T>)Activator.CreateInstance(this.GetType());
+            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            return rule;
+        }
+
+        /// <summary>
         /// Determines if item matches a derived classes criteria.
         /// </summary>
         /// <param name="data">

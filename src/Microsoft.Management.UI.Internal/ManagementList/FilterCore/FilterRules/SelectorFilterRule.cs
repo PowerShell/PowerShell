@@ -71,6 +71,20 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Creates a clone of the SelectorFilterRule instance.
+        /// </summary>
+        public override FilterRule Clone()
+        {
+            SelectorFilterRule clone = new SelectorFilterRule();
+            clone.DisplayName = this.DisplayName;
+            clone.AvailableRules = this.AvailableRules;
+            clone.AvailableRules.SelectedValueChanged += clone.AvailableRules_SelectedValueChanged;
+            clone.AvailableRules.SelectedValue.EvaluationResultInvalidated += clone.SelectedValue_EvaluationResultInvalidated;
+
+            return clone;
+        }
+
+        /// <summary>
         /// Called when the SelectedValue within AvailableRules changes.
         /// </summary>
         /// <param name="oldValue">

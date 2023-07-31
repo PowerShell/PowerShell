@@ -22,6 +22,17 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Creates a clone of the TextDoesNotEqualFilterRule instance.
+        /// </summary>
+        public override FilterRule Clone()
+        {
+            TextDoesNotEqualFilterRule rule = new TextDoesNotEqualFilterRule();
+            rule.Value = this.Value;
+            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            return rule;
+        }
+
+        /// <summary>
         /// Determines if data is not equal to Value.
         /// </summary>
         /// <param name="data">

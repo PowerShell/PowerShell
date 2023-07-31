@@ -60,6 +60,15 @@ namespace Microsoft.Management.UI.Internal
             }
         }
 
+
+        /// <summary>
+        /// Creates a clone of the FilterRule.
+        /// </summary>        
+        public override FilterRule Clone()
+        {
+            return base.Clone();
+        }
+
         /// <summary>
         /// Initializes a new instance of the TextFilterRule class.
         /// </summary>

@@ -25,6 +25,17 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Creates a clone of the TextContainsFilterRule instance.
+        /// </summary>
+        public override FilterRule Clone()
+        {
+            TextContainsFilterRule rule = new TextContainsFilterRule();
+            rule.Value = this.Value;
+            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            return rule;
+        }
+
+        /// <summary>
         /// Determines if Value is contained within data.
         /// </summary>
         /// <param name="data">

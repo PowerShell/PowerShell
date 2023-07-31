@@ -27,7 +27,7 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public static FilterRule DeepCopy(this FilterRule rule)
         {
-            throw new NotSupportedException();
+            return rule.Clone();
         }
     }
 }
