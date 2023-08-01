@@ -1229,8 +1229,10 @@ class InheritedClassTest : System.Attribute
 
         It "Should keep '~' in completiontext when it's used to refer to home in input" {
             $res = TabExpansion2 -inputScript "~$separator"
+            # select the first answer which does not have a space in the completion (those completions look like & '3D Objects')
+            $observedResult = $res.CompletionMatches.Where({$_.CompletionText.IndexOf("&") -eq -1})[0].CompletionText
             $completedText = $res.CompletionMatches.CompletionText -join ","
-            $res.CompletionMatches[0].CompletionText | Should -BeLike "~$separator*" -Because "$completedText"
+            $observedResult | Should -BeLike "~$separator*" -Because "$completedText"
         }
 
         It "Should use '~' as relative filter text when not followed by separator" {
@@ -1277,9 +1279,13 @@ class InheritedClassTest : System.Attribute
     It 'Should keep custom drive names when completing file paths' {
         $TempDriveName = "asdf"
         $null = New-PSDrive -Name $TempDriveName -PSProvider FileSystem -Root $HOME
-        $completions = (TabExpansion2 -inputScript "${TempDriveName}:\").CompletionMatches
-        $completionText = $completions.CompletionText -join ","
-        $completions[0].CompletionText | Should -BeLike "${TempDriveName}:*" -Because "$completionText"
+
+        $completions = (TabExpansion2 -inputScript "${TempDriveName}:\")
+        # select the first answer which does not have a space in the completion (those completions look like & '3D Objects')
+        $observedResult = $completions.CompletionMatches.Where({$_.CompletionText.IndexOf("&") -eq -1})[0].CompletionText
+        $completedText = $completions.CompletionMatches.CompletionText -join ","
+
+        $observedResult | Should -BeLike "${TempDriveName}:*" -Because "$completionText"
         Remove-PSDrive -Name $TempDriveName
     }
 
