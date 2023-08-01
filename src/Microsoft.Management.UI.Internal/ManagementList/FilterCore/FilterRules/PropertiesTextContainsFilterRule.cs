@@ -38,6 +38,20 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Creates a clone of this <see cref="PropertiesTextContainsFilterRule"/>.
+        /// </summary>
+        /// <returns>
+        /// A clone of this <see cref="PropertiesTextContainsFilterRule"/>.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            PropertiesTextContainsFilterRule clone = new PropertiesTextContainsFilterRule();
+            clone.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            clone.PropertyNames = new List<string>(this.PropertyNames);
+            return clone;
+        }
+
+        /// <summary>
         /// Evaluates whether the specified properties on <paramref name="item"/> contain the current value.
         /// </summary>
         /// <param name="item">The item to evaluate.</param>

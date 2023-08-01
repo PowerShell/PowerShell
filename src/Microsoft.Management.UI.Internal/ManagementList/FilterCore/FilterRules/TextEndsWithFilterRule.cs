@@ -25,6 +25,20 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
+        /// Creates a clone of the TextEndsWithFilterRule instance.
+        /// </summary>
+        /// <returns>
+        /// Returns a clone of the TextEndsWithFilterRule instance.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            TextEndsWithFilterRule rule = new TextEndsWithFilterRule();
+            rule.Value = this.Value;
+            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            return rule;
+        }
+
+        /// <summary>
         /// Determines if data ends with Value.
         /// </summary>
         /// <param name="data">
