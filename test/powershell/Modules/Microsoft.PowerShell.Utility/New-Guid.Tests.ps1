@@ -27,10 +27,9 @@ Describe "New-Guid" -Tags "CI" {
     }
 
     It "Should convert a string to a guid, value from pipeline" {
-        $guid1 = New-Guid
-        $guid2 = $guid1.ToString() | New-Guid
-        $guid2 | Should -BeOfType System.Guid
-        $guid1.ToString() | Should -BeExactly $guid2.ToString()
+        $guids = '11c43ee8-b9d3-4e51-b73f-bd9dda66e29c','0f8fad5bd9cb469fa16570867728950e' | New-Guid
+        $guids[0].ToString() | Should -BeExactly '11c43ee8-b9d3-4e51-b73f-bd9dda66e29c'
+        $guids[1].ToString() | Should -BeExactly '0f8fad5b-d9cb-469f-a165-70867728950e'
     }
 
     It "Should return different guids with each call" {
