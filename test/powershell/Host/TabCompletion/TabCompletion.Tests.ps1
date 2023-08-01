@@ -992,6 +992,19 @@ class InheritedClassTest : System.Attribute
         $res.CompletionMatches.CompletionText | Should -Contain '-ProgressAction'
     }
 
+    It 'Should complete dynamic parameters with partial input' {
+        # See issue: #19498
+        try
+        {
+            Push-Location function:
+            $res = TabExpansion2 -inputScript 'Get-ChildItem -LiteralPath $PSHOME -Fi'
+            $res.CompletionMatches[1].CompletionText | Should -Be '-File'
+        }
+        finally
+        {
+            Pop-Location
+        }
+    }
     it 'Should complete enum class members for Enums in script text' {
         $res = TabExpansion2 -inputScript 'enum Test1 {Val1};([Test1]"").'
         $res.CompletionMatches.CompletionText[0] | Should -Be 'value__'
