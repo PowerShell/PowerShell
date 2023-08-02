@@ -1103,7 +1103,9 @@ namespace System.Management.Automation
             {
                 var typeAst = completionContext.RelatedAsts.OfType<TypeExpressionAst>().FirstOrDefault();
                 TypeName typeNameToComplete = null;
-                if (typeAst != null)
+
+                // See if the typename to complete really is within the typename, and if so, which one, in the case of generics.
+                if (typeAst is not null)
                 {
                     typeNameToComplete = FindTypeNameToComplete(typeAst.TypeName, _cursorPosition);
                 }
@@ -1123,12 +1125,11 @@ namespace System.Management.Automation
 
                 if (typeNameToComplete != null)
                 {
-                    // See if the typename to complete really is within the typename, and if so, which one, in the case of generics.
-
+                    bool attributesOnly = tokenAtCursor is not null && tokenAtCursor.TokenFlags.HasFlag(TokenFlags.AttributeName);
                     replacementIndex = typeNameToComplete.Extent.StartOffset;
                     replacementLength = typeNameToComplete.Extent.EndOffset - replacementIndex;
                     completionContext.WordToComplete = typeNameToComplete.FullName;
-                    result = CompletionCompleters.CompleteType(completionContext);
+                    result = CompletionCompleters.CompleteType(completionContext, attributeOnly: attributesOnly);
                 }
             }
 

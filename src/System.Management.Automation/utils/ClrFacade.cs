@@ -47,9 +47,12 @@ namespace System.Management.Automation
         /// In CoreCLR context, if it's for string-to-type conversion and the namespace qualified type name is known, pass it in so that
         /// powershell can load the necessary TPA if the target type is from an unloaded TPA.
         /// </param>
-        internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
+        /// <param name="includePsGeneratedTypes">
+        /// PowerShell generated types are excluded by default, but they can be included if needed (Tab completion)
+        /// </param>
+        internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null, bool includePsGeneratedTypes = false)
         {
-            return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ?? GetPSVisibleAssemblies();
+            return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ?? GetPSVisibleAssemblies(includePsGeneratedTypes);
         }
 
         /// <summary>
@@ -57,13 +60,13 @@ namespace System.Management.Automation
         /// The 'individual' load contexts are the ones holding assemblies loaded via 'Assembly.Load(byte[])' and 'Assembly.LoadFile'.
         /// Assemblies loaded in any custom load contexts are not consider visible to PowerShell to avoid type identity issues.
         /// </summary>
-        private static IEnumerable<Assembly> GetPSVisibleAssemblies()
+        private static IEnumerable<Assembly> GetPSVisibleAssemblies(bool includePsGeneratedTypes = false)
         {
             const string IndividualAssemblyLoadContext = "System.Runtime.Loader.IndividualAssemblyLoadContext";
 
             foreach (Assembly assembly in AssemblyLoadContext.Default.Assemblies)
             {
-                if (!assembly.FullName.StartsWith(TypeDefiner.DynamicClassAssemblyFullNamePrefix, StringComparison.Ordinal))
+                if (includePsGeneratedTypes || !assembly.FullName.StartsWith(TypeDefiner.DynamicClassAssemblyFullNamePrefix, StringComparison.Ordinal))
                 {
                     yield return assembly;
                 }

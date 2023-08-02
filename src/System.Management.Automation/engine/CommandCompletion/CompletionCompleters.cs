@@ -6942,384 +6942,222 @@ namespace System.Management.Automation
         }
 
         #endregion Members
-
+        
         #region Types
 
-        private abstract class TypeCompletionBase
-        {
-            internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix);
-
-            internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove);
-
-            internal static string RemoveBackTick(string typeName)
-            {
-                var backtick = typeName.LastIndexOf('`');
-                return backtick == -1 ? typeName : typeName.Substring(0, backtick);
-            }
-        }
-
-        /// <summary>
-        /// In OneCore PS, there is no way to retrieve all loaded assemblies. But we have the type catalog dictionary
-        /// which contains the full type names of all available CoreCLR .NET types. We can extract the necessary info
-        /// from the full type names to make type name auto-completion work.
-        /// This type represents a non-generic type for type name completion. It only contains information that can be
-        /// inferred from the full type name.
-        /// </summary>
-        private class TypeCompletionInStringFormat : TypeCompletionBase
+        private sealed class TypeCompletionCache
         {
             /// <summary>
-            /// Get the full type name of the type represented by this instance.
+            /// Groups short typenames with matching full names. Grouped by first character in short type name -> Short Type Name -> Full names.
             /// </summary>
-            internal string FullTypeName;
+            internal Dictionary<char, Dictionary<string, HashSet<string>>> TypeNameMap = new(27);
 
             /// <summary>
-            /// Get the short type name of the type represented by this instance.
+            /// Groups namespaces by their last subnamespace. Grouped by first character in subnamespace ->  Subnamespace -> Full names.
+            /// For example "System.Runtime.Serialization" and "System.Text.Json.Serialization" are both grouped under "Serialization".
             /// </summary>
-            internal string ShortTypeName
+            internal Dictionary<char, Dictionary<string, HashSet<string>>> NamespaceMap = new(23);
+
+            /// <summary>
+            /// Maps full namespaces like "System.Management" to the content they contain (Types and namespaces).
+            /// </summary>
+            internal Dictionary<string, NamespaceContentCache> NamespaceContent = new(307, StringComparer.OrdinalIgnoreCase);
+
+            /// <summary>
+            /// Maps full typenames to their completion info (ListItemText, ToolTip).
+            /// </summary>
+            internal Dictionary<string, TypeCompletionInfo> CompletionInfo = new(7639, StringComparer.OrdinalIgnoreCase);
+
+            /// <summary>
+            /// Maps type accelerator names to their completion info (ListItemText, ToolTip, Fullname).
+            /// </summary>
+            internal Dictionary<string, TypeAcceleratorCompletionInfo> TypeAcceleratorMap;
+
+            /// <summary>
+            /// Contains all the root namespaces. Used to complete the first "root" namespace with no input.
+            /// </summary>
+            internal HashSet<string> RootNamespaces = new(StringComparer.OrdinalIgnoreCase);
+
+            internal void AddTypeToCache(TypeInfoForCompletion typeInfo)
             {
-                get
+                var fullNameSet = GetOrCreateCacheSet(TypeNameMap, typeInfo.ShortName);
+                _ = fullNameSet.Add(typeInfo.FullName);
+
+                int lastIndexOfNestedType = typeInfo.ShortName.LastIndexOf('+');
+                if (lastIndexOfNestedType != -1)
                 {
-                    if (_shortTypeName == null)
+                    fullNameSet = GetOrCreateCacheSet(TypeNameMap, typeInfo.ShortName.Substring(lastIndexOfNestedType + 1));
+                    _ = fullNameSet.Add(typeInfo.FullName);
+                }
+
+                CompletionInfo[typeInfo.FullName] = new TypeCompletionInfo()
+                {
+                    ListItemText = typeInfo.ListItemText,
+                    Tooltip = typeInfo.ToolTip,
+                    IsAttribute = typeInfo.IsAttribute
+                };
+
+                if (string.IsNullOrEmpty(typeInfo.Namespace))
+                {
+                    return;
+                }
+
+                var namespaces = typeInfo.Namespace.Split('.');
+                var currentNamespace = namespaces[0];
+                _ = RootNamespaces.Add(currentNamespace);
+
+                for (int i = 0; i < namespaces.Length; i++)
+                {
+                    var namespaceSet = GetOrCreateCacheSet(NamespaceMap, namespaces[i]);
+                    _ = namespaceSet.Add(currentNamespace);
+
+                    var nextIndex = i + 1;
+
+                    NamespaceContentCache nsContent;
+                    if (!NamespaceContent.TryGetValue(currentNamespace, out nsContent))
                     {
-                        int lastDotIndex = FullTypeName.LastIndexOf('.');
-                        int lastPlusIndex = FullTypeName.LastIndexOf('+');
-                        _shortTypeName = lastPlusIndex != -1
-                                           ? FullTypeName.Substring(lastPlusIndex + 1)
-                                           : FullTypeName.Substring(lastDotIndex + 1);
+                        nsContent = new NamespaceContentCache();
+                        NamespaceContent.Add(currentNamespace, nsContent);
                     }
 
-                    return _shortTypeName;
-                }
-            }
-
-            private string _shortTypeName;
-
-            /// <summary>
-            /// Get the namespace of the type represented by this instance.
-            /// </summary>
-            internal string Namespace
-            {
-                get
-                {
-                    if (_namespace == null)
+                    if (nextIndex < namespaces.Length)
                     {
-                        int lastDotIndex = FullTypeName.LastIndexOf('.');
-                        _namespace = FullTypeName.Substring(0, lastDotIndex);
+                        currentNamespace += string.Create(CultureInfo.InvariantCulture, $".{namespaces[nextIndex]}");
+                        _ = nsContent.Namespaces.Add(currentNamespace);
                     }
-
-                    return _namespace;
-                }
-            }
-
-            private string _namespace;
-
-            /// <summary>
-            /// Construct the CompletionResult based on the information of this instance.
-            /// </summary>
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
-            {
-                return GetCompletionResult(keyMatched, prefix, suffix, null);
-            }
-
-            /// <summary>
-            /// Construct the CompletionResult based on the information of this instance.
-            /// </summary>
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
-            {
-                string completion = string.IsNullOrEmpty(namespaceToRemove)
-                                        ? FullTypeName
-                                        : FullTypeName.Substring(namespaceToRemove.Length + 1);
-
-                string listItem = ShortTypeName;
-                string tooltip = FullTypeName;
-
-                return new CompletionResult(prefix + completion + suffix, listItem, CompletionResultType.Type, tooltip);
-            }
-        }
-
-        /// <summary>
-        /// In OneCore PS, there is no way to retrieve all loaded assemblies. But we have the type catalog dictionary
-        /// which contains the full type names of all available CoreCLR .NET types. We can extract the necessary info
-        /// from the full type names to make type name auto-completion work.
-        /// This type represents a generic type for type name completion. It only contains information that can be
-        /// inferred from the full type name.
-        /// </summary>
-        private sealed class GenericTypeCompletionInStringFormat : TypeCompletionInStringFormat
-        {
-            /// <summary>
-            /// Get the number of generic type arguments required by the type represented by this instance.
-            /// </summary>
-            private int GenericArgumentCount
-            {
-                get
-                {
-                    if (_genericArgumentCount == 0)
+                    else
                     {
-                        var backtick = FullTypeName.LastIndexOf('`');
-                        var argCount = FullTypeName.Substring(backtick + 1);
-                        _genericArgumentCount = LanguagePrimitives.ConvertTo<int>(argCount);
+                        _ = nsContent.TypeNames.Add(typeInfo.ShortName);
                     }
-
-                    return _genericArgumentCount;
                 }
             }
 
-            private int _genericArgumentCount = 0;
-
-            /// <summary>
-            /// Construct the CompletionResult based on the information of this instance.
-            /// </summary>
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
+            private static HashSet<string> GetOrCreateCacheSet(Dictionary<char, Dictionary<string, HashSet<string>>> cacheMap, string indexWord)
             {
-                return GetCompletionResult(keyMatched, prefix, suffix, null);
-            }
+                char indexChar = char.ToUpper(indexWord[0]);
 
-            /// <summary>
-            /// Construct the CompletionResult based on the information of this instance.
-            /// </summary>
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
-            {
-                string fullNameWithoutBacktip = RemoveBackTick(FullTypeName);
-                string completion = string.IsNullOrEmpty(namespaceToRemove)
-                                        ? fullNameWithoutBacktip
-                                        : fullNameWithoutBacktip.Substring(namespaceToRemove.Length + 1);
-
-                string typeName = RemoveBackTick(ShortTypeName);
-                var listItem = typeName + "<>";
-
-                var tooltip = new StringBuilder();
-                tooltip.Append(fullNameWithoutBacktip);
-                tooltip.Append('[');
-
-                for (int i = 0; i < GenericArgumentCount; i++)
+                Dictionary<string, HashSet<string>> groupMap;
+                if (!cacheMap.TryGetValue(indexChar, out groupMap))
                 {
-                    if (i != 0) tooltip.Append(", ");
-                    tooltip.Append(GenericArgumentCount == 1
-                                       ? "T"
-                                       : string.Create(CultureInfo.InvariantCulture, $"T{i + 1}"));
+                    groupMap = new Dictionary<string, HashSet<string>>(1, StringComparer.OrdinalIgnoreCase);
+                    cacheMap.Add(indexChar, groupMap);
                 }
-
-                tooltip.Append(']');
-
-                return new CompletionResult(prefix + completion + suffix, listItem, CompletionResultType.Type, tooltip.ToString());
+                HashSet<string> fullNames;
+                if (!groupMap.TryGetValue(indexWord, out fullNames))
+                {
+                    fullNames = new HashSet<string>(1, StringComparer.OrdinalIgnoreCase);
+                    groupMap.Add(indexWord, fullNames);
+                }
+                return fullNames;
             }
         }
 
-        /// <summary>
-        /// This type represents a non-generic type for type name completion. It contains the actual type instance.
-        /// </summary>
-        private class TypeCompletion : TypeCompletionBase
+        private sealed class NamespaceContentCache
         {
-            internal Type Type;
-
-            protected string GetTooltipPrefix()
-            {
-                if (typeof(Delegate).IsAssignableFrom(Type))
-                    return "Delegate ";
-                if (Type.IsInterface)
-                    return "Interface ";
-                if (Type.IsClass)
-                    return "Class ";
-                if (Type.IsEnum)
-                    return "Enum ";
-                if (typeof(ValueType).IsAssignableFrom(Type))
-                    return "Struct ";
-
-                return string.Empty; // what other interesting types are there?
-            }
-
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
-            {
-                return GetCompletionResult(keyMatched, prefix, suffix, null);
-            }
-
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
-            {
-                string completion = ToStringCodeMethods.Type(Type, false, keyMatched);
-
-                // If the completion included a namespace and ToStringCodeMethods.Type found
-                // an accelerator, then just use the type's FullName instead because the user
-                // probably didn't want the accelerator.
-                if (keyMatched.Contains('.') && !completion.Contains('.'))
-                {
-                    completion = Type.FullName;
-                }
-
-                if (!string.IsNullOrEmpty(namespaceToRemove) && completion.Equals(Type.FullName, StringComparison.OrdinalIgnoreCase))
-                {
-                    // Remove the namespace only if the completion text contains namespace
-                    completion = completion.Substring(namespaceToRemove.Length + 1);
-                }
-
-                string listItem = Type.Name;
-                string tooltip = GetTooltipPrefix() + Type.FullName;
-
-                return new CompletionResult(prefix + completion + suffix, listItem, CompletionResultType.Type, tooltip);
-            }
+            internal HashSet<string> TypeNames = new(StringComparer.OrdinalIgnoreCase);
+            internal HashSet<string> Namespaces = new(StringComparer.OrdinalIgnoreCase);
         }
 
-        /// <summary>
-        /// This type represents a generic type for type name completion. It contains the actual type instance.
-        /// </summary>
-        private sealed class GenericTypeCompletion : TypeCompletion
+        private sealed class TypeCompletionInfo
         {
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
-            {
-                return GetCompletionResult(keyMatched, prefix, suffix, null);
-            }
-
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
-            {
-                string fullNameWithoutBacktip = RemoveBackTick(Type.FullName);
-                string completion = string.IsNullOrEmpty(namespaceToRemove)
-                                        ? fullNameWithoutBacktip
-                                        : fullNameWithoutBacktip.Substring(namespaceToRemove.Length + 1);
-
-                string typeName = RemoveBackTick(Type.Name);
-                var listItem = typeName + "<>";
-
-                var tooltip = new StringBuilder();
-                tooltip.Append(GetTooltipPrefix());
-                tooltip.Append(fullNameWithoutBacktip);
-                tooltip.Append('[');
-                var genericParameters = Type.GetGenericArguments();
-                for (int i = 0; i < genericParameters.Length; i++)
-                {
-                    if (i != 0) tooltip.Append(", ");
-                    tooltip.Append(genericParameters[i].Name);
-                }
-
-                tooltip.Append(']');
-
-                return new CompletionResult(prefix + completion + suffix, listItem, CompletionResultType.Type, tooltip.ToString());
-            }
+            internal string ListItemText;
+            internal string Tooltip;
+            internal bool IsAttribute;
         }
 
-        /// <summary>
-        /// This type represents a namespace for namespace completion.
-        /// </summary>
-        private sealed class NamespaceCompletion : TypeCompletionBase
+        private sealed class TypeAcceleratorCompletionInfo
         {
+            internal string ListItemText;
+            internal string Tooltip;
+            internal string FullName;
+            internal bool IsAttribute;
+        }
+
+        private sealed class TypeInfoForCompletion
+        {
+            internal string ShortName;
+            internal string FullName;
             internal string Namespace;
-
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
-            {
-                var listItemText = Namespace;
-                var dotIndex = listItemText.LastIndexOf('.');
-                if (dotIndex != -1)
-                {
-                    listItemText = listItemText.Substring(dotIndex + 1);
-                }
-
-                return new CompletionResult(prefix + Namespace + suffix, listItemText, CompletionResultType.Namespace, "Namespace " + Namespace);
-            }
-
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
-            {
-                return GetCompletionResult(keyMatched, prefix, suffix);
-            }
+            internal string ToolTip;
+            internal string ListItemText;
+            internal bool IsAttribute;
         }
 
-        private sealed class TypeCompletionMapping
+        private sealed class UsingInfo
         {
-            // The Key is the string we'll be searching on.  It could complete to various things.
-            internal string Key;
-            internal List<TypeCompletionBase> Completions = new List<TypeCompletionBase>();
+            internal List<string> UsingNamespaces;
+            //internal Dictionary<string, string> NamespaceAliases;
+            //internal Dictionary<string, ITypeName> TypeAliases;
+            internal Dictionary<string, TypeDefinitionAst[]> ExternalTypes;
+            internal List<TypeDefinitionAst> InternalTypes;
         }
 
-        private static TypeCompletionMapping[][] s_typeCache;
+        private static TypeCompletionCache s_typeCache;
 
-        private static TypeCompletionMapping[][] InitializeTypeCache()
+        private static TypeCompletionCache InitializeTypeCache()
         {
-            #region Process_TypeAccelerators
+            var result = new TypeCompletionCache();
 
-            var entries = new Dictionary<string, TypeCompletionMapping>(StringComparer.OrdinalIgnoreCase);
-            foreach (var type in TypeAccelerators.Get)
+            var typeAcceleratorTable = TypeAccelerators.Get;
+            result.TypeAcceleratorMap = new Dictionary<string, TypeAcceleratorCompletionInfo>(typeAcceleratorTable.Count);
+            foreach (string TypeAccelerator in typeAcceleratorTable.Keys)
             {
-                TypeCompletionMapping entry;
-                var typeCompletionInstance = new TypeCompletion { Type = type.Value };
+                var AcceleratorType = typeAcceleratorTable[TypeAccelerator];
 
-                if (entries.TryGetValue(type.Key, out entry))
-                {
-                    // Check if this accelerator type is already included in the mapping entry referenced by the same key.
-                    Type acceleratorType = type.Value;
-                    bool typeAlreadyIncluded = entry.Completions.Any(
-                        item =>
-                            {
-                                var typeCompletion = item as TypeCompletion;
-                                return typeCompletion != null && typeCompletion.Type == acceleratorType;
-                            });
-
-                    // If it's already included, skip it.
-                    // This may happen when an accelerator name is the same as the short name of the type it represents,
-                    // and aslo that type has more than one accelerator names. For example:
-                    //    "float"  -> System.Single
-                    //    "single" -> System.Single
-                    if (typeAlreadyIncluded) { continue; }
-
-                    // If this accelerator type is not included in the mapping entry, add it in.
-                    // This may happen when an accelerator name happens to be the short name of a different type (rare case).
-                    entry.Completions.Add(typeCompletionInstance);
-                }
+                string toolTip;
+                if (typeof(Delegate).IsAssignableFrom(AcceleratorType))
+                    toolTip = string.Create(CultureInfo.InvariantCulture, $"Delegate {AcceleratorType.FullName}");
+                else if (AcceleratorType.IsInterface)
+                    toolTip = string.Create(CultureInfo.InvariantCulture, $"Interface {AcceleratorType.FullName}");
+                else if (AcceleratorType.IsClass)
+                    toolTip = string.Create(CultureInfo.InvariantCulture, $"Class {AcceleratorType.FullName}");
+                else if (AcceleratorType.IsEnum)
+                    toolTip = string.Create(CultureInfo.InvariantCulture, $"Enum {AcceleratorType.FullName}");
+                else if (typeof(ValueType).IsAssignableFrom(AcceleratorType))
+                    toolTip = string.Create(CultureInfo.InvariantCulture, $"Struct {AcceleratorType.FullName}");
                 else
+                    toolTip = AcceleratorType.FullName;
+
+                result.TypeAcceleratorMap.Add(TypeAccelerator, new TypeAcceleratorCompletionInfo
                 {
-                    entries.Add(type.Key, new TypeCompletionMapping { Key = type.Key, Completions = { typeCompletionInstance } });
-                }
-
-                // If the full type name has already been included, then we know for sure that the short type name has also been included.
-                string fullTypeName = type.Value.FullName;
-                if (entries.ContainsKey(fullTypeName)) { continue; }
-
-                // Otherwise, add the mapping from full type name to the type
-                entries.Add(fullTypeName, new TypeCompletionMapping { Key = fullTypeName, Completions = { typeCompletionInstance } });
-
-                // If the short type name is the same as the accelerator name, then skip it to avoid duplication.
-                string shortTypeName = type.Value.Name;
-                if (type.Key.Equals(shortTypeName, StringComparison.OrdinalIgnoreCase)) { continue; }
-
-                // Otherwise, add a new mapping entry, or put the TypeCompletion instance in the existing mapping entry.
-                // For example, this may happen if both System.TimeoutException and System.ServiceProcess.TimeoutException
-                // are in the TypeAccelerator cache.
-                if (!entries.TryGetValue(shortTypeName, out entry))
-                {
-                    entry = new TypeCompletionMapping { Key = shortTypeName };
-                    entries.Add(shortTypeName, entry);
-                }
-
-                entry.Completions.Add(typeCompletionInstance);
+                    ListItemText = AcceleratorType.Name,
+                    Tooltip = toolTip,
+                    FullName = AcceleratorType.FullName,
+                    IsAttribute = typeof(Attribute).IsAssignableFrom(AcceleratorType)
+                });
             }
 
-            #endregion Process_TypeAccelerators
-
-            #region Process_CoreCLR_TypeCatalog
-
-            // In CoreCLR, we have namespace-qualified type names of all available .NET Core types stored in TypeCatalog.
-            // Populate the type completion cache using the namespace-qualified type names.
-            foreach (string fullTypeName in ClrFacade.AvailableDotNetTypeNames)
+            foreach (var fullTypeName in ClrFacade.AvailableDotNetTypeNames)
             {
-                var typeCompInString = new TypeCompletionInStringFormat { FullTypeName = fullTypeName };
-                HandleNamespace(entries, typeCompInString.Namespace);
-                HandleType(entries, fullTypeName, typeCompInString.ShortTypeName, null);
+                var typeInfo = GetTypeInfoForCompletion(fullTypeName);
+                if (typeInfo is not null)
+                {
+                    result.AddTypeToCache(typeInfo);
+                }
             }
 
-            #endregion Process_CoreCLR_TypeCatalog
-
-            #region Process_LoadedAssemblies
-
-            foreach (Assembly assembly in ClrFacade.GetAssemblies())
+            foreach (Assembly assembly in ClrFacade.GetAssemblies(includePsGeneratedTypes: true))
             {
                 // Ignore the assemblies that are already covered by the type catalog
-                if (ClrFacade.AvailableDotNetAssemblyNames.Contains(assembly.FullName)) { continue; }
+                if (ClrFacade.AvailableDotNetAssemblyNames.Contains(assembly.FullName))
+                {
+                    continue;
+                }
 
                 try
                 {
                     foreach (Type type in assembly.GetTypes())
                     {
                         // Ignore non-public types
-                        if (!TypeResolver.IsPublic(type)) { continue; }
-
-                        HandleNamespace(entries, type.Namespace);
-                        HandleType(entries, type.FullName, type.Name, type);
+                        if (!TypeResolver.IsPublic(type))
+                        {
+                            continue;
+                        }
+                        var typeInfo = GetTypeInfoForCompletion(type);
+                        if (typeInfo is not null)
+                        {
+                            result.AddTypeToCache(typeInfo);
+                        }
                     }
                 }
                 catch (ReflectionTypeLoadException)
@@ -7327,143 +7165,322 @@ namespace System.Management.Automation
                 }
             }
 
-            #endregion Process_LoadedAssemblies
-
-            var grouping = entries.Values.GroupBy(static t => t.Key.Count(c => c == '.')).OrderBy(static g => g.Key).ToArray();
-            var localTypeCache = new TypeCompletionMapping[grouping.Last().Key + 1][];
-            foreach (var group in grouping)
-            {
-                localTypeCache[group.Key] = group.ToArray();
-            }
-
-            Interlocked.Exchange(ref s_typeCache, localTypeCache);
-            return localTypeCache;
+            Interlocked.Exchange(ref s_typeCache, result);
+            return result;
         }
 
-        /// <summary>
-        /// Handle namespace when initializing the type cache.
-        /// </summary>
-        /// <param name="entryCache">The TypeCompletionMapping dictionary.</param>
-        /// <param name="namespace">The namespace.</param>
-        private static void HandleNamespace(Dictionary<string, TypeCompletionMapping> entryCache, string @namespace)
+        private static TypeInfoForCompletion GetTypeInfoForCompletion(Type type)
         {
-            if (string.IsNullOrEmpty(@namespace))
+            // Nested generic types are not interesting
+            if (type.IsGenericType && type.IsNested)
             {
-                return;
+                return null;
             }
 
-            int dotIndex = 0;
-            while (dotIndex != -1)
-            {
-                dotIndex = @namespace.IndexOf('.', dotIndex + 1);
-                string subNamespace = dotIndex != -1
-                                        ? @namespace.Substring(0, dotIndex)
-                                        : @namespace;
+            string toolTipPrefix;
+            if (typeof(Delegate).IsAssignableFrom(type))
+                toolTipPrefix = "Delegate ";
+            else if (type.IsInterface)
+                toolTipPrefix = "Interface ";
+            else if (type.IsClass)
+                toolTipPrefix = "Class ";
+            else if (type.IsEnum)
+                toolTipPrefix = "Enum ";
+            else if (typeof(ValueType).IsAssignableFrom(type))
+                toolTipPrefix = "Struct ";
+            else
+                toolTipPrefix = string.Empty;
 
-                TypeCompletionMapping entry;
-                if (!entryCache.TryGetValue(subNamespace, out entry))
+            string shortName;
+            string fullName;
+            string toolTip;
+            string listItemText;
+
+            if (type.IsGenericType)
+            {
+
+                shortName = RemoveBacktickFromTypeName(type.Name);
+                fullName = RemoveBacktickFromTypeName(type.FullName);
+                listItemText = $"{shortName}<>";
+                var genericArguments = type.GetGenericArguments();
+                if (genericArguments.Length == 1)
                 {
-                    entry = new TypeCompletionMapping
+                    toolTip = $"{toolTipPrefix}{fullName}[{genericArguments[0].Name}]";
+                }
+                else
+                {
+                    toolTip = $"{toolTipPrefix}{fullName}[";
+                    for (int i = 0; i < genericArguments.Length; i++)
                     {
-                        Key = subNamespace,
-                        Completions = { new NamespaceCompletion { Namespace = subNamespace } }
-                    };
-                    entryCache.Add(subNamespace, entry);
+                        toolTip += i != 0 ? $", {genericArguments[i].Name}" : genericArguments[i].Name;
+                    }
+                    toolTip += "]";
                 }
-                else if (!entry.Completions.OfType<NamespaceCompletion>().Any())
-                {
-                    entry.Completions.Add(new NamespaceCompletion { Namespace = subNamespace });
-                }
-            }
-        }
-
-        /// <summary>
-        /// Handle a type when initializing the type cache.
-        /// </summary>
-        /// <param name="entryCache">The TypeCompletionMapping dictionary.</param>
-        /// <param name="fullTypeName">The full type name.</param>
-        /// <param name="shortTypeName">The short type name.</param>
-        /// <param name="actualType">The actual type object. It may be null if we are handling type information from the CoreCLR TypeCatalog.</param>
-        private static void HandleType(Dictionary<string, TypeCompletionMapping> entryCache, string fullTypeName, string shortTypeName, Type actualType)
-        {
-            if (string.IsNullOrEmpty(fullTypeName)) { return; }
-
-            TypeCompletionBase typeCompletionBase = null;
-            var backtick = fullTypeName.LastIndexOf('`');
-            var plusChar = fullTypeName.LastIndexOf('+');
-
-            bool isGenericTypeDefinition = backtick != -1;
-            bool isNested = plusChar != -1;
-
-            if (isGenericTypeDefinition)
-            {
-                // Nested generic types aren't useful for completion.
-                if (isNested) { return; }
-
-                typeCompletionBase = actualType != null
-                                         ? (TypeCompletionBase)new GenericTypeCompletion { Type = actualType }
-
-                                         : new GenericTypeCompletionInStringFormat { FullTypeName = fullTypeName };
-
-                // Remove the backtick, we only want 1 generic in our results for types like Func or Action.
-                fullTypeName = fullTypeName.Substring(0, backtick);
-                shortTypeName = shortTypeName.Substring(0, shortTypeName.LastIndexOf('`'));
             }
             else
             {
-                typeCompletionBase = actualType != null
-                                         ? (TypeCompletionBase)new TypeCompletion { Type = actualType }
-
-                                         : new TypeCompletionInStringFormat { FullTypeName = fullTypeName };
+                fullName = type.FullName;
+                shortName = type.IsNested ? fullName.Substring(fullName.LastIndexOf('.') + 1) : type.Name;
+                toolTip = $"{toolTipPrefix}{fullName}";
+                listItemText = shortName;
             }
 
-            // If the full type name has already been included, then we know for sure that the short type
-            // name and the accelerator type names (if there are any) have also been included.
-            TypeCompletionMapping entry;
-            if (!entryCache.TryGetValue(fullTypeName, out entry))
+            return new TypeInfoForCompletion()
             {
-                entry = new TypeCompletionMapping
-                {
-                    Key = fullTypeName,
-                    Completions = { typeCompletionBase }
-                };
-                entryCache.Add(fullTypeName, entry);
+                ShortName = shortName,
+                FullName = fullName,
+                ToolTip = toolTip,
+                ListItemText = listItemText,
+                Namespace = type.Namespace,
+                IsAttribute = typeof(Attribute).IsAssignableFrom(type)
+            };
+        }
 
-                // Add a new mapping entry, or put the TypeCompletion instance in the existing mapping entry of the shortTypeName.
-                // For example, this may happen to System.ServiceProcess.TimeoutException when System.TimeoutException is already in the cache.
-                if (!entryCache.TryGetValue(shortTypeName, out entry))
+        private static TypeInfoForCompletion GetTypeInfoForCompletion(string fullTypeName)
+        {
+            int genericArgIndex = fullTypeName.LastIndexOf('`');
+
+            // Nested generic types are not interesting
+            if (genericArgIndex != 0 && fullTypeName.Contains('+'))
+            {
+                return null;
+            }
+
+            int typeNameIndex = fullTypeName.LastIndexOf('.');
+            string ns = fullTypeName.Remove(typeNameIndex);
+
+            string shortName;
+            if (genericArgIndex != -1)
+            {
+                shortName = RemoveBacktickFromTypeName(fullTypeName.Substring(typeNameIndex + 1));
+                var cleanFullName = RemoveBacktickFromTypeName(fullTypeName);
+                var argCount = int.Parse(fullTypeName.Substring(genericArgIndex + 1));
+                string toolTip;
+                if (argCount == 1)
                 {
-                    entry = new TypeCompletionMapping { Key = shortTypeName };
-                    entryCache.Add(shortTypeName, entry);
+                    toolTip = $"{cleanFullName}[T]";
                 }
-
-                entry.Completions.Add(typeCompletionBase);
+                else
+                {
+                    toolTip = $"{cleanFullName}[";
+                    for (int i = 0; i < argCount; i++)
+                    {
+                        toolTip += i != 0 ? $", T{i + 1}" : $"T{i + 1}";
+                    }
+                    toolTip += ']';
+                }
+                return new TypeInfoForCompletion()
+                {
+                    FullName = cleanFullName,
+                    ListItemText = $"{shortName}<>",
+                    Namespace = ns,
+                    ShortName = shortName,
+                    ToolTip = toolTip,
+                    IsAttribute = shortName.EndsWith("Attribute")
+                };
+            }
+            else
+            {
+                shortName = fullTypeName.Substring(typeNameIndex + 1);
+                return new TypeInfoForCompletion()
+                {
+                    FullName = fullTypeName,
+                    ListItemText = shortName,
+                    Namespace = ns,
+                    ShortName = shortName,
+                    ToolTip = fullTypeName,
+                    IsAttribute = shortName.EndsWith("Attribute")
+                };
             }
         }
 
-        internal static List<CompletionResult> CompleteNamespace(CompletionContext context, string prefix = "", string suffix = "")
+        private static string RemoveBacktickFromTypeName(string typename)
         {
-            var localTypeCache = s_typeCache ?? InitializeTypeCache();
-            var results = new List<CompletionResult>();
-            var wordToComplete = context.WordToComplete;
-            var dots = wordToComplete.Count(static c => c == '.');
-            if (dots >= localTypeCache.Length || localTypeCache[dots] == null)
+            var index = typename.LastIndexOf('`');
+            return index == -1 ? typename : typename.Substring(0, index);
+        }
+
+        private static Dictionary<string, string> GetShortestNonConflictingTypeName(HashSet<string> fullNames, UsingInfo usingInfo, HashSet<string> typeNamesAlreadyUsed, string targetType = "")
+        {
+            var nameCandidateTable = new Dictionary<string, HashSet<string>>(fullNames.Count);
+            var usedTypeNames = new HashSet<string>();
+            var conflictingTypeNames = new HashSet<string>(typeNamesAlreadyUsed, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var name in fullNames)
             {
+                nameCandidateTable.Add(name, new HashSet<string>());
+                foreach (var ns in usingInfo.UsingNamespaces)
+                {
+                    if (name.StartsWith(ns))
+                    {
+                        var nameToAdd = name.Substring(ns.Length + 1);
+                        _ = usedTypeNames.Add(nameToAdd) ? nameCandidateTable[name].Add(nameToAdd) : conflictingTypeNames.Add(nameToAdd);
+                    }
+                }
+                //foreach (var alias in usingInfo.NamespaceAliases.Keys)
+                //{
+                //    var resolvedAlias = usingInfo.NamespaceAliases[alias];
+                //    if (name.StartsWith(resolvedAlias))
+                //    {
+                //        var nameToAdd = $"{alias}{name.Substring(resolvedAlias.Length)}";
+                //        _ = usedTypeNames.Add(nameToAdd) ? nameCandidateTable[name].Add(nameToAdd) : conflictingTypeNames.Add(nameToAdd);
+                //    }
+                //}
+            }
+
+            Dictionary<string, string> results;
+            if (targetType != string.Empty)
+            {
+                results = new Dictionary<string, string>(1);
+                _ = nameCandidateTable[targetType].RemoveWhere(name => conflictingTypeNames.Contains(name));
+                var shortestName = targetType;
+                foreach (var name in nameCandidateTable[targetType])
+                {
+                    if (name.Length < shortestName.Length)
+                    {
+                        shortestName = name;
+                    }
+                }
+                results.Add(targetType, shortestName);
                 return results;
             }
 
-            var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-            foreach (var entry in localTypeCache[dots].Where(e => e.Completions.OfType<NamespaceCompletion>().Any() && pattern.IsMatch(e.Key)))
+            results = new Dictionary<string, string>(fullNames.Count);
+            foreach (var fullName in nameCandidateTable.Keys)
             {
-                foreach (var completion in entry.Completions)
+                _ = nameCandidateTable[fullName].RemoveWhere(name => conflictingTypeNames.Contains(name));
+                var shortestName = fullName;
+                foreach (var name in nameCandidateTable[fullName])
                 {
-                    results.Add(completion.GetCompletionResult(entry.Key, prefix, suffix));
+                    if (name.Length < shortestName.Length)
+                    {
+                        shortestName = name;
+                    }
+                }
+                results.Add(fullName, shortestName);
+            }
+            return results;
+        }
+
+        private static UsingInfo GetUsingInfo(CompletionContext context)
+        {
+            var namespaces = new List<string>();
+            //var namespaceAliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            //var typeAliases = new Dictionary<string, ITypeName>(StringComparer.OrdinalIgnoreCase);
+            var externalTypes = new Dictionary<string, TypeDefinitionAst[]>();
+            var internalTypes = new List<TypeDefinitionAst>();
+
+            if (context.RelatedAsts is not null && context.RelatedAsts.Count > 0 && context.RelatedAsts[0] is ScriptBlockAst rootScriptBlock)
+            {
+                foreach (var statement in rootScriptBlock.UsingStatements)
+                {
+                    if (statement.UsingStatementKind == UsingStatementKind.Namespace)
+                    {
+                        //if (statement.Alias is TypeConstraintAst typeConstraint)
+                        //{
+                        //    _ = namespaceAliases.TryAdd(statement.Name.Value, typeConstraint.TypeName.Name);
+                        //}
+                        //else
+                        //{
+                            namespaces.Add(statement.Name.Value);
+                        //}
+                    }
+                    //else if (statement.UsingStatementKind == UsingStatementKind.Type && statement.Alias is TypeConstraintAst typeConstraint)
+                    //{
+                    //    _ = typeAliases.TryAdd(statement.Name.Value, typeConstraint.TypeName);
+                    //}
+                    else if (statement.UsingStatementKind == UsingStatementKind.Module && statement.ModuleInfo is not null)
+                    {
+                        var typeDefinitions = statement.ModuleInfo.GetExportedTypeDefinitions();
+                        if (externalTypes.TryAdd(statement.ModuleInfo.Name, new TypeDefinitionAst[typeDefinitions.Count]))
+                        {
+                            int i = 0;
+                            foreach (var key in typeDefinitions.Keys)
+                            {
+                                externalTypes[statement.ModuleInfo.Name][i] = typeDefinitions[key];
+                                i++;
+                            }
+                        }
+                    }
+                }
+                foreach (TypeDefinitionAst typeDefinition in rootScriptBlock.FindAll(static ast => ast is TypeDefinitionAst, true))
+                {
+                    internalTypes.Add(typeDefinition);
                 }
             }
 
-            results.Sort(static (c1, c2) => string.Compare(c1.ListItemText, c2.ListItemText, StringComparison.OrdinalIgnoreCase));
-            return results;
+            // Session state includes "System" namespace by default.
+            // We don't want to consider session state namespaces for completion unless the user has explicitly added some.
+            if (namespaces.Count == 0 && context.ExecutionContext.SessionState.Internal.CurrentScope.TypeResolutionState.namespaces.Length > 1)
+            {
+                namespaces.AddRange(context.ExecutionContext.SessionState.Internal.CurrentScope.TypeResolutionState.namespaces);
+            }
+            //if (namespaceAliases.Count == 0)
+            //{
+            //    namespaceAliases = context.ExecutionContext.SessionState.Internal.CurrentScope.TypeResolutionState.namespaceAliases;
+            //}
+            //if (typeAliases.Count == 0)
+            //{
+            //    typeAliases = context.ExecutionContext.SessionState.Internal.CurrentScope.TypeResolutionState.typeAliases;
+            //}
+            return new UsingInfo()
+            {
+                UsingNamespaces = namespaces,
+                //NamespaceAliases = namespaceAliases,
+                //TypeAliases = typeAliases,
+                ExternalTypes = externalTypes,
+                InternalTypes = internalTypes
+            };
+        }
+
+        private static void AddNamespaceResults(List<CompletionResult> results, ICollection<string> namespaces, string nsAlias, int resolvedAliasLength, string partialName, string prefix, string suffix)
+        {
+            foreach (var ns in namespaces)
+            {
+                if (ns.StartsWith(partialName, StringComparison.OrdinalIgnoreCase))
+                {
+                    int lastNsIndex = ns.LastIndexOf('.');
+                    var toolTip = lastNsIndex == -1 ? ns : ns.Substring(lastNsIndex + 1);
+                    var completionText = nsAlias is null
+                        ? string.Create(CultureInfo.InvariantCulture, $"{prefix}{ns}{suffix}")
+                        : string.Create(CultureInfo.InvariantCulture, $"{prefix}{nsAlias}.{ns.AsSpan(resolvedAliasLength + 1)}{suffix}");
+
+                    results.Add(new CompletionResult(
+                        completionText,
+                        toolTip,
+                        CompletionResultType.Namespace,
+                        string.Create(CultureInfo.InvariantCulture, $"Namespace {ns}")));
+                }
+            }
+        }
+
+        //private static void AddNamespaceAliasResults(List<CompletionResult> results, Dictionary<string, string> namespaceAliases, string partialName, string prefix, string suffix)
+        //{
+        //    foreach (var alias in namespaceAliases.Keys)
+        //    {
+        //        if (alias.StartsWith(partialName, StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            results.Add(new CompletionResult(
+        //                string.Create(CultureInfo.InvariantCulture, $"{prefix}{alias}{suffix}"),
+        //                alias,
+        //                CompletionResultType.Namespace,
+        //                $"Namespace alias {alias} = {namespaceAliases[alias]}"));
+        //        }
+        //    }
+        //}
+
+        private static void AddTypeDefinitionToResults(List<CompletionResult> results, TypeDefinitionAst typeDefinition, string completionText)
+        {
+            string toolTip;
+            if (typeDefinition.IsInterface)
+                toolTip = string.Create(CultureInfo.InvariantCulture, $"Interface {typeDefinition.Name}");
+            else if (typeDefinition.IsClass)
+                toolTip = string.Create(CultureInfo.InvariantCulture, $"Class {typeDefinition.Name}");
+            else if (typeDefinition.IsEnum)
+                toolTip = string.Create(CultureInfo.InvariantCulture, $"Enum {typeDefinition.Name}");
+            else
+                toolTip = typeDefinition.Name;
+            results.Add(new CompletionResult(completionText, typeDefinition.Name, CompletionResultType.Type, toolTip));
         }
 
         /// <summary>
@@ -7483,56 +7500,291 @@ namespace System.Management.Automation
             return CompleteType(new CompletionContext { WordToComplete = typeName, Helper = helper, ExecutionContext = executionContext });
         }
 
-        internal static List<CompletionResult> CompleteType(CompletionContext context, string prefix = "", string suffix = "")
+        internal static List<CompletionResult> CompleteType(CompletionContext context, string prefix = "", string suffix = "", bool attributeOnly = false)
         {
-            var localTypeCache = s_typeCache ?? InitializeTypeCache();
-
             var results = new List<CompletionResult>();
-            var completionTextSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            var wordToComplete = context.WordToComplete;
-            var dots = wordToComplete.Count(static c => c == '.');
-            if (dots >= localTypeCache.Length || localTypeCache[dots] == null)
+            var typeCache = s_typeCache ?? InitializeTypeCache();
+            var usingInfo = GetUsingInfo(context);
+            var wordToComplete = context.WordToComplete is null ? string.Empty : context.WordToComplete;
+            var usedTypeNames = new HashSet<string>(usingInfo.InternalTypes.Count, StringComparer.OrdinalIgnoreCase);
+            var completedAccelerators = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var typeDefinition in usingInfo.InternalTypes)
             {
-                return results;
+                _ = usedTypeNames.Add(typeDefinition.Name);
+
+                if (attributeOnly && ((typeDefinition.Type is not null && !typeof(Attribute).IsAssignableFrom(typeDefinition.Type))
+                    || (typeDefinition.Type is null && !typeDefinition.Name.EndsWith("Attribute"))))
+                {
+                    continue;
+                }
+
+                if (typeDefinition.Name.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                {
+                    AddTypeDefinitionToResults(results, typeDefinition, string.Create(CultureInfo.InvariantCulture, $"{prefix}{typeDefinition.Name}{suffix}"));
+                }
             }
 
-            var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-            foreach (var entry in localTypeCache[dots].Where(e => pattern.IsMatch(e.Key)))
+            foreach (var module in usingInfo.ExternalTypes.Keys)
             {
-                foreach (var completion in entry.Completions)
+                foreach (var typeDefinition in usingInfo.ExternalTypes[module])
                 {
-                    string namespaceToRemove = GetNamespaceToRemove(context, completion);
-                    var completionResult = completion.GetCompletionResult(entry.Key, prefix, suffix, namespaceToRemove);
+                    var moduleQualifiedTypeName = string.Create(CultureInfo.InvariantCulture, $"{module}.{typeDefinition.Name}");
+                    var shortTypeNameWasAdded = usedTypeNames.Add(typeDefinition.Name);
+                    _ = usedTypeNames.Add(moduleQualifiedTypeName);
 
-                    // We might get the same completion result twice. For example, the type cache has:
-                    //    DscResource->System.Management.Automation.DscResourceAttribute (from accelerator)
-                    //    DscResourceAttribute->System.Management.Automation.DscResourceAttribute (from short type name)
-                    // input '[DSCRes' can match both of them, but they actually resolves to the same completion text 'DscResource'.
-                    if (!completionTextSet.Contains(completionResult.CompletionText))
+                    if (attributeOnly && ((typeDefinition.Type is not null && !typeof(Attribute).IsAssignableFrom(typeDefinition.Type))
+                        || (typeDefinition.Type is null && !typeDefinition.Name.EndsWith("Attribute"))))
                     {
-                        results.Add(completionResult);
-                        completionTextSet.Add(completionResult.CompletionText);
+                        continue;
+                    }
+
+                    if (typeDefinition.Name.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase)
+                        || module.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var completionText = shortTypeNameWasAdded ? typeDefinition.Name : moduleQualifiedTypeName;
+                        AddTypeDefinitionToResults(results, typeDefinition, string.Create(CultureInfo.InvariantCulture, $"{prefix}{completionText}{suffix}"));
                     }
                 }
             }
 
-            // this is a temporary fix. Only the type defined in the same script get complete. Need to use using Module when that is available.
-            if (context.RelatedAsts != null && context.RelatedAsts.Count > 0)
-            {
-                var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
-                var typeAsts = scriptBlockAst.FindAll(static ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
-                foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
-                {
-                    string toolTipPrefix = string.Empty;
-                    if (typeAst.IsInterface)
-                        toolTipPrefix = "Interface ";
-                    else if (typeAst.IsClass)
-                        toolTipPrefix = "Class ";
-                    else if (typeAst.IsEnum)
-                        toolTipPrefix = "Enum ";
+            //foreach (var typeAlias in usingInfo.TypeAliases.Keys)
+            //{
+            //    if (usedTypeNames.Add(typeAlias) && typeAlias.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        results.Add(new CompletionResult(
+            //            string.Create(CultureInfo.InvariantCulture, $"{prefix}{typeAlias}{suffix}"),
+            //            typeAlias,
+            //            CompletionResultType.Type,
+            //            string.Create(CultureInfo.InvariantCulture, $"Type alias {typeAlias} = {usingInfo.TypeAliases[typeAlias]}")));
+            //    }
+            //}
 
-                    results.Add(new CompletionResult(prefix + typeAst.Name + suffix, typeAst.Name, CompletionResultType.Type, toolTipPrefix + typeAst.Name));
+            foreach (var typeAccelerator in typeCache.TypeAcceleratorMap.Keys)
+            {
+                if (usedTypeNames.Add(typeAccelerator) && typeAccelerator.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                {
+                    var completionInfo = typeCache.TypeAcceleratorMap[typeAccelerator];
+                    if (attributeOnly && !completionInfo.IsAttribute)
+                    {
+                        continue;
+                    }
+
+                    results.Add(new CompletionResult(
+                        string.Create(CultureInfo.InvariantCulture, $"{prefix}{typeAccelerator}{suffix}"),
+                        completionInfo.ListItemText,
+                        CompletionResultType.Type,
+                        completionInfo.Tooltip));
+
+                    _ = completedAccelerators.Add(completionInfo.FullName);
+
+                    // The type accelerator "pscustomobject" counterintuitively points to System.Management.Automation.PSObject
+                    // This prevents the false full name from showing up in the results when completing the accelerator
+                    if (typeAccelerator == "pscustomobject")
+                    {
+                        completedAccelerators.Add("System.Management.Automation.PSCustomObject");
+                    }
+                }
+            }
+
+            if (wordToComplete == string.Empty)
+            {
+                //AddNamespaceAliasResults(results, usingInfo.NamespaceAliases, wordToComplete, prefix, suffix);
+                AddNamespaceResults(results, typeCache.RootNamespaces, null, 0, wordToComplete, prefix, suffix);
+
+                foreach (var ns in usingInfo.UsingNamespaces)
+                {
+                    NamespaceContentCache nsContent;
+                    if (typeCache.NamespaceContent.TryGetValue(ns, out nsContent))
+                    {
+                        AddNamespaceResults(results, nsContent.Namespaces, null, 0, wordToComplete, prefix, suffix);
+                    }
+                }
+
+                foreach (var indexChar in typeCache.TypeNameMap.Keys)
+                {
+                    var typeMap = typeCache.TypeNameMap[indexChar];
+                    foreach (var shortTypeName in typeMap.Keys)
+                    {
+                        var shortNameTable = GetShortestNonConflictingTypeName(typeMap[shortTypeName], usingInfo, usedTypeNames);
+                        foreach (var fullName in shortNameTable.Keys)
+                        {
+                            if (completedAccelerators.Contains(fullName))
+                            {
+                                continue;
+                            }
+                            var completionInfo = typeCache.CompletionInfo[fullName];
+                            if (attributeOnly && !completionInfo.IsAttribute)
+                            {
+                                continue;
+                            }
+
+                            results.Add(new CompletionResult(
+                                string.Create(CultureInfo.InvariantCulture, $"{prefix}{shortNameTable[fullName]}{suffix}"),
+                                completionInfo.ListItemText,
+                                CompletionResultType.Type,
+                                completionInfo.Tooltip));
+                        }
+                    }
+                }
+
+                results.Sort(static (c1, c2) => string.Compare(c1.ListItemText, c2.ListItemText, StringComparison.OrdinalIgnoreCase));
+                return results;
+            }
+
+            var inputContainsNamespace = wordToComplete.Contains('.');
+            string usedNsAlias = null;
+
+            //if (inputContainsNamespace)
+            //{
+            //    foreach (var nsAlias in usingInfo.NamespaceAliases.Keys)
+            //    {
+            //        if (wordToComplete.StartsWith(string.Create(CultureInfo.InvariantCulture, $"{nsAlias}.")))
+            //        {
+            //            usedNsAlias = nsAlias;
+            //            wordToComplete = string.Create(CultureInfo.InvariantCulture, $"{usingInfo.NamespaceAliases[nsAlias]}{wordToComplete.AsSpan(nsAlias.Length)}");
+            //            break;
+            //        }
+            //    }
+            //}
+
+            if (wordToComplete.EndsWith('.'))
+            {
+                var fullNamespace = wordToComplete.Remove(wordToComplete.Length - 1);
+                var indexOfLastNamespace = fullNamespace.LastIndexOf('.');
+                var lastNamespace = indexOfLastNamespace == -1 ? fullNamespace : fullNamespace.Substring(indexOfLastNamespace + 1);
+
+                if (lastNamespace == string.Empty)
+                {
+                    return results;
+                }
+                var indexChar = char.ToUpper(lastNamespace[0]);
+
+                Dictionary<string, HashSet<string>> map;
+                HashSet<string> namespaceSet;
+                if (typeCache.NamespaceMap.TryGetValue(indexChar, out map) && map.TryGetValue(lastNamespace, out namespaceSet))
+                {
+                    foreach (var ns in namespaceSet)
+                    {
+                        if (!ns.EndsWith(fullNamespace, StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+                        var namespacesInNs = typeCache.NamespaceContent[ns].Namespaces;
+                        AddNamespaceResults(results, namespacesInNs, usedNsAlias, fullNamespace.Length, string.Empty, prefix, suffix);
+
+                        var typesInNs = typeCache.NamespaceContent[ns].TypeNames;
+                        foreach (var shortTypeName in typesInNs)
+                        {
+                            var fullTypeName = string.Create(CultureInfo.InvariantCulture, $"{ns}.{shortTypeName}");
+                            var completionInfo = typeCache.CompletionInfo[fullTypeName];
+                            if (attributeOnly && !completionInfo.IsAttribute)
+                            {
+                                continue;
+                            }
+
+                            indexChar = char.ToUpper(shortTypeName[0]);
+
+                            var shortNameTable = GetShortestNonConflictingTypeName(typeCache.TypeNameMap[indexChar][shortTypeName], usingInfo, usedTypeNames, fullTypeName);
+
+                            results.Add(new CompletionResult(
+                                string.Create(CultureInfo.InvariantCulture, $"{prefix}{shortNameTable[fullTypeName]}{suffix}"),
+                                completionInfo.ListItemText,
+                                CompletionResultType.Type,
+                                completionInfo.Tooltip));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                string typeNamePrefix = null;
+                string partialTypeName;
+                if (inputContainsNamespace)
+                {
+                    var typeNameIndex = wordToComplete.LastIndexOf('.');
+                    partialTypeName = wordToComplete.Substring(typeNameIndex + 1);
+                    typeNamePrefix = wordToComplete.Remove(typeNameIndex + 1);
+                }
+                else
+                {
+                    partialTypeName = wordToComplete;
+                    //AddNamespaceAliasResults(results, usingInfo.NamespaceAliases, partialTypeName, prefix, suffix);
+                }
+
+                string fullNameFilter = null;
+                var indexChar = char.ToUpper(partialTypeName[0]);
+                Dictionary<string, HashSet<string>> map;
+                if (typeCache.TypeNameMap.TryGetValue(indexChar, out map))
+                {
+                    foreach (var shortTypeName in map.Keys)
+                    {
+                        if (shortTypeName.StartsWith(partialTypeName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (typeNamePrefix is not null)
+                            {
+                                fullNameFilter = string.Create(CultureInfo.InvariantCulture, $"{typeNamePrefix}{shortTypeName}");
+                            }
+                            var shortNameTable = GetShortestNonConflictingTypeName(map[shortTypeName], usingInfo, usedTypeNames);
+                            foreach (var fullName in shortNameTable.Keys)
+                            {
+                                if (completedAccelerators.Contains(fullName))
+                                {
+                                    continue;
+                                }
+                                if (fullNameFilter is null || fullName.EndsWith(fullNameFilter, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    var completionInfo = typeCache.CompletionInfo[fullName];
+                                    if (attributeOnly && !completionInfo.IsAttribute)
+                                    {
+                                        continue;
+                                    }
+
+                                    results.Add(new CompletionResult(
+                                        string.Create(CultureInfo.InvariantCulture, $"{prefix}{shortNameTable[fullName]}{suffix}"),
+                                        completionInfo.ListItemText,
+                                        CompletionResultType.Type,
+                                        completionInfo.Tooltip));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (typeCache.NamespaceMap.TryGetValue(indexChar, out map))
+                {
+                    foreach (var shortNsName in map.Keys)
+                    {
+                        if (typeNamePrefix is not null)
+                        {
+                            fullNameFilter = string.Create(CultureInfo.InvariantCulture, $"{typeNamePrefix}{shortNsName}");
+                        }
+                        if (shortNsName.StartsWith(partialTypeName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            foreach (var fullName in map[shortNsName])
+                            {
+                                if (fullNameFilter is null || fullName.EndsWith(fullNameFilter, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    //if (usedNsAlias is null)
+                                    //{
+                                        results.Add(new CompletionResult(
+                                            string.Create(CultureInfo.InvariantCulture, $"{prefix}{fullName}{suffix}"),
+                                            shortNsName,
+                                            CompletionResultType.Namespace,
+                                            string.Create(CultureInfo.InvariantCulture, $"Namespace {fullName}")));
+                                    //}
+                                    //else
+                                    //{
+                                    //    results.Add(new CompletionResult(
+                                    //       string.Create(CultureInfo.InvariantCulture, $"{prefix}{usedNsAlias}.{fullName.AsSpan(typeNamePrefix.Length + 1)}{suffix}"),
+                                    //       shortNsName,
+                                    //       CompletionResultType.Namespace,
+                                    //       string.Create(CultureInfo.InvariantCulture, $"Namespace {fullName}")));
+                                    //}
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -7540,34 +7792,133 @@ namespace System.Management.Automation
             return results;
         }
 
-        private static string GetNamespaceToRemove(CompletionContext context, TypeCompletionBase completion)
+        internal static List<CompletionResult> CompleteNamespace(CompletionContext context, string prefix = "", string suffix = "")
         {
-            if (completion is NamespaceCompletion || context.RelatedAsts == null || context.RelatedAsts.Count == 0)
+            var results = new List<CompletionResult>();
+            var typeCache = s_typeCache ?? InitializeTypeCache();
+            var usingInfo = GetUsingInfo(context);
+            var wordToComplete = context.WordToComplete is null ? string.Empty : context.WordToComplete;
+
+            if (wordToComplete == string.Empty)
             {
-                return null;
+                //AddNamespaceAliasResults(results, usingInfo.NamespaceAliases, wordToComplete, prefix, suffix);
+                AddNamespaceResults(results, typeCache.RootNamespaces, null, 0, wordToComplete, prefix, suffix);
+
+                foreach (var ns in usingInfo.UsingNamespaces)
+                {
+                    NamespaceContentCache nsContent;
+                    if (typeCache.NamespaceContent.TryGetValue(ns, out nsContent))
+                    {
+                        AddNamespaceResults(results, nsContent.Namespaces, null, 0, wordToComplete, prefix, suffix);
+                    }
+                }
+
+                results.Sort(static (c1, c2) => string.Compare(c1.ListItemText, c2.ListItemText, StringComparison.OrdinalIgnoreCase));
+                return results;
             }
 
-            var typeCompletion = completion as TypeCompletion;
-            string typeNameSpace = typeCompletion != null
-                                       ? typeCompletion.Type.Namespace
-                                       : ((TypeCompletionInStringFormat)completion).Namespace;
+            var inputContainsNamespace = wordToComplete.Contains('.');
+            string usedNsAlias = null;
 
-            var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
-            var matchingNsStates = scriptBlockAst.UsingStatements.Where(s =>
-                 s.UsingStatementKind == UsingStatementKind.Namespace
-                 && typeNameSpace != null
-                 && typeNameSpace.StartsWith(s.Name.Value, StringComparison.OrdinalIgnoreCase));
+            //if (inputContainsNamespace)
+            //{
+            //    foreach (var nsAlias in usingInfo.NamespaceAliases.Keys)
+            //    {
+            //        if (wordToComplete.StartsWith(string.Create(CultureInfo.InvariantCulture, $"{nsAlias}.")))
+            //        {
+            //            usedNsAlias = nsAlias;
+            //            wordToComplete = string.Create(CultureInfo.InvariantCulture, $"{usingInfo.NamespaceAliases[nsAlias]}{wordToComplete.AsSpan(nsAlias.Length)}");
+            //            break;
+            //        }
+            //    }
+            //}
 
-            string ns = string.Empty;
-            foreach (var nsState in matchingNsStates)
+            if (wordToComplete.EndsWith('.'))
             {
-                if (nsState.Name.Extent.Text.Length > ns.Length)
+                var fullNamespace = wordToComplete.Remove(wordToComplete.Length - 1);
+                var indexOfLastNamespace = fullNamespace.LastIndexOf('.');
+                var lastNamespace = indexOfLastNamespace == -1 ? fullNamespace : fullNamespace.Substring(indexOfLastNamespace + 1);
+
+                if (lastNamespace == string.Empty)
                 {
-                    ns = nsState.Name.Extent.Text;
+                    return results;
+                }
+                var indexChar = char.ToUpper(lastNamespace[0]);
+
+                Dictionary<string, HashSet<string>> map;
+                HashSet<string> namespaceSet;
+                if (typeCache.NamespaceMap.TryGetValue(indexChar, out map) && map.TryGetValue(lastNamespace, out namespaceSet))
+                {
+                    foreach (var ns in namespaceSet)
+                    {
+                        if (!ns.EndsWith(fullNamespace, StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+                        var namespacesInNs = typeCache.NamespaceContent[ns].Namespaces;
+                        AddNamespaceResults(results, namespacesInNs, usedNsAlias, fullNamespace.Length, string.Empty, prefix, suffix);
+                    }
+                }
+            }
+            else
+            {
+                string typeNamePrefix = null;
+                string partialTypeName;
+                if (inputContainsNamespace)
+                {
+                    var typeNameIndex = wordToComplete.LastIndexOf('.');
+                    partialTypeName = wordToComplete.Substring(typeNameIndex + 1);
+                    typeNamePrefix = wordToComplete.Remove(typeNameIndex + 1);
+                }
+                else
+                {
+                    partialTypeName = wordToComplete;
+                    //AddNamespaceAliasResults(results, usingInfo.NamespaceAliases, partialTypeName, prefix, suffix);
+                }
+
+                string fullNameFilter = null;
+                var indexChar = char.ToUpper(partialTypeName[0]);
+                Dictionary<string, HashSet<string>> map;
+
+                if (typeCache.NamespaceMap.TryGetValue(indexChar, out map))
+                {
+                    foreach (var shortNsName in map.Keys)
+                    {
+                        if (typeNamePrefix is not null)
+                        {
+                            fullNameFilter = string.Create(CultureInfo.InvariantCulture, $"{typeNamePrefix}{shortNsName}");
+                        }
+                        if (shortNsName.StartsWith(partialTypeName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            foreach (var fullName in map[shortNsName])
+                            {
+                                if (fullNameFilter is null || fullName.EndsWith(fullNameFilter, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    //if (usedNsAlias is null)
+                                    //{
+                                        results.Add(new CompletionResult(
+                                            string.Create(CultureInfo.InvariantCulture, $"{prefix}{fullName}{suffix}"),
+                                            shortNsName,
+                                            CompletionResultType.Namespace,
+                                            string.Create(CultureInfo.InvariantCulture, $"Namespace {fullName}")));
+                                    //}
+                                    //else
+                                    //{
+                                    //    results.Add(new CompletionResult(
+                                    //       string.Create(CultureInfo.InvariantCulture, $"{prefix}{usedNsAlias}.{fullName.AsSpan(typeNamePrefix.Length + 1)}{suffix}"),
+                                    //       shortNsName,
+                                    //       CompletionResultType.Namespace,
+                                    //       string.Create(CultureInfo.InvariantCulture, $"Namespace {fullName}")));
+                                    //}
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
-            return ns;
+            results.Sort(static (c1, c2) => string.Compare(c1.ListItemText, c2.ListItemText, StringComparison.OrdinalIgnoreCase));
+            return results;
         }
 
         #endregion Types
