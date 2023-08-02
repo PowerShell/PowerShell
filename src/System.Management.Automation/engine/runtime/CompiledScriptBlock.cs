@@ -1065,7 +1065,7 @@ namespace System.Management.Automation
                     // Since we are in audit mode, go ahead and allow the language transition.
                     oldLanguageMode = context.LanguageMode;
                     newLanguageMode = this.LanguageMode;
-                }
+            }
             }
 
             Dictionary<string, PSVariable> backupWhenDotting = null;
@@ -2059,8 +2059,8 @@ namespace System.Management.Automation
                         if (result != null)
                         {
                             return result;
-                        }
                     }
+                }
                 }
 
                 return CheckForMatches(runningHash, 0);
@@ -2412,7 +2412,37 @@ namespace System.Management.Automation
             {
                 var resultList = new List<object>();
                 Diagnostics.Assert(_functionContext._outputPipe == null, "Output pipe should not be set yet.");
-                _functionContext._outputPipe = new Pipe(resultList);
+                _functionContext._outputPipe = new Pipe();
+                var objectStream = new ObjectStream();
+                var objectWriter = new ObjectWriter(objectStream);
+                objectStream.DataReady += (sender, args) =>
+                {
+                    var objectStream = sender as ObjectStream;
+                    while (objectStream.Count > 0)
+                    {
+                        var obj = objectStream.Read();
+                        RuntimeDefinedParameter runtimeDefinedParameter = obj as RuntimeDefinedParameter;
+                        runtimeDefinedParameter ??= (obj as PSObject)?.BaseObject as RuntimeDefinedParameter;
+                        if (runtimeDefinedParameter is RuntimeDefinedParameter)
+                        {
+                            RuntimeDefinedParameterDictionary runtimeParamDictionary = new() { { runtimeDefinedParameter.Name, runtimeDefinedParameter } };
+                            _parameterBinderController.MergeStaticAndDynamicParameterMetadata(runtimeParamDictionary);
+                            ParameterBindingException outgoingBindingException = null;
+                            _parameterBinderController.BindDynamicParameters(out outgoingBindingException);
+                            if (outgoingBindingException != null)
+                            {
+                                throw outgoingBindingException;
+                            }
+                            if (this.MyInvocation.BoundParameters.TryGetValue(runtimeDefinedParameter.Name, out var boundValue))
+                                this.SessionState.PSVariable.Set(runtimeDefinedParameter.Name, boundValue);
+                        }
+                        else
+                        {
+                            resultList.Add(obj);
+                        }
+                    }
+                };
+                _functionContext._outputPipe.ExternalWriter = objectWriter;
                 RunClause(
                     clause: _runOptimized ? _scriptBlock.DynamicParamBlock : _scriptBlock.UnoptimizedDynamicParamBlock,
                     dollarUnderbar: AutomationNull.Value,
@@ -2449,11 +2479,12 @@ namespace System.Management.Automation
         /// </summary>
         internal void PopDottedScope(SessionStateScope scope) => scope.DottedScopes.Pop();
 
-        internal void PrepareForBinding(CommandLineParameters commandLineParameters)
+        internal void PrepareForBinding(CmdletParameterBinderController parameterBinderController)
         {
+            _parameterBinderController = parameterBinderController;
             _localsTuple.SetAutomaticVariable(
                 AutomaticVariable.PSBoundParameters,
-                value: commandLineParameters.GetValueToBindToPSBoundParameters(),
+                value: _parameterBinderController.CommandLineParameters.GetValueToBindToPSBoundParameters(),
                 this.Context);
             _localsTuple.SetAutomaticVariable(AutomaticVariable.MyInvocation, value: MyInvocation, this.Context);
         }
@@ -2522,6 +2553,7 @@ namespace System.Management.Automation
         #region IDispose
 
         private bool _disposed;
+        private CmdletParameterBinderController _parameterBinderController;
 
         internal event EventHandler DisposingEvent;
 

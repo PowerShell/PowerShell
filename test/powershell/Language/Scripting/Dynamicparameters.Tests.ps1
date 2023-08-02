@@ -3,12 +3,11 @@
 Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
     BeforeAll {
         Class MyTestParameter {
-            [parameter(ParameterSetName = 'pset1', position=0, mandatory=1)]
+            [parameter(ParameterSetName = 'pset1', position = 0, mandatory = 1)]
             [string] $name
         }
 
-        function foo-bar
-        {
+        function foo-bar {
             [CmdletBinding()]
             param($path)
 
@@ -22,13 +21,15 @@ Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
                     $attributeCollection.Add($attributes)
 
                     $dynParam1 = [System.Management.Automation.RuntimeDefinedParameter]::new("dp1", [Int32], $attributeCollection)
+                    if ($PSBoundParameters["path"] -contains "realtime") {
+                        return $dynParam1
+                    } else {
+                        $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
+                        $paramDictionary.Add("dp1", $dynParam1)
 
-                    $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
-                    $paramDictionary.Add("dp1", $dynParam1)
-
-                    return $paramDictionary
-                }
-                elseif($PSBoundParameters["path"] -contains "class") {
+                        return $paramDictionary
+                    }
+                } elseif ($PSBoundParameters["path"] -contains "class") {
                     $paramDictionary = [MyTestParameter]::new()
                     return $paramDictionary
                 }
@@ -38,19 +39,19 @@ Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
             }
 
             begin {
-                if(($null -ne $paramDictionary) -and ($paramDictionary -is [MyTestParameter]) ) {
-                    $paramDictionary.name
+                if($dp1){
+                    return $dp1
                 }
-                elseif ($null -ne $paramDictionary) {
+                if (($null -ne $paramDictionary) -and ($paramDictionary -is [MyTestParameter]) ) {
+                    $paramDictionary.name
+                } elseif ($null -ne $paramDictionary) {
                     if ($null -ne $paramDictionary.dp1.Value) {
                         $paramDictionary.dp1.Value
-                    }
-                    else {
+                    } else {
                         "dynamic parameters not passed"
                     }
-                }
-                else {
-                  "no dynamic parameters"
+                } else {
+                    "no dynamic parameters"
                 }
             }
 
@@ -77,5 +78,8 @@ Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
 
     It "Parameter is defined in Class" {
         foo-bar -path class -Name "myName" | Should -BeExactly 'myName'
+    }
+    It "Parameter is bound without dictionary"{
+        foo-bar -path abc,realtime -dp1 42 | Should -Be 42
     }
 }
