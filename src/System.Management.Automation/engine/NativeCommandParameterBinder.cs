@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -67,12 +68,82 @@ namespace System.Management.Automation
             return null;
         }
 
+        internal CommandParameterInternal BuildCompositeArgument(CommandParameterInternal currentParameter, CommandParameterInternal nextParameter)
+        {
+            if (currentParameter.ParameterExtent.EndOffset == nextParameter.ArgumentExtent.StartOffset)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(currentParameter.ParameterText);
+                if (currentParameter.ArgumentAst is not null)
+                {
+                    sb.Append(currentParameter.ArgumentValue);
+                }
+                sb.Append(nextParameter.ArgumentValue);
+
+                var sAst = Parser.ParseInput('"' + sb.ToString() + '"', out _, out _).Find(ast => ast is StringConstantExpressionAst, searchNestedScriptBlocks: true);
+                if (sAst is not null)
+                {
+                    string compositeString = sb.ToString();
+                    var ph = new PositionHelper(string.Empty, compositeString);
+                    var sOffset = currentParameter.ParameterExtent.StartOffset;
+                    var sExtent = new InternalScriptExtent(ph, sOffset, sOffset + compositeString.Length + 1);
+                    var compositeAst = new StringConstantExpressionAst(sExtent, compositeString, StringConstantType.BareWord);
+                    var compositeArgument = CommandParameterInternal.CreateArgument(compositeString, compositeAst, false);
+                    return compositeArgument;
+                }
+            }
+
+            if (currentParameter.ParameterAst is null && currentParameter.ArgumentExtent.EndOffset == nextParameter.ArgumentExtent.StartOffset)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(currentParameter.ArgumentValue);
+                sb.Append(nextParameter.ArgumentValue);
+                var sAst = Parser.ParseInput('"' + sb.ToString() + '"', out _, out _).Find(ast => ast is StringConstantExpressionAst, searchNestedScriptBlocks: true);
+                if (sAst is not null)
+                {
+                    string compositeString = sb.ToString();
+                    var sp = new ScriptPosition(string.Empty, 0, 0, compositeString);
+                    var ep = new ScriptPosition(string.Empty, 0, compositeString.Length, sb.ToString());
+                    var sExtent = new ScriptExtent(sp, ep);
+                    var compositeAst = new StringConstantExpressionAst(sExtent, compositeString, StringConstantType.BareWord);
+                    var compositeArgument = CommandParameterInternal.CreateArgument(compositeString, compositeAst, false);
+                    return compositeArgument;
+                }
+            }
+        
+            return null;
+        }
+
         internal void BindParameters(Collection<CommandParameterInternal> parameters)
         {
             bool sawVerbatimArgumentMarker = false;
             bool first = true;
-            foreach (CommandParameterInternal parameter in parameters)
+            for (int i = 0; i < parameters.Count; i++)
             {
+                CommandParameterInternal parameter = parameters[i];
+
+                // check to see if we have two parameters which have no spaces between them.
+                // This could also be a parameter followed by an argument with no space between them.
+                if (i < parameters.Count - 1)
+                {
+                    CommandParameterInternal compositeParameter = BuildCompositeArgument(parameter, parameters[i + 1]);
+                    if (compositeParameter is not null)
+                    {
+                        parameter = compositeParameter;
+                        i++;
+
+                        if (i < parameters.Count - 1)
+                        {
+                            CommandParameterInternal newComposite = BuildCompositeArgument(parameter, parameters[i + 1]);
+                            if (newComposite is not null)
+                            {
+                                parameter = newComposite;
+                                i++;
+                            }
+                        }
+                    }
+                }
+
                 if (!first)
                 {
                     _arguments.Append(' ');
