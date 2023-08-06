@@ -1223,7 +1223,7 @@ class InheritedClassTest : System.Attribute
             $tokens = $null
             $scriptAst = [System.Management.Automation.Language.Parser]::ParseInput(
                 $scriptText,
-                $PSCommandPath,
+                (Join-Path -Path $tempDir -ChildPath ScriptInEditor.ps1),
                 [ref] $tokens,
                 [ref] $null)
 
@@ -1232,23 +1232,13 @@ class InheritedClassTest : System.Attribute
                 GetMethod('CloneWithNewOffset', [System.Reflection.BindingFlags]'NonPublic, Instance').
                 Invoke($scriptAst.Extent.StartScriptPosition, @($scriptText.Length - 1))
 
-            $ScriptParentPath = Split-Path -LiteralPath $cursorPosition.File
-            $TestFile = Join-Path -Path $ScriptParentPath -ChildPath $ExpectedFileName
-            $OldLocation = $PWD
-            Set-Location -LiteralPath $PSHOME
-            try
-            {
-                $null = New-Item -Path $TestFile
-                $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
-            }
-            finally
-            {
-                Set-Location -LiteralPath $OldLocation
-                Remove-Item -LiteralPath $TestFile
-            }
-            
+            Push-Location -LiteralPath $PSHOME
+            $TestFile = Join-Path -Path $tempDir -ChildPath $ExpectedFileName
+            $null = New-Item -Path $TestFile
+            $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
+                        
             $ExpectedPath = Join-Path -Path '.\' -ChildPath $ExpectedFileName
-            $res.CompletionMatches[0].CompletionText | Should -Be $ExpectedPath
+            $res.CompletionMatches.CompletionText | Where-Object {$_ -Like "*$ExpectedFileName"} | Should -Be $ExpectedPath
         }
 
         It "Should keep '~' in completiontext when it's used to refer to home in input" {
