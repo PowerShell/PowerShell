@@ -1,14 +1,14 @@
-id: 
+id:
 name: GitOps.PullRequestIssueManagement
 description: GitOps.PullRequestIssueManagement primitive
-owner: 
+owner:
 resource: repository
 disabled: false
-where: 
+where:
 configuration:
   resourceManagementConfiguration:
     scheduledSearches:
-    - description: 
+    - description:
       frequencies:
       - hourly:
           hour: 12
@@ -23,7 +23,7 @@ configuration:
           days: 10
       actions:
       - closeIssue
-    - description: 
+    - description:
       frequencies:
       - hourly:
           hour: 3
@@ -41,7 +41,7 @@ configuration:
           label: Stale
       - addReply:
           reply: This pull request has been automatically marked as stale because it has been marked as requiring author feedback but has not had any activity for **15 days**. It will be closed if no further activity occurs **within 10 days of this comment**.
-    - description: 
+    - description:
       frequencies:
       - hourly:
           hour: 3
@@ -56,7 +56,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as duplicate and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
       - closeIssue
-    - description: 
+    - description:
       frequencies:
       - hourly:
           hour: 3
@@ -71,7 +71,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as external and has not had any activity for **1 day**. It has been be closed for housekeeping purposes.
       - closeIssue
-    - description: 
+    - description:
       frequencies:
       - hourly:
           hour: 12
@@ -86,7 +86,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as answered and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
       - closeIssue
-    - description: 
+    - description:
       frequencies:
       - hourly:
           hour: 12
@@ -101,7 +101,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as fixed and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
       - closeIssue
-    - description: 
+    - description:
       frequencies:
       - hourly:
           hour: 12
@@ -127,7 +127,7 @@ configuration:
             This pull request has been automatically marked as Review Needed because it has been there has not been any activity for **7 days**.
 
             Maintainer, please provide feedback and/or mark it as `Waiting on Author`
-    - description: 
+    - description:
       frequencies:
       - hourly:
           hour: 12
@@ -145,7 +145,7 @@ configuration:
       actions:
       - addLabel:
           label: Waiting on Author
-    - description: 
+    - description:
       frequencies:
       - hourly:
           hour: 12
@@ -160,7 +160,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as declined and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
       - closeIssue
-    - description: 
+    - description:
       frequencies:
       - hourly:
           hour: 12
@@ -175,7 +175,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as by-design and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
       - closeIssue
-    - description: 
+    - description:
       frequencies:
       - hourly:
           hour: 12
@@ -190,7 +190,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as won't fix and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
       - closeIssue
-    - description: 
+    - description:
       frequencies:
       - hourly:
           hour: 12
@@ -369,5 +369,5 @@ configuration:
       - removeLabel:
           label: Waiting on Author
       description: 
-onFailure: 
-onSuccess: 
+onFailure:
+onSuccess:
