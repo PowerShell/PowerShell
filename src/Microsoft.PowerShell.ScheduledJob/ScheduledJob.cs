@@ -1079,7 +1079,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 {
                     _information = (Collection<InformationRecord>)info.GetValue("Results_Information", typeof(Collection<InformationRecord>));
                 }
-                catch(SerializationException)
+                catch (SerializationException)
                 {
                     // The job might not have the info stream. Ignore.
                     _information = new Collection<InformationRecord>();
