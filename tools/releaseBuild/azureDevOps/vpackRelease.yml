@@ -63,8 +63,4 @@ stages:
 
   - template: ./templates/vpackReleaseJob.yml
     parameters:
-      architecture: arm32
-
-  - template: ./templates/vpackReleaseJob.yml
-    parameters:
       architecture: arm64
