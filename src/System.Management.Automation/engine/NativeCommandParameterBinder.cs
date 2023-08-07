@@ -72,8 +72,16 @@ namespace System.Management.Automation
         {
             if (currentParameter.ParameterExtent.EndOffset == nextParameter.ArgumentExtent.StartOffset)
             {
+                if (currentParameter.ParameterExtent.EndOffset == 0)
+                {
+                    return null;
+                }
+
                 StringBuilder sb = new StringBuilder();
-                sb.Append(currentParameter.ParameterText);
+                if (currentParameter.ParameterAst is not null)
+                {
+                    sb.Append(currentParameter.ParameterText);
+                }
                 if (currentParameter.ArgumentAst is not null)
                 {
                     sb.Append(currentParameter.ArgumentValue);
@@ -131,16 +139,6 @@ namespace System.Management.Automation
                     {
                         parameter = compositeParameter;
                         i++;
-
-                        if (i < parameters.Count - 1)
-                        {
-                            CommandParameterInternal newComposite = BuildCompositeArgument(parameter, parameters[i + 1]);
-                            if (newComposite is not null)
-                            {
-                                parameter = newComposite;
-                                i++;
-                            }
-                        }
                     }
                 }
 
@@ -232,7 +230,7 @@ namespace System.Management.Automation
         /// <param name="argument">The value used with parameter.</param>
         internal void AddToArgumentList(CommandParameterInternal parameter, string argument)
         {
-            if (parameter.ParameterNameSpecified && parameter.ParameterText.EndsWith(":"))
+            if (parameter.ParameterNameSpecified && (parameter.ParameterText.EndsWith(":") || parameter.ParameterText.EndsWith("=")))
             {
                 if (argument != parameter.ParameterText)
                 {

@@ -3214,25 +3214,6 @@ namespace System.Management.Automation.Language
                     case '\r':
                     case '\n':
                     case '\0':
-                        // a parameter may take the shape of -parm=${val} for native commands
-                        /*
-                        if (c == '{' && sb[sb.Length - 1] == '$')
-                        {
-                            sb.Append(c);
-                            inVariable = true;
-                        }
-                        else if (inVariable && c == '}')
-                        {
-                            sb.Append(c);
-                            inVariable = false;
-                            scanning = false;
-                        }
-                        else
-                        {
-                            UngetChar();
-                            scanning = false;
-                        }
-                        */
                         UngetChar();
                         scanning = false;
                         break;
@@ -3240,7 +3221,7 @@ namespace System.Management.Automation.Language
                     case '=':
                         scanning = false;
                         sb.Append(c);
-
+                        sawColonAtEnd = true;
                         break;
                         
                     case ':':

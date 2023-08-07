@@ -186,6 +186,66 @@ Describe "find.exe uses legacy behavior on Windows" -Tag 'CI' {
     }
 }
 
+Describe "parameters are properly bound when complex" -Tag 'CI' {
+
+	BeforeAll {
+		$a = "STR STR"
+		$o = [pscustomobject]@{ one = 1; two = @{ three = 4 }}
+		$tests = @(
+		@{ sb = {echoit -foo 'bar'""}; Expected = @("-foo","bar") }
+		@{ sb = {echoit -foo ""'bar'}; Expected = @("-foo","bar") }
+		@{ sb = {echoit -foo ""bar}; Expected = @("-foo","bar") }
+		@{ sb = {echoit -foo " "ab" de "f}; Expected = @("-foo"," ab de f") }
+		@{ sb = {echoit -foo:bar" "baz}; Expected = @("-foo:bar baz") }
+		@{ sb = {echoit -foo:""bar}; Expected = @("-foo:bar") }
+		@{ sb = {echoit -foo:""bar""}; Expected = @("-foo:bar") }
+		@{ sb = {echoit -foo:'"bar"'}; Expected = @("-foo:""bar""") }
+		@{ sb = {echoit -foo:$null..6}; Expected = @("-foo:..6") }
+		@{ sb = {echoit -foo:6..$null}; Expected = @("-foo:6..") }
+		@{ sb = {echoit -foo:$a..6}; Expected = @("-foo:${a}..6") }
+		@{ sb = {echoit -foo:${a}..6}; Expected = @("-foo:${a}..6") }
+		@{ sb = {echoit -foo:6..$a}; Expected = @("-foo:6..STR STR") }
+		@{ sb = {echoit -foo:6..${a}}; Expected = @("-foo:6..STR STR") }
+		@{ sb = {echoit -foo=bar" "baz}; Expected = @("-foo=bar baz") }
+		@{ sb = {echoit -foo=""bar}; Expected = @("-foo=bar") }
+		@{ sb = {echoit -foo=""bar""}; Expected = @("-foo=bar") }
+		@{ sb = {echoit -foo='"bar"'}; Expected = @("-foo=""bar""") }
+		@{ sb = {echoit -foo=$null..6}; Expected = @("-foo=..6") }
+		@{ sb = {echoit -foo=6..$null}; Expected = @("-foo=6..") }
+		@{ sb = {echoit -foo=$a..6}; Expected = @("-foo=STR STR..6") }
+		@{ sb = {echoit -foo=${a}..6}; Expected = @("-foo=STR STR..6") }
+		@{ sb = {echoit -foo=6..$a}; Expected = @("-foo=6..STR STR") }
+		@{ sb = {echoit ""bar""}; Expected = @("bar") }
+		@{ sb = {echoit ""$null""}; Expected = @("") }
+		@{ sb = {echoit ""$a""}; Expected = @("STR STR") }
+		@{ sb = {echoit ""$a}; Expected = @("STR STR") }
+		@{ sb = {echoit $a""}; Expected = @("STR STR") }
+		@{ sb = {echoit 1,2,3}; Expected = @("1,2,3") }
+		@{ sb = {echoit bar" "baz}; Expected = @("bar baz") }
+		@{ sb = {echoit ""bar}; Expected = @("bar") }
+		@{ sb = {echoit ""bar""}; Expected = @("bar") }
+		@{ sb = {echoit '"bar"'}; Expected = @("""bar""") }
+		@{ sb = {echoit $null..6}; Expected = @("..6") }
+		@{ sb = {echoit 6..$null}; Expected = @("6..") }
+		@{ sb = {echoit $a..6}; Expected = @("STR STR..6") }
+		@{ sb = {echoit 6..$a}; Expected = @("6..STR STR") }
+		@{ sb = {echoit 6..${a} }; Expected = @("6..STR STR") }
+		@{ sb = [scriptblock]::Create('echoit --% 6..$a'); Expected = @('6..$a') }
+ 		@{ sb = [scriptblock]::Create('echoit $a..6..$a --% 6..$a'); Expected = @('STR STR..6..STR STR', '6..$a') }
+		)
+	}
+
+	It "'<sb>' should be bound properly" -testcase $tests {
+		param ($sb, $expected)
+		$eStrings = @()
+		for($i = 0; $i -lt $expected.Count; $i++) {
+			$eStrings += "Argument {0} <{1}>" -f ($i + 1), $expected[$i]
+		}
+		$r = invoke-expression $sb.ToString()
+		$r | Should -Be $eStrings
+	}
+}
+
 foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
     $PSNativeCommandArgumentPassing = $argumentListValue
     Describe "Native Command Arguments (${PSNativeCommandArgumentPassing})" -tags "CI" {
