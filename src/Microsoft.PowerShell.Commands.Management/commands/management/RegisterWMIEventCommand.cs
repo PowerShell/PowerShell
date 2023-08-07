@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         /// The credential to use.
         /// </summary>
         [Parameter]
-        [Credential()]
+        [Credential]
         public PSCredential Credential { get; set; }
 
         /// <summary>

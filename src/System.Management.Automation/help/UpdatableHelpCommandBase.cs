@@ -78,8 +78,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the credential parameter.
         /// </summary>
-        [Parameter()]
-        [Credential()]
+        [Parameter]
+        [Credential]
         public PSCredential Credential
         {
             get { return _credential; }
