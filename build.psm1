@@ -309,6 +309,7 @@ function Start-PSBuild {
         # If this parameter is not provided it will get determined automatically.
         [ValidateSet("alpine-x64",
                      "fxdependent",
+                     "fxdependent-alpine-x64",
                      "fxdependent-linux-x64",
                      "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
@@ -887,6 +888,7 @@ function New-PSOptions {
         [ValidateSet("",
                      "alpine-x64",
                      "fxdependent",
+                     "fxdependent-alpine-x64",
                      "fxdependent-linux-x64",
                      "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
@@ -973,7 +975,7 @@ function New-PSOptions {
 
     # Build the Output path
     if (!$Output) {
-        if ($Runtime -like 'fxdependent*' -and $Runtime -like 'fxdependent*linux*') {
+        if ($Runtime -like 'fxdependent*' -and ($Runtime -like 'fxdependent*linux*' -or $Runtime -like 'fxdependent*alpine*')) {
             $outputRuntime = $Runtime -replace 'fxdependent-', ''
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $outputRuntime, "publish", $Executable)
         }

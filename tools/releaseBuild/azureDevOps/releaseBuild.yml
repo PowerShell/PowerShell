@@ -166,6 +166,12 @@ stages:
             unsignedBuildArtifactName: pwshLinuxBuild.tar.gz
             signedBuildArtifactName: pwshLinuxBuildAlpine.tar.gz
             signedArtifactContainer: authenticode-signed
+          linux-x64-Alpine-Fxdependent:
+            runtime: linux-x64-Alpine-Fxdependent
+            unsignedBuildArtifactContainer: pwshAlpineFxdBuildAmd64.tar.gz
+            unsignedBuildArtifactName: pwshAlpineFxdBuildAmd64.tar.gz
+            signedBuildArtifactName: pwshAlpineFxdBuildAmd64.tar.gz
+            signedArtifactContainer: authenticode-signed
           linux-arm32:
             runtime: linux-arm32
             unsignedBuildArtifactContainer: pwshLinuxBuildArm32.tar.gz
@@ -329,18 +335,18 @@ stages:
       parameters:
         buildArchitecture: arm64
 
+  - stage: nuget_and_json
+    displayName: NuGet Packaging and Build Json
+    dependsOn: ['package_signing']
+    jobs:
+      - template: templates/nuget.yml
+      - template: templates/json.yml
+
   # This is done late so that we dont use resources before the big signing and packaging tasks.
   - stage: compliance
     dependsOn: ['package_signing']
     jobs:
       - template: templates/compliance.yml
-
-  - stage: nuget_and_json
-    displayName: NuGet Packaging and Build Json
-    dependsOn: [package_signing]
-    jobs:
-      - template: templates/nuget.yml
-      - template: templates/json.yml
 
   - stage: test_and_release_artifacts
     displayName: Test and Release Artifacts
