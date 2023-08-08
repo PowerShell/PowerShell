@@ -4468,10 +4468,23 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
 Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
         $unixSocket = Get-UnixSocketName
-        $WebListener = Start-UnixSocket $unixSocket
+        $skipTests = $false
+        try {
+            $WebListener = Start-UnixSocket $unixSocket
+        }
+        catch {
+            if ($_.Exception.Message -match "Unix sockets are not supported on this platform.") {
+                $WebListener = $null
+                $skipTests = $true
+            }
+        }
     }
 
     It "Execute Invoke-WebRequest with -UnixSocket" {
+        if ($skipTest) {
+            Set-ItResult -Skipped -Becuase "Unix sockets are not supported on this platform."
+        }
+
         $uri = Get-UnixSocketUri
         $result = Invoke-WebRequest $uri -UnixSocket $unixSocket
         $result.StatusCode | Should -Be "200"
@@ -4479,6 +4492,10 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
     }
 
     It "Execute Invoke-RestMethod with -UnixSocket" {
+        if ($skipTest) {
+            Set-ItResult -Skipped -Becuase "Unix sockets are not supported on this platform."
+        }
+
         $uri = Get-UnixSocketUri
         $result = Invoke-RestMethod  $uri -UnixSocket $unixSocket
         $result | Should -Be "Hello World Unix Socket."

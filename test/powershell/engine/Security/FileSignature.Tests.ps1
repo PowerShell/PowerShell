@@ -102,7 +102,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
         foreach($path in $paths) {
             if (Test-Path $path) {
                 # failing to remove is not fatal
-                Remove-Item -Force -Path $path -ErrorAction Continue
+                Remove-Item -Force -Path $path -ErrorAction Ignore
             }
         }
     }

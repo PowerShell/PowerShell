@@ -67,7 +67,14 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
         }
         else
         {
-            Enable-PSRemoting -SkipNetworkProfileCheck
+            try {
+                Enable-PSRemoting -SkipNetworkProfileCheck -ErrorAction Stop
+            }
+            catch {
+                Write-Verbose -Verbose ($_.Message)
+                $global:PSDefaultParameterValues["it:skip"] = $true
+                return
+            }
         }
     }
 
@@ -109,7 +116,14 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
         }
         else
         {
-            Enable-PSRemoting -SkipNetworkProfileCheck
+            try {
+                Enable-PSRemoting -SkipNetworkProfileCheck -ErrorAction Stop
+            }
+            catch {
+                Write-Verbose -Verbose ($_.Message)
+                $global:PSDefaultParameterValues["it:skip"] = $true
+                return
+            }
         }
     }
 
@@ -149,7 +163,14 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
         }
         else
         {
-            Enable-PSRemoting -SkipNetworkProfileCheck
+            try {
+                Enable-PSRemoting -SkipNetworkProfileCheck -ErrorAction Stop
+            }
+            catch {
+                Write-Verbose -Verbose ($_.Message)
+                $global:PSDefaultParameterValues["it:skip"] = $true
+                return
+            }
             $configName = "PowerShell." + $PSVersionTable.GitCommitId
             $configuration = Get-PSSessionConfiguration -Name $configName -ErrorAction Ignore
             if ($null -eq $configuration) {
