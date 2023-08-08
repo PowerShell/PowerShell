@@ -3223,7 +3223,7 @@ namespace System.Management.Automation.Language
                         sb.Append(c);
                         sawColonAtEnd = true;
                         break;
-                        
+
                     case ':':
                         scanning = false;
                         sawColonAtEnd = true;
