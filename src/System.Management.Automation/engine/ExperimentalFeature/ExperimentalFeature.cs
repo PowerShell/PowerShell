@@ -124,6 +124,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSCommandWithArgs,
                     description: "Enable `-CommandWithArgs` parameter for pwsh"),
+                new ExperimentalFeature(
+                    name: "PSNativeParameterParsing",
+                    description: "Adjust how parameters are parsed and passed to better support native applications."),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

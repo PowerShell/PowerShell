@@ -189,6 +189,8 @@ Describe "find.exe uses legacy behavior on Windows" -Tag 'CI' {
 Describe "parameters are properly bound when complex" -Tag 'CI' {
 
 	BeforeAll {
+        $ef = get-experimentalfeature -name PSNativeParameterParsing
+        $enabled = $ef -eq $null ? $false : $ef.Enabled
 		$a = "STR STR"
 		$o = [pscustomobject]@{ one = 1; two = @{ three = 4 }}
 		$tests = @(
@@ -235,7 +237,7 @@ Describe "parameters are properly bound when complex" -Tag 'CI' {
 		)
 	}
 
-	It "'<sb>' should be bound properly" -testcase $tests {
+	It "'<sb>' should be bound properly" -testcase $tests -skip:(-not $enabled) {
 		param ($sb, $expected)
 		$eStrings = @()
 		for($i = 0; $i -lt $expected.Count; $i++) {
