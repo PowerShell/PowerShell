@@ -132,9 +132,10 @@ namespace System.Management.Automation
 
                 // check to see if we have two parameters which have no spaces between them.
                 // This could also be a parameter followed by an argument with no space between them.
-                if (i < parameters.Count - 1)
+                if (ExperimentalFeature.IsEnabled("PSNativeParameterParsing") && i < parameters.Count - 1)
                 {
                     CommandParameterInternal compositeParameter = BuildCompositeArgument(parameter, parameters[i + 1]);
+                    // If we were able to build a composite parameter, use it but skip the next parameter as it was used to create the composite.
                     if (compositeParameter is not null)
                     {
                         parameter = compositeParameter;

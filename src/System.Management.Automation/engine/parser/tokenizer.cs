@@ -3219,9 +3219,16 @@ namespace System.Management.Automation.Language
                         break;
 
                     case '=':
-                        scanning = false;
-                        sb.Append(c);
-                        sawColonAtEnd = true;
+                        if (ExperimentalFeature.IsEnabled("PSNativeParameterParsing"))
+                        {
+                            sb.Append(c);
+                            scanning = false;
+                            sawColonAtEnd = true;
+                        }
+                        else
+                        {
+                            goto default;
+                        }
                         break;
 
                     case ':':
