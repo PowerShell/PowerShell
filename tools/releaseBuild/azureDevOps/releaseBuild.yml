@@ -220,12 +220,6 @@ stages:
             unsignedBuildArtifactName: '**/*-symbols-win-x86.zip'
             signedBuildArtifactName: '-symbols-win-x86-signed.zip'
             signedArtifactContainer: results
-          win-arm32:
-            runtime: win-arm32
-            unsignedBuildArtifactContainer: results
-            unsignedBuildArtifactName: '**/*-symbols-win-arm32.zip'
-            signedBuildArtifactName: '-symbols-win-arm32-signed.zip'
-            signedArtifactContainer: results
           win-arm64:
             runtime: win-arm64
             unsignedBuildArtifactContainer: results
