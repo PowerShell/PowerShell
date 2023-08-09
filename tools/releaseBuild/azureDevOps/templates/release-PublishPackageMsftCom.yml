@@ -9,7 +9,8 @@ steps:
   displayName: Set Package version
 
 - pwsh: |
-   git clone https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
+    Write-Verbose -verbose "git clone --verbose https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'"
+    git clone --verbose https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
   displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
 
 - pwsh: |
