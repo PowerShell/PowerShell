@@ -24,6 +24,7 @@
     Invoke this script directly from GitHub
     Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -daily"
 #>
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '')]
 [CmdletBinding(DefaultParameterSetName = "Daily")]
 param(
     [Parameter(ParameterSetName = "Version" )]
