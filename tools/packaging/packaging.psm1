@@ -125,7 +125,6 @@ function Start-PSPackage {
             # Runtime will be one of win7-x64, win7-x86, "win-arm" and "win-arm64" on Windows.
             # Build the name suffix for universal win-plat packages.
             switch ($Runtime) {
-                "win-arm"   { $NameSuffix = "win-arm32" }
                 "win-arm64" { $NameSuffix = "win-arm64" }
                 default     { $NameSuffix = $_ -replace 'win\d+', 'win' }
             }
