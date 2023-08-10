@@ -14,7 +14,6 @@ parameters:
     - PowerShell.Linux.arm32
     - PowerShell.Linux.arm64
     - PowerShell.Windows.x64
-    - PowerShell.Windows.arm32
 
 steps:
 
