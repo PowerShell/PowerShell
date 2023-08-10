@@ -43,7 +43,7 @@ jobs:
   - template: shouldSign.yml
 
   - pwsh: |
-      $pkgFilter = if ( '$(Architecture)' -eq 'arm' ) { "arm32" } else { '$(Architecture)' }
+      $pkgFilter = '$(Architecture)'
       if ($env:BuildConfiguration -eq 'minSize') { $pkgFilter += '-gc' }
 
       $vstsCommandString = "vso[task.setvariable variable=PkgFilter]$pkgFilter"
@@ -243,7 +243,6 @@ jobs:
         {
           "x64" { "win7-x64" }
           "x86" { "win7-x86" }
-          "arm" { "win-arm"}
           "arm64" { "win-arm64" }
           "fxdependent" { "fxdependent" }
           "fxdependentWinDesktop" { "fxdependent-win-desktop" }
