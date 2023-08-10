@@ -50,7 +50,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "tar-alpine-fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -111,7 +111,13 @@ function Start-PSPackage {
             }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
-        } else {
+        } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-fxdependent-arm64") {
+            New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-arm64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
+        elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine-fxdependent") {
+            New-PSOptions -Configuration "Release" -Runtime 'fxdependent-alpine-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
+        else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
 
@@ -119,7 +125,6 @@ function Start-PSPackage {
             # Runtime will be one of win7-x64, win7-x86, "win-arm" and "win-arm64" on Windows.
             # Build the name suffix for universal win-plat packages.
             switch ($Runtime) {
-                "win-arm"   { $NameSuffix = "win-arm32" }
                 "win-arm64" { $NameSuffix = "win-arm64" }
                 default     { $NameSuffix = $_ -replace 'win\d+', 'win' }
             }
@@ -414,7 +419,7 @@ function Start-PSPackage {
                     }
                 }
             }
-            { $_ -like "fxdependent*" } {
+            { $_ -like "fxdependent*"} {
                 if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
@@ -438,6 +443,25 @@ function Start-PSPackage {
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
                             R2RState = 'NoR2R'
+                        }
+                    }
+
+                    if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                        New-TarballPackage @Arguments
+                    }
+                }
+            }
+            "tar-alpine-fxdependent" {
+                if ($Environment.IsLinux) {
+                    $Arguments = @{
+                        PackageSourcePath = $Source
+                        Name = $Name
+                        PackageNameSuffix = 'alpine-fxdependent'
+                        Version = $Version
+                        Force = $Force
+                        R2RVerification = [R2RVerification]@{
+                            R2RState = 'R2R'
+                            OperatingSystem = "Linux"
                         }
                     }
 
@@ -592,6 +616,7 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "amd64"
                 }
                 foreach ($Distro in $Script:DebianDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -609,6 +634,7 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "x86_64"
                 }
                 foreach ($Distro in $Script:RedhatFullDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -627,6 +653,26 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "x86_64"
+                }
+                foreach ($Distro in $Script:RedhatFddDistributions) {
+                    $Arguments["Distribution"] = $Distro
+                    if ($PSCmdlet.ShouldProcess("Create RPM Package for $Distro")) {
+                        Write-Verbose -Verbose "Creating RPM Package for $Distro"
+                        New-UnixPackage @Arguments
+                    }
+                }
+            }
+            'rpm-fxdependent-arm64' {
+                $Arguments = @{
+                    Type = 'rpm'
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    NoSudo = $NoSudo
+                    LTS = $LTS
+                    HostArchitecture = "aarch64"
                 }
                 foreach ($Distro in $Script:RedhatFddDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -668,6 +714,7 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "all"
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create $_ Package")) {
@@ -926,6 +973,13 @@ function New-UnixPackage {
         # This is a string because strings are appended to it
         [string]$Iteration = "1",
 
+        # Host architecture values allowed for deb type packages: amd64
+        # Host architecture values allowed for rpm type packages include: x86_64, aarch64, native, all, noarch, any
+        # Host architecture values allowed for osxpkg type packages include: x86_64, arm64
+        [string]
+        [ValidateSet("x86_64", "amd64", "aarch64", "arm64", "native", "all", "noarch", "any")]
+        $HostArchitecture,
+
         [Switch]
         $Force,
 
@@ -955,23 +1009,10 @@ function New-UnixPackage {
             $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
             $Attributes.Add($ParameterAttr) > $null
             $Attributes.Add($ValidateSetAttr) > $null
-
+            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
             $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
-            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
+
             $Dict.Add("Distribution", $Parameter) > $null
-            return $Dict
-        } elseif ($Type -eq "osxpkg") {
-            # Add a dynamic parameter '-HostArchitecture' when the specified package type is 'osxpkg'.
-            # The '-HostArchitecture' parameter is used to indicate which Mac processor this package is targeting,
-            # Intel (x86_64) or Apple Silicon (arm64).
-            $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
-            $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList "x86_64", "arm64"
-            $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
-            $Attributes.Add($ParameterAttr) > $null
-            $Attributes.Add($ValidateSetAttr) > $null
-            $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("HostArchitecture", [string], $Attributes)
-            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
-            $Dict.Add("HostArchitecture", $Parameter) > $null
             return $Dict
         }
     }
@@ -1026,7 +1067,6 @@ function New-UnixPackage {
                     throw ($ErrorMessage -f "macOS")
                 }
 
-                $HostArchitecture = $PSBoundParameters['HostArchitecture']
                 $DebDistro = 'macOS'
             }
         }
@@ -1072,6 +1112,7 @@ function New-UnixPackage {
 
         # Destination for symlink to powershell executable
         $Link = Get-PwshExecutablePath -IsPreview:$IsPreview
+
         $links = @(New-LinkInfo -LinkDestination $Link -LinkTarget "$Destination/pwsh")
 
         if($LTS) {
@@ -1131,7 +1172,10 @@ function New-UnixPackage {
         # Setup package dependencies
         $Dependencies = @(Get-PackageDependencies @packageDependenciesParams)
 
-        $Arguments = Get-FpmArguments `
+        $Arguments = @()
+
+
+        $Arguments += Get-FpmArguments `
             -Name $Name `
             -Version $packageVersion `
             -Iteration $Iteration `
@@ -1147,6 +1191,7 @@ function New-UnixPackage {
             -LinkInfo $Links `
             -AppsFolder $AppsFolder `
             -Distribution $DebDistro `
+            -HostArchitecture $HostArchitecture `
             -ErrorAction Stop
 
         # Build package
@@ -1398,7 +1443,8 @@ function Get-FpmArguments
             return $true
         })]
         [String]$AppsFolder,
-        [String]$Distribution = 'rhel.7'
+        [String]$Distribution = 'rhel.7',
+        [string]$HostArchitecture
     )
 
     $Arguments = @(
@@ -1410,6 +1456,7 @@ function Get-FpmArguments
         "--vendor", "Microsoft Corporation",
         "--url", "https://microsoft.com/powershell",
         "--description", $Description,
+        "--architecture", $HostArchitecture,
         "--category", "shells",
         "-t", $Type,
         "-s", "dir"
@@ -3957,6 +4004,13 @@ function ReduceFxDependentPackage
     $runtimeFolder = Get-ChildItem $Path -Recurse -Directory -Filter 'runtimes'
 
     $runtimeFolderPath = $runtimeFolder | Out-String
+
+    if ($runtimeFolder.Count -eq 0)
+    {
+        Write-Log -message "No runtimes folder found under $Path. Completing cleanup."
+        return
+    }
+
     Write-Log -message $runtimeFolderPath
 
     if ($runtimeFolder.Count -eq 0)
@@ -4011,7 +4065,8 @@ function Start-PrepForGlobalToolNupkg
     param(
         [Parameter(Mandatory)] [string] $LinuxBinPath,
         [Parameter(Mandatory)] [string] $WindowsBinPath,
-        [Parameter(Mandatory)] [string] $WindowsDesktopBinPath
+        [Parameter(Mandatory)] [string] $WindowsDesktopBinPath,
+        [Parameter(Mandatory)] [string] $AlpineBinPath
     )
 
     Write-Log "Start-PrepForGlobalToolNupkg: Running clean up for New-GlobalToolNupkg package creation."
@@ -4028,7 +4083,7 @@ function Start-PrepForGlobalToolNupkg
     }
 
     # Remove unnecessary xml files
-    Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath, $WindowsDesktopBinPath -Filter *.xml | Remove-Item -Verbose
+    Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath, $WindowsDesktopBinPath, $AlpineBinPath -Filter *.xml | Remove-Item -Verbose
 }
 
 <#
@@ -4063,6 +4118,7 @@ function New-GlobalToolNupkgSource
         [Parameter(Mandatory)] [string] $LinuxBinPath,
         [Parameter(Mandatory)] [string] $WindowsBinPath,
         [Parameter(Mandatory)] [string] $WindowsDesktopBinPath,
+        [Parameter(Mandatory)] [string] $AlpineBinPath,
         [Parameter(Mandatory)] [string] $PackageVersion
     )
 
@@ -4072,6 +4128,9 @@ function New-GlobalToolNupkgSource
 
         Write-Log "New-GlobalToolNupkgSource: Reducing size of Linux package"
         ReduceFxDependentPackage -Path $LinuxBinPath
+
+        Write-Log "New-GlobalToolNupkgSource: Reducing size of Alpine package"
+        ReduceFxDependentPackage -Path $AlpineBinPath
 
         Write-Log "New-GlobalToolNupkgSource: Reducing size of Windows package"
         ReduceFxDependentPackage -Path $WindowsBinPath -KeepWindowsRuntimes
@@ -4122,11 +4181,8 @@ function New-GlobalToolNupkgSource
 
             $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
 
-            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $LinuxBinPath for $PackageType"
-            Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
-            Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
-            Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
-            Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $AlpineBinPath for $PackageType"
+            Copy-Item "$AlpineBinPath/*" -Destination $ridFolder -Recurse
             $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
         }
 
@@ -4303,6 +4359,8 @@ ${minSizeLinuxBuildFolder} = 'pwshLinuxBuildMinSize'
 ${arm32LinuxBuildFolder} = 'pwshLinuxBuildArm32'
 ${arm64LinuxBuildFolder} = 'pwshLinuxBuildArm64'
 ${amd64MarinerBuildFolder} = 'pwshMarinerBuildAmd64'
+${amd64AlpineFxdBuildFolder} = 'pwshAlpineFxdBuildAmd64'
+${arm64MarinerBuildFolder} = 'pwshMarinerBuildArm64'
 
 <#
     Used in Azure DevOps Yaml to package all the linux packages for a channel.
@@ -4382,6 +4440,8 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}"
             Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
         } elseif ($BuildType -eq 'rpm') {
+            # Generate mariner amd64 package
+            Write-Verbose -Verbose "Generating mariner amd64 package"
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\psoptions.json"
             $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\linuxFilePermission.json"
             Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}"
@@ -4391,6 +4451,28 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             Write-Verbose -Verbose "options.Top $($options.Top)"
 
             Start-PSPackage -Type rpm-fxdependent @releaseTagParam -LTS:$LTS
+
+            # Generate mariner arm64 package
+            Write-Verbose -Verbose "Generating mariner arm64 package"
+            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\psoptions.json"
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64MarinerBuildFolder}"
+
+            Write-Verbose -Verbose "---- rpm-fxdependent-arm64 ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+
+            Start-PSPackage -Type rpm-fxdependent-arm64 @releaseTagParam -LTS:$LTS
+        } elseif ($BuildType -eq 'alpine') {
+            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}-meta\psoptions.json"
+            $filePermissionFile = "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}-meta\linuxFilePermission.json"
+            Set-LinuxFilePermission -FilePath $filePermissionFile -RootPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64AlpineFxdBuildFolder}"
+
+            Write-Verbose -Verbose "---- tar-alpine-fxdependent ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+
+            Start-PSPackage -Type tar-alpine-fxdependent @releaseTagParam -LTS:$LTS
         }
     }
     catch {
@@ -4475,9 +4557,47 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             Remove-Item "${buildFolder}\*.pdb" -Force
             Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
         } elseif ($BuildType -eq 'rpm') {
-            ## Build for Mariner
+            ## Build for Mariner amd64
             $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Mariner ----"
+            Write-Verbose -Verbose "---- Mariner x64 ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
+            if (Test-Path -Path $binDir) {
+                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner x64 package"
+                Remove-Item -Path $binDir -Recurse -Force
+            }
+
+            $buildParams['Runtime'] = 'fxdependent-linux-x64'
+            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64MarinerBuildFolder}"
+            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            # Remove symbol files, xml document files.
+            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
+
+            ## Build for Mariner arm64
+            $options = Get-PSOptions
+            Write-Verbose -Verbose "---- Mariner arm64 ----"
+
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
+            if (Test-Path -Path $binDir) {
+                Write-Verbose -Verbose "Remove $binDir, to get a clean build for Mariner arm64 package"
+                Remove-Item -Path $binDir -Recurse -Force
+            }
+
+            $buildParams['Runtime'] = 'fxdependent-linux-arm64'
+            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64MarinerBuildFolder}"
+
+            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            # Remove symbol files, xml document files.
+            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
+            Get-ChildItem -Path $buildFolder -Recurse -File | Export-LinuxFilePermission -FilePath "${buildFolder}-meta/linuxFilePermission.json" -RootPath ${buildFolder} -Force
+        } elseif ($BuildType -eq 'alpine') {
+            ## Build for alpine fxdependent
+            $options = Get-PSOptions
+            Write-Verbose -Verbose "---- fxdependent alpine x64 ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
             Write-Verbose -Verbose "options.Top $($options.Top)"
             $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
@@ -4486,8 +4606,8 @@ function Invoke-AzDevOpsLinuxPackageBuild {
                 Remove-Item -Path $binDir -Recurse -Force
             }
 
-            $buildParams['Runtime'] = 'fxdependent-linux-x64'
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64MarinerBuildFolder}"
+            $buildParams['Runtime'] = 'fxdependent-alpine-x64'
+            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64AlpineFxdBuildFolder}"
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files, xml document files.
             Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force

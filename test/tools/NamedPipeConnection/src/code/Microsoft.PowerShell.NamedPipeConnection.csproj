@@ -15,6 +15,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Management.Automation" Version="7.4.0-preview.2" />
+    <PackageReference Include="System.Management.Automation" Version="7.4.0-preview.4" />
   </ItemGroup>
 </Project>

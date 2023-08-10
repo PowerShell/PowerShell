@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -56,7 +55,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonSchema.Net",
-          "Version": "4.1.5"
+          "Version": "4.1.8"
         }
       },
       "DevelopmentDependency": false
@@ -226,7 +225,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "7.0.3"
+          "Version": "7.0.4"
         }
       },
       "DevelopmentDependency": false
@@ -346,7 +345,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers.Unstable",
-          "Version": "1.2.0.435"
+          "Version": "1.2.0.507"
         }
       },
       "DevelopmentDependency": true
@@ -646,7 +645,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Pkcs",
-          "Version": "7.0.2"
+          "Version": "7.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -816,7 +815,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Web.Services.Description",
-          "Version": "4.9.0"
+          "Version": "4.10.0"
         }
       },
       "DevelopmentDependency": false
@@ -831,5 +830,6 @@
       },
       "DevelopmentDependency": false
     }
-  ]
+  ],
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
 }

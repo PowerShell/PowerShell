@@ -657,6 +657,12 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
     }
 
+    It 'Should complete variable assigned with Data statement' {
+        $TestString = 'data MyDataVar {"Hello"};$MyDatav'
+        $res = TabExpansion2 -inputScript $TestString
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyDataVar'
+    }
+
     it 'Should complete "Value" parameter value in "Where-Object" for Enum property with no input' {
         $res = TabExpansion2 -inputScript 'Get-Command | where-Object CommandType -eq '
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Alias
@@ -986,6 +992,19 @@ class InheritedClassTest : System.Attribute
         $res.CompletionMatches.CompletionText | Should -Contain '-ProgressAction'
     }
 
+    It 'Should complete dynamic parameters with partial input' {
+        # See issue: #19498
+        try
+        {
+            Push-Location function:
+            $res = TabExpansion2 -inputScript 'Get-ChildItem -LiteralPath $PSHOME -Fi'
+            $res.CompletionMatches[1].CompletionText | Should -Be '-File'
+        }
+        finally
+        {
+            Pop-Location
+        }
+    }
     it 'Should complete enum class members for Enums in script text' {
         $res = TabExpansion2 -inputScript 'enum Test1 {Val1};([Test1]"").'
         $res.CompletionMatches.CompletionText[0] | Should -Be 'value__'
@@ -1210,7 +1229,10 @@ class InheritedClassTest : System.Attribute
 
         It "Should keep '~' in completiontext when it's used to refer to home in input" {
             $res = TabExpansion2 -inputScript "~$separator"
-            $res.CompletionMatches[0].CompletionText | Should -BeLike "~$separator*"
+            # select the first answer which does not have a space in the completion (those completions look like & '3D Objects')
+            $observedResult = $res.CompletionMatches.Where({$_.CompletionText.IndexOf("&") -eq -1})[0].CompletionText
+            $completedText = $res.CompletionMatches.CompletionText -join ","
+            $observedResult | Should -BeLike "~$separator*" -Because "$completedText"
         }
 
         It "Should use '~' as relative filter text when not followed by separator" {
@@ -1234,7 +1256,7 @@ class InheritedClassTest : System.Attribute
             $NewPath = Join-Path -Path $TestDrive -ChildPath $LiteralPath
             $null = New-Item -Path $NewPath -Force
             Push-Location $TestDrive
-            
+
             $InputText = "Get-ChildItem -Path {0}.${separator}BacktickTest"
             $InputTextLiteral = "Get-ChildItem -LiteralPath {0}.${separator}BacktickTest"
 
@@ -1252,6 +1274,19 @@ class InheritedClassTest : System.Attribute
 
             Remove-Item -LiteralPath $LiteralPath
         }
+    }
+
+    It 'Should keep custom drive names when completing file paths' {
+        $TempDriveName = "asdf"
+        $null = New-PSDrive -Name $TempDriveName -PSProvider FileSystem -Root $HOME
+
+        $completions = (TabExpansion2 -inputScript "${TempDriveName}:\")
+        # select the first answer which does not have a space in the completion (those completions look like & '3D Objects')
+        $observedResult = $completions.CompletionMatches.Where({$_.CompletionText.IndexOf("&") -eq -1})[0].CompletionText
+        $completedText = $completions.CompletionMatches.CompletionText -join ","
+
+        $observedResult | Should -BeLike "${TempDriveName}:*" -Because "$completionText"
+        Remove-PSDrive -Name $TempDriveName
     }
 
     Context "Cmdlet name completion" {
@@ -2283,6 +2318,7 @@ dir -Recurse `
 
     Context "Tab completion help test" {
         BeforeAll {
+            New-Item -ItemType File (Join-Path ${TESTDRIVE} "pwsh.xml")
             if ($IsWindows) {
                 $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
             } else {
@@ -2456,10 +2492,10 @@ dir -Recurse `
             }
             @{
                 Intent = 'Complete help keyword EXTERNALHELP argument'
-                Expected = Join-Path $PSHOME "pwsh.xml"
+                Expected = Join-Path $TESTDRIVE "pwsh.xml"
                 TestString = @"
 <#
-.EXTERNALHELP $PSHOME\pwsh.^
+.EXTERNALHELP $TESTDRIVE\pwsh.^
 #>
 "@
             }

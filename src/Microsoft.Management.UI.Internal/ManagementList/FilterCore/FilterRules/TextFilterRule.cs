@@ -13,7 +13,6 @@ namespace Microsoft.Management.UI.Internal
     /// The TextFilterRule class supports derived rules by offering services for
     /// evaluating string operations.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public abstract class TextFilterRule : SingleValueComparableValueFilterRule<string>
     {
@@ -59,6 +58,17 @@ namespace Microsoft.Management.UI.Internal
 
                 this.NotifyEvaluationResultInvalidated();
             }
+        }
+
+        /// <summary>
+        /// Creates a clone of the FilterRule.
+        /// </summary>
+        /// <returns>
+        /// Returns a clone of the FilterRule.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            return base.Clone();
         }
 
         /// <summary>

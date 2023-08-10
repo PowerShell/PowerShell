@@ -10,7 +10,6 @@ namespace Microsoft.Management.UI.Internal
     /// The TextEndsWithFilterRule class evaluates a string item to
     /// check if it ends with the rule's value.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class TextEndsWithFilterRule : TextFilterRule
     {
@@ -23,6 +22,20 @@ namespace Microsoft.Management.UI.Internal
         public TextEndsWithFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_TextEndsWith;
+        }
+
+        /// <summary>
+        /// Creates a clone of the TextEndsWithFilterRule instance.
+        /// </summary>
+        /// <returns>
+        /// Returns a clone of the TextEndsWithFilterRule instance.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            TextEndsWithFilterRule rule = new TextEndsWithFilterRule();
+            rule.Value = this.Value;
+            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            return rule;
         }
 
         /// <summary>

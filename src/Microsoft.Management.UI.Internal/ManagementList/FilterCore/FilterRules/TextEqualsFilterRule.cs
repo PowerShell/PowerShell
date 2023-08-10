@@ -10,7 +10,6 @@ namespace Microsoft.Management.UI.Internal
     /// The TextEqualsFilterRule class evaluates a string item to
     /// check if it is equal to the rule's value.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class TextEqualsFilterRule : TextFilterRule
     {
@@ -22,6 +21,20 @@ namespace Microsoft.Management.UI.Internal
         public TextEqualsFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_Equals;
+        }
+
+        /// <summary>
+        /// Creates a clone of the TextEqualsFilterRule instance.
+        /// </summary>
+        /// <returns>
+        /// Returns a clone of the TextEqualsFilterRule instance.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            TextEqualsFilterRule rule = new TextEqualsFilterRule();
+            rule.Value = this.Value;
+            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            return rule;
         }
 
         /// <summary>

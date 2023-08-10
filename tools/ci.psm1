@@ -784,7 +784,7 @@ function New-LinuxPackage
 
     # Only build packages for PowerShell/PowerShell repository
     # branches, not pull requests
-    $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks -Type deb, rpm, tar)
+    $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks -Type deb, rpm, rpm-fxdependent-arm64, tar)
     foreach($package in $packages)
     {
         if (Test-Path $package)

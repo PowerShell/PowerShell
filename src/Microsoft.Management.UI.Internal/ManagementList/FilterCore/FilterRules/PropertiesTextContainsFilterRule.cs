@@ -11,7 +11,6 @@ namespace Microsoft.Management.UI.Internal
     /// <summary>
     /// Represents a filter rule that searches for text within properties on an object.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class PropertiesTextContainsFilterRule : TextFilterRule
     {
@@ -36,6 +35,20 @@ namespace Microsoft.Management.UI.Internal
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Creates a clone of this <see cref="PropertiesTextContainsFilterRule"/>.
+        /// </summary>
+        /// <returns>
+        /// A clone of this <see cref="PropertiesTextContainsFilterRule"/>.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            PropertiesTextContainsFilterRule clone = new PropertiesTextContainsFilterRule();
+            clone.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            clone.PropertyNames = new List<string>(this.PropertyNames);
+            return clone;
         }
 
         /// <summary>

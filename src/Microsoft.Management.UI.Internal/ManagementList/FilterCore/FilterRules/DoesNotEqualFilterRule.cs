@@ -12,7 +12,6 @@ namespace Microsoft.Management.UI.Internal
     /// <typeparam name="T">
     /// The generic parameter.
     /// </typeparam>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class DoesNotEqualFilterRule<T> : EqualsFilterRule<T> where T : IComparable
     {
@@ -23,6 +22,20 @@ namespace Microsoft.Management.UI.Internal
         {
             this.DisplayName = UICultureResources.FilterRule_DoesNotEqual;
             this.DefaultNullValueEvaluation = true;
+        }
+
+        /// <summary>
+        /// Creates a clone of the DoesNotEqualFilterRule instance.
+        /// </summary>
+        /// <returns>
+        /// A clone of the DoesNotEqualFilterRule instance.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            DoesNotEqualFilterRule<T> rule = new DoesNotEqualFilterRule<T>();
+            rule.Value = this.Value;
+            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            return rule;
         }
 
         /// <summary>

@@ -14,7 +14,6 @@ namespace Microsoft.Management.UI.Internal
     /// <typeparam name="T">
     /// The generic parameter.
     /// </typeparam>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class ValidatingValue<T> : ValidatingValueBase
     {

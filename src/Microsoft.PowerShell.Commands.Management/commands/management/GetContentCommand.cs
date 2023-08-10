@@ -31,48 +31,20 @@ namespace Microsoft.PowerShell.Commands
         public long ReadCount { get; set; } = 1;
 
         /// <summary>
-        /// The number of content items to retrieve. By default this
-        /// value is -1 which means read all the content.
+        /// The number of content items to retrieve.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
+        [ValidateRange(0, long.MaxValue)]
         [Alias("First", "Head")]
-        public long TotalCount
-        {
-            get
-            {
-                return _totalCount;
-            }
-
-            set
-            {
-                _totalCount = value;
-                _totalCountSpecified = true;
-            }
-        }
-
-        private bool _totalCountSpecified = false;
+        public long TotalCount { get; set; } = -1;
 
         /// <summary>
         /// The number of content items to retrieve from the back of the file.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
+        [ValidateRange(0, int.MaxValue)]
         [Alias("Last")]
-        public int Tail
-        {
-            get
-            {
-                return _backCount;
-            }
-
-            set
-            {
-                _backCount = value;
-                _tailSpecified = true;
-            }
-        }
-
-        private int _backCount = -1;
-        private bool _tailSpecified = false;
+        public int Tail { get; set; } = -1;
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
@@ -98,15 +70,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Parameters
 
-        #region parameter data
-
-        /// <summary>
-        /// The number of content items to retrieve.
-        /// </summary>
-        private long _totalCount = -1;
-
-        #endregion parameter data
-
         #region Command code
 
         /// <summary>
@@ -116,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // TotalCount and Tail should not be specified at the same time.
             // Throw out terminating error if this is the case.
-            if (_totalCountSpecified && _tailSpecified)
+            if (TotalCount != -1 && Tail != -1)
             {
                 string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "TotalCount", "Tail");
                 ErrorRecord error = new(new InvalidOperationException(errMsg), "TailAndHeadCannotCoexist", ErrorCategory.InvalidOperation, null);
@@ -124,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (TotalCount == 0)
+            if (TotalCount == 0 || Tail == 0)
             {
                 // Don't read anything
                 return;
@@ -141,11 +104,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     long countRead = 0;
 
-                    Dbg.Diagnostics.Assert(
-                        holder.Reader != null,
-                        "All holders should have a reader assigned");
+                    Dbg.Diagnostics.Assert(holder.Reader != null, "All holders should have a reader assigned");
 
-                    if (_tailSpecified && holder.Reader is not FileSystemContentReaderWriter)
+                    if (Tail != -1 && holder.Reader is not FileSystemContentReaderWriter)
                     {
                         string errMsg = SessionStateStrings.GetContent_TailNotSupported;
                         ErrorRecord error = new(new InvalidOperationException(errMsg), "TailNotSupported", ErrorCategory.InvalidOperation, Tail);
@@ -153,11 +114,11 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    // If Tail is negative, we are supposed to read all content out. This is same
+                    // If Tail is -1, we are supposed to read all content out. This is same
                     // as reading forwards. So we read forwards in this case.
                     // If Tail is positive, we seek the right position. Or, if the seek failed
                     // because of an unsupported encoding, we scan forward to get the tail content.
-                    if (Tail >= 0)
+                    if (Tail > 0)
                     {
                         bool seekSuccess = false;
 
@@ -197,72 +158,61 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (TotalCount != 0)
+                    IList results = null;
+
+                    do
                     {
-                        IList results = null;
+                        long countToRead = ReadCount;
 
-                        do
+                        // Make sure we only ask for the amount the user wanted
+                        // I am using TotalCount - countToRead so that I don't
+                        // have to worry about overflow
+                        if (TotalCount > 0 && (countToRead == 0 || TotalCount - countToRead < countRead))
                         {
-                            long countToRead = ReadCount;
+                            countToRead = TotalCount - countRead;
+                        }
 
-                            // Make sure we only ask for the amount the user wanted
-                            // I am using TotalCount - countToRead so that I don't
-                            // have to worry about overflow
+                        try
+                        {
+                            results = holder.Reader.Read(countToRead);
+                        }
+                        catch (Exception e) // Catch-all OK. 3rd party callout
+                        {
+                            ProviderInvocationException providerException =
+                                new(
+                                    "ProviderContentReadError",
+                                    SessionStateStrings.ProviderContentReadError,
+                                    holder.PathInfo.Provider,
+                                    holder.PathInfo.Path,
+                                    e);
 
-                            if ((TotalCount > 0) && (countToRead == 0 || (TotalCount - countToRead < countRead)))
+                            // Log a provider health event
+                            MshLog.LogProviderHealthEvent(this.Context, holder.PathInfo.Provider.Name, providerException, Severity.Warning);
+                            WriteError(new ErrorRecord(providerException.ErrorRecord, providerException));
+
+                            break;
+                        }
+
+                        if (results != null && results.Count > 0)
+                        {
+                            countRead += results.Count;
+                            if (ReadCount == 1)
                             {
-                                countToRead = TotalCount - countRead;
+                                // Write out the content as a single object
+                                WriteContentObject(results[0], countRead, holder.PathInfo, currentContext);
                             }
-
-                            try
+                            else
                             {
-                                results = holder.Reader.Read(countToRead);
+                                // Write out the content as an array of objects
+                                WriteContentObject(results, countRead, holder.PathInfo, currentContext);
                             }
-                            catch (Exception e) // Catch-all OK. 3rd party callout
-                            {
-                                ProviderInvocationException providerException =
-                                    new(
-                                        "ProviderContentReadError",
-                                        SessionStateStrings.ProviderContentReadError,
-                                        holder.PathInfo.Provider,
-                                        holder.PathInfo.Path,
-                                        e);
-
-                                // Log a provider health event
-                                MshLog.LogProviderHealthEvent(
-                                    this.Context,
-                                    holder.PathInfo.Provider.Name,
-                                    providerException,
-                                    Severity.Warning);
-
-                                WriteError(new ErrorRecord(
-                                    providerException.ErrorRecord,
-                                    providerException));
-
-                                break;
-                            }
-
-                            if (results != null && results.Count > 0)
-                            {
-                                countRead += results.Count;
-                                if (ReadCount == 1)
-                                {
-                                    // Write out the content as a single object
-                                    WriteContentObject(results[0], countRead, holder.PathInfo, currentContext);
-                                }
-                                else
-                                {
-                                    // Write out the content as an array of objects
-                                    WriteContentObject(results, countRead, holder.PathInfo, currentContext);
-                                }
-                            }
-                        } while (results != null && results.Count > 0 && ((TotalCount < 0) || countRead < TotalCount));
-                    }
+                        }
+                    } while (results != null && results.Count > 0 && (TotalCount == -1 || countRead < TotalCount));
                 }
             }
             finally
             {
-                // close all the content readers
+                // Close all the content readers
 
                 CloseContent(contentStreams, false);
 
@@ -284,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var fsReader = holder.Reader as FileSystemContentReaderWriter;
             Dbg.Diagnostics.Assert(fsReader != null, "Tail is only supported for FileSystemContentReaderWriter");
-            var tailResultQueue = new Queue<object>();
+            Queue<object> tailResultQueue = new();
             IList results = null;
             ErrorRecord error = null;
 
@@ -327,7 +277,10 @@ namespace Microsoft.PowerShell.Commands
                     foreach (object entry in results)
                     {
                         if (tailResultQueue.Count == Tail)
+                        {
                             tailResultQueue.Dequeue();
+                        }
+
                         tailResultQueue.Enqueue(entry);
                     }
                 }
@@ -349,21 +302,25 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Write out the content as single object
                     while (tailResultQueue.Count > 0)
+                    {
                         WriteContentObject(tailResultQueue.Dequeue(), count++, holder.PathInfo, currentContext);
+                    }
                 }
                 else // ReadCount < Queue.Count
                 {
                     while (tailResultQueue.Count >= ReadCount)
                     {
-                        var outputList = new List<object>((int)ReadCount);
+                        List<object> outputList = new((int)ReadCount);
                         for (int idx = 0; idx < ReadCount; idx++, count++)
+                        {
                             outputList.Add(tailResultQueue.Dequeue());
+                        }
+
                         // Write out the content as an array of objects
                         WriteContentObject(outputList.ToArray(), count, holder.PathInfo, currentContext);
                     }
 
-                    int remainder = tailResultQueue.Count;
-                    if (remainder > 0)
+                    if (tailResultQueue.Count > 0)
                     {
                         // Write out the content as an array of objects
                         WriteContentObject(tailResultQueue.ToArray(), count, holder.PathInfo, currentContext);

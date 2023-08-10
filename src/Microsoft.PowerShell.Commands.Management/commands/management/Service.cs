@@ -2519,7 +2519,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Non-terminating errors occurring in the service noun commands.
     /// </summary>
-    [Serializable]
     public class ServiceCommandException : SystemException
     {
         #region ctors
@@ -2561,25 +2560,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info"></param>
         /// <param name="context"></param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8, hence this method is now marked as obsolete", DiagnosticId = "SYSLIB0051")]
         protected ServiceCommandException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-            ArgumentNullException.ThrowIfNull(info);
-
-            _serviceName = info.GetString("ServiceName");
+            throw new NotSupportedException();
         }
-        /// <summary>
-        /// Serializer.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            ArgumentNullException.ThrowIfNull(info);
 
-            base.GetObjectData(info, context);
-            info.AddValue("ServiceName", _serviceName);
-        }
         #endregion Serialization
 
         #region Properties

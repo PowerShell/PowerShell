@@ -9,7 +9,6 @@ namespace Microsoft.Management.UI.Internal
     /// The TextDoesNotContainFilterRule class evaluates a string item to
     /// check if it is does not contain the rule's value within it.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class TextDoesNotContainFilterRule : TextContainsFilterRule
     {
@@ -20,6 +19,20 @@ namespace Microsoft.Management.UI.Internal
         {
             this.DisplayName = UICultureResources.FilterRule_DoesNotContain;
             this.DefaultNullValueEvaluation = true;
+        }
+
+        /// <summary>
+        /// Creates a clone of the TextDoesNotContainFilterRule instance.
+        /// </summary>
+        /// <returns>
+        /// A clone of the TextDoesNotContainFilterRule instance.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            TextDoesNotContainFilterRule rule = new TextDoesNotContainFilterRule();
+            rule.Value = this.Value;
+            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            return rule;
         }
 
         /// <summary>

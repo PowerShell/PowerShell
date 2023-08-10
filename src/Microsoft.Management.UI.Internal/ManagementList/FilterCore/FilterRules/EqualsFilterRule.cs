@@ -13,7 +13,6 @@ namespace Microsoft.Management.UI.Internal
     /// <typeparam name="T">
     /// The generic parameter.
     /// </typeparam>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class EqualsFilterRule<T> : SingleValueComparableValueFilterRule<T> where T : IComparable
     {
@@ -23,6 +22,20 @@ namespace Microsoft.Management.UI.Internal
         public EqualsFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_Equals;
+        }
+
+        /// <summary>
+        /// Creates a new EqualsFilterRule that is a clone of the current instance.
+        /// </summary>
+        /// <returns>
+        /// A new EqualsFilterRule that is a clone of the current instance.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            EqualsFilterRule<T> rule = new EqualsFilterRule<T>();
+            rule.Value = this.Value;
+            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            return rule;
         }
 
         /// <summary>

@@ -9,7 +9,6 @@ namespace Microsoft.Management.UI.Internal
     /// The IsEmptyFilterRule evaluates an item to determine whether it
     /// is empty or not.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class IsEmptyFilterRule : FilterRule
     {
@@ -19,6 +18,18 @@ namespace Microsoft.Management.UI.Internal
         public IsEmptyFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_IsEmpty;
+        }
+
+        /// <summary>
+        /// Creates a clone of the IsEmptyFilterRule instance.
+        /// </summary>
+        /// <returns>
+        /// A clone of IsEmptyFilterRule instance.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            IsEmptyFilterRule rule = new IsEmptyFilterRule();
+            return rule;
         }
 
         /// <summary>

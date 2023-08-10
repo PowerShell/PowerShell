@@ -10,7 +10,6 @@ namespace Microsoft.Management.UI.Internal
     /// The TextContainsFilterRule class evaluates a string item to
     /// check if it is contains the rule's value within it.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class TextContainsFilterRule : TextFilterRule
     {
@@ -23,6 +22,20 @@ namespace Microsoft.Management.UI.Internal
         public TextContainsFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_Contains;
+        }
+
+        /// <summary>
+        /// Creates a clone of the TextContainsFilterRule instance.
+        /// </summary>
+        /// <returns>
+        /// Returns a clone of the TextContainsFilterRule instance.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            TextContainsFilterRule rule = new TextContainsFilterRule();
+            rule.Value = this.Value;
+            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
+            return rule;
         }
 
         /// <summary>

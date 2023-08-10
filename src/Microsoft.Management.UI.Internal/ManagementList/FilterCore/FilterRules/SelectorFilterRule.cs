@@ -9,7 +9,6 @@ namespace Microsoft.Management.UI.Internal
     /// <summary>
     /// The SelectorFilterRule represents a rule composed of other rules.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class SelectorFilterRule : FilterRule
     {
@@ -69,6 +68,23 @@ namespace Microsoft.Management.UI.Internal
             }
 
             return this.AvailableRules.SelectedValue.Evaluate(item);
+        }
+
+        /// <summary>
+        /// Creates a clone of the SelectorFilterRule instance.
+        /// </summary>
+        /// <returns>
+        /// Returns a clone of the SelectorFilterRule instance.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            SelectorFilterRule clone = new SelectorFilterRule();
+            clone.DisplayName = this.DisplayName;
+            clone.AvailableRules = this.AvailableRules;
+            clone.AvailableRules.SelectedValueChanged += clone.AvailableRules_SelectedValueChanged;
+            clone.AvailableRules.SelectedValue.EvaluationResultInvalidated += clone.SelectedValue_EvaluationResultInvalidated;
+
+            return clone;
         }
 
         /// <summary>

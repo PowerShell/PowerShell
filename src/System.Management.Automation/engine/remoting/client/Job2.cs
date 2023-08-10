@@ -2106,7 +2106,6 @@ namespace System.Management.Automation
     /// Container exception for jobs that can map errors and exceptions
     /// to specific lines in their input.
     /// </summary>
-    [Serializable]
     public class JobFailedException : SystemException
     {
         /// <summary>
@@ -2151,11 +2150,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializationInfo">Serialization info.</param>
         /// <param name="streamingContext">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected JobFailedException(SerializationInfo serializationInfo, StreamingContext streamingContext)
-            : base(serializationInfo, streamingContext)
         {
-            _reason = (Exception)serializationInfo.GetValue("Reason", typeof(Exception));
-            _displayScriptPosition = (ScriptExtent)serializationInfo.GetValue("DisplayScriptPosition", typeof(ScriptExtent));
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -2171,21 +2169,6 @@ namespace System.Management.Automation
         public ScriptExtent DisplayScriptPosition { get { return _displayScriptPosition; } }
 
         private readonly ScriptExtent _displayScriptPosition;
-
-        /// <summary>
-        /// Gets the information for serialization.
-        /// </summary>
-        /// <param name="info">The standard SerializationInfo.</param>
-        /// <param name="context">The standard StreaminContext.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            ArgumentNullException.ThrowIfNull(info);
-
-            base.GetObjectData(info, context);
-
-            info.AddValue("Reason", _reason);
-            info.AddValue("DisplayScriptPosition", _displayScriptPosition);
-        }
 
         /// <summary>
         /// Returns the reason for this exception.

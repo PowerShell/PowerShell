@@ -379,8 +379,8 @@ namespace System.Management.Automation
                 startTime.Kind == DateTimeKind.Utc,
                 "DateTime arithmetic should always be done in utc mode [to avoid problems when some operands are calculated right before and right after switching to /from a daylight saving time");
 
-            ArgumentOutOfRangeException.ThrowIfGreaterThan(now, startTime);
-            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(TimeSpan.Zero, expectedDuration);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(startTime, now);
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(expectedDuration, TimeSpan.Zero);
 
             /*
              * According to the spec of Checkpoint-Computer
@@ -505,7 +505,7 @@ namespace System.Management.Automation
             string activity = string.IsNullOrEmpty(Activity) ? " " : Activity;
 
             PSObject progressAsPSObject = RemotingEncoder.CreateEmptyPSObject();
-            
+
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_Activity, activity));
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_ActivityId, this.ActivityId));
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_StatusDescription, this.StatusDescription));
@@ -529,9 +529,10 @@ namespace System.Management.Automation
     enum ProgressRecordType
     {
         /// <summary>
+        /// <para>
         /// Operation just started or is not yet complete.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// A cmdlet can call WriteProgress with ProgressRecordType.Processing
         /// as many times as it wishes.  However, at the end of the operation,
         /// it should call once more with ProgressRecordType.Completed.
@@ -542,17 +543,20 @@ namespace System.Management.Automation
         /// of the same Id, the host will update that display.
         /// Finally, when the host receives a 'completed' record
         /// for that activity, it will remove the progress indicator.
-        /// </remarks>
+        /// </para>
+        /// </summary>
         Processing,
 
         /// <summary>
+        /// <para>
         /// Operation is complete.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// If a cmdlet uses WriteProgress, it should use
         /// ProgressRecordType.Completed exactly once, in the last call
         /// to WriteProgress.
-        /// </remarks>
+        /// </para>
+        /// </summary>
         Completed
     }
 }

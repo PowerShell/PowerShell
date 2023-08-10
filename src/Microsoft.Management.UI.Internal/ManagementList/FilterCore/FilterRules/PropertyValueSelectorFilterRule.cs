@@ -15,7 +15,6 @@ namespace Microsoft.Management.UI.Internal
     /// <typeparam name="T">
     /// The generic parameter.
     /// </typeparam>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class PropertyValueSelectorFilterRule<T> : SelectorFilterRule where T : IComparable
     {
@@ -119,6 +118,17 @@ namespace Microsoft.Management.UI.Internal
             }
 
             return this.AvailableRules.SelectedValue.Evaluate(propertyValue);
+        }
+
+        /// <summary>
+        /// Creates a clone of the PropertyValueSelectorFilterRule instance.
+        /// </summary>
+        /// <returns>
+        /// Returns a clone of the PropertyValueSelectorFilterRule instance.
+        /// </returns>
+        public override FilterRule Clone()
+        {
+            return new PropertyValueSelectorFilterRule<T>(this.PropertyName, this.DisplayName, this.AvailableRules.AvailableValues);
         }
 
         #endregion Public Methods

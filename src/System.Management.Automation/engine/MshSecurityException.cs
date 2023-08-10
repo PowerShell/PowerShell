@@ -8,7 +8,6 @@ namespace System.Management.Automation
     /// <summary>
     /// This is a wrapper for exception class SecurityException.
     /// </summary>
-    [Serializable]
     public class PSSecurityException : RuntimeException
     {
         #region ctor
@@ -34,19 +33,11 @@ namespace System.Management.Automation
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected PSSecurityException(SerializationInfo info,
                            StreamingContext context)
-            : base(info, context)
         {
-            _errorRecord = new ErrorRecord(
-                new ParentContainsErrorRecordException(this),
-                "UnauthorizedAccess",
-                ErrorCategory.SecurityError,
-                null);
-            _errorRecord.ErrorDetails = new ErrorDetails(SessionStateStrings.CanNotRun);
-            _message = _errorRecord.ErrorDetails.Message;
-            // no fields, nothing more to serialize
-            // no need for a GetObjectData implementation
+            throw new NotSupportedException();
         }
 
         /// <summary>
