@@ -120,7 +120,7 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
                 Enable-PSRemoting -SkipNetworkProfileCheck -ErrorAction Stop
             }
             catch {
-                Write-Verbose -Verbose ($_.Message)
+                Write-Verbose -Verbose "Enable-PSRemoting failed: $($_.Message)"
                 $global:PSDefaultParameterValues["it:skip"] = $true
                 return
             }
@@ -167,7 +167,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
                 Enable-PSRemoting -SkipNetworkProfileCheck -ErrorAction Stop
             }
             catch {
-                Write-Verbose -Verbose ($_.Message)
+                Write-Verbose -Verbose "Enable-PSRemoting failed: $($_.Message)"
                 $global:PSDefaultParameterValues["it:skip"] = $true
                 return
             }

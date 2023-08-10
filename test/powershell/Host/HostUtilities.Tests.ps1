@@ -37,10 +37,10 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAd
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        $pendingTest = (Test-IsWinWow64)
+        $skipTest = (Test-IsWinWow64) -or !$IsWindows
 
-        if ($pendingTest) {
-            $global:PSDefaultParameterValues["it:pending"] = $true
+        if ($skipTest) {
+            $global:PSDefaultParameterValues["it:skip"] = $true
             return
         }
 
@@ -58,7 +58,7 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAd
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    It "Method should successfully invoke command on remote runspace" -Skip:(!$IsWindows) {
+    It "Method should successfully invoke command on remote runspace" -Skip:$skipTest {
 
         $command = [System.Management.Automation.PSCommand]::new()
         $command.AddScript('"Hello!"')

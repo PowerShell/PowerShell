@@ -11,7 +11,15 @@ try
     $WarningPreference = "SilentlyContinue"
     # Skip all tests if can't write to $PSHOME as Register-PSSessionConfiguration writes to $PSHOME
     # or if the processor architecture is Arm64
-    $IsNotSkipped = ($IsWindows -and $IsCoreCLR -and (Test-IsElevated) -and (Test-CanWriteToPsHome) -and [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -ne [System.Runtime.InteropServices.Architecture]::Arm64)
+    $IsNotSkipped = (
+        $IsWindows -and
+        $IsCoreCLR -and
+        (Test-IsElevated) -and
+        (Test-CanWriteToPsHome) -and
+        -not (Test-IsWindowsArm64) -and
+        -not (Test-IsWinWow64)
+    )
+
     $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 
     #

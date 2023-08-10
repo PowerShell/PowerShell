@@ -126,8 +126,8 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOn
             $PSDefaultParameterValues["it:skip"] = $true
             return
         }
-        elseif (Test-IsWindowsArm64) {
-            Write-Verbose "remoting is not setup on ARM64, skipping tests" -Verbose
+        elseif ((Test-IsWindowsArm64) -or (Test-IsWinWow64)) {
+            Write-Verbose "remoting is not setup on ARM64 or x86, skipping tests" -Verbose
             $PSDefaultParameterValues["it:skip"] = $true
             return
         }
@@ -156,7 +156,7 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOn
 
     AfterAll {
 
-        if (!$IsWindows)
+        if (!$IsWindows -or (Test-IsWindowsArm64) -or (Test-IsWinWow64))
         {
             $global:PSDefaultParameterValues = $originalDefaultParameterValues
             return

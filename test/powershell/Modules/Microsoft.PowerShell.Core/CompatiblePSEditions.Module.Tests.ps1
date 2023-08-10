@@ -666,6 +666,11 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         }
 
         It "NoClobber WinCompat list in powershell.config is a Desktop-edition module" {
+            if (Test-IsWinWow64) {
+                Set-ItResult -Skipped -Because "This test is not applicable to WoW64."
+                return
+            }
+
             if (-not $desktopModuleToUse) {
                 throw 'Neither the "PersistentMemory" module nor the "RemoteDesktop" module is available. Please check and use a desktop-edition module that is under the System32 module path.'
             }
@@ -1481,6 +1486,11 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
     }
 
     It "Attempt to load a 'Desktop' edition module should fail because 'Export-PSSession' cannot be found" {
+        if (Test-IsWinWow64) {
+            Set-ItResult -Skipped -Because "This test is not applicable to WoW64."
+            return
+        }
+
         if (-not $desktopModuleToUse) {
             throw 'Neither the "PersistentMemory" module nor the "RemoteDesktop" module is available. Please check and use a desktop-edition module that is under the System32 module path.'
         }
