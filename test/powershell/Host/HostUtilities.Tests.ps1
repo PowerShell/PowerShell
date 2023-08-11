@@ -35,27 +35,20 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
 Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-
         $skipTest = (Test-IsWinWow64) -or !$IsWindows
 
         if ($skipTest) {
-            $global:PSDefaultParameterValues["it:skip"] = $true
             return
         }
 
-        if ($IsWindows) {
-            $script:remoteRunspace = New-RemoteRunspace
-        }
+        $script:remoteRunspace = New-RemoteRunspace
     }
 
     AfterAll {
-        if ($script:remoteRunspace -and -not $pendingTest)
+        if ($script:remoteRunspace)
         {
             $script:remoteRunspace.Dispose();
         }
-
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     It "Method should successfully invoke command on remote runspace" -Skip:$skipTest {

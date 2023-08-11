@@ -505,6 +505,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         @{ httpVersion = '2'}
     ) {
         param($httpVersion)
+
+        if(Test-IsWinServer2012R2 -and $httpVersion -eq '2') {
+            Set-ItResult -Skipped -Because "HTTP/2 is not supported on Windows Server 2012R2"
+            return
+        }
+
         # Operation options
         $uri = Get-WebListenerUrl -Test 'Get' -Https
         $command = "Invoke-WebRequest -Uri $uri -HttpVersion $httpVersion -SkipCertificateCheck"
@@ -2572,6 +2578,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         @{ httpVersion = '2'}
     ) {
         param($httpVersion)
+
+        if(Test-IsWinServer2012R2 -and $httpVersion -eq '2') {
+            Set-ItResult -Skipped -Because "HTTP/2 is not supported on Windows Server 2012R2"
+            return
+        }
+
         # Operation options
         $uri = Get-WebListenerUrl -Test 'Get' -Https
         $command = "Invoke-RestMethod -Uri $uri -HttpVersion $httpVersion -SkipCertificateCheck"
@@ -4468,10 +4480,9 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
 Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
         $unixSocket = Get-UnixSocketName
-        $skipTests = $false
+        $skipTests = (Test-IsWindows2016) -or (Test-IsWinServer2012R2)
 
-        if (Test-IsWindows2016) {
-            $skipTests = $true
+        if ($skipTests){
             return
         }
 
@@ -4488,7 +4499,7 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
 
     It "Execute Invoke-WebRequest with -UnixSocket" {
         if ($skipTest) {
-            Set-ItResult -Skipped -Becuase "Unix sockets are not supported on this platform."
+            Set-ItResult -Skipped -Because "Unix sockets are not supported on this platform."
         }
 
         $uri = Get-UnixSocketUri
@@ -4499,7 +4510,7 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
 
     It "Execute Invoke-RestMethod with -UnixSocket" {
         if ($skipTest) {
-            Set-ItResult -Skipped -Becuase "Unix sockets are not supported on this platform."
+            Set-ItResult -Skipped -Because "Unix sockets are not supported on this platform."
         }
 
         $uri = Get-UnixSocketUri

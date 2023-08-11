@@ -232,6 +232,10 @@ Describe "Get-ChildItem" -Tags "CI" {
         It 'Works with Windows volume paths' -Skip:(!$IsWindows) {
             $volume = (Get-Volume -DriveLetter $env:SystemDrive[0]).Path
             $items = Get-ChildItem -LiteralPath "${volume}Windows"
+            Write-Verbose -Verbose "Trying files in '${volume}Windows'"
+            if (-not $items) {
+                Write-Verbose -Verbose "`$items is null!!"
+            }
             $items[0].Parent | Should -BeExactly "${volume}Windows"
             $items | Should -HaveCount (Get-ChildItem $env:SystemRoot).Count
         }
