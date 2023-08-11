@@ -4469,6 +4469,12 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
         $unixSocket = Get-UnixSocketName
         $skipTests = $false
+
+        if (Test-IsWindows2016) {
+            $skipTests = $true
+            return
+        }
+
         try {
             $WebListener = Start-UnixSocket $unixSocket
         }

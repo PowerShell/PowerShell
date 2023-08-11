@@ -456,3 +456,12 @@ function Test-IsWinServer2012R2
     $osInfo = [System.Environment]::OSVersion.Version
     return ($osInfo.Major -eq 6 -and $osInfo.Minor -eq 3)
 }
+
+function Test-IsWindows2016 {
+    if (-not $IsWindows) {
+        return $false
+    }
+
+    $osInfo = [System.Environment]::OSVersion.Version
+    return ($osInfo.Major -eq 10 -and $osInfo.Minor -eq 0 -and $osInfo.Build -eq 14393)
+}
