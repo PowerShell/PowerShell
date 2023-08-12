@@ -13,6 +13,7 @@ using System.Management.Automation.Security;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace System.Management.Automation.Internal
 {
@@ -2358,6 +2359,98 @@ namespace System.Management.Automation
         ///   b) The argument is null.
         /// </summary>
         public virtual bool TransformNullOptionalParameters { get => true; }
+    }
+
+    /// <summary>
+    /// Transforms an argument.
+    /// </summary>
+    public class ArgumentTransform : ArgumentTransformationAttribute
+    {
+
+        /// <summary>
+        /// Creates a Argument Transform
+        /// </summary>
+        /// <param name="propertyName">The name of the property</param>        
+        /// <param name="transformScript">A ScriptBlock to transform the value</param>
+        public ArgumentTransform(string propertyName, ScriptBlock transformScript) {
+            this.PropertyName = propertyName;
+            this.TransformScript = transformScript;
+        }
+
+        /// <summary>
+        /// Creates a Argument Transform
+        /// </summary>
+        /// <param name="propertyName">The name of the property</param>        
+        public ArgumentTransform(string propertyName) {
+            this.PropertyName = propertyName;
+        }
+
+        /// <summary>
+        /// Creates a Argument Transform
+        /// </summary>
+        /// <param name="transform">A ScriptBlock to transform the value</param>
+        public ArgumentTransform(ScriptBlock transform) {
+            this.TransformScript = transform;            
+        }
+
+        /// <summary>
+        /// The Name of the Property that will be transformed.
+        /// If this is empty, the original value will be transformed.
+        /// </summary>
+        public string PropertyName {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// A ScriptBlock to transform the value.
+        /// The output of this script block will become the argument.
+        /// </summary>
+        public ScriptBlock TransformScript {
+            get;
+            set;
+        }        
+
+        /// <inheritdoc/>
+        public override object Transform(EngineIntrinsics engineIntrinsics, object inputData) {
+            object valueToConvert = inputData;
+            if (!String.IsNullOrEmpty(this.PropertyName))
+            {
+                if (inputData != null)
+                {                    
+                    if (inputData is PSObject) 
+                    {
+                        var psProperty = ((PSObject)inputData).Properties[this.PropertyName];
+                        if (psProperty != null) {
+                            valueToConvert = psProperty.Value;
+                        }
+                    }
+                    else
+                    {
+                        PropertyInfo propertyExists = inputData.GetType().GetProperty(this.PropertyName, (
+                            BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase
+                        ));                        
+                        if (propertyExists != null)
+                        {                            
+                            valueToConvert = propertyExists.GetValue(inputData);
+                        }
+                    }                    
+                }
+            }
+                    
+            if (this.TransformScript != null)
+            {
+                valueToConvert = this.TransformScript.DoInvokeReturnAsIs(
+                    useLocalScope: true,
+                    errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
+                    dollarUnder: LanguagePrimitives.AsPSObjectOrNull(valueToConvert),
+                    input: AutomationNull.Value,
+                    scriptThis: this,
+                    args: new object[] { inputData });
+            }
+
+            return valueToConvert;
+        }
     }
 
     #endregion Data Generation Attributes
