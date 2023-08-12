@@ -42,37 +42,20 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("TimeoutSec")]
-        [ValidateRangeAttribute(-1, int.MaxValue)]
-        public int Timeout
+        [ValidateRangeAttribute(-1, double.MaxValue)]
+        [ArgumentTransform("TotalSeconds")]
+        public double Timeout
         {
             get
             {
-                return (int)_timeoutTimespan.TotalSeconds;
+                return _timeoutTimespan.TotalSeconds;
             }
 
             set
             {
                 _timeoutTimespan = TimeSpan.FromSeconds(value);
             }
-        }
-
-        /// <summary>
-        /// If timespan is specified, the cmdlet will only wait for this timespan.
-        /// Negative values mean never timeout.
-        /// </summary>
-        [Parameter]        
-        public TimeSpan TimeSpan
-        {
-            get
-            {
-                return _timeoutTimespan;
-            }
-
-            set
-            {
-                _timeoutTimespan = value;
-            }
-        }
+        }    
 
         private TimeSpan _timeoutTimespan = TimeSpan.FromSeconds(-1); // -1: infinite, this default is to wait for as long as it takes.
 
@@ -106,9 +89,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if ((DateTime.UtcNow - startTime) > _timeoutTimespan)
                         break;
-                }
 
-                received = _eventArrived.WaitOne((int)(Math.Abs(_timeoutTimespan.TotalMilliseconds) / 100));
+                    received = _eventArrived.WaitOne((int)(Math.Abs(_timeoutTimespan.TotalMilliseconds) / 100));
+
+                } else {
+
+                    received = _eventArrived.WaitOne();
+
+                }                
 
                 eventManager.ProcessPendingActions();
             }
