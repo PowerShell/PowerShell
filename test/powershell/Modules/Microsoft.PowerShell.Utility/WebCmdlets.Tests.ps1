@@ -4487,19 +4487,19 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
         }
 
         try {
-            $WebListener = Start-UnixSocket $unixSocket
+            $WebListener = Start-UnixSocket $unixSocket -ErrorAction Stop
         }
         catch {
-            if ($_.Exception.Message -match "Unix sockets are not supported on this platform.") {
-                $WebListener = $null
-                $skipTests = $true
-            }
+            Write-Verbose -Verbose -Message "Exception: $_"
+            $WebListener = $null
+            $skipTests = $true
         }
     }
 
     It "Execute Invoke-WebRequest with -UnixSocket" {
         if ($skipTest) {
             Set-ItResult -Skipped -Because "Unix sockets are not supported on this platform."
+            return
         }
 
         $uri = Get-UnixSocketUri
@@ -4511,6 +4511,7 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
     It "Execute Invoke-RestMethod with -UnixSocket" {
         if ($skipTest) {
             Set-ItResult -Skipped -Because "Unix sockets are not supported on this platform."
+            return
         }
 
         $uri = Get-UnixSocketUri

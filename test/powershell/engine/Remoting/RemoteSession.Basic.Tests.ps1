@@ -70,7 +70,7 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
             Enable-PSRemoting -SkipNetworkProfileCheck -ErrorAction Stop
         }
         catch {
-            Write-Verbose -Verbose ($_.Message)
+            Write-Verbose -Verbose "exception: $_"
             Push-DefaultParameterValueStack @{ "it:skip" = $true }
             $skipTest = $true
             return

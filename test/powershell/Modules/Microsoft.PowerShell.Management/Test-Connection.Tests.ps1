@@ -265,7 +265,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
 
             $platform = Get-PlatformInfo
 
-            if ($platform.platform -match 'suse' -and $platform.Version -match '15') {
+            if ($platform.platform -match 'suse') {
                 Set-ItResult -Skipped -Because "MTUSizeDetect is not supported on OpenSUSE 15"
                 return
             }
