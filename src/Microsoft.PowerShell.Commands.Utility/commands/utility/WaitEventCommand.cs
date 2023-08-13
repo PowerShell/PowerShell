@@ -92,7 +92,9 @@ namespace Microsoft.PowerShell.Commands
 
                     received = _eventArrived.WaitOne((int)(Math.Abs(_timeoutTimespan.TotalMilliseconds) / 100));
 
-                } else {
+                }
+                else
+                {
 
                     received = _eventArrived.WaitOne();
 
