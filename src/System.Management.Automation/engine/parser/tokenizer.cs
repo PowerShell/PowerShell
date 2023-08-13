@@ -2577,15 +2577,19 @@ namespace System.Management.Automation.Language
 
         private class LineInfo
         {
-            internal int linestartIndex;
+            // This says where in the stringbuilder the line starts so we can trim whitespace.
+            internal int lineStartIndex;
+            // This says where in the overall script the line started so we can report errors accurately.
+            internal int scriptLineStartIndex;
             internal int whitespaceCount;
-            internal int newlineCharCount;
+            internal bool whitespaceOnly;
 
-            internal LineInfo(int linestartIndex, int newlineCharCount)
+            internal LineInfo(int lineStartIndex, int scriptLineStartIndex, int whitespaceCount, bool whitespaceOnly)
             {
-                this.linestartIndex = linestartIndex;
-                this.whitespaceCount = 0;
-                this.newlineCharCount = newlineCharCount;
+                this.lineStartIndex = lineStartIndex;
+                this.scriptLineStartIndex = scriptLineStartIndex;
+                this.whitespaceCount = whitespaceCount;
+                this.whitespaceOnly = whitespaceOnly;
             }
         }
         
@@ -2598,23 +2602,76 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private Token ScanHereString(bool expandableString, int tokenStartIndex, int leadingAtCharCount)
+        private Token ScanHereString(bool expandableString)
         {
-            char currentChar;
+            // On entry, we've seen "@'". Remember the position in case we reach the end of file and want
+            // to use this position as the error position.
+            int tokenStartIndex = _currentIndex - 2;
+
+            // Count the quotes so we know what the footer should look like.
+            int headerQuoteCount = 1;
+            char currentChar = GetChar();
+            while ((expandableString && currentChar.IsDoubleQuote())
+                || (!expandableString && currentChar.IsSingleQuote()))
+            {
+                headerQuoteCount++;
+                currentChar = GetChar();
+            }
+
+            // Ignore whitespace after header
+            while (currentChar.IsWhitespace())
+            {
+                currentChar = GetChar();
+            }
+
+            // Return early if the required line break after the header is missing.
+            if (currentChar == '\r' && PeekChar() == '\n')
+            {
+                SkipChar();
+            }
+            else if (currentChar != '\n')
+            {
+                if (currentChar == '\0' && AtEof())
+                {
+                    UngetChar();
+                    currentChar = expandableString ? '"' : '\'';
+                    ReportIncompleteInput(tokenStartIndex,
+                        nameof(ParserStrings.TerminatorExpectedAtEndOfString),
+                        ParserStrings.TerminatorExpectedAtEndOfString,
+                        string.Concat(new string(currentChar, headerQuoteCount), '@'));
+                }
+                else
+                {
+                    UngetChar();
+                    ReportError(_currentIndex,
+                            nameof(ParserStrings.UnexpectedCharactersAfterHereStringHeader),
+                            ParserStrings.UnexpectedCharactersAfterHereStringHeader);
+                }
+
+                if (expandableString)
+                {
+                    return NewStringExpandableToken(string.Empty, string.Empty, TokenKind.HereStringExpandable, null, TokenFlags.TokenInError);
+                }
+                else
+                {
+                    return NewStringLiteralToken(string.Empty, TokenKind.HereStringLiteral, TokenFlags.TokenInError);
+                }
+            }
+
             TokenFlags flags = TokenFlags.None;
-            var endSequenceBuffer = new char[leadingAtCharCount + 1];
             int lastFooterOffset = -1;
-            int lowestWhitespaceCount = -1;
             StringBuilder sb = GetStringBuilder();
-            List<LineInfo> lineInfoList = new List<LineInfo>() { new LineInfo(0, -1) };
+            List<LineInfo> lineInfoList = new();
             StringBuilder formatSb;
             List<LineInfo> formatLineInfoList;
             List<Token> nestedTokens;
+            bool skipNewChar;
+            int newLineCharCount = 0;
 
             if (expandableString)
             {
                 formatSb = GetStringBuilder();
-                formatLineInfoList = new List<LineInfo>() { new LineInfo(0, -1) };
+                formatLineInfoList = new List<LineInfo>();
                 nestedTokens = new List<Token>();
             }
             else
@@ -2624,37 +2681,39 @@ namespace System.Management.Automation.Language
                 nestedTokens = null;
             }
 
+            void ProcessStartOfNewLine()
+            {
+                // Called after every line break to count leading whitespaces and save that info along with line starting position.
+                skipNewChar = true;
+                int lineStartIndex = sb.Length;
+                while (true)
+                {
+                    currentChar = GetChar();
+                    if (!currentChar.IsWhitespace())
+                    {
+                        break;
+                    }
+
+                    AppendCharToHereStringBuilders(expandableString, currentChar, sb, formatSb);
+                }
+
+                int whitespaceCount = sb.Length - lineStartIndex;
+                int scriptLineIndex = _currentIndex - whitespaceCount - 1;
+                bool whitespaceOnly = currentChar == '\n' || (currentChar == '\r' && PeekChar() == '\n');
+                lineInfoList.Add(new LineInfo(lineStartIndex, scriptLineIndex, whitespaceCount, whitespaceOnly));
+                if (expandableString)
+                {
+                    lineStartIndex = formatSb.Length - whitespaceCount;
+                    formatLineInfoList.Add(new LineInfo(lineStartIndex, scriptLineIndex, whitespaceCount, whitespaceOnly));
+                }
+            }
+
+            ProcessStartOfNewLine();
             while (true)
             {
-                if (sb.Length == lineInfoList[^1].linestartIndex)
+                if (skipNewChar)
                 {
-                    // This is at the start of a new line, save the leading whitespace count for this line
-                    while (true)
-                    {
-                        currentChar = GetChar();
-                        if (!currentChar.IsWhitespace())
-                        {
-                            break;
-                        }
-                        AppendCharToHereStringBuilders(expandableString, currentChar, sb, formatSb);
-                    }
-
-                    int whitespaceCount = sb.Length - lineInfoList[^1].linestartIndex;
-                    if (whitespaceCount > 0)
-                    {
-                        lineInfoList[^1].whitespaceCount = whitespaceCount;
-                        if (expandableString)
-                        {
-                            formatLineInfoList[^1].whitespaceCount = whitespaceCount;
-                        }
-
-                        // Save the lowest whitespace count so indented multi-line strings can be trimmed
-                        // Skip first line because it's the header line
-                        if (lineInfoList.Count > 1 && (lowestWhitespaceCount == -1 || whitespaceCount < lowestWhitespaceCount))
-                        {
-                            lowestWhitespaceCount = whitespaceCount;
-                        }
-                    }
+                    skipNewChar = false;
                 }
                 else
                 {
@@ -2695,62 +2754,47 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                if (currentChar is '\r' or '\n')
+                if (currentChar == '\r' && PeekChar() == '\n')
                 {
-                    int newlineCharCount = 1;
+                    SkipChar();
+                    newLineCharCount = 2;
                     AppendCharToHereStringBuilders(expandableString, currentChar, sb, formatSb);
-                    if (currentChar == '\r' && PeekChar() == '\n')
-                    {
-                        newlineCharCount++;
-                        SkipChar();
-                        AppendCharToHereStringBuilders(expandableString, '\n', sb, formatSb);
-                    }
-                    lineInfoList.Add(new LineInfo(sb.Length, newlineCharCount));
-                    if (expandableString)
-                    {
-                        formatLineInfoList.Add(new LineInfo(formatSb.Length, newlineCharCount));
-                    }
+                    AppendCharToHereStringBuilders(expandableString, '\n', sb, formatSb);
+                    ProcessStartOfNewLine();
+                }
+                else if (currentChar == '\n')
+                {
+                    newLineCharCount = 1;
+                    AppendCharToHereStringBuilders(expandableString, currentChar, sb, formatSb);
+                    ProcessStartOfNewLine();
                 }
                 else if ((expandableString && currentChar.IsDoubleQuote())
                     || (!expandableString && currentChar.IsSingleQuote()))
                 {
-                    endSequenceBuffer[0] = currentChar;
-                    currentChar = GetChar();
-                    bool completedSequence = true;
-                    for (int i = 1; i < endSequenceBuffer.Length; i++)
+                    int foundQuotes = 0;
+                    while (foundQuotes < headerQuoteCount)
                     {
-                        if (currentChar != '@')
-                        {
-                            completedSequence = false;
-                            _ = sb.Append(endSequenceBuffer, 0, i);
-                            if (expandableString)
-                            {
-                                _ = formatSb.Append(endSequenceBuffer, 0, i);
-                            }
-                            Array.Clear(endSequenceBuffer);
-                            break;
-                        }
-                        endSequenceBuffer[i] = currentChar;
+                        AppendCharToHereStringBuilders(expandableString, currentChar, sb, formatSb);
+                        foundQuotes++;
                         currentChar = GetChar();
-                    }
-
-                    UngetChar();
-                    if (completedSequence)
-                    {
-                        lastFooterOffset = _currentIndex - leadingAtCharCount - 1;
-                        // We've found a valid ending sequence, break unless it's indented and it looks like the original here-string syntax
-                        if (!(leadingAtCharCount == 1 && lineInfoList.Count > 1 && lineInfoList[^1].linestartIndex != sb.Length))
+                        if (((expandableString && !currentChar.IsDoubleQuote())
+                            || (!expandableString && !currentChar.IsSingleQuote())))
                         {
                             break;
                         }
-
-                        _ = sb.Append(endSequenceBuffer);
-                        if (expandableString)
-                        {
-                            _ = formatSb.Append(endSequenceBuffer);
-                        }
-                        Array.Clear(endSequenceBuffer);
                     }
+
+                    if (foundQuotes == headerQuoteCount && currentChar == '@')
+                    {
+                        lastFooterOffset = _currentIndex - headerQuoteCount - 1;
+                        if (headerQuoteCount > 1 || lineInfoList[^1].scriptLineStartIndex == lastFooterOffset)
+                        {
+                            // We've found a valid footer, break unless it's the original here-string syntax and there are characters before the footer.
+                            break;
+                        }
+                    }
+
+                    skipNewChar = true;
                 }
                 else if (currentChar != '\0' || !AtEof())
                 {
@@ -2766,97 +2810,86 @@ namespace System.Management.Automation.Language
 
             if (flags == TokenFlags.TokenInError)
             {
-                if (lastFooterOffset != -1)
-                {
-                    // This is a legacy here-string with illegal characters on the footer line
-                    ReportIncompleteInput(lastFooterOffset,
-                        nameof(ParserStrings.CharacterBeforeHereStringFooter),
-                        ParserStrings.CharacterBeforeHereStringFooter);
-                }
-                else
+                if (lastFooterOffset == -1)
                 {
                     // No footer line was found
                     ReportIncompleteInput(tokenStartIndex,
                         nameof(ParserStrings.TerminatorExpectedAtEndOfString),
                         ParserStrings.TerminatorExpectedAtEndOfString,
-                        expandableString ? $"\"${new string('@', leadingAtCharCount)}" : $"'${new string('@', leadingAtCharCount)}");
+                        expandableString
+                        ? new string('"', headerQuoteCount) + '@'
+                        : new string('\'', headerQuoteCount) + '@');
                 }
-            }
-            else
-            {
-                if (lineInfoList.Count > 1)
+                else
                 {
-                    if (lineInfoList[1].linestartIndex != lineInfoList[1].newlineCharCount + lineInfoList[0].whitespaceCount)
-                    {
-                        // There are non-whitespace characters on the header liner
-                        flags = TokenFlags.TokenInError;
-                        ReportError(tokenStartIndex + 1 + leadingAtCharCount + lineInfoList[0].whitespaceCount,
-                            nameof(ParserStrings.UnexpectedCharactersAfterHereStringHeader),
-                            ParserStrings.UnexpectedCharactersAfterHereStringHeader);
-                    }
-
-                    if (lineInfoList[^1].linestartIndex + lineInfoList[^1].whitespaceCount != sb.Length)
-                    {
-                        // There are non-whitespace characters on the footer line
-                        flags = TokenFlags.TokenInError;
-                        ReportIncompleteInput(lastFooterOffset,
-                            nameof(ParserStrings.NonWhitespaceCharacterBeforeHereStringFooter),
-                            ParserStrings.NonWhitespaceCharacterBeforeHereStringFooter);
-                    }
+                    // This is a legacy here-string with characters before the footer on the footer line
+                    ReportIncompleteInput(lastFooterOffset,
+                        nameof(ParserStrings.CharacterBeforeHereStringFooter),
+                        ParserStrings.CharacterBeforeHereStringFooter);
                 }
             }
 
-            if (lineInfoList.Count > 1 && flags != TokenFlags.TokenInError)
+            if (flags != TokenFlags.TokenInError && lastFooterOffset != -1)
             {
-                if (lineInfoList[^1].whitespaceCount < lowestWhitespaceCount)
+                LineInfo footerLine = lineInfoList[^1];
+                if (footerLine.lineStartIndex + footerLine.whitespaceCount != sb.Length - headerQuoteCount)
                 {
-                    lowestWhitespaceCount = lineInfoList[^1].whitespaceCount;
+                    // There are non-whitespace characters on the footer line
+                    flags = TokenFlags.TokenInError;
+                    ReportIncompleteInput(lastFooterOffset,
+                        nameof(ParserStrings.NonWhitespaceCharacterBeforeHereStringFooter),
+                        ParserStrings.NonWhitespaceCharacterBeforeHereStringFooter);
                 }
 
-                int whitespacesRemoved = 0;
-                if (lowestWhitespaceCount > 0)
+                if (flags != TokenFlags.TokenInError)
                 {
-                    // Remove leading whitespaces, except for the first line because it's the header
-                    for (int i = 1; i < lineInfoList.Count - 1; i++)
-                    {
-                        if (lineInfoList[i].whitespaceCount >= lowestWhitespaceCount)
-                        {
-                            _ = sb.Remove(lineInfoList[i].linestartIndex - whitespacesRemoved, lowestWhitespaceCount);
-                            if (expandableString)
-                            {
-                                _ = formatSb.Remove(formatLineInfoList[i].linestartIndex - whitespacesRemoved, lowestWhitespaceCount);
-                            }
-                            whitespacesRemoved += lowestWhitespaceCount;
-                        }
-                    }
-                }
-
-                // Remove header line
-                _ = sb.Remove(0, lineInfoList[1].linestartIndex);
-                if (expandableString)
-                {
-                    _ = formatSb.Remove(0, formatLineInfoList[1].linestartIndex);
-                }
-
-                // Remove footer line
-                if (sb.Length > 0)
-                {
-                    int removeIndex = lineInfoList[^1].linestartIndex - lineInfoList[^1].newlineCharCount - whitespacesRemoved;
-                    if (lineInfoList.Count > 2)
-                    {
-                        removeIndex -= lineInfoList[1].linestartIndex;
-                    }
-                    _ = sb.Remove(removeIndex, sb.Length - removeIndex);
-
+                    // Remove the footer line from the string content
+                    sb.Length = footerLine.lineStartIndex - newLineCharCount;
                     if (expandableString)
                     {
-                        removeIndex = formatLineInfoList[^1].linestartIndex - formatLineInfoList[^1].newlineCharCount - whitespacesRemoved;
-                        if (formatLineInfoList.Count > 2)
-                        {
-                            removeIndex -= formatLineInfoList[1].linestartIndex;
-                        }
+                        formatSb.Length = formatLineInfoList[^1].lineStartIndex - newLineCharCount;
+                    }
 
-                        _ = formatSb.Remove(removeIndex, formatSb.Length - removeIndex);
+                    if (footerLine.whitespaceCount > 0)
+                    {
+                        // Trim leading whitespaces and report errors for lines with missing whitespace
+                        int trimmedWhitespaces = 0;
+                        for (int i = 0; i < lineInfoList.Count - 1; i++)
+                        {
+                            LineInfo line = lineInfoList[i];
+                            int whitespacesToRemove = footerLine.whitespaceCount;
+                            if (line.whitespaceCount < whitespacesToRemove)
+                            {
+                                if (line.whitespaceOnly)
+                                {
+                                    if (line.whitespaceCount == 0)
+                                    {
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        whitespacesToRemove = line.whitespaceCount;
+                                    }
+                                }
+                                else
+                                {
+                                    flags = TokenFlags.TokenInError;
+                                    var errorExtent = NewScriptExtent(line.scriptLineStartIndex, line.scriptLineStartIndex + line.whitespaceCount);
+                                    ReportError(errorExtent,
+                                        nameof(ParserStrings.MissingIndentationInHereString),
+                                        ParserStrings.MissingIndentationInHereString);
+                                    continue;
+                                }
+                            }
+
+                            _ = sb.Remove(line.lineStartIndex - trimmedWhitespaces, whitespacesToRemove);
+                            if (expandableString)
+                            {
+                                _ = formatSb.Remove(formatLineInfoList[i].lineStartIndex - trimmedWhitespaces, whitespacesToRemove);
+                            }
+
+                            trimmedWhitespaces += whitespacesToRemove;
+                        }
                     }
                 }
             }
@@ -4658,35 +4691,14 @@ namespace System.Management.Automation.Language
                         return NewToken(TokenKind.AtParen);
                     }
 
-                    if (c1 == '@' || c1.IsSingleQuote() || c1.IsDoubleQuote())
+                    if (c1.IsSingleQuote())
                     {
-                        int tokenStartIndex = _currentIndex - 2;
-                        int leadingAtCharCount = 1;
-                        while (c1 == '@')
-                        {
-                            leadingAtCharCount++;
-                            c1 = GetChar();
-                        }
+                        return ScanHereString(expandableString: false);
+                    }
 
-                        bool expandableHereString;
-                        if (c1.IsSingleQuote())
-                        {
-                            expandableHereString = false;
-                        }
-                        else if (c1.IsDoubleQuote())
-                        {
-                            expandableHereString = true;
-                        }
-                        else
-                        {
-                            UngetChar();
-                            ReportError(new InternalScriptExtent(_positionHelper, tokenStartIndex, _currentIndex),
-                                nameof(ParserStrings.MissingQuotationMark),
-                                ParserStrings.MissingQuotationMark);
-                            return NewToken(TokenKind.Unknown);
-                        }
-
-                        return ScanHereString(expandableHereString, tokenStartIndex, leadingAtCharCount);
+                    if (c1.IsDoubleQuote())
+                    {
+                        return ScanHereString(expandableString: true);
                     }
 
                     UngetChar();

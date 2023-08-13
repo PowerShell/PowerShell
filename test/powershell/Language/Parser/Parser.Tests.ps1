@@ -1287,6 +1287,10 @@ foo``u{2195}abc
         }
     }
 
+    It "A here string must have one line (line 3266)" {
+        { ExecuteCommand "@`"`"@" } | Should -Throw -ErrorId "ParseException"
+    }
+
     It 'This test will call a cmdlet that returns an array and assigns it to a variable.  Then it will concatenate this array with itself and check that what results is an array of double the size of the original. (line 3148)' {
         $result = ExecuteCommand '$list=$(testcmd-parserBVT -ReturnType "array"); $list = $list + $list;$list.length'
         $result | Should -Be 6
@@ -1294,43 +1298,33 @@ foo``u{2195}abc
 
     It '<Intent>' -TestCases @(
         @{
-            Intent     = 'Should successfully parse a single line here-string with just one @ on each end'
-            Expected   = "Hello world"
-            TestString = "@'Hello world'@"
-        }
-        @{
-            Intent     = 'Should successfully parse a single line here-string with inner here-string'
-            Expected   = "@'Hello world'@"
-            TestString = "@@'@'Hello world'@'@@"
-        }
-        @{
-            Intent     = 'Should remove indentation from a multi-line herestring with more than one @ on each end'
+            Intent     = 'Should remove indentation from a here string with multiple quotes'
             Expected   = "Hello"
             TestString = @"
-    @@'
+    @''
     Hello
-    '@@
+    ''@
 "@
         }
         @{
-            Intent     = 'Should only remove as much indentation as the shortest line allows from a multi-line herestring with more than one @ on each end'
+            Intent     = 'Should only remove as much indentation as the footer line has'
             Expected   = " Hello","World" -join [System.Environment]::NewLine
             TestString = @"
-    @@'
+    @''
      Hello
     World
-    '@@
+    ''@
 "@
         }
         @{
-            Intent     = 'Should ignore completely empty lines when removing indentation from herestring'
+            Intent     = 'Should ignore empty lines when removing indentation from herestring'
             Expected   = " Hello","","World" -join [System.Environment]::NewLine
             TestString = @"
-    @@'
+    @''
      Hello
 
     World
-    '@@
+    ''@
 "@
         }
     ) -Test {
@@ -1340,7 +1334,7 @@ foo``u{2195}abc
 
     It 'Should throw <Intent>' -TestCases @(
         @{
-            Intent     = 'when there are any characters in front of here string footer with single @'
+            Intent     = 'when there are any characters in front of here string footer with one quote'
             Expected   = "CharacterBeforeHereStringFooter"
             TestString = @"
 @'
@@ -1349,7 +1343,7 @@ a'@
 "@
         }
         @{
-            Intent     = 'when there are whitespace characters in front of here string footer with single @'
+            Intent     = 'when there are whitespace characters in front of here string footer with one quote'
             Expected   = "CharacterBeforeHereStringFooter"
             TestString = @"
 @'
@@ -1358,17 +1352,17 @@ Hello
 "@
         }
         @{
-            Intent     = 'when there are non white-space characters in front of here string footer with multiple @'
+            Intent     = 'when there are non white-space characters in front of here string footer with multiple quotes'
             Expected   = "NonWhitespaceCharacterBeforeHereStringFooter"
             TestString = @"
-@@'
+@''
 Hello
-a'@@
+a''@
 "@
         }
         @{
             Intent     = 'when there are non white-space characters in header of here string'
-            Expected   = "UnexpectedCharactersAfterHereStringHeader"
+            Expected   = @('UnexpectedCharactersAfterHereStringHeader', 'UnexpectedToken', 'TerminatorExpectedAtEndOfString')
             TestString = @"
 @' Hello
 World

@@ -579,6 +579,9 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="NonWhitespaceCharacterBeforeHereStringFooter" xml:space="preserve">
     <value>Only white space characters are allowed before the string terminator.</value>
   </data>
+  <data name="MissingIndentationInHereString" xml:space="preserve">
+    <value>Line is missing indentation. Add whitespace to match the indentation of the footer line.</value>
+  </data>
   <data name="EndSquareBracketExpectedAtEndOfType" xml:space="preserve">
     <value>Missing ] at end of type token.</value>
   </data>
@@ -1333,9 +1336,6 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="InvokingCleanBlockNotSupported" xml:space="preserve">
     <value>Directly invoking the 'clean' block of a script block is not supported.</value>
-  </data>
-  <data name="MissingQuotationMark" xml:space="preserve">
-    <value>The here string header is missing a single or double quote mark.</value>
   </data>
   <data name="WDACParserConfigKeywordLogTitle" xml:space="preserve">
     <value>Parser Configuration Keyword</value>
