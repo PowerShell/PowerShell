@@ -6,7 +6,6 @@ Import-Module HelpersCommon
 try
 {
     # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
-    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
     $originalWarningPreference = $WarningPreference
     $WarningPreference = "SilentlyContinue"
     # Skip all tests if can't write to $PSHOME as Register-PSSessionConfiguration writes to $PSHOME
@@ -20,8 +19,7 @@ try
         -not (Test-IsWinWow64)
     )
 
-    $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
-
+    Push-DefaultParameterValueStack @{ "it:skip" = ! $IsNotSkipped }
     #
     # TODO: Enable-PSRemoting should be performed at a higher set up for all tests.
     # Tests whether PowerShell remoting is enabled for this instance of PowerShell.
@@ -77,29 +75,20 @@ try
                     # Register new session configuration
                     function RegisterNewConfiguration {
                         param (
-
-                            [string]
-                            $Name,
-
-                            [string]
-                            $ConfigFilePath,
-
-                            [switch]
-                            $Enabled
+                            [string] $Name,
+                            [string] $ConfigFilePath,
+                            [switch] $Enabled
                         )
 
                         $TestConfig = Get-PSSessionConfiguration -Name $Name -ErrorAction SilentlyContinue
-                        if($TestConfig)
-                        {
+                        if($TestConfig) {
                             $null = Unregister-PSSessionConfiguration -Name $Name
                         }
 
-                        if($Enabled)
-                        {
+                        if($Enabled) {
                             $null = Register-PSSessionConfiguration -Name $Name -Path $ConfigFilePath
                         }
-                        else
-                        {
+                        else {
                             $null = Register-PSSessionConfiguration -Name $Name -Path $ConfigFilePath -AccessMode Disabled
                         }
                     }
@@ -107,9 +96,7 @@ try
                     # Unregister session configuration
                     function UnregisterPSSessionConfiguration{
                         param (
-
-                            [string]
-                            $Name
+                            [string] $Name
                         )
 
                         Unregister-PSSessionConfiguration -Name $Name -Force -NoServiceRestart -ErrorAction SilentlyContinue
@@ -119,8 +106,7 @@ try
                     function CreateTestConfigFile {
 
                         $TestConfigFileLoc = Join-Path $TestDrive "Remoting"
-                        if(-not (Test-path $TestConfigFileLoc))
-                        {
+                        if(-not (Test-path $TestConfigFileLoc)) {
                             $null = New-Item -Path $TestConfigFileLoc -ItemType Directory -Force -ErrorAction Stop
                         }
 
@@ -173,24 +159,12 @@ try
 
                 function VerifyEnableAndDisablePSSessionConfig {
                     param (
-                        [string]
-                        $SessionConfigName,
-
-                        [string]
-                        $ConfigFilePath,
-
-                        [Bool]
-                        $InitialSessionStateEnabled,
-
-                        [Bool]
-                        $FinalSessionStateEnabled,
-
-                        [string]
-                        $TestDescription,
-
-                        [bool]
-                        $EnablePSSessionConfig
-                    )
+                        [string] $SessionConfigName,
+                        [string] $ConfigFilePath,
+                        [Bool] $InitialSessionStateEnabled,
+                        [Bool] $FinalSessionStateEnabled,
+                        [string] $TestDescription,
+                        [bool] $EnablePSSessionConfig)
 
                     It "$TestDescription" {
 
@@ -198,15 +172,13 @@ try
 
                         $TestConfigStateBeforeChange = (Get-PSSessionConfiguration -Name $SessionConfigName).Enabled
 
-                        if($EnablePSSessionConfig)
-                        {
+                        if($EnablePSSessionConfig) {
                             $isSkipNetworkCheck = $true
                             # TODO: Get-NetConnectionProfile is not available during typical PS Core deployments. Once it is, this check should be used.
                             #Get-NetConnectionProfile | Where-Object { $_.NetworkCategory -eq "Public" } | ForEach-Object { $isSkipNetworkCheck = $true }
                             Enable-PSSessionConfiguration -Name $SessionConfigName -NoServiceRestart -SkipNetworkProfileCheck:$isSkipNetworkCheck
                         }
-                        else
-                        {
+                        else {
                             Disable-PSSessionConfiguration -Name $SessionConfigName -NoServiceRestart
                         }
 
@@ -239,8 +211,7 @@ try
                     }
                 )
 
-                foreach ($testcase in $testData)
-                {
+                foreach ($testcase in $testData) {
                     VerifyEnableAndDisablePSSessionConfig @testcase
                 }
             }
@@ -248,12 +219,13 @@ try
             Context "Validate Unregister-PSSessionConfiguration cmdlet" {
 
                 BeforeEach {
-                    Register-PSSessionConfiguration -Name "TestUnregisterPSSessionConfig"
+                    if ($IsNotSkipped) {
+                        Register-PSSessionConfiguration -Name "TestUnregisterPSSessionConfig"
+                    }
                 }
 
                 AfterAll {
-                    if ($IsNotSkipped)
-                    {
+                    if ($IsNotSkipped) {
                         Unregister-PSSessionConfiguration -name "TestUnregisterPSSessionConfig" -ErrorAction SilentlyContinue | Out-Null
                     }
                 }
@@ -266,32 +238,26 @@ try
 
                         $Result = [PSObject] @{Output = $true ; Error = $null}
                         $error.Clear()
-                        try
-                        {
+                        try {
                             $null = Unregister-PSSessionConfiguration -name $SessionConfigName -ErrorAction stop
                         }
-                        catch
-                        {
+                        catch {
                             $Result.Error = $_.Exception
                         }
 
-                        if(-not $Result.Error)
-                        {
+                        if(-not $Result.Error) {
                             $ValidEndpoints = [PSObject]@(Get-PSSessionConfiguration)
 
-                            foreach ($endpoint in $ValidEndpoints)
-                            {
+                            foreach ($endpoint in $ValidEndpoints) {
                                 # Setting it to false means the unregister was unsuccessful
                                 # and there is still an endpoint with name matching the one we wanted to remove.
-                                if($endpoint.name -like $SessionConfigName)
-                                {
+                                if($endpoint.name -like $SessionConfigName) {
                                     $Result.Output = $false
                                     break
                                 }
                             }
                         }
-                        else
-                        {
+                        else {
                             $Result.Output = $false
                         }
 
@@ -841,12 +807,18 @@ namespace PowershellTestConfigNamespace
         BeforeAll {
             if (Test-IsWindowsArm64) {
                 Write-Verbose "remoting is not setup on ARM64, skipping tests" -Verbose
-                $PSDefaultParameterValues["it:skip"] = $true
+                Push-DefaultParameterValueStack @{ "it:skip" = $true }
                 return
             }
 
             if ($IsNotSkipped) {
                 Enable-PSRemoting -SkipNetworkProfileCheck -Force
+            }
+        }
+
+        AfterAll {
+            if (Test-IsWindowsArm64) {
+                Pop-DefaultParameterValueStack
             }
         }
 

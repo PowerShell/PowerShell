@@ -451,9 +451,9 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ( ! $IsWindows ) {
-            $PSDefaultParameterValues["it:skip"] = $true
+            Push-DefaultParameterValueStack @{ "it:skip" = $true }
+            return
         }
 
         $ModuleName = "DesktopModule"
@@ -468,7 +468,10 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        if ( ! $IsWindows ) {
+            Pop-DefaultParameterValueStack
+            return
+        }
     }
 
     Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
@@ -766,14 +769,16 @@ Remove-Module $desktopModuleToUse
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
     BeforeAll {
         $pwsh = "$PSHOME/pwsh"
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ( ! $IsWindows ) {
-            $PSDefaultParameterValues["it:skip"] = $true
+            Push-DefaultParameterValueStack @{  "it:skip" = $true }
+            return
         }
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        if ( ! $IsWindows ) {
+            Pop-DefaultParameterValueStack
+        }
     }
 
     Context "System32 module path prepended to PSModulePath" {
@@ -1408,8 +1413,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
 Describe "WinCompat importing should check availablity of built-in modules" -Tag "CI" {
     BeforeAll {
         if (-not $IsWindows ) {
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
+            Push-DefaultParameterValueStack @{  "it:skip" = $true }
             return
         }
 
@@ -1431,7 +1435,7 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
 
     AfterAll {
         if (-not $IsWindows) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            Pop-DefaultParameterValueStack
             return
         }
 

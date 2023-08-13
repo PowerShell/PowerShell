@@ -22,12 +22,11 @@ Describe "Windows platform file signatures" -Tags 'Feature' {
 }
 
 Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWindows') {
-    $shouldSkip = (-not $IsWindows) -or (Test-IsWinServer2012R2)
-
-    $PSDefaultParameterValues = @{ "It:Skip" = $shouldSkip }
-
     BeforeAll {
+        $shouldSkip = (-not $IsWindows) -or (Test-IsWinServer2012R2)
+
         if ($shouldSkip) {
+            Push-DefaultParameterValueStack @{ "it:skip" = $shouldSkip }
             return
         }
 
@@ -100,7 +99,7 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
         )
 
         foreach($path in $paths) {
-            if (Test-Path $path -ItemType Leaf) {
+            if (Test-Path $path -PathType Leaf) {
                 # failing to remove is not fatal
                 Remove-Item -Force -Path $path -ErrorAction Ignore
             }
