@@ -843,7 +843,7 @@ namespace PowershellTestConfigNamespace
 }
 finally
 {
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    Pop-DefaultParameterValueStack
     $WarningPreference = $originalWarningPreference
 }
 
