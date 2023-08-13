@@ -18,7 +18,7 @@ Describe "Wait-Event" -Tags "CI" {
 			$stopwatch = [System.Diagnostics.Stopwatch]::startNew()
 			# Testing the timeout, so wait for an event that will never be
 			# raised because it is fake
-			Wait-Event -TimeSpan '00:00:00.25' -SourceIdentifier "FakeEvent"
+			Wait-Event -TimeSpan ([Timespan]'00:00:00.25') -SourceIdentifier "FakeEvent"
 			$stopwatch.Stop()
 			$stopwatch.ElapsedMilliseconds | Should -BeGreaterThan 200
 			$stopwatch.ElapsedMilliseconds | Should -BeLessThan 300
