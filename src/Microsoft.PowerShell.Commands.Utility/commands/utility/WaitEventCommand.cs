@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// Value of -1 means never timeout.
         /// </summary>
         [Parameter]
-        [Alias("TimeoutSec")]
+        [Alias("TimeoutSec", "TimeSpan")]
         [ValidateRangeAttribute(-1, double.MaxValue)]
         [ArgumentTransform("TotalSeconds")]
         public double Timeout
