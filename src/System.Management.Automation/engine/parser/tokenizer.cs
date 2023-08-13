@@ -2625,9 +2625,9 @@ namespace System.Management.Automation.Language
             }
 
             // Return early if the required line break after the header is missing.
-            if (currentChar == '\r' && PeekChar() == '\n')
+            if (currentChar == '\r')
             {
-                SkipChar();
+                NormalizeCRLF(currentChar);
             }
             else if (currentChar != '\n')
             {
@@ -2699,7 +2699,7 @@ namespace System.Management.Automation.Language
 
                 int whitespaceCount = sb.Length - lineStartIndex;
                 int scriptLineIndex = _currentIndex - whitespaceCount - 1;
-                bool whitespaceOnly = currentChar == '\n' || (currentChar == '\r' && PeekChar() == '\n');
+                bool whitespaceOnly = currentChar is '\n' or '\r';
                 lineInfoList.Add(new LineInfo(lineStartIndex, scriptLineIndex, whitespaceCount, whitespaceOnly));
                 if (expandableString)
                 {
@@ -2754,18 +2754,17 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                if (currentChar == '\r' && PeekChar() == '\n')
-                {
-                    SkipChar();
-                    newLineCharCount = 2;
-                    AppendCharToHereStringBuilders(expandableString, currentChar, sb, formatSb);
-                    AppendCharToHereStringBuilders(expandableString, '\n', sb, formatSb);
-                    ProcessStartOfNewLine();
-                }
-                else if (currentChar == '\n')
+                if (currentChar is '\r' or '\n')
                 {
                     newLineCharCount = 1;
                     AppendCharToHereStringBuilders(expandableString, currentChar, sb, formatSb);
+                    if (currentChar == '\r' && PeekChar() == '\n')
+                    {
+                        newLineCharCount = 2;
+                        SkipChar();
+                        AppendCharToHereStringBuilders(expandableString, '\n', sb, formatSb);
+                    }
+
                     ProcessStartOfNewLine();
                 }
                 else if ((expandableString && currentChar.IsDoubleQuote())
