@@ -4479,14 +4479,16 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
 
 Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
-        $unixSocket = Get-UnixSocketName
-        $skipTests = (Test-IsWindows2016) -or (Test-IsWinServer2012R2)
-
+        $isWin2016 = Test-IsWindows2016
+        $isWin2012 = Test-IsWinServer2012R2
+        $skipTests = $isWin2016 -or $isWin2012
+        Write-Verbose -Verbose -Message "IsWin2016: $isWin2016 - IsWin2012: $isWin2012 - SkipTests: $skipTests"
         if ($skipTests){
             return
         }
 
         try {
+            $unixSocket = Get-UnixSocketName -ErrorAction Stop
             $WebListener = Start-UnixSocket $unixSocket -ErrorAction Stop
         }
         catch {
