@@ -4499,7 +4499,7 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
     }
 
     It "Execute Invoke-WebRequest with -UnixSocket" {
-        if ($skipTest) {
+        if ($skipTests) {
             Set-ItResult -Skipped -Because "Unix sockets are not supported on this platform."
             return
         }
@@ -4511,7 +4511,7 @@ Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
     }
 
     It "Execute Invoke-RestMethod with -UnixSocket" {
-        if ($skipTest) {
+        if ($skipTests) {
             Set-ItResult -Skipped -Because "Unix sockets are not supported on this platform."
             return
         }
