@@ -100,10 +100,10 @@ namespace System.Management.Automation
                 // we want to take the value of the next parameter rather than the extent.
                 sb.Append(nextParameter.ArgumentValue);
 
-                // reparse the string as we need the AST to create the new composite argument.
+                // Re-parse the string as we need the AST to create the new composite argument.
                 // If it is, we will return that composite argument.
-                var sAst = Parser.ParseInput('"' + sb.ToString() + '"', out _, out _).Find(ast => ast is StringConstantExpressionAst, searchNestedScriptBlocks: true);
-                if (sAst is not null)
+                var stringAst = Parser.ParseInput('"' + sb.ToString() + '"', out _, out _).Find(ast => ast is StringConstantExpressionAst, searchNestedScriptBlocks: true);
+                if (stringAst is not null)
                 {
                     string compositeString = sb.ToString();
                     var ph = new PositionHelper(string.Empty, compositeString);
