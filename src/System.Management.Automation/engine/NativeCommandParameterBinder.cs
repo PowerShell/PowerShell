@@ -1,4 +1,3 @@
-using System.Reflection.Metadata;
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -8,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
+using System.Reflection.Metadata;
 using System.Text;
 
 using Microsoft.PowerShell.Commands;
@@ -74,7 +74,6 @@ namespace System.Management.Automation
         /// <param name="currentParameter">The current parameter being prepared for native execution.</param>
         /// <param name="nextParameter">The next parameter to be inspected to determine whether it should be combined with the current.</param>
         /// <returns>A composite CommandParameterInternal representing the two provided parameters.</returns>
-
         internal CommandParameterInternal BuildCompositeArgument(CommandParameterInternal currentParameter, CommandParameterInternal nextParameter)
         {
             // if the end of the current parameter is the same as the start of the next parameter, then we want to combine them.
@@ -108,9 +107,9 @@ namespace System.Management.Automation
                 {
                     string compositeString = sb.ToString();
                     var ph = new PositionHelper(string.Empty, compositeString);
-                    var sOffset = currentParameter.ParameterExtent.StartOffset;
-                    var sExtent = new InternalScriptExtent(ph, sOffset, sOffset + compositeString.Length + 1);
-                    var compositeAst = new StringConstantExpressionAst(sExtent, compositeString, StringConstantType.BareWord);
+                    var startOffset = currentParameter.ParameterExtent.StartOffset;
+                    var scriptExtent = new InternalScriptExtent(ph, startOffset, startOffset + compositeString.Length + 1);
+                    var compositeAst = new StringConstantExpressionAst(scriptExtent, compositeString, StringConstantType.BareWord);
                     var compositeArgument = CommandParameterInternal.CreateArgument(compositeString, compositeAst, false);
                     return compositeArgument;
                 }
@@ -122,14 +121,14 @@ namespace System.Management.Automation
                 StringBuilder sb = new StringBuilder();
                 sb.Append(currentParameter.ArgumentValue);
                 sb.Append(nextParameter.ArgumentValue);
-                var sAst = Parser.ParseInput('"' + sb.ToString() + '"', out _, out _).Find(ast => ast is StringConstantExpressionAst, searchNestedScriptBlocks: true);
-                if (sAst is not null)
+                var stringAst = Parser.ParseInput('"' + sb.ToString() + '"', out _, out _).Find(ast => ast is StringConstantExpressionAst, searchNestedScriptBlocks: true);
+                if (stringAst is not null)
                 {
                     string compositeString = sb.ToString();
-                    var sp = new ScriptPosition(string.Empty, 0, 0, compositeString);
-                    var ep = new ScriptPosition(string.Empty, 0, compositeString.Length, sb.ToString());
-                    var sExtent = new ScriptExtent(sp, ep);
-                    var compositeAst = new StringConstantExpressionAst(sExtent, compositeString, StringConstantType.BareWord);
+                    var startPosition = new ScriptPosition(string.Empty, 0, 0, compositeString);
+                    var endPosition = new ScriptPosition(string.Empty, 0, compositeString.Length, sb.ToString());
+                    var scriptExtent = new ScriptExtent(startPosition, endPosition);
+                    var compositeAst = new StringConstantExpressionAst(scriptExtent, compositeString, StringConstantType.BareWord);
                     var compositeArgument = CommandParameterInternal.CreateArgument(compositeString, compositeAst, false);
                     return compositeArgument;
                 }
@@ -151,6 +150,7 @@ namespace System.Management.Automation
                 if (ExperimentalFeature.IsEnabled("PSNativeParameterParsing") && i < parameters.Count - 1)
                 {
                     CommandParameterInternal compositeParameter = BuildCompositeArgument(parameter, parameters[i + 1]);
+
                     // If we were able to build a composite parameter, use it but skip the next parameter as it was used to create the composite.
                     if (compositeParameter is not null)
                     {
