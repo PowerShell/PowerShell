@@ -32,6 +32,12 @@ Describe "New-Guid" -Tags "CI" {
         $guids[1].ToString() | Should -BeExactly '0f8fad5b-d9cb-469f-a165-70867728950e'
     }
 
+    It "Should accept pipeline input" {
+        $guids = 1..10 | foreach-object { [guid]::newguid() }
+        $observed = $guids.Foreach({$_.ToString()}) | New-Guid
+        $observed | Should -Be $guids
+    }
+
     It "Should return different guids with each call" {
         $guid1 = New-Guid
         $guid2 = New-Guid
