@@ -182,7 +182,8 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem -File -LiteralPath TestDrive:/ -Filter noext*.*).Name | Should -BeExactly 'noextension'
         }
 
-        It "Understand APPEXECLINKs" -Skip:$true -Because "dotnet API is not available, see PR 16044" {
+        # Because "dotnet API is not available, see PR 16044
+        It "Understand APPEXECLINKs" -Skip {
             $app = Get-ChildItem -Path ~\appdata\local\microsoft\windowsapps\*.exe | Select-Object -First 1
             $app.Target | Should -Not -Be $app.FullName
             $app.LinkType | Should -BeExactly 'AppExeCLink'
