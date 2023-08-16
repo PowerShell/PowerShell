@@ -468,31 +468,31 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/_manifest/spdx_2.2/manifest.cat",
+    "Pattern": "Modules/PSResourceGet/*.dll",
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/dependencies/*.dll",
+    "Pattern": "Modules/PSResourceGet/*.ps?1",
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/LICENSE",
+    "Pattern": "Modules/PSResourceGet/*.ps1xml",
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.dll",
+    "Pattern": "Modules/PSResourceGet/LICENSE",
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psd1",
+    "Pattern": "Modules/PSResourceGet/Notice.txt",
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Notice.txt",
+    "Pattern": "Modules/PSResourceGet/_manifest/spdx_2.2/*.json*",
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/PSGet.Format.ps1xml",
+    "Pattern": "Modules/PSResourceGet/_manifest/spdx_2.2/*.cat",
     "FileType": "NonProduct"
   },
   {
