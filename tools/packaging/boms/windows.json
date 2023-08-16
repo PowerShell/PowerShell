@@ -900,6 +900,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psm1",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "mscordaccore_*.dll",
     "FileType": "NonProduct"
   },
