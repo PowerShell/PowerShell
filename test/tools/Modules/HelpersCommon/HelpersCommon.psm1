@@ -456,3 +456,80 @@ function Test-IsWinServer2012R2
     $osInfo = [System.Environment]::OSVersion.Version
     return ($osInfo.Major -eq 6 -and $osInfo.Minor -eq 3)
 }
+
+function Test-IsWindows2016 {
+    if (-not $IsWindows) {
+        return $false
+    }
+
+    $osInfo = [System.Environment]::OSVersion.Version
+    return ($osInfo.Major -eq 10 -and $osInfo.Minor -eq 0 -and $osInfo.Build -eq 14393)
+}
+
+
+# helpers for managing psdefaultparametervalues
+[system.collections.generic.Stack[hashtable]]$script:DefaultParameterValueStack = [system.collections.generic.Stack[hashtable]]::new()
+
+# Ensure that the global:PSDefaultParameterValues variable is a hashtable
+function Initialize-PSDefaultParameterValue {
+	if ( $global:PSDefaultParameterValues -isnot [hashtable] ) {
+		$global:PSDefaultParameterValues = @{}
+	}
+}
+
+# reset the stack
+function Reset-DefaultParameterValueStack {
+	$script:DefaultParameterValueStack = [system.collections.generic.Stack[hashtable]]::new()
+    Initialize-PSDefaultParameterValue
+}
+
+# return the current stack
+function Get-DefaultParameterValueStack {
+	$script:DefaultParameterValueStack
+}
+
+# PSDefaultParameterValue may not have both skip and pending keys
+function Test-PSDefaultParameterValue {
+    if ( $global:PSDefaultParameterValues -is [hashtable] ) {
+        if ( $global:PSDefaultParameterValues.ContainsKey('skip') -and $global:PSDefaultParameterValues.ContainsKey('pending') ) {
+            return $false
+        }
+        return $true
+    }
+    Initialize-PSDefaultParameterValue
+}
+
+# push a new value onto the stack
+# if $ht is null, then the current value of $global:PSDefaultParameterValues is pushed
+# if $NewValue is used, then $ht is used as the new value of $global:PSDefaultParameterValues
+function Push-DefaultParameterValueStack {
+	param ([hashtable]$ht, [switch]$NewValue)
+    Initialize-PSDefaultParameterValue
+
+	$script:DefaultParameterValueStack.Push($global:PSDefaultParameterValues.Clone())
+	if ( $ht ) {
+		if ( $NewValue ) {
+			$global:PSDefaultParameterValues = $ht
+		}
+		else {
+			foreach ($k in $ht.Keys) {
+				$global:PSDefaultParameterValues[$k] = $ht[$k]
+			}
+		}
+        if ( ! (Test-PSDefaultParameterValue)) {
+            Write-Warning -Message "PSDefaultParameterValues may not have both skip and pending keys, resetting."
+            Pop-DefaultParameterValueStack
+        }
+	}
+}
+
+function Pop-DefaultParameterValueStack {
+	try {
+		$global:PSDefaultParameterValues = $script:DefaultParameterValueStack.Pop()
+		return $true
+	}
+	catch {
+        Initialize-PSDefaultParameterValue
+		return $false
+	}
+}
