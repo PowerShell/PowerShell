@@ -376,6 +376,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/dependencies/*.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Modules/ThreadJob/*.dll",
     "FileType": "NonProduct"
   },
