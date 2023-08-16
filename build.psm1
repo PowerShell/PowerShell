@@ -19,8 +19,8 @@ $script:Options = $null
 $dotnetMetadata = Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json
 $dotnetCLIChannel = $dotnetMetadata.Sdk.Channel
 $dotnetCLIQuality = $dotnetMetadata.Sdk.Quality
-$dotnetAzureFeed = if (-not $env:__DONET_RUNTIME_FEED ) { $dotnetMetadata.Sdk.azureFeed }
-$dotnetAzureFeedSecret = $env:__DONET_RUNTIME_FEED_KEY
+$dotnetAzureFeed = if (-not $env:__DOTNET_RUNTIME_FEED ) { $dotnetMetadata.Sdk.azureFeed }
+$dotnetAzureFeedSecret = $env:__DOTNET_RUNTIME_FEED_KEY
 $dotnetSDKVersionOveride = $dotnetMetadata.Sdk.sdkImageOverride
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
