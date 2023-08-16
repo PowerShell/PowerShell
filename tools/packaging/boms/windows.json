@@ -900,7 +900,7 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\Microsoft.PowerShell.PSResourceGet.psm1",
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psm1",
     "FileType": "NonProduct"
   },
   {
