@@ -1,8 +1,3 @@
-parameters:
-  - name: skipPublish
-    default: false
-    type: boolean
-
 steps:
 - template: release-SetReleaseTagAndContainerName.yml
 
@@ -20,6 +15,7 @@ steps:
 
 - pwsh: |
     $metadata = Get-Content -Path "$(Build.SourcesDirectory)/tools/metadata.json" -Raw | ConvertFrom-Json
+    Write-Verbose -Verbose "$(ReleaseTag) $(RepoClientCliClientID) $(RepoClientCliSecret) $(AzureVersion) $($metadata.LTSRelease.Latest)"
     $params = @{
         ReleaseTag = "$(ReleaseTag)"
         AadClientId = "$(RepoClientCliClientID)"
@@ -27,8 +23,6 @@ steps:
         BlobFolderName = "$(AzureVersion)"
         LTS = $metadata.LTSRelease.Latest
         ForProduction = $true
-        SkipPublish = $${{ parameters.skipPublish }}
     }
-    $params | Out-String -width 9999 | write-Verbose -Verbose
     & '$(Pipeline.Workspace)/tools/packages.microsoft.com/releaseLinuxPackages.ps1' -MappingFilePath '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'  @params
   displayName: Run release script
