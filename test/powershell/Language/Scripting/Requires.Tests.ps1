@@ -118,11 +118,17 @@ Describe "#requires -Modules" -Tags "CI" {
             $badName = 'ModuleThatDoesNotExist'
             $badPath = Join-Path $TestDrive 'ModuleThatDoesNotExist'
             $version = '1.0'
+            $requiredVersion = '1.1'
+            $maximumVersion = '1.2'
             $testCases = @(
-                @{ ModuleRequirement = "'$badName'"; Scenario = 'name' }
-                @{ ModuleRequirement = "'$badPath'"; Scenario = 'path' }
-                @{ ModuleRequirement = "@{ ModuleName = '$badName'; ModuleVersion = '$version' }"; Scenario = 'fully qualified name with name' }
-                @{ ModuleRequirement = "@{ ModuleName = '$badPath'; ModuleVersion = '$version' }"; Scenario = 'fully qualified name with path' }
+                @{ ModuleRequirement = $badName; Scenario = 'fully qualified with module name' }
+                @{ ModuleRequirement = $badPath; Scenario = 'fully qualified with module path' }
+                @{ ModuleRequirement = "@{ ModuleName = '$badName'; ModuleVersion = '$version' }"; Scenario = 'fully qualified with module name and version' }
+                @{ ModuleRequirement = "@{ ModuleName = '$badPath'; ModuleVersion = '$version' }"; Scenario = 'fully qualified with module name and version' }
+                @{ ModuleRequirement = "@{ ModuleName = '$badName'; RequiredVersion = '$requiredVersion' }"; Scenario = 'fully qualified with module name and required version' }
+                @{ ModuleRequirement = "@{ ModuleName = '$badPath'; RequiredVersion = '$requiredVersion' }"; Scenario = 'fully qualified with module path and required version' }
+                @{ ModuleRequirement = "@{ ModuleName = '$badName'; MaximumVersion = '$maximumVersion' }"; Scenario = 'fully qualified with module name and maximum version' }
+                @{ ModuleRequirement = "@{ ModuleName = '$badPath'; MaximumVersion = '$maximumVersion' }"; Scenario = 'fully qualified with module path and maximum version' }
             )
         }
 
@@ -132,7 +138,8 @@ Describe "#requires -Modules" -Tags "CI" {
             $script = "#requires -Modules $ModuleRequirement`n`nWrite-Output 'failed'"
             $null = New-Item -Path $scriptPath -Value $script -Force
 
-            { & $scriptPath } | Should -Throw -ErrorId 'ScriptRequiresMissingModules'
+            $ex = { & $scriptPath } | Should -Throw -ErrorId 'ScriptRequiresMissingModules' -PassThru
+            $ex.Exception.Message | Should -Match ([regex]::Escape($ModuleRequirement))
         }
     }
 
