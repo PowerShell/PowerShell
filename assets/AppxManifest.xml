@@ -41,7 +41,7 @@
           <uap:ShowNameOnTiles> 
             <uap:ShowOn Tile="square150x150Logo"/>
           </uap:ShowNameOnTiles>
-      </uap:DefaultTile>
+        </uap:DefaultTile>
       </uap:VisualElements>
     </Application>
   </Applications>
