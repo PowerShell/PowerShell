@@ -32,13 +32,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returned data structure is a Hashtable instead a CustomPSObject.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter AsHashtable { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum depth the JSON input is allowed to have. By default, it is 1024.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int Depth { get; set; } = 1024;
 

@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
         /// The type name we want to update on.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = DynamicTypeSet)]
-        [ArgumentToTypeNameTransformationAttribute()]
+        [ArgumentToTypeNameTransformationAttribute]
         [ValidateNotNullOrEmpty]
         public string TypeName
         {
@@ -1055,7 +1055,7 @@ namespace Microsoft.PowerShell.Commands
         /// The target type to remove.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = RemoveTypeSet)]
-        [ArgumentToTypeNameTransformationAttribute()]
+        [ArgumentToTypeNameTransformationAttribute]
         [ValidateNotNullOrEmpty]
         public string TypeName
         {

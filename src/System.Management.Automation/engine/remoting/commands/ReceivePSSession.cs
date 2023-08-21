@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriSessionNameParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
-        [Credential()]
+        [Credential]
         public PSCredential Credential
         {
             get
