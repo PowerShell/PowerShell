@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     public class NewGuidCommand : PSCmdlet
     {
         /// <summary>
-        /// Generates an instance of the Guid structure whose value is all zeros.
+        /// Gets or sets a value indicating that the cmdlet should return a Guid structure whose value is all zeros.
         /// </summary>
         [Parameter(ParameterSetName = "Empty")]
         public SwitchParameter Empty { get; set; }
