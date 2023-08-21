@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Empty { get; set; }
 
         /// <summary>
-        /// Converts a string to a Guid.
+        /// Gets or sets the value to be converted to a Guid.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ParameterSetName = "InputObject")]
         [System.Diagnostics.CodeAnalysis.AllowNull]
