@@ -4270,7 +4270,7 @@ function New-GlobalToolNupkgSource
             $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
         }
 
-        default { throw "New-GlobalToolNupkgSource: Unkown package type: $PackageType" }
+        default { throw "New-GlobalToolNupkgSource: Unknown package type: $PackageType" }
     }
 
     $nuSpec = $packagingStrings.GlobalToolNuSpec -f $PackageName, $PackageVersion, $iconFileName
