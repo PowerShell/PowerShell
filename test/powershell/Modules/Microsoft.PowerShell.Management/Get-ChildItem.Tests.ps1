@@ -243,13 +243,13 @@ Describe "Get-ChildItem" -Tags "CI" {
                 return
             }
 
-            $items = Get-ChildItem -LiteralPath "${volume}${winPartialPath}}"
-            Write-Verbose -Verbose "Trying files in '${volume}${winPartialPath}'}'"
+            $items = Get-ChildItem -LiteralPath "${volume}${winPartialPath}"
+            Write-Verbose -Verbose "Trying files in '${volume}${winPartialPath}'"
             if ($items.Count -eq 0) {
                 Write-Verbose -Verbose "`$items is null!!"
             }
 
-            $items[0].Parent.FullName | Should -BeExactly "${volume}${winPartialPath}}"
+            $items[0].Parent.FullName | Should -BeExactly "${volume}${winPartialPath}"
             $items | Should -HaveCount (Get-ChildItem $winPath).Count
         }
 
