@@ -309,8 +309,10 @@ Describe 'FileSystem Provider Formatting' -Tag "CI","RequireAdminOnWindows" {
 
         if ($IsWindows)
         {
+            # arm64 adds the archive attribute
             $junctionMode = (Test-IsWindowsArm64) ? "la---" : "l----"
-            $testcases += @{ expectedMode = $junctionMode; expectedModeWithoutHardlink = $junctionMode; itemType = "Junction"; itemName = "Junction-Directory"; fileAttributes = [System.IO.FileAttributes]::Directory -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetDir1.FullName }
+            $armFileAttributes = (Test-IsWindowsArm64) ? [System.IO.FileAttributes]"Directory,Archive,ReparsePoint" : [System.IO.FileAttributes]"Directory,ReparsePoint"
+            $testcases += @{ expectedMode = $junctionMode; expectedModeWithoutHardlink = $junctionMode; itemType = "Junction"; itemName = "Junction-Directory"; fileAttributes = $armFileAttributes; target = $targetDir1.FullName }
             $testcases += @{ expectedMode = "-a---"; expectedModeWithoutHardlink = "-a---"; itemType = "File"; itemName = "ArchiveFile"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $null }
             $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "la---"; itemType = "SymbolicLink"; itemName = "SymbolicLink-File"; fileAttributes = [System.IO.FileAttributes]::Archive -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetFile1.FullName }
             $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "-a---"; itemType = "HardLink"; itemName = "HardLink"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $targetFile2.FullName }
