@@ -228,7 +228,6 @@ Describe "Get-ChildItem" -Tags "CI" {
         It 'Works with Windows volume paths' -Skip:(!$IsWindows) {
             $winPath = $env:windir
             if (! $winPath) {
-                Write-Verbose -Verbose "variable windir is null"
                 Set-ItResult -Skipped -Because "windir is null"
                 return
             }
@@ -238,7 +237,6 @@ Describe "Get-ChildItem" -Tags "CI" {
             Write-Verbose -Verbose "Partial path is '$winPartialPath'"
             $volume = (Get-Volume -DriveLetter $driveLetter).Path
             if (! $volume) {
-                Write-Verbose -Verbose "windir: $winPath"
                 Set-ItResult -Skipped -Because "Get-Volume returned no volume for system drive '$driveLetter'"
                 return
             }
