@@ -642,8 +642,9 @@ try
 
             try
             {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                Start-Sleep -Seconds 2
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
                 Import-Module -Name $manifestFileName -Force -ErrorAction Stop
                 throw "No Exception!"
@@ -723,8 +724,9 @@ try
 
             try
             {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                Start-Sleep -Seconds 2
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
                 Import-Module -Name $manifestFileName -Force -ErrorAction Stop
                 throw "No Exception!"
@@ -768,8 +770,9 @@ try
 
             try
             {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                Start-Sleep -Seconds 2
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
                 Import-Module -Name $manifestFileName -Force -ErrorAction Stop
                 throw "No Exception!"
@@ -1330,8 +1333,9 @@ try
 
             try
             {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                Start-Sleep -Seconds 2
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 $module = Import-Module -Name $manifestFileName -Force -PassThru
             }
             finally
@@ -1394,6 +1398,7 @@ try
             {
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                Start-Sleep -Seconds 2
                 $module = Import-Module -Name $moduleFileName -Force -PassThru
             }
             finally
@@ -1540,6 +1545,7 @@ try
             try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                Start-Sleep -Seconds 2
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
                 # Get scriptblock from untrusted script file

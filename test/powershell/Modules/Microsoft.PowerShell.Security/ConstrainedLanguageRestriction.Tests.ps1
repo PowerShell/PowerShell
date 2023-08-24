@@ -73,6 +73,7 @@ try
             try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                Start-Sleep -Seconds 2
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
                 $command = @"
@@ -972,6 +973,8 @@ try
             try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                # Wait for the lockdown mode to take effect
+                Start-Sleep -second 2
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
                 # Import untrusted module
@@ -1027,6 +1030,7 @@ try
 
                 Import-Module -Name $scriptModulePath -Force
 
+
                 $result1 = ModuleFn
                 $result2 = ImportModuleFn
             }
@@ -1046,9 +1050,7 @@ try
 
             $randomClassName = "class_$(Get-Random -Max 9999)"
 
-            $script = @'
-            class {0} {{ static Hello([string] $msg) {{ [System.Console]::WriteLine("Hello from: $msg") }} }}
-'@ -f $randomClassName
+            $script = "class ${randomClassName} { static [string] GetLanguageMode() { return (Get-Variable -ValueOnly -Name ExecutionContext).SessionState.LanguageMode } }"
 
             $modulePathName = "modulePath_$(Get-Random -Max 9999)"
             $modulePath = Join-Path $testdrive $modulePathName
@@ -1097,46 +1099,34 @@ try
 
         It "Verifies that classes cannot be created in script files running under constrained language" {
 
-            try
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                & ($untrustedScriptFile)
-                throw "No Error!"
+            try {
+                $ps = [powershell]::Create("NewRunspace")
+                $ps.Runspace.LanguageMode = "ConstrainedLanguage"
+                $result = $ps.AddScript($untrustedScriptFile).Invoke()
+                $ps.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly  "ClassesNotAllowedInConstrainedLanguage" -Because "Invoke-Command should fail in constrained language"
             }
-            catch
-            {
-                $expectedError = $_
+            catch {
+                $_ | Should -BeNullOrEmpty -Because "exception '$_' unexpected."
             }
-            finally
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode -RevertLockdownMode
+            finally {
+                $ps.Dispose()
             }
-
-            $expectedError.FullyQualifiedErrorId | Should -BeExactly "ClassesNotAllowedInConstrainedLanguage"
         }
 
         It "Verifies that classes cannot be created in untrusted script modules running under constrained language" {
-
-            try
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                Import-Module -Name $untrustedScriptModule -ErrorAction Stop
-                throw "No Error!"
+            try {
+                $ps = [powershell]::Create("NewRunspace")
+                $ps.Runspace.LanguageMode = "ConstrainedLanguage"
+                # importing the module whilst in constrained language makes it untrusted, even without lockdown mode
+                $ps.AddCommand("Import-Module").AddParameter("Name", $untrustedScriptModule).Invoke()
+                $ps.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly  "ClassesNotAllowedInConstrainedLanguage" -Because "Import-Module should fail in constrained language"
             }
-            catch
-            {
-                $expectedError = $_
+            catch {
+                $_ | Should -BeNullOrEmpty -Because "exception '$_' unexpected."
             }
-            finally
-            {
-                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode -RevertLockdownMode
+            finally {
+                $ps.Dispose()
             }
-
-            $expectedError.FullyQualifiedErrorId | Should -BeExactly "ClassesNotAllowedInConstrainedLanguage"
         }
 
         It "Verifies that classes can be created in trusted script files running under constrained language" {
