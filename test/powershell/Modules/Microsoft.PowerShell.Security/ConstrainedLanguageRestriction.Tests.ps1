@@ -1050,7 +1050,7 @@ try
 
             $randomClassName = "class_$(Get-Random -Max 9999)"
 
-            $script = "class ${randomClassName} { static [string] GetLanguageMode() { return `$ExecutionContext.SessionState.LanguageMode } }"
+            $script = "class ${randomClassName} { static [string] GetLanguageMode() { return (Get-Variable -ValueOnly -Name ExecutionContext).SessionState.LanguageMode } }"
 
             $modulePathName = "modulePath_$(Get-Random -Max 9999)"
             $modulePath = Join-Path $testdrive $modulePathName
