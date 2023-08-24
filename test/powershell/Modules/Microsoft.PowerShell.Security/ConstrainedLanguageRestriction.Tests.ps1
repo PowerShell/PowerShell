@@ -1109,7 +1109,7 @@ try
                 $_ | Should -BeNullOrEmpty -Because "exception '$_' unexpected."
             }
             finally {
-                $ps.Dipose()
+                $ps.Dispose()
             }
         }
 
@@ -1125,7 +1125,7 @@ try
                 $_ | Should -BeNullOrEmpty -Because "exception '$_' unexpected."
             }
             finally {
-                $ps.Dipose()
+                $ps.Dispose()
             }
         }
 
