@@ -967,6 +967,10 @@ try
         }
 
         It "Verifies a scriptblock from a trusted script file does not run as trusted" {
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                return
+            }
 
             $result = $null
 
@@ -974,7 +978,6 @@ try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
                 # Wait for the lockdown mode to take effect
-                Start-Sleep -second 2
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
                 # Import untrusted module

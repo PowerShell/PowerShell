@@ -622,6 +622,10 @@ try
     Describe "Import mix of trusted and untrusted manifest and module files" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies that an untrusted manifest with a trusted module will not load under system lockdown" {
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                return
+            }
 
             $manifestFileName = Join-Path $TestDrive "ImportUnTrustedManifestWithFnExport.psd1"
             $moduleFileName = Join-Path $TestDrive "ImportUnTrustedManifestWithFnExport_System32.psm1"
@@ -643,7 +647,6 @@ try
             try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                Start-Sleep -Seconds 2
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
                 Import-Module -Name $manifestFileName -Force -ErrorAction Stop
@@ -705,6 +708,10 @@ try
         }
 
         It "Verifies that an untrusted module with nested trusted modules cannot load in a locked down system" {
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                return
+            }
 
             $manifestFileName = Join-Path $TestDrive "ImportUnTrustedManifestWithTrustedModule.psd1"
             $moduleFileName = Join-Path $TestDrive "ImportUnTrustedManifestWithTrustedModule_System32.psm1"
@@ -725,7 +732,6 @@ try
             try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                Start-Sleep -Seconds 2
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
                 Import-Module -Name $manifestFileName -Force -ErrorAction Stop
@@ -744,6 +750,10 @@ try
         }
 
         It "Verifies that an untrusted manifest containing all trusted modules does not load under system lock down" {
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                return
+            }
 
             $moduleFileName1 = Join-Path $TestDrive "ImportUnTrustedManifestWithTrustedModules1_System32.psm1"
             $moduleFileName2 = Join-Path $TestDrive "ImportUnTrustedManifestWithTrustedModules2_System32.psm1"
@@ -771,7 +781,6 @@ try
             try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                Start-Sleep -Seconds 2
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
                 Import-Module -Name $manifestFileName -Force -ErrorAction Stop
@@ -1316,6 +1325,10 @@ try
         }
 
         It "Verifies that importing untrusted manifest in lock down mode exports all functions by default" {
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                return
+            }
 
             CreateManifestNames "ImportUntrustedManifestWithNoFnExport"
             @'
@@ -1334,7 +1347,6 @@ try
             try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                Start-Sleep -Seconds 2
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 $module = Import-Module -Name $manifestFileName -Force -PassThru
             }
@@ -1380,6 +1392,10 @@ try
         }
 
         It "Verifies that importing untrusted module file in lock down mode exports all functions by default" {
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                return
+            }
 
             CreateManifestNames "ImportUnTrustedModuleWithNoFnExport"
             @'
@@ -1398,7 +1414,6 @@ try
             {
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                Start-Sleep -Seconds 2
                 $module = Import-Module -Name $moduleFileName -Force -PassThru
             }
             finally
@@ -1539,13 +1554,16 @@ try
         }
 
         It "New-Module succeeds in creating module with untrusted scriptblock in ConstrainedLanguage" {
+            if (Test-IsWindowsArm64) {
+                Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShell/issues/20169"
+                return
+            }
 
             $result = $null
 
             try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                Start-Sleep -Seconds 2
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
                 # Get scriptblock from untrusted script file
