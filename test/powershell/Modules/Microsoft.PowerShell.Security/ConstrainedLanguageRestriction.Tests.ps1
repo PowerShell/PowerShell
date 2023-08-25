@@ -73,7 +73,6 @@ try
             try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-                Start-Sleep -Seconds 2
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
                 $command = @"
