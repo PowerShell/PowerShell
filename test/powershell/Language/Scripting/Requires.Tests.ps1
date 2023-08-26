@@ -121,25 +121,60 @@ Describe "#requires -Modules" -Tags "CI" {
             $requiredVersion = '1.1'
             $maximumVersion = '1.2'
             $testCases = @(
-                @{ ModuleRequirement = $badName; Scenario = 'fully qualified with module name' }
-                @{ ModuleRequirement = $badPath; Scenario = 'fully qualified with module path' }
-                @{ ModuleRequirement = "@{ ModuleName = '$badName'; ModuleVersion = '$version' }"; Scenario = 'fully qualified with module name and version' }
-                @{ ModuleRequirement = "@{ ModuleName = '$badPath'; ModuleVersion = '$version' }"; Scenario = 'fully qualified with module name and version' }
-                @{ ModuleRequirement = "@{ ModuleName = '$badName'; RequiredVersion = '$requiredVersion' }"; Scenario = 'fully qualified with module name and required version' }
-                @{ ModuleRequirement = "@{ ModuleName = '$badPath'; RequiredVersion = '$requiredVersion' }"; Scenario = 'fully qualified with module path and required version' }
-                @{ ModuleRequirement = "@{ ModuleName = '$badName'; MaximumVersion = '$maximumVersion' }"; Scenario = 'fully qualified with module name and maximum version' }
-                @{ ModuleRequirement = "@{ ModuleName = '$badPath'; MaximumVersion = '$maximumVersion' }"; Scenario = 'fully qualified with module path and maximum version' }
+                @{
+                    ModuleRequirement = $badName
+                    Scenario = 'fully qualified with module name'
+                    ExpectedMessageStrings = @($badName)
+                }
+                @{
+                    ModuleRequirement = $badPath
+                    Scenario = 'fully qualified with module path'
+                    ExpectedMessageStrings = @($badPath)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badName'; ModuleVersion = '$version' }"
+                    Scenario = 'fully qualified with module name and version'
+                    ExpectedMessageStrings = @($badName, $version)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badPath'; ModuleVersion = '$version' }"
+                    Scenario = 'fully qualified with module name and version'
+                    ExpectedMessageStrings = @($badPath, $version)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badName'; RequiredVersion = '$requiredVersion' }"
+                    Scenario = 'fully qualified with module name and required version'
+                    ExpectedMessageStrings = @($badName, $requiredVersion)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badPath'; RequiredVersion = '$requiredVersion' }"
+                    Scenario = 'fully qualified with module path and required version'
+                    ExpectedMessageStrings = @($badPath, $requiredVersion)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badName'; MaximumVersion = '$maximumVersion' }"
+                    Scenario = 'fully qualified with module name and maximum version'
+                    ExpectedMessageStrings = @($badName, $maximumVersion)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badPath'; MaximumVersion = '$maximumVersion' }"
+                    Scenario = 'fully qualified with module path and maximum version'
+                    ExpectedMessageStrings = @($badPath, $maximumVersion)
+                }
             )
         }
 
         It "Fails parsing a script that requires module by <Scenario>" -TestCases $testCases {
-            param([string]$ModuleRequirement, [string]$Scenario)
+            param([string]$ModuleRequirement, [string]$Scenario, [string[]]$ExpectedMessageStrings)
 
             $script = "#requires -Modules $ModuleRequirement`n`nWrite-Output 'failed'"
             $null = New-Item -Path $scriptPath -Value $script -Force
 
             $ex = { & $scriptPath } | Should -Throw -ErrorId 'ScriptRequiresMissingModules' -PassThru
-            $ex.Exception.Message | Should -Match ([regex]::Escape($ModuleRequirement))
+
+            $expectedPattern = $ExpectedMessageStrings.ForEach{ [regex]::Escape($_) } -join '|'
+            $stringMatches = [regex]::Matches($ex.Exception.Message, $expectedPattern)
+            $stringMatches | Should -HaveCount $ExpectedMessageStrings.Count
         }
     }
 
