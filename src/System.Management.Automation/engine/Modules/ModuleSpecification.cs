@@ -171,24 +171,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 return StringUtil.Format(Modules.RequiredModuleNotFoundRequiredVersion, Name, RequiredVersion);
             }
-            else
-            {
-                if (Version != null && MaximumVersion != null)
-                {
-                    return StringUtil.Format(Modules.RequiredModuleNotFoundModuleAndMaximumVersion, Name, Version, MaximumVersion);
-                }
-                else
-                {
-                    if (Version != null)
-                    {
-                        return StringUtil.Format(Modules.RequiredModuleNotFoundModuleVersion, Name, Version);
-                    }
 
-                    if (MaximumVersion != null)
-                    {
-                        return StringUtil.Format(Modules.RequiredModuleNotFoundMaximumVersion, Name, MaximumVersion);
-                    }
-                }
+            if (Version != null && MaximumVersion != null)
+            {
+                return StringUtil.Format(Modules.RequiredModuleNotFoundModuleAndMaximumVersion, Name, Version, MaximumVersion);
+            }
+
+            if (Version != null)
+            {
+                return StringUtil.Format(Modules.RequiredModuleNotFoundModuleVersion, Name, Version);
+            }
+
+            if (MaximumVersion != null)
+            {
+                return StringUtil.Format(Modules.RequiredModuleNotFoundMaximumVersion, Name, MaximumVersion);
             }
 
             return StringUtil.Format(Modules.RequiredModuleNotFoundWithoutVersion, Name);
