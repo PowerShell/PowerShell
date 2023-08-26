@@ -161,6 +161,16 @@ Describe "#requires -Modules" -Tags "CI" {
                     Scenario = 'fully qualified with module path and maximum version'
                     ExpectedMessageStrings = @($badPath, $maximumVersion)
                 }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badName'; ModuleVersion = '$version'; MaximumVersion = '$maximumVersion' }"
+                    Scenario = 'fully qualified with module name and version and maximum version'
+                    ExpectedMessageStrings = @($badName, $version, $maximumVersion)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badPath'; ModuleVersion = '$version'; MaximumVersion = '$maximumVersion' }"
+                    Scenario = 'fully qualified with module path and version and maximum version'
+                    ExpectedMessageStrings = @($badPath, $version, $maximumVersion)
+                }
             )
         }
 

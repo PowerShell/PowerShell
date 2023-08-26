@@ -240,6 +240,9 @@
   <data name="RequiredModuleNotFoundMaximumVersion" xml:space="preserve">
     <value>The module '{0}' cannot be found with MaximumVersion '{1}'</value>
   </data>
+  <data name="RequiredModuleNotFoundModuleAndMaximumVersion" xml:space="preserve">
+    <value>The module '{0}' cannot be found with Module Version '{1}' and MaximumVersion '{2}'</value>
+  </data>
   <data name="RequiredModuleNotFoundWithoutVersion" xml:space="preserve">
     <value>The module '{0}' cannot be found</value>
   </data>
