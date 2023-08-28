@@ -3187,7 +3187,6 @@ namespace System.Management.Automation.Language
             var sb = GetStringBuilder();
 
             bool scanning = true;
-            // bool inVariable = false;
             bool sawColonAtEnd = false;
             while (scanning)
             {
