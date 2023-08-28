@@ -226,14 +226,29 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It 'Works with Windows volume paths' -Skip:(!$IsWindows) {
-            $volume = (Get-Volume -DriveLetter $env:SystemDrive[0]).Path
-            $items = Get-ChildItem -LiteralPath "${volume}Windows"
-            Write-Verbose -Verbose "Trying files in '${volume}Windows'"
-            if (-not $items) {
+            $winPath = $env:windir
+            if (! $winPath) {
+                Set-ItResult -Skipped -Because "windir is null"
+                return
+            }
+
+            $driveLetter = $winPath[0]
+            $winPartialPath = $winPath.SubString(3) # skip the drive letter, colon, and backslash
+            Write-Verbose -Verbose "Partial path is '$winPartialPath'"
+            $volume = (Get-Volume -DriveLetter $driveLetter).Path
+            if (! $volume) {
+                Set-ItResult -Skipped -Because "Get-Volume returned no volume for system drive '$driveLetter'"
+                return
+            }
+
+            $items = Get-ChildItem -LiteralPath "${volume}${winPartialPath}"
+            Write-Verbose -Verbose "Trying files in '${volume}${winPartialPath}'"
+            if ($items.Count -eq 0) {
                 Write-Verbose -Verbose "`$items is null!!"
             }
-            $items[0].Parent | Should -BeExactly "${volume}Windows"
-            $items | Should -HaveCount (Get-ChildItem $env:SystemRoot).Count
+
+            $items[0].Parent.FullName | Should -BeExactly "${volume}${winPartialPath}"
+            $items | Should -HaveCount (Get-ChildItem $winPath).Count
         }
 
         It 'Works with Windows pipes' -Skip:(!$IsWindows) {
@@ -294,7 +309,10 @@ Describe 'FileSystem Provider Formatting' -Tag "CI","RequireAdminOnWindows" {
 
         if ($IsWindows)
         {
-            $testcases += @{ expectedMode = "l----"; expectedModeWithoutHardlink = "l----"; itemType = "Junction"; itemName = "Junction-Directory"; fileAttributes = [System.IO.FileAttributes]::Directory -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetDir1.FullName }
+            # arm64 adds the archive attribute
+            $junctionMode = (Test-IsWindowsArm64) ? "la---" : "l----"
+            $armFileAttributes = (Test-IsWindowsArm64) ? [System.IO.FileAttributes]"Directory,Archive,ReparsePoint" : [System.IO.FileAttributes]"Directory,ReparsePoint"
+            $testcases += @{ expectedMode = $junctionMode; expectedModeWithoutHardlink = $junctionMode; itemType = "Junction"; itemName = "Junction-Directory"; fileAttributes = $armFileAttributes; target = $targetDir1.FullName }
             $testcases += @{ expectedMode = "-a---"; expectedModeWithoutHardlink = "-a---"; itemType = "File"; itemName = "ArchiveFile"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $null }
             $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "la---"; itemType = "SymbolicLink"; itemName = "SymbolicLink-File"; fileAttributes = [System.IO.FileAttributes]::Archive -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetFile1.FullName }
             $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "-a---"; itemType = "HardLink"; itemName = "HardLink"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $targetFile2.FullName }
