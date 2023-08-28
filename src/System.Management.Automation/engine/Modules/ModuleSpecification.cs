@@ -167,22 +167,25 @@ namespace Microsoft.PowerShell.Commands
 
         internal string GetRequiredModuleNotFoundVersionMessage()
         {
-            if (RequiredVersion != null)
+            if (RequiredVersion is not null)
             {
                 return StringUtil.Format(Modules.RequiredModuleNotFoundRequiredVersion, Name, RequiredVersion);
             }
 
-            if (Version != null && MaximumVersion != null)
+            bool hasVersion = Version is not null;
+            bool hasMaximumVersion = MaximumVersion is not null;
+
+            if (hasVersion && hasMaximumVersion)
             {
                 return StringUtil.Format(Modules.RequiredModuleNotFoundModuleAndMaximumVersion, Name, Version, MaximumVersion);
             }
 
-            if (Version != null)
+            if (hasVersion)
             {
                 return StringUtil.Format(Modules.RequiredModuleNotFoundModuleVersion, Name, Version);
             }
 
-            if (MaximumVersion != null)
+            if (hasMaximumVersion)
             {
                 return StringUtil.Format(Modules.RequiredModuleNotFoundMaximumVersion, Name, MaximumVersion);
             }
