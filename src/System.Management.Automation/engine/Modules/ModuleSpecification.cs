@@ -169,7 +169,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (RequiredVersion is not null)
             {
-                return StringUtil.Format(Modules.RequiredModuleNotFoundRequiredVersion, Name, RequiredVersion);
+                return StringUtil.Format(
+                    Modules.RequiredModuleNotFoundRequiredVersion,
+                    Name,
+                    RequiredVersion);
             }
 
             bool hasVersion = Version is not null;
@@ -177,20 +180,32 @@ namespace Microsoft.PowerShell.Commands
 
             if (hasVersion && hasMaximumVersion)
             {
-                return StringUtil.Format(Modules.RequiredModuleNotFoundModuleAndMaximumVersion, Name, Version, MaximumVersion);
+                return StringUtil.Format(
+                    Modules.RequiredModuleNotFoundModuleAndMaximumVersion,
+                    Name,
+                    Version,
+                    MaximumVersion);
             }
 
             if (hasVersion)
             {
-                return StringUtil.Format(Modules.RequiredModuleNotFoundModuleVersion, Name, Version);
+                return StringUtil.Format(
+                    Modules.RequiredModuleNotFoundModuleVersion,
+                    Name,
+                    Version);
             }
 
             if (hasMaximumVersion)
             {
-                return StringUtil.Format(Modules.RequiredModuleNotFoundMaximumVersion, Name, MaximumVersion);
+                return StringUtil.Format(
+                    Modules.RequiredModuleNotFoundMaximumVersion,
+                    Name,
+                    MaximumVersion);
             }
 
-            return StringUtil.Format(Modules.RequiredModuleNotFoundWithoutVersion, Name);
+            return StringUtil.Format(
+                Modules.RequiredModuleNotFoundWithoutVersion,
+                Name);
         }
 
         internal ModuleSpecification(PSModuleInfo moduleInfo)
