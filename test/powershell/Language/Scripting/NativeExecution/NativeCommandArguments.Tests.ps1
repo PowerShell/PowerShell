@@ -204,6 +204,7 @@ Describe "parameters are properly bound when complex" -Tag 'CI' {
 		@{ sb = {testexe -echoargs -foo:'"bar"'}; Expected = @("-foo:""bar""") }
 		@{ sb = {testexe -echoargs -foo:$null..6}; Expected = @("-foo:..6") }
 		@{ sb = {testexe -echoargs -foo:6..$null}; Expected = @("-foo:6..") }
+		@{ sb = {testexe -echoargs -foo:$a..$a}; Expected = @("-foo:STR STR..STR STR") }
 		@{ sb = {testexe -echoargs -foo:$a..6}; Expected = @("-foo:${a}..6") }
 		@{ sb = {testexe -echoargs -foo:${a}..6}; Expected = @("-foo:${a}..6") }
 		@{ sb = {testexe -echoargs -foo:6..$a}; Expected = @("-foo:6..STR STR") }
@@ -215,6 +216,7 @@ Describe "parameters are properly bound when complex" -Tag 'CI' {
 		@{ sb = {testexe -echoargs -foo=$null..6}; Expected = @("-foo=..6") }
 		@{ sb = {testexe -echoargs -foo=6..$null}; Expected = @("-foo=6..") }
 		@{ sb = {testexe -echoargs -foo=$a..6}; Expected = @("-foo=STR STR..6") }
+		@{ sb = {testexe -echoargs -foo=$a..$a}; Expected = @("-foo=STR STR..STR STR") }
 		@{ sb = {testexe -echoargs -foo=${a}..6}; Expected = @("-foo=STR STR..6") }
 		@{ sb = {testexe -echoargs -foo=6..$a}; Expected = @("-foo=6..STR STR") }
 		@{ sb = {testexe -echoargs ""bar""}; Expected = @("bar") }
@@ -232,6 +234,8 @@ Describe "parameters are properly bound when complex" -Tag 'CI' {
 		@{ sb = {testexe -echoargs $a..6}; Expected = @("STR STR..6") }
 		@{ sb = {testexe -echoargs 6..$a}; Expected = @("6..STR STR") }
 		@{ sb = {testexe -echoargs 6..${a} }; Expected = @("6..STR STR") }
+		@{ sb = {testexe -echoargs $a..$a}; Expected = @("STR STR..STR STR") }
+		@{ sb = {testexe -echoargs ${a}..${a} }; Expected = @("STR STR..STR STR") }
 		@{ sb = [scriptblock]::Create('testexe -echoargs --% 6..$a'); Expected = @('6..$a') }
  		@{ sb = [scriptblock]::Create('testexe -echoargs $a..6..$a --% 6..$a'); Expected = @('STR STR..6..STR STR', '6..$a') }
 		)
