@@ -69,7 +69,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///  Possibly create a new argument made up of two arguments that have no space between them.
+        /// Possibly create a new argument made up of two arguments that have no space between them.
         /// </summary>
         /// <param name="currentParameter">The current parameter being prepared for native execution.</param>
         /// <param name="nextParameter">The next parameter to be inspected to determine whether it should be combined with the current.</param>
