@@ -14,8 +14,12 @@ steps:
   displayName: Set Package version
 
 - pwsh: |
-    Write-Verbose -verbose "git clone --verbose https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'"
-    git clone --verbose https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
+    $gitArgs = "clone",
+    "--verbose", 
+    "https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools", 
+    '$(Pipeline.Workspace)/tools'
+    $gitArgs | Write-Verbose -Verbose
+    git $gitArgs
   displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
 
 - pwsh: |
@@ -42,12 +46,12 @@ steps:
     $params = @{
         ReleaseTag = "$(ReleaseTag)"
         AadClientId = "$(RepoClientCliClientID)"
-        AadClientSecret = "$(RepoClientCliSecret)"
         BlobFolderName = "$(AzureVersion)"
         LTS = $metadata.LTSRelease.Latest
         ForProduction = $true
         SkipPublish = $${{ parameters.skipPublish }}
+        MappingFilePath = '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'
     }
-    $params | Out-String -width 9999 | write-Verbose -Verbose
-    & '$(Pipeline.Workspace)/tools/packages.microsoft.com/releaseLinuxPackages.ps1' -MappingFilePath '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'  @params
+    $params | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    & '$(Pipeline.Workspace)/tools/packages.microsoft.com/releaseLinuxPackages.ps1' @params
   displayName: Run release script
