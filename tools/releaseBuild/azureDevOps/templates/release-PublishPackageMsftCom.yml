@@ -52,6 +52,8 @@ steps:
         SkipPublish = $${{ parameters.skipPublish }}
         MappingFilePath = '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'
     }
+    
     $params | Out-String -width 9999 -Stream | write-Verbose -Verbose
-    & '$(Pipeline.Workspace)/tools/packages.microsoft.com/releaseLinuxPackages.ps1' @params
+
+    & '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/releaseLinuxPackages.ps1' @params
   displayName: Run release script
