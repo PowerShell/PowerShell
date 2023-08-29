@@ -119,8 +119,8 @@ jobs:
       }
     displayName: 'Bootstrap VM'
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
       # Add -SkipReleaseChecks as a mitigation to unblock release.
@@ -133,8 +133,8 @@ jobs:
       }
     displayName: 'Package'
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
