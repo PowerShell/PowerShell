@@ -14,8 +14,11 @@ steps:
   displayName: Set Package version
 
 - pwsh: |
+    $branch = 'main-mirror'
     $gitArgs = "clone",
     "--verbose", 
+    "--branch",
+    "$branch",
     "https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools", 
     '$(Pipeline.Workspace)/tools'
     $gitArgs | Write-Verbose -Verbose

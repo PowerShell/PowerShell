@@ -23,7 +23,7 @@ resources:
     type: git
     trigger: none
     name: Internal-PowerShellTeam-Tools
-    ref: master
+    ref: main-mirror
 
 variables:
   - name: runCodesignValidationInjection
