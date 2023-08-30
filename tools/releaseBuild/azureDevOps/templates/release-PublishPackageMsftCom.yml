@@ -25,11 +25,6 @@ steps:
     git $gitArgs
   displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
 
-- pwsh: |
-    sudo apt update
-    sudo apt install -y python3 python3-pip python-is-python3
-  displayName: Install Python
-
 - task: PipAuthenticate@1
   inputs:
     artifactFeeds: 'pmc'
