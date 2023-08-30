@@ -813,7 +813,6 @@ namespace System.Management.Automation
                             stdOutDestination,
                             stdOutSource,
                             out _stdOutByteTransfer);
-
                     }
                 }
             }

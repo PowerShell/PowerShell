@@ -505,7 +505,6 @@ namespace Microsoft.PowerShell
         /// </returns>
         internal bool? ExecuteCommandAndGetResultAsBool(string command)
         {
-
             bool? result = ExecuteCommandAndGetResultAsBool(command, out _);
 
             return result;

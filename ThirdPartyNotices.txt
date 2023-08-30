@@ -135,7 +135,7 @@ limitations under the License.
 
 ---------------------------------------------------------
 
-Markdig.Signed 0.31.0 - BSD-2-Clause
+Markdig.Signed 0.32.0 - BSD-2-Clause
 
 
 
@@ -238,7 +238,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonSchema.Net 4.1.6 - MIT
+JsonSchema.Net 4.1.8 - MIT
 
 
 
