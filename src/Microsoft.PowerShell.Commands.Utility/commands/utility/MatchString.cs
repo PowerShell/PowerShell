@@ -1336,7 +1336,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the text encoding to process each file as.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding

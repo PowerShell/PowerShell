@@ -361,6 +361,11 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
     }
 
     It "Should run 'whoami.exe' from FAT file system without error" -Skip:(!$IsWindows) {
+        if ((Test-IsWinServer2012R2) -or (Test-IsWindows2016)) {
+            Set-ItResult -Pending -Because "Marking as pending since whomai.exe is not found on T:\ on 2012R2 and 2016 after copying to VHD"
+            return
+        }
+
         $expected = & "$env:WinDir\System32\whoami.exe"
         $result = T:\whoami.exe
         $result | Should -BeExactly $expected
