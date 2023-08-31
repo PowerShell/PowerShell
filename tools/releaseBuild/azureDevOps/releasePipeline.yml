@@ -9,6 +9,10 @@ parameters:
     displayName: Skip actual publishing to Packages.microsoft.com, AFTER we upload it.  Used to test the publishing script.
     default: false
     type: boolean
+  - name: skipNugetPublish
+    displayName: Skip nuget publishing.  Used in testing publising stage.
+    default: false
+    type: boolean
 
 resources:
   pipelines:
@@ -346,6 +350,8 @@ stages:
 
     steps:
     - template: templates/release-ReleaseToNuGet.yml
+      parameters:
+        skipPublish: ${{ parameters.skipNugetPublish }}
 
   - job: PublishPkgsMsftCom
 

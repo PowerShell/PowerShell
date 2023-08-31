@@ -43,7 +43,7 @@ steps:
     $metadata = Get-Content -Path "$(Build.SourcesDirectory)/tools/metadata.json" -Raw | ConvertFrom-Json
     $params = @{
         ReleaseTag = "$(ReleaseTag)"
-        AadClientId = "$(RepoClientCliClientID)"
+        AadClientId = "$(PmcCliClientID)"
         BlobFolderName = "$(AzureVersion)"
         LTS = $metadata.LTSRelease.Latest
         ForProduction = $true
