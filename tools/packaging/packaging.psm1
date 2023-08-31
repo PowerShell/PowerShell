@@ -459,7 +459,7 @@ function Start-PSPackage {
                 elseif ($Runtime -match "-arm64")
                 {
                     $TargetArchitecture = "arm64"
-                    $r2rArchitecture = "TODO ANAM"
+                    $r2rArchitecture = "arm64"
                 }
 
                 Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
@@ -3324,7 +3324,7 @@ function New-MSIPackage
     elseif ($ProductTargetArchitecture -eq "arm64")
     {
         $fileArchitecture = 'arm64'
-        $ProductProgFilesDir = "TODO ANAM"
+        $ProductProgFilesDir = "ProgramFiles64Folder"
     }
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
