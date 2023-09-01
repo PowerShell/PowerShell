@@ -10,7 +10,7 @@ parameters:
     default: false
     type: boolean
   - name: skipNugetPublish
-    displayName: Skip nuget publishing.  Used in testing publising stage.
+    displayName: Skip nuget publishing.  Used in testing publishing stage.
     default: false
     type: boolean
 
