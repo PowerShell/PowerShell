@@ -83,7 +83,7 @@ try
                 $result = Get-Command NestedFn1 2> $null;
                 return ($result -ne $null)
 '@
-                $isCommandAccessible = powershell.exe -noprofile -nologo -c $command
+                $isCommandAccessible = pwsh.exe -noprofile -nologo -c $command
             }
             finally
             {
