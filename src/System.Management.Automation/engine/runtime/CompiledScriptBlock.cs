@@ -1065,7 +1065,7 @@ namespace System.Management.Automation
                     // Since we are in audit mode, go ahead and allow the language transition.
                     oldLanguageMode = context.LanguageMode;
                     newLanguageMode = this.LanguageMode;
-            }
+                }
             }
 
             Dictionary<string, PSVariable> backupWhenDotting = null;
@@ -2059,8 +2059,8 @@ namespace System.Management.Automation
                         if (result != null)
                         {
                             return result;
+                        }
                     }
-                }
                 }
 
                 return CheckForMatches(runningHash, 0);
