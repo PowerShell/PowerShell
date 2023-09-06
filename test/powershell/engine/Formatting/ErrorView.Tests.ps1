@@ -166,6 +166,19 @@ Describe 'Tests for $ErrorView' -Tag CI {
             start-job { [cmdletbinding()]param() $e = [System.Management.Automation.ErrorRecord]::new([System.Exception]::new('hello'), 1, 'ParserError', $null); $pscmdlet.ThrowTerminatingError($e) } | Wait-Job | Receive-Job -ErrorVariable e -ErrorAction SilentlyContinue
             $e | Out-String | Should -BeLike '*ParserError*'
         }
+
+        It 'Exception thrown from Enumerator.MoveNext in a pipeline shows information' {
+            & {
+                [CmdletBinding()]
+                param()
+                end {
+                    $l = [System.Collections.Generic.List[string]] @('one', 'two')
+                    $l | ForEach-Object { $null = $l.Remove($_) }
+                }
+            } -ErrorVariable e -ErrorAction SilentlyContinue
+
+            $e | Out-String | Should -BeLike 'InvalidOperation:*'
+        }
     }
 
     Context 'NormalView tests' {
