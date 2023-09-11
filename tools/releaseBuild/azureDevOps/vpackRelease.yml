@@ -48,7 +48,7 @@ stages:
         
     - powershell: |
         if($env:RELEASETAGVAR -match '-') {
-            throw "Don't release a preview build without coordinating with Windows Engineering"
+            throw "Don't release a preview build without coordinating with Windows Engineering Build Tools Team"
         }
       displayName: Stop any preview release
 
