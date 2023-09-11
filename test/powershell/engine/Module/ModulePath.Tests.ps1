@@ -180,7 +180,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         try {
             $userConfig = '{ "PSModulePath": "myUserPath" }'
             Set-Content -Path $userConfigPath -Value $userConfig -Force
-            $out = & $powershell -noprofile -command 'powershell.exe -noprofile -command $env:PSModulePath'
+            $out = & $powershell -noprofile -command 'powershell.exe -noprofile -command `$env:PSModulePath'
             $out | Should -Not -BeLike 'myUserPath;*'
         }
         finally {
