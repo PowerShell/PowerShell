@@ -824,7 +824,7 @@ function Invoke-PRBackport {
     }
 
     if ($PSCmdlet.ShouldProcess("Create the PR")) {
-        gh pr create --base $Target --title $backportTitle --body "Backport #$PrNumber"
+        gh pr create --base $Target --title $backportTitle --body "Backport #$PrNumber" --web
     }
 }
 
