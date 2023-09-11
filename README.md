@@ -34,7 +34,7 @@ You can download and install a PowerShell package for any of the following platf
 | [Ubuntu 18.04][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu18]     | [.deb][pv-deb]        | [Instructions][in-ubuntu18]   |
 | [Ubuntu 16.04][corefx-linux]               | [.deb][lts-deb]         | [.deb][rl-ubuntu16]     | [.deb][pv-deb]        | [Instructions][in-ubuntu16]   |
 | [Debian 9][corefx-linux]                   | [.deb][lts-deb]         | [.deb][rl-debian9]      | [.deb][pv-deb]        | [Instructions][in-deb9]       |
-| [Debian 10][corefx-linux]                  | [.deb][lts-deb]         | [.deb][rl-debian10]     | [.deb][pv-deb]        | [Instructions][in-deb9]       |
+| [Debian 10][corefx-linux]                  | [.deb][lts-deb]         | [.deb][rl-debian10]     | [.deb][pv-deb]        | [Instructions][in-deb10]      |
 | [Debian 11][corefx-linux]                  | [.deb][lts-deb]         | [.deb][rl-debian11]     | [.deb][pv-deb]        |                               |
 | [CentOS 7][corefx-linux]                   | [.rpm][lts-rh]          | [.rpm][rl-centos]       | [.rpm][pv-rpm]        | [Instructions][in-centos]     |
 | [CentOS 8][corefx-linux]                   | [.rpm][lts-rh]          | [.rpm][rl-centos8]      | [.rpm][pv-rpm]        |                               |
