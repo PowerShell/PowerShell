@@ -47,6 +47,7 @@ variables:
   # Turn off Homebrew analytics
   HOMEBREW_NO_ANALYTICS: 1
   __SuppressAnsiEscapeSequences: 1
+  nugetMultiFeedWarnLevel: none
 
 resources:
 - repo: self
