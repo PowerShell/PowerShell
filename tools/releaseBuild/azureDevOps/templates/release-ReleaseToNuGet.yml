@@ -1,5 +1,11 @@
+parameters:
+  - name: skipPublish
+    default: false
+    type: boolean
+    
 steps:
 - task: DownloadPipelineArtifact@2
+  condition: and(eq('${{ parameters.skipPublish }}', 'false'), succeeded())
   inputs:
     source: specific
     project: PowerShellCore
@@ -12,6 +18,7 @@ steps:
     path: '$(Pipeline.Workspace)/releasePipeline/finalResults'
 
 - task: DownloadPipelineArtifact@2
+  condition: and(eq('${{ parameters.skipPublish }}', 'false'), succeeded())
   inputs:
     source: specific
     project: PowerShellCore
@@ -34,9 +41,11 @@ steps:
 
     Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
   displayName: Download and capture nupkgs
+  condition: and(eq('${{ parameters.skipPublish }}', 'false'), succeeded())
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
+  condition: and(eq('${{ parameters.skipPublish }}', 'false'), succeeded())
   inputs:
     command: push
     packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
