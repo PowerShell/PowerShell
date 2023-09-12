@@ -1157,10 +1157,7 @@ namespace System.Management.Automation
     {
         static Verbs()
         {
-            Type[] verbTypes = new Type[] { typeof(VerbsCommon), typeof(VerbsCommunications), typeof(VerbsData),
-                typeof(VerbsDiagnostic), typeof(VerbsLifecycle), typeof(VerbsOther), typeof(VerbsSecurity) };
-
-            foreach (Type type in verbTypes)
+            foreach (Type type in GetAllTypes())
             {
                 foreach (FieldInfo field in type.GetFields())
                 {
@@ -1310,6 +1307,16 @@ namespace System.Management.Automation
             }
 #endif
         }
+
+        internal static Type[] GetAllTypes() => new Type[] {
+            typeof(VerbsCommon),
+            typeof(VerbsCommunications),
+            typeof(VerbsData),
+            typeof(VerbsDiagnostic),
+            typeof(VerbsLifecycle),
+            typeof(VerbsOther),
+            typeof(VerbsSecurity)
+        };
 
         private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, string[]> s_recommendedAlternateVerbs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);

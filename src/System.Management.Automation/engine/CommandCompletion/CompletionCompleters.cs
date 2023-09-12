@@ -2423,6 +2423,15 @@ namespace System.Management.Automation
                         break;
                     }
 
+                case "Get-Verb":
+                    {
+                        if (parameterName.Equals("Verb", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionVerbCommands(result, context);
+                        }
+                        break;
+                    }
+
                 default:
                     {
                         NativeCompletionPathArgument(context, parameterName, result);
@@ -2583,6 +2592,26 @@ namespace System.Management.Automation
             {
                 result.RemoveAt(result.Count - 1);
             }
+        }
+
+        private static void NativeCompletionVerbCommands(List<CompletionResult> result, CompletionContext context)
+        {
+            string wordToComplete = context.WordToComplete + "*";
+
+            WildcardPattern verbPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+
+            foreach (Type verbType in Verbs.GetAllTypes())
+            {
+                foreach (FieldInfo field in verbType.GetFields())
+                {
+                    if (verbPattern.IsMatch(field.Name))
+                    {
+                        result.Add(new CompletionResult(field.Name));
+                    }
+                }
+            }
+
+            result.Add(CompletionResult.Null);
         }
 
         private static void NativeCompletionCimCommands(

@@ -39,15 +39,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Type[] verbTypes = new Type[] { typeof(VerbsCommon), typeof(VerbsCommunications), typeof(VerbsData),
-                typeof(VerbsDiagnostic), typeof(VerbsLifecycle), typeof(VerbsOther), typeof(VerbsSecurity) };
-
             Collection<WildcardPattern> matchingVerbs = SessionStateUtilities.CreateWildcardsFromStrings(
                             this.Verb,
                             WildcardOptions.IgnoreCase
                         );
 
-            foreach (Type type in verbTypes)
+            foreach (Type type in Verbs.GetAllTypes())
             {
                 string groupName = type.Name.Substring(5);
                 if (this.Group != null)
