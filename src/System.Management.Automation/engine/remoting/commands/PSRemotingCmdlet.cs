@@ -3940,8 +3940,8 @@ namespace Microsoft.PowerShell.Commands
                     string shellUri = null;
                     if (!string.IsNullOrEmpty(configurationName))
                     {
-                        shellUri = (configurationName.IndexOf(
-                                    System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) != -1) ?
+                        shellUri = configurationName.Contains(
+                                    System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) ?
                                     configurationName : System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + configurationName;
                     }
 

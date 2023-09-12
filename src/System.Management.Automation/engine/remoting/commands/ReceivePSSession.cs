@@ -446,8 +446,8 @@ namespace Microsoft.PowerShell.Commands
             string shellUri = null;
             if (!string.IsNullOrEmpty(ConfigurationName))
             {
-                shellUri = (ConfigurationName.IndexOf(
-                            System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) != -1) ?
+                shellUri = ConfigurationName.Contains(
+                            System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) ?
                             ConfigurationName : System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + ConfigurationName;
             }
 
