@@ -37,6 +37,14 @@
           "channel": "stable"
       },
       {
+          "url": "cbl-mariner-2.0-preview-Microsoft-aarch64",
+          "distribution": [
+              "bionic"
+          ],
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.aarch64.rpm",
+          "channel": "preview"
+      },
+      {
           "url": "cbl-mariner-2.0-preview-Microsoft-x86_64",
           "distribution": [
               "bionic"
