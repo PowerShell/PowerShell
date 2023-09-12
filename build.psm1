@@ -457,6 +457,10 @@ Fix steps:
         $Arguments += "--self-contained"
     }
 
+    if ($Options.Runtime -like 'win*') {
+        $Arguments += "/property:UseRidGraph=true"
+    }
+
     if ($Options.Runtime -like 'win*' -or ($Options.Runtime -like 'fxdependent*' -and $environment.IsWindows)) {
         $Arguments += "/property:IsWindows=true"
         if(!$environment.IsWindows) {
@@ -800,6 +804,7 @@ function Restore-PSPackage
 
         if ($Options.Runtime -like 'win*') {
             $RestoreArguments += "/property:EnableWindowsTargeting=True"
+            $RestoreArguments += "/property:UseRidGraph=True"
         }
 
         if ($InteractiveAuth) {
