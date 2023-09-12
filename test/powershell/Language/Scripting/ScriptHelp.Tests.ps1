@@ -2,35 +2,48 @@
 # Licensed under the MIT License.
 $ProgressPreference = "SilentlyContinue"
 
-Describe 'get-help HelpFunc1' -Tags "Feature" {
-    BeforeAll {
-    function TestHelpError {
-        [CmdletBinding()]
-        param(
-        $x,
-        [System.Management.Automation.ErrorRecord[]]$e,
-        [string] $expectedError
+New-Module PesterInterop {
+    $script:isPester4 = (Get-Module Pester).Version -lt '5.0'
+
+    if ($script:isPester4) {
+        function BeforeDiscovery {
+            param (
+                [ScriptBlock]$ScriptBlock
+            )
+
+            . $ScriptBlock
+        }
+    }
+}
+
+Describe 'Get-Help Function' -Tags 'Feature' {
+    BeforeDiscovery {
+        $testCases = @(
+            @{ Name = 'Synopsis';                                Expected = 'A relatively useless function.' }
+            @{ Name = 'Description';                             Expected = "A description`n`n    with indented text and a blank line." }
+            @{ Name = 'alertSet.alert';                          Expected = 'This function is mostly harmless.';        Getter = { $content.alertSet.alert } }
+            @{ Name = 'relatedLinks.navigationLink[0].uri';      Expected = 'https://blogs.msdn.com/powershell';        Getter = { $content.relatedLinks.navigationLink[0].uri } }
+            @{ Name = 'relatedLinks.navigationLink[1].linkText'; Expected = 'other commands';                           Getter = { $content.relatedLinks.navigationLink[1].linkText } }
+            @{ Name = 'examples.example.code';                   Expected = "If you need an example, you're hopeless."; Getter = { $content.examples.example.code } }
+            @{ Name = 'inputTypes.inputType.type.name';          Expected = 'Anything you like.';                       Getter = { $content.inputTypes.inputType.type.name } }
+            @{ Name = 'returnValues.returnValue.type.name';      Expected = 'Nothing.';                                 Getter = { $content.returnValues.returnValue.type.name } }
+            @{ Name = 'Component';                               Expected = 'Something' }
+            @{ Name = 'Role';                                    Expected = 'CrazyUser' }
+            @{ Name = 'Functionality';                           Expected = 'Useless' }
         )
-        It 'Help result should be $null' { $x | Should -BeNullOrEmpty }
-        It '$e.Count' { $e.Count | Should -BeGreaterThan 0 }
-        It 'FullyQualifiedErrorId' { $e[0].FullyQualifiedErrorId | Should -BeExactly $expectedError }
     }
 
-    function TestHelpFunc1 {
-        [CmdletBinding()]
-        param( $x )
-        It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-        It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "A relatively useless function." }
-        It '$x.Description' { $x.Description[0].Text | Should -BeExactly "A description`n`n    with indented text and a blank line." }
-        It '$x.alertSet.alert' { $x.alertSet.alert[0].Text | Should -BeExactly "This function is mostly harmless." }
-        It '$x.relatedLinks.navigationLink[0].uri' {  $x.relatedLinks.navigationLink[0].uri | Should -BeExactly "https://blogs.msdn.com/powershell" }
-        It '$x.relatedLinks.navigationLink[1].linkText' { $x.relatedLinks.navigationLink[1].linkText | Should -BeExactly "other commands" }
-        It '$x.examples.example.code' { $x.examples.example.code | Should -BeExactly "If you need an example, you're hopeless." }
-        It '$x.inputTypes.inputType.type.name' { $x.inputTypes.inputType.type.name | Should -BeExactly "Anything you like." }
-        It '$x.returnValues.returnValue.type.name' { $x.returnValues.returnValue.type.name | Should -BeExactly "Nothing." }
-        It '$x.Component' { $x.Component | Should -BeExactly "Something" }
-        It '$x.Role' { $x.Role | Should -BeExactly "CrazyUser" }
-        It '$x.Functionality' { $x.Functionality | Should -BeExactly "Useless" }
+    BeforeAll {
+        function TestHelpError {
+            [CmdletBinding()]
+            param(
+            $x,
+            [System.Management.Automation.ErrorRecord[]]$e,
+            [string] $expectedError
+            )
+            It 'Help result should be $null' { $x | Should -BeNullOrEmpty }
+            It '$e.Count' { $e.Count | Should -BeGreaterThan 0 }
+            It 'FullyQualifiedErrorId' { $e[0].FullyQualifiedErrorId | Should -BeExactly $expectedError }
         }
 
         # .SYNOPSIS
@@ -134,46 +147,84 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
     }
 
     Context 'Get-Help helpFunc1' {
-        $x = Get-Help helpFunc1
-        TestHelpFunc1 $x
+        BeforeAll {
+            $content = Get-Help helpFunc1 -ErrorAction SilentlyContinue -ErrorVariable helpError
+        }
+
+        It 'Should not be null' {
+            Get-Help helpFunc1 | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Should not raise errors getting help' {
+            $helpError | Should -BeNullOrEmpty
+        }
+
+        It 'Should get <Name>' -TestCases $properties {
+            param ($Name, $Expected, $Getter)
+
+            if ($Getter) {
+                $value = & $Getter
+            } else {
+                $value = $content.$Name
+            }
+
+            $value | Should -BeExactly $Expected
+        }
     }
 
     Context 'Get-Help dynamicHelpFunc1' {
-        $x = Get-Help dynamicHelpFunc1
-        TestHelpFunc1 $x
+        BeforeAll {
+            $content = Get-Help dynamicHelpFunc1 -ErrorAction SilentlyContinue -ErrorVariable helpError
+        }
+
+        It 'Should not be null' {
+            Get-Help dynamicHelpFunc1 | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Should not raise errors getting help' {
+            $helpError | Should -BeNullOrEmpty
+        }
+
+        It 'Should get <Name>' -TestCases $properties {
+            param ($Name, $Expected, $Getter)
+
+            if ($Getter) {
+                $value = & $Getter
+            } else {
+                $value = $content.$Name
+            }
+
+            $value | Should -BeExactly $Expected
+        }
     }
 
-    Context 'get-help helpFunc1 -component blah' {
-        $x = Get-Help helpFunc1 -Component blah -ErrorAction SilentlyContinue -ErrorVariable e
-        TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
-    }
+    Context 'Filtering' {
+        It 'Can get role specific help' {
+            {
+                Get-Help helpFunc1 -Role CrazyUser -ErrorAction Stop | Should -Not -BeNullOrEmpty
+            } | Should -Not -Throw
+        }
 
-    Context 'get-help helpFunc1 -component Something' {
-        $x = Get-Help helpFunc1 -Component Something -ErrorAction SilentlyContinue -ErrorVariable e
-        TestHelpFunc1 $x
-        It '$e should be empty' { $e.Count | Should -Be 0 }
-    }
+        It 'Can filter help based on Functionality' {
+            {
+                Get-Help helpFunc1 -Functionality Useless -ErrorAction Stop | Should -Not -BeNullOrEmpty
+            } | Should -Not -Throw
+        }
 
-    Context 'get-help helpFunc1 -role blah' {
-        $x = Get-Help helpFunc1 -Component blah -ErrorAction SilentlyContinue -ErrorVariable e
-        TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
-    }
+        It 'Should throw if a help is not found when filtering by <Name>' -TestCases @(
+            @{ Name = 'Component' }
+            @{ Name = 'Role' }
+            @{ Name = 'Functionality' }
+        ) {
+            param ( $Name )
 
-    Context 'get-help helpFunc1 -role CrazyUser' {
-        $x = Get-Help helpFunc1 -Role CrazyUser -ErrorAction SilentlyContinue -ErrorVariable e
-        TestHelpFunc1 $x
-        It '$e should be empty' { $e.Count | Should -Be 0 }
-    }
-
-    Context '$x = get-help helpFunc1 -functionality blah' {
-        $x = Get-Help helpFunc1 -Functionality blah -ErrorAction SilentlyContinue -ErrorVariable e
-        TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
-    }
-
-    Context '$x = get-help helpFunc1 -functionality Useless' {
-        $x = Get-Help helpFunc1 -Functionality Useless -ErrorAction SilentlyContinue -ErrorVariable e
-        TestHelpFunc1 $x
-        It '$e should be empty' { $e.Count | Should -Be 0 }
+            $params = @{
+                $Name       = 'blah'
+                Name        = 'helpFunc1'
+                ErrorAction = 'Stop'
+            }
+            { Get-Help @params } | Should -Throw -ErrorId 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
+        }
     }
 }
 
@@ -181,10 +232,10 @@ Describe 'get-help file' -Tags "CI" {
     BeforeAll {
         try {
             if ($IsWindows) {
-                $tmpfile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+                $tmpfile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), 'ps1')
             }
             else {
-                $tmpfile = Join-Path $env:HOME $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), "ps1"))
+                $tmpfile = Join-Path $env:HOME $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), 'ps1'))
             }
         } catch {
             return
