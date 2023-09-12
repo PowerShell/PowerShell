@@ -20,13 +20,13 @@ Describe 'Get-Help Function' -Tags 'Feature' {
     BeforeDiscovery {
         $testCases = @(
             @{ Name = 'Synopsis';                                Expected = 'A relatively useless function.' }
-            @{ Name = 'Description';                             Expected = "A description`n`n    with indented text and a blank line." }
-            @{ Name = 'alertSet.alert';                          Expected = 'This function is mostly harmless.';        Getter = { $content.alertSet.alert } }
-            @{ Name = 'relatedLinks.navigationLink[0].uri';      Expected = 'https://blogs.msdn.com/powershell';        Getter = { $content.relatedLinks.navigationLink[0].uri } }
-            @{ Name = 'relatedLinks.navigationLink[1].linkText'; Expected = 'other commands';                           Getter = { $content.relatedLinks.navigationLink[1].linkText } }
-            @{ Name = 'examples.example.code';                   Expected = "If you need an example, you're hopeless."; Getter = { $content.examples.example.code } }
-            @{ Name = 'inputTypes.inputType.type.name';          Expected = 'Anything you like.';                       Getter = { $content.inputTypes.inputType.type.name } }
-            @{ Name = 'returnValues.returnValue.type.name';      Expected = 'Nothing.';                                 Getter = { $content.returnValues.returnValue.type.name } }
+            @{ Name = 'Description';                             Expected = "A description`n`n    with indented text and a blank line."; Getter = { $content.Description.Text } }
+            @{ Name = 'alertSet.alert';                          Expected = 'This function is mostly harmless.';                         Getter = { $content.alertSet.alert.Text } }
+            @{ Name = 'relatedLinks.navigationLink[0].uri';      Expected = 'https://blogs.msdn.com/powershell';                         Getter = { $content.relatedLinks.navigationLink[0].uri } }
+            @{ Name = 'relatedLinks.navigationLink[1].linkText'; Expected = 'other commands';                                            Getter = { $content.relatedLinks.navigationLink[1].linkText } }
+            @{ Name = 'examples.example.code';                   Expected = "If you need an example, you're hopeless.";                  Getter = { $content.examples.example.code } }
+            @{ Name = 'inputTypes.inputType.type.name';          Expected = 'Anything you like.';                                        Getter = { $content.inputTypes.inputType.type.name } }
+            @{ Name = 'returnValues.returnValue.type.name';      Expected = 'Nothing.';                                                  Getter = { $content.returnValues.returnValue.type.name } }
             @{ Name = 'Component';                               Expected = 'Something' }
             @{ Name = 'Role';                                    Expected = 'CrazyUser' }
             @{ Name = 'Functionality';                           Expected = 'Useless' }
@@ -159,7 +159,7 @@ Describe 'Get-Help Function' -Tags 'Feature' {
             $helpError | Should -BeNullOrEmpty
         }
 
-        It 'Should get <Name>' -TestCases $properties {
+        It 'Should get <Name>' -TestCases $testCases {
             param ($Name, $Expected, $Getter)
 
             if ($Getter) {
@@ -185,7 +185,7 @@ Describe 'Get-Help Function' -Tags 'Feature' {
             $helpError | Should -BeNullOrEmpty
         }
 
-        It 'Should get <Name>' -TestCases $properties {
+        It 'Should get <Name>' -TestCases $testCases {
             param ($Name, $Expected, $Getter)
 
             if ($Getter) {
