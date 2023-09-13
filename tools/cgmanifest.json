@@ -86,7 +86,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.NetAnalyzers",
-          "Version": "7.0.1"
+          "Version": "7.0.4"
         }
       },
       "DevelopmentDependency": true
@@ -106,7 +106,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "7.0.9"
+          "Version": "7.0.11"
         }
       },
       "DevelopmentDependency": false
@@ -206,7 +206,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "7.0.4"
+          "Version": "7.0.5"
         }
       },
       "DevelopmentDependency": false
@@ -476,7 +476,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.AccountManagement",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
