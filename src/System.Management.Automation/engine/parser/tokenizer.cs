@@ -3217,13 +3217,20 @@ namespace System.Management.Automation.Language
                         break;
 
                     case '=':
-                        // We have an '=' in the parameter which is highly unlikely to be a powershell
-                        // construct. However, it is not uncommon that a native utility would have a
-                        // parameter like -parm=value or -parm=$var so in this case, just return an generic token.
-                        // We need to insert the '-' that was skipped when we thought it was our parameter.
-                        UngetChar();
-                        sb.Insert(0, _script[_tokenStart]);
-                        return ScanGenericToken(sb);
+                        if (ExperimentalFeature.IsEnabled("PSWindowsNativeCommandArgPassing"))
+                        {
+                            // We have an '=' in the parameter which is highly unlikely to be a powershell
+                            // construct. However, it is not uncommon that a native utility would have a
+                            // parameter like -parm=value or -parm=$var or -parm="a b c" so in this case,
+                            // just return an generic token.
+                            // We need to insert the '-' that was skipped when we thought it was our parameter.
+                            UngetChar();
+                            sb.Insert(0, _script[_tokenStart]);
+                            return ScanGenericToken(sb);
+                        }
+
+                        // if the experimental feature is not enabled, just treat is as default case
+                        goto default;
 
                     case ':':
                         scanning = false;
