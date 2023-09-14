@@ -155,7 +155,7 @@ Describe 'Comment Based Help' {
                     . {
                         function ExampleInsideFunction {
                             param ( )
-                            Write-Host 'Hello world'
+                            'Hello world'
                             <#
                             .SYNOPSIS
                                 An example function.
@@ -174,7 +174,7 @@ Describe 'Comment Based Help' {
                             .SYNOPSIS
                                 An example function.
                             #>
-                            Write-Host 'Hello world'
+                            'Hello world'
                         }
                     }
 
@@ -244,7 +244,7 @@ Describe 'Comment Based Help' {
 Script help.
 #>
 
-Write-Host 'Hello world'
+'Hello world'
 '@
 
                 Get-HelpField $script -Name 'SYNOPSIS' | Should -Be 'Script help.'
@@ -252,7 +252,7 @@ Write-Host 'Hello world'
 
             It 'Should find help content at the end of a script' {
                 Set-Content -Path $script -Value @'
-Write-Host 'Hello world'
+'Hello world'
 
 <#
 .SYNOPSIS
@@ -290,7 +290,7 @@ param ( )
 Script help.
 #>
 
-Write-Host 'Hello world'
+'Hello world'
 '@
 
                 Get-HelpField $script -Name 'SYNOPSIS' | Should -Be 'Script help.'
@@ -305,7 +305,7 @@ Write-Host 'Hello world'
 Script help.
 #>
 
-Write-Host 'Hello world'
+'Hello world'
 '@
 
                 Get-HelpField $script -Name 'SYNOPSIS' | Should -Be 'Script help.'
@@ -330,14 +330,14 @@ function NestedFunction { }
 
             It 'Should not find help content between statements in a script' {
                 Set-Content -Path $script -Value @'
-Write-Host 'Start'
+'Start'
 
 <#
 .SYNOPSIS
 Script help.
 #>
 
-Write-Host 'End'
+'End'
 '@
 
                 Get-Help $script | ForEach-Object Trim | Should -Be 'script.ps1'
@@ -351,7 +351,7 @@ Write-Host 'End'
 Script help.
 #>
 
-Write-Host 'Hello world'
+'Hello world'
 '@
 
                 Get-Help $script | ForEach-Object Trim | Should -Be 'script.ps1'
@@ -366,7 +366,7 @@ using namespace System.Management.Automation
 Script help.
 #>
 
-Write-Host 'Hello world'
+'Hello world'
 '@
 
                 Get-Help $script | ForEach-Object Trim | Should -Be 'script.ps1'
