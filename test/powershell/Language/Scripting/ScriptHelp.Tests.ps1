@@ -181,6 +181,55 @@ Describe 'Comment Based Help' {
                     Get-HelpField 'ExampleInsideFunction' -Name 'SYNOPSIS' | Should -Be 'ExampleInsideFunction'
                 }
             }
+
+            Context 'Nested' {
+                It 'Allows help blocks in nested functions' {
+                    function ExampleFunction {
+                        <#
+                            .SYNOPSIS
+                                An example function.
+                        #>
+                        param ( )
+
+                        function NestedFunction {
+                            <#
+                                .SYNOPSIS
+                                    An example nested function.
+                            #>
+                        }
+
+                        Get-Help NestedFunction
+                    }
+
+                    $helpInfo = Get-Help ExampleFunction
+                    Get-HelpField -HelpInfo $helpInfo -Name 'NAME' | Should -Be 'ExampleFunction'
+                    Get-HelpField -HelpInfo $helpInfo -Name 'SYNOPSIS' | Should -Be 'An example function.'
+
+                    $helpInfo = ExampleFunction
+                    Get-HelpField -HelpInfo $helpInfo -Name 'NAME' | Should -Be 'NestedFunction'
+                    Get-HelpField -HelpInfo $helpInfo -Name 'SYNOPSIS' | Should -Be 'An example nested function.'
+                }
+
+                It 'Cannot distinguish between function help and nested function help when usage is ambiguous' {
+                    function ExampleFunction {
+                        <#
+                            .SYNOPSIS
+                                An example function.
+                        #>
+                        function NestedFunction { }
+
+                        Get-Help NestedFunction
+                    }
+
+                    $helpInfo = Get-Help ExampleFunction
+                    Get-HelpField -HelpInfo $helpInfo -Name 'NAME' | Should -Be 'ExampleFunction'
+                    Get-HelpField -HelpInfo $helpInfo -Name 'SYNOPSIS' | Should -Be 'An example function.'
+
+                    $helpInfo = ExampleFunction
+                    Get-HelpField -HelpInfo $helpInfo -Name 'NAME' | Should -Be 'NestedFunction'
+                    Get-HelpField -HelpInfo $helpInfo -Name 'SYNOPSIS' | Should -Be 'An example function.'
+                }
+            }
         }
 
         Context 'Script help' {
@@ -1154,11 +1203,124 @@ function NestedFunction { }
     }
 
     Context 'Fowarded' {
+        AfterAll {
+            if (Test-Path function:Get-Process) {
+                Remove-Item function:Get-Process
+            }
+        }
 
+        It 'Can forward help without specifying a target category' {
+            function TargetFunction {
+                <#
+                    .SYNOPSIS
+                        A target function.
+                #>
+            }
+
+            function ExampleFunction {
+                <#
+                    .FORWARDHELPTARGETNAME TargetFunction
+                #>
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'SYNOPSIS' | Should -Be 'A target function.'
+        }
+
+        It 'Can forward help to a cmdlet' {
+            function ExampleFunction {
+                <#
+                    .FORWARDHELPTARGETNAME Get-Process
+                #>
+            }
+
+            $helpInfo = Get-Help ExampleFunction
+            Get-HelpField -HelpInfo $helpInfo -Name 'NAME' | Should -Be 'Get-Process'
+            Get-HelpField -HelpInfo $helpInfo -Name 'CATEGORY' | Should -Be 'Cmdlet'
+        }
+
+        It 'Can forward help to a command of a different category where a conflict exists' {
+            function Get-Process {
+                <#
+                    .SYNOPSIS
+                        A target function.
+                #>
+            }
+
+            function ExampleFunction {
+                <#
+                    .FORWARDHELPTARGETNAME Get-Process
+                    .FORWARDHELPCATEGORY Function
+                #>
+            }
+
+            $helpInfo = Get-Help ExampleFunction
+            Get-HelpField -HelpInfo $helpInfo -Name 'NAME' | Should -Be 'Get-Process'
+            Get-HelpField -HelpInfo $helpInfo -Name 'CATEGORY' | Should -Be 'Function'
+            Get-HelpField -HelpInfo $helpInfo -Name 'SYNOPSIS' | Should -Be 'A target function.'
+        }
+
+        It 'Should return generated help for the existing command if the target is not valid' {
+            function ExampleFunction {
+                <#
+                    .FORWARDHELPTARGETNAME ScriptHelp-DoesNotExist
+                #>
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'NAME' | Should -Be 'ExampleFunction'
+        }
     }
 
     Context 'External' {
+        BeforeAll {
+            $currentCulture = $PSUICulture
+        }
 
+        AfterEach {
+            [System.Globalization.CultureInfo]::CurrentUICulture = $currentCulture
+        }
+
+        It 'Can use an external help file' {
+            function ExampleFunction {
+                <#
+                    .EXTERNALHELP ScriptHelp.Tests.NoCulture.xml
+                #>
+            }
+
+            Get-HelpField 'ExampleFunction' -Name 'SYNOPSIS' | Should -Be 'An example function with help from a fallback file.'
+        }
+
+        It 'Can use a culture specific help file for the culture <Culture>' -TestCases @(
+            @{ Culture = 'en-US' }
+            @{ Culture = 'fr-FR' }
+        ) {
+            param ( $Culture )
+
+            function ExampleFunction {
+                <#
+                    .EXTERNALHELP ScriptHelp.Tests.xml
+                #>
+            }
+
+            [System.Globalization.CultureInfo]::CurrentUICulture = $Culture
+
+            Get-HelpField 'ExampleFunction' -Name 'SYNOPSIS' | Should -Be ('An example function with help from the {0} culture.' -f $Culture)
+        }
+
+        It 'Can use a culture specific help file under a child directory for the culture <Culture>' -TestCases @(
+            @{ Culture = 'en-US' }
+        ) {
+            param ( $Culture )
+
+            function ExampleFunction {
+                <#
+                    .EXTERNALHELP newbase\ScriptHelp.Tests.xml
+                #>
+            }
+
+            [System.Globalization.CultureInfo]::CurrentUICulture = $Culture
+
+            Get-HelpField 'ExampleFunction' -Name 'SYNOPSIS' | Should -Be ('An example function with help from the newbase\{0} culture.' -f $Culture)
+        }
     }
 
     Context 'Filtering' {
@@ -1208,103 +1370,3 @@ function NestedFunction { }
         }
     }
 }
-
-
-
-
-    # Context 'get-help helpFunc5' {
-
-    #     function helpFunc5
-    #     {
-    #         # .EXTERNALHELP scriptHelp.Tests.xml
-    #     }
-    #     $x = Get-Help helpFunc5
-    #     It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-    #     It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "A useless function, really." }
-    # }
-
-    # Context 'get-help helpFunc6 script help xml' {
-    #     function helpFunc6
-    #     {
-    #         # .EXTERNALHELP scriptHelp1.xml
-    #     }
-    #     if ($PSUICulture -ieq "en-us")
-    #     {
-    #         $x = Get-Help helpFunc6
-    #         It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-    #         It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "Useless.  Really, trust me on this one." }
-    #     }
-    # }
-
-    # Context 'get-help helpFunc6 script help xml' {
-    #     function helpFunc6
-    #     {
-    #         # .EXTERNALHELP newbase/scriptHelp1.xml
-    #     }
-    #     if ($PSUICulture -ieq "en-us")
-    #     {
-    #         $x = Get-Help helpFunc6
-    #         It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-    #         It '$x.Synopsis' { $x.Synopsis | Should -BeExactly "Useless in newbase.  Really, trust me on this one." }
-    #     }
-    # }
-
-    # Context 'get-help helpFunc7' {
-
-    #     function helpFunc7
-    #     {
-    #         # .FORWARDHELPTARGETNAME Get-Help
-    #         # .FORWARDHELPCATEGORY Cmdlet
-    #     }
-    #     $x = Get-Help helpFunc7
-    #     It '$x.Name' { $x.Name | Should -BeExactly 'Get-Help' }
-    #     It '$x.Category' { $x.Category | Should -BeExactly 'Cmdlet' }
-
-    #     # Make sure help is a function, or the test would fail
-    #     if ($null -ne (Get-Command -type Function help))
-    #     {
-    #         if ((Get-Content function:help) -Match "FORWARDHELP")
-    #         {
-    #             $x = Get-Help help
-    #             It '$x.Name' { $x.Name | Should -BeExactly 'Get-Help' }
-    #             It '$x.Category' { $x.Category | Should -BeExactly 'Cmdlet' }
-    #         }
-    #     }
-    # }
-
-    # Context 'get-help helpFunc8' {
-
-    #     function func8
-    #     {
-    #         # .SYNOPSIS
-    #         #    Help on helpFunc8, not func8
-    #         function helpFunc8
-    #         {
-    #         }
-    #         Get-Help helpFunc8
-    #     }
-
-    #     $x = Get-Help func8
-    #     It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-
-    #     $x = func8
-    #     It '$x.Synopsis' { $x.Synopsis | Should -BeExactly 'Help on helpFunc8, not func8' }
-    # }
-
-    # Context 'get-help helpFunc9' {
-    #     function helpFunc9
-    #     {
-    #         # .SYNOPSIS
-    #         #    Help on helpFunc9, not func9
-    #         param($x)
-
-    #         function func9
-    #         {
-    #         }
-    #         Get-Help func9
-    #     }
-    #     $x = Get-Help helpFunc9
-    #     It 'help is on the outer functon' { $x.Synopsis | Should -BeExactly 'Help on helpFunc9, not func9' }
-    #     $x = helpFunc9
-    #     It '$x should not be $null' { $x | Should -Not -BeNullOrEmpty }
-    # }
