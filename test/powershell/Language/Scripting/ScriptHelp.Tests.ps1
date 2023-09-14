@@ -829,18 +829,47 @@ function NestedFunction { }
             $parameterHelp.defaultValue | Should -Be '(Get-Process -ID $PID)'
         }
 
-        It 'Should not include the language-defined parameter <_>' -TestCases @(
-            [System.Management.Automation.Internal.CommonParameters].GetProperties().Name
-            [System.Management.Automation.Internal.ShouldProcessParameters].GetProperties().Name
-            [System.Management.Automation.Internal.TransactionParameters].GetProperties().Name
-            [System.Management.Automation.PagingParameters].GetProperties().Name
+        It 'Shoudl include the language feature specific parameter <Name>' -TestCases @(
+            @(
+                [System.Management.Automation.Internal.ShouldProcessParameters].GetProperties().Name
+                [System.Management.Automation.PagingParameters].GetProperties().Name
+            ) | ForEach-Object {
+                @{ Name = $_ }
+            }
         ) {
+            param ($Name)
+
             function ExampleFunction {
                 <#
                     .SYNOPSIS
                         An example function.
                 #>
-                [CmdletBinding(SupportsShouldProcess, SupportsTransactions, SupportsPaging)]
+                [CmdletBinding(SupportsShouldProcess, SupportsPaging)]
+                param (
+                    # Parameter help.
+                    $Name
+                )
+            }
+
+            $parameterHelp = Get-HelpField 'ExampleFunction' -Name 'PARAMETER'
+            $parameterHelp.name | Should -Contain $Name
+        }
+
+        It 'Should not include the common parameter <Name>' -TestCases @(
+            @(
+                [System.Management.Automation.Internal.CommonParameters].GetProperties().Name
+            ) | ForEach-Object {
+                @{ Name = $_ }
+            }
+        ) {
+            param ($Name)
+
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding()]
                 param (
                     # Parameter help.
                     $Name
@@ -853,28 +882,6 @@ function NestedFunction { }
     }
 
     Context 'Syntax' {
-        It 'Should not include the language-defined parameter <_>' -TestCases @(
-            [System.Management.Automation.Internal.CommonParameters].GetProperties().Name
-            [System.Management.Automation.Internal.ShouldProcessParameters].GetProperties().Name
-            [System.Management.Automation.Internal.TransactionParameters].GetProperties().Name
-            [System.Management.Automation.PagingParameters].GetProperties().Name
-        ) {
-            function ExampleFunction {
-                <#
-                    .SYNOPSIS
-                        An example function.
-                #>
-                [CmdletBinding(SupportsShouldProcess, SupportsTransactions, SupportsPaging)]
-                param (
-                    # Parameter help.
-                    $Name
-                )
-            }
-
-            $syntax = Get-HelpField 'ExampleFunction' -Name 'SYNTAX,ITEM'
-            $syntax.parameter.name | Should -Not -Contain $Name
-        }
-
         It 'Should represent mandatory optional parameters' {
             function ExampleFunction {
                 <#
@@ -995,6 +1002,57 @@ function NestedFunction { }
             }
 
             Get-HelpField 'ExampleFunction' -Name 'SYNTAX,STRING' | Should -Match '(?m)^ExampleFunction \[-Name\]'
+        }
+
+        It 'Should include the language feature specific parameter <Name>' -TestCases @(
+            @(
+                [System.Management.Automation.Internal.ShouldProcessParameters].GetProperties().Name
+                [System.Management.Automation.PagingParameters].GetProperties().Name
+            ) | ForEach-Object {
+                @{ Name = $_ }
+            }
+        ) {
+            param ($Name)
+
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding(SupportsShouldProcess, SupportsPaging)]
+                param (
+                    # Parameter help.
+                    $Name
+                )
+            }
+
+            $parameters = Get-HelpField 'ExampleFunction' -Name 'SYNTAX,PARAMETER'
+            $parameters.name | Should -Contain $Name
+        }
+
+        It 'Should not include the common parameter <Name>' -TestCases @(
+            @(
+                [System.Management.Automation.Internal.CommonParameters].GetProperties().Name
+            ) | ForEach-Object {
+                @{ Name = $_ }
+            }
+        ) {
+            param ($Name)
+
+            function ExampleFunction {
+                <#
+                    .SYNOPSIS
+                        An example function.
+                #>
+                [CmdletBinding()]
+                param (
+                    # Parameter help.
+                    $Name
+                )
+            }
+
+            $parameters = Get-HelpField 'ExampleFunction' -Name 'SYNTAX,PARAMETER'
+            $parameters.name | Should -Not -Contain $Name
         }
 
         Context 'Parameter sets' {
