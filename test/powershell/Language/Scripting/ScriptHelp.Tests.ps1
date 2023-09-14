@@ -1347,7 +1347,7 @@ function NestedFunction { }
             Get-HelpField 'ExampleFunction' -Name 'SYNOPSIS' | Should -Be 'An example function with help from a fallback file.'
         }
 
-        It 'Can use a culture specific help file for the culture <Culture>' -TestCases @(
+        It 'Can use a culture specific help file for the culture <Culture>' -Skip:(-not $IsWindows) -TestCases @(
             @{ Culture = 'en-US' }
             @{ Culture = 'fr-FR' }
         ) {
@@ -1364,7 +1364,7 @@ function NestedFunction { }
             Get-HelpField 'ExampleFunction' -Name 'SYNOPSIS' | Should -Be ('An example function with help from the {0} culture.' -f $Culture)
         }
 
-        It 'Can use a culture specific help file under a child directory for the culture <Culture>' -TestCases @(
+        It 'Can use a culture specific help file under a child directory for the culture <Culture>' -Skip:(-not $IsWindows) -TestCases @(
             @{ Culture = 'en-US' }
         ) {
             param ( $Culture )
