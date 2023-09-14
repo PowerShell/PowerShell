@@ -168,16 +168,12 @@ Describe 'Tests for $ErrorView' -Tag CI {
         }
 
         It 'Exception thrown from Enumerator.MoveNext in a pipeline shows information' {
-            & {
-                [CmdletBinding()]
-                param()
-                end {
+            $e = {
                     $l = [System.Collections.Generic.List[string]] @('one', 'two')
                     $l | ForEach-Object { $null = $l.Remove($_) }
-                }
-            } -ErrorVariable e -ErrorAction SilentlyContinue
+            } | Should -Throw -ErrorId 'BadEnumeration' -PassThru | Out-String
 
-            $e | Out-String | Should -BeLike 'InvalidOperation:*'
+            $e | Should -BeLike 'InvalidOperation:*'
         }
     }
 
