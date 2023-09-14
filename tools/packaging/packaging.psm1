@@ -870,8 +870,11 @@ function New-UnixPackage {
         # This is a string because strings are appended to it
         [string]$Iteration = "1",
 
+        # Host architecture values allowed for deb type packages: amd64
+        # Host architecture values allowed for rpm type packages include: x86_64, aarch64, native, all, noarch, any
+        # Host architecture values allowed for osxpkg type packages include: x86_64, arm64
         [string]
-        [ValidateSet("x86_64", "amd64", "aarch64", "native", "all", "noarch", "any")]
+        [ValidateSet("x86_64", "amd64", "aarch64", "arm64", "native", "all", "noarch", "any")]
         $HostArchitecture,
 
         [Switch]
@@ -907,19 +910,6 @@ function New-UnixPackage {
             $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
 
             $Dict.Add("Distribution", $Parameter) > $null
-            return $Dict
-        } elseif ($Type -eq "osxpkg") {
-            # Add a dynamic parameter '-HostArchitecture' when the specified package type is 'osxpkg'.
-            # The '-HostArchitecture' parameter is used to indicate which Mac processor this package is targeting,
-            # Intel (x86_64) or Apple Silicon (arm64).
-            $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
-            $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList "x86_64", "arm64"
-            $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
-            $Attributes.Add($ParameterAttr) > $null
-            $Attributes.Add($ValidateSetAttr) > $null
-            $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("HostArchitecture", [string], $Attributes)
-            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
-            $Dict.Add("HostArchitecture", $Parameter) > $null
             return $Dict
         }
     }
@@ -974,7 +964,6 @@ function New-UnixPackage {
                     throw ($ErrorMessage -f "macOS")
                 }
 
-                $HostArchitecture = $PSBoundParameters['HostArchitecture']
                 $DebDistro = 'macOS'
             }
         }
