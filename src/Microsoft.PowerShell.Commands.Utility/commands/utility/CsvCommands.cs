@@ -320,7 +320,6 @@ namespace Microsoft.PowerShell.Commands
 
             string csv = _helper.ConvertPSObjectToCSV(InputObject, _propertyNames);
             WriteCsvLine(csv);
-            _sw.Flush();
         }
 
         /// <summary>
