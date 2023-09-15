@@ -21,7 +21,6 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
-        internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
         internal const string PSModuleAutoLoadSkipOfflineFilesFeatureName = "PSModuleAutoLoadSkipOfflineFiles";
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
         internal const string PSCommandWithArgs = "PSCommandWithArgs";
@@ -117,9 +116,6 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
-                new ExperimentalFeature(
-                    name: PSNativeCommandErrorActionPreferenceFeatureName,
-                    description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
                 new ExperimentalFeature(
                     name: PSModuleAutoLoadSkipOfflineFilesFeatureName,
                     description: "Module discovery will skip over files that are marked by cloud providers as not fully on disk."),

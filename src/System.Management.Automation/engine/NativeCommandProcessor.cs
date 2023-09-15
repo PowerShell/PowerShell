@@ -940,12 +940,6 @@ namespace System.Management.Automation
 
                     this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
-                    // Feature is not enabled, so return
-                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName))
-                    {
-                        return;
-                    }
-
                     // We send telemetry information only if the feature is enabled.
                     // This shouldn't be done once, because it's a run-time check we should send telemetry every time.
                     // Report on the following conditions:
@@ -961,12 +955,12 @@ namespace System.Management.Automation
                     // The variable is unset
                     if (useDefaultSetting)
                     {
-                        ApplicationInsightsTelemetry.SendExperimentalUseData(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName, "unset");
+                        ApplicationInsightsTelemetry.SendExperimentalUseData("PSNativeCommandErrorActionPreference", "unset");
                         return;
                     }
 
                     // Send the value that was set.
-                    ApplicationInsightsTelemetry.SendExperimentalUseData(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName, nativeErrorActionPreferenceSetting.ToString());
+                    ApplicationInsightsTelemetry.SendExperimentalUseData("PSNativeCommandErrorActionPreference", nativeErrorActionPreferenceSetting.ToString());
 
                     // if it was explicitly set to false, return
                     if (!nativeErrorActionPreferenceSetting)

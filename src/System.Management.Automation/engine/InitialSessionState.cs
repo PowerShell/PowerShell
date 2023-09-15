@@ -4652,16 +4652,13 @@ end {
                 #endregion
             };
 
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName))
-            {
-                builtinVariables.Add(
-                    new SessionStateVariableEntry(
-                        SpecialVariables.PSNativeCommandUseErrorActionPreference,
-                        value: true,    // when this feature is changed to stable, this should default to `false`
-                        RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription,
-                        ScopedItemOptions.None,
-                        new ArgumentTypeConverterAttribute(typeof(bool))));
-            }
+            builtinVariables.Add(
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSNativeCommandUseErrorActionPreference,
+                    value: true,    // when this feature is changed to stable, this should default to `false`
+                    RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(bool))));
 
             builtinVariables.Add(
                 new SessionStateVariableEntry(
