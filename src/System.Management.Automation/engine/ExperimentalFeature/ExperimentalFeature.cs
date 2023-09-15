@@ -22,7 +22,6 @@ namespace System.Management.Automation
 
         internal const string EngineSource = "PSEngine";
         internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
-        internal const string PSNativeCommandPreserveBytePipe = "PSNativeCommandPreserveBytePipe";
         internal const string PSModuleAutoLoadSkipOfflineFilesFeatureName = "PSModuleAutoLoadSkipOfflineFiles";
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
         internal const string PSCommandWithArgs = "PSCommandWithArgs";
@@ -124,9 +123,6 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSModuleAutoLoadSkipOfflineFilesFeatureName,
                     description: "Module discovery will skip over files that are marked by cloud providers as not fully on disk."),
-                new ExperimentalFeature(
-                    name: PSNativeCommandPreserveBytePipe,
-                    description: "Byte output is retained when piping between two or more native commands"),
                 new ExperimentalFeature(
                     name: PSFeedbackProvider,
                     description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
