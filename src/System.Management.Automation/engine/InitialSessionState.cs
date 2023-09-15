@@ -4682,11 +4682,6 @@ end {
 #if UNIX
             return NativeArgumentPassingStyle.Standard;
 #else
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSWindowsNativeCommandArgPassing))
-            {
-                return NativeArgumentPassingStyle.Windows;
-            }
-
             return NativeArgumentPassingStyle.Legacy;
 #endif
         }

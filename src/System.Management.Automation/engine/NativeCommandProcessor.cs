@@ -546,7 +546,7 @@ namespace System.Management.Automation
 
             // Send Telemetry indicating what argument passing mode we are in.
             ApplicationInsightsTelemetry.SendExperimentalUseData(
-                ExperimentalFeature.PSWindowsNativeCommandArgPassing,
+                "PSWindowsNativeCommandArgPassing",
                 NativeParameterBinderController.ArgumentPassingStyle.ToString());
 
 #if !UNIX
