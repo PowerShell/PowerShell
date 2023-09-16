@@ -2427,7 +2427,7 @@ namespace System.Management.Automation
                     {
                         if (parameterName.Equals("Verb", StringComparison.OrdinalIgnoreCase))
                         {
-                            NativeCompletionVerbCommands(result, context);
+                            NativeCompletionVerbCommands(context, result);
                         }
                         break;
                     }
@@ -2594,7 +2594,9 @@ namespace System.Management.Automation
             }
         }
 
-        private static void NativeCompletionVerbCommands(List<CompletionResult> result, CompletionContext context)
+        private static void NativeCompletionVerbCommands(
+            CompletionContext context,
+            List<CompletionResult> result)
         {
             string wordToComplete = context.WordToComplete + "*";
 
