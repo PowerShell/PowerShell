@@ -2434,6 +2434,7 @@ namespace System.Management.Automation
                         {
                             NativeCompletionVerbCommands(context, result);
                         }
+                        
                         break;
                     }
 
