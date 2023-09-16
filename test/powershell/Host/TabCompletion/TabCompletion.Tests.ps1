@@ -744,6 +744,17 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
     }
 
+    It "Should complete Verb parameter for '<TextInput>'" -TestCases @(
+        @{ TextInput = 'Get-Verb -Verb '; ExpectedCount = 100 }
+        @{ TextInput = 'Get-Verb -Verb Re'; ExpectedCount = 15 }
+        @{ TextInput = 'Get-Verb -Verb Ex'; ExpectedCount = 3 }
+        @{ TextInput = 'Get-Verb -Verb Conv'; ExpectedCount = 3 }
+    ) {
+        param($TextInput, $ExpectedCount)
+        $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+        $res.CompletionMatches | Should -HaveCount $ExpectedCount
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'
