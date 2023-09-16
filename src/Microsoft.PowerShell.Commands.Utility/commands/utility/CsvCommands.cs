@@ -421,7 +421,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_sw != null)
                 {
-                    _sw.Flush();
                     _sw.Dispose();
                     _sw = null;
                 }
