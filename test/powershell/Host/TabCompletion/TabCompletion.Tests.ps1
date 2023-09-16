@@ -749,6 +749,10 @@ ConstructorTestClass(int i, bool b)
         @{ TextInput = 'Get-Verb -Verb Re'; ExpectedCount = 15 }
         @{ TextInput = 'Get-Verb -Verb Ex'; ExpectedCount = 3 }
         @{ TextInput = 'Get-Verb -Verb Conv'; ExpectedCount = 3 }
+        @{ TextInput = 'Get-Command -Verb '; ExpectedCount = 100 }
+        @{ TextInput = 'Get-Command -Verb Re'; ExpectedCount = 15 }
+        @{ TextInput = 'Get-Command -Verb Ex'; ExpectedCount = 3 }
+        @{ TextInput = 'Get-Command -Verb Conv'; ExpectedCount = 3 }
     ) {
         param($TextInput, $ExpectedCount)
         $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length

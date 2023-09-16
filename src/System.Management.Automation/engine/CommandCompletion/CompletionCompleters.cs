@@ -2172,6 +2172,11 @@ namespace System.Management.Automation
                             break;
                         }
 
+                        if (parameterName.Equals("Verb", StringComparison.OrdinalIgnoreCase)) 
+                        {
+                            NativeCompletionVerbCommands(context, result);
+                        }
+
                         break;
                     }
                 case "Show-Command":
