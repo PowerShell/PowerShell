@@ -2604,9 +2604,9 @@ namespace System.Management.Automation
             CompletionContext context,
             List<CompletionResult> result)
         {
-            string wordToComplete = context.WordToComplete + "*";
-
-            WildcardPattern verbPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+            WildcardPattern verbPattern = WildcardPattern.Get(
+                context.WordToComplete + "*",
+                WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
             foreach (Type verbType in Verbs.GetAllTypes())
             {
