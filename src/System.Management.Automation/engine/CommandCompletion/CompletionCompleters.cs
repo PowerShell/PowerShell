@@ -2613,18 +2613,15 @@ namespace System.Management.Automation
             List<CompletionResult> result,
             string[] groups = null)
         {
-            WildcardPattern verbPattern = WildcardPattern.Get(
-                context.WordToComplete + "*",
-                WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+            Collection<WildcardPattern> verbPattern = SessionStateUtilities.CreateWildcardsFromStrings(
+                new string[] { context.WordToComplete + "*" },
+                WildcardOptions.IgnoreCase);
 
             foreach (Type verbType in Verbs.FilterTypesByGroup(groups))
             {
-                foreach (FieldInfo field in verbType.GetFields())
+                foreach (FieldInfo field in Verbs.FilterTypeFieldsByWildCardPattern(verbType, verbPattern))
                 {
-                    if (field.IsLiteral && verbPattern.IsMatch(field.Name))
-                    {
-                        result.Add(new CompletionResult(field.Name));
-                    }
+                    result.Add(new CompletionResult(field.Name));
                 }
             }
 

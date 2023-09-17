@@ -48,25 +48,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 string groupName = Verbs.GetGroupDisplayName(type);
 
-                foreach (FieldInfo field in type.GetFields())
+                foreach (FieldInfo field in Verbs.FilterTypeFieldsByWildCardPattern(type, matchingVerbs))
                 {
-                    if (field.IsLiteral)
+                    VerbInfo verb = new()
                     {
-                        if (this.Verb != null)
-                        {
-                            if (!SessionStateUtilities.MatchesAnyWildcardPattern(field.Name, matchingVerbs, false))
-                            {
-                                continue;
-                            }
-                        }
+                        Verb = field.Name,
+                        AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name),
+                        Group = groupName,
+                        Description = VerbDescriptions.GetVerbDescription(field.Name)
+                    };
 
-                        VerbInfo verb = new();
-                        verb.Verb = field.Name;
-                        verb.AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name);
-                        verb.Group = groupName;
-                        verb.Description = VerbDescriptions.GetVerbDescription(field.Name);
-                        WriteObject(verb);
-                    }
+                    WriteObject(verb);
                 }
             }
         }

@@ -1336,6 +1336,17 @@ namespace System.Management.Automation
                 .ToArray();
         }
 
+        internal static FieldInfo[] FilterTypeFieldsByWildCardPattern(Type type, IEnumerable<WildcardPattern> patterns) 
+        {
+            return type
+                .GetFields()
+                .Where(field => field.IsLiteral && SessionStateUtilities.MatchesAnyWildcardPattern(
+                    field.Name,
+                    patterns,
+                    defaultValue: false))
+                .ToArray();
+        }
+
         private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, string[]> s_recommendedAlternateVerbs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
 
