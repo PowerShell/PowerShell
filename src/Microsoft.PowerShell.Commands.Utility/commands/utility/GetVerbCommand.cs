@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (Type verbType in Verbs.FilterVerbTypesByGroup(Group))
             {
-                string groupName = Verbs.GetGroupDisplayName(verbType);
+                string verbGroupName = Verbs.GetVerbGroupDisplayName(verbType);
 
                 foreach (FieldInfo field in Verbs.FilterVerbTypeFieldsByWildCardPattern(verbType, verbPattern))
                 {
@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Verb = field.Name,
                         AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name),
-                        Group = groupName,
+                        Group = verbGroupName,
                         Description = VerbDescriptions.GetVerbDescription(field.Name)
                     };
 
