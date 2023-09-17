@@ -1319,7 +1319,7 @@ namespace System.Management.Automation
             typeof(VerbsSecurity)
         };
 
-        internal static string GetGroupDisplayName(Type type) => type.Name.Substring(5);
+        internal static string GetGroupDisplayName(Type verbType) => verbType.Name.Substring(5);
 
         internal static IEnumerable<Type> FilterVerbTypesByGroup(IEnumerable<string> groups)
         {
@@ -1335,9 +1335,9 @@ namespace System.Management.Automation
                     StringComparer.OrdinalIgnoreCase));
         }
 
-        internal static IEnumerable<FieldInfo> FilterVerbTypeFieldsByWildCardPattern(Type type, IEnumerable<WildcardPattern> patterns) 
+        internal static IEnumerable<FieldInfo> FilterVerbTypeFieldsByWildCardPattern(Type verbType, IEnumerable<WildcardPattern> patterns) 
         {
-            return type
+            return verbType
                 .GetFields()
                 .Where(field => field.IsLiteral && SessionStateUtilities.MatchesAnyWildcardPattern(
                     field.Name,
