@@ -752,13 +752,17 @@ ConstructorTestClass(int i, bool b)
             $verbsStartingWithConv = 'Convert', 'ConvertFrom', 'ConvertTo'
             $lifeCycleVerbsStartingWithRe = 'Register', 'Request', 'Restart', 'Resume'
             $dataVerbsStartingwithEx = 'Expand', 'Export'
+            $lifeCycleAndCommmonVerbsStartingWithRe = 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Register', 'Request', 'Restart', 'Resume'
+            $allLifeCycleAndCommonVerbs = 'Add', 'Clear', 'Close', 'Copy', 'Enter', 'Exit', 'Find', 'Format', 'Get', 'Hide', 'Join', 'Lock', 'Move', 'New', 'Open', 'Optimize', 'Push', 'Pop', 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Search', 'Select', 'Set', 'Show', 'Skip', 'Split', 'Step', 'Switch', 'Undo', 'Unlock', 'Watch', 'Approve', 'Assert', 'Build', 'Complete', 'Confirm', 'Deny', 'Deploy', 'Disable', 'Enable', 'Install', 'Invoke', 'Register', 'Request', 'Restart', 'Resume', 'Start', 'Stop', 'Submit', 'Suspend', 'Uninstall', 'Unregister', 'Wait'
         }
     }
 
     It "Should complete Verb parameter for '<TextInput>'" -TestCases @(
         @{ TextInput = 'Get-Verb -Verb '; ExpectedVerbs = $allVerbs }
+        @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb '; ExpectedVerbs = $allLifeCycleAndCommonVerbs }
         @{ TextInput = 'Get-Verb -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
         @{ TextInput = 'Get-Verb -Group Lifecycle -Verb Re'; ExpectedVerbs = $lifeCycleVerbsStartingWithRe }
+        @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb Re'; ExpectedVerbs = $lifeCycleAndCommmonVerbsStartingWithRe }
         @{ TextInput = 'Get-Verb -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
         @{ TextInput = 'Get-Verb -Group Data -Verb Ex'; ExpectedVerbs = $dataVerbsStartingwithEx }
         @{ TextInput = 'Get-Verb -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
