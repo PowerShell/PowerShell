@@ -1158,7 +1158,7 @@ namespace System.Management.Automation
     {
         static Verbs()
         {
-            foreach (Type type in Types)
+            foreach (Type type in VerbTypes)
             {
                 foreach (FieldInfo field in type.GetFields())
                 {
@@ -1309,7 +1309,7 @@ namespace System.Management.Automation
 #endif
         }
 
-        private static Type[] Types => new Type[] {
+        private static Type[] VerbTypes => new Type[] {
             typeof(VerbsCommon),
             typeof(VerbsCommunications),
             typeof(VerbsData),
@@ -1321,21 +1321,21 @@ namespace System.Management.Automation
 
         internal static string GetGroupDisplayName(Type type) => type.Name.Substring(5);
 
-        internal static IEnumerable<Type> FilterTypesByGroup(IEnumerable<string> groups)
+        internal static IEnumerable<Type> FilterVerbTypesByGroup(IEnumerable<string> groups)
         {
             if (groups is null || !groups.Any())
             {
-                return Types;
+                return VerbTypes;
             }
 
-            return Types
+            return VerbTypes
                 .Where(type => SessionStateUtilities.CollectionContainsValue(
                     groups,
                     GetGroupDisplayName(type),
                     StringComparer.OrdinalIgnoreCase));
         }
 
-        internal static IEnumerable<FieldInfo> FilterTypeFieldsByWildCardPattern(Type type, IEnumerable<WildcardPattern> patterns) 
+        internal static IEnumerable<FieldInfo> FilterVerbTypeFieldsByWildCardPattern(Type type, IEnumerable<WildcardPattern> patterns) 
         {
             return type
                 .GetFields()

@@ -46,11 +46,11 @@ namespace Microsoft.PowerShell.Commands
                 Verb,
                 WildcardOptions.IgnoreCase);
 
-            foreach (Type verbType in Verbs.FilterTypesByGroup(Group))
+            foreach (Type verbType in Verbs.FilterVerbTypesByGroup(Group))
             {
                 string groupName = Verbs.GetGroupDisplayName(verbType);
 
-                foreach (FieldInfo field in Verbs.FilterTypeFieldsByWildCardPattern(verbType, verbPattern))
+                foreach (FieldInfo field in Verbs.FilterVerbTypeFieldsByWildCardPattern(verbType, verbPattern))
                 {
                     VerbInfo verb = new()
                     {

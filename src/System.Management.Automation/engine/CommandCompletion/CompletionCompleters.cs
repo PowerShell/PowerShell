@@ -2616,9 +2616,9 @@ namespace System.Management.Automation
                 new Collection<string> { context.WordToComplete + "*" },
                 WildcardOptions.IgnoreCase);
 
-            foreach (Type verbType in Verbs.FilterTypesByGroup(groups))
+            foreach (Type verbType in Verbs.FilterVerbTypesByGroup(groups))
             {
-                foreach (FieldInfo field in Verbs.FilterTypeFieldsByWildCardPattern(verbType, verbPattern))
+                foreach (FieldInfo field in Verbs.FilterVerbTypeFieldsByWildCardPattern(verbType, verbPattern))
                 {
                     result.Add(new CompletionResult(field.Name));
                 }
