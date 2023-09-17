@@ -744,19 +744,32 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
     }
 
+    Context 'Verb parameter completion' {
+        BeforeAll {
+            $allVerbs = 'Add', 'Clear', 'Close', 'Copy', 'Enter', 'Exit', 'Find', 'Format', 'Get', 'Hide', 'Join', 'Lock', 'Move', 'New', 'Open', 'Optimize', 'Push', 'Pop', 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Search', 'Select', 'Set', 'Show', 'Skip', 'Split', 'Step', 'Switch', 'Undo', 'Unlock', 'Watch', 'Connect', 'Disconnect', 'Read', 'Receive', 'Send', 'Write', 'Backup', 'Checkpoint', 'Compare', 'Compress', 'Convert', 'ConvertFrom', 'ConvertTo', 'Dismount', 'Edit', 'Expand', 'Export', 'Group', 'Import', 'Initialize', 'Limit', 'Merge', 'Mount', 'Out', 'Publish', 'Restore', 'Save', 'Sync', 'Unpublish', 'Update', 'Debug', 'Measure', 'Ping', 'Repair', 'Resolve', 'Test', 'Trace', 'Approve', 'Assert', 'Build', 'Complete', 'Confirm', 'Deny', 'Deploy', 'Disable', 'Enable', 'Install', 'Invoke', 'Register', 'Request', 'Restart', 'Resume', 'Start', 'Stop', 'Submit', 'Suspend', 'Uninstall', 'Unregister', 'Wait', 'Use', 'Block', 'Grant', 'Protect', 'Revoke', 'Unblock', 'Unprotect'
+            $verbsStartingWithRe = 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Read', 'Receive', 'Restore', 'Repair', 'Resolve', 'Register', 'Request', 'Restart', 'Resume', 'Revoke'
+            $verbsStartingWithEx = 'Exit', 'Expand', 'Export'
+            $verbsStartingWithConv = 'Convert', 'ConvertFrom', 'ConvertTo'
+            $lifeCycleVerbsStartingWithRe = 'Register', 'Request', 'Restart', 'Resume'
+            $dataVerbsStartingwithEx = 'Expand', 'Export'
+        }
+    }
+
     It "Should complete Verb parameter for '<TextInput>'" -TestCases @(
-        @{ TextInput = 'Get-Verb -Verb '; ExpectedCount = 100 }
-        @{ TextInput = 'Get-Verb -Verb Re'; ExpectedCount = 15 }
-        @{ TextInput = 'Get-Verb -Verb Ex'; ExpectedCount = 3 }
-        @{ TextInput = 'Get-Verb -Verb Conv'; ExpectedCount = 3 }
-        @{ TextInput = 'Get-Command -Verb '; ExpectedCount = 100 }
-        @{ TextInput = 'Get-Command -Verb Re'; ExpectedCount = 15 }
-        @{ TextInput = 'Get-Command -Verb Ex'; ExpectedCount = 3 }
-        @{ TextInput = 'Get-Command -Verb Conv'; ExpectedCount = 3 }
+        @{ TextInput = 'Get-Verb -Verb '; ExpectedVerbs = $allVerbs }
+        @{ TextInput = 'Get-Verb -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
+        @{ TextInput = 'Get-Verb -Group Lifecycle -Verb Re'; ExpectedVerbs = $lifeCycleVerbsStartingWithRe }
+        @{ TextInput = 'Get-Verb -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
+        @{ TextInput = 'Get-Verb -Group Data -Verb Ex'; ExpectedVerbs = $dataVerbsStartingwithEx }
+        @{ TextInput = 'Get-Verb -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
+        @{ TextInput = 'Get-Command -Verb '; ExpectedVerbs = $allVerbs }
+        @{ TextInput = 'Get-Command -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
+        @{ TextInput = 'Get-Command -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
+        @{ TextInput = 'Get-Command -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
     ) {
-        param($TextInput, $ExpectedCount)
+        param($TextInput, $ExpectedVerbs)
         $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
-        $res.CompletionMatches | Should -HaveCount $ExpectedCount
+        $res.CompletionMatches.CompletionText | Should -BeExactly $ExpectedVerbs
     }
 
     Context "Format cmdlet's View paramter completion" {
