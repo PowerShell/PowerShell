@@ -1335,15 +1335,13 @@ namespace System.Management.Automation
                     StringComparer.OrdinalIgnoreCase));
         }
 
-        internal static IEnumerable<FieldInfo> FilterVerbTypeFieldsByWildCardPattern(Type verbType, IEnumerable<WildcardPattern> patterns) 
-        {
-            return verbType
+        internal static IEnumerable<FieldInfo> FilterVerbTypeFieldsByWildCardPattern(Type verbType, IEnumerable<WildcardPattern> patterns) =>
+            verbType
                 .GetFields()
                 .Where(field => field.IsLiteral && SessionStateUtilities.MatchesAnyWildcardPattern(
                     field.Name,
                     patterns,
                     defaultValue: false));
-        }
 
         private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, string[]> s_recommendedAlternateVerbs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
