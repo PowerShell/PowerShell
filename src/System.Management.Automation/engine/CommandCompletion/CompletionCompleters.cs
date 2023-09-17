@@ -2614,7 +2614,7 @@ namespace System.Management.Automation
             string[] groups = null)
         {
             Collection<WildcardPattern> verbPattern = SessionStateUtilities.CreateWildcardsFromStrings(
-                new string[] { context.WordToComplete + "*" },
+                new Collection<string> { context.WordToComplete + "*" },
                 WildcardOptions.IgnoreCase);
 
             foreach (Type verbType in Verbs.FilterTypesByGroup(groups))
