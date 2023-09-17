@@ -44,16 +44,9 @@ namespace Microsoft.PowerShell.Commands
                             WildcardOptions.IgnoreCase
                         );
 
-            foreach (Type type in Verbs.GetAllTypes())
+            foreach (Type type in Verbs.FilterTypesByGroup(Group))
             {
-                string groupName = type.Name.Substring(5);
-                if (this.Group != null)
-                {
-                    if (!SessionStateUtilities.CollectionContainsValue(this.Group, groupName, StringComparer.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-                }
+                string groupName = Verbs.GetGroupDisplayName(type);
 
                 foreach (FieldInfo field in type.GetFields())
                 {

@@ -2172,7 +2172,7 @@ namespace System.Management.Automation
                             break;
                         }
 
-                        if (parameterName.Equals("Verb", StringComparison.OrdinalIgnoreCase)) 
+                        if (parameterName.Equals("Verb", StringComparison.OrdinalIgnoreCase))
                         {
                             NativeCompletionVerbCommands(context, result);
                         }
@@ -2432,9 +2432,17 @@ namespace System.Management.Automation
                     {
                         if (parameterName.Equals("Verb", StringComparison.OrdinalIgnoreCase))
                         {
-                            NativeCompletionVerbCommands(context, result);
+                            string[] groups = null;
+                            if (boundArguments.TryGetValue("Group", out AstParameterArgumentPair pair)) 
+                            {
+                                groups = GetParameterValues((AstPair)pair, context.CursorPosition.Offset)
+                                    .Select(group => group.Replace("'", string.Empty))
+                                    .ToArray();
+                            }
+
+                            NativeCompletionVerbCommands(context, result, groups);
                         }
-                        
+
                         break;
                     }
 
@@ -2602,17 +2610,18 @@ namespace System.Management.Automation
 
         private static void NativeCompletionVerbCommands(
             CompletionContext context,
-            List<CompletionResult> result)
+            List<CompletionResult> result,
+            string[] groups = null)
         {
             WildcardPattern verbPattern = WildcardPattern.Get(
                 context.WordToComplete + "*",
                 WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
-            foreach (Type verbType in Verbs.GetAllTypes())
+            foreach (Type verbType in Verbs.FilterTypesByGroup(groups))
             {
                 foreach (FieldInfo field in verbType.GetFields())
                 {
-                    if (verbPattern.IsMatch(field.Name))
+                    if (field.IsLiteral && verbPattern.IsMatch(field.Name))
                     {
                         result.Add(new CompletionResult(field.Name));
                     }

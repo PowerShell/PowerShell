@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -1157,7 +1158,7 @@ namespace System.Management.Automation
     {
         static Verbs()
         {
-            foreach (Type type in GetAllTypes())
+            foreach (Type type in Types)
             {
                 foreach (FieldInfo field in type.GetFields())
                 {
@@ -1308,7 +1309,7 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal static Type[] GetAllTypes() => new Type[] {
+        private static Type[] Types => new Type[] {
             typeof(VerbsCommon),
             typeof(VerbsCommunications),
             typeof(VerbsData),
@@ -1317,6 +1318,23 @@ namespace System.Management.Automation
             typeof(VerbsOther),
             typeof(VerbsSecurity)
         };
+
+        internal static string GetGroupDisplayName(Type type) => type.Name.Substring(5);
+
+        internal static Type[] FilterTypesByGroup(string[] groups)
+        {
+            if (groups is null || groups.Length == 0)
+            {
+                return Types;
+            }
+
+            return Types
+                .Where(type => SessionStateUtilities.CollectionContainsValue(
+                    groups,
+                    GetGroupDisplayName(type),
+                    StringComparer.OrdinalIgnoreCase))
+                .ToArray();
+        }
 
         private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, string[]> s_recommendedAlternateVerbs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
