@@ -1321,9 +1321,9 @@ namespace System.Management.Automation
 
         internal static string GetGroupDisplayName(Type type) => type.Name.Substring(5);
 
-        internal static Type[] FilterTypesByGroup(string[] groups)
+        internal static IEnumerable<Type> FilterTypesByGroup(IEnumerable<string> groups)
         {
-            if (groups is null || groups.Length == 0)
+            if (groups is null || !groups.Any())
             {
                 return Types;
             }
@@ -1332,19 +1332,17 @@ namespace System.Management.Automation
                 .Where(type => SessionStateUtilities.CollectionContainsValue(
                     groups,
                     GetGroupDisplayName(type),
-                    StringComparer.OrdinalIgnoreCase))
-                .ToArray();
+                    StringComparer.OrdinalIgnoreCase));
         }
 
-        internal static FieldInfo[] FilterTypeFieldsByWildCardPattern(Type type, IEnumerable<WildcardPattern> patterns) 
+        internal static IEnumerable<FieldInfo> FilterTypeFieldsByWildCardPattern(Type type, IEnumerable<WildcardPattern> patterns) 
         {
             return type
                 .GetFields()
                 .Where(field => field.IsLiteral && SessionStateUtilities.MatchesAnyWildcardPattern(
                     field.Name,
                     patterns,
-                    defaultValue: false))
-                .ToArray();
+                    defaultValue: false));
         }
 
         private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);

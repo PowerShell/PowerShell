@@ -21,8 +21,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Position = 0)]
         public string[] Verb
         {
-            get; set;
+            get => _verb;
+            set => _verb = value;
         }
+
+        private string[] _verb = new string[] { "*" };
 
         /// <summary>
         /// Optional Group filter.
@@ -39,16 +42,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Collection<WildcardPattern> matchingVerbs = SessionStateUtilities.CreateWildcardsFromStrings(
-                            this.Verb,
-                            WildcardOptions.IgnoreCase
-                        );
+            Collection<WildcardPattern> verbPattern = SessionStateUtilities.CreateWildcardsFromStrings(
+                Verb,
+                WildcardOptions.IgnoreCase);
 
-            foreach (Type type in Verbs.FilterTypesByGroup(Group))
+            foreach (Type verbType in Verbs.FilterTypesByGroup(Group))
             {
-                string groupName = Verbs.GetGroupDisplayName(type);
+                string groupName = Verbs.GetGroupDisplayName(verbType);
 
-                foreach (FieldInfo field in Verbs.FilterTypeFieldsByWildCardPattern(type, matchingVerbs))
+                foreach (FieldInfo field in Verbs.FilterTypeFieldsByWildCardPattern(verbType, verbPattern))
                 {
                     VerbInfo verb = new()
                     {
