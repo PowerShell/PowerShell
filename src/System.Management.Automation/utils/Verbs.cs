@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -1321,27 +1321,58 @@ namespace System.Management.Automation
 
         internal static string GetVerbGroupDisplayName(Type verbType) => verbType.Name.Substring(5);
 
-        internal static IEnumerable<Type> FilterVerbTypesByGroup(string[] groups)
+        internal static IEnumerable<VerbInfo> GetVerbsByGroup(string[] verbs, string[] groups)
         {
-            if (groups is null || groups.Length == 0)
-            {
-                return VerbTypes;
-            }
+            bool isEmptyVerbs = verbs is null || verbs.Length == 0;
+            bool isEmptyGroups = groups is null || groups.Length == 0;
 
-            return VerbTypes
-                .Where(type => SessionStateUtilities.CollectionContainsValue(
-                    groups,
-                    GetVerbGroupDisplayName(type),
-                    StringComparer.OrdinalIgnoreCase));
+            Collection<WildcardPattern> verbPattern = SessionStateUtilities.CreateWildcardsFromStrings(
+                isEmptyVerbs ? new string[] { "*" } : verbs,
+                WildcardOptions.IgnoreCase);
+
+            foreach (Type verbType in VerbTypes) 
+            {
+                string verbGroupName = GetVerbGroupDisplayName(verbType);
+
+                bool hasVerbGroup = SessionStateUtilities.CollectionContainsValue(
+                    groups ?? Array.Empty<string>(),
+                    verbGroupName,
+                    StringComparer.OrdinalIgnoreCase);
+
+                if (isEmptyGroups || hasVerbGroup)
+                {
+                    foreach (VerbInfo verb in GetVerbsByWildCardPattern(verbType, verbGroupName, verbPattern))
+                    {
+                        yield return verb;
+                    }
+                }
+            }
         }
 
-        internal static IEnumerable<FieldInfo> FilterVerbTypeFieldsByWildCardPattern(Type verbType, IEnumerable<WildcardPattern> patterns) =>
-            verbType
-                .GetFields()
-                .Where(field => field.IsLiteral && SessionStateUtilities.MatchesAnyWildcardPattern(
+        private static IEnumerable<VerbInfo> GetVerbsByWildCardPattern(
+            Type verbType,
+            string verbGroupName,
+            IEnumerable<WildcardPattern> patterns)
+        {
+            foreach (FieldInfo field in verbType.GetFields())
+            {
+                bool matchesWildCardPattern = SessionStateUtilities.MatchesAnyWildcardPattern(
                     field.Name,
                     patterns,
-                    defaultValue: false));
+                    defaultValue: false);
+
+                if (field.IsLiteral && matchesWildCardPattern)
+                {
+                    yield return new VerbInfo
+                    {
+                        Verb = field.Name,
+                        AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name),
+                        Group = verbGroupName,
+                        Description = VerbDescriptions.GetVerbDescription(field.Name)
+                    };
+                }
+            }
+        }
 
         private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, string[]> s_recommendedAlternateVerbs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);

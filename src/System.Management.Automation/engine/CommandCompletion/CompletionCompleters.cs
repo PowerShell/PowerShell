@@ -2614,16 +2614,11 @@ namespace System.Management.Automation
             List<CompletionResult> result,
             string[] groups = null)
         {
-            Collection<WildcardPattern> verbPattern = SessionStateUtilities.CreateWildcardsFromStrings(
-                new Collection<string> { context.WordToComplete + "*" },
-                WildcardOptions.IgnoreCase);
+            string[] verbs = new string[] { context.WordToComplete + "*" };
 
-            foreach (Type verbType in Verbs.FilterVerbTypesByGroup(groups))
+            foreach (VerbInfo verb in Verbs.GetVerbsByGroup(verbs, groups))
             {
-                foreach (FieldInfo field in Verbs.FilterVerbTypeFieldsByWildCardPattern(verbType, verbPattern))
-                {
-                    result.Add(new CompletionResult(field.Name));
-                }
+                result.Add(new CompletionResult(verb.Verb));
             }
 
             result.Add(CompletionResult.Null);
