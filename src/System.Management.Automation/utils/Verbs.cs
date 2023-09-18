@@ -1321,9 +1321,9 @@ namespace System.Management.Automation
 
         internal static string GetVerbGroupDisplayName(Type verbType) => verbType.Name.Substring(5);
 
-        internal static IEnumerable<Type> FilterVerbTypesByGroup(IEnumerable<string> groups)
+        internal static IEnumerable<Type> FilterVerbTypesByGroup(string[] groups)
         {
-            if (groups is null || !groups.Any())
+            if (groups is null || groups.Length == 0)
             {
                 return VerbTypes;
             }

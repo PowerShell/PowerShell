@@ -2432,12 +2432,13 @@ namespace System.Management.Automation
                     {
                         if (parameterName.Equals("Verb", StringComparison.OrdinalIgnoreCase))
                         {
-                            IEnumerable<string> groups = null;
+                            string[] groups = null;
                             if (boundArguments.TryGetValue("Group", out AstParameterArgumentPair pair) &&
                                 pair.ParameterArgumentType == AstParameterArgumentType.AstPair)
                             {
                                 groups = GetParameterValues((AstPair)pair, context.CursorPosition.Offset)
-                                    .Select(group => group.Replace("'", string.Empty));
+                                    .Select(group => group.Replace("'", string.Empty))
+                                    .ToArray();
                             }
 
                             NativeCompletionVerbCommands(context, result, groups);
@@ -2611,7 +2612,7 @@ namespace System.Management.Automation
         private static void NativeCompletionVerbCommands(
             CompletionContext context,
             List<CompletionResult> result,
-            IEnumerable<string> groups = null)
+            string[] groups = null)
         {
             Collection<WildcardPattern> verbPattern = SessionStateUtilities.CreateWildcardsFromStrings(
                 new Collection<string> { context.WordToComplete + "*" },
