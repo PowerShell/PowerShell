@@ -2614,7 +2614,7 @@ namespace System.Management.Automation
             List<CompletionResult> result,
             string[] groups = null)
         {
-            string[] verbs = new string[] { context.WordToComplete + "*" };
+            var verbs = new string[] { context.WordToComplete + "*" };
 
             foreach (VerbInfo verb in Verbs.GetVerbsByGroup(verbs, groups))
             {
