@@ -4674,15 +4674,14 @@ end {
         /// <summary>
         /// Assigns the default behavior for native argument passing.
         /// If the system is non-Windows, we will return Standard.
-        /// If the experimental feature is enabled, we will return Windows.
-        /// Otherwise, we will return Legacy.
+        /// Otherwise, we will return Windows.
         /// </summary>
         private static NativeArgumentPassingStyle GetPassingStyle()
         {
 #if UNIX
             return NativeArgumentPassingStyle.Standard;
 #else
-            return NativeArgumentPassingStyle.Legacy;
+            return NativeArgumentPassingStyle.Windows;
 #endif
         }
 
