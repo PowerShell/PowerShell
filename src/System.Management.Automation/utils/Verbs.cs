@@ -1319,7 +1319,7 @@ namespace System.Management.Automation
             typeof(VerbsSecurity)
         };
 
-        internal static string GetVerbGroupDisplayName(Type verbType) => verbType.Name.Substring(5);
+        private static string GetVerbGroupDisplayName(Type verbType) => verbType.Name.Substring(5);
 
         internal static IEnumerable<VerbInfo> GetVerbsByGroup(string[] verbs, string[] groups)
         {
