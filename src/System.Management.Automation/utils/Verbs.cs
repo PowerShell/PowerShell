@@ -1323,11 +1323,8 @@ namespace System.Management.Automation
 
         internal static IEnumerable<VerbInfo> GetVerbsByGroup(string[] verbs, string[] groups)
         {
-            bool isEmptyVerbs = verbs is null || verbs.Length == 0;
-            bool isEmptyGroups = groups is null || groups.Length == 0;
-
             Collection<WildcardPattern> verbPattern = SessionStateUtilities.CreateWildcardsFromStrings(
-                isEmptyVerbs ? new string[] { "*" } : verbs,
+                verbs ?? new string[] { "*" },
                 WildcardOptions.IgnoreCase);
 
             foreach (Type verbType in VerbTypes) 
@@ -1339,7 +1336,7 @@ namespace System.Management.Automation
                     verbGroupName,
                     StringComparer.OrdinalIgnoreCase);
 
-                if (isEmptyGroups || hasVerbGroup)
+                if (groups is null || hasVerbGroup)
                 {
                     foreach (VerbInfo verb in GetVerbsByWildCardPattern(verbType, verbGroupName, verbPattern))
                     {
