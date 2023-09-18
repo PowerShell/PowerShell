@@ -129,31 +129,31 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private async Task<byte[]> ComputeHashAsync(Stream stream, CancellationToken cancellationToken)
+        private ValueTask<byte[]> ComputeHashAsync(Stream stream, CancellationToken cancellationToken)
         {
             switch (Algorithm)
             {
                 case HashAlgorithmNames.SHA1:
-                    return await SHA1.HashDataAsync(stream, cancellationToken);
+                    return SHA1.HashDataAsync(stream, cancellationToken);
                 case HashAlgorithmNames.SHA256:
-                    return await SHA256.HashDataAsync(stream, cancellationToken);
+                    return SHA256.HashDataAsync(stream, cancellationToken);
                 case HashAlgorithmNames.SHA384:
-                    return await SHA384.HashDataAsync(stream, cancellationToken);
+                    return SHA384.HashDataAsync(stream, cancellationToken);
                 case HashAlgorithmNames.SHA512:
-                    return await SHA512.HashDataAsync(stream, cancellationToken);
+                    return SHA512.HashDataAsync(stream, cancellationToken);
                 case HashAlgorithmNames.MD5:
-                    return await MD5.HashDataAsync(stream, cancellationToken);
+                    return MD5.HashDataAsync(stream, cancellationToken);
             }
 
             Debug.Assert(false, "invalid hash algorithm");
-            return await SHA256.HashDataAsync(stream, cancellationToken);
+            return SHA256.HashDataAsync(stream, cancellationToken);
         }
 
         private byte[] ComputeHash(Stream stream)
         {
             try
             {
-                return ComputeHashAsync(stream, _cancellationSource.Token).GetAwaiter().GetResult();
+                return ComputeHashAsync(stream, _cancellationSource.Token).AsTask().GetAwaiter().GetResult();
             }
             catch (TaskCanceledException)
             {
