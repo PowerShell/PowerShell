@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
 using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -16,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "FileHash", DefaultParameterSetName = PathParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=517145")]
     [OutputType(typeof(FileHashInfo))]
-    public class GetFileHashCommand : HashCmdletBase
+    public class GetFileHashCommand : HashCmdletBase, IDisposable
     {
         /// <summary>
         /// Path parameter.
@@ -68,6 +70,8 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(Mandatory = true, ParameterSetName = StreamParameterSet, Position = 0)]
         public Stream InputStream { get; set; }
+
+        private readonly CancellationTokenSource _cancellationSource = new();
 
         /// <summary>
         /// ProcessRecord() override.
@@ -125,24 +129,36 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private byte[] ComputeHash(Stream stream)
+        private async Task<byte[]> ComputeHashAsync(Stream stream, CancellationToken cancellationToken)
         {
             switch (Algorithm)
             {
                 case HashAlgorithmNames.SHA1:
-                    return SHA1.HashData(stream);
+                    return await SHA1.HashDataAsync(stream, cancellationToken);
                 case HashAlgorithmNames.SHA256:
-                    return SHA256.HashData(stream);
+                    return await SHA256.HashDataAsync(stream, cancellationToken);
                 case HashAlgorithmNames.SHA384:
-                    return SHA384.HashData(stream);
+                    return await SHA384.HashDataAsync(stream, cancellationToken);
                 case HashAlgorithmNames.SHA512:
-                    return SHA512.HashData(stream);
+                    return await SHA512.HashDataAsync(stream, cancellationToken);
                 case HashAlgorithmNames.MD5:
-                    return MD5.HashData(stream);
+                    return await MD5.HashDataAsync(stream, cancellationToken);
             }
 
             Debug.Assert(false, "invalid hash algorithm");
-            return SHA256.HashData(stream);
+            return await SHA256.HashDataAsync(stream, cancellationToken);
+        }
+
+        private byte[] ComputeHash(Stream stream)
+        {
+            try
+            {
+                return ComputeHashAsync(stream, _cancellationSource.Token).GetAwaiter().GetResult();
+            }
+            catch (TaskCanceledException)
+            {
+                throw new PipelineStoppedException();
+            }
         }
 
         /// <summary>
@@ -157,6 +173,37 @@ namespace Microsoft.PowerShell.Commands
 
                 string hash = Convert.ToHexString(bytehash);
                 WriteHashResult(Algorithm, hash, string.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Process the Ctrl+C signal.
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _cancellationSource.Cancel();
+        }
+
+        /// <summary>
+        /// IDisposable implementation, dispose of any disposable resources created by the cmdlet.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Implementation of IDisposable for both manual Dispose() and finalizer-called disposal of resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// Specified as true when Dispose() was called, false if this is called from the finalizer.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _cancellationSource.Dispose();
             }
         }
 
