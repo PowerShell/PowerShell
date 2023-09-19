@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            foreach (VerbInfo verb in Verbs.GetVerbsByGroup(Verb, Group))
+            foreach (VerbInfo verb in Verbs.FilterByVerbsAndGroups(Verb, Group))
             {
                 WriteObject(verb);
             }

@@ -1321,7 +1321,9 @@ namespace System.Management.Automation
 
         private static string GetVerbGroupDisplayName(Type verbType) => verbType.Name.Substring(5);
 
-        internal static IEnumerable<VerbInfo> GetVerbsByGroup(string[] verbs, string[] groups)
+        internal static IEnumerable<VerbInfo> FilterByVerbsAndGroups(
+            string[] verbs,
+            string[] groups)
         {
             Collection<WildcardPattern> verbPattern = SessionStateUtilities.CreateWildcardsFromStrings(
                 verbs ?? new string[] { "*" },

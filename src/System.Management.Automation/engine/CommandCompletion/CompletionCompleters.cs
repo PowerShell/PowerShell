@@ -2616,7 +2616,7 @@ namespace System.Management.Automation
         {
             var verbs = new string[] { context.WordToComplete + "*" };
 
-            foreach (VerbInfo verb in Verbs.GetVerbsByGroup(verbs, groups))
+            foreach (VerbInfo verb in Verbs.FilterByVerbsAndGroups(verbs, groups))
             {
                 result.Add(new CompletionResult(verb.Verb));
             }
