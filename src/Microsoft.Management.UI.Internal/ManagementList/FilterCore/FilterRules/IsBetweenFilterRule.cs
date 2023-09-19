@@ -16,6 +16,7 @@ namespace Microsoft.Management.UI.Internal
     /// The generic parameter.
     /// </typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class IsBetweenFilterRule<T> : ComparableValueFilterRule<T> where T : IComparable
     {
         #region Properties
@@ -48,21 +49,6 @@ namespace Microsoft.Management.UI.Internal
         {
             get;
             protected set;
-        }
-
-        /// <summary>
-        /// Creates a clone of the FilterRule.
-        /// </summary>
-        /// <returns>
-        /// A clone of the FilterRule.
-        /// </returns>
-        public override FilterRule Clone()
-        {
-            IsBetweenFilterRule<T> clone = new IsBetweenFilterRule<T>();
-            clone.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
-            clone.StartValue = this.StartValue;
-            clone.EndValue = this.EndValue;
-            return clone;
         }
 
         #endregion Properties

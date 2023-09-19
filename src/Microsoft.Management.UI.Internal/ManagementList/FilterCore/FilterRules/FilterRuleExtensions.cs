@@ -27,7 +27,34 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public static FilterRule DeepCopy(this FilterRule rule)
         {
-            return rule.Clone();
+            ArgumentNullException.ThrowIfNull(rule);
+
+#pragma warning disable SYSLIB0050
+            Debug.Assert(rule.GetType().IsSerializable, "rule is serializable");
+
+#pragma warning disable SYSLIB0011
+#pragma warning disable SYSLIB0050
+            BinaryFormatter formatter = new BinaryFormatter(null, new StreamingContext(StreamingContextStates.Clone));
+            MemoryStream ms = new MemoryStream();
+
+            FilterRule copy = null;
+            try
+            {
+#pragma warning disable SYSLIB0011
+                formatter.Serialize(ms, rule);
+#pragma warning restore SYSLIB0011
+
+                ms.Position = 0;
+#pragma warning disable SYSLIB0011
+                copy = (FilterRule)formatter.Deserialize(ms);
+#pragma warning restore SYSLIB0011
+            }
+            finally
+            {
+                ms.Close();
+            }
+
+            return copy;
         }
     }
 }
