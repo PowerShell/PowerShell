@@ -10,6 +10,7 @@ using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Security;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -2358,6 +2359,99 @@ namespace System.Management.Automation
         ///   b) The argument is null.
         /// </summary>
         public virtual bool TransformNullOptionalParameters { get => true; }
+    }
+
+    /// <summary>
+    /// Transforms argument to a parameter in PowerShell.
+    /// 
+    /// This class is primarily designed to enable use of ArgumentTransformationAttributes in PowerShell.
+    /// Its secondary purpose is to enable simple transformations for compiled Cmdlets.
+    /// </summary>
+    public class ArgumentTransformAttribute : ArgumentTransformationAttribute
+    {
+        /// <summary>
+        /// Creates a Argument Transform from an expression.
+        /// </summary>
+        /// <param name="transformExpression">
+        /// An expression to use for the transform.
+        /// This will be converted into a ScriptBlock.</param>
+        public ArgumentTransformAttribute(string transformExpression) {
+            this.TransformScript = ScriptBlock.Create(transformExpression);
+        }
+
+        /// <summary>
+        /// Creates a Argument Transform from a ScriptBlock
+        /// </summary>
+        /// <param name="transformScript">A ScriptBlock to transform the value</param>
+        public ArgumentTransformAttribute(ScriptBlock transformScript) {
+            this.TransformScript = transformScript;            
+        }                        
+
+        /// <summary>
+        /// A ScriptBlock to transform the value.
+        /// The output of this script block will become the argument.
+        /// </summary>
+        public ScriptBlock TransformScript {
+            get;
+            set;
+        }        
+
+        /// <summary>
+        /// If a transform is disabled, nothing will happen.
+        /// </summary>
+        public bool Disabled {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The name of the transform.
+        /// This is not required. It is present in order to disambiguate multiple transforms.
+        /// </summary>
+        public string TransformName {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Transforms arguments.        
+        /// If the attribute is disabled, no transformation will take place.        
+        /// If the attribute has a .TransformScript, this argument will be transformed by invoking the script. 
+        /// </summary>
+        /// <param name="engineIntrinsics"></param>
+        /// <param name="inputData"></param>
+        /// <returns></returns>
+        public override object Transform(EngineIntrinsics engineIntrinsics, object inputData) {
+            // If disabled, do nothing
+            if (this.Disabled) { return inputData; }
+            // If there is no transform script, return the input data.
+            if (this.TransformScript == null) { return inputData; }                      
+            
+            // By getting the value of InvocationInfo now, we know what command is trying to perform the transform.
+            InvocationInfo myInvocation = engineIntrinsics.SessionState.PSVariable.Get("MyInvocation").Value as InvocationInfo;
+                                            
+            // The transform script will be passed:
+            // The input data, invocation info,  command, and this attribute.
+            object[] arguments   = new object[] { inputData, myInvocation, myInvocation.MyCommand, this };
+
+            // Invoke it in place.
+            // ($_ will be the current transformed value)
+            // ($this will be the CommandInfo or InvocationInfo)
+            object transformedValue = this.TransformScript.DoInvokeReturnAsIs(
+                useLocalScope: true,
+                errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
+                dollarUnder: LanguagePrimitives.AsPSObjectOrNull(inputData),
+                input: new object[] { inputData },
+                scriptThis: myInvocation != null ? myInvocation.MyCommand : myInvocation,
+                args: arguments
+            );
+
+            if (transformedValue != null) {
+                return transformedValue;
+            }            
+
+            return inputData;
+        }
     }
 
     #endregion Data Generation Attributes
