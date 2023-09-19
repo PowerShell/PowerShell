@@ -1325,25 +1325,62 @@ namespace System.Management.Automation
             string[] verbs,
             string[] groups)
         {
+            if (groups is null)
+            {
+                foreach (VerbInfo verb in FilterVerbs(verbs))
+                {
+                    yield return verb;
+                }
+
+                yield break;
+            }
+
+            foreach (VerbInfo verb in FilterVerbsWithGroups(verbs, groups))
+            {
+                yield return verb;
+            }
+        }
+
+        private static IEnumerable<VerbInfo> FilterVerbsWithGroups(
+            string[] verbs,
+            string[] groups)
+        {
             Collection<WildcardPattern> verbPattern = SessionStateUtilities.CreateWildcardsFromStrings(
                 verbs ?? new string[] { "*" },
                 WildcardOptions.IgnoreCase);
 
-            foreach (Type verbType in VerbTypes) 
+            foreach (Type verbType in VerbTypes)
             {
                 string verbGroupName = GetVerbGroupDisplayName(verbType);
 
                 bool hasVerbGroup = SessionStateUtilities.CollectionContainsValue(
-                    groups ?? Array.Empty<string>(),
+                    groups,
                     verbGroupName,
                     StringComparer.OrdinalIgnoreCase);
 
-                if (groups is null || hasVerbGroup)
+                if (hasVerbGroup)
                 {
                     foreach (VerbInfo verb in GetVerbsByWildCardPattern(verbType, verbGroupName, verbPattern))
                     {
                         yield return verb;
                     }
+                }
+            }
+        }
+
+        private static IEnumerable<VerbInfo> FilterVerbs(string[] verbs)
+        {
+            Collection<WildcardPattern> verbPattern = SessionStateUtilities.CreateWildcardsFromStrings(
+                verbs ?? new string[] { "*" },
+                WildcardOptions.IgnoreCase);
+
+            foreach (Type verbType in VerbTypes)
+            {
+                string verbGroupName = GetVerbGroupDisplayName(verbType);
+
+                foreach (VerbInfo verb in GetVerbsByWildCardPattern(verbType, verbGroupName, verbPattern))
+                {
+                    yield return verb;
                 }
             }
         }
