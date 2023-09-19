@@ -1351,16 +1351,14 @@ namespace System.Management.Automation
 
             foreach (Type verbType in VerbTypes)
             {
-                string verbGroupName = GetVerbGroupDisplayName(verbType);
-
                 bool hasVerbGroup = SessionStateUtilities.CollectionContainsValue(
                     groups,
-                    verbGroupName,
+                    GetVerbGroupDisplayName(verbType),
                     StringComparer.OrdinalIgnoreCase);
 
                 if (hasVerbGroup)
                 {
-                    foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbGroupName, verbPattern))
+                    foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbPattern))
                     {
                         yield return verb;
                     }
@@ -1376,9 +1374,7 @@ namespace System.Management.Automation
 
             foreach (Type verbType in VerbTypes)
             {
-                string verbGroupName = GetVerbGroupDisplayName(verbType);
-
-                foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbGroupName, verbPattern))
+                foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbPattern))
                 {
                     yield return verb;
                 }
@@ -1387,7 +1383,6 @@ namespace System.Management.Automation
 
         private static IEnumerable<VerbInfo> FilterVerbsByWildCardPattern(
             Type verbType,
-            string verbGroupName,
             IEnumerable<WildcardPattern> patterns)
         {
             foreach (FieldInfo field in verbType.GetFields())
@@ -1403,7 +1398,7 @@ namespace System.Management.Automation
                     {
                         Verb = field.Name,
                         AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name),
-                        Group = verbGroupName,
+                        Group = GetVerbGroupDisplayName(verbType),
                         Description = VerbDescriptions.GetVerbDescription(field.Name)
                     };
                 }
