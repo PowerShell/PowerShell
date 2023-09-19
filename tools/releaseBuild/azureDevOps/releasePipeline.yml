@@ -281,6 +281,13 @@ stages:
       instructions: |
         Update and merge the changelog for the release.
         This step is required for creating GitHub draft release.
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Restart the pipeline to pick up the changelog
+      jobName: RestartForChangeLog
+      instructions: |
+        Azure DevOps will not pick up the new check-in automatically.
+        Please restart the release pipeline, you can disable any stages that are completed.
 
 - stage: GitHubDraftRelease
   displayName: Create GitHub draft release
@@ -289,8 +296,18 @@ stages:
 
   # The environment here is used for approval.
   jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Ready for release?
+      jobName: ReleaseReady
+      instructions: |
+        Security releases should only be done on Tuesday or Thursday.
+        Verify that MSRC is ready and our security announcements are ready.
+        Non-Security releases should not be done on Mondays or Fridays.
+        
   - deployment: AzureBlobPublic
     displayName: Make Azure Blob Public
+    dependsOn: ReleaseReady
 
     pool:
       name: PowerShell1ES
