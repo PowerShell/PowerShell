@@ -1360,7 +1360,7 @@ namespace System.Management.Automation
 
                 if (hasVerbGroup)
                 {
-                    foreach (VerbInfo verb in GetVerbsByWildCardPattern(verbType, verbGroupName, verbPattern))
+                    foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbGroupName, verbPattern))
                     {
                         yield return verb;
                     }
@@ -1378,14 +1378,14 @@ namespace System.Management.Automation
             {
                 string verbGroupName = GetVerbGroupDisplayName(verbType);
 
-                foreach (VerbInfo verb in GetVerbsByWildCardPattern(verbType, verbGroupName, verbPattern))
+                foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbGroupName, verbPattern))
                 {
                     yield return verb;
                 }
             }
         }
 
-        private static IEnumerable<VerbInfo> GetVerbsByWildCardPattern(
+        private static IEnumerable<VerbInfo> FilterVerbsByWildCardPattern(
             Type verbType,
             string verbGroupName,
             IEnumerable<WildcardPattern> patterns)
