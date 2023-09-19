@@ -41,6 +41,7 @@ variables:
   - name: BUILDSECMON_OPT_IN
     value: true
   - group: ReleasePipelineSecrets
+  - group: PipelineExecutionPats
 
 stages:
 - stage: MSIXBundle
