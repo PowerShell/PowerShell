@@ -457,6 +457,17 @@ Fix steps:
         $Arguments += "--self-contained"
     }
 
+    if ($Options.Runtime -like 'win*') {
+        # Starting in .NET 8, the .NET SDK won't recognize version-specific RIDs by default, such as win7-x64,
+        # see https://learn.microsoft.com/dotnet/core/compatibility/sdk/8.0/rid-graph for details.
+        # It will cause huge amount of changes in our build infrastructure because our building and packaging
+        # scripts have the 'win7-xx' assumption regarding the target runtime.
+        #
+        # As a workaround, we use the old full RID graph during the build so that we can continue to use the
+        # 'win7-x64' and 'win7-x86' RIDs.
+        $Arguments += "/property:UseRidGraph=true"
+    }
+
     if ($Options.Runtime -like 'win*' -or ($Options.Runtime -like 'fxdependent*' -and $environment.IsWindows)) {
         $Arguments += "/property:IsWindows=true"
         if(!$environment.IsWindows) {
@@ -800,6 +811,7 @@ function Restore-PSPackage
 
         if ($Options.Runtime -like 'win*') {
             $RestoreArguments += "/property:EnableWindowsTargeting=True"
+            $RestoreArguments += "/property:UseRidGraph=True"
         }
 
         if ($InteractiveAuth) {
@@ -1196,6 +1208,10 @@ function Publish-PSTestTools {
             if (-not $runtime) {
                 $runtime = $Options.Runtime
             }
+
+            # We are using non-version/distro specific RIDs for test tools, so we need to fix the runtime
+            # value here if it starts with 'win7'.
+            $runtime = $runtime -replace '^win7-', 'win-'
 
             Write-Verbose -Verbose -Message "Starting dotnet publish for $toolPath with runtime $runtime"
 
