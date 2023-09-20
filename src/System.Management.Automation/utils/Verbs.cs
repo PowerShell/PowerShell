@@ -1325,9 +1325,13 @@ namespace System.Management.Automation
             string[] verbs,
             string[] groups)
         {
+            Collection<WildcardPattern> verbPatterns = SessionStateUtilities.CreateWildcardsFromStrings(
+                verbs,
+                WildcardOptions.IgnoreCase);
+
             if (groups is null)
             {
-                foreach (VerbInfo verb in FilterVerbs(verbs))
+                foreach (VerbInfo verb in FilterVerbs(verbPatterns))
                 {
                     yield return verb;
                 }
@@ -1335,20 +1339,16 @@ namespace System.Management.Automation
                 yield break;
             }
 
-            foreach (VerbInfo verb in FilterVerbsWithGroups(verbs, groups))
+            foreach (VerbInfo verb in FilterVerbsWithGroups(verbPatterns, groups))
             {
                 yield return verb;
             }
         }
 
         private static IEnumerable<VerbInfo> FilterVerbsWithGroups(
-            string[] verbs,
+            Collection<WildcardPattern> verbPatterns,
             string[] groups)
         {
-            Collection<WildcardPattern> verbPattern = SessionStateUtilities.CreateWildcardsFromStrings(
-                verbs ?? new string[] { "*" },
-                WildcardOptions.IgnoreCase);
-
             foreach (Type verbType in VerbTypes)
             {
                 bool hasVerbGroup = SessionStateUtilities.CollectionContainsValue(
@@ -1358,7 +1358,7 @@ namespace System.Management.Automation
 
                 if (hasVerbGroup)
                 {
-                    foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbPattern))
+                    foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbPatterns))
                     {
                         yield return verb;
                     }
@@ -1366,15 +1366,11 @@ namespace System.Management.Automation
             }
         }
 
-        private static IEnumerable<VerbInfo> FilterVerbs(string[] verbs)
+        private static IEnumerable<VerbInfo> FilterVerbs(Collection<WildcardPattern> verbPatterns)
         {
-            Collection<WildcardPattern> verbPattern = SessionStateUtilities.CreateWildcardsFromStrings(
-                verbs ?? new string[] { "*" },
-                WildcardOptions.IgnoreCase);
-
             foreach (Type verbType in VerbTypes)
             {
-                foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbPattern))
+                foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbPatterns))
                 {
                     yield return verb;
                 }
@@ -1383,27 +1379,45 @@ namespace System.Management.Automation
 
         private static IEnumerable<VerbInfo> FilterVerbsByWildCardPattern(
             Type verbType,
-            IEnumerable<WildcardPattern> patterns)
+            Collection<WildcardPattern> verbPatterns)
         {
+            if (verbPatterns.Count == 0)
+            {
+                foreach (FieldInfo field in verbType.GetFields())
+                {
+                    if (field.IsLiteral)
+                    {
+                        yield return CreateVerbFromField(field, verbType);
+                    }
+                }
+
+                yield break;
+            }
+
             foreach (FieldInfo field in verbType.GetFields())
             {
-                bool matchesWildCardPattern = SessionStateUtilities.MatchesAnyWildcardPattern(
-                    field.Name,
-                    patterns,
-                    defaultValue: false);
-
-                if (field.IsLiteral && matchesWildCardPattern)
+                if (field.IsLiteral)
                 {
-                    yield return new VerbInfo
+                    bool matchesWildCardPattern = SessionStateUtilities.MatchesAnyWildcardPattern(
+                        field.Name,
+                        verbPatterns,
+                        defaultValue: false);
+
+                    if (matchesWildCardPattern)
                     {
-                        Verb = field.Name,
-                        AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name),
-                        Group = GetVerbGroupDisplayName(verbType),
-                        Description = VerbDescriptions.GetVerbDescription(field.Name)
-                    };
+                        yield return CreateVerbFromField(field, verbType);
+                    }
                 }
             }
         }
+
+        private static VerbInfo CreateVerbFromField(FieldInfo field, Type verbType) => new()
+        {
+            Verb = field.Name,
+            AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name),
+            Group = GetVerbGroupDisplayName(verbType),
+            Description = VerbDescriptions.GetVerbDescription(field.Name)
+        };
 
         private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, string[]> s_recommendedAlternateVerbs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
