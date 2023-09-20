@@ -1325,13 +1325,9 @@ namespace System.Management.Automation
             string[] verbs,
             string[] groups)
         {
-            Collection<WildcardPattern> verbPatterns = SessionStateUtilities.CreateWildcardsFromStrings(
-                verbs,
-                WildcardOptions.IgnoreCase);
-
             if (groups is null)
             {
-                foreach (VerbInfo verb in FilterVerbs(verbPatterns))
+                foreach (VerbInfo verb in FilterVerbs(verbs))
                 {
                     yield return verb;
                 }
@@ -1339,16 +1335,30 @@ namespace System.Management.Automation
                 yield break;
             }
 
-            foreach (VerbInfo verb in FilterVerbsWithGroups(verbPatterns, groups))
+            foreach (VerbInfo verb in FilterVerbsWithGroups(verbs, groups))
             {
                 yield return verb;
             }
         }
 
-        private static IEnumerable<VerbInfo> FilterVerbs(Collection<WildcardPattern> verbPatterns)
+        private static IEnumerable<VerbInfo> FilterVerbs(string[] verbs)
         {
+            Collection<WildcardPattern> verbPatterns = SessionStateUtilities.CreateWildcardsFromStrings(
+                verbs,
+                WildcardOptions.IgnoreCase);
+
             foreach (Type verbType in VerbTypes)
             {
+                if (verbPatterns.Count == 0)
+                {
+                    foreach (VerbInfo verb in FilterAllVerbs(verbType))
+                    {
+                        yield return verb;
+                    }
+
+                    yield break;
+                }
+
                 foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbPatterns))
                 {
                     yield return verb;
@@ -1357,9 +1367,13 @@ namespace System.Management.Automation
         }
 
         private static IEnumerable<VerbInfo> FilterVerbsWithGroups(
-            Collection<WildcardPattern> verbPatterns,
+            string[] verbs,
             string[] groups)
         {
+            Collection<WildcardPattern> verbPatterns = SessionStateUtilities.CreateWildcardsFromStrings(
+                verbs,
+                WildcardOptions.IgnoreCase);
+
             foreach (Type verbType in VerbTypes)
             {
                 if (SessionStateUtilities.CollectionContainsValue(
@@ -1367,6 +1381,16 @@ namespace System.Management.Automation
                     GetVerbGroupDisplayName(verbType),
                     StringComparer.OrdinalIgnoreCase))
                 {
+                    if (verbPatterns.Count == 0)
+                    {
+                        foreach (VerbInfo verb in FilterAllVerbs(verbType))
+                        {
+                            yield return verb;
+                        }
+
+                        yield break;
+                    }
+
                     foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbPatterns))
                     {
                         yield return verb;
@@ -1375,20 +1399,18 @@ namespace System.Management.Automation
             }
         }
 
+        private static IEnumerable<VerbInfo> FilterAllVerbs(Type verbType)
+        {
+            foreach (FieldInfo field in GetVerbTypeFields(verbType))
+            {
+                yield return CreateVerbFromField(field, verbType);
+            }
+        }
+
         private static IEnumerable<VerbInfo> FilterVerbsByWildCardPattern(
             Type verbType,
             Collection<WildcardPattern> verbPatterns)
         {
-            if (verbPatterns.Count == 0)
-            {
-                foreach (FieldInfo field in GetVerbTypeFields(verbType))
-                {
-                    yield return CreateVerbFromField(field, verbType);
-                }
-
-                yield break;
-            }
-
             foreach (FieldInfo field in GetVerbTypeFields(verbType))
             {
                 if (SessionStateUtilities.MatchesAnyWildcardPattern(
