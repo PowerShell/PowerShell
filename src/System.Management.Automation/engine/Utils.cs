@@ -1302,6 +1302,16 @@ namespace System.Management.Automation
 #endif
         }
 
+        internal static bool PathIsDevicePath(string path)
+        {
+#if UNIX
+            return false;
+#else
+            // device paths can be network paths, we would need windows to parse it.
+            return path.StartsWith(@"\\.\") || path.StartsWith(@"\\?\") || path.StartsWith(@"\\;");
+#endif
+        }
+
         internal static readonly string PowerShellAssemblyStrongNameFormat =
             "{0}, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
 
@@ -1558,6 +1568,23 @@ namespace System.Management.Automation
             }
 
             return oldMode;
+        }
+
+        /// <summary>
+        /// Returns true if the current session is restricted (JEA or similar sessions)
+        /// </summary>
+        /// <param name="context">ExecutionContext.</param>
+        /// <returns>True if the session is restricted.</returns>
+        internal static bool IsSessionRestricted(ExecutionContext context)
+        {
+                CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
+                // if import-module is visible, then the session is not restricted,
+                // because the user can load arbitrary code.
+                if (cmdletInfo != null && cmdletInfo.Visibility == SessionStateEntryVisibility.Public)
+                {        
+                   return false; 
+                }
+                return true;
         }
     }
 }

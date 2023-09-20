@@ -452,3 +452,96 @@ function Test-IsReleaseCandidate
 
     return $false
 }
+
+function Test-IsWinServer2012R2
+{
+    if (-not $IsWindows) {
+        return $false
+    }
+
+    $osInfo = [System.Environment]::OSVersion.Version
+    return ($osInfo.Major -eq 6 -and $osInfo.Minor -eq 3)
+}
+
+function Get-HelpNetworkTestCases
+{
+    param(
+        [switch]
+        $PositiveCases
+    )
+    # .NET doesn't consider these path rooted and we won't go to the network:
+    # \\?
+    # \\.
+    # \??
+
+    # Command discovery does not follow symlinks to network locations for module qualified paths
+    $networkBlockedError = "CommandNameNotAllowed,Microsoft.PowerShell.Commands.GetHelpCommand"
+    $scriptBlockedError = "ScriptsNotAllowed"
+
+    $formats = @(
+        '//{0}/share/{1}'
+        '\\{0}\share\{1}'
+        '//{0}\share/{1}'
+        'Microsoft.PowerShell.Core\filesystem:://{0}/share/{1}'
+    )
+
+    if (!$PositiveCases) {
+        $formats += 'filesystem:://{0}/share/{1}'
+    }
+
+    $moduleQualifiedCommand = 'test.dll\fakecommand'
+    $lanManFormat = @(
+        '//;LanmanRedirector/{0}/share/{1}'
+    )
+
+    $hosts = @(
+        'fakehost'
+        'fakehost.pstest'
+    )
+
+    $commands = @(
+        'test.ps1'
+        'test.dll'
+        $moduleQualifiedCommand
+    )
+
+    $variants = @()
+    $cases = @()
+    foreach($command in $commands)  {
+        $hostName = $hosts[0]
+        $format = $formats[0]
+        $cases += @{
+            Command = $format -f $hostName, $command
+            ExpectedError = $networkBlockedError
+        }
+    }
+
+    foreach($hostName in $hosts) {
+        # chose the format with backslashes(\) to match the host with blackslashes
+        $format = $formats[1]
+        $command = $commands[0]
+        $cases += @{
+            Command = $format -f $hostName, $command
+            ExpectedError = $networkBlockedError
+        }
+    }
+    foreach($format in $formats) {
+        $hostName = $hosts[0]
+        $command = $commands[0]
+        $cases += @{
+            Command = $format -f $hostName, $command
+            ExpectedError = $networkBlockedError
+        }
+    }
+
+    foreach($format in $lanManFormat) {
+        $hostName = $hosts[0]
+        $command = $moduleQualifiedCommand
+        $cases += @{
+            Command = $format -f $hostName, $command
+            ExpectedError = $scriptBlockedError
+        }
+    }
+
+    return $cases | Sort-Object -Property ExpectedError, Command -Unique
+}

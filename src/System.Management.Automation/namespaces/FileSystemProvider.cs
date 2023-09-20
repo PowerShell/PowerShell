@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// The path with all / normalized to \
         /// </returns>
-        private static string NormalizePath(string path)
+        internal static string NormalizePath(string path)
         {
             return GetCorrectCasedPath(path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator));
         }

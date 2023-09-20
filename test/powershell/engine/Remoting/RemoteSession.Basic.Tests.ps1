@@ -96,7 +96,6 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
             Unregister-PSSessionConfiguration -Name JEA -Force -ErrorAction SilentlyContinue
         }
     }
-
 }
 
 Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
@@ -133,6 +132,34 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
         finally
         {
             Unregister-PSSessionConfiguration -Name JEA -Force -ErrorAction SilentlyContinue
+            Remove-Item $RoleCapDirectory -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Get-Help should throw <ExpectedError> on <command>" -TestCases (Get-HelpNetworkTestCases) {
+        param(
+            $Command,
+            $ExpectedError
+        )
+
+        [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
+        [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
+        $configurationName = 'RestrictedWithNoGetHelpProxy'
+        try
+        {
+            New-PSSessionConfigurationFile -Path $PSSessionConfigFile `
+                -SessionType Empty `
+                -LanguageMode NoLanguage `
+                -ModulesToImport 'Microsoft.PowerShell.Utility', 'Microsoft.PowerShell.Core' `
+                -VisibleCmdlets 'Get-command', 'measure-object', 'select-object', 'enter-pssession', 'get-formatdata', 'out-default', 'out-file', 'exit-pssession', 'get-help'
+            Register-PSSessionConfiguration -Name $configurationName -Path $PSSessionConfigFile -Force -ErrorAction SilentlyContinue
+            $scriptBlock = [scriptblock]::Create("Get-Help -Name $Command")
+            {Invoke-Command -ConfigurationName $configurationName -ComputerName localhost -ScriptBlock $scriptBlock -ErrorAction Stop} |
+                Should -Throw -ErrorId $ExpectedError
+        }
+        finally
+        {
+            Unregister-PSSessionConfiguration -Name $configurationName -Force -ErrorAction SilentlyContinue
             Remove-Item $RoleCapDirectory -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
@@ -332,6 +359,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
         $session = New-RemoteSession -ConfigurationName $endPoint
         try {
             $result = Invoke-Command -Session $session -ScriptBlock { $Host.Version }
+            Write-Verbose "host version: $result" -Verbose
             $result | Should -Be $PSVersionTable.PSVersion
         }
         finally {
