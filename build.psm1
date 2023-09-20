@@ -1209,6 +1209,10 @@ function Publish-PSTestTools {
                 $runtime = $Options.Runtime
             }
 
+            # We are using non-version/distro specific RIDs for test tools, so we need to fix the runtime
+            # value here if it starts with 'win7'.
+            $runtime = $runtime -replace '^win7-', 'win-'
+
             Write-Verbose -Verbose -Message "Starting dotnet publish for $toolPath with runtime $runtime"
 
             dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $runtime --self-contained | Out-String | Write-Verbose -Verbose
