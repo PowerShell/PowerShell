@@ -1351,7 +1351,7 @@ namespace System.Management.Automation
             {
                 if (verbPatterns.Count == 0)
                 {
-                    foreach (VerbInfo verb in FilterAllVerbs(verbType))
+                    foreach (VerbInfo verb in GetAllVerbs(verbType))
                     {
                         yield return verb;
                     }
@@ -1383,7 +1383,7 @@ namespace System.Management.Automation
                 {
                     if (verbPatterns.Count == 0)
                     {
-                        foreach (VerbInfo verb in FilterAllVerbs(verbType))
+                        foreach (VerbInfo verb in GetAllVerbs(verbType))
                         {
                             yield return verb;
                         }
@@ -1399,7 +1399,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static IEnumerable<VerbInfo> FilterAllVerbs(Type verbType)
+        private static IEnumerable<VerbInfo> GetAllVerbs(Type verbType)
         {
             foreach (FieldInfo field in GetVerbTypeFields(verbType))
             {
