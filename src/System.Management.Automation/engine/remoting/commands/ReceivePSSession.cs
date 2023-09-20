@@ -446,9 +446,9 @@ namespace Microsoft.PowerShell.Commands
             string shellUri = null;
             if (!string.IsNullOrEmpty(ConfigurationName))
             {
-                shellUri = ConfigurationName.Contains(
-                            System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) ?
-                            ConfigurationName : System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + ConfigurationName;
+                shellUri = ConfigurationName.Contains(WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase)
+                    ? ConfigurationName
+                    : WSManNativeApi.ResourceURIPrefix + ConfigurationName;
             }
 
             // Connect selected runspace/command and direct command output to host

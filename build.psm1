@@ -458,6 +458,13 @@ Fix steps:
     }
 
     if ($Options.Runtime -like 'win*') {
+        # Starting in .NET 8, the .NET SDK won't recognize version-specific RIDs by default, such as win7-x64,
+        # see https://learn.microsoft.com/dotnet/core/compatibility/sdk/8.0/rid-graph for details.
+        # It will cause huge amount of changes in our build infrastructure because our building and packaging
+        # scripts have the 'win7-xx' assumption regarding the target runtime.
+        #
+        # As a workaround, we use the old full RID graph during the build so that we can continue to use the
+        # 'win7-x64' and 'win7-x86' RIDs.
         $Arguments += "/property:UseRidGraph=true"
     }
 
