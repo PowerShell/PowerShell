@@ -38,6 +38,7 @@ FunctionsToExport = @(
         'Test-TesthookIsSet'
         'Wait-FileToBePresent'
         'Wait-UntilTrue'
+        'Get-HelpNetworkTestCases'
         'Get-PlatformInfo'
         'Get-WSManSupport'
     )
