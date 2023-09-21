@@ -13,6 +13,7 @@ namespace Microsoft.Management.UI.Internal
     /// The generic parameter.
     /// </typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public abstract class ComparableValueFilterRule<T> : FilterRule where T : IComparable
     {
         #region Properties
@@ -59,19 +60,6 @@ namespace Microsoft.Management.UI.Internal
             }
 
             return this.Evaluate(castItem);
-        }
-
-        /// <summary>
-        /// Creates a clone of the ComparableValueFilterRule instance.
-        /// </summary>
-        /// <returns>
-        /// Returns a clone of the ComparableValueFilterRule instance.
-        /// </returns>
-        public override FilterRule Clone()
-        {
-            ComparableValueFilterRule<T> rule = (ComparableValueFilterRule<T>)Activator.CreateInstance(this.GetType());
-            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
-            return rule;
         }
 
         /// <summary>
