@@ -11,6 +11,7 @@ namespace Microsoft.Management.UI.Internal
     /// check if it is contains the rule's value within it.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class TextContainsFilterRule : TextFilterRule
     {
         private static readonly string TextContainsCharactersRegexPattern = "{0}";
@@ -22,20 +23,6 @@ namespace Microsoft.Management.UI.Internal
         public TextContainsFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_Contains;
-        }
-
-        /// <summary>
-        /// Creates a clone of the TextContainsFilterRule instance.
-        /// </summary>
-        /// <returns>
-        /// Returns a clone of the TextContainsFilterRule instance.
-        /// </returns>
-        public override FilterRule Clone()
-        {
-            TextContainsFilterRule rule = new TextContainsFilterRule();
-            rule.Value = this.Value;
-            rule.DefaultNullValueEvaluation = this.DefaultNullValueEvaluation;
-            return rule;
         }
 
         /// <summary>
