@@ -55,7 +55,7 @@ jobs:
     - pwsh: |
         Import-Module .\build.psm1 -force
         Find-DotNet
-        Start-PSBuild -Configuration StaticAnalysis -PSModuleRestore -Clean
+        Start-PSBuild -Configuration StaticAnalysis -PSModuleRestore -Clean -Runtime fxdependent-win-desktop
 
         $OutputFolder = Split-Path (Get-PSOutput)
         Write-Host "##vso[task.setvariable variable=BinDir]$OutputFolder"
