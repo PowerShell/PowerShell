@@ -1321,58 +1321,20 @@ namespace System.Management.Automation
 
         private static string GetVerbGroupDisplayName(Type verbType) => verbType.Name.Substring(5);
 
-        internal static IEnumerable<VerbInfo> FilterByVerbsAndGroups(
-            string[] verbs,
-            string[] groups)
+        internal static IEnumerable<VerbInfo> FilterByVerbsAndGroups(string[] verbs, string[] groups)
         {
             if (groups is null)
             {
-                foreach (VerbInfo verb in FilterVerbs(verbs))
+                foreach (Type verbType in VerbTypes)
                 {
-                    yield return verb;
+                    foreach (VerbInfo verb in GetVerbsByType(verbs, verbType))
+                    {
+                        yield return verb;
+                    }
                 }
 
                 yield break;
             }
-
-            foreach (VerbInfo verb in FilterVerbsWithGroups(verbs, groups))
-            {
-                yield return verb;
-            }
-        }
-
-        private static IEnumerable<VerbInfo> FilterVerbs(string[] verbs)
-        {
-            Collection<WildcardPattern> verbPatterns = SessionStateUtilities.CreateWildcardsFromStrings(
-                verbs,
-                WildcardOptions.IgnoreCase);
-
-            foreach (Type verbType in VerbTypes)
-            {
-                if (verbPatterns.Count == 0)
-                {
-                    foreach (VerbInfo verb in GetAllVerbs(verbType))
-                    {
-                        yield return verb;
-                    }
-
-                    yield break;
-                }
-
-                foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbPatterns))
-                {
-                    yield return verb;
-                }
-            }
-        }
-
-        private static IEnumerable<VerbInfo> FilterVerbsWithGroups(
-            string[] verbs,
-            string[] groups)
-        {
-            Collection<WildcardPattern> verbPatterns = SessionStateUtilities.CreateWildcardsFromStrings(
-                verbs,
-                WildcardOptions.IgnoreCase);
 
             foreach (Type verbType in VerbTypes)
             {
@@ -1381,17 +1343,7 @@ namespace System.Management.Automation
                     GetVerbGroupDisplayName(verbType),
                     StringComparer.OrdinalIgnoreCase))
                 {
-                    if (verbPatterns.Count == 0)
-                    {
-                        foreach (VerbInfo verb in GetAllVerbs(verbType))
-                        {
-                            yield return verb;
-                        }
-
-                        yield break;
-                    }
-
-                    foreach (VerbInfo verb in FilterVerbsByWildCardPattern(verbType, verbPatterns))
+                    foreach (VerbInfo verb in GetVerbsByType(verbs, verbType))
                     {
                         yield return verb;
                     }
@@ -1399,50 +1351,47 @@ namespace System.Management.Automation
             }
         }
 
-        private static IEnumerable<VerbInfo> GetAllVerbs(Type verbType)
+        private static IEnumerable<VerbInfo> GetVerbsByType(string[] verbs, Type verbType)
         {
-            foreach (FieldInfo field in GetVerbTypeFields(verbType))
+            if (verbs is null)
             {
-                yield return CreateVerbFromField(field, verbType);
-            }
-        }
-
-        private static IEnumerable<VerbInfo> FilterVerbsByWildCardPattern(
-            Type verbType,
-            Collection<WildcardPattern> verbPatterns)
-        {
-            foreach (FieldInfo field in GetVerbTypeFields(verbType))
-            {
-                if (SessionStateUtilities.MatchesAnyWildcardPattern(
-                    field.Name,
-                    verbPatterns,
-                    defaultValue: false))
+                foreach (FieldInfo field in verbType.GetFields())
                 {
-                    yield return CreateVerbFromField(field, verbType);
+                    if (field.IsLiteral)
+                    {
+                        yield return CreateVerbFromField(field, verbType);
+                    }
                 }
-            }
-        }
 
-        private static IEnumerable<FieldInfo> GetVerbTypeFields(Type verbType)
-        {
+                yield break;
+            }
+
+            Collection<WildcardPattern> verbPatterns = SessionStateUtilities.CreateWildcardsFromStrings(
+                verbs,
+                WildcardOptions.IgnoreCase);
+
             foreach (FieldInfo field in verbType.GetFields())
             {
                 if (field.IsLiteral)
                 {
-                    yield return field;
+                    if (SessionStateUtilities.MatchesAnyWildcardPattern(
+                        field.Name,
+                        verbPatterns,
+                        defaultValue: false))
+                    {
+                        yield return CreateVerbFromField(field, verbType);
+                    }
                 }
             }
         }
 
-        private static VerbInfo CreateVerbFromField(
-            FieldInfo field,
-            Type verbType) => new()
-            {
-                Verb = field.Name,
-                AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name),
-                Group = GetVerbGroupDisplayName(verbType),
-                Description = VerbDescriptions.GetVerbDescription(field.Name)
-            };
+        private static VerbInfo CreateVerbFromField(FieldInfo field, Type verbType) => new()
+        {
+            Verb = field.Name,
+            AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name),
+            Group = GetVerbGroupDisplayName(verbType),
+            Description = VerbDescriptions.GetVerbDescription(field.Name)
+        };
 
         private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, string[]> s_recommendedAlternateVerbs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
