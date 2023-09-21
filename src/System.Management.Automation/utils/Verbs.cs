@@ -1327,7 +1327,7 @@ namespace System.Management.Automation
             {
                 foreach (Type verbType in VerbTypes)
                 {
-                    foreach (VerbInfo verb in GetVerbsByType(verbs, verbType))
+                    foreach (VerbInfo verb in FilterVerbsByType(verbs, verbType))
                     {
                         yield return verb;
                     }
@@ -1343,7 +1343,7 @@ namespace System.Management.Automation
                     GetVerbGroupDisplayName(verbType),
                     StringComparer.OrdinalIgnoreCase))
                 {
-                    foreach (VerbInfo verb in GetVerbsByType(verbs, verbType))
+                    foreach (VerbInfo verb in FilterVerbsByType(verbs, verbType))
                     {
                         yield return verb;
                     }
@@ -1351,7 +1351,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static IEnumerable<VerbInfo> GetVerbsByType(string[] verbs, Type verbType)
+        private static IEnumerable<VerbInfo> FilterVerbsByType(string[] verbs, Type verbType)
         {
             if (verbs is null)
             {
