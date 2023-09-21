@@ -1,4 +1,3 @@
-using System.Security.AccessControl;
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -9,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 using System.Threading;
 
 using Microsoft.ApplicationInsights;
