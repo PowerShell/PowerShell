@@ -45,7 +45,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
         It "NewFileCatalogWithSingleFile with WhatIf" {
 
             $sourcePath = Join-Path $testDataPath '\CatalogTestFile1.mof'
-            # use existant Path for the directory when .cat file name is not specified
+            # use existent Path for the directory when .cat file name is not specified
             $catalogPath = $testDataPath
             $catalogFile = $catalogPath + "\catalog.cat"
 
@@ -87,7 +87,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
         It "NewFileCatalogFolderWithSubFolders" {
 
             $sourcePath = Join-Path $testDataPath 'UserConfigProv'
-            # use non existant Path for the directory when .cat file name is specified
+            # use non existent Path for the directory when .cat file name is specified
             $catalogPath = "$testDataPath\OutPutCatalog\NewFileCatalogFolderWithSubFolders.cat"
 
             try
@@ -109,7 +109,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
         It "NewFileCatalogWithSingleFile" {
 
             $sourcePath = Join-Path $testDataPath '\CatalogTestFile1.mof'
-            # use existant Path for the directory when .cat file name is not specified
+            # use existent Path for the directory when .cat file name is not specified
             $catalogPath = $testDataPath
             try
             {
@@ -130,7 +130,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $expectedPathsAndHashes = @{ "TestImage.gif" = "B0E4B9F0BB21284AA0AF0D525C913420AD73DA6A" ;
                                         "TestFileCatalog.txt" = "BA6A26C5F19AB50B0D5BE2A9D445B259998B0DD9" }
 
-            # use non existant Path for the directory when .cat file name is not specified
+            # use non existent Path for the directory when .cat file name is not specified
             $catalogPath = "$testDataPath\OutPutCatalog"
 
             try
