@@ -100,7 +100,7 @@ function Start-PSPackage {
         } elseif ($MacOSRuntime) {
            $MacOSRuntime, "Release"
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine") {
-            New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+            New-PSOptions -Configuration "Release" -Runtime "linux-musl-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm") {
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm64") {
@@ -594,7 +594,7 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
-                    Architecture = "alpine-x64"
+                    Architecture = "linux-musl-x64"
                     ExcludeSymbolicLinks = $true
                     R2RVerification = [R2RVerification]@{
                         R2RState = 'R2R'
@@ -4513,7 +4513,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
                 $buildParams.Add("Runtime", "fxdependent")
             }
             'alpine' {
-                $buildParams.Add("Runtime", 'alpine-x64')
+                $buildParams.Add("Runtime", 'linux-musl-x64')
             }
         }
 
