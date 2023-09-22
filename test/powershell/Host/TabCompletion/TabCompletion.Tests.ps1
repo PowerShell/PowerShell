@@ -23,6 +23,11 @@ Describe "TabCompletion" -Tags CI {
         $res | Should -BeExactly 'Test-AbbreviatedFunctionExpansion'
     }
 
+    It 'Should complete module by shortname' {
+        $res = TabExpansion2 -inputScript 'Get-Module -ListAvailable -Name Host'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Microsoft.PowerShell.Host'
+    }
+
     It 'Should complete native exe' -Skip:(!$IsWindows) {
         $res = TabExpansion2 -inputScript 'notep' -cursorColumn 'notep'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'notepad.exe'
