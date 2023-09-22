@@ -900,7 +900,7 @@ function New-PSOptions {
         [ValidateSet("",
                      "linux-musl-x64",
                      "fxdependent",
-                     "fxdependent-alpine-x64",
+                     "fxdependent-linux-musl-x64",
                      "fxdependent-linux-x64",
                      "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
