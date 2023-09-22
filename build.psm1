@@ -309,7 +309,7 @@ function Start-PSBuild {
         # If this parameter is not provided it will get determined automatically.
         [ValidateSet("linux-musl-x64",
                      "fxdependent",
-                     "fxdependent-alpine-x64",
+                     "fxdependent-linux-musl-x64",
                      "fxdependent-linux-x64",
                      "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
@@ -497,14 +497,7 @@ Fix steps:
         # libraries should not have runtime
         $Arguments += "--runtime", $Options.Runtime
     } elseif ($Options.Runtime -match $optimizedFddRegex) {
-
-        if ($Runtime -match "alpine-x64") {
-            $runtime = "linux-musl-x64"
-        }
-        else {
-            $runtime = $Options.Runtime -replace 'fxdependent-', ''
-        }
-
+        $runtime = $Options.Runtime -replace 'fxdependent-', ''
         $Arguments += "--runtime", $runtime
     }
 
