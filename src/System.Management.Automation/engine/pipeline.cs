@@ -261,31 +261,26 @@ namespace System.Management.Automation.Internal
         /// <exception cref="ObjectDisposedException"></exception>
         internal int Add(CommandProcessorBase commandProcessor)
         {
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+            if (commandProcessor is NativeCommandProcessor nativeCommand)
             {
-                if (commandProcessor is NativeCommandProcessor nativeCommand)
+                if (_lastNativeCommand is not null)
                 {
-                    if (_lastNativeCommand is not null)
+                    // Only report experimental feature usage once per pipeline.
+                    if (!_haveReportedNativePipeUsage)
                     {
-                        // Only report experimental feature usage once per pipeline.
-                        if (!_haveReportedNativePipeUsage)
-                        {
-                            ApplicationInsightsTelemetry.SendExperimentalUseData(
-                                ExperimentalFeature.PSNativeCommandPreserveBytePipe,
-                                "p");
-                            _haveReportedNativePipeUsage = true;
-                        }
-
-                        _lastNativeCommand.DownStreamNativeCommand = nativeCommand;
-                        nativeCommand.UpstreamIsNativeCommand = true;
+                        ApplicationInsightsTelemetry.SendExperimentalUseData("PSNativeCommandPreserveBytePipe", "p");
+                        _haveReportedNativePipeUsage = true;
                     }
 
-                    _lastNativeCommand = nativeCommand;
+                    _lastNativeCommand.DownStreamNativeCommand = nativeCommand;
+                    nativeCommand.UpstreamIsNativeCommand = true;
                 }
-                else
-                {
-                    _lastNativeCommand = null;
-                }
+
+                _lastNativeCommand = nativeCommand;
+            }
+            else
+            {
+                _lastNativeCommand = null;
             }
 
             commandProcessor.CommandRuntime.PipelineProcessor = this;
