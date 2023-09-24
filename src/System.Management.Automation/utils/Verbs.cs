@@ -1312,6 +1312,10 @@ namespace System.Management.Automation
 #endif
         }
 
+        /// <summary>
+        /// Gets all verb types.
+        /// </summary>
+        /// <value>List of all verb types.</value>
         private static Type[] VerbTypes => new Type[] {
             typeof(VerbsCommon),
             typeof(VerbsCommunications),
@@ -1322,8 +1326,19 @@ namespace System.Management.Automation
             typeof(VerbsSecurity)
         };
 
+        /// <summary>
+        /// Gets verb group display name from type.
+        /// </summary>
+        /// <param name="verbType">The verb type.</param>
+        /// <returns>Verb group display name.</returns>
         private static string GetVerbGroupDisplayName(Type verbType) => verbType.Name.Substring(5);
 
+        /// <summary>
+        /// Filters by verbs and groups.
+        /// </summary>
+        /// <param name="verbs">The array of verbs.</param>
+        /// <param name="groups">The array of groups.</param>
+        /// <returns>List of Verbs.</returns>
         internal static IEnumerable<VerbInfo> FilterByVerbsAndGroups(string[] verbs, string[] groups)
         {
             if (groups is null)
@@ -1354,6 +1369,12 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Filters verbs by type.
+        /// </summary>
+        /// <param name="verbs">The array of verbs.</param>
+        /// <param name="verbType">The verb type.</param>
+        /// <returns>List of Verbs.</returns>
         private static IEnumerable<VerbInfo> FilterVerbsByType(string[] verbs, Type verbType)
         {
             if (verbs is null)
@@ -1388,6 +1409,12 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Creates Verb info object from field info.
+        /// </summary>
+        /// <param name="field">The field.</param>
+        /// <param name="verbType">The verb type.</param>
+        /// <returns>VerbInfo object.</returns>
         private static VerbInfo CreateVerbFromField(FieldInfo field, Type verbType) => new()
         {
             Verb = field.Name,
@@ -1396,8 +1423,20 @@ namespace System.Management.Automation
             Description = VerbDescriptions.GetVerbDescription(field.Name)
         };
 
+        /// <summary>
+        /// Provides argument completion for Verb parameter.
+        /// </summary>
         public class VerbArgumentCompleter : IArgumentCompleter
         {
+            /// <summary>
+            /// Returns completion results for verb parameter.
+            /// </summary>
+            /// <param name="commandName">The command name.</param>
+            /// <param name="parameterName">The parameter name.</param>
+            /// <param name="wordToComplete">The word to complete.</param>
+            /// <param name="commandAst">The command AST.</param>
+            /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+            /// <returns>List of Completion Results.</returns>
             public IEnumerable<CompletionResult> CompleteArgument(
                 string commandName,
                 string parameterName,
