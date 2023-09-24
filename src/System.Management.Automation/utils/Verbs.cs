@@ -1427,8 +1427,10 @@ namespace System.Management.Automation
                     }
                 }
 
-                return FilterByVerbsAndGroups(verbs, groups)
-                    .Select(verb => new CompletionResult(verb.Verb));
+                foreach (VerbInfo verb in FilterByVerbsAndGroups(verbs, groups))
+                {
+                    yield return new CompletionResult(verb.Verb);
+                }
             }
         }
 
