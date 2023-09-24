@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation;
+using static System.Management.Automation.Verbs;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -16,6 +17,7 @@ namespace Microsoft.PowerShell.Commands
         /// Optional Verb filter.
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Position = 0)]
+        [ArgumentCompleter(typeof(VerbArgumentCompleter))]
         public string[] Verb
         {
             get; set;
@@ -36,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            foreach (VerbInfo verb in Verbs.FilterByVerbsAndGroups(Verb, Group))
+            foreach (VerbInfo verb in FilterByVerbsAndGroups(Verb, Group))
             {
                 WriteObject(verb);
             }

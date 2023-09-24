@@ -2172,11 +2172,6 @@ namespace System.Management.Automation
                             break;
                         }
 
-                        if (parameterName.Equals("Verb", StringComparison.OrdinalIgnoreCase))
-                        {
-                            NativeCompletionVerbCommands(context, result);
-                        }
-
                         break;
                     }
                 case "Show-Command":
@@ -2428,25 +2423,6 @@ namespace System.Management.Automation
                         break;
                     }
 
-                case "Get-Verb":
-                    {
-                        if (parameterName.Equals("Verb", StringComparison.OrdinalIgnoreCase))
-                        {
-                            string[] groups = null;
-                            if (boundArguments.TryGetValue("Group", out AstParameterArgumentPair pair) &&
-                                pair.ParameterArgumentType == AstParameterArgumentType.AstPair)
-                            {
-                                groups = GetParameterValues((AstPair)pair, context.CursorPosition.Offset)
-                                    .Select(group => group.Replace("'", string.Empty))
-                                    .ToArray();
-                            }
-
-                            NativeCompletionVerbCommands(context, result, groups);
-                        }
-
-                        break;
-                    }
-
                 default:
                     {
                         NativeCompletionPathArgument(context, parameterName, result);
@@ -2607,21 +2583,6 @@ namespace System.Management.Automation
             {
                 result.RemoveAt(result.Count - 1);
             }
-        }
-
-        private static void NativeCompletionVerbCommands(
-            CompletionContext context,
-            List<CompletionResult> result,
-            string[] groups = null)
-        {
-            var verbs = new string[] { context.WordToComplete + "*" };
-
-            foreach (VerbInfo verb in Verbs.FilterByVerbsAndGroups(verbs, groups))
-            {
-                result.Add(new CompletionResult(verb.Verb));
-            }
-
-            result.Add(CompletionResult.Null);
         }
 
         private static void NativeCompletionCimCommands(

@@ -1,9 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Management.Automation.Language;
 using System.Reflection;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -1392,6 +1395,42 @@ namespace System.Management.Automation
             Group = GetVerbGroupDisplayName(verbType),
             Description = VerbDescriptions.GetVerbDescription(field.Name)
         };
+
+        public class VerbArgumentCompleter : IArgumentCompleter
+        {
+            public IEnumerable<CompletionResult> CompleteArgument(
+                string commandName,
+                string parameterName,
+                string wordToComplete,
+                CommandAst commandAst,
+                IDictionary fakeBoundParameters)
+            {
+                var verbs = new string[] { wordToComplete + "*" };
+
+                string[] groups = null;
+
+                if (fakeBoundParameters.Contains("Group"))
+                {
+                    object groupParameterValue = fakeBoundParameters["Group"];
+                    Type groupParameterValueType = groupParameterValue.GetType();
+
+                    if (groupParameterValueType == typeof(string))
+                    {
+                        groups = new string[] { groupParameterValue.ToString() };
+                    }
+
+                    else if (groupParameterValueType.IsArray)
+                    {
+                        groups = ((IEnumerable)groupParameterValue)
+                            .Cast<string>()
+                            .ToArray();
+                    }
+                }
+
+                return FilterByVerbsAndGroups(verbs, groups)
+                    .Select(verb => new CompletionResult(verb.Verb));
+            }
+        }
 
         private static readonly Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, string[]> s_recommendedAlternateVerbs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
