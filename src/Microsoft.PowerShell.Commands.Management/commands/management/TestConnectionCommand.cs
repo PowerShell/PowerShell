@@ -874,11 +874,6 @@ namespace Microsoft.PowerShell.Commands
                 sendBuffer[i] = (byte)((int)'a' + i % 23);
             }
 
-            if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer.Length == 0)
-            {
-                s_DefaultSendBuffer = sendBuffer;
-            }
-
             return sendBuffer;
         }
 
