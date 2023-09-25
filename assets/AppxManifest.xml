@@ -37,6 +37,11 @@
         </uap3:Extension>
       </Extensions>
       <uap:VisualElements DisplayName="$DISPLAYNAME$" Description="PowerShell is an automation and configuration management platform. It consists of a cross-platform (Windows, Linux, and macOS) command-line shell and associated scripting language." BackgroundColor="transparent" Square150x150Logo="assets\Square150x150Logo.png" Square44x44Logo="assets\Square44x44Logo.png">
+        <uap:DefaultTile Square150x150Logo="assets\Square150x150Logo.png" ShortName="PowerShell">
+          <uap:ShowNameOnTiles> 
+            <uap:ShowOn Tile="square150x150Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
       </uap:VisualElements>
     </Application>
   </Applications>
