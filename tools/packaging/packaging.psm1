@@ -100,7 +100,7 @@ function Start-PSPackage {
         } elseif ($MacOSRuntime) {
            $MacOSRuntime, "Release"
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine") {
-            New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+            New-PSOptions -Configuration "Release" -Runtime "linux-musl-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm") {
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm64") {
@@ -115,7 +115,7 @@ function Start-PSPackage {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-arm64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
         elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine-fxdependent") {
-            New-PSOptions -Configuration "Release" -Runtime 'fxdependent-alpine-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+            New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-musl-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
         else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -594,7 +594,7 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
-                    Architecture = "alpine-x64"
+                    Architecture = "linux-musl-x64"
                     ExcludeSymbolicLinks = $true
                     R2RVerification = [R2RVerification]@{
                         R2RState = 'R2R'
@@ -4513,7 +4513,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
                 $buildParams.Add("Runtime", "fxdependent")
             }
             'alpine' {
-                $buildParams.Add("Runtime", 'alpine-x64')
+                $buildParams.Add("Runtime", 'linux-musl-x64')
             }
         }
 
@@ -4606,7 +4606,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
                 Remove-Item -Path $binDir -Recurse -Force
             }
 
-            $buildParams['Runtime'] = 'fxdependent-alpine-x64'
+            $buildParams['Runtime'] = 'fxdependent-linux-musl-x64'
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64AlpineFxdBuildFolder}"
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files, xml document files.
