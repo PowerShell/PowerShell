@@ -183,12 +183,10 @@ namespace System.Management.Automation.Subsystem.Feedback
 
         private static bool CanSkip(IEnumerable<IFeedbackProvider> providers)
         {
-            const FeedbackTrigger possibleTriggerOnSuccess = FeedbackTrigger.Success | FeedbackTrigger.Comment;
-
             bool canSkip = true;
             foreach (IFeedbackProvider provider in providers)
             {
-                if ((provider.Trigger & possibleTriggerOnSuccess) != 0)
+                if (provider.Trigger.HasFlag(FeedbackTrigger.Success))
                 {
                     canSkip = false;
                     break;
@@ -249,7 +247,8 @@ namespace System.Management.Automation.Subsystem.Feedback
 
             if (IsPureComment(tokens))
             {
-                trigger = FeedbackTrigger.Comment;
+                // Don't trigger anything in this case.
+                return false;
             }
             else if (questionMarkValue)
             {
