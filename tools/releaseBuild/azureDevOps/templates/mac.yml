@@ -43,8 +43,8 @@ jobs:
       tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
     displayName: 'Bootstrap VM'
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
     parameters:
@@ -58,8 +58,8 @@ jobs:
       $env:AzDevOpsFeedPAT2 = $null
     displayName: 'Build'
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

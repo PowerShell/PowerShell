@@ -553,7 +553,7 @@ namespace System.Management.Automation.Language
                         break;
                     }
 
-                    if (block2.IsCatchAll) 
+                    if (block2.IsCatchAll)
                     {
                         continue;
                     }
@@ -1033,7 +1033,7 @@ namespace System.Management.Automation.Language
             return AstVisitAction.Continue;
         }
 
-        private ExpressionAst CheckUsingExpression(ExpressionAst exprAst)
+        private static ExpressionAst CheckUsingExpression(ExpressionAst exprAst)
         {
             RuntimeHelpers.EnsureSufficientExecutionStack();
             if (exprAst is VariableExpressionAst)

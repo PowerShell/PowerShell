@@ -761,8 +761,7 @@ namespace System.Management.Automation
             if (msv == null)
             {
                 // Check if the value is in string format
-                string singleValue = value as string;
-                if (singleValue != null)
+                if (value is string singleValue)
                 {
                     msv = new string[1];
                     msv[0] = singleValue;

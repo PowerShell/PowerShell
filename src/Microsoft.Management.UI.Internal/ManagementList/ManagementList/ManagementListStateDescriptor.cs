@@ -15,8 +15,8 @@ namespace Microsoft.Management.UI.Internal
     /// <summary>
     /// Allows the state of the ManagementList to be saved and restored.
     /// </summary>
-    [Serializable]
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class ManagementListStateDescriptor : StateDescriptor<ManagementList>
     {
         #region Fields
@@ -465,7 +465,6 @@ namespace Microsoft.Management.UI.Internal
 
         #region Helper Classes
 
-        [Serializable]
         internal class ColumnStateDescriptor
         {
             private int index;
@@ -510,7 +509,6 @@ namespace Microsoft.Management.UI.Internal
             }
         }
 
-        [Serializable]
         internal class RuleStateDescriptor
         {
             /// <summary>

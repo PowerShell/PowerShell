@@ -31,7 +31,6 @@ namespace System.Management.Automation
     /// Defines exception which is thrown when state of the PowerShell is different
     /// from the expected state.
     /// </summary>
-    [Serializable]
     public class InvalidPowerShellStateException : SystemException
     {
         /// <summary>
@@ -97,10 +96,11 @@ namespace System.Management.Automation
         /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected
         InvalidPowerShellStateException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion

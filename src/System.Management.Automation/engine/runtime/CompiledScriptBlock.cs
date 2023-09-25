@@ -539,8 +539,7 @@ namespace System.Management.Automation
         }
     }
 
-    [Serializable]
-    public partial class ScriptBlock : ISerializable
+    public partial class ScriptBlock
     {
         private readonly CompiledScriptBlockData _scriptBlockData;
 
@@ -573,6 +572,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Protected constructor to support ISerializable.
         /// </summary>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ScriptBlock(SerializationInfo info, StreamingContext context)
         {
         }
@@ -710,21 +710,6 @@ namespace System.Management.Automation
 
             sbText = paramText + sbText;
             return sbText;
-        }
-
-        /// <summary>
-        /// Support for <see cref="ISerializable"/>.
-        /// </summary>
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(info));
-            }
-
-            string serializedContent = this.ToString();
-            info.AddValue("ScriptText", serializedContent);
-            info.SetType(typeof(ScriptBlockSerializationHelper));
         }
 
         internal PowerShell GetPowerShellImpl(
@@ -2189,38 +2174,6 @@ namespace System.Management.Automation
         internal bool HasEndBlock { get => AstInternal.Body.EndBlock != null; }
 
         internal bool HasCleanBlock { get => AstInternal.Body.CleanBlock != null; }
-    }
-
-    [Serializable]
-    internal class ScriptBlockSerializationHelper : ISerializable, IObjectReference
-    {
-        private readonly string _scriptText;
-
-        private ScriptBlockSerializationHelper(SerializationInfo info, StreamingContext context)
-        {
-            ArgumentNullException.ThrowIfNull(info);
-
-            _scriptText = info.GetValue("ScriptText", typeof(string)) as string;
-            if (_scriptText == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(info));
-            }
-        }
-
-        /// <summary>
-        /// Returns a script block that corresponds to the version deserialized.
-        /// </summary>
-        /// <param name="context">The streaming context for this instance.</param>
-        /// <returns>A script block that corresponds to the version deserialized.</returns>
-        public object GetRealObject(StreamingContext context) => ScriptBlock.Create(_scriptText);
-
-        /// <summary>
-        /// Implements the ISerializable contract for serializing a scriptblock.
-        /// </summary>
-        /// <param name="info">Serialization information for this instance.</param>
-        /// <param name="context">The streaming context for this instance.</param>
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-            => throw new NotSupportedException();
     }
 
     internal sealed class PSScriptCmdlet : PSCmdlet, IDynamicParameters, IDisposable

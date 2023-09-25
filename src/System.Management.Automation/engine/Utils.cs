@@ -1424,6 +1424,7 @@ namespace System.Management.Automation
 
         internal static class Separators
         {
+            internal static readonly char[] Backslash = new char[] { '\\' };
             internal static readonly char[] Directory = new char[] { '\\', '/' };
             internal static readonly char[] DirectoryOrDrive = new char[] { '\\', '/', ':' };
             internal static readonly char[] SpaceOrTab = new char[] { ' ', '\t' };
@@ -1558,6 +1559,9 @@ namespace System.Management.Automation.Internal
         internal static bool DisableGACLoading;
         internal static bool SetConsoleWidthToZero;
         internal static bool SetConsoleHeightToZero;
+
+        // Simulate 'MyDocuments' returning empty string
+        internal static bool SetMyDocumentsSpecialFolderToBlank;
 
         internal static bool SetDate;
 

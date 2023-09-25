@@ -5910,7 +5910,6 @@ namespace System.Management.Automation
     /// 2) values that can be serialized and deserialized during PowerShell remoting handshake
     ///    (in major-version compatible versions of PowerShell remoting)
     /// </summary>
-    [Serializable]
     public sealed class PSPrimitiveDictionary : Hashtable
     {
         #region Constructors
@@ -6008,7 +6007,7 @@ namespace System.Management.Automation
                 typeof(PSPrimitiveDictionary)
             };
 
-        private void VerifyValue(object value)
+        private static void VerifyValue(object value)
         {
             // null is a primitive type
             if (value == null)
@@ -6066,7 +6065,7 @@ namespace System.Management.Automation
         public override void Add(object key, object value)
         {
             string keyAsString = VerifyKey(key);
-            this.VerifyValue(value);
+            VerifyValue(value);
             base.Add(keyAsString, value);
         }
 
@@ -6094,7 +6093,7 @@ namespace System.Management.Automation
             set
             {
                 string keyAsString = VerifyKey(key);
-                this.VerifyValue(value);
+                VerifyValue(value);
                 base[keyAsString] = value;
             }
         }
@@ -6122,7 +6121,7 @@ namespace System.Management.Automation
 
             set
             {
-                this.VerifyValue(value);
+                VerifyValue(value);
                 base[key] = value;
             }
         }

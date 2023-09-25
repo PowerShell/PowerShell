@@ -135,7 +135,7 @@ limitations under the License.
 
 ---------------------------------------------------------
 
-Markdig.Signed 0.31.0 - BSD-2-Clause
+Markdig.Signed 0.32.0 - BSD-2-Clause
 
 
 
@@ -238,7 +238,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonSchema.Net 4.1.5 - MIT
+JsonSchema.Net 4.1.8 - MIT
 
 
 
@@ -696,7 +696,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 7.0.3 - MIT
+Microsoft.Windows.Compatibility 7.0.4 - MIT
 
 
 (c) Microsoft Corporation
@@ -3461,7 +3461,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.Pkcs 7.0.2 - MIT
+System.Security.Cryptography.Pkcs 7.0.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -4594,12 +4594,9 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Web.Services.Description 4.9.0 - MIT
+System.Web.Services.Description 4.10.0 - MIT
 
 
-(c) Microsoft Corporation.
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
 
 The MIT License (MIT)
 

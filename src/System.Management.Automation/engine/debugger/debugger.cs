@@ -982,7 +982,7 @@ namespace System.Management.Automation
             _inBreakpoint = false;
             _idToBreakpoint = new ConcurrentDictionary<int, Breakpoint>();
             // The string key is function context file path. The int key is sequencePoint index.
-            _pendingBreakpoints = new ConcurrentDictionary<string, ConcurrentDictionary<int, LineBreakpoint>>();
+            _pendingBreakpoints = new ConcurrentDictionary<string, ConcurrentDictionary<int, LineBreakpoint>>(StringComparer.OrdinalIgnoreCase);
             _boundBreakpoints = new ConcurrentDictionary<string, Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>>>(StringComparer.OrdinalIgnoreCase);
             _commandBreakpoints = new ConcurrentDictionary<int, CommandBreakpoint>();
             _variableBreakpoints = new ConcurrentDictionary<string, ConcurrentDictionary<int, VariableBreakpoint>>(StringComparer.OrdinalIgnoreCase);

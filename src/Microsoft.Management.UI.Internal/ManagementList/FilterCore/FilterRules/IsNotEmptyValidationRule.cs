@@ -8,8 +8,8 @@ namespace Microsoft.Management.UI.Internal
     /// <summary>
     /// The IsNotEmptyValidationRule checks a value to see if a value is not empty.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class IsNotEmptyValidationRule : DataErrorInfoValidationRule
     {
         #region Properties

@@ -708,7 +708,18 @@ namespace System.Management.Automation
                     break;
             }
 
-            Diagnostics.Assert(matchedParameterName != null, "we should find matchedParameterName from the BoundArguments");
+            if (matchedParameterName is null)
+            {
+                // The pseudo binder has skipped a parameter
+                // This will happen when completing parameters for commands with dynamic parameters.
+                result = GetParameterCompletionResults(
+                    parameterName,
+                    bindingInfo.ValidParameterSetsFlags,
+                    bindingInfo.UnboundParameters,
+                    withColon);
+                return result;
+            }
+
             MergedCompiledCommandParameter param = bindingInfo.BoundParameters[matchedParameterName];
 
             WildcardPattern pattern = WildcardPattern.Get(parameterName + "*", WildcardOptions.IgnoreCase);
@@ -4618,9 +4629,27 @@ namespace System.Management.Automation
                 string basePath;
                 if (!relativePaths)
                 {
-                    basePath = dirInfo.FullName.EndsWith(provider.ItemSeparator)
-                        ? providerPrefix + dirInfo.FullName
-                        : providerPrefix + dirInfo.FullName + provider.ItemSeparator;
+                    string providerName = $"{provider.ModuleName}\\{provider.Name}::";
+                    if (pathInfo.Path.StartsWith(providerName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        basePath = pathInfo.Path.Substring(providerName.Length);
+                    }
+                    else
+                    {
+                        providerName = $"{provider.Name}::";
+                        if (pathInfo.Path.StartsWith(providerName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            basePath = pathInfo.Path.Substring(providerName.Length);
+                        }
+                        else
+                        {
+                            basePath = pathInfo.Path;
+                        }
+                    }
+
+                    basePath = basePath.EndsWith(provider.ItemSeparator)
+                        ? providerPrefix + basePath
+                        : providerPrefix + basePath + provider.ItemSeparator;
                     basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
                 }
                 else
@@ -5655,6 +5684,21 @@ namespace System.Management.Automation
 
                     parent = parent.Parent;
                 }
+            }
+
+            public override AstVisitAction VisitDataStatement(DataStatementAst dataStatementAst)
+            {
+                if (dataStatementAst.Extent.StartOffset >= StopSearchOffset)
+                {
+                    return AstVisitAction.StopVisit;
+                }
+
+                if (dataStatementAst.Variable is not null)
+                {
+                    SaveVariableInfo(dataStatementAst.Variable, variableType: null, isConstraint: false);
+                }
+
+                return AstVisitAction.SkipChildren;
             }
         }
 

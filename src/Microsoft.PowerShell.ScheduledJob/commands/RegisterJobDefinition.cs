@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         [Parameter(ParameterSetName = RegisterScheduledJobCommand.FilePathParameterSet)]
         [Parameter(ParameterSetName = RegisterScheduledJobCommand.ScriptBlockParameterSet)]
-        [Credential()]
+        [Credential]
         public PSCredential Credential
         {
             get { return _credential; }

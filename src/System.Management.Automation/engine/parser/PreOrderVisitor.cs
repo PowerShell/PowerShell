@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Management.Automation.Language
 {
     /// <summary>
-    /// Each Visit* method in <see ref="AstVisitor"/> returns one of these values to control
+    /// Each Visit* method in <see cref="AstVisitor" /> returns one of these values to control
     /// how visiting nodes in the AST should proceed.
     /// </summary>
     public enum AstVisitAction

@@ -369,7 +369,7 @@ function GetMultipartBody {
 <#
     Defines the list of redirect codes to test as well as the
     expected Method when the redirection is handled.
-    See https://docs.microsoft.com/previous-versions/windows/apps/f92ssyy1(v=vs.105)
+    See https://learn.microsoft.com/dotnet/api/system.net.httpstatuscode
     for additonal details.
 #>
 $redirectTests = @(
@@ -505,6 +505,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         @{ httpVersion = '2'}
     ) {
         param($httpVersion)
+
+        if(Test-IsWinServer2012R2 -and $httpVersion -eq '2') {
+            Set-ItResult -Skipped -Because "HTTP/2 is not supported on Windows Server 2012R2"
+            return
+        }
+
         # Operation options
         $uri = Get-WebListenerUrl -Test 'Get' -Https
         $command = "Invoke-WebRequest -Uri $uri -HttpVersion $httpVersion -SkipCertificateCheck"
@@ -2572,6 +2578,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         @{ httpVersion = '2'}
     ) {
         param($httpVersion)
+
+        if(Test-IsWinServer2012R2 -and $httpVersion -eq '2') {
+            Set-ItResult -Skipped -Because "HTTP/2 is not supported on Windows Server 2012R2"
+            return
+        }
+
         # Operation options
         $uri = Get-WebListenerUrl -Test 'Get' -Https
         $command = "Invoke-RestMethod -Uri $uri -HttpVersion $httpVersion -SkipCertificateCheck"
@@ -4462,6 +4474,51 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support Cancellation through C
     It 'Invoke-RestMethod: CTRL-C Cancels request in XML atom processing' {
         $uri = Get-WebListenerUrl -test Stall -TestValue '30/application%2fxml'
         RunWithCancellation -Command 'Invoke-RestMethod' -Uri $uri
+    }
+}
+
+Describe "Web cmdlets Unix Sockets tests" -Tags "CI", "RequireAdminOnWindows" {
+    BeforeAll {
+        $isWin2016 = Test-IsWindows2016
+        $isWin2012 = Test-IsWinServer2012R2
+        $skipTests = $isWin2016 -or $isWin2012
+        Write-Verbose -Verbose -Message "IsWin2016: $isWin2016 - IsWin2012: $isWin2012 - SkipTests: $skipTests"
+        if ($skipTests){
+            return
+        }
+
+        try {
+            $unixSocket = Get-UnixSocketName -ErrorAction Stop
+            $WebListener = Start-UnixSocket $unixSocket -ErrorAction Stop
+        }
+        catch {
+            Write-Verbose -Verbose -Message "Exception: $_"
+            $WebListener = $null
+            $skipTests = $true
+        }
+    }
+
+    It "Execute Invoke-WebRequest with -UnixSocket" {
+        if ($skipTests) {
+            Set-ItResult -Skipped -Because "Unix sockets are not supported on this platform."
+            return
+        }
+
+        $uri = Get-UnixSocketUri
+        $result = Invoke-WebRequest $uri -UnixSocket $unixSocket
+        $result.StatusCode | Should -Be "200"
+        $result.Content | Should -Be "Hello World Unix Socket."
+    }
+
+    It "Execute Invoke-RestMethod with -UnixSocket" {
+        if ($skipTests) {
+            Set-ItResult -Skipped -Because "Unix sockets are not supported on this platform."
+            return
+        }
+
+        $uri = Get-UnixSocketUri
+        $result = Invoke-RestMethod  $uri -UnixSocket $unixSocket
+        $result | Should -Be "Hello World Unix Socket."
     }
 }
 
