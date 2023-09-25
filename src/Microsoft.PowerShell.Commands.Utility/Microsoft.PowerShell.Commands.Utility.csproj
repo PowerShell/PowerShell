@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-    <PackageReference Include="Markdig.Signed" Version="0.32.0" />
+    <PackageReference Include="Markdig.Signed" Version="0.33.0" />
     <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.1" />
   </ItemGroup>
 
