@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Fields
 
-        private static byte[]? s_DefaultSendBuffer;
+        private static byte[] s_DefaultSendBuffer = Array.Empty<byte>();
 
         private readonly CancellationTokenSource _dnsLookupCancel = new();
 
@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
                                 reply.Status == IPStatus.Success
                                     ? reply.RoundtripTime
                                     : timer.ElapsedMilliseconds,
-                                buffer.Length,
+                                buffer.Length == 0 ? DefaultSendBufferSize : buffer.Length,
                                 pingNum: i);
                             WriteObject(new TraceStatus(
                                 currentHop,
@@ -707,7 +707,7 @@ namespace Microsoft.PowerShell.Commands
                         resolvedTargetName,
                         reply,
                         reply.RoundtripTime,
-                        buffer.Length,
+                        buffer.Length == 0 ? DefaultSendBufferSize : buffer.Length,
                         pingNum: (uint)i));
                 }
 
@@ -862,7 +862,7 @@ namespace Microsoft.PowerShell.Commands
         // Creates and fills a send buffer. This follows the ping.exe and CoreFX model.
         private static byte[] GetSendBuffer(int bufferSize)
         {
-            if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer != null)
+            if (bufferSize == DefaultSendBufferSize)
             {
                 return s_DefaultSendBuffer;
             }
@@ -874,7 +874,7 @@ namespace Microsoft.PowerShell.Commands
                 sendBuffer[i] = (byte)((int)'a' + i % 23);
             }
 
-            if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer == null)
+            if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer.Length == 0)
             {
                 s_DefaultSendBuffer = sendBuffer;
             }
