@@ -4932,23 +4932,13 @@ namespace Microsoft.PowerShell.Commands
         // Note: we don't use IO.Path.IsPathRooted as this deals with "invalid" i.e. unnormalized paths
         private static bool IsAbsolutePath(string path)
         {
-            bool result = false;
-
             // check if we're on a single root filesystem and it's an absolute path
             if (LocationGlobber.IsSingleFileSystemAbsolutePath(path))
             {
                 return true;
             }
 
-            // Find the drive separator
-            int index = path.IndexOf(':');
-
-            if (index != -1)
-            {
-                result = true;
-            }
-
-            return result;
+            return path.Contains(':');
         }
 
         /// <summary>
