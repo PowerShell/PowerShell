@@ -61,6 +61,8 @@ Describe "UnixFileSystem additions" -Tag "CI" {
 
         It "Should present filemode '<Mode>' string correctly as '<Perm>'" -testCase $testCase {
             param ($Mode, $Perm, $Item )
+            # chmod can fail for some modes so be sure to handle that here.
+            # specifically, when setting setgid chmod can fail if the group is privileged.
             chmod "$Mode" "${Item}"
             if ($LASTEXITCODE -ne 0) {
                 set-itresult -skip -because "chmod '$mode' failed"
