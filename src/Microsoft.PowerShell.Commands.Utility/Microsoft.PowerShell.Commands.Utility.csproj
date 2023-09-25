@@ -33,8 +33,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0-1.final" />
-    <PackageReference Include="System.Threading.AccessControl" Version="8.0.0-rc.1.23419.3" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.0-rc.1.23416.3" />
+    <PackageReference Include="System.Threading.AccessControl" Version="8.0.0-rc.1.23419.4" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0-rc.1.23419.5" />
     <PackageReference Include="JsonSchema.Net" Version="5.2.5" />
   </ItemGroup>
 
