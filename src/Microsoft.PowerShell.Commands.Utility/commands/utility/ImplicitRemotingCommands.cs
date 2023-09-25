@@ -1305,7 +1305,10 @@ namespace Microsoft.PowerShell.Commands
             // we are not sending CmdletBinding/DefaultParameterSet over the wire anymore
             // we need to infer IsProxyForCmdlet from presence of all common parameters
 
-            foreach (string commonParameterName in Cmdlet.CommonParameters)
+            // need to exclude `ProgressAction` which may not exist for downlevel platforms
+            var commonParameters = Cmdlet.CommonParameters;
+            commonParameters.Remove("ProgressAction");
+            foreach (string commonParameterName in commonParameters)
             {
                 if (!parameters.ContainsKey(commonParameterName))
                 {
