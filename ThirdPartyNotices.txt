@@ -135,7 +135,7 @@ limitations under the License.
 
 ---------------------------------------------------------
 
-Markdig.Signed 0.31.0 - BSD-2-Clause
+Markdig.Signed 0.33.0 - BSD-2-Clause
 
 
 
@@ -172,7 +172,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Json.More.Net 1.8.0 - MIT
+Json.More.Net 1.9.0 - MIT
 
 
 (c) Microsoft 2023
@@ -205,7 +205,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonPointer.Net 3.0.1 - MIT
+JsonPointer.Net 3.0.3 - MIT
 
 
 (c) Microsoft 2023
@@ -238,7 +238,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonSchema.Net 4.1.8 - MIT
+JsonSchema.Net 5.2.5 - MIT
 
 
 
@@ -343,7 +343,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.CodeAnalysis.Common 4.6.0 - MIT
+Microsoft.CodeAnalysis.Common 4.7.0 - MIT
 
 
 (c) Microsoft Corporation
@@ -363,7 +363,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.CodeAnalysis.CSharp 4.6.0 - MIT
+Microsoft.CodeAnalysis.CSharp 4.7.0 - MIT
 
 
 (c) Microsoft Corporation
@@ -696,7 +696,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 7.0.4 - MIT
+Microsoft.Windows.Compatibility 7.0.5 - MIT
 
 
 (c) Microsoft Corporation
@@ -2294,7 +2294,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.DirectoryServices.AccountManagement 7.0.0 - MIT
+System.DirectoryServices.AccountManagement 7.0.1 - MIT
 
 
 (c) Microsoft Corporation
