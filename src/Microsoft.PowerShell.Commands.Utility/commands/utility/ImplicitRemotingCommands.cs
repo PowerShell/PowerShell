@@ -1300,13 +1300,23 @@ namespace Microsoft.PowerShell.Commands
                 parameterType);
         }
 
-        private static bool IsProxyForCmdlet(Dictionary<string, ParameterMetadata> parameters)
+        private bool IsProxyForCmdlet(Dictionary<string, ParameterMetadata> parameters)
         {
             // we are not sending CmdletBinding/DefaultParameterSet over the wire anymore
             // we need to infer IsProxyForCmdlet from presence of all common parameters
 
-            foreach (string commonParameterName in Cmdlet.CommonParameters)
+            // need to exclude `ProgressAction` which may not exist for downlevel platforms
+            bool isDownLevelRemote = Session.Runspace is RemoteRunspace remoteRunspace
+                && remoteRunspace.ServerVersion is not null
+                && remoteRunspace.ServerVersion <= new Version(7, 3);
+
+            foreach (string commonParameterName in CommonParameters)
             {
+                if (isDownLevelRemote && commonParameterName == "ProgressAction")
+                {
+                    continue;
+                }
+
                 if (!parameters.ContainsKey(commonParameterName))
                 {
                     return false;
