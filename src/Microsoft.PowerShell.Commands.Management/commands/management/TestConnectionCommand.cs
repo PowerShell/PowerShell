@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Fields
 
-        private static byte[] s_DefaultSendBuffer = Array.Empty<byte>();
+        private static readonly byte[] s_DefaultSendBuffer = Array.Empty<byte>();
 
         private readonly CancellationTokenSource _dnsLookupCancel = new();
 
