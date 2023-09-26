@@ -1306,6 +1306,7 @@ namespace Microsoft.PowerShell.Commands
             // we need to infer IsProxyForCmdlet from presence of all common parameters
 
             var commonParameters = new HashSet<string>(Cmdlet.CommonParameters);
+
             // need to exclude `ProgressAction` which may not exist for downlevel platforms
             if ((Session.Runspace is RemoteRunspace remoteRunspace) && (remoteRunspace.ServerVersion != null) && (remoteRunspace.ServerVersion <= new Version(7, 3))) 
             { 

@@ -1538,7 +1538,7 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
             $out = Invoke-Expression 'get-AppLockerFileInformation NoSuch.exe -ErrorAction Stop; "after"'
         }
         catch {
-            # do nothing
+            # do nothing as we expect an error, but execution should not continue
         }
 
         $out | Should -Not -Contain 'after'
