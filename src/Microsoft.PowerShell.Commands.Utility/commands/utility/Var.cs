@@ -697,27 +697,8 @@ namespace Microsoft.PowerShell.Commands
         /// Append to the variable if it exists
         /// </summary>
         [Parameter]
-        public SwitchParameter Append
-        {
-            get
-            {
-                return _append;
-            }
-
-            set
-            {
-                if (ExperimentalFeature.IsEnabled("PSRedirectToVariable"))
-                {
-                    _append = value;
-                }
-                else
-                {
-                    throw new ArgumentException("ExperimentalFeature 'PSRedirectToVariable' is not enabled");
-                }
-            }
-        }
-
-        private bool _append;
+        [Experimental("PSRedirectToVariable", ExperimentAction.Show)]
+        public SwitchParameter Append { get; set; }
 
         private bool _nameIsFormalParameter;
         private bool _valueIsFormalParameter;
@@ -738,7 +719,7 @@ namespace Microsoft.PowerShell.Commands
                 _valueIsFormalParameter = true;
             }
 
-            if (_append)
+            if (Append)
             {
                 // create the list here and add to it if it has a value
                 // but if they have more than one name, produce an error
@@ -749,6 +730,7 @@ namespace Microsoft.PowerShell.Commands
                     appendVariableError.ErrorDetails.RecommendedAction = "Use a single variable rather than a collection";
                     ThrowTerminatingError(appendVariableError);
                 }
+
                 _valueList = new List<object>();
                 var currentValue = Context.SessionState.PSVariable.Get(Name[0]);
                 if (currentValue != null) {
