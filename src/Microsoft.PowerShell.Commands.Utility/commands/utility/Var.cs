@@ -733,10 +733,10 @@ namespace Microsoft.PowerShell.Commands
 
                 _valueList = new List<object>();
                 var currentValue = Context.SessionState.PSVariable.Get(Name[0]);
-                if (currentValue != null) {
-                    if (currentValue.Value is IList<object>)
+                if (currentValue is not null) {
+                    if (currentValue.Value is IList<object> ilist)
                     {
-                        _valueList.AddRange(currentValue.Value as IList<object>);
+                        _valueList.AddRange(ilist);
                     }
                     else
                     {
