@@ -44,7 +44,7 @@ steps:
 - pwsh: |
     $message = @()
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.tar.gz | ForEach-Object {
-        if($_.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?(linux|osx|linux-linux-musl)+\-(x64\-fxdependent|x64|arm32|arm64|x64\-fxdependent)\.(tar\.gz)')
+        if($_.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?(linux|osx|linux-linux-musl)+\-(x64\-fxdependent|x64|arm32|arm64|x64\-alpine\-fxdependent)\.(tar\.gz)')
         {
             $messageInstance = "$($_.Name) is not a valid package name"
             $message += $messageInstance
