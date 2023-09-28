@@ -77,6 +77,14 @@ jobs:
         pattern: '**/pwshLinuxBuildAlpine.tar.gz'
       displayName: Download alpine build
 
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: authenticode-signed
+        path: $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64-signed
+        pattern: '**/pwshAlpineFxdBuildAmd64.tar.gz'
+      displayName: Download alpine framework dependent build
+
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
@@ -134,6 +142,13 @@ jobs:
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-meta
       displayName: Download alpine build meta
 
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: pwshAlpineFxdBuildAmd64-meta
+        path: $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64-meta
+      displayName: Download alpine build meta
+
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
@@ -182,6 +197,10 @@ jobs:
         Write-Verbose -Verbose "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine-signed/pwshLinuxBuildAlpine.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuild"
         New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild -ItemType Directory
         tar -xf $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine-signed/pwshLinuxBuildAlpine.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
+
+        Write-Verbose -Verbose "Expanding $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64-signed/pwshAlpineFxdBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64"
+        New-Item -Path $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64 -ItemType Directory
+        tar -xf $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64-signed/pwshAlpineFxdBuildAmd64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64
       }
 
       if ('$(build)' -eq 'fxdependent') {
@@ -234,8 +253,8 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - powershell: |
       try {

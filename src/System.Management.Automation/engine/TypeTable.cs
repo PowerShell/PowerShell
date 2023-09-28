@@ -1804,7 +1804,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected TypeTableLoadException(SerializationInfo info, StreamingContext context)
         {
             throw new NotSupportedException();
@@ -4098,7 +4098,7 @@ namespace System.Management.Automation.Runspaces
 #endif
         }
 
-        private TypeMemberData GetTypeMemberDataFromPSMemberInfo(PSMemberInfo member)
+        private static TypeMemberData GetTypeMemberDataFromPSMemberInfo(PSMemberInfo member)
         {
             var note = member as PSNoteProperty;
             if (note != null)
@@ -4165,7 +4165,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="member"></param>
         /// <param name="typeData"></param>
-        private void LoadMembersToTypeData(PSMemberInfo member, TypeData typeData)
+        private static void LoadMembersToTypeData(PSMemberInfo member, TypeData typeData)
         {
             Dbg.Assert(member != null, "caller should guarantee that member is not null");
             Dbg.Assert(typeData != null, "caller should guarantee that typeData is not null");
@@ -4201,7 +4201,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Load the standard members into the passed-in TypeData.
         /// </summary>
-        private void LoadStandardMembersToTypeData(PSMemberSet memberSet, TypeData typeData)
+        private static void LoadStandardMembersToTypeData(PSMemberSet memberSet, TypeData typeData)
         {
             foreach (PSMemberInfo member in memberSet.InternalMembers)
             {

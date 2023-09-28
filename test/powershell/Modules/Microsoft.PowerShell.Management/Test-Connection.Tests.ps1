@@ -262,6 +262,15 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
 
     Context "MTUSizeDetect" {
         It "MTUSizeDetect works" {
+
+            $platform = Get-PlatformInfo
+            $platform | Out-String -Stream | Write-Verbose -Verbose
+
+            if ($platform.platform -match 'sles' -and $platform.version -match '15') {
+                Set-ItResult -Skipped -Because "MTUSizeDetect is not supported on OpenSUSE 15"
+                return
+            }
+
             $result = Test-Connection $testAddress -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus

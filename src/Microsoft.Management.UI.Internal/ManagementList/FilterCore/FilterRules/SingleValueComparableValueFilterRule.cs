@@ -13,6 +13,7 @@ namespace Microsoft.Management.UI.Internal
     /// </summary>
     /// <typeparam name="T">The generic parameter.</typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public abstract class SingleValueComparableValueFilterRule<T> : ComparableValueFilterRule<T> where T : IComparable
     {
         #region Properties
@@ -52,15 +53,6 @@ namespace Microsoft.Management.UI.Internal
         }
 
         #endregion Ctor
-
-        /// <summary>
-        /// Creates a clone of the FilterRule.
-        /// </summary>
-        /// <returns>A clone of the FilterRule.</returns>
-        public override FilterRule Clone()
-        {
-            return base.Clone();
-        }
 
         private void Value_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {

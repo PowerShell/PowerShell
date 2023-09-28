@@ -110,10 +110,6 @@ stages:
 
       - template: templates/windows-hosted-build.yml
         parameters:
-          Architecture: arm
-
-      - template: templates/windows-hosted-build.yml
-        parameters:
           Architecture: arm64
 
       - template: templates/windows-hosted-build.yml
@@ -170,6 +166,12 @@ stages:
             unsignedBuildArtifactName: pwshLinuxBuild.tar.gz
             signedBuildArtifactName: pwshLinuxBuildAlpine.tar.gz
             signedArtifactContainer: authenticode-signed
+          linux-x64-Alpine-Fxdependent:
+            runtime: linux-x64-Alpine-Fxdependent
+            unsignedBuildArtifactContainer: pwshAlpineFxdBuildAmd64.tar.gz
+            unsignedBuildArtifactName: pwshAlpineFxdBuildAmd64.tar.gz
+            signedBuildArtifactName: pwshAlpineFxdBuildAmd64.tar.gz
+            signedArtifactContainer: authenticode-signed
           linux-arm32:
             runtime: linux-arm32
             unsignedBuildArtifactContainer: pwshLinuxBuildArm32.tar.gz
@@ -217,12 +219,6 @@ stages:
             unsignedBuildArtifactContainer: results
             unsignedBuildArtifactName: '**/*-symbols-win-x86.zip'
             signedBuildArtifactName: '-symbols-win-x86-signed.zip'
-            signedArtifactContainer: results
-          win-arm32:
-            runtime: win-arm32
-            unsignedBuildArtifactContainer: results
-            unsignedBuildArtifactName: '**/*-symbols-win-arm32.zip'
-            signedBuildArtifactName: '-symbols-win-arm32-signed.zip'
             signedArtifactContainer: results
           win-arm64:
             runtime: win-arm64
@@ -306,11 +302,6 @@ stages:
 
     - template: templates/windows-packaging.yml
       parameters:
-        Architecture: arm
-        parentJob: build_windows_arm_release
-
-    - template: templates/windows-packaging.yml
-      parameters:
         Architecture: arm64
         parentJob: build_windows_arm64_release
 
@@ -338,18 +329,18 @@ stages:
       parameters:
         buildArchitecture: arm64
 
+  - stage: nuget_and_json
+    displayName: NuGet Packaging and Build Json
+    dependsOn: ['package_signing']
+    jobs:
+      - template: templates/nuget.yml
+      - template: templates/json.yml
+
   # This is done late so that we dont use resources before the big signing and packaging tasks.
   - stage: compliance
     dependsOn: ['package_signing']
     jobs:
       - template: templates/compliance.yml
-
-  - stage: nuget_and_json
-    displayName: NuGet Packaging and Build Json
-    dependsOn: [package_signing]
-    jobs:
-      - template: templates/nuget.yml
-      - template: templates/json.yml
 
   - stage: test_and_release_artifacts
     displayName: Test and Release Artifacts

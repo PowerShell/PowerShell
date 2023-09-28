@@ -623,7 +623,7 @@ namespace Microsoft.PowerShell.Commands
         /// security descriptor.  Default is the current location.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] Path
         {
             get
@@ -663,7 +663,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
         [Alias("PSPath")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
@@ -685,7 +685,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the audit flag of the command.  This flag
         /// determines if audit rules should also be retrieved.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Audit
         {
             get
@@ -716,7 +716,7 @@ namespace Microsoft.PowerShell.Commands
         /// determines whether the information about all central access policies
         /// available on the machine should be displayed.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter AllCentralAccessPolicies
         {
             get
@@ -1025,7 +1025,7 @@ namespace Microsoft.PowerShell.Commands
         /// If true, the security descriptor is also passed
         /// down the output pipeline.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Passthru
         {
             get

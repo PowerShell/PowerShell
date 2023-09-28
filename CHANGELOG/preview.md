@@ -1,5 +1,186 @@
 # Current preview release
 
+## [7.4.0-preview.6] - 2023-09-28
+
+### General Cmdlet Updates and Fixes
+
+- Set approved experimental features to stable for 7.4 release (#20362)
+- Revert changes to continue using `BinaryFormatter` for `Out-GridView` (#20360)
+- Remove the comment trigger from feedback provider (#20346)
+
+### Tests
+
+- Continued improvement to tests for release automation (#20259)
+- Skip the test on x86 as `InstallDate` is not visible on `Wow64` (#20255)
+- Harden some problematic release tests (#20254)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>Move to .NET 8.0.100-rc.1.23463.5</p>
+
+</summary>
+
+<ul>
+<li>Update the regex for package name validation (Internal 27783, 27795)</li>
+<li>Update ThirdPartyNotices.txt (Internal 27772)</li>
+<li>Remove the <code>ref</code> folder before running compliance (#20375)</li>
+<li>Updates RIDs used to generate component Inventory (#20372)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.CSharp</code> from 4.7.0 to 4.8.0-2.final (#20368)</li>
+<li>Fix the release build by moving to the official .NET 8-rc.1 release build version (#20365)</li>
+<li>Update the experimental feature JSON files (#20363)</li>
+<li>Bump <code>XunitXml.TestLogger</code> from 3.1.11 to 3.1.17 (#20364)</li>
+<li>Update <code>Microsoft.PowerShell.PSResourceGet</code> to 0.9.0-rc1 (#20361)</li>
+<li>Update .NET SDK to version 8.0.100-rc.1.23455.8 (#20358)</li>
+<li>Use <code>fxdependent-win-desktop</code> runtime for compliance runs (#20359)</li>
+<li>Add mapping for mariner arm64 stable (#20348)</li>
+<li>Bump <code>xunit.runner.visualstudio</code> from <code>2.5.0</code> to <code>2.5.1</code> (#20357)</li>
+<li>Bump <code>JsonSchema.Net</code> from 5.2.1 to 5.2.5 (#20356)</li>
+<li>Bump <code>Microsoft.NET.Test.Sdk</code> from 17.7.1 to 17.7.2 (#20355)</li>
+<li>Bump Markdig.Signed from 0.32.0 to 0.33.0 (#20354)</li>
+<li>Bump JsonSchema.Net from 5.1.3 to 5.2.1 (#20353)</li>
+<li>Bump actions/checkout from 3 to 4 (#20352)</li>
+<li>Bump <code>Microsoft.NET.Test.Sdk</code> from 17.7.0 to 17.7.1 (#20351)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.CSharp</code> from 4.7.0-2.final to 4.7.0 (#20350)</li>
+<li>Release build: Change the names of the PATs (#20349)</li>
+<li>Put the calls to <code>Set-AzDoProjectInfo</code> and Set-AzDoAuthToken` in the right order (#20347)</li>
+<li>Bump Microsoft.Management.Infrastructure (continued) (#20262)</li>
+<li>Bump <code>Microsoft.Management.Infrastructure</code> to 3.0.0-preview.2 (#20261)</li>
+<li>Enable <code>vPack</code> provenance data (#20260)</li>
+<li>Start using new packages.microsoft.com cli (#20258)</li>
+<li>Add mariner arm64 to PMC release (#20257)</li>
+<li>Fix typo <code>donet</code> to <code>dotnet</code> in build scripts and pipelines (#20256)</li>
+</ul>
+
+</details>
+
+[7.4.0-preview.6]: https://github.com/PowerShell/PowerShell/compare/v7.4.0-preview.5...v7.4.0-preview.6
+
+## [7.4.0-preview.5] - 2023-08-21
+
+### Breaking Changes
+
+- Change how relative paths in `Resolve-Path` are handled when using the `RelativeBasePath` parameter (#19755) (Thanks @MartinGC94!)
+
+### Engine Updates and Fixes
+
+- Fix dynamic parameter completion (#19510) (Thanks @MartinGC94!)
+- Use `OrdinalIgnoreCase` to lookup script breakpoints (#20046) (Thanks @fflaten!)
+- Guard against `null` or blank path components when adding to module path (#19922) (Thanks @stevenebutler!)
+- Fix deadlock when piping to shell associated file extension (#19940)
+- Fix completion regression for filesystem paths with custom `PSDrive` names (#19921) (Thanks @MartinGC94!)
+- Add completion for variables assigned by the `Data` statement (#19831) (Thanks @MartinGC94!)
+- Fix a null reference crash in completion code (#19916) (Thanks @MartinGC94!)
+
+### General Cmdlet Updates and Fixes
+
+- Fix `Out-GridView` by implementing `Clone()` method to replace old use of binary format serialization (#20050)
+- Support Unix domain socket in WebCmdlets (#19343) (Thanks @CarloToso!)
+- Wait-Process: add `-Any` and `-PassThru` parameters (#19423) (Thanks @dwtaber!)
+- Added the switch parameter `-CaseInsensitive` to `Select-Object` and `Get-Unique` cmdlets (#19683) (Thanks @ArmaanMcleod!)
+- `Restore-Computer` and `Stop-Computer` should fail with error when not running via `sudo` on Unix (#19824)
+- Add Help proxy function for non-Windows platforms (#19972)
+- Remove input text from the error message resulted by `SecureString` and `PSCredential` conversion failure (#19977) (Thanks @ArmaanMcleod!)
+- Add `Microsoft.PowerShell.PSResourceGet` to the telemetry module list (#19926)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@eltociear, @Molkree, @MartinGC94</p>
+
+</summary>
+
+<ul>
+<li>Fix use of <code>ThrowIf</code> where the arguments were reversed (#20052)</li>
+<li>Fix typo in <code>Logging.Tests.ps1</code> (#20048) (Thanks @eltociear!)</li>
+<li>Apply the <code>InlineAsTypeCheck</code> in the engine code - 2nd pass (#19694) (Thanks @Molkree!)</li>
+<li>Apply the <code>InlineAsTypeCheck</code> rule in the engine code - 1st pass (#19692) (Thanks @Molkree!)</li>
+<li>Remove unused string completion code (#19879) (Thanks @MartinGC94!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Give the `assignPRs` workflow write permissions (#20021)
+
+### Tests
+
+- Additional test hardening for tests which fail in release pass. (#20093)
+- Don't use a completion which has a space in it (#20064)
+- Fixes for release tests (#20028)
+- Remove spelling CI in favor of GitHub Action (#19973)
+- Hide expected error for negative test on windows for script extension (#19929)
+- Add more debugging to try to determine why these test fail in release build. (#19829)
+
+### Build and Packaging Improvements
+
+<ul>
+<li>Update ThirdPartyNotices for 7.4.0-preview.5</li>
+<li>Update <code>PSResourceGet</code> to <code>0.5.24-beta24</code> (#20118)</li>
+<li>Fix build after the change to remove win-arm32 (#20102)</li>
+<li>Add comment about pinned packages (#20096)</li>
+<li>Bump to .NET 8 Preview 7 (#20092)</li>
+<li>Remove <code>Win-Arm32</code> from release build. (#20095)</li>
+<li>Add alpine framework dependent package (#19995)</li>
+<li>Bump JsonSchema.Net from 4.1.8 to 5.1.3 (#20089)</li>
+<li>Bump Microsoft.NET.Test.Sdk from 17.6.3 to 17.7.0 (#20088)</li>
+<li>Move build to .NET 8 preview 6 (#19991)</li>
+<li>Bump <code>Microsoft.Management.Infrastructure</code> from <code>2.0.0</code> to <code>3.0.0-preview.1</code> (#20081)</li>
+<li>Bump <code>Markdig.Signed</code> from <code>0.31.0</code> to <code>0.32.0</code> (#20076)</li>
+<li>Auto assign PR Maintainer (#20020)</li>
+<li>Delete rule that was supposed to round-robin assign a maintainer (#20019)</li>
+<li>Update the cgmanifest (#20012)</li>
+<li>Update the cgmanifest (#20008)</li>
+<li>Bump JsonSchema.Net from 4.1.7 to 4.1.8 (#20006)</li>
+<li>Bump JsonSchema.Net from 4.1.6 to 4.1.7 (#20000)</li>
+<li>Add mariner arm64 package build to release build (#19946)</li>
+<li>Check for pre-release packages when it's a stable release (#19939)</li>
+<li>Make PR creation tool use <code>--web</code> because it is more reliable (#19944)</li>
+<li>Update to the latest NOTICES file (#19971)</li>
+<li>Update variable used to bypass the blocking check for multiple NuGet feeds for release pipeline (#19963)</li>
+<li>Update variable used to bypass the blocking check for multiple NuGet feeds (#19967)</li>
+<li>Update README.md and metadata.json for release v7.2.13 and v7.3.6 (#19964)</li>
+<li>Don't publish notice on failure because it prevent retry (#19955)</li>
+<li>Change variable used to bypass nuget security scanning (#19954)</li>
+<li>Update the cgmanifest (#19924)</li>
+<li>Publish rpm package for rhel9 (#19750)</li>
+<li>Bump XunitXml.TestLogger from 3.0.78 to 3.1.11 (#19900)</li>
+<li>Bump JsonSchema.Net from 4.1.5 to 4.1.6 (#19885)</li>
+<li>Bump xunit from 2.4.2 to 2.5.0 (#19902)</li>
+<li>Remove <code>HostArchitecture</code> dynamic parameter for <code>osxpkg</code> (#19917)</li>
+<li>FabricBot: Onboarding to GitOps.ResourceManagement because of FabricBot decommissioning (#19905)</li>
+<li>Change variable used to bypass nuget security scanning (#19907)</li>
+<li>Checkout history for markdown lint check (#19908)</li>
+<li>Switch to GitHub Action for linting markdown (#19899)</li>
+<li>Bump xunit.runner.visualstudio from 2.4.5 to 2.5.0 (#19901)</li>
+<li>Add runtime and packaging type info for mariner2 arm64 (#19450)</li>
+<li>Update to the latest NOTICES file (#19856)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update `README.md` and `metadata.json` for `7.4.0-preview.4` release (#19872)
+- Fix grammatical issue in `ADOPTERS.md` (#20037) (Thanks @nikohoffren!)
+- Replace docs.microsoft.com URLs in code with FWLinks (#19996)
+- Change `docs.microsoft.com` to `learn.microsoft.com` (#19994)
+- Update man page to match current help for pwsh (#19993)
+- Merge `7.3.5`, `7.3.6`, `7.2.12` and `7.2.13` changelogs (#19968)
+- Fix ///-comments that violate the docs schema (#19957)
+- Update the link for getting started in `README.md` (#19932)
+- Migrate user docs to the PowerShell-Docs repository (#19871)
+
+[7.4.0-preview.5]: https://github.com/PowerShell/PowerShell/compare/v7.4.0-preview.4...v7.4.0-preview.5
+
 ## [7.4.0-preview.4] - 2023-06-29
 
 ### Breaking Changes
@@ -287,7 +468,7 @@
 - Fix class member completion for classes with base types (#19179) (Thanks @MartinGC94!)
 - Add `-Path` and `-LiteralPath` parameters to `Test-Json` cmdlet (#19042) (Thanks @ArmaanMcleod!)
 - Allow to preserve the original HTTP method by adding `-PreserveHttpMethodOnRedirect` to Web cmdlets (#18894) (Thanks @CarloToso!)
-- Webcmdlets display an error on https to http redirect (#18595) (Thanks @CarloToso!)
+- Webcmdlets display an error on HTTPS to http redirect (#18595) (Thanks @CarloToso!)
 - Build the relative URI for links from the response in `Invoke-WebRequest` (#19092) (Thanks @CarloToso!)
 - Fix redirection for `-CustomMethod` `POST` in WebCmdlets (#19111) (Thanks @CarloToso!)
 - Dispose previous response in Webcmdlets (#19117) (Thanks @CarloToso!)
@@ -437,15 +618,15 @@
 - Update to the latest NOTICES file (#19169)(#19309)(#19086)(#19077)
 - Update supported distros in Readme (#18667) (Thanks @techguy16!)
 - Remove the 'Code Coverage Status' badge (#19265)
-- Pull in change logs for `v7.2.10` and `v7.3.3` releases (#19219)
+- Pull in changelogs for `v7.2.10` and `v7.3.3` releases (#19219)
 - Update tools `metadata` and `README` (#18831)(#19204)(#19014)
 - Update a broken link in the `README.md` (#19187)
 - Fix typos in comments (#19064) (Thanks @spaette!)
-- Add `7.2` and `7.3` change logs (#19025)
+- Add `7.2` and `7.3` changelogs (#19025)
 - typos (#19058) (Thanks @spaette!)
 - Fix typo in `dotnet-tools/README.md` (#19021) (Thanks @spaette!)
 - Fix up all comments to be in the proper order with proper spacing (#18619)
-- Change log for `v7.4.0-preview.1` release (#18835)
+- Changelog for `v7.4.0-preview.1` release (#18835)
 
 [7.4.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.4.0-preview.1...v7.4.0-preview.2
 
@@ -472,7 +653,7 @@
 ### Performance
 
 - Remove some static constants from `Utils.Separators` (#18154) (Thanks @iSazonov!)
-- Avoid using regex when unnecessary in `ScriptWriter` (#18348)
+- Avoid using regular expression when unnecessary in `ScriptWriter` (#18348)
 - Use source generator for `PSVersionInfo` to improve startup time (#15603) (Thanks @iSazonov!)
 - Skip evaluating suggestions at startup (#18232)
 - Avoid using `Regex` when not necessary (#18210)
@@ -487,7 +668,7 @@
 - Fix `New-Item -ItemType Hardlink` to resolve target to absolute path and not allow link to itself (#18634)
 - Add output types to Format commands (#18746) (Thanks @MartinGC94!)
 - Fix the process `CommandLine` on Linux (#18710) (Thanks @jborean93!)
-- Fix `SuspiciousContentChecker.Match` to detect a pre-defined string when the text starts with it (#18693)
+- Fix `SuspiciousContentChecker.Match` to detect a predefined string when the text starts with it (#18693)
 - Switch `$PSNativeCommandUseErrorActionPreference` to `$true` when feature is enabled (#18695)
 - Fix `Start-Job` to check the existence of working directory using the PowerShell way (#18675)
 - Webcmdlets add 308 to redirect codes and small cleanup (#18536) (Thanks @CarloToso!)
@@ -630,7 +811,7 @@
 
 ### Tests
 
-- Add `testexe.exe -echocmdline` to output raw command line received by the process on Windows (#18591)
+- Add `testexe.exe -echocmdline` to output raw command-line received by the process on Windows (#18591)
 - Mark charset test as pending (#18511)
 - Skip output rendering tests on Windows Server 2012 R2 (#18382)
 - Increase timeout to make subsystem tests more reliable (#18380)
@@ -728,14 +909,13 @@
 - Change unsupported XML documentation tag (#18608)
 - Change public API mention of `monad` to PowerShell (#18491)
 - Update security reporting policy to recommend security portal for more streamlined reporting (#18437)
-- Change log for v7.3.0 (#18505) (Internal 23161)
+- Changelog for v7.3.0 (#18505) (Internal 23161)
 - Replace `msh` in public API comment based documentation with PowerShell equivalent (#18483)
 - Add missing XML doc elements for methods in `RunspaceFactory` (#18450)
-- Change log for `v7.3.0-rc.1` (#18400)
-- Update change logs for `v7.2.7` and `v7.0.13` (#18342)
-- Update the change log for v7.3.0-preview.8 (#18136)
+- Changelog for `v7.3.0-rc.1` (#18400)
+- Update changelogs for `v7.2.7` and `v7.0.13` (#18342)
+- Update the changelog for v7.3.0-preview.8 (#18136)
 - Add the `ConfigurationFile` option to the PowerShell help content (#18093)
 - Update help content about the PowerShell flag `-NonInteractive` (#17952)
 
 [7.4.0-preview.1]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.8...v7.4.0-preview.1
-

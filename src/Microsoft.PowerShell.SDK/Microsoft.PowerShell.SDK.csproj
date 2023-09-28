@@ -19,10 +19,14 @@
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="8.0.0-preview.4.23259.5" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="8.0.0-preview.4.23259.5" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0-preview.4.23259.5" />
-    <!-- the following package(s) are from https://github.com/dotnet/wcf -->
+    <PackageReference Include="System.IO.Packaging" Version="8.0.0-rc.1.23419.4" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="8.0.0-rc.1.23419.4" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0-rc.1.23419.4" />
+    <!--
+        the following package(s) are from https://github.com/dotnet/wcf
+        they are pinned to the version 4.10.2 due to a breaking change in newer versions.
+        see https://github.com/PowerShell/PowerShell/issues/19238 for details.
+     -->
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.2" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.10.2" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.2" />
@@ -30,7 +34,7 @@
     <PackageReference Include="System.ServiceModel.Security" Version="4.10.2" />
     <PackageReference Include="System.Private.ServiceModel" Version="4.10.2" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.0-preview.4.23260.1" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.0-rc.1.23420.5" />
   </ItemGroup>
 
 </Project>

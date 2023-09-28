@@ -2626,6 +2626,12 @@ function MyFunction ($param1, $param2)
         $res = TabExpansion2 -inputScript 'using module @{'
         $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly "GUID MaximumVersion ModuleName ModuleVersion RequiredVersion"
     }
+
+    It 'Should not fallback to file completion when completing typenames' {
+        $Text = '[abcdefghijklmnopqrstuvwxyz]'
+        $res = TabExpansion2 -inputScript $Text -cursorColumn ($Text.Length - 1)
+        $res.CompletionMatches | Should -HaveCount 0
+    }
 }
 
 Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {

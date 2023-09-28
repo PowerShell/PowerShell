@@ -15,7 +15,7 @@ namespace System.Management.Automation
     /// which, according to user preference, forwards that information on to the host for rendering to the user.
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Cmdlet.WriteProgress(ProgressRecord)"/>
-    [DataContract()]
+    [DataContract]
     public
     class ProgressRecord
     {
@@ -429,28 +429,28 @@ namespace System.Management.Automation
 
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private readonly int id;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private int parentId = -1;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private string activity;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private string status;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private string currentOperation;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private int percent = -1;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private int secondsRemaining = -1;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private ProgressRecordType type = ProgressRecordType.Processing;
 
         #endregion

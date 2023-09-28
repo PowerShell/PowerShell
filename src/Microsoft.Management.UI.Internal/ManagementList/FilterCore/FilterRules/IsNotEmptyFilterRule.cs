@@ -10,6 +10,7 @@ namespace Microsoft.Management.UI.Internal
     /// is empty or not.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class IsNotEmptyFilterRule : IsEmptyFilterRule
     {
         /// <summary>
@@ -18,18 +19,6 @@ namespace Microsoft.Management.UI.Internal
         public IsNotEmptyFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_IsNotEmpty;
-        }
-
-        /// <summary>
-        /// Creates a clone of the IsNotEmptyFilterRule.
-        /// </summary>
-        /// <returns>
-        /// A clone of the IsNotEmptyFilterRule.
-        /// </returns>
-        public override FilterRule Clone()
-        {
-            IsNotEmptyFilterRule rule = new IsNotEmptyFilterRule();
-            return rule;
         }
 
         /// <summary>

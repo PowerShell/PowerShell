@@ -29,7 +29,7 @@ namespace System.Management.Automation
     /// Enumerates all possible types of members.
     /// </summary>
     [TypeConverterAttribute(typeof(LanguagePrimitives.EnumMultipleTypeConverter))]
-    [FlagsAttribute()]
+    [FlagsAttribute]
     public enum PSMemberTypes
     {
         /// <summary>
@@ -121,7 +121,7 @@ namespace System.Management.Automation
     /// Enumerator for all possible views available on a PSObject.
     /// </summary>
     [TypeConverterAttribute(typeof(LanguagePrimitives.EnumMultipleTypeConverter))]
-    [FlagsAttribute()]
+    [FlagsAttribute]
     public enum PSMemberViewTypes
     {
         /// <summary>

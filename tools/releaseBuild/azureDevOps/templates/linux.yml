@@ -62,8 +62,8 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
       try {
@@ -142,6 +142,16 @@ jobs:
         PackageVersion: $(Version)
         sourceScanPath: '$(PowerShellRoot)/tools'
 
+  - ${{ if eq(variables.build,'alpine') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Alpine FXD SBOM
+        PackageName: PowerShell Alpine Framework Dependent AMD64
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
+
   - pwsh: |
       Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuild'
       Write-Verbose -Verbose "File permisions before compressing"
@@ -164,6 +174,12 @@ jobs:
         Set-Location '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
         tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz *
       displayName: Compress pwshMarinerBuildAmd64
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - pwsh: |
+        Set-Location '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz *
+      displayName: Compress pwshAlpineFxdBuildAmd64
 
   - ${{ if eq(variables.build,'rpm') }} :
     - pwsh: |
@@ -267,6 +283,20 @@ jobs:
       inputs:
         path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
         artifactName: pwshLinuxBuildAlpine-meta
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz'
+        artifactName: pwshAlpineFxdBuildAmd64.tar.gz
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64-meta'
+        artifactName: pwshAlpineFxdBuildAmd64-meta
       retryCountOnTaskFailure: 2
 
   - ${{ if eq(variables.build,'fxdependent') }} :

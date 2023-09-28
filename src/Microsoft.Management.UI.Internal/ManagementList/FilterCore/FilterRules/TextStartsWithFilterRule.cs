@@ -11,6 +11,7 @@ namespace Microsoft.Management.UI.Internal
     /// check if it starts with the rule's value.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class TextStartsWithFilterRule : TextFilterRule
     {
         private static readonly string TextStartsWithCharactersRegexPattern = "^{0}";
@@ -22,17 +23,6 @@ namespace Microsoft.Management.UI.Internal
         public TextStartsWithFilterRule()
         {
             this.DisplayName = UICultureResources.FilterRule_TextStartsWith;
-        }
-
-        /// <summary>
-        /// Creates a clone of the TextStartsWithFilterRule instance.
-        /// </summary>
-        /// <returns>
-        /// Returns a clone of the TextStartsWithFilterRule instance.
-        /// </returns>
-        public override FilterRule Clone()
-        {
-            return base.Clone();
         }
 
         /// <summary>

@@ -59,7 +59,7 @@ function BuildPackages {
             $buildParams.Add("Runtime", "fxdependent")
         } elseif ($Alpine.IsPresent) {
             $projectAssetsZipName = 'linuxAlpineProjectAssetssymbols.zip'
-            $buildParams.Add("Runtime", 'alpine-x64')
+            $buildParams.Add("Runtime", 'linux-musl-x64')
         } else {
             # make the artifact name unique
             $projectAssetsZipName = "linuxProjectAssets-$((Get-Date).Ticks)-symbols.zip"

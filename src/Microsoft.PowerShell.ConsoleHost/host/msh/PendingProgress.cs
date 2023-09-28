@@ -458,9 +458,7 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The found node, or null if no suitable node was located.
         /// </returns>
-        private
-        ProgressNode
-        FindOldestNodeOfGivenStyle(ArrayList nodes, int oldestSoFar, ProgressNode.RenderStyle style)
+        private static ProgressNode FindOldestNodeOfGivenStyle(ArrayList nodes, int oldestSoFar, ProgressNode.RenderStyle style)
         {
             if (nodes == null)
             {
@@ -631,9 +629,7 @@ namespace Microsoft.PowerShell
         /// <param name="rawUI">
         /// The PSHostRawUserInterface used to gauge string widths in the rendering.
         /// </param>
-        private
-        void
-        RenderHelper(ArrayList strings, ArrayList nodes, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
+        private static void RenderHelper(ArrayList strings, ArrayList nodes, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
         {
             Dbg.Assert(strings != null, "strings should not be null");
             Dbg.Assert(nodes != null, "nodes should not be null");
@@ -721,9 +717,7 @@ namespace Microsoft.PowerShell
         /// <param name="nodes"></param>
         /// <param name="style"></param>
         /// <returns></returns>
-        private
-        bool
-        AllNodesHaveGivenStyle(ArrayList nodes, ProgressNode.RenderStyle style)
+        private static bool AllNodesHaveGivenStyle(ArrayList nodes, ProgressNode.RenderStyle style)
         {
             if (nodes == null)
             {

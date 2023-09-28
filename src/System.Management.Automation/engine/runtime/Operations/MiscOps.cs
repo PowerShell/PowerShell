@@ -221,10 +221,7 @@ namespace System.Management.Automation
             bool redirectedInformation = false;
             if (redirections != null)
             {
-                bool shouldProcessMergesFirst = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
-                    && isNativeCommand;
-
-                if (shouldProcessMergesFirst)
+                if (isNativeCommand)
                 {
                     foreach (CommandRedirection redirection in redirections)
                     {
@@ -237,7 +234,7 @@ namespace System.Management.Automation
 
                 foreach (CommandRedirection redirection in redirections)
                 {
-                    if (!shouldProcessMergesFirst || redirection is not MergingRedirection)
+                    if (!isNativeCommand || redirection is not MergingRedirection)
                     {
                         redirection.Bind(pipe, commandProcessor, context);
                     }
@@ -1081,16 +1078,13 @@ namespace System.Management.Automation
         //    dir > out
         internal override void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context)
         {
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+            if (commandProcessor is NativeCommandProcessor nativeCommand
+                && nativeCommand.CommandRuntime.ErrorMergeTo is not MshCommandRuntime.MergeDataStream.Output
+                && FromStream is RedirectionStream.Output
+                && !string.IsNullOrWhiteSpace(File))
             {
-                if (commandProcessor is NativeCommandProcessor nativeCommand
-                    && nativeCommand.CommandRuntime.ErrorMergeTo is not MshCommandRuntime.MergeDataStream.Output
-                    && FromStream is RedirectionStream.Output
-                    && !string.IsNullOrWhiteSpace(File))
-                {
-                    nativeCommand.StdOutDestination = FileBytePipe.Create(File, Appending);
-                    return;
-                }
+                nativeCommand.StdOutDestination = FileBytePipe.Create(File, Appending);
+                return;
             }
 
             Pipe pipe = GetRedirectionPipe(context, pipelineProcessor);

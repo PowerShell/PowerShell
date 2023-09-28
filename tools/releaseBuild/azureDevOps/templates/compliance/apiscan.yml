@@ -40,8 +40,8 @@ jobs:
       retryCountOnTaskFailure: 2
       displayName: 'Bootstrap'
       env:
-        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+        __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
         Import-Module .\build.psm1 -force
@@ -55,10 +55,15 @@ jobs:
     - pwsh: |
         Import-Module .\build.psm1 -force
         Find-DotNet
-        Start-PSBuild -Configuration StaticAnalysis -PSModuleRestore -Clean
+        Start-PSBuild -Configuration StaticAnalysis -PSModuleRestore -Clean -Runtime fxdependent-win-desktop
 
         $OutputFolder = Split-Path (Get-PSOutput)
         Write-Host "##vso[task.setvariable variable=BinDir]$OutputFolder"
+
+        Write-Verbose -Verbose -Message "Deleting ref folder from output folder"
+        if (Test-Path $OutputFolder/ref) {
+          Remove-Item -Recurse -Force $OutputFolder/ref
+        }
       workingDirectory: '$(Build.SourcesDirectory)'
       displayName: 'Build PowerShell Source'
 
