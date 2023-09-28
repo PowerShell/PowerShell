@@ -694,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThru;
 
         /// <summary>
-        /// Append to the variable if it exists
+        /// Append to the variable if it exists.
         /// </summary>
         [Parameter]
         [Experimental("PSRedirectToVariable", ExperimentAction.Show)]
