@@ -69,7 +69,7 @@ Describe "UnixFileSystem additions" -Tag "CI" {
             }
             else {
                 $i = Get-Item $Item
-                $i.UnixMode | Should -Be $Perm
+                $i.UnixMode | Should -BeExactly $Perm
             }
         }
 
