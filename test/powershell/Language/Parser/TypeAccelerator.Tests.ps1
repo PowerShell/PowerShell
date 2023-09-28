@@ -414,15 +414,19 @@ Describe "Type accelerators" -Tags "CI" {
                     Accelerator = 'NoRunspaceAffinity'
                     Type        = [System.Management.Automation.Language.NoRunspaceAffinityAttribute]
                 }
+                @{
+                    Accelerator = 'ArgumentTransform'
+                    Type        = [System.Management.Automation.ArgumentTransformAttribute]
+                }
             )
 
             if ( !$IsWindows )
             {
-                $totalAccelerators = 102
+                $totalAccelerators = 103
             }
             else
             {
-                $totalAccelerators = 107
+                $totalAccelerators = 108
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{
