@@ -115,8 +115,8 @@ jobs:
         $pathToDll = Get-ChildItem -Path $OutputFolder -Filter 'getfilesiginforedist.dll' -Recurse | Select-Object -First 1 -ExpandProperty FullName
 
         $surrogateFile = Join-Path $(Pipeline.Workspace) + 'APIScanSurrogates.xml'
-        $surrogateFileContent = $surrogateFileTemplate -replace '{path_to_symbol}', '$(winverifySymbolsPath)'
-          -replace '{path_to_dll}', $pathToDll
+        $surrogateFileContent = $surrogateFileTemplate -replace '{path_to_symbol}', '$(winverifySymbolsPath)\winverify-private'
+          -replace '{path_to_dll}', $(winverifySymbolsPath)\winverify-private\getfilesiginforedist.dll
           -replace '{path_to_dll_in_build}', $pathToDll
 
         $surrogateFileContent | Out-File -FilePath $surrogateFile -Force
