@@ -241,4 +241,47 @@ Describe "Set-Variable" -Tags "CI" {
 	    { Set-Variable globalVar -Value 1 -Scope local -Force } | Should -Not -Throw
 	}
     }
+
+    Context "Set-Variable -Append tests" {
+        BeforeAll {
+            if (! (Get-ExperimentalFeature PSRedirectToVariable).Enabled) {
+				$skipTest = $true
+			}
+
+			$testCases = @{ value = 2; Count = 2 },
+				@{ value = @(2,3,4); Count = 2},
+				@{ value = "abc",(Get-Process -Id $PID) ; count = 2}
+        }
+
+		It "Can append values <value> to a variable" -testCases $testCases {
+			param ($value, $count)
+
+			if ($skipTest) {
+				Set-ItResult -skip -because "Experimental Feature PSRedirectToVariable not enabled"
+				return
+			}
+
+			$variableName = "testVar"
+			Set-Variable -Name $variableName -Value 1
+			Set-Variable -Name $variableName -Value $value -Append
+
+			$observedValues = Get-Variable $variableName -Value
+
+			$observedValues.Count | Should -Be $count
+			$observedValues[0] | Should -Be 1
+
+			$observedValues[1] | Should -Be $value
+		}
+
+		It "Can use set-variable via streaming and append values" {
+			if ($skipTest) {
+				Set-ItResult -skip -because "Experimental Feature PSRedirectToVariable not enabled"
+				return
+			}
+
+			$testVar = 1
+			4..6 | Set-Variable -Name testVar -Append
+			$testVar | Should -Be @(1,4,5,6)
+		}
+    }
 }

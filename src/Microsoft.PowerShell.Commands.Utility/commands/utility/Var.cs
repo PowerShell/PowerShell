@@ -726,8 +726,8 @@ namespace Microsoft.PowerShell.Commands
                 if (Name.Length != 1)
                 {
                     ErrorRecord appendVariableError = new ErrorRecord(new InvalidOperationException(), "SetVariableAppend", ErrorCategory.InvalidOperation, Name);
-                    appendVariableError.ErrorDetails = new ErrorDetails("SetVariable");
-                    appendVariableError.ErrorDetails.RecommendedAction = "Use a single variable rather than a collection";
+                    appendVariableError.ErrorDetails = new ErrorDetails("SetVariableAppend");
+                    appendVariableError.ErrorDetails.RecommendedAction = VariableCommandStrings.UseSingleVariable;
                     ThrowTerminatingError(appendVariableError);
                 }
 
@@ -759,6 +759,16 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_nameIsFormalParameter && _valueIsFormalParameter)
             {
+                if (Append)
+                {
+                    if (Value != AutomationNull.Value)
+                    {
+                        _valueList ??= new List<object>();
+
+                        _valueList.Add(Value);
+                    }
+                }
+
                 return;
             }
 
@@ -789,7 +799,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_valueIsFormalParameter)
                 {
-                    SetVariable(Name, Value);
+                    if (Append)
+                    {
+                        SetVariable(Name, _valueList);
+                    }
+                    else
+                    {
+                        SetVariable(Name, Value);
+                    }
                 }
                 else
                 {
