@@ -68,7 +68,6 @@ jobs:
         $winverifySymbolsPath = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)/winverify-symbols' -Force
         Write-Host "##vso[task.setvariable variable=winverifySymbolsPath]$winverifySymbolsPath"
 
-        & $azcopy login --service-principal --application-id $(PowerShellReleaseSPN)
         & $azcopy cp https://$(StorageAccount).blob.core.windows.net/winverify-private $winverifySymbolsPath --recursive
 
         Get-ChildItem $winverifySymbolsPath -Recurse | Out-String | Write-Verbose -Verbose
@@ -76,7 +75,7 @@ jobs:
       displayName: Download winverify-private Artifacts
       retryCountOnTaskFailure: 2
       env:
-        AZCOPY_SPA_CLIENT_SECRET: $(PowerShellReleaseSPNSecret)
+        AZCOPY_AUTO_LOGIN_TYPE: MSI
 
     - pwsh: |
         Import-Module .\build.psm1 -force
