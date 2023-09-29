@@ -372,7 +372,7 @@ configuration:
     - if: 
         - isAction: 
             action: Closed
-    - then:
+      then:
         - addReply:
             reply: " 📣 Hey @${issueAuthor}, how did we do? We would love to hear your feedback with the link below! 🗣️ \n\n🔗 https://forms.office.com/r/P926k48jRJ "
 onFailure:
