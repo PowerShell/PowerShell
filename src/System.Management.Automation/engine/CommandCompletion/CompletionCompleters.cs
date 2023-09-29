@@ -470,6 +470,7 @@ namespace System.Management.Automation
                 {
                     var moduleInfo = (PSModuleInfo)item.BaseObject;
                     var completionText = moduleInfo.Name;
+                    var listItemText = completionText;
                     if (shortNameSearch
                         && completionText.Contains('.')
                         && !shortNamePattern.IsMatch(completionText.Substring(completionText.LastIndexOf('.') + 1))
@@ -494,7 +495,7 @@ namespace System.Management.Automation
                         completionText = quote + completionText + quote;
                     }
 
-                    result.Add(new CompletionResult(completionText, completionText, CompletionResultType.ParameterValue, toolTip));
+                    result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, toolTip));
                 }
             }
 
