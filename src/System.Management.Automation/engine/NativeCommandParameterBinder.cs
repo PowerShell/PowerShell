@@ -328,7 +328,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// On Windows, just append <paramref name="arg"/>.
+        /// On Windows, do tilde expansion, otherwise just append <paramref name="arg"/>.
         /// On Unix, do globbing as appropriate, otherwise just append <paramref name="arg"/>.
         /// </summary>
         /// <param name="arg">The argument that possibly needs expansion.</param>
@@ -417,6 +417,27 @@ namespace System.Management.Automation
                 }
             }
 #endif // UNIX
+
+#if !UNIX
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeWindowsTildeExpansion) && !usedQuotes)
+            {
+                var fileSystemProvider = Context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
+                var home = fileSystemProvider.Home;
+                if (string.Equals(arg, "~"))
+                {
+                    _arguments.Append(home);
+                    AddToArgumentList(parameter, home);
+                    argExpanded = true;
+                }
+                else if (arg.StartsWith("~/") || arg.StartsWith(@"~\"))
+                {
+                    var replacementString = string.Concat(home, arg.AsSpan(1));
+                    _arguments.Append(replacementString);
+                    AddToArgumentList(parameter, replacementString);
+                    argExpanded = true;
+                }
+            }
+#endif
 
             if (!argExpanded)
             {
