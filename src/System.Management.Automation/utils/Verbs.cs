@@ -1458,11 +1458,10 @@ namespace System.Management.Automation
                         groups = new string[] { groupParameterValue.ToString() };
                     }
 
-                    else if (groupParameterValueType.IsArray)
+                    else if (groupParameterValueType.IsArray &&
+                             groupParameterValueType.GetElementType() == typeof(object))
                     {
-                        groups = ((IEnumerable)groupParameterValue)
-                            .Cast<string>()
-                            .ToArray();
+                        groups = Array.ConvertAll((object[])groupParameterValue, group => group.ToString());
                     }
                 }
 
