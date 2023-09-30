@@ -1428,6 +1428,11 @@ namespace System.Management.Automation
         public class VerbArgumentCompleter : IArgumentCompleter
         {
             /// <summary>
+            /// The name of group parameter.
+            /// </summary>
+            private const string groupParameterName = "Group";
+
+            /// <summary>
             /// Returns completion results for verb parameter.
             /// </summary>
             /// <param name="commandName">The command name.</param>
@@ -1447,9 +1452,9 @@ namespace System.Management.Automation
 
                 string[] groups = null;
 
-                if (fakeBoundParameters.Contains("Group"))
+                if (fakeBoundParameters.Contains(groupParameterName))
                 {
-                    object groupParameterValue = fakeBoundParameters["Group"];
+                    object groupParameterValue = fakeBoundParameters[groupParameterName];
                     Type groupParameterValueType = groupParameterValue.GetType();
 
                     if (groupParameterValueType == typeof(string))
