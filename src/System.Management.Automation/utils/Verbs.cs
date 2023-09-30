@@ -1430,7 +1430,7 @@ namespace System.Management.Automation
             /// <summary>
             /// The name of group parameter.
             /// </summary>
-            private const string groupParameterName = "Group";
+            private const string GroupParameterName = "Group";
 
             /// <summary>
             /// Returns completion results for verb parameter.
@@ -1452,9 +1452,9 @@ namespace System.Management.Automation
 
                 string[] groups = null;
 
-                if (fakeBoundParameters.Contains(groupParameterName))
+                if (fakeBoundParameters.Contains(GroupParameterName))
                 {
-                    object groupParameterValue = fakeBoundParameters[groupParameterName];
+                    object groupParameterValue = fakeBoundParameters[GroupParameterName];
                     Type groupParameterValueType = groupParameterValue.GetType();
 
                     if (groupParameterValueType == typeof(string))
