@@ -11,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -1800,6 +1801,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = "UseShellExecute")]
         [ValidateNotNullOrEmpty]
+        [ArgumentCompleter(typeof(VerbArgumentCompleter))]
         public string Verb { get; set; }
 
         /// <summary>
@@ -2654,6 +2656,81 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     }
 
+    /// <summary>
+    /// Provides argument completion for Verb parameter.
+    /// </summary>
+    public class VerbArgumentCompleter : IArgumentCompleter
+    {
+        private const string StartProcessCommandName = "Start-Process";
+        private const string FilePathParameterName = "FilePath";
+
+        private readonly Dictionary<string, string[]> FileExtensionVerbMapping = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { ".cmd", new string[] { "edit", "open", "print", "runas", "runasuser" } },
+            { ".exe", new string[] { "open", "runas", "runasuser" } },
+            { ".txt", new string[] { "open", "print", "printto" } },
+            { ".wav", new string[] { "open", "play" } }
+        };
+
+        private readonly string[] AllVerbs = new string[]
+        {
+            "edit",
+            "open",
+            "play",
+            "print",
+            "printto",
+            "runas",
+            "runasuser"
+        };
+
+        /// <summary>
+        /// Returns completion results for verb parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of Completion Results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+        {
+            var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            if (commandName.Equals(StartProcessCommandName)
+                && fakeBoundParameters.Contains(FilePathParameterName))
+            {
+                string filePath = fakeBoundParameters[FilePathParameterName].ToString();
+                string fileExtension = Path.GetExtension(filePath);
+
+                if (!string.IsNullOrEmpty(fileExtension)
+                    && FileExtensionVerbMapping.TryGetValue(fileExtension, out string[] verbs))
+                {
+                    foreach (string verb in verbs)
+                    {
+                        if (verbPattern.IsMatch(verb))
+                        {
+                            yield return new CompletionResult(verb);
+                        }
+                    }
+
+                    yield break;
+                }
+            }
+
+            foreach (string verb in AllVerbs)
+            {
+                if (verbPattern.IsMatch(verb))
+                {
+                    yield return new CompletionResult(verb);
+                }
+            }
+        }
+    }
 #if !UNIX
     /// <summary>
     /// ProcessCollection is a helper class used by Start-Process -Wait cmdlet to monitor the
