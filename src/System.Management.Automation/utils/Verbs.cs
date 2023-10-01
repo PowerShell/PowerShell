@@ -1342,14 +1342,6 @@ namespace System.Management.Automation
         {
             if (commands is null || commands.Count == 0)
             {
-                foreach (Type verbType in VerbTypes)
-                {
-                    foreach (VerbInfo verb in FilterVerbsByType(verbs, verbType))
-                    {
-                        yield return verb.Verb;
-                    }
-                }
-
                 yield break;
             }
 
@@ -1521,29 +1513,30 @@ namespace System.Management.Automation
 
                 else if (commandName.Equals(GetCommandCommandName, StringComparison.OrdinalIgnoreCase))
                 {
-                    Collection<CmdletInfo> commands = null;
-
                     if (fakeBoundParameters.Contains(NounParameterName))
                     {
-                        object nounParameterValue = fakeBoundParameters[NounParameterName];
-
                         var commandInfo = new CmdletInfo(GetCommandCommandName, typeof(GetCommandCommand));
 
                         var ps = PowerShell.Create(RunspaceMode.CurrentRunspace)
                             .AddCommand(commandInfo)
-                            .AddParameter(NounParameterName, nounParameterValue);
+                            .AddParameter(NounParameterName, fakeBoundParameters[NounParameterName]);
 
-                        if (fakeBoundParameters.Contains(ModuleParameterName))
+                        Collection<CmdletInfo> commands = ps.Invoke<CmdletInfo>();
+
+                        foreach (string verb in FilterByVerbsAndCommands(verbs, commands))
                         {
-                            ps.AddParameter(ModuleParameterName, fakeBoundParameters[ModuleParameterName]);
+                            yield return new CompletionResult(verb);
                         }
 
-                        commands = ps.Invoke<CmdletInfo>();
+                        yield break;
                     }
 
-                    foreach (string verb in FilterByVerbsAndCommands(verbs, commands))
+                    foreach (Type verbType in VerbTypes)
                     {
-                        yield return new CompletionResult(verb);
+                        foreach (VerbInfo verb in FilterVerbsByType(verbs, verbType))
+                        {
+                            yield return new CompletionResult(verb.Verb);
+                        }
                     }
                 }
             }

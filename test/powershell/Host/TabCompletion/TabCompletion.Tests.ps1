@@ -767,6 +767,7 @@ ConstructorTestClass(int i, bool b)
         @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb Re'; ExpectedVerbs = $lifeCycleAndCommmonVerbsStartingWithRe }
         @{ TextInput = 'Get-Verb -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
         @{ TextInput = 'Get-Verb -Group Data -Verb Ex'; ExpectedVerbs = $dataVerbsStartingwithEx }
+        @{ TextInput = 'Get-Verb -Group NonExistentGroup -Verb '; ExpectedVerbs = @() }
         @{ TextInput = 'Get-Verb -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
         @{ TextInput = 'Get-Command -Verb '; ExpectedVerbs = $allVerbs }
         @{ TextInput = 'Get-Command -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
@@ -774,6 +775,7 @@ ConstructorTestClass(int i, bool b)
         @{ TextInput = 'Get-Command -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
         @{ TextInput = 'Get-Command -Noun Acl -Verb '; ExpectedVerbs = $allAclCommandVerbs }
         @{ TextInput = 'Get-Command -Noun Acl -Verb G'; ExpectedVerbs = $getAclCommandVerb }
+        @{ TextInput = 'Get-Command -Noun NonExistentNoun -Verb '; ExpectedVerbs = @() }
     ) {
         param($TextInput, $ExpectedVerbs)
         $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
