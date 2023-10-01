@@ -756,6 +756,8 @@ ConstructorTestClass(int i, bool b)
             $allLifeCycleAndCommonVerbs = 'Add', 'Clear', 'Close', 'Copy', 'Enter', 'Exit', 'Find', 'Format', 'Get', 'Hide', 'Join', 'Lock', 'Move', 'New', 'Open', 'Optimize', 'Push', 'Pop', 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Search', 'Select', 'Set', 'Show', 'Skip', 'Split', 'Step', 'Switch', 'Undo', 'Unlock', 'Watch', 'Approve', 'Assert', 'Build', 'Complete', 'Confirm', 'Deny', 'Deploy', 'Disable', 'Enable', 'Install', 'Invoke', 'Register', 'Request', 'Restart', 'Resume', 'Start', 'Stop', 'Submit', 'Suspend', 'Uninstall', 'Unregister', 'Wait'
             $allAclCommandVerbs = 'Get', 'Set'
             $getAclCommandVerb = 'Get'
+            $allAclAndJobCommandVerbs = 'Debug', 'Get', 'Get', 'Receive', 'Remove', 'Set', 'Start', 'Stop', 'Wait'
+            $aclAndJobCommandVerbsStartingWithSt = 'Start', 'Stop'
         }
     }
 
@@ -775,6 +777,8 @@ ConstructorTestClass(int i, bool b)
         @{ TextInput = 'Get-Command -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
         @{ TextInput = 'Get-Command -Noun Acl -Verb '; ExpectedVerbs = $allAclCommandVerbs }
         @{ TextInput = 'Get-Command -Noun Acl -Verb G'; ExpectedVerbs = $getAclCommandVerb }
+        @{ TextInput = 'Get-Command -Noun Acl, Job -Verb '; ExpectedVerbs = $allAclAndJobCommandVerbs }
+        @{ TextInput = 'Get-Command -Noun Acl, Job -Verb St'; ExpectedVerbs = $aclAndJobCommandVerbsStartingWithSt }
         @{ TextInput = 'Get-Command -Noun NonExistentNoun -Verb '; ExpectedVerbs = @() }
     ) {
         param($TextInput, $ExpectedVerbs)
