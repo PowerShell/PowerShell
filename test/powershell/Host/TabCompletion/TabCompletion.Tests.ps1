@@ -744,6 +744,34 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
     }
 
+    Context 'Start-Process -Verb parameter completion' {
+        BeforeAll {
+            $allVerbs = 'edit', 'open', 'play', 'print', 'printto', 'runas', 'runasuser'
+            $verbsStartingWithP = 'play', 'print', 'printto'
+            $cmdVerbs = 'edit', 'open', 'print', 'runas', 'runasuser'
+            $exeVerbs = 'open', 'runas', 'runasuser'
+            $exeVerbsStartingWithRun = 'runas', 'runasuser'
+            $txtVerbs = 'open', 'print', 'printto'
+            $txtVerbsStartingWithPrin = 'print', 'printto'
+            $wavVerbs = 'open', 'play'
+        }
+
+        It "Should complete Verb parameter for '<TextInput>'" -TestCases @(
+            @{ TextInput = 'Start-Process -Verb '; ExpectedVerbs = $allVerbs }
+            @{ TextInput = 'Start-Process -Verb p'; ExpectedVerbs = $verbsStartingWithP }
+            @{ TextInput = 'Start-Process -FilePath npm.cmd -Verb '; ExpectedVerbs = $cmdVerbs }
+            @{ TextInput = 'Start-Process -FilePath powershell.exe -Verb '; ExpectedVerbs = $exeVerbs }
+            @{ TextInput = 'Start-Process -FilePath powershell.exe -Verb run'; ExpectedVerbs = $exeVerbsStartingWithRun }
+            @{ TextInput = 'Start-Process -FilePath LICENSE.txt -Verb '; ExpectedVerbs = $txtVerbs }
+            @{ TextInput = 'Start-Process -FilePath LICENSE.txt -Verb prin'; ExpectedVerbs = $txtVerbsStartingWithPrin }
+            @{ TextInput = 'Start-Process -FilePath Empty.wav -Verb '; ExpectedVerbs = $wavVerbs }
+        ) {
+            param($TextInput, $ExpectedVerbs)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $res.CompletionMatches.CompletionText | Should -BeExactly $ExpectedVerbs
+        }
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'
