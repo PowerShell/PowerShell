@@ -754,6 +754,8 @@ ConstructorTestClass(int i, bool b)
             $dataVerbsStartingwithEx = 'Expand', 'Export'
             $lifeCycleAndCommmonVerbsStartingWithRe = 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Register', 'Request', 'Restart', 'Resume'
             $allLifeCycleAndCommonVerbs = 'Add', 'Clear', 'Close', 'Copy', 'Enter', 'Exit', 'Find', 'Format', 'Get', 'Hide', 'Join', 'Lock', 'Move', 'New', 'Open', 'Optimize', 'Push', 'Pop', 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Search', 'Select', 'Set', 'Show', 'Skip', 'Split', 'Step', 'Switch', 'Undo', 'Unlock', 'Watch', 'Approve', 'Assert', 'Build', 'Complete', 'Confirm', 'Deny', 'Deploy', 'Disable', 'Enable', 'Install', 'Invoke', 'Register', 'Request', 'Restart', 'Resume', 'Start', 'Stop', 'Submit', 'Suspend', 'Uninstall', 'Unregister', 'Wait'
+            $allAclCommandVerbs = 'Get', 'Set'
+            $getAclCommandVerb = 'Get'
         }
     }
 
@@ -770,6 +772,8 @@ ConstructorTestClass(int i, bool b)
         @{ TextInput = 'Get-Command -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
         @{ TextInput = 'Get-Command -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
         @{ TextInput = 'Get-Command -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
+        @{ TextInput = 'Get-Command -Noun Acl -Verb '; ExpectedVerbs = $allAclCommandVerbs }
+        @{ TextInput = 'Get-Command -Noun Acl -Verb G'; ExpectedVerbs = $getAclCommandVerb }
     ) {
         param($TextInput, $ExpectedVerbs)
         $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length

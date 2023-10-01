@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Language;
 using System.Reflection;
-
+using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -1333,6 +1333,43 @@ namespace System.Management.Automation
         private static string GetVerbGroupDisplayName(Type verbType) => verbType.Name.Substring(5);
 
         /// <summary>
+        /// Filters by verbs and commands.
+        /// </summary>
+        /// <param name="verbs">The array of verbs.</param>
+        /// <param name="commands">The collection of commands.</param>
+        /// <returns>List of Verbs.</returns>
+        private static IEnumerable<string> FilterByVerbsAndCommands(string[] verbs, Collection<CmdletInfo> commands)
+        {
+            if (commands is null || commands.Count == 0)
+            {
+                foreach (Type verbType in VerbTypes)
+                {
+                    foreach (VerbInfo verb in FilterVerbsByType(verbs, verbType))
+                    {
+                        yield return verb.Verb;
+                    }
+                }
+
+                yield break;
+            }
+
+            Collection<WildcardPattern> verbPatterns = SessionStateUtilities.CreateWildcardsFromStrings(
+                verbs,
+                WildcardOptions.IgnoreCase);
+
+            foreach (CmdletInfo command in commands)
+            {
+                if (SessionStateUtilities.MatchesAnyWildcardPattern(
+                    command.Verb,
+                    verbPatterns,
+                    defaultValue: false))
+                {
+                    yield return command.Verb;
+                }
+            }
+        }
+
+        /// <summary>
         /// Filters by verbs and groups.
         /// </summary>
         /// <param name="verbs">The array of verbs.</param>
@@ -1427,10 +1464,15 @@ namespace System.Management.Automation
         /// </summary>
         public class VerbArgumentCompleter : IArgumentCompleter
         {
-            /// <summary>
-            /// The name of group parameter.
-            /// </summary>
+            #region Command & Parameter Name Constants
+
+            private const string GetVerbCommandName = "Get-Verb";
             private const string GroupParameterName = "Group";
+            private const string GetCommandCommandName = "Get-Command";
+            private const string NounParameterName = "Noun";
+            private const string ModuleParameterName = "Module";
+
+            #endregion
 
             /// <summary>
             /// Returns completion results for verb parameter.
@@ -1450,28 +1492,59 @@ namespace System.Management.Automation
             {
                 var verbs = new string[] { wordToComplete + "*" };
 
-                string[] groups = null;
-
-                if (fakeBoundParameters.Contains(GroupParameterName))
+                if (commandName.Equals(GetVerbCommandName, StringComparison.OrdinalIgnoreCase))
                 {
-                    object groupParameterValue = fakeBoundParameters[GroupParameterName];
-                    Type groupParameterValueType = groupParameterValue.GetType();
+                    string[] groups = null;
 
-                    if (groupParameterValueType == typeof(string))
+                    if (fakeBoundParameters.Contains(GroupParameterName))
                     {
-                        groups = new string[] { groupParameterValue.ToString() };
+                        object groupParameterValue = fakeBoundParameters[GroupParameterName];
+                        Type groupParameterValueType = groupParameterValue.GetType();
+
+                        if (groupParameterValueType == typeof(string))
+                        {
+                            groups = new string[] { groupParameterValue.ToString() };
+                        }
+
+                        else if (groupParameterValueType.IsArray
+                                 && groupParameterValueType.GetElementType() == typeof(object))
+                        {
+                            groups = Array.ConvertAll((object[])groupParameterValue, group => group.ToString());
+                        }
                     }
 
-                    else if (groupParameterValueType.IsArray
-                             && groupParameterValueType.GetElementType() == typeof(object))
+                    foreach (VerbInfo verb in FilterByVerbsAndGroups(verbs, groups))
                     {
-                        groups = Array.ConvertAll((object[])groupParameterValue, group => group.ToString());
+                        yield return new CompletionResult(verb.Verb);
                     }
                 }
 
-                foreach (VerbInfo verb in FilterByVerbsAndGroups(verbs, groups))
+                else if (commandName.Equals(GetCommandCommandName, StringComparison.OrdinalIgnoreCase))
                 {
-                    yield return new CompletionResult(verb.Verb);
+                    Collection<CmdletInfo> commands = null;
+
+                    if (fakeBoundParameters.Contains(NounParameterName))
+                    {
+                        object nounParameterValue = fakeBoundParameters[NounParameterName];
+
+                        var commandInfo = new CmdletInfo(GetCommandCommandName, typeof(GetCommandCommand));
+
+                        var ps = PowerShell.Create(RunspaceMode.CurrentRunspace)
+                            .AddCommand(commandInfo)
+                            .AddParameter(NounParameterName, nounParameterValue);
+
+                        if (fakeBoundParameters.Contains(ModuleParameterName))
+                        {
+                            ps.AddParameter(ModuleParameterName, fakeBoundParameters[ModuleParameterName]);
+                        }
+
+                        commands = ps.Invoke<CmdletInfo>();
+                    }
+
+                    foreach (string verb in FilterByVerbsAndCommands(verbs, commands))
+                    {
+                        yield return new CompletionResult(verb);
+                    }
                 }
             }
         }
