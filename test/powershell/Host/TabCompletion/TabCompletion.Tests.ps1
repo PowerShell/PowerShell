@@ -744,7 +744,7 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
     }
 
-    Context 'Verb parameter completion' {
+    Context 'Get-Verb & Get-Command -Verb parameter completion' {
         BeforeAll {
             $allVerbs = 'Add', 'Clear', 'Close', 'Copy', 'Enter', 'Exit', 'Find', 'Format', 'Get', 'Hide', 'Join', 'Lock', 'Move', 'New', 'Open', 'Optimize', 'Push', 'Pop', 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Search', 'Select', 'Set', 'Show', 'Skip', 'Split', 'Step', 'Switch', 'Undo', 'Unlock', 'Watch', 'Connect', 'Disconnect', 'Read', 'Receive', 'Send', 'Write', 'Backup', 'Checkpoint', 'Compare', 'Compress', 'Convert', 'ConvertFrom', 'ConvertTo', 'Dismount', 'Edit', 'Expand', 'Export', 'Group', 'Import', 'Initialize', 'Limit', 'Merge', 'Mount', 'Out', 'Publish', 'Restore', 'Save', 'Sync', 'Unpublish', 'Update', 'Debug', 'Measure', 'Ping', 'Repair', 'Resolve', 'Test', 'Trace', 'Approve', 'Assert', 'Build', 'Complete', 'Confirm', 'Deny', 'Deploy', 'Disable', 'Enable', 'Install', 'Invoke', 'Register', 'Request', 'Restart', 'Resume', 'Start', 'Stop', 'Submit', 'Suspend', 'Uninstall', 'Unregister', 'Wait', 'Use', 'Block', 'Grant', 'Protect', 'Revoke', 'Unblock', 'Unprotect'
             $verbsStartingWithRe = 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Read', 'Receive', 'Restore', 'Repair', 'Resolve', 'Register', 'Request', 'Restart', 'Resume', 'Revoke'
