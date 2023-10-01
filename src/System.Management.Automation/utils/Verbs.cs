@@ -1483,42 +1483,44 @@ namespace System.Management.Automation
             {
                 var verbs = new string[] { wordToComplete + "*" };
 
-                if (commandName.Equals(GetVerbCommandName, StringComparison.OrdinalIgnoreCase))
+                // Completion: Get-Verb -Group <group> -Verb <wordToComplete>
+                if (commandName.Equals(GetVerbCommandName, StringComparison.OrdinalIgnoreCase)
+                    && fakeBoundParameters.Contains(GroupParameterName))
                 {
                     string[] groups = null;
 
-                    if (fakeBoundParameters.Contains(GroupParameterName))
+                    object groupParameterValue = fakeBoundParameters[GroupParameterName];
+                    Type groupParameterValueType = groupParameterValue.GetType();
+
+                    if (groupParameterValueType == typeof(string))
                     {
-                        object groupParameterValue = fakeBoundParameters[GroupParameterName];
-                        Type groupParameterValueType = groupParameterValue.GetType();
+                        groups = new string[] { groupParameterValue.ToString() };
+                    }
 
-                        if (groupParameterValueType == typeof(string))
-                        {
-                            groups = new string[] { groupParameterValue.ToString() };
-                        }
-
-                        else if (groupParameterValueType.IsArray
-                                 && groupParameterValueType.GetElementType() == typeof(object))
-                        {
-                            groups = Array.ConvertAll((object[])groupParameterValue, group => group.ToString());
-                        }
+                    else if (groupParameterValueType.IsArray
+                             && groupParameterValueType.GetElementType() == typeof(object))
+                    {
+                        groups = Array.ConvertAll((object[])groupParameterValue, group => group.ToString());
                     }
 
                     foreach (VerbInfo verb in FilterByVerbsAndGroups(verbs, groups))
                     {
                         yield return new CompletionResult(verb.Verb);
                     }
+
+                    yield break;
                 }
 
-                else if (commandName.Equals(GetCommandCommandName, StringComparison.OrdinalIgnoreCase))
+                // Completion: Get-Command -Noun <noun> -Verb <wordToComplete>
+                else if (commandName.Equals(GetCommandCommandName, StringComparison.OrdinalIgnoreCase)
+                         && fakeBoundParameters.Contains(NounParameterName))
                 {
-                    if (fakeBoundParameters.Contains(NounParameterName))
-                    {
-                        var commandInfo = new CmdletInfo(GetCommandCommandName, typeof(GetCommandCommand));
+                    var commandInfo = new CmdletInfo(GetCommandCommandName, typeof(GetCommandCommand));
 
-                        var ps = PowerShell.Create(RunspaceMode.CurrentRunspace)
-                            .AddCommand(commandInfo)
-                            .AddParameter(NounParameterName, fakeBoundParameters[NounParameterName]);
+                    using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
+                    {
+                        ps.AddCommand(commandInfo);
+                        ps.AddParameter(NounParameterName, fakeBoundParameters[NounParameterName]);
 
                         Collection<CmdletInfo> commands = ps.Invoke<CmdletInfo>();
 
@@ -1526,16 +1528,17 @@ namespace System.Management.Automation
                         {
                             yield return new CompletionResult(verb);
                         }
-
-                        yield break;
                     }
 
-                    foreach (Type verbType in VerbTypes)
+                    yield break;
+                }
+
+                // Complete all verbs by default if above cases not completed
+                foreach (Type verbType in VerbTypes)
+                {
+                    foreach (VerbInfo verb in FilterVerbsByType(verbs, verbType))
                     {
-                        foreach (VerbInfo verb in FilterVerbsByType(verbs, verbType))
-                        {
-                            yield return new CompletionResult(verb.Verb);
-                        }
+                        yield return new CompletionResult(verb.Verb);
                     }
                 }
             }
