@@ -1462,7 +1462,6 @@ namespace System.Management.Automation
             private const string GroupParameterName = "Group";
             private const string GetCommandCommandName = "Get-Command";
             private const string NounParameterName = "Noun";
-            private const string ModuleParameterName = "Module";
 
             #endregion
 
