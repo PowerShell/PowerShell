@@ -1340,7 +1340,7 @@ namespace System.Management.Automation
         /// <returns>List of Verbs.</returns>
         internal static IEnumerable<VerbInfo> FilterByVerbsAndGroups(string[] verbs, string[] groups)
         {
-            if (groups is null)
+            if (groups is null || groups.Length == 0)
             {
                 foreach (Type verbType in VerbTypes)
                 {
@@ -1376,7 +1376,7 @@ namespace System.Management.Automation
         /// <returns>List of Verbs.</returns>
         private static IEnumerable<VerbInfo> FilterVerbsByType(string[] verbs, Type verbType)
         {
-            if (verbs is null)
+            if (verbs is null || verbs.Length == 0)
             {
                 foreach (FieldInfo field in verbType.GetFields())
                 {
@@ -1462,8 +1462,8 @@ namespace System.Management.Automation
                         groups = new string[] { groupParameterValue.ToString() };
                     }
 
-                    else if (groupParameterValueType.IsArray &&
-                             groupParameterValueType.GetElementType() == typeof(object))
+                    else if (groupParameterValueType.IsArray
+                             && groupParameterValueType.GetElementType() == typeof(object))
                     {
                         groups = Array.ConvertAll((object[])groupParameterValue, group => group.ToString());
                     }
