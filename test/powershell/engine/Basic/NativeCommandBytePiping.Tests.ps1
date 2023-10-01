@@ -8,11 +8,6 @@
 Describe 'Native command byte piping tests' -Tags 'CI' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (-not [ExperimentalFeature]::IsEnabled('PSNativeCommandPreserveBytePipe'))
-        {
-            $PSDefaultParameterValues['It:Skip'] = $true
-            return
-        }
 
         # Without this the test would otherwise be hard coded to a specific set
         # of [Console]::OutputEncoding/$OutputEncoding settings.

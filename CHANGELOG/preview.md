@@ -1,5 +1,64 @@
 # Current preview release
 
+## [7.4.0-preview.6] - 2023-09-28
+
+### General Cmdlet Updates and Fixes
+
+- Set approved experimental features to stable for 7.4 release (#20362)
+- Revert changes to continue using `BinaryFormatter` for `Out-GridView` (#20360)
+- Remove the comment trigger from feedback provider (#20346)
+
+### Tests
+
+- Continued improvement to tests for release automation (#20259)
+- Skip the test on x86 as `InstallDate` is not visible on `Wow64` (#20255)
+- Harden some problematic release tests (#20254)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>Move to .NET 8.0.100-rc.1.23463.5</p>
+
+</summary>
+
+<ul>
+<li>Update the regex for package name validation (Internal 27783, 27795)</li>
+<li>Update ThirdPartyNotices.txt (Internal 27772)</li>
+<li>Remove the <code>ref</code> folder before running compliance (#20375)</li>
+<li>Updates RIDs used to generate component Inventory (#20372)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.CSharp</code> from 4.7.0 to 4.8.0-2.final (#20368)</li>
+<li>Fix the release build by moving to the official .NET 8-rc.1 release build version (#20365)</li>
+<li>Update the experimental feature JSON files (#20363)</li>
+<li>Bump <code>XunitXml.TestLogger</code> from 3.1.11 to 3.1.17 (#20364)</li>
+<li>Update <code>Microsoft.PowerShell.PSResourceGet</code> to 0.9.0-rc1 (#20361)</li>
+<li>Update .NET SDK to version 8.0.100-rc.1.23455.8 (#20358)</li>
+<li>Use <code>fxdependent-win-desktop</code> runtime for compliance runs (#20359)</li>
+<li>Add mapping for mariner arm64 stable (#20348)</li>
+<li>Bump <code>xunit.runner.visualstudio</code> from <code>2.5.0</code> to <code>2.5.1</code> (#20357)</li>
+<li>Bump <code>JsonSchema.Net</code> from 5.2.1 to 5.2.5 (#20356)</li>
+<li>Bump <code>Microsoft.NET.Test.Sdk</code> from 17.7.1 to 17.7.2 (#20355)</li>
+<li>Bump Markdig.Signed from 0.32.0 to 0.33.0 (#20354)</li>
+<li>Bump JsonSchema.Net from 5.1.3 to 5.2.1 (#20353)</li>
+<li>Bump actions/checkout from 3 to 4 (#20352)</li>
+<li>Bump <code>Microsoft.NET.Test.Sdk</code> from 17.7.0 to 17.7.1 (#20351)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.CSharp</code> from 4.7.0-2.final to 4.7.0 (#20350)</li>
+<li>Release build: Change the names of the PATs (#20349)</li>
+<li>Put the calls to <code>Set-AzDoProjectInfo</code> and Set-AzDoAuthToken` in the right order (#20347)</li>
+<li>Bump Microsoft.Management.Infrastructure (continued) (#20262)</li>
+<li>Bump <code>Microsoft.Management.Infrastructure</code> to 3.0.0-preview.2 (#20261)</li>
+<li>Enable <code>vPack</code> provenance data (#20260)</li>
+<li>Start using new packages.microsoft.com cli (#20258)</li>
+<li>Add mariner arm64 to PMC release (#20257)</li>
+<li>Fix typo <code>donet</code> to <code>dotnet</code> in build scripts and pipelines (#20256)</li>
+</ul>
+
+</details>
+
+[7.4.0-preview.6]: https://github.com/PowerShell/PowerShell/compare/v7.4.0-preview.5...v7.4.0-preview.6
+
 ## [7.4.0-preview.5] - 2023-08-21
 
 ### Breaking Changes

@@ -1532,4 +1532,15 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
         $result[4] | Should -BeExactly 'ConvertFrom-String'
         $result[5] | Should -BeExactly 'CFS'
     }
+
+    It 'ErrorAction should be used for cmdlet' {
+        try {
+            $out = Invoke-Expression 'get-AppLockerFileInformation NoSuch.exe -ErrorAction Stop; "after"'
+        }
+        catch {
+            # do nothing as we expect an error, but execution should not continue
+        }
+
+        $out | Should -Not -Contain 'after'
+    }
 }
