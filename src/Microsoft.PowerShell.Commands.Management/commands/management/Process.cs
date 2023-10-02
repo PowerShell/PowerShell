@@ -2664,25 +2664,6 @@ namespace Microsoft.PowerShell.Commands
         private const string StartProcessCommandName = "Start-Process";
         private const string FilePathParameterName = "FilePath";
 
-        private readonly Dictionary<string, string[]> fileExtensionVerbMapping = new(StringComparer.OrdinalIgnoreCase)
-        {
-            { ".cmd", new string[] { "Edit", "Open", "Print", "RunAs", "RunAsUser" } },
-            { ".exe", new string[] { "Open", "RunAs", "RunAsUser" } },
-            { ".txt", new string[] { "Open", "Print", "PrintTo" } },
-            { ".wav", new string[] { "Open", "Play" } }
-        };
-
-        private readonly string[] allVerbs = new string[]
-        {
-            "Edit",
-            "Open",
-            "Play",
-            "Print",
-            "PrintTo",
-            "RunAs",
-            "RunAsUser"
-        };
-
         /// <summary>
         /// Returns completion results for verb parameter.
         /// </summary>
@@ -2707,26 +2688,17 @@ namespace Microsoft.PowerShell.Commands
                 string filePath = fakeBoundParameters[FilePathParameterName].ToString();
                 string fileExtension = Path.GetExtension(filePath);
 
-                if (!string.IsNullOrEmpty(fileExtension)
-                    && fileExtensionVerbMapping.TryGetValue(fileExtension, out string[] verbs))
+                if (!string.IsNullOrEmpty(fileExtension))
                 {
-                    foreach (string verb in verbs)
+                    var processInfo = new ProcessStartInfo(filePath);
+
+                    foreach (string verb in processInfo.Verbs)
                     {
                         if (verbPattern.IsMatch(verb))
                         {
                             yield return new CompletionResult(verb);
                         }
                     }
-
-                    yield break;
-                }
-            }
-
-            foreach (string verb in allVerbs)
-            {
-                if (verbPattern.IsMatch(verb))
-                {
-                    yield return new CompletionResult(verb);
                 }
             }
         }
