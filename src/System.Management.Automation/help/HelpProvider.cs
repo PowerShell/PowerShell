@@ -223,10 +223,7 @@ namespace System.Management.Automation
         /// <returns>String representing base directory of the executing shell.</returns>
         internal string GetDefaultShellSearchPath()
         {
-            string shellID = this.HelpSystem.ExecutionContext.ShellID;
-            // Beginning in PowerShell 6.0.0.12, the $pshome is no longer registry specified, we search the application base instead.
-            // We use executing assemblies location in case registry entry not found
-            return Utils.GetApplicationBase(shellID) ?? Path.GetDirectoryName(Environment.ProcessPath);
+            return Utils.GetApplicationBase();
         }
 
         /// <summary>

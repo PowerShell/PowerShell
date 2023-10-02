@@ -478,13 +478,22 @@ namespace System.Management.Automation
         }
 #endif
 
-        internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
+        internal static string DefaultPowerShellAppBase => GetApplicationBase();
 
-        internal static string GetApplicationBase(string shellId)
+        internal static string GetApplicationBase()
         {
-            // Use the location of SMA.dll as the application base.
-            Assembly assembly = typeof(PSObject).Assembly;
-            return Path.GetDirectoryName(assembly.Location);
+            // AppContext is needed where PS7 may be compiled as a single exe
+            // Environment.ProcessPath covers the general case
+            if (!string.IsNullOrEmpty(AppContext.BaseDirectory))
+            {
+                return Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory);
+            }
+            else if (!string.IsNullOrEmpty(Path.GetDirectoryName(typeof(PSObject).Assembly.Location)))
+            {
+                return Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
+            }
+
+            return Path.GetDirectoryName(Environment.ProcessPath);
         }
 
         private static string[] s_productFolderDirectories;

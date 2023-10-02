@@ -7578,7 +7578,7 @@ namespace System.Management.Automation
         {
             var results = new List<CompletionResult>();
             string userHelpDir = HelpUtils.GetUserHomeHelpSearchPath();
-            string appHelpDir = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+            string appHelpDir = Utils.GetApplicationBase();
             string currentCulture = CultureInfo.CurrentCulture.Name;
 
             //search for help files for the current culture + en-US as fallback

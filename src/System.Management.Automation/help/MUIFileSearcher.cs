@@ -254,7 +254,7 @@ namespace System.Management.Automation
             }
 
             // step 3: locate the file in the default PowerShell installation directory.
-            string defaultPSPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+            string defaultPSPath = Utils.GetApplicationBase();
             if (defaultPSPath != null &&
                 !result.Contains(defaultPSPath) &&
                 Directory.Exists(defaultPSPath))
