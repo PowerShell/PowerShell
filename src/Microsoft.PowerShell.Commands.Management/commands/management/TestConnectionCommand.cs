@@ -484,6 +484,9 @@ namespace Microsoft.PowerShell.Commands
                                 reply.Status == IPStatus.Success
                                     ? reply.RoundtripTime
                                     : timer.ElapsedMilliseconds,
+
+                                // If we use the empty buffer, then .NET actually uses a 32 byte buffer so we want to show
+                                // as the result object the actual buffer size used instead of 0.
                                 buffer.Length == 0 ? DefaultSendBufferSize : buffer.Length,
                                 pingNum: i);
                             WriteObject(new TraceStatus(
