@@ -2680,23 +2680,27 @@ namespace Microsoft.PowerShell.Commands
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
-            var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-            if (commandName.Equals(StartProcessCommandName)
-                && fakeBoundParameters.Contains(FilePathParameterName))
+            // -Verb is not supported on non-Windows platforms as well as Windows headless SKUs
+            if (Platform.IsWindowsDesktop)
             {
-                string filePath = fakeBoundParameters[FilePathParameterName].ToString();
-                string fileExtension = Path.GetExtension(filePath);
+                var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
-                if (!string.IsNullOrEmpty(fileExtension))
+                if (commandName.Equals(StartProcessCommandName)
+                    && fakeBoundParameters.Contains(FilePathParameterName))
                 {
-                    var processInfo = new ProcessStartInfo(filePath);
+                    string filePath = fakeBoundParameters[FilePathParameterName].ToString();
+                    string fileExtension = Path.GetExtension(filePath);
 
-                    foreach (string verb in processInfo.Verbs)
+                    if (!string.IsNullOrEmpty(fileExtension))
                     {
-                        if (verbPattern.IsMatch(verb))
+                        var processInfo = new ProcessStartInfo(filePath);
+
+                        foreach (string verb in processInfo.Verbs)
                         {
-                            yield return new CompletionResult(verb);
+                            if (verbPattern.IsMatch(verb))
+                            {
+                                yield return new CompletionResult(verb);
+                            }
                         }
                     }
                 }

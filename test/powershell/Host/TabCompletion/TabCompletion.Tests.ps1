@@ -744,24 +744,29 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
     }
 
-    Context 'Start-Process -Verb parameter completion' {
+    Context 'Verb parameter completion' {
         BeforeAll {
-            $cmdVerbs = 'edit', 'open', 'print', 'runas', 'runasuser'
-            $exeVerbs = 'open', 'runas', 'runasuser'
-            $exeVerbsStartingWithRun = 'runas', 'runasuser'
-            $txtVerbs = 'open', 'print', 'printto'
-            $wavVerbs = 'Enqueue', 'open', 'Play'
-            $docxVerbs = 'open', 'print', 'printto'
+            $testCmdPath = Join-Path -Path $TestDrive -ChildPath 'test.cmd'
+            $testCmdVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testCmdPath).Verbs
+            $testExePath = Join-Path -Path $TestDrive -ChildPath 'test.exe'
+            $testExeVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testExePath).Verbs
+            $testExeVerbsStartingWithRun = $testExeVerbs | Where-Object { $_ -like 'run*' }
+            $testTxtPath = Join-Path -Path $TestDrive -ChildPath 'test.txt'
+            $testTxtVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testTxtPath).Verbs
+            $testWavPath = Join-Path -Path $TestDrive -ChildPath 'test.wav'
+            $testWavVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testWavPath).Verbs
+            $testDocxPath = Join-Path -Path $TestDrive -ChildPath 'test.docx'
+            $testDocxVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testDocxPath).Verbs
         }
 
-        It "Should complete Verb parameter for '<TextInput>'" -Skip:(!$IsWindows) -TestCases @(
+        It "Should complete Verb parameter for '<TextInput>'" -Skip:(!([System.Management.Automation.Platform]::IsWindowsDesktop)) -TestCases @(
             @{ TextInput = 'Start-Process -Verb '; ExpectedVerbs = @() }
-            @{ TextInput = 'Start-Process -FilePath npm.cmd -Verb '; ExpectedVerbs = $cmdVerbs }
-            @{ TextInput = 'Start-Process -FilePath powershell.exe -Verb '; ExpectedVerbs = $exeVerbs }
-            @{ TextInput = 'Start-Process -FilePath powershell.exe -Verb run'; ExpectedVerbs = $exeVerbsStartingWithRun }
-            @{ TextInput = 'Start-Process -FilePath LICENSE.txt -Verb '; ExpectedVerbs = $txtVerbs }
-            @{ TextInput = 'Start-Process -FilePath Empty.wav -Verb '; ExpectedVerbs = $wavVerbs }
-            @{ TextInput = 'Start-Process -FilePath README.docx -Verb '; ExpectedVerbs = $docxVerbs }
+            @{ TextInput = "Start-Process -FilePath $testCmdPath -Verb "; ExpectedVerbs =  $testCmdVerbs }
+            @{ TextInput = "Start-Process -FilePath $testExePath -Verb "; ExpectedVerbs = $testExeVerbs }
+            @{ TextInput = "Start-Process -FilePath $testExePath -Verb run"; ExpectedVerbs = $testExeVerbsStartingWithRun }
+            @{ TextInput = "Start-Process -FilePath $testTxtPath -Verb "; ExpectedVerbs = $testTxtVerbs }
+            @{ TextInput = "Start-Process -FilePath $testWavPath -Verb "; ExpectedVerbs = $testWavVerbs }
+            @{ TextInput = "Start-Process -FilePath $testDocxPath -Verb "; ExpectedVerbs = $testDocxVerbs }
             @{ TextInput = 'Start-Process -FilePath FileWithoutExtension -Verb '; ExpectedVerbs = @() }
         ) {
             param($TextInput, $ExpectedVerbs)
