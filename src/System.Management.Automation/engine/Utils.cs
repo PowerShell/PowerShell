@@ -482,7 +482,18 @@ namespace System.Management.Automation
 
         internal static string GetApplicationBase()
         {
-            return AppContext.BaseDirectory ?? Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
+            // AppContext is needed where PS7 may be compiled as a single exe
+            // Environment.ProcessPath covers the general case
+            if (!string.IsNullOrEmpty(AppContext.BaseDirectory))
+            {
+                return Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory);
+            }
+            else if (!string.IsNullOrEmpty(Path.GetDirectoryName(typeof(PSObject).Assembly.Location)))
+            {
+                return Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
+            }
+
+            return Path.GetDirectoryName(Environment.ProcessPath);
         }
 
         private static string[] s_productFolderDirectories;
