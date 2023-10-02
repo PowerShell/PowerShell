@@ -369,6 +369,7 @@ configuration:
       - removeLabel:
           label: Waiting on Author
       description: Automatically commenting for feedback when an issue is closed
+      triggerOnOwnActions: true
     - if: 
         - isAction: 
             action: Closed
