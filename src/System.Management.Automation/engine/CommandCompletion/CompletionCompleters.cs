@@ -4635,7 +4635,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        int stringStartIndex = pathInfo.Drive.Root.EndsWith(provider.ItemSeparator)
+                        int stringStartIndex = pathInfo.Drive.Root.EndsWith(provider.ItemSeparator) && pathInfo.Drive.Root.Length > 1
                             ? pathInfo.Drive.Root.Length - 1
                             : pathInfo.Drive.Root.Length;
 
