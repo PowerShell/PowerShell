@@ -35,6 +35,12 @@
   <?define ExplorerContextSubMenuElevatedDialogText = "Open here as &Administrator"?>
   <!-- ps1 context submenu entries. -->
   <?define PowerShellFileContextSubMenuDialogText = "Run with $(var.ProductName) $(var.SimpleProductVersion)"?>
+  <!-- Registry location to save installer properties. -->
+  <?if $(var.IsPreview)=True?>
+    <?define InstallerPropertiesKey = "Software\Microsoft\PowerShellCore\PreviewInstallerProperties"?>
+  <?else?>
+    <?define InstallerPropertiesKey = "Software\Microsoft\PowerShellCore\InstallerProperties"?>
+  <?endif?>
   <Product
     Id="*"
     Name="PowerShell $(var.SimpleProductVersion)-$(sys.BUILDARCH)"
@@ -61,6 +67,172 @@
     <!-- This changes the default setting from "reinstall if the file is a newer version" to "reinstall if the file is a different version" -->
     <Property Id="REINSTALLMODE" Value="dmus"/>
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+
+    <!-- Property Initialization -->
+
+    <!--
+    Each property below will undergo the following steps in the
+    initial sequence (`InstallUISequence` if the UI is shown
+    or `InstallExecuteSequence` if the UI is skipped):
+
+      1. Load the value that was used in the previous installation into a separate property.
+
+      2. `..._SetFromSaved`: If the property does not have a value (meaning it
+         was not specified on the command line) and there is a value from the
+         previous installation, use the value from the previous installation.
+
+      3. `..._SetDefault`: If the property does not have a value (meaning it was not specified 
+         on the command line _and_ there wasn't a value from a previous installation), and
+         the property has a default value, then set the property to the default value.
+
+      4. `..._DeleteIfOff`: For "boolean" properties, if the property value is not `1`, then delete
+         the property. This needs to be done so that the checkbox in the UI is not initially checked. 
+         If the property exists, the checkbox will be initially checked regardless of the property value.
+
+    Then in the `InstallExecuteSequence`:
+
+      1. `..._SetToOffIfMissing`: For boolean properties, if the property does not exist, it is set
+         to `0`. This ensures that the property value that is saved to the registry is not blank.
+         If blank values are saved to the registry, then the `..._SetFromSaved` step won't run because
+         a blank property value is indistinguishable from a property value that does not exist.
+
+    When using "boolean" properties, always check if the property value is equal `1`, instead 
+    of just checking if the property exists. For example, use `FOO=1` instead of just `FOO`.
+    -->
+
+    <!-- Property: INSTALLFOLDER -->
+    <Property Id="PREVIOUS_INSTALLFOLDER">
+      <RegistrySearch Id="GetSavedInstallFolder" Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="InstallFolder" Type="raw" />
+    </Property>
+    <SetProperty Id="INSTALLFOLDER" Action="InstallFolder_SetFromSaved" After="AppSearch" Value="[PREVIOUS_INSTALLFOLDER]" Sequence="first">
+      not INSTALLFOLDER and PREVIOUS_INSTALLFOLDER
+    </SetProperty>
+
+    <!-- Property: ADD_PATH -->
+    <Property Id="PREVIOUS_ADD_PATH">
+      <RegistrySearch Id="GetSavedAddToPath" Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="AddToPath" Type="raw" />
+    </Property>
+    <SetProperty Id="ADD_PATH" Action="AddToPath_SetFromSaved" After="AppSearch" Value="[PREVIOUS_ADD_PATH]" Sequence="first">
+      not ADD_PATH and PREVIOUS_ADD_PATH
+    </SetProperty>
+    <SetProperty Id="ADD_PATH" Action="AddToPath_SetDefault" After="AddToPath_SetFromSaved" Value="1" Sequence="first">
+      not ADD_PATH
+    </SetProperty>
+    <SetProperty Id="ADD_PATH" Action="AddToPath_DeleteIfOff" After="AddToPath_SetDefault" Value="{}" Sequence="first">
+      ADD_PATH&lt;&gt;1
+    </SetProperty>
+    <SetProperty Id="ADD_PATH" Action="AddToPath_SetToOffIfMissing" Before="InstallInitialize" Value="0" Sequence="execute">
+      not ADD_PATH
+    </SetProperty>
+
+    <!-- Property: REGISTER_MANIFEST -->
+    <Property Id="PREVIOUS_REGISTER_MANIFEST">
+      <RegistrySearch Id="GetSavedRegisterManifest" Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="RegisterManifest" Type="raw" />
+    </Property>
+    <SetProperty Id="REGISTER_MANIFEST" Action="RegisterManifest_SetFromSaved" After="AppSearch" Value="[PREVIOUS_REGISTER_MANIFEST]" Sequence="first">
+      not REGISTER_MANIFEST and PREVIOUS_REGISTER_MANIFEST
+    </SetProperty>
+    <SetProperty Id="REGISTER_MANIFEST" Action="RegisterManifest_SetDefault" After="RegisterManifest_SetFromSaved" Value="1" Sequence="first">
+      not REGISTER_MANIFEST
+    </SetProperty>
+    <SetProperty Id="REGISTER_MANIFEST" Action="RegisterManifest_DeleteIfOff" After="RegisterManifest_SetDefault" Value="{}" Sequence="first">
+      REGISTER_MANIFEST&lt;&gt;1
+    </SetProperty>
+    <SetProperty Id="REGISTER_MANIFEST" Action="RegisterManifest_SetToOffIfMissing" Before="InstallInitialize" Value="0" Sequence="execute">
+      not REGISTER_MANIFEST
+    </SetProperty>
+
+    <!-- Property: ENABLE_PSREMOTING -->
+    <Property Id="PREVIOUS_ENABLE_PSREMOTING">
+      <RegistrySearch Id="GetSavedEnablePsRemoting" Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="EnablePsRemoting" Type="raw" />
+    </Property>
+    <SetProperty Id="ENABLE_PSREMOTING" Action="EnablePsRemoting_SetFromSaved" After="AppSearch" Value="[PREVIOUS_ENABLE_PSREMOTING]" Sequence="first">
+      not ENABLE_PSREMOTING and PREVIOUS_ENABLE_PSREMOTING
+    </SetProperty>
+    <SetProperty Id="ENABLE_PSREMOTING" Action="EnablePsRemoting_DeleteIfOff" After="EnablePsRemoting_SetFromSaved" Value="{}" Sequence="first">
+      ENABLE_PSREMOTING&lt;&gt;1
+    </SetProperty> 
+    <SetProperty Id="ENABLE_PSREMOTING" Action="EnablePsRemoting_SetToOffIfMissing" Before="InstallInitialize" Value="0" Sequence="execute">
+      not ENABLE_PSREMOTING
+    </SetProperty>
+
+    <!-- Property: DISABLE_TELEMETRY -->
+    <Property Id="PREVIOUS_DISABLE_TELEMETRY">
+      <RegistrySearch Id="GetSavedDisableTelemetry" Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="DisableTelemetry" Type="raw" />
+    </Property>
+    <SetProperty Id="DISABLE_TELEMETRY" Action="DisableTelemetry_SetFromSaved" After="AppSearch" Value="[PREVIOUS_DISABLE_TELEMETRY]" Sequence="first">
+      not DISABLE_TELEMETRY and PREVIOUS_DISABLE_TELEMETRY
+    </SetProperty>
+    <SetProperty Id="DISABLE_TELEMETRY" Action="DisableTelemetry_DeleteIfOff" After="DisableTelemetry_SetFromSaved" Value="{}" Sequence="first">
+      DISABLE_TELEMETRY&lt;&gt;1
+    </SetProperty>
+    <SetProperty Id="DISABLE_TELEMETRY" Action="DisableTelemetry_SetToOffIfMissing" Before="InstallInitialize" Value="0" Sequence="execute">
+      not DISABLE_TELEMETRY
+    </SetProperty>
+
+    <!-- Property: ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL -->
+    <Property Id="PREVIOUS_ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL">
+      <RegistrySearch Id="GetSavedAddExplorerContextMenuOpenPowerShell" Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="AddExplorerContextMenuOpenPowerShell" Type="raw" />
+    </Property>
+    <SetProperty Id="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" Action="AddExplorerContextMenuOpenPowerShell_SetFromSaved" After="AppSearch" Value="[PREVIOUS_ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL]" Sequence="first">
+      not ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL and PREVIOUS_ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL
+    </SetProperty>
+    <SetProperty Id="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" Action="AddExplorerContextMenuOpenPowerShell_DeleteIfOff" After="AddExplorerContextMenuOpenPowerShell_SetFromSaved" Value="{}" Sequence="first">
+      ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL&lt;&gt;1
+    </SetProperty>
+    <SetProperty Id="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" Action="AddExplorerContextMenuOpenPowerShell_SetToOffIfMissing" Before="InstallInitialize" Value="0" Sequence="execute">
+      not ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL
+    </SetProperty>
+
+    <!-- Property: ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL -->
+    <Property Id="PREVIOUS_ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL">
+      <RegistrySearch Id="GetSavedAddFileContextMenuRunPowerShell" Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="AddFileContextMenuRunPowerShell" Type="raw" />
+    </Property>
+    <SetProperty Id="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" Action="AddFileContextMenuRunPowerShell_SetFromSaved" After="AppSearch" Value="[PREVIOUS_ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL]" Sequence="first">
+      not ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL and PREVIOUS_ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL
+    </SetProperty>
+    <SetProperty Id="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" Action="AddFileContextMenuRunPowerShell_DeleteIfOff" After="AddFileContextMenuRunPowerShell_SetFromSaved" Value="{}" Sequence="first">
+      ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL&lt;&gt;1
+    </SetProperty>
+    <SetProperty Id="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" Action="AddFileContextMenuRunPowerShell_SetToOffIfMissing" Before="InstallInitialize" Value="0" Sequence="execute">
+      not ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL
+    </SetProperty>
+
+    <!-- Property: USE_MU -->
+    <Property Id="PREVIOUS_USE_MU">
+      <RegistrySearch Id="GetSavedUseMU" Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="UseMU" Type="raw" />
+    </Property>
+    <SetProperty Id="USE_MU" Action="UseMU_SetFromSaved" After="AppSearch" Value="[PREVIOUS_USE_MU]" Sequence="first">
+      not USE_MU and PREVIOUS_USE_MU
+    </SetProperty>
+    <SetProperty Id="USE_MU" Action="UseMU_SetDefault" After="UseMU_SetFromSaved" Value="1" Sequence="first">
+      not USE_MU
+    </SetProperty>
+    <SetProperty Id="USE_MU" Action="UseMU_DeleteIfOff" After="UseMU_SetDefault" Value="{}" Sequence="first">
+      USE_MU&lt;&gt;1
+    </SetProperty>
+    <SetProperty Id="USE_MU" Action="UseMU_SetToOffIfMissing" Before="InstallInitialize" Value="0" Sequence="execute">
+      not USE_MU
+    </SetProperty>
+
+    <!-- Property: ENABLE_MU -->
+    <Property Id="PREVIOUS_ENABLE_MU">
+      <RegistrySearch Id="GetSavedEnableMU" Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="EnableMU" Type="raw" />
+    </Property>
+    <SetProperty Id="ENABLE_MU" Action="EnableMU_SetFromSaved" After="AppSearch" Value="[PREVIOUS_ENABLE_MU]" Sequence="first">
+      not ENABLE_MU and PREVIOUS_ENABLE_MU
+    </SetProperty>
+    <SetProperty Id="ENABLE_MU" Action="EnableMU_SetDefault" After="EnableMU_SetFromSaved" Value="1" Sequence="first">
+      not ENABLE_MU
+    </SetProperty>
+    <SetProperty Id="ENABLE_MU" Action="EnableMU_DeleteIfOff" After="EnableMU_SetDefault" Value="{}" Sequence="first">
+      ENABLE_MU&lt;&gt;1
+    </SetProperty>
+    <SetProperty Id="ENABLE_MU" Action="EnableMU_SetToOffIfMissing" Before="InstallInitialize" Value="0" Sequence="execute">
+      not ENABLE_MU
+    </SetProperty>
+
+    <!-- End Property Initialization -->
 
     <SetProperty Id="RegisterManifest"
                  Before="RegisterManifest"
@@ -157,6 +329,7 @@
       <ComponentRef Id="DisableTelemetry"/>
       <ComponentRef Id="ExplorerContextMenu"/>
       <ComponentRef Id="PowerShellFileContextMenu"/>
+      <ComponentRef Id="SaveInstallerProperties"/>
     </Feature>
     <!-- We need to show EULA, and provide option to customize download location -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
@@ -217,7 +390,7 @@
               </RegistryKey>
             </Component>
             <Component Id="DisableTelemetry" Guid="{E86F5C91-3721-4C5C-A31F-1F0A5A468573}" KeyPath="yes">
-              <Condition>DISABLE_TELEMETRY</Condition>
+              <Condition>DISABLE_TELEMETRY=1</Condition>
               <Environment Id="PowerShellTelemetryOptout" Action="set" Name="POWERSHELL_TELEMETRY_OPTOUT" Permanent="no" System="yes" Value="1"/>
             </Component>
             <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
@@ -232,7 +405,7 @@
             <!-- Explorer context menu with 2 submenus to open PowerShell normally or as an Administrator.
                  See https://blogs.msdn.microsoft.com/andrew_richards/2017/03/01/enhancing-the-open-command-prompt-here-shift-right-click-context-menu-experience/ for details -->
             <Component Id="ExplorerContextMenu">
-              <Condition>ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL</Condition>
+              <Condition>ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1</Condition>
               <!-- When clicking on background in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\Background\shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
@@ -282,7 +455,7 @@
               <RemoveRegistryKey Id="RemoveOldOpenKey" Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\open" Action="removeOnInstall"/>
             </Component>
             <Component Id="PowerShellFileContextMenu">
-              <Condition>ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL</Condition>
+              <Condition>ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL=1</Condition>
               <!-- When right-clicking ps1 file -->
               <RegistryKey Root="HKCR" Key="Microsoft.PowerShellScript.1\Shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.PowerShellFileContextSubMenuDialogText)"/>
@@ -291,6 +464,17 @@
                   <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe -Command &quot;$host.UI.RawUI.WindowTitle = '$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))'; &amp; '%1'&quot;"/>
                 </RegistryKey>
               </RegistryKey>
+            </Component>
+            <Component Id="SaveInstallerProperties" Permanent="yes">
+              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="InstallFolder" Value="[INSTALLFOLDER]" Type="string" />
+              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="AddToPath" Value="[ADD_PATH]" Type="string" />
+              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="RegisterManifest" Value="[REGISTER_MANIFEST]" Type="string" />
+              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="EnablePSRemoting" Value="[ENABLE_PSREMOTING]" Type="string" />
+              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="DisableTelemetry" Value="[DISABLE_TELEMETRY]" Type="string" />
+              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="ContextMenuOpenPowerShell" Value="[ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL]" Type="string" />
+              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="ContextMenuRunPowerShell" Value="[ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL]" Type="string" />
+              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="UseMU" Value="[USE_MU]" Type="string" />
+              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="EnableMU" Value="[ENABLE_MU]" Type="string" />
             </Component>
           </Directory>
         </Directory>
@@ -315,8 +499,6 @@
 <!-- Explorer Context Menu Dialog -->
 <Fragment>
  <UI>
-    <Property Id="REGISTER_MANIFEST" Value="1" />
-    <Property Id="ADD_PATH" Value="1" />
     <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
       <!-- Banner -->
       <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="!(loc.InstallDirDlgBannerBitmap)"/>
@@ -324,12 +506,12 @@
       <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Initialization and Customization" TabSkip="yes" />
       <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" TabSkip="yes" />
       <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
-      <Control Id="AddToPathCheckBox" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="ADD_PATH" CheckBoxValue="0" Text="Add $(var.ProductName) to Path Environment Variable"/>
-      <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
-      <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
-      <Control Id="DisableTelemetry" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="DISABLE_TELEMETRY" CheckBoxValue="0" Text="Disable Telemetry (Reboot or Restart of processes may be required)" ToolTip="Sets environment variable POWERSHELL_TELEMETRY_OPTOUT to 1, see https://go.microsoft.com/fwlink/?linkid=2242006"/>
-      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="140" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
-      <Control Id="ContextMenuRunPowerShell" Type="CheckBox" X="20" Y="160" Width="290" Height="17" Property="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.PowerShellFileContextSubMenuDialogText)' context menu for PowerShell files"/>
+      <Control Id="AddToPathCheckBox" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="ADD_PATH" CheckBoxValue="1" Text="Add $(var.ProductName) to Path Environment Variable"/>
+      <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="1" Text="Register Windows Event Logging Manifest"/>
+      <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="1" Text="Enable $(var.ProductName) remoting"/>
+      <Control Id="DisableTelemetry" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="DISABLE_TELEMETRY" CheckBoxValue="1" Text="Disable Telemetry (Reboot or Restart of processes may be required)" ToolTip="Sets environment variable POWERSHELL_TELEMETRY_OPTOUT to 1, see https://go.microsoft.com/fwlink/?linkid=2242006"/>
+      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="140" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="1" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
+      <Control Id="ContextMenuRunPowerShell" Type="CheckBox" X="20" Y="160" Width="290" Height="17" Property="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" CheckBoxValue="1" Text="Add '$(var.PowerShellFileContextSubMenuDialogText)' context menu for PowerShell files"/>
       <Control Id="LicenseLink" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
         <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt">The application is distributed under the MIT license.</a>]]></Text>
       </Control>
@@ -350,8 +532,6 @@
 <!-- Microsoft Update Menu Dialog -->
 <Fragment>
  <UI>
-    <Property Id="USE_MU" Value="1" />
-    <Property Id="ENABLE_MU" Value="1" />
     <Dialog Id="MuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
       <!-- Banner -->
       <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="!(loc.InstallDirDlgBannerBitmap)"/>
