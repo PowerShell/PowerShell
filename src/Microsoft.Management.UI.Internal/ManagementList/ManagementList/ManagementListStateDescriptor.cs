@@ -15,8 +15,8 @@ namespace Microsoft.Management.UI.Internal
     /// <summary>
     /// Allows the state of the ManagementList to be saved and restored.
     /// </summary>
-    [Serializable]
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class ManagementListStateDescriptor : StateDescriptor<ManagementList>
     {
         #region Fields
@@ -63,10 +63,7 @@ namespace Microsoft.Management.UI.Internal
         /// </exception>
         public override void SaveState(ManagementList subject)
         {
-            if (subject == null)
-            {
-                throw new ArgumentNullException("subject");
-            }
+            ArgumentNullException.ThrowIfNull(subject);
 
             this.SaveColumns(subject);
             this.SaveSortOrder(subject);
@@ -100,10 +97,7 @@ namespace Microsoft.Management.UI.Internal
         /// </exception>
         public void RestoreState(ManagementList subject, bool applyRestoredFilter)
         {
-            if (subject == null)
-            {
-                throw new ArgumentNullException("subject");
-            }
+            ArgumentNullException.ThrowIfNull(subject);
 
             // Clear the sort, otherwise restoring columns and filters may trigger extra sorting \\
             subject.List.ClearSort();
@@ -471,7 +465,6 @@ namespace Microsoft.Management.UI.Internal
 
         #region Helper Classes
 
-        [Serializable]
         internal class ColumnStateDescriptor
         {
             private int index;
@@ -516,7 +509,6 @@ namespace Microsoft.Management.UI.Internal
             }
         }
 
-        [Serializable]
         internal class RuleStateDescriptor
         {
             /// <summary>

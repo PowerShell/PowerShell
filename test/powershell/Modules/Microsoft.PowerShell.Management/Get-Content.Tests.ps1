@@ -72,6 +72,14 @@ Describe "Get-Content" -Tags "CI" {
         Get-Content -Path $testPath2 -Last 1 | Should -BeExactly $fifthline
     }
 
+    It 'Verifies -TotalCount reports a ParameterArgumentValidationError error for negative values' {
+        {Get-Content -Path $testPath2 -TotalCount -2} | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetContentCommand'
+    }
+
+    It 'Verifies -Tail reports a ParameterArgumentValidationError error for negative values' {
+        {Get-Content -Path $testPath2 -Tail -2} | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetContentCommand'
+    }
+
     It "Should be able to get content within a different drive" {
         Push-Location env:
         $expectedoutput = [Environment]::GetEnvironmentVariable("PATH");
@@ -104,7 +112,8 @@ Describe "Get-Content" -Tags "CI" {
         @{EncodingName = 'UTF8NoBOM'},
         @{EncodingName = 'UTF7'},
         @{EncodingName = 'UTF32'},
-        @{EncodingName = 'Ascii'}
+        @{EncodingName = 'Ascii'},
+        @{EncodingName = 'ANSI'}
         ){
         param($EncodingName)
 
@@ -114,7 +123,7 @@ Describe "Get-Content" -Tags "CI" {
               @('𐍈1','𐍈𐍈2','𐍈𐍈𐍈3','𐍈𐍈𐍈𐍈4','𐍈𐍈𐍈𐍈𐍈5')) # utf-32
         ForEach ($content in $contentSets)
         {
-            $tailCount = 3
+            $tailCount = 4
             $testPath = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
             $content | Set-Content -Path $testPath -Encoding $EncodingName
 
@@ -221,7 +230,7 @@ Describe "Get-Content" -Tags "CI" {
         $expected = 'He', 'o,', '', 'Wor', "d${nl}He", 'o2,', '', 'Wor', "d2${nl}"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]    | Should -BeExactly $expected[$i]}
     }
-    
+
     Context "Alternate Data Stream support on Windows" {
         It "Should support NTFS streams using colon syntax" -Skip:(!$IsWindows) {
             Set-Content "${testPath}:Stream" -Value "Foo"
@@ -268,6 +277,10 @@ Describe "Get-Content" -Tags "CI" {
 
     It "Should return no content when -TotalCount value is 0" {
         Get-Content -Path $testPath -TotalCount 0 | Should -BeNullOrEmpty
+    }
+
+    It "Should return no content when -Tail value is 0" {
+        Get-Content -Path $testPath -Tail 0 | Should -BeNullOrEmpty
     }
 
     It "Should throw TailAndHeadCannotCoexist when both -Tail and -TotalCount are used" {

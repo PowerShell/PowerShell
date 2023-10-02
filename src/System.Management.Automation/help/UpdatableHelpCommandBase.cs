@@ -60,7 +60,11 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null) return;
+                if (value == null)
+                {
+                    return;
+                }
+
                 _language = new string[value.Length];
                 for (int index = 0; index < value.Length; index++)
                 {
@@ -74,8 +78,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the credential parameter.
         /// </summary>
-        [Parameter()]
-        [Credential()]
+        [Parameter]
+        [Credential]
         public PSCredential Credential
         {
             get { return _credential; }
@@ -206,9 +210,7 @@ namespace Microsoft.PowerShell.Commands
             _exceptions = new Dictionary<string, UpdatableHelpExceptionContext>();
             _helpSystem.OnProgressChanged += HandleProgressChanged;
 
-            Random rand = new Random();
-
-            activityId = rand.Next();
+            activityId = Random.Shared.Next();
         }
 
         #endregion
@@ -443,7 +445,10 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="modules">Module objects given by the user.</param>
         internal void Process(IEnumerable<PSModuleInfo> modules)
         {
-            if (modules == null || !modules.Any()) { return; }
+            if (modules == null || !modules.Any())
+            {
+                return;
+            }
 
             var helpModules = new Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo>();
 
@@ -550,7 +555,8 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 catch (UpdatableHelpSystemException e)
                 {
-                    if (e.FullyQualifiedErrorId == "HelpCultureNotSupported")
+                    if (e.FullyQualifiedErrorId == "HelpCultureNotSupported"
+                            || e.FullyQualifiedErrorId == "UnableToRetrieveHelpInfoXml")
                     {
                         installed = false;
 
@@ -665,7 +671,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Culture check
-            if (!newHelpInfo.IsCultureSupported(culture))
+            if (!newHelpInfo.IsCultureSupported(culture.Name))
             {
                 throw new UpdatableHelpSystemException("HelpCultureNotSupported",
                     StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupported,
@@ -791,7 +797,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path">Path to resolve.</param>
         /// <returns>A list of directories.</returns>
-        private IEnumerable<string> RecursiveResolvePathHelper(string path)
+        private static IEnumerable<string> RecursiveResolvePathHelper(string path)
         {
             if (System.IO.Directory.Exists(path))
             {
@@ -899,6 +905,7 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// Save the help content to the user directory.
+        /// </summary>
         CurrentUser,
 
         /// <summary>

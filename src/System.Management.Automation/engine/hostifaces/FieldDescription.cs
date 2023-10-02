@@ -165,7 +165,7 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// A short, human-presentable message to describe and identify the field.  If supplied, a typical implementation of
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/> will use this value instead of
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/> will use this value instead of
         /// the field name to identify the field to the user.
         /// </summary>
         /// <exception cref="System.Management.Automation.PSArgumentNullException">
@@ -174,9 +174,9 @@ namespace System.Management.Automation.Host
         /// <remarks>
         /// Note that the special character &amp; (ampersand) may be embedded in the label string to identify the next
         /// character in the label as a "hot key" (aka "keyboard accelerator") that the
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/> implementation may use
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/> implementation may use
         /// to allow the user to quickly set input focus to this field.  The implementation of
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/> is responsible for parsing
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/> is responsible for parsing
         /// the label string for this special character and rendering it accordingly.
         ///
         /// For example, a field named "SSN" might have "&amp;Social Security Number" as it's label.
@@ -256,15 +256,15 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Gets and sets the default value, if any, for the implementation of <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
+        /// Gets and sets the default value, if any, for the implementation of <see cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         /// to pre-populate its UI with. This is a PSObject instance so that the value can be serialized, converted,
         /// manipulated like any pipeline object.
         /// </summary>
-        ///<remarks>
-        /// It is up to the implementer of <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/> to decide if it
+        /// <remarks>
+        /// It is up to the implementer of <see cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/> to decide if it
         /// can make use of the object in its presentation of the fields prompt.
         ///
-        ///</remarks>
+        /// </remarks>
         public
         PSObject
         DefaultValue
@@ -283,7 +283,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Gets the Attribute classes that apply to the field. In the case that <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
+        /// Gets the Attribute classes that apply to the field. In the case that <see cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         /// is being called from the engine, this will contain the set of prompting attributes that are attached to a
         /// cmdlet parameter declaration.
         /// </summary>

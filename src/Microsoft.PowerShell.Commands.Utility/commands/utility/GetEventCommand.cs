@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
         /// An identifier for this event subscription.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true, ParameterSetName = "BySource")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string SourceIdentifier
         {
             get

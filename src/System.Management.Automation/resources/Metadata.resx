@@ -258,4 +258,10 @@
   <data name="ValidateTrustedDataFailure" xml:space="preserve">
     <value>Cannot process input. The argument "{0}" is not trusted.</value>
   </data>
+  <data name="WDACParameterArgNotTrustedLogTitle" xml:space="preserve">
+    <value>ValidateTrustedData Attribute Check Failure</value>
+  </data>
+  <data name="WDACParameterArgNotTrustedMessage" xml:space="preserve">
+    <value>The parameter argument '{0}' is not trusted and will fail the ValidateTrustedData parameter attribute check in Constrained Language mode.</value>
+  </data>
 </root>

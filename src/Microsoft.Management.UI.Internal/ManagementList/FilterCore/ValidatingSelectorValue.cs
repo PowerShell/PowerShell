@@ -16,8 +16,8 @@ namespace Microsoft.Management.UI.Internal
     /// <typeparam name="T">
     /// The generic parameter.
     /// </typeparam>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class ValidatingSelectorValue<T> : ValidatingValueBase
     {
         #region Properties
@@ -131,11 +131,6 @@ namespace Microsoft.Management.UI.Internal
 
             set
             {
-                if (value != null && !value.GetType().IsSerializable)
-                {
-                    throw new ArgumentException("The DisplayNameConverter must be serializable.", "value");
-                }
-
                 this.displayNameConverter = value;
             }
         }
@@ -188,7 +183,7 @@ namespace Microsoft.Management.UI.Internal
         {
             if (!columnName.Equals(SelectedIndexPropertyName, StringComparison.CurrentCulture))
             {
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "{0} is not a valid column name.", columnName), "columnName");
+                throw new ArgumentException(string.Create(CultureInfo.CurrentCulture, $"{columnName} is not a valid column name."), "columnName");
             }
 
             if (!this.IsIndexWithinBounds(this.SelectedIndex))

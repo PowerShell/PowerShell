@@ -138,8 +138,8 @@
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation.</Copyright>
 
-    <TargetFramework>net7.0</TargetFramework>
-    <LangVersion>10.0</LangVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>11.0</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -183,14 +183,6 @@
     <Optimize>true</Optimize>
     <!-- This is required to be full for compliance tools !-->
     <DebugType>full</DebugType>
-  </PropertyGroup>
-
-  <!-- Define non-windows, release configuration properties -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' != 'true' ">
-    <!-- Set-Date fails with optimize enabled in NonWindowsSetDate
-         Debugging the issues resolves the problem
-     -->
-    <Optimize>false</Optimize>
   </PropertyGroup>
 
   <PropertyGroup>

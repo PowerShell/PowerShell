@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    WriteDebug(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
+                    WriteDebug(string.Create(CultureInfo.InvariantCulture, $"Invalid parameter set name: {ParameterSetName}"));
                     break;
             }
         }
@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string log in _providersByLogMap.Keys)
                     {
                         logQuery = new EventLogQuery(log, PathType.LogName, AddProviderPredicatesToFilter(_providersByLogMap[log]));
-                        WriteVerbose(string.Format(CultureInfo.InvariantCulture, "Log {0} will be queried", log));
+                        WriteVerbose(string.Create(CultureInfo.InvariantCulture, $"Log {log} will be queried"));
                     }
                 }
 
@@ -680,7 +680,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string resolvedPath in resolvedPaths)
                     {
                         _resolvedPaths.Add(resolvedPath);
-                        WriteVerbose(string.Format(CultureInfo.InvariantCulture, "Found file {0}", resolvedPath));
+                        WriteVerbose(string.Create(CultureInfo.InvariantCulture, $"Found file {resolvedPath}"));
                     }
                 }
 
@@ -908,7 +908,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    WriteDebug(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
+                    WriteDebug(string.Create(CultureInfo.InvariantCulture, $"Invalid parameter set name: {ParameterSetName}"));
                     break;
             }
 
@@ -1187,8 +1187,7 @@ namespace Microsoft.PowerShell.Commands
                 //
                 // Build xpath for <Suppress>
                 //
-                Hashtable suppresshash = hash[hashkey_supress_lc] as Hashtable;
-                if (suppresshash != null)
+                if (hash[hashkey_supress_lc] is Hashtable suppresshash)
                 {
                     xpathStringSuppress = BuildXPathFromHashTable(suppresshash);
                 }
@@ -1255,8 +1254,7 @@ namespace Microsoft.PowerShell.Commands
         private static string HandleEventIdHashValue(object value)
         {
             StringBuilder ret = new();
-            Array idsArray = value as Array;
-            if (idsArray != null)
+            if (value is Array idsArray)
             {
                 ret.Append('(');
                 for (int i = 0; i < idsArray.Length; i++)
@@ -1285,8 +1283,7 @@ namespace Microsoft.PowerShell.Commands
         private static string HandleLevelHashValue(object value)
         {
             StringBuilder ret = new();
-            Array levelsArray = value as Array;
-            if (levelsArray != null)
+            if (value is Array levelsArray)
             {
                 ret.Append('(');
                 for (int i = 0; i < levelsArray.Length; i++)
@@ -1317,8 +1314,7 @@ namespace Microsoft.PowerShell.Commands
             long keywordsMask = 0;
             long keywordLong = 0;
 
-            Array keywordArray = value as Array;
-            if (keywordArray != null)
+            if (value is Array keywordArray)
             {
                 foreach (object keyword in keywordArray)
                 {
@@ -1473,8 +1469,7 @@ namespace Microsoft.PowerShell.Commands
         private static string HandleDataHashValue(object value)
         {
             StringBuilder ret = new();
-            Array dataArray = value as Array;
-            if (dataArray != null)
+            if (value is Array dataArray)
             {
                 ret.Append('(');
                 for (int i = 0; i < dataArray.Length; i++)
@@ -1504,8 +1499,7 @@ namespace Microsoft.PowerShell.Commands
         private static string HandleNamedDataHashValue(string key, object value)
         {
             StringBuilder ret = new();
-            Array dataArray = value as Array;
-            if (dataArray != null)
+            if (value is Array dataArray)
             {
                 ret.Append('(');
                 for (int i = 0; i < dataArray.Length; i++)
@@ -1752,8 +1746,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        Array eltArray = value as Array;
-                        if (eltArray != null)
+                        if (value is Array eltArray)
                         {
                             foreach (object elt in eltArray)
                             {
@@ -2047,7 +2040,7 @@ namespace Microsoft.PowerShell.Commands
                       ||
                       (wildProvPattern.IsMatch(provName)))
                     {
-                        WriteVerbose(string.Format(CultureInfo.InvariantCulture, "Found matching provider: {0}", provName));
+                        WriteVerbose(string.Create(CultureInfo.InvariantCulture, $"Found matching provider: {provName}"));
                         AddLogsForProviderToInternalMap(eventLogSession, provName);
                         bMatched = true;
                     }

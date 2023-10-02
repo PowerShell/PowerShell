@@ -158,6 +158,9 @@ namespace System.Management.Automation.Internal
         Provider_Lifecycle = 0x1F03,
         Settings = 0x1F04,
         Engine_Trace = 0x1F06,
+        Amsi_Init = 0x4001,
+        WDAC_Query = 0x4002,
+        WDAC_Audit = 0x4003,
 
         // Experimental Features
         ExperimentalFeature_InvalidName = 0x3001,
@@ -239,7 +242,10 @@ namespace System.Management.Automation.Internal
         ExperimentalFeature = 0x6B,
         ScheduledJob = 0x6E,
         NamedPipe = 0x6F,
-        ISEOperation = 0x78
+        ISEOperation = 0x78,
+        Amsi = 0X82,
+        WDAC = 0x83,
+        WDACAudit = 0x84
     }
 
     /// <summary>

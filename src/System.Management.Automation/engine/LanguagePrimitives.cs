@@ -13,6 +13,7 @@ using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -20,12 +21,12 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Security;
 
 using Dbg = System.Management.Automation.Diagnostics;
 using MethodCacheEntry = System.Management.Automation.DotNetAdapter.MethodCacheEntry;
 #if !UNIX
 using System.DirectoryServices;
-using System.Management;
 #endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -2076,6 +2077,14 @@ namespace System.Management.Automation
                 return string.Join(CultureInfo.CurrentUICulture.TextInfo.ListSeparator, enumHashEntry.names);
             }
 
+            /// <summary>
+            /// Returns all values for the provided enum type.
+            /// </summary>
+            /// <param name="enumType">The enum type to retrieve values from.</param>
+            /// <returns>Array of enum values for the specified type.</returns>
+            internal static Array GetEnumValues(Type enumType)
+                => EnumSingleTypeConverter.GetEnumHashEntry(enumType).values;
+
             public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
             {
                 return EnumSingleTypeConverter.BaseConvertFrom(sourceValue, destinationType, formatProvider, ignoreCase, false);
@@ -3842,11 +3851,11 @@ namespace System.Management.Automation
         /// Create a IList to hold all elements, and use the IList to create the object of the resultType.
         /// The reason for using IList is that it can work on constructors that takes IEnumerable[T], ICollection[T] or IList[T].
         /// </summary>
-        /// <remark>
+        /// <remarks>
         /// When get to this method, we know the fromType and the toType meet the following two conditions:
         /// 1. toType is a closed generic type and it has a constructor that takes IEnumerable[T], ICollection[T] or IList[T]
         /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType
-        /// </remark>
+        /// </remarks>
         private sealed class ConvertViaIEnumerableConstructor
         {
             internal Func<int, IList> ListCtorLambda;
@@ -3998,9 +4007,21 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
-                            "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
-                        throw rte;
+                        if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+                        {
+                            SystemPolicy.LogWDACAuditMessage(
+                                context: ecFromTLS,
+                                title: ExtendedTypeSystem.WDACHashTypeLogTitle,
+                                message: StringUtil.Format(ExtendedTypeSystem.WDACHashTypeLogMessage, resultType.FullName),
+                                fqid: "LanguageHashtableConversionNotAllowed",
+                                dropIntoDebugger: true);
+                        }
+                        else
+                        {
+                            RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
+                                "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
+                            throw rte;
+                        }
                     }
 
                     return result;
@@ -4691,6 +4712,12 @@ namespace System.Management.Automation
                                     }
                                 }
 
+                                // treat AutomationNull.Value as null for consistency
+                                if (propValue == AutomationNull.Value)
+                                {
+                                    propValue = null;
+                                }
+
                                 property.Value = propValue;
                             }
                             else
@@ -4892,8 +4919,26 @@ namespace System.Management.Automation
 
             typeConversion.WriteLine("Type Conversion failed.");
             errorId = "ConvertToFinalInvalidCastException";
-            errorMsg = StringUtil.Format(ExtendedTypeSystem.InvalidCastException, valueToConvert.ToString(),
-                                         ObjectToTypeNameString(valueToConvert), resultType.ToString());
+
+            string valueToConvertTypeName = ObjectToTypeNameString(valueToConvert);
+            string resultTypeName = resultType.ToString();
+
+            if (resultType == typeof(SecureString) || resultType == typeof(PSCredential))
+            {
+                errorMsg = StringUtil.Format(
+                    ExtendedTypeSystem.InvalidCastExceptionWithoutValue,
+                    valueToConvertTypeName,
+                    resultTypeName);
+            }
+            else
+            {
+                errorMsg = StringUtil.Format(
+                    ExtendedTypeSystem.InvalidCastException,
+                    valueToConvert.ToString(),
+                    valueToConvertTypeName,
+                    resultTypeName);
+            }
+
             return Tuple.Create(errorId, errorMsg);
         }
 
@@ -5631,20 +5676,29 @@ namespace System.Management.Automation
             PSConverter<object> converter = null;
             ConversionRank rank = ConversionRank.None;
 
-            // If we've ever used ConstrainedLanguage, check if the target type is allowed
+            // If we've ever used ConstrainedLanguage, check if the target type is allowed.
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
-
-                if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
+                if (context?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
-                    if ((toType != typeof(object)) &&
-                        (toType != typeof(object[])) &&
-                        (!CoreTypes.Contains(toType)))
+                    if (toType != typeof(object) &&
+                        toType != typeof(object[]) &&
+                        !CoreTypes.Contains(toType))
                     {
-                        converter = ConvertNotSupportedConversion;
-                        rank = ConversionRank.None;
-                        return CacheConversion(fromType, toType, converter, rank);
+                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                        {
+                            converter = ConvertNotSupportedConversion;
+                            rank = ConversionRank.None;
+                            return CacheConversion(fromType, toType, converter, rank);
+                        }
+
+                        SystemPolicy.LogWDACAuditMessage(
+                            context: context,
+                            title: ExtendedTypeSystem.WDACTypeConversionLogTitle,
+                            message: StringUtil.Format(ExtendedTypeSystem.WDACTypeConversionLogMessage, fromType.FullName, toType.FullName),
+                            fqid: "LanguageTypeConversionNotAllowed",
+                            dropIntoDebugger: true);
                     }
                 }
             }

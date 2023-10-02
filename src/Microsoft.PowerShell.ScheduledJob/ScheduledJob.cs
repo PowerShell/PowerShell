@@ -24,7 +24,6 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// the scheduled job and so can run an instance of the scheduled
     /// job and optionally save results to file.
     /// </summary>
-    [Serializable]
     public sealed class ScheduledJob : Job2, ISerializable
     {
         #region Private Members
@@ -926,7 +925,10 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private void AddSetShouldExitToHost()
         {
-            if (!_allowSetShouldExit || _host == null) { return; }
+            if (!_allowSetShouldExit || _host == null)
+            {
+                return;
+            }
 
             PSObject hostPrivateData = _host.PrivateData as PSObject;
             if (hostPrivateData != null)
@@ -938,7 +940,10 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private void RemoveSetShouldExitFromHost()
         {
-            if (!_allowSetShouldExit || _host == null) { return; }
+            if (!_allowSetShouldExit || _host == null)
+            {
+                return;
+            }
 
             PSObject hostPrivateData = _host.PrivateData as PSObject;
             if (hostPrivateData != null)
@@ -951,8 +956,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         #endregion
 
         #region Private ResultsInfo class
-
-        [Serializable]
         private sealed class ResultsInfo : ISerializable
         {
             // Private Members
@@ -1076,7 +1079,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 {
                     _information = (Collection<InformationRecord>)info.GetValue("Results_Information", typeof(Collection<InformationRecord>));
                 }
-                catch(SerializationException)
+                catch (SerializationException)
                 {
                     // The job might not have the info stream. Ignore.
                     _information = new Collection<InformationRecord>();
@@ -1106,8 +1109,6 @@ namespace Microsoft.PowerShell.ScheduledJob
     }
 
     #region Internal StatusInfo Class
-
-    [Serializable]
     internal class StatusInfo : ISerializable
     {
         // Private Members

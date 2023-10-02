@@ -107,8 +107,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ComplexControlBody complexBody = null;
 
             // we might have a reference
-            ControlReference controlReference = control as ControlReference;
-            if (controlReference != null && controlReference.controlType == typeof(ComplexControlBody))
+            if (control is ControlReference controlReference && controlReference.controlType == typeof(ComplexControlBody))
             {
                 // retrieve the reference
                 complexBody = DisplayDataQuery.ResolveControlReference(
@@ -205,8 +204,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             #region foreach loop
             foreach (FormatToken t in formatTokenList)
             {
-                TextToken tt = t as TextToken;
-                if (tt != null)
+                if (t is TextToken tt)
                 {
                     FormatTextField ftf = new FormatTextField();
                     ftf.text = _db.displayResourceManagerCache.GetTextTokenString(tt);
@@ -214,8 +212,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                var newline = t as NewLineToken;
-                if (newline != null)
+                if (t is NewLineToken newline)
                 {
                     for (int i = 0; i < newline.count; i++)
                     {
@@ -225,8 +222,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                FrameToken ft = t as FrameToken;
-                if (ft != null)
+                if (t is FrameToken ft)
                 {
                     // instantiate a new entry and attach a frame info object
                     FormatEntry feFrame = new FormatEntry();
@@ -245,8 +241,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
                 #region CompoundPropertyToken
-                CompoundPropertyToken cpt = t as CompoundPropertyToken;
-                if (cpt != null)
+                if (t is CompoundPropertyToken cpt)
                 {
                     if (!EvaluateDisplayCondition(so, cpt.conditionToken))
                     {
@@ -491,7 +486,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (formatErrorObject != null && formatErrorObject.exception != null)
             {
-                // if we did no thave any errors in the expression evaluation
+                // if we did not have any errors in the expression evaluation
                 // we might have errors in the formatting, if present
                 _errorManager.LogStringFormatError(formatErrorObject);
                 if (_errorManager.DisplayFormatErrorString)

@@ -180,11 +180,88 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         try {
             $userConfig = '{ "PSModulePath": "myUserPath" }'
             Set-Content -Path $userConfigPath -Value $userConfig -Force
-            $out = & $powershell -noprofile -command 'powershell.exe -noprofile -command $env:PSModulePath'
+            $out = & $powershell -noprofile -command 'powershell.exe -noprofile -command `$env:PSModulePath'
             $out | Should -Not -BeLike 'myUserPath;*'
         }
         finally {
             Remove-Item -Path $userConfigPath -Force
         }
     }
+
+    It 'User PSModulePath has trailing separator' {
+        if ($IsWindows) {
+            $validation = "*\$env:SystemDrive\*"
+        }
+        else {
+            $validation = "*//*"
+        }
+
+        $newUserPath = Join-Path $expectedUserPath ([System.IO.Path]::DirectorySeparatorChar)
+        $env:PSModulePath = $env:PSModulePath.Replace($expectedUserPath, $newUserPath).Replace($expectedSharedPath,"")
+        $out = & $powershell -noprofile -command '$env:PSModulePath'
+        $out.Split([System.IO.Path]::PathSeparator, [System.StringSplitOptions]::RemoveEmptyEntries) | Should -Not -BeLike $validation
+    }
+}
+
+Describe "ModuleIntrinsics.GetPSModulePath API tests" -tag @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
+    BeforeAll {
+        # create a local repostory and install a module
+        $localSourceName = [Guid]::NewGuid().ToString("n")
+        $localSourceLocation = Join-Path $PSScriptRoot assets
+        Register-PSRepository -Name $localSourceName -SourceLocation $localSourceLocation -InstallationPolicy Trusted -ErrorAction SilentlyContinue
+        Install-Module -Force -Scope AllUsers -Name PowerShell.TestPackage -Repository $localSourceName -ErrorAction SilentlyContinue
+        Install-Module -Force -Scope CurrentUser -Name PowerShell.TestPackage -Repository $localSourceName -ErrorAction SilentlyContinue
+
+        $testCases = @(
+            @{ Name = "User"   ; Expected = $IsWindows ?
+                (Resolve-Path ([Environment]::GetFolderPath("Personal") + "\PowerShell\Modules")).Path :
+                (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES"))).Path
+                }
+            @{ Name = "Machine" ; Expected = $IsWindows ?
+                [Environment]::GetFolderPath("ProgramFiles") + "\PowerShell\Modules" :
+                (Resolve-Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES"))).Path
+            }
+            @{ Name = "Builtin" ; Expected = (Resolve-Path (Join-Path $PSHOME Modules)).Path }
+        )
+        # resolve the paths to ensure they are in the correct format
+        $currentModulePathElements = $env:PSModulePath -split [System.IO.Path]::PathSeparator | Foreach-Object { (Resolve-Path $_).Path }
+    }
+
+    AfterAll {
+        Unregister-PSRepository -Name $localSourceName -ErrorAction SilentlyContinue
+    }
+
+    It "The value '<Name>' should return the proper value" -testcase $testCases {
+        param ( $Name, $Expected )
+        $result = [System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name)
+        $result | Should -not -BeNullOrEmpty
+        # spot check pshome, the user and shared paths may not be present
+        if ( $name -eq "PSHOME") {
+            $result | Should -Be $Expected
+        }
+    }
+
+    It "The current module path should contain the expected paths for '<Name>'" -testcase $testCases {
+        param ( $Name, $Expected )
+        $mPath = (Resolve-Path ([System.Management.Automation.ModuleIntrinsics]::GetPSModulePath($name))).Path
+        $currentModulePathElements | Should -Contain $mPath
+    }
+}
+
+Describe 'ModuleIntrinsics.GetModulePath environment interaction' -tag @('CI') {
+
+    It "GetModulePath does not crash when MyDocuments special folder is empty" {
+        try {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SetMyDocumentsSpecialFolderToBlank', $true)
+            [System.Management.Automation.ModuleIntrinsics]::GetModulePath($null, $null, $null)
+        }
+        finally {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('SetMyDocumentsSpecialFolderToBlank', $false)
+        }
+    }
+
+    It "GetModulePath does not crash when MyDocuments special folder is not empty" {
+        [System.Management.Automation.ModuleIntrinsics]::GetModulePath($null, $null, $null)
+    }
+
 }

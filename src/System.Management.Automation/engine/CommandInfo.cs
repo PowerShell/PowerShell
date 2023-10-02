@@ -24,26 +24,20 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// Aliases create a name that refers to other command types.
-        /// </summary>
-        /// <remarks>
         /// Aliases are only persisted within the execution of a single engine.
-        /// </remarks>
+        /// </summary>
         Alias = 0x0001,
 
         /// <summary>
         /// Script functions that are defined by a script block.
-        /// </summary>
-        /// <remarks>
         /// Functions are only persisted within the execution of a single engine.
-        /// </remarks>
+        /// </summary>
         Function = 0x0002,
 
         /// <summary>
         /// Script filters that are defined by a script block.
-        /// </summary>
-        /// <remarks>
         /// Filters are only persisted within the execution of a single engine.
-        /// </remarks>
+        /// </summary>
         Filter = 0x0004,
 
         /// <summary>
@@ -58,11 +52,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Any existing application (can be console or GUI).
-        /// </summary>
-        /// <remarks>
         /// An application can have any extension that can be executed either directly through CreateProcess
         /// or indirectly through ShellExecute.
-        /// </remarks>
+        /// </summary>
         Application = 0x0020,
 
         /// <summary>
@@ -77,11 +69,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// All possible command types.
+        /// NOTE: a CommandInfo instance will never specify All as its CommandType
+        /// but All can be used when filtering the CommandTypes.
         /// </summary>
-        /// <remarks>
-        /// Note, a CommandInfo instance will never specify
-        /// All as its CommandType but All can be used when filtering the CommandTypes.
-        /// </remarks>
         All = Alias | Function | Filter | Cmdlet | Script | ExternalScript | Application | Configuration,
     }
 
@@ -110,10 +100,7 @@ namespace System.Management.Automation
             // The name can be empty for functions and filters but it
             // can't be null
 
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             Name = name;
             CommandType = type;
@@ -288,10 +275,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void Rename(string newName)
         {
-            if (string.IsNullOrEmpty(newName))
-            {
-                throw new ArgumentNullException(nameof(newName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(newName);
 
             Name = newName;
         }

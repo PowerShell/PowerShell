@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true, Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
-        [Credential()]
+        [Credential]
         public override PSCredential Credential
         {
             get
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
-        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
+        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If that's
         /// not specified as well, then "WSMAN" will be used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -702,7 +702,7 @@ namespace Microsoft.PowerShell.Commands
             ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(Mandatory = true,
             ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override string[] HostName
         {
             get { return base.HostName; }
@@ -715,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override string UserName
         {
             get { return base.UserName; }
@@ -728,7 +728,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [Alias("IdentityFilePath")]
         public override string KeyFilePath
         {
@@ -785,7 +785,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostHashParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostHashParameterSet, Mandatory = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override Hashtable[] SSHConnection
         {
             get;
@@ -2167,10 +2167,7 @@ namespace System.Management.Automation.Internal
                 return;
             }
 
-            if (string.IsNullOrEmpty(computerName))
-            {
-                throw new ArgumentNullException(nameof(computerName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(computerName);
 
             lock (_syncObject)
             {

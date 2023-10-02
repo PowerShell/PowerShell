@@ -1,10 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.IO;
 using System.Management.Automation;
 using System.Net.Http;
+using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -23,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public InvokeWebRequestCommand() : base()
         {
-            this._parseRelLink = true;
+            _parseRelLink = true;
         }
 
         /// <summary>
@@ -32,22 +35,24 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="response"></param>
         internal override void ProcessResponse(HttpResponseMessage response)
         {
-            if (response == null) { throw new ArgumentNullException(nameof(response)); }
-
-            Stream responseStream = StreamHelper.GetResponseStream(response);
+            ArgumentNullException.ThrowIfNull(response);
+            TimeSpan perReadTimeout = ConvertTimeoutSecondsToTimeSpan(OperationTimeoutSeconds);
+            Stream responseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
             if (ShouldWriteToPipeline)
             {
-                // creating a MemoryStream wrapper to response stream here to support IsStopping.
+                // Creating a MemoryStream wrapper to response stream here to support IsStopping.
                 responseStream = new WebResponseContentMemoryStream(
                     responseStream,
                     StreamHelper.ChunkSize,
                     this,
-                    response.Content.Headers.ContentLength.GetValueOrDefault());
-                WebResponseObject ro = WebResponseObjectFactory.GetResponseObject(response, responseStream, this.Context);
+                    response.Content.Headers.ContentLength.GetValueOrDefault(),
+                    perReadTimeout,
+                    _cancelToken.Token);
+                WebResponseObject ro = WebResponseHelper.IsText(response) ? new BasicHtmlWebResponseObject(response, responseStream, perReadTimeout, _cancelToken.Token) : new WebResponseObject(response, responseStream, perReadTimeout, _cancelToken.Token);
                 ro.RelationLink = _relationLink;
                 WriteObject(ro);
 
-                // use the rawcontent stream from WebResponseObject for further
+                // Use the rawcontent stream from WebResponseObject for further
                 // processing of the stream. This is need because WebResponse's
                 // stream can be used only once.
                 responseStream = ro.RawContentStream;
@@ -56,7 +61,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldSaveToOutFile)
             {
-                StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
+                string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
+
+                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
+
+                StreamHelper.SaveStreamToFile(responseStream, outFilePath, this, response.Content.Headers.ContentLength.GetValueOrDefault(), perReadTimeout, _cancelToken.Token);
             }
         }
 

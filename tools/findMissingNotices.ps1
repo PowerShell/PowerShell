@@ -6,7 +6,8 @@
 # Requires the module dotnet.project.assets from the PowerShell Gallery authored by @TravisEz13
 
 param(
-    [switch] $Fix
+    [switch] $Fix,
+    [switch] $IsStable
 )
 
 Import-Module dotnet.project.assets
@@ -158,16 +159,15 @@ function Get-CGRegistrations {
     param(
         [Parameter(Mandatory)]
         [ValidateSet(
-            "alpine-x64",
+            "linux-musl-x64",
             "linux-arm",
             "linux-arm64",
             "linux-x64",
             "osx-arm64",
             "osx-x64",
-            "win-arm",
             "win-arm64",
-            "win7-x64",
-            "win7-x86",
+            "win-x64",
+            "win-x86",
             "modules")]
         [string]$Runtime,
 
@@ -177,8 +177,8 @@ function Get-CGRegistrations {
 
     $registrationChanged = $false
 
-    $dotnetTargetName = 'net7.0'
-    $dotnetTargetNameWin7 = 'net7.0-windows7.0'
+    $dotnetTargetName = 'net8.0'
+    $dotnetTargetNameWin7 = 'net8.0-windows8.0'
     $unixProjectName = 'powershell-unix'
     $windowsProjectName = 'powershell-win-core'
     $actualRuntime = $Runtime
@@ -196,7 +196,7 @@ function Get-CGRegistrations {
             $folder = $unixProjectName
             $target = "$dotnetTargetName|$Runtime"
         }
-        "win7-.*" {
+        "win-x*" {
             $sdkToUse = $winDesktopSdk
             $folder = $windowsProjectName
             $target = "$dotnetTargetNameWin7|$Runtime"
@@ -264,7 +264,7 @@ function Get-CGRegistrations {
 $registrations = [System.Collections.Generic.Dictionary[string, Registration]]::new()
 $lastCount = 0
 $registrationChanged = $false
-foreach ($runtime in "win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win-arm", "linux-arm", "linux-arm64", "osx-arm64", "win-arm64", "win7-x86") {
+foreach ($runtime in "win-x64", "linux-x64", "osx-x64", "linux-musl-x64", "linux-arm", "linux-arm64", "osx-arm64", "win-arm64", "win-x86") {
     $registrationChanged = (Get-CGRegistrations -Runtime $runtime -RegistrationTable $registrations) -or $registrationChanged
     $count = $registrations.Count
     $newCount = $count - $lastCount
@@ -274,9 +274,20 @@ foreach ($runtime in "win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win-arm"
 
 $newRegistrations = $registrations.Keys | Sort-Object | ForEach-Object { $registrations[$_] }
 
+if ($IsStable) {
+    foreach ($registion in $newRegistrations) {
+        $name = $registion.Component.Name()
+        $version = $registion.Component.Version()
+        $developmentDependency = $registion.DevelopmentDependency
+        if ($version -match '-' -and !$developmentDependency) {
+            throw "Version $version of $name is preview.  This is not allowed."
+        }
+    }
+}
+
 $count = $newRegistrations.Count
 $newJson = @{
-    Registrations = $newRegistrations 
+    Registrations = $newRegistrations
      '$schema' = "https://json.schemastore.org/component-detection-manifest.json"
 } | ConvertTo-Json -depth 99
 

@@ -27,30 +27,14 @@ pr:
     - release*
     - feature*
   paths:
-    # file extension filters are not supported when this was written.
-    # This really should be /src/**/*.csproj
     include:
-    - .vsts-ci/windows/*
+    - .vsts-ci/windows/*.yml
     - assets/wix/*
     - build.psm1
     - global.json
     - nuget.config
     - PowerShell.Common.props
-    - src/Microsoft.Management.Infrastructure.CimCmdlets/Microsoft.Management.Infrastructure.CimCmdlets.csproj
-    - src/Microsoft.Management.UI.Internal/Microsoft.PowerShell.GraphicalHost.csproj
-    - src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj
-    - src/Microsoft.PowerShell.Commands.Management/Microsoft.PowerShell.Commands.Management.csproj
-    - src/Microsoft.PowerShell.Commands.Utility/Microsoft.PowerShell.Commands.Utility.csproj
-    - src/Microsoft.PowerShell.ConsoleHost/Microsoft.PowerShell.ConsoleHost.csproj
-    - src/Microsoft.PowerShell.CoreCLR.Eventing/Microsoft.PowerShell.CoreCLR.Eventing.csproj
-    - src/Microsoft.PowerShell.GlobalTool.Shim/Microsoft.PowerShell.GlobalTool.Shim.csproj
-    - src/Microsoft.PowerShell.MarkdownRender/Microsoft.PowerShell.MarkdownRender.csproj
-    - src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj
-    - src/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.csproj
-    - src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj
-    - src/Microsoft.WSMan.Runtime/Microsoft.WSMan.Runtime.csproj
-    - src/Modules/PSGalleryModules.csproj
-    - src/powershell-win-core/powershell-win-core.csproj
+    - src/*.csproj
     - test/packaging/windows/*
     - tools/ci.psm1
     - tools/packaging/*
@@ -70,6 +54,8 @@ variables:
   - group: fakeNugetKey
   - name: SBOMGenerator_Formats
     value: spdx:2.2
+  - name: nugetMultiFeedWarnLevel
+    value: none
 
 resources:
   repositories:
@@ -94,11 +80,6 @@ stages:
     parameters:
       channel: preview
       architecture: x86
-  - template: templates/windows-packaging.yml
-    parameters:
-      channel: preview
-      architecture: arm
-      runtimePrefix: win
   - template: templates/windows-packaging.yml
     parameters:
       channel: preview

@@ -714,7 +714,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(rootedPath))
             {
                 // Use the name of the parent module if it's specified, otherwise, use the current module name.
-                //  - If the current module is a nested module, then the parent module will be specifeid.
+                //  - If the current module is a nested module, then the parent module will be specified.
                 //  - If the current module is a root module, then the parent module will not be specified.
                 string moduleName = parentModule?.Name ?? ModuleIntrinsics.GetModuleName(moduleSpecification.Name);
                 rootedPath = FixFileName(moduleName, moduleBase, moduleSpecification.Name, extension: null, canLoadAssembly: importingModule);
@@ -890,11 +890,21 @@ namespace Microsoft.PowerShell.Commands
                     // Constrained Language session.
                     if (module.LanguageMode != manifestLanguageMode)
                     {
-                        var languageModeError = PSTraceSource.NewInvalidOperationException(
-                            Modules.MismatchedLanguageModes,
-                            module.Name, manifestLanguageMode, module.LanguageMode);
-                        languageModeError.SetErrorId("Modules_MismatchedLanguageModes");
-                        throw languageModeError;
+                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                        {
+                            var languageModeError = PSTraceSource.NewInvalidOperationException(
+                                Modules.MismatchedLanguageModes,
+                                module.Name, manifestLanguageMode, module.LanguageMode);
+                            languageModeError.SetErrorId("Modules_MismatchedLanguageModes");
+                            throw languageModeError;
+                        }
+
+                        SystemPolicy.LogWDACAuditMessage(
+                            context: Context,
+                            title: Modules.WDACMismatchedLanguageModesTitle,
+                            message: Modules.WDACMismatchedLanguageModesMessage,
+                            fqid: "ModulesMismatchedLanguageModes",
+                            dropIntoDebugger: true);
                     }
                 }
 
@@ -3419,12 +3429,24 @@ namespace Microsoft.PowerShell.Commands
                     if ((ss != null) && (!ss.Internal.UseExportList))
                     {
                         // For cross language boundaries, implicitly import all functions only if
-                        // this manifest *does* exort functions explicitly.
+                        // this manifest *does* export functions explicitly.
                         List<WildcardPattern> fnMatchPattern = (
                                                                 (manifestScriptInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage) &&
                                                                 (Context.LanguageMode != PSLanguageMode.FullLanguage) &&
                                                                 (exportedFunctions == null)
                                                                 ) ? null : MatchAll;
+
+                        // If the system is in WDAC policy AUDIT mode, then an export functions restriction should be reported but not applied.
+                        if (fnMatchPattern == null && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+                        {
+                            SystemPolicy.LogWDACAuditMessage(
+                                context: Context,
+                                title: Modules.WDACImplicitFunctionExportLogTitle,
+                                message: StringUtil.Format(Modules.WDACImplicitFunctionExportLogMessage, manifestScriptInfo.ModuleName),
+                                fqid: "ModuleImplicitFunctionExportNotAllowed",
+                                dropIntoDebugger: true);
+                            fnMatchPattern = MatchAll;
+                        }
 
                         ModuleIntrinsics.ExportModuleMembers(cmdlet: this,
                                                              sessionState: ss.Internal,
@@ -4542,7 +4564,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it can be converted to the expected type, then it returns <see langword="true"/> and sets <paramref name="result"/> to the value.
-        /// If the key is missing it returns <see langword="true"/> and sets <paramref name="result"/> to <c>default(<typeparam name="T"/>)</c>.
+        /// If the key is missing it returns <see langword="true"/> and sets <paramref name="result"/> to <c>default(<typeparamref name="T"/>)</c>.
         /// If the key is invalid then it returns <see langword="false"/>.
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
@@ -4608,7 +4630,7 @@ namespace Microsoft.PowerShell.Commands
         /// A utility routine to fix up a file name so it's rooted and has an extension.
         /// </summary>
         /// <remarks>
-        /// When fixing up an assembly file, this method loads the resovled assembly if it's in the process of actually loading a module.
+        /// When fixing up an assembly file, this method loads the resolved assembly if it's in the process of actually loading a module.
         /// Read the comments in the method for the detailed information.
         /// </remarks>
         /// <param name="moduleName">Name of the module that we are processing, used for caching purpose when we need to load an assembly.</param>
@@ -4939,7 +4961,7 @@ namespace Microsoft.PowerShell.Commands
                 using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
                 ps.AddCommand(new CmdletInfo("Invoke-Command", typeof(InvokeCommandCommand)));
                 ps.AddParameter("Session", compatSession);
-                ps.AddParameter("ScriptBlock", ScriptBlock.Create(string.Format("Set-Location -Path '{0}'", args.NewPath.Path)));
+                ps.AddParameter("ScriptBlock", ScriptBlock.Create(string.Create(CultureInfo.InvariantCulture, $"Set-Location -Path '{args.NewPath.Path}'")));
                 ps.Invoke();
             }
         }
@@ -5631,12 +5653,23 @@ namespace Microsoft.PowerShell.Commands
             PSModuleInfo module = null;
 
             // Block ps1 files from being imported in constrained language.
-            if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage && ext.Equals(StringLiterals.PowerShellScriptFileExtension, StringComparison.OrdinalIgnoreCase))
+            if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                ext.Equals(StringLiterals.PowerShellScriptFileExtension, StringComparison.OrdinalIgnoreCase))
             {
-                InvalidOperationException invalidOp = new InvalidOperationException(Modules.ImportPSFileNotAllowedInConstrainedLanguage);
-                ErrorRecord er = new ErrorRecord(invalidOp, "Modules_ImportPSFileNotAllowedInConstrainedLanguage",
-                                                 ErrorCategory.PermissionDenied, null);
-                ThrowTerminatingError(er);
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                {
+                    InvalidOperationException invalidOp = new InvalidOperationException(Modules.ImportPSFileNotAllowedInConstrainedLanguage);
+                    ErrorRecord er = new ErrorRecord(invalidOp, "Modules_ImportPSFileNotAllowedInConstrainedLanguage",
+                                                    ErrorCategory.PermissionDenied, null);
+                    ThrowTerminatingError(er);
+                }
+
+                SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
+                    title: Modules.WDACScriptFileImportLogTitle,
+                    message: StringUtil.Format(Modules.WDACScriptFileImportLogMessage, fileName),
+                    fqid: "ModuleImportScriptFilesNotAllowed",
+                    dropIntoDebugger: true);
             }
 
             // If MinimumVersion/RequiredVersion/MaximumVersion has been specified, then only try to process manifest modules...
@@ -5720,18 +5753,30 @@ namespace Microsoft.PowerShell.Commands
 
                                 // If the script didn't call Export-ModuleMember explicitly, then
                                 // implicitly export functions and cmdlets.
+                                var systemLockdownPolicy = SystemPolicy.GetSystemLockdownPolicy();
                                 if (!module.SessionState.Internal.UseExportList)
                                 {
                                     // For cross language boundaries don't implicitly export all functions, unless they are allowed nested modules.
-                                    // Implict function export is allowed when any of the following is true:
+                                    // Implicit function export is allowed when any of the following is true:
                                     //  - Nested modules are allowed by module manifest
                                     //  - The import context language mode is FullLanguage
-                                    //  - This script module not running as trusted (FullLanguage)
+                                    //  - This script module is not running as trusted (FullLanguage)
                                     module.ModuleAutoExportsAllFunctions = options.AllowNestedModuleFunctionsToExport ||
                                                                            Context.LanguageMode == PSLanguageMode.FullLanguage ||
                                                                            psm1ScriptInfo.DefiningLanguageMode != PSLanguageMode.FullLanguage;
-
                                     List<WildcardPattern> fnMatchPattern = module.ModuleAutoExportsAllFunctions ? MatchAll : null;
+
+                                    // If the system is in WDAC policy AUDIT mode, then an export functions restriction should be reported but not applied.
+                                    if (fnMatchPattern == null && systemLockdownPolicy == SystemEnforcementMode.Audit)
+                                    {
+                                        SystemPolicy.LogWDACAuditMessage(
+                                            context: Context,
+                                            title: Modules.WDACImplicitFunctionExportLogTitle,
+                                            message: StringUtil.Format(Modules.WDACImplicitFunctionExportLogMessage, module.Name),
+                                            fqid: "ModuleImplicitFunctionExportNotAllowed",
+                                            dropIntoDebugger: true);
+                                        fnMatchPattern = MatchAll;
+                                    }
 
                                     ModuleIntrinsics.ExportModuleMembers(
                                         cmdlet: this,
@@ -5742,8 +5787,8 @@ namespace Microsoft.PowerShell.Commands
                                         variablePatterns: null,
                                         doNotExportCmdlets: null);
                                 }
-                                else if ((SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) &&
-                                         (module.LanguageMode == PSLanguageMode.FullLanguage) &&
+                                else if ((systemLockdownPolicy == SystemEnforcementMode.Enforce || systemLockdownPolicy == SystemEnforcementMode.Audit) &&
+                                         module.LanguageMode == PSLanguageMode.FullLanguage &&
                                          module.SessionState.Internal.FunctionsExportedWithWildcard &&
                                          !module.SessionState.Internal.ManifestWithExplicitFunctionExport)
                                 {
@@ -5751,10 +5796,10 @@ namespace Microsoft.PowerShell.Commands
                                     // exported functions only come from this module and not from any imported nested modules.
                                     // Unless there is a parent manifest that explicitly filters all exported functions (no wildcards).
                                     // This prevents unintended public exposure of imported functions running in FullLanguage.
-                                    ModuleIntrinsics.RemoveNestedModuleFunctions(module);
+                                    RemoveNestedModuleFunctions(Context, module, systemLockdownPolicy);
                                 }
 
-                                CheckForDisallowedDotSourcing(module.SessionState, psm1ScriptInfo, options);
+                                CheckForDisallowedDotSourcing(module, psm1ScriptInfo, options);
 
                                 // Add it to the all module tables
                                 ImportModuleMembers(module, prefix, options);
@@ -5908,7 +5953,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (module != null)
                     {
-                        CheckForDisallowedDotSourcing(module.SessionState, psd1ScriptInfo, options);
+                        CheckForDisallowedDotSourcing(module, psd1ScriptInfo, options);
 
                         if (importingModule)
                         {
@@ -6073,25 +6118,28 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private void CheckForDisallowedDotSourcing(
-            SessionState ss,
+            PSModuleInfo moduleInfo,
             ExternalScriptInfo scriptInfo,
             ImportModuleOptions options)
         {
-            if (ss == null || ss.Internal == null)
-            { return; }
+            if (moduleInfo.SessionState == null || moduleInfo.SessionState.Internal == null)
+            {
+                return;
+            }
 
             // A manifest with explicit function export is detected through a shared session state or the nested module options, because nested
             // module processing does not use a shared session state.
-            var manifestWithExplicitFunctionExport = ss.Internal.ManifestWithExplicitFunctionExport || options.AllowNestedModuleFunctionsToExport;
+            var manifestWithExplicitFunctionExport = moduleInfo.SessionState.Internal.ManifestWithExplicitFunctionExport || options.AllowNestedModuleFunctionsToExport;
 
             // If system is in lock down mode, we disallow trusted modules that use the dotsource operator while simultaneously using
             // wild cards for exporting module functions, unless there is an overriding manifest that explicitly exports functions
             // without wild cards.
             // This is because dotsourcing brings functions into module scope and it is too easy to inadvertently or maliciously
             // expose harmful private functions that run in trusted (FullLanguage) mode.
-            if (!manifestWithExplicitFunctionExport && ss.Internal.FunctionsExportedWithWildcard &&
-                (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) &&
-                (scriptInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage))
+            var systemLockdownPolicy = SystemPolicy.GetSystemLockdownPolicy();
+            if (!manifestWithExplicitFunctionExport && moduleInfo.SessionState.Internal.FunctionsExportedWithWildcard &&
+                (systemLockdownPolicy == SystemEnforcementMode.Enforce || systemLockdownPolicy == SystemEnforcementMode.Audit) &&
+                scriptInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage)
             {
                 var dotSourceOperator = scriptInfo.GetScriptBlockAst().FindAll(ast =>
                 {
@@ -6102,13 +6150,48 @@ namespace Microsoft.PowerShell.Commands
 
                 if (dotSourceOperator != null)
                 {
-                    var errorRecord = new ErrorRecord(
-                        new PSSecurityException(Modules.CannotUseDotSourceWithWildCardFunctionExport),
-                        "Modules_SystemLockDown_CannotUseDotSourceWithWildCardFunctionExport",
-                        ErrorCategory.SecurityError, null);
-                    ThrowTerminatingError(errorRecord);
+                    if (systemLockdownPolicy != SystemEnforcementMode.Audit)
+                    {
+                        var errorRecord = new ErrorRecord(
+                            new PSSecurityException(Modules.CannotUseDotSourceWithWildCardFunctionExport),
+                            "Modules_SystemLockDown_CannotUseDotSourceWithWildCardFunctionExport",
+                            ErrorCategory.SecurityError, null);
+                        ThrowTerminatingError(errorRecord);
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: Context,
+                        title: Modules.WDACModuleDotSourceLogTitle,
+                        message: StringUtil.Format(Modules.WDACModuleDotSourceLogMessage, moduleInfo.Name),
+                        fqid: "ModuleImportDotSourceNotAllowed",
+                        dropIntoDebugger: true);
                 }
             }
+        }
+        
+        private static void RemoveNestedModuleFunctions(
+            ExecutionContext context,
+            PSModuleInfo module,
+            SystemEnforcementMode systemLockdownPolicy)
+        {
+            var input = module.SessionState?.Internal?.ExportedFunctions;
+            if (input == null || input.Count == 0)
+            {
+                return;
+            }
+
+            if (systemLockdownPolicy != SystemEnforcementMode.Audit)
+            {
+                input.RemoveAll(fnInfo => !module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase));
+                return;
+            }
+
+            SystemPolicy.LogWDACAuditMessage(
+                context: context,
+                title: Modules.WDACModuleFnExportWithNestedModulesLogTitle,
+                message: StringUtil.Format(Modules.WDACModuleFnExportWithNestedModulesLogMessage, module.Name),
+                fqid: "ModuleExportWithWildcardCharactersNotAllowed",
+                dropIntoDebugger: true);
         }
 
         private static bool ShouldProcessScriptModule(PSModuleInfo parentModule, ref bool found)
@@ -7192,6 +7275,9 @@ namespace Microsoft.PowerShell.Commands
                     CommandOrigin.Internal,
                     targetSessionState.ExecutionContext);
 
+                // Note that the module 'func' and the function table 'functionInfo' instances are now linked
+                // together (see 'CopiedCommand' in CommandInfo class), so setting visibility on one also 
+                // sets it on the other.
                 SetCommandVisibility(isImportModulePrivate, functionInfo);
                 functionInfo.Module = sourceModule;
 

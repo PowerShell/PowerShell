@@ -30,6 +30,18 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
         $arraylist.Count | Should -Be 0
     }
 
+    It 'AutomationNull should be same as null for type conversion' {
+        $result = pwsh -noprofile -command {
+            class Example {
+                [string[]]$LogMessage
+            }
+
+            [Example] @{ LogMessage = [System.Management.Automation.Internal.AutomationNull]::Value }
+        }
+
+        $result.LogMessage | Should -BeNullOrEmpty
+    }
+
     ## fix https://github.com/PowerShell/PowerShell/issues/17165
     It "([bool] `$var = 42) should return the varaible value" {
         ([bool]$var = 42).GetType().FullName | Should -Be "System.Boolean"
@@ -127,5 +139,11 @@ public class NullStringTest {
         [NullStringTest]::Test([NullString]::Value) | Should -BeExactly 'string'
         [NullStringTest]::Get([NullString]::Value) | Should -BeExactly 'System.String'
         [NullStringTest]::Get(@('foo', [NullString]::Value, 'bar')) | Should -BeExactly 'System.String[]; 2nd element is NULL'
+    }
+
+    It 'Non-default encoding should work in PowerShell' {
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        $result = & $powershell -noprofile -c '[System.Text.Encoding]::GetEncoding("IBM437").WebName'
+        $result | Should -BeExactly "ibm437"
     }
 }

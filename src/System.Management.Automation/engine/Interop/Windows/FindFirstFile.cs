@@ -4,6 +4,8 @@
 #nullable enable
 
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Management.Automation;
 using System.Runtime.InteropServices;
 
 using Microsoft.Win32.SafeHandles;
@@ -39,7 +41,8 @@ internal static partial class Interop
 
         internal sealed class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            private SafeFindHandle() : base(true) { }
+            // .NET 8 requires the default constructor to be public
+            public SafeFindHandle() : base(true) { }
 
             protected override bool ReleaseHandle()
             {
@@ -50,6 +53,14 @@ internal static partial class Interop
         // We use 'FindFirstFileW' instead of 'FindFirstFileExW' because the latter doesn't work correctly with Unicode file names on FAT32.
         // See https://github.com/PowerShell/PowerShell/issues/16804
         [LibraryImport("api-ms-win-core-file-l1-1-0.dll", EntryPoint = "FindFirstFileW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        internal static partial SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
+        private static partial SafeFindHandle FindFirstFileW(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
+
+        internal static SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData)
+        {
+            lpFileName = Path.TrimEndingDirectorySeparator(lpFileName);
+            lpFileName = PathUtils.EnsureExtendedPrefixIfNeeded(lpFileName);
+
+            return FindFirstFileW(lpFileName, ref lpFindFileData);
+        }
     }
 }

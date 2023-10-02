@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
             ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public new string HostName { get; set; }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = VMIdParameterSet)]
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true,
                    ParameterSetName = VMNameParameterSet)]
-        [Credential()]
+        [Credential]
         public override PSCredential Credential
         {
             get { return base.Credential; }
@@ -332,7 +332,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // If runspace is null then the error record has already been written and we can exit.
-            if (remoteRunspace == null) { return; }
+            if (remoteRunspace == null)
+            {
+                return;
+            }
 
             // If the runspace is in a disconnected state try to connect.
             bool runspaceConnected = false;

@@ -61,9 +61,15 @@ namespace ExperimentalFeatureTest
             string message = $"Hello World {Name}.";
             if (ExperimentalFeature.IsEnabled("ExpTest.FeatureOne"))
             {
-                if (SwitchOne.IsPresent) { message += "-SwitchOne is on."; }
+                if (SwitchOne.IsPresent)
+                {
+                    message += "-SwitchOne is on.";
+                }
 
-                if (SwitchTwo.IsPresent) { message += "-SwitchTwo is on."; }
+                if (SwitchTwo.IsPresent)
+                {
+                    message += "-SwitchTwo is on.";
+                }
             }
 
             WriteObject(message);
@@ -190,12 +196,12 @@ namespace ExperimentalFeatureTest
     public class DynamicParamTwo
     {
         [Experimental("ExpTest.FeatureOne", ExperimentAction.Show)]
-        [Parameter()]
+        [Parameter]
         [ValidateNotNullOrEmpty]
         public string ConfigFile { get; set; }
 
         [Experimental("ExpTest.FeatureOne", ExperimentAction.Hide)]
-        [Parameter()]
+        [Parameter]
         [ValidateNotNullOrEmpty]
         public string ConfigName { get; set; }
     }

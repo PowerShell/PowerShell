@@ -107,10 +107,8 @@ namespace System.Management.Automation
         {
             if (s_oemEncoding == null)
             {
-                // load all available encodings
-                EncodingRegisterProvider();
 #if UNIX
-                s_oemEncoding = new UTF8Encoding(false);
+                s_oemEncoding = Encoding.Default;
 #else
                 uint oemCp = Interop.Windows.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
@@ -121,14 +119,6 @@ namespace System.Management.Automation
         }
 
         private static volatile Encoding s_oemEncoding;
-
-        private static void EncodingRegisterProvider()
-        {
-            if (s_oemEncoding == null)
-            {
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            }
-        }
 
         #endregion Encoding
 
@@ -270,12 +260,18 @@ namespace System.Management.Automation
                     else
                     {
                         Match match = Regex.Match(line, @"^ZoneId\s*=\s*(.*)", RegexOptions.IgnoreCase);
-                        if (!match.Success) { continue; }
+                        if (!match.Success)
+                        {
+                            continue;
+                        }
 
                         // Match found. Validate ZoneId value.
                         string zoneIdRawValue = match.Groups[1].Value;
                         match = Regex.Match(zoneIdRawValue, @"^[+-]?\d+", RegexOptions.IgnoreCase);
-                        if (!match.Success) { return SecurityZone.NoZone; }
+                        if (!match.Success)
+                        {
+                            return SecurityZone.NoZone;
+                        }
 
                         string zoneId = match.Groups[0].Value;
                         SecurityZone result;

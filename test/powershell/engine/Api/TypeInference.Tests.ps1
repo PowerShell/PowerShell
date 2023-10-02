@@ -524,6 +524,24 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be "System.String"
     }
 
+    It "Infers typeof Get-Random with pipeline input" {
+        $res = [AstTypeInference]::InferTypeOf( { "Hello","World" | Get-Random }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String"
+    }
+
+    It "Infers typeof Get-Random with astpair input" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-Random -InputObject Hello,World }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String[]"
+    }
+
+    It "Infers typeof Get-Random with no input" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-Random }.Ast)
+        $res.Count | Should -Be 3
+        $res.Name -join ', ' | Should -Be "System.Int32, System.Int64, System.Double"
+    }
+
     It "Infers typeof Group-Object Group" {
         $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object | ForEach-Object Group  }.Ast)
         $res.Count | Should -Be 3
@@ -1365,6 +1383,54 @@ Describe "Type inference Tests" -tags "CI" {
         $res = [AstTypeInference]::InferTypeOf( { (@{RandomKey = Get-ChildItem $HOME})['RandomKey'] }.Ast)
         $res.Count | Should -Be 2
         $res.Name -join ' ' | Should -Be "System.IO.FileInfo System.IO.DirectoryInfo"
+    }
+
+    It 'Infers closest variable type' {
+        $res = [AstTypeInference]::InferTypeOf( { [string]$TestVar = "";[hashtable]$TestVar = @{};$TestVar }.Ast)
+        $res.Name | Select-Object -Last 1 | Should -Be "System.Collections.Hashtable"
+    }
+
+    It 'Infers closest variable type and ignores unrelated param blocks' {
+        $res = [AstTypeInference]::InferTypeOf( {
+        [hashtable]$ParameterName=@{}
+        function Verb-Noun {
+            param
+            (
+                [string]$ParameterName
+            )
+        }
+        $ParameterName }.Ast)
+        $res.Name | Should -Be "System.Collections.Hashtable"
+    }
+
+    It 'Infers type of $null after variable assignment' {
+        $res = [AstTypeInference]::InferTypeOf( { $null = "Hello";$null }.Ast)
+        $res.Count | Should -Be 0
+    }
+
+    It 'Infers type of all scope variable after variable assignment' {
+        $res = [AstTypeInference]::InferTypeOf( { $true = "Hello";$true }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Boolean'
+    }
+
+    It 'Infers type of all scope variable host after variable assignment' {
+        $res = [AstTypeInference]::InferTypeOf( { $Host = "Hello";$Host }.Ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Management.Automation.Internal.Host.InternalHost'
+    }
+
+    It 'Infers type of external applications' {
+        $res = [AstTypeInference]::InferTypeOf( { pwsh }.Ast)
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Should not throw when inferring $_ in switch condition' {
+        $FoundAst = { switch($_){default{}} }.Ast.Find(
+            {param($Ast) $Ast -is [Language.VariableExpressionAst]},
+            $true
+        )
+        $null = [AstTypeInference]::InferTypeOf($FoundAst)
     }
 }
 

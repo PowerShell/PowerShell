@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         /// The time, in minutes, before this transaction is rolled back
         /// automatically.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [Alias("TimeoutMins")]
         public int Timeout
         {
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the flag to determine if this transaction can
         /// be committed or rolled back independently of other transactions.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Independent
         {
             get { return _independent; }
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the rollback preference for this transaction.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public RollbackSeverity RollbackPreference
         {
             get { return _rollbackPreference; }

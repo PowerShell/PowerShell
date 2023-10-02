@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 using Microsoft.PowerShell;
+using System.Management.Automation.Security;
 using System.Management.Automation.Subsystem;
 using System.Management.Automation.Subsystem.DSC;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
@@ -533,7 +533,10 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitTryStatement(TryStatementAst tryStatementAst)
         {
-            if (tryStatementAst.CatchClauses.Count <= 1) return AstVisitAction.Continue;
+            if (tryStatementAst.CatchClauses.Count <= 1)
+            {
+                return AstVisitAction.Continue;
+            }
 
             for (int i = 0; i < tryStatementAst.CatchClauses.Count - 1; ++i)
             {
@@ -550,7 +553,10 @@ namespace System.Management.Automation.Language
                         break;
                     }
 
-                    if (block2.IsCatchAll) continue;
+                    if (block2.IsCatchAll)
+                    {
+                        continue;
+                    }
 
                     foreach (TypeConstraintAst typeLiteral1 in block1.CatchTypes)
                     {
@@ -1027,7 +1033,7 @@ namespace System.Management.Automation.Language
             return AstVisitAction.Continue;
         }
 
-        private ExpressionAst CheckUsingExpression(ExpressionAst exprAst)
+        private static ExpressionAst CheckUsingExpression(ExpressionAst exprAst)
         {
             RuntimeHelpers.EnsureSufficientExecutionStack();
             if (exprAst is VariableExpressionAst)
@@ -1689,7 +1695,11 @@ namespace System.Management.Automation.Language
         /// <param name="hasTest">True if it is a Test method with qualified return type and signature; otherwise, false.</param>
         private static void CheckTest(FunctionMemberAst functionMemberAst, ref bool hasTest)
         {
-            if (hasTest) return;
+            if (hasTest)
+            {
+                return;
+            }
+
             hasTest = (functionMemberAst.Name.Equals("Test", StringComparison.OrdinalIgnoreCase) &&
                     functionMemberAst.Parameters.Count == 0 &&
                     functionMemberAst.ReturnType != null &&
@@ -1702,7 +1712,11 @@ namespace System.Management.Automation.Language
         /// <param name="hasSet">True if it is a Set method with qualified return type and signature; otherwise, false.</param>
         private static void CheckSet(FunctionMemberAst functionMemberAst, ref bool hasSet)
         {
-            if (hasSet) return;
+            if (hasSet)
+            {
+                return;
+            }
+
             hasSet = (functionMemberAst.Name.Equals("Set", StringComparison.OrdinalIgnoreCase) &&
                     functionMemberAst.Parameters.Count == 0 &&
                     functionMemberAst.IsReturnTypeVoid());
@@ -1818,11 +1832,21 @@ namespace System.Management.Automation.Language
             // we only need to check the language mode.
             if (executionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                var parser = new Parser();
-                parser.ReportError(dataStatementAst.CommandsAllowed[0].Extent,
-                    nameof(ParserStrings.DataSectionAllowedCommandDisallowed),
-                    ParserStrings.DataSectionAllowedCommandDisallowed);
-                throw new ParseException(parser.ErrorList.ToArray());
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                {
+                    var parser = new Parser();
+                    parser.ReportError(dataStatementAst.CommandsAllowed[0].Extent,
+                        nameof(ParserStrings.DataSectionAllowedCommandDisallowed),
+                        ParserStrings.DataSectionAllowedCommandDisallowed);
+                    throw new ParseException(parser.ErrorList.ToArray());
+                }
+
+                SystemPolicy.LogWDACAuditMessage(
+                    context: executionContext,
+                    title: ParserStrings.WDACParserDSSupportedCommandLogTitle,
+                    message: ParserStrings.WDACParserDSSupportedCommandLogMessage,
+                    fqid: "SupportedCommandInDataSectionNotSupported",
+                    dropIntoDebugger: true);
             }
         }
 

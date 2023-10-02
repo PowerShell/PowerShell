@@ -223,7 +223,7 @@ namespace System.Management.Automation.Provider
         /// </summary>
         /// <param name="cmdletProviderContext">
         /// The context under which this method is being called.
-        ///</param>
+        /// </param>
         internal void Stop(CmdletProviderContext cmdletProviderContext)
         {
             Context = cmdletProviderContext;

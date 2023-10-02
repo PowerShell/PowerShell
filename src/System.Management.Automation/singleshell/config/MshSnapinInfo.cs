@@ -761,8 +761,7 @@ namespace System.Management.Automation
             if (msv == null)
             {
                 // Check if the value is in string format
-                string singleValue = value as string;
-                if (singleValue != null)
+                if (value is string singleValue)
                 {
                     msv = new string[1];
                     msv[0] = singleValue;
@@ -870,13 +869,13 @@ namespace System.Management.Automation
             applicationBase = Utils.DefaultPowerShellAppBase;
             Dbg.Assert(
                 !string.IsNullOrEmpty(applicationBase),
-                string.Format(CultureInfo.CurrentCulture, "{0} is empty or null", RegistryStrings.MonadEngine_ApplicationBase));
+                string.Create(CultureInfo.CurrentCulture, $"{RegistryStrings.MonadEngine_ApplicationBase} is empty or null"));
 
             // Get the PSVersion from Utils..this is hardcoded
             psVersion = PSVersionInfo.PSVersion;
             Dbg.Assert(
                 psVersion != null,
-                string.Format(CultureInfo.CurrentCulture, "{0} is null", RegistryStrings.MonadEngine_MonadVersion));
+                string.Create(CultureInfo.CurrentCulture, $"{RegistryStrings.MonadEngine_MonadVersion} is null"));
 
             // Get version number in x.x.x.x format
             // This information is available from the executing assembly
@@ -939,8 +938,13 @@ namespace System.Management.Automation
                          "Help.format.ps1xml", "HelpV3.format.ps1xml", "PowerShellCore.format.ps1xml", "PowerShellTrace.format.ps1xml",
                          "Registry.format.ps1xml"});
 
-            string strongName = string.Format(CultureInfo.InvariantCulture, "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
-                s_coreSnapin.AssemblyName, assemblyVersion, culture, publicKeyToken);
+            string strongName = string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
+                s_coreSnapin.AssemblyName,
+                assemblyVersion,
+                culture,
+                publicKeyToken);
 
             string moduleName = Path.Combine(applicationBase, s_coreSnapin.AssemblyName + ".dll");
 

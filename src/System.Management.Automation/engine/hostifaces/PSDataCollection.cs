@@ -116,7 +116,6 @@ namespace System.Management.Automation
     /// <summary>build
     /// Thread Safe buffer used with PowerShell Hosting interfaces.
     /// </summary>
-    [Serializable]
     public class PSDataCollection<T> : IList<T>, ICollection<T>, IEnumerable<T>, IList, ICollection, IEnumerable, IDisposable, ISerializable
     {
         #region Private Data
@@ -1548,7 +1547,10 @@ namespace System.Management.Automation
                 Dbg.Assert(_refCount > 0, "RefCount cannot be <= 0");
 
                 _refCount--;
-                if (_refCount != 0 && (!_blockingEnumerator || _refCount != 1)) return;
+                if (_refCount != 0 && (!_blockingEnumerator || _refCount != 1))
+                {
+                    return;
+                }
 
                 // release threads blocked on waithandle
                 _readWaitHandle?.Set();

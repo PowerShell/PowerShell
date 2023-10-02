@@ -24,12 +24,15 @@ variables:
     value: 1
   - name: POWERSHELL_TELEMETRY_OPTOUT
     value: 1
+  - name: nugetMultiFeedWarnLevel
+    value: none
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   # Defines the variables AzureFileCopySubscription, StorageAccount, StorageAccountKey, StorageResourceGroup, StorageSubscriptionName
   - group: 'Azure Blob variable group'
   # Defines the variables CgPat, CgOrganization, and CgProject
   - group: 'ComponentGovernance'
+  - group: 'PoolNames'
 
 stages:
   - stage: compliance

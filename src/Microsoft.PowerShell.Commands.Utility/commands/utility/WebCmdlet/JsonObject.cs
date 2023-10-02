@@ -152,10 +152,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
         public static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, out ErrorRecord error)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            ArgumentNullException.ThrowIfNull(input);
 
             error = null;
             try
@@ -574,15 +571,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        IDictionary dict = obj as IDictionary;
-                        if (dict != null)
+                        if (obj is IDictionary dict)
                         {
                             rv = ProcessDictionary(dict, currentDepth, in context);
                         }
                         else
                         {
-                            IEnumerable enumerable = obj as IEnumerable;
-                            if (enumerable != null)
+                            if (obj is IEnumerable enumerable)
                             {
                                 rv = ProcessEnumerable(enumerable, currentDepth, in context);
                             }
@@ -629,9 +624,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             bool wasDictionary = true;
-            IDictionary dict = obj as IDictionary;
 
-            if (dict == null)
+            if (obj is not IDictionary dict)
             {
                 wasDictionary = false;
                 dict = new Dictionary<string, object>();

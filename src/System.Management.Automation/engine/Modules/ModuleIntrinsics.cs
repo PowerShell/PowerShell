@@ -859,7 +859,10 @@ namespace System.Management.Automation
                         foreach (Hashtable feature in features)
                         {
                             string featureName = feature["Name"] as string;
-                            if (string.IsNullOrEmpty(featureName)) { continue; }
+                            if (string.IsNullOrEmpty(featureName))
+                            {
+                                continue;
+                            }
 
                             if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
                             {
@@ -964,7 +967,7 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
-            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string myDocumentsPath = InternalTestHooks.SetMyDocumentsSpecialFolderToBlank ? string.Empty : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
 #endif
         }
@@ -1136,19 +1139,26 @@ namespace System.Management.Automation
                     int position = PathContainsSubstring(result.ToString(), subPathToAdd); // searching in effective 'result' value ensures that possible duplicates in pathsToAdd are handled correctly
                     if (position == -1) // subPathToAdd not found - add it
                     {
-                        if (insertPosition == -1) // append subPathToAdd to the end
+                        if (insertPosition == -1 || insertPosition > basePath.Length) // append subPathToAdd to the end
                         {
                             bool endsWithPathSeparator = false;
-                            if (result.Length > 0) endsWithPathSeparator = (result[result.Length - 1] == Path.PathSeparator);
+                            if (result.Length > 0)
+                            {
+                                endsWithPathSeparator = (result[result.Length - 1] == Path.PathSeparator);
+                            }
 
                             if (endsWithPathSeparator)
+                            {
                                 result.Append(subPathToAdd);
+                            }
                             else
+                            {
                                 result.Append(Path.PathSeparator + subPathToAdd);
+                            }
                         }
                         else if (insertPosition > result.Length)
                         {
-                            // handle case where path is a singleton with no path seperator already
+                            // handle case where path is a singleton with no path separator already
                             result.Append(Path.PathSeparator).Append(subPathToAdd);
                         }
                         else // insert at the requested location (this is used by DSC (<Program Files> location) and by 'user-specific location' (SpecialFolder.MyDocuments or EVT.User))
@@ -1160,6 +1170,42 @@ namespace System.Management.Automation
             }
 
             return result.ToString();
+        }
+
+        /// <summary>
+        /// The available module path scopes.
+        /// </summary>
+        public enum PSModulePathScope
+        {
+            /// <summary>The users module path.</summary>
+            User,
+
+            /// <summary>The Builtin module path. This is where PowerShell is installed (PSHOME).</summary>
+            Builtin,
+
+            /// <summary>The machine module path. This is the shared location for all users of the system.</summary>
+            Machine
+        }
+
+        /// <summary>
+        /// Retrieve the current PSModulePath for the specified scope.
+        /// </summary>
+        /// <param name="scope">The scope of module path to retrieve. This can be User, Builtin, or Machine.</param>
+        /// <returns>The string representing the requested module path type.</returns>
+        public static string GetPSModulePath(PSModulePathScope scope)
+        {
+            if (scope == PSModulePathScope.User)
+            {
+                return GetPersonalModulePath();
+            }
+            else if (scope == PSModulePathScope.Builtin)
+            {
+                return GetPSHomeModulePath();
+            }
+            else
+            {
+                return GetSharedModulePath();
+            }
         }
 
         /// <summary>
@@ -1213,26 +1259,30 @@ namespace System.Management.Automation
                 // personalModulePath
                 // sharedModulePath
                 // systemModulePath
+
                 int insertIndex = 0;
-                if (!string.IsNullOrEmpty(personalModulePathToUse))
-                {
-                    currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, insertIndex);
-                    insertIndex = PathContainsSubstring(currentProcessModulePath, personalModulePathToUse) + personalModulePathToUse.Length + 1;
-                }
 
-                if (!string.IsNullOrEmpty(sharedModulePath))
-                {
-                    currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
-                    insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath) + sharedModulePath.Length + 1;
-                }
-
-                if (!string.IsNullOrEmpty(systemModulePathToUse))
-                {
-                    currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
-                }
+                currentProcessModulePath = UpdatePath(currentProcessModulePath, personalModulePathToUse, ref insertIndex);
+                currentProcessModulePath = UpdatePath(currentProcessModulePath, sharedModulePath, ref insertIndex);
+                currentProcessModulePath = UpdatePath(currentProcessModulePath, systemModulePathToUse, ref insertIndex);
             }
 
             return currentProcessModulePath;
+        }
+
+        private static string UpdatePath(string path, string pathToAdd, ref int insertIndex)
+        {
+            if (!string.IsNullOrEmpty(pathToAdd))
+            {
+                path = AddToPath(path, pathToAdd, insertIndex);
+                insertIndex = path.IndexOf(Path.PathSeparator, PathContainsSubstring(path, pathToAdd));
+                if (insertIndex != -1)
+                {
+                    // advance past the path separator
+                    insertIndex++;
+                }
+            }
+            return path;
         }
 
         /// <summary>
@@ -1248,7 +1298,7 @@ namespace System.Management.Automation
 
 #if !UNIX
         /// <summary>
-        /// Returns a PSModulePath suiteable for Windows PowerShell by removing PowerShell's specific
+        /// Returns a PSModulePath suitable for Windows PowerShell by removing PowerShell's specific
         /// paths from current PSModulePath.
         /// </summary>
         /// <returns>
@@ -1434,19 +1484,6 @@ namespace System.Management.Automation
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Removes all functions not belonging to the parent module.
-        /// </summary>
-        /// <param name="module">Parent module.</param>
-        internal static void RemoveNestedModuleFunctions(PSModuleInfo module)
-        {
-            var input = module.SessionState?.Internal?.ExportedFunctions;
-            if ((input == null) || (input.Count == 0))
-            { return; }
-
-            input.RemoveAll(fnInfo => !module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase));
         }
 
 #nullable enable
@@ -1711,7 +1748,7 @@ namespace System.Management.Automation
         /// <summary>Module version was greater than the maximum version.</summary>
         MaximumVersion,
 
-        /// <summary>The module specifcation passed in was null.</summary>
+        /// <summary>The module specification passed in was null.</summary>
         NullModuleSpecification,
     }
 

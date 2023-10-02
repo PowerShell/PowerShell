@@ -8,7 +8,7 @@ jobs:
     ${{ parameters.parentJobs }}
   condition: succeeded()
   pool:
-    name: PowerShell1ES
+    name: $(windowsPool)
     demands:
     - ImageOverride -equals PSMMS2019-Secure
   variables:
@@ -94,12 +94,6 @@ jobs:
       architecture: x64
       version: $(version)
       pdb: yes
-
-  - template: upload.yml
-    parameters:
-      architecture: arm32
-      version: $(version)
-      msi: no
 
   - template: upload.yml
     parameters:

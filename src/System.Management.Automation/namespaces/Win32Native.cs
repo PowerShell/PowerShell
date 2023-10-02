@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands.Internal
     // Remove the default demands for all N/Direct methods with this
     // global declaration on the class.
     //
-    [SuppressUnmanagedCodeSecurityAttribute()]
+    [SuppressUnmanagedCodeSecurityAttribute]
     internal static class Win32Native
     {
         #region Integer Const

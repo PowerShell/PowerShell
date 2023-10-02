@@ -5,9 +5,12 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Runtime.InteropServices;
+
+#nullable enable
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -36,13 +39,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string errMsg = StringUtil.Format("Command returned 0x{0:X}", retVal);
                     ErrorRecord error = new ErrorRecord(
-                        new InvalidOperationException(errMsg), "Command Failed", ErrorCategory.OperationStopped, "localhost");
+                        new InvalidOperationException(errMsg), "CommandFailed", ErrorCategory.OperationStopped, "localhost");
                     WriteError(error);
                 }
                 return;
             }
 
-            RunCommand("/sbin/shutdown", "-r now");
+            RunShutdown("-r now");
         }
 #endregion "Overrides"
     }
@@ -78,13 +81,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string errMsg = StringUtil.Format("Command returned 0x{0:X}", retVal);
                     ErrorRecord error = new ErrorRecord(
-                        new InvalidOperationException(errMsg), "Command Failed", ErrorCategory.OperationStopped, "localhost");
+                        new InvalidOperationException(errMsg), "CommandFailed", ErrorCategory.OperationStopped, "localhost");
                     WriteError(error);
                 }
                 return;
             }
 
-            RunCommand("/sbin/shutdown", args);
+            RunShutdown(args);
         }
 #endregion "Overrides"
     }
@@ -95,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
     public class CommandLineCmdletBase : PSCmdlet, IDisposable
     {
 #region Private Members
-        private Process _process = null;
+        private Process? _process = null;
 #endregion
 
 #region "IDisposable Members"
@@ -150,22 +153,52 @@ namespace Microsoft.PowerShell.Commands
 
 #region "Internals"
 
+        private static string? shutdownPath;
+
         /// <summary>
-        /// Run a command.
+        /// Run shutdown command.
         /// </summary>
-        protected void RunCommand(String command, String args) {
+        protected void RunShutdown(String args)
+        {
+            if (shutdownPath is null)
+            {
+                CommandInfo cmdinfo = CommandDiscovery.LookupCommandInfo(
+                    "shutdown", CommandTypes.Application,
+                    SearchResolutionOptions.None, CommandOrigin.Internal, this.Context);
+
+                if (cmdinfo is not null)
+                {
+                    shutdownPath = cmdinfo.Definition;
+                }
+                else
+                {
+                    ErrorRecord error = new ErrorRecord(
+                        new InvalidOperationException(ComputerResources.ShutdownCommandNotFound), "CommandNotFound", ErrorCategory.ObjectNotFound, targetObject: null);
+                    ThrowTerminatingError(error);
+                }
+            }
+
             _process = new Process()
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "/sbin/shutdown",
+                    FileName = shutdownPath,
                     Arguments = string.Empty,
                     RedirectStandardOutput = false,
+                    RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
                 }
             };
             _process.Start();
+            _process.WaitForExit();
+            if (_process.ExitCode != 0)
+            {
+                string stderr = _process.StandardError.ReadToEnd();
+                ErrorRecord error = new ErrorRecord(
+                    new InvalidOperationException(stderr), "CommandFailed", ErrorCategory.OperationStopped, null);
+                ThrowTerminatingError(error);
+            }
         }
 #endregion
     }

@@ -11,7 +11,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown when a syntax error occurs while parsing PowerShell script text.
     /// </summary>
-    [Serializable]
     public class ParseException : RuntimeException
     {
         private const string errorIdString = "Parse";
@@ -34,25 +33,11 @@ namespace System.Management.Automation
         /// <param name="info">The serialization information to use when initializing this object.</param>
         /// <param name="context">The streaming context to use when initializing this object.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ParseException(SerializationInfo info,
                            StreamingContext context)
-                : base(info, context)
         {
-            _errors = (ParseError[])info.GetValue("Errors", typeof(ParseError[]));
-        }
-
-        /// <summary>
-        /// Add private data for serialization.
-        /// </summary>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("Errors", _errors);
+            throw new NotSupportedException();
         }
 
         #endregion Serialization
@@ -127,11 +112,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of the ParseException class with a collection of error messages.
         /// </summary>
         /// <param name="errors">The collection of error messages.</param>
-        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors",
-            Justification = "ErrorRecord is not overridden in classes deriving from ParseException")]
-        public ParseException(Language.ParseError[] errors)
+        public ParseException(ParseError[] errors)
         {
-            if ((errors == null) || (errors.Length == 0))
+            if (errors is null || errors.Length == 0)
             {
                 throw new ArgumentNullException(nameof(errors));
             }
@@ -177,7 +160,6 @@ namespace System.Management.Automation
     /// rather than irrecoverably wrong. A host can catch this exception and then prompt for additional
     /// input to complete the parse.
     /// </remarks>
-    [Serializable]
     public class IncompleteParseException
             : ParseException
     {
@@ -195,10 +177,11 @@ namespace System.Management.Automation
         /// <param name="info">The serialization information to use when initializing this object.</param>
         /// <param name="context">The streaming context to use when initializing this object.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected IncompleteParseException(SerializationInfo info,
                            StreamingContext context)
-                : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
 

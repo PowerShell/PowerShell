@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     ci.alignment = colHeader.alignment;
                     if (colHeader.label != null)
                     {
-                        ci.HeaderMatchesProperty = so.Properties[colHeader.label.text] is not null || !ExperimentalFeature.IsEnabled(ExperimentalFeature.PSCustomTableHeaderLabelDecoration);
+                        ci.HeaderMatchesProperty = so.Properties[colHeader.label.text] is not null;
 
                         ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(colHeader.label);
                     }
@@ -191,18 +191,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         token = rowItem.formatTokenList[0];
                     if (token != null)
                     {
-                        FieldPropertyToken fpt = token as FieldPropertyToken;
-                        if (fpt != null)
+                        if (token is FieldPropertyToken fpt)
                         {
                             ci.label = fpt.expression.expressionValue;
                         }
-                        else
+                        else if (token is TextToken tt)
                         {
-                            TextToken tt = token as TextToken;
-                            if (tt != null)
-                            {
-                                ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
-                            }
+                            ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                         }
                     }
                     else
@@ -223,6 +218,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             TableHeaderInfo thi = new TableHeaderInfo();
 
             thi.hideHeader = this.HideHeaders;
+            thi.repeatHeader = this.RepeatHeader;
 
             for (int k = 0; k < this.activeAssociationList.Count; k++)
             {

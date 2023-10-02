@@ -28,11 +28,6 @@ namespace System.Management.Automation
     public abstract class FlowControlException : SystemException
     {
         internal FlowControlException() { }
-
-        internal FlowControlException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
     }
 
     /// <summary>
@@ -43,11 +38,6 @@ namespace System.Management.Automation
         internal LoopFlowException(string label)
         {
             this.Label = label ?? string.Empty;
-        }
-
-        internal LoopFlowException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
         }
 
         internal LoopFlowException() { }
@@ -95,11 +85,6 @@ namespace System.Management.Automation
             : base(label)
         {
         }
-
-        private BreakException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
     }
 
     /// <summary>
@@ -119,11 +104,6 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception should only be thrown from SMA.dll")]
         internal ContinueException(string label, Exception innerException)
             : base(label)
-        {
-        }
-
-        private ContinueException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }
@@ -156,12 +136,6 @@ namespace System.Management.Automation
 
         [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception should only be thrown from SMA.dll")]
         internal ExitException() { }
-
-        [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception should only be thrown from SMA.dll")]
-        private ExitException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
     }
 
     /// <summary>
@@ -1972,6 +1946,22 @@ namespace System.Management.Automation
                     errorRecord.LockScriptStackTrace();
                 }
             }
+        }
+
+        internal static void UpdateExceptionErrorRecordHistoryId(RuntimeException exception, ExecutionContext context)
+        {
+            InvocationInfo invInfo = exception.ErrorRecord.InvocationInfo;
+            if (invInfo is not { HistoryId: -1 })
+            {
+                return;
+            }
+
+            if (context?.CurrentCommandProcessor is null)
+            {
+                return;
+            }
+
+            invInfo.HistoryId = context.CurrentCommandProcessor.Command.MyInvocation.HistoryId;
         }
     }
     #endregion InterpreterError

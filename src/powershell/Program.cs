@@ -119,10 +119,7 @@ namespace Microsoft.PowerShell
                 pwshPath = Marshal.PtrToStringAnsi(linkPathPtr, (int)bufSize);
                 Marshal.FreeHGlobal(linkPathPtr);
 
-                if (pwshPath == null)
-                {
-                    throw new ArgumentNullException(nameof(pwshPath));
-                }
+                ArgumentNullException.ThrowIfNull(pwshPath);
 
                 // exec pwsh
                 ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: false));
@@ -207,10 +204,7 @@ namespace Microsoft.PowerShell
                 // Get the pwshPath from exec_path
                 pwshPath = Marshal.PtrToStringAnsi(executablePathPtr);
 
-                if (pwshPath == null)
-                {
-                    throw new ArgumentNullException(nameof(pwshPath));
-                }
+                ArgumentNullException.ThrowIfNull(pwshPath);
 
                 // exec pwsh
                 ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: true));
@@ -354,7 +348,11 @@ namespace Microsoft.PowerShell
             foreach (char c in str)
             {
                 length++;
-                if (c == '\'') { length++; }
+
+                if (c == '\'')
+                {
+                    length++;
+                }
             }
 
             return length;

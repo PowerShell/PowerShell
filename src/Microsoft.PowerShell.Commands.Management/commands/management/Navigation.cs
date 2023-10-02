@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the credential parameter.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        [Credential()]
+        [Credential]
         public PSCredential Credential { get; set; }
 
         #endregion Parameters
@@ -618,7 +618,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    Dbg.Diagnostics.Assert(false, string.Format(System.Globalization.CultureInfo.InvariantCulture, "One of the predefined parameter sets should have been specified, instead we got: {0}", ParameterSetName));
+                    Dbg.Diagnostics.Assert(false, string.Create(System.Globalization.CultureInfo.InvariantCulture, $"One of the predefined parameter sets should have been specified, instead we got: {ParameterSetName}"));
                     break;
             }
         }
@@ -4128,7 +4128,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the provider that will be removed.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] PSProvider
         {
             get => _provider;

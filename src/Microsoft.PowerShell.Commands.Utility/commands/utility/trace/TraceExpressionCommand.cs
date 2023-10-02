@@ -330,15 +330,8 @@ namespace Microsoft.PowerShell.Commands
             bool writeError,
             Collection<PSTraceSource> matchingSources)
         {
-            if (cmdlet == null)
-            {
-                throw new ArgumentNullException(nameof(cmdlet));
-            }
-
-            if (matchingSources == null)
-            {
-                throw new ArgumentNullException(nameof(matchingSources));
-            }
+            ArgumentNullException.ThrowIfNull(cmdlet); 
+            ArgumentNullException.ThrowIfNull(matchingSources);
 
             _cmdlet = cmdlet;
             _writeError = writeError;
@@ -519,8 +512,7 @@ namespace Microsoft.PowerShell.Commands
         private static ErrorRecord ConvertToErrorRecord(object obj)
         {
             ErrorRecord result = null;
-            PSObject mshobj = obj as PSObject;
-            if (mshobj != null)
+            if (obj is PSObject mshobj)
             {
                 object baseObject = mshobj.BaseObject;
                 if (baseObject is not PSCustomObject)
@@ -529,8 +521,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            ErrorRecord errorRecordResult = obj as ErrorRecord;
-            if (errorRecordResult != null)
+            if (obj is ErrorRecord errorRecordResult)
             {
                 result = errorRecordResult;
             }

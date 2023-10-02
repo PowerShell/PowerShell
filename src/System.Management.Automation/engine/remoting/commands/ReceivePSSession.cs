@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
-        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
+        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If that's
         /// not specified as well, then "WSMAN" will be used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriSessionNameParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
-        [Credential()]
+        [Credential]
         public PSCredential Credential
         {
             get
@@ -446,9 +446,9 @@ namespace Microsoft.PowerShell.Commands
             string shellUri = null;
             if (!string.IsNullOrEmpty(ConfigurationName))
             {
-                shellUri = (ConfigurationName.IndexOf(
-                            System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) != -1) ?
-                            ConfigurationName : System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + ConfigurationName;
+                shellUri = ConfigurationName.Contains(WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase)
+                    ? ConfigurationName
+                    : WSManNativeApi.ResourceURIPrefix + ConfigurationName;
             }
 
             // Connect selected runspace/command and direct command output to host
@@ -851,7 +851,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Job childJob = job.ChildJobs[0];
                     job.ConnectJobs();
-                    if (CheckForDebugMode(session, true)) { return; }
+                    if (CheckForDebugMode(session, true))
+                    {
+                        return;
+                    }
 
                     do
                     {
@@ -921,7 +924,10 @@ namespace Microsoft.PowerShell.Commands
 
                     pipelineConnectedEvent = null;
 
-                    if (CheckForDebugMode(session, true)) { return; }
+                    if (CheckForDebugMode(session, true))
+                    {
+                        return;
+                    }
 
                     // Wait for remote command to complete, while writing any available data.
                     while (!_remotePipeline.Output.EndOfPipeline)
@@ -1100,7 +1106,10 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (CheckForDebugMode(session, true)) { return; }
+            if (CheckForDebugMode(session, true))
+            {
+                return;
+            }
 
             // Write the job object to output.
             WriteObject(job);

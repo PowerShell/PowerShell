@@ -14,8 +14,8 @@ namespace Microsoft.Management.UI.Internal
     /// <typeparam name="T">
     /// The generic parameter.
     /// </typeparam>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class ValidatingValue<T> : ValidatingValueBase
     {
         #region Properties
@@ -165,10 +165,7 @@ namespace Microsoft.Management.UI.Internal
         {
             castValue = default(T);
 
-            if (rawValue == null)
-            {
-                throw new ArgumentNullException("rawValue");
-            }
+            ArgumentNullException.ThrowIfNull(rawValue);
 
             if (typeof(T).IsEnum)
             {

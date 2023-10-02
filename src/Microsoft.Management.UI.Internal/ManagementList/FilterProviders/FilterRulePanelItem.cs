@@ -79,15 +79,8 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public FilterRulePanelItem(FilterRule rule, string groupId)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException("rule");
-            }
-
-            if (string.IsNullOrEmpty(groupId))
-            {
-                throw new ArgumentNullException("groupId");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
+            ArgumentException.ThrowIfNullOrEmpty(groupId);
 
             this.Rule = rule;
             this.GroupId = groupId;

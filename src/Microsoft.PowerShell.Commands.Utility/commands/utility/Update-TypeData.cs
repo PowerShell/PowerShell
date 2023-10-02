@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
         /// The type name we want to update on.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = DynamicTypeSet)]
-        [ArgumentToTypeNameTransformationAttribute()]
+        [ArgumentToTypeNameTransformationAttribute]
         [ValidateNotNullOrEmpty]
         public string TypeName
         {
@@ -1055,7 +1055,7 @@ namespace Microsoft.PowerShell.Commands
         /// The target type to remove.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = RemoveTypeSet)]
-        [ArgumentToTypeNameTransformationAttribute()]
+        [ArgumentToTypeNameTransformationAttribute]
         [ValidateNotNullOrEmpty]
         public string TypeName
         {
@@ -1117,7 +1117,10 @@ namespace Microsoft.PowerShell.Commands
                 string removeFileTarget = UpdateDataStrings.UpdateTarget;
 
                 Collection<string> typeFileTotal = UpdateData.Glob(_typeFiles, "TypePathException", this);
-                if (typeFileTotal.Count == 0) { return; }
+                if (typeFileTotal.Count == 0)
+                {
+                    return;
+                }
 
                 // Key of the map is the name of the file that is in the cache. Value of the map is a index list. Duplicate files might
                 // exist in the cache because the user can add arbitrary files to the cache by $host.Runspace.InitialSessionState.Types.Add()
@@ -1129,7 +1132,10 @@ namespace Microsoft.PowerShell.Commands
                     for (int index = 0; index < Context.InitialSessionState.Types.Count; index++)
                     {
                         string fileName = Context.InitialSessionState.Types[index].FileName;
-                        if (fileName == null) { continue; }
+                        if (fileName == null)
+                        {
+                            continue;
+                        }
 
                         // Resolving the file path because the path to the types file in module manifest is now specified as
                         // ..\..\types.ps1xml which expands to C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Core\..\..\types.ps1xml

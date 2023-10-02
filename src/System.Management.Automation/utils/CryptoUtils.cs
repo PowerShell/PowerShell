@@ -43,7 +43,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         public const uint PUBLICKEYBLOB = 0x00000006;
 
-        /// <summmary>
+        /// <summary>
         /// PUBLICKEYBLOB header length.
         /// </summary>
         public const int PUBLICKEYBLOB_HEADER_LEN = 20;
@@ -53,7 +53,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         public const uint SIMPLEBLOB = 0x00000001;
 
-        /// <summmary>
+        /// <summary>
         /// SIMPLEBLOB header length.
         /// </summary>
         public const int SIMPLEBLOB_HEADER_LEN = 12;
@@ -97,10 +97,7 @@ namespace System.Management.Automation.Internal
 
         private static RSA FromCapiPublicKeyBlob(byte[] blob, int offset)
         {
-            if (blob == null)
-            {
-                throw new ArgumentNullException(nameof(blob));
-            }
+            ArgumentNullException.ThrowIfNull(blob);
 
             if (offset > blob.Length)
             {
@@ -123,10 +120,7 @@ namespace System.Management.Automation.Internal
 
         private static RSAParameters GetParametersFromCapiPublicKeyBlob(byte[] blob, int offset)
         {
-            if (blob == null)
-            {
-                throw new ArgumentNullException(nameof(blob));
-            }
+            ArgumentNullException.ThrowIfNull(blob);
 
             if (offset > blob.Length)
             {
@@ -175,10 +169,7 @@ namespace System.Management.Automation.Internal
 
         internal static byte[] ToCapiPublicKeyBlob(RSA rsa)
         {
-            if (rsa == null)
-            {
-                throw new ArgumentNullException(nameof(rsa));
-            }
+            ArgumentNullException.ThrowIfNull(rsa);
 
             RSAParameters p = rsa.ExportParameters(false);
             int keyLength = p.Modulus.Length;   // in bytes
@@ -221,10 +212,7 @@ namespace System.Management.Automation.Internal
 
         internal static byte[] FromCapiSimpleKeyBlob(byte[] blob)
         {
-            if (blob == null)
-            {
-                throw new ArgumentNullException(nameof(blob));
-            }
+            ArgumentNullException.ThrowIfNull(blob);
 
             if (blob.Length < SIMPLEBLOB_HEADER_LEN)
             {
@@ -237,10 +225,7 @@ namespace System.Management.Automation.Internal
 
         internal static byte[] ToCapiSimpleKeyBlob(byte[] encryptedKey)
         {
-            if (encryptedKey == null)
-            {
-                throw new ArgumentNullException(nameof(encryptedKey));
-            }
+            ArgumentNullException.ThrowIfNull(encryptedKey);
 
             // formulate the PUBLICKEYSTRUCT
             byte[] blob = new byte[SIMPLEBLOB_HEADER_LEN + encryptedKey.Length];
@@ -250,9 +235,9 @@ namespace System.Management.Automation.Internal
             // [2], [3]                         // RESERVED - Always 0
             blob[4] = (byte)CALG_AES_256;       // AES-256 algo id (0x10)
             blob[5] = 0x66;                     // ??
-            // [6], [7], [8]                    // 0x00 
+            // [6], [7], [8]                    // 0x00
             blob[9] = (byte)CALG_RSA_KEYX;      // 0xa4
-            // [10], [11]                       // 0x00 
+            // [10], [11]                       // 0x00
 
             // create a reversed copy and add the encrypted key
             byte[] reversedKey = CreateReverseByteArray(encryptedKey);
@@ -273,7 +258,6 @@ namespace System.Management.Automation.Internal
     /// to the user when something fails on the remote end, then this
     /// can be turned public</remarks>
     [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic")]
-    [Serializable]
     internal class PSCryptoException : Exception
     {
         #region Private Members
@@ -344,26 +328,13 @@ namespace System.Management.Automation.Internal
         /// <param name="context">Context in which this constructor is called.</param>
         /// <remarks>Currently no custom type-specific serialization logic is
         /// implemented</remarks>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected PSCryptoException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-            _errorCode = unchecked(0xFFFFFFF);
-            Dbg.Assert(false, "type-specific serialization logic not implemented and so this constructor should not be called");
+            throw new NotSupportedException();
         }
 
         #endregion Constructors
-
-        #region ISerializable Overrides
-        /// <summary>
-        /// Returns base implementation.
-        /// </summary>
-        /// <param name="info">Serialization info.</param>
-        /// <param name="context">Context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-        }
-        #endregion ISerializable Overrides
     }
 
     /// <summary>
@@ -380,7 +351,7 @@ namespace System.Management.Automation.Internal
         // handle to the AES provider object (houses session key and iv)
         private readonly Aes _aes;
 
-        // this flag indicates that this class has a key imported from the 
+        // this flag indicates that this class has a key imported from the
         // remote end and so can be used for encryption
         private bool _canEncrypt;
 
@@ -438,7 +409,7 @@ namespace System.Management.Automation.Internal
             {
                 if (!_sessionKeyGenerated)
                 {
-                    // Aes object gens key automatically on construction, so this is somewhat redundant, 
+                    // Aes object gens key automatically on construction, so this is somewhat redundant,
                     // but at least the actionable key will not be in-memory until it's requested fwiw.
                     _aes.GenerateKey();
                     _sessionKeyGenerated = true;
@@ -895,12 +866,10 @@ namespace System.Management.Automation.Internal
 
         internal override string EncryptSecureString(SecureString secureString)
         {
-            ServerRemoteSession session = Session as ServerRemoteSession;
-
             // session!=null check required for DRTs TestEncryptSecureString* entries in CryptoUtilsTest/UTUtils.dll
             // for newer clients, server will never initiate key exchange.
             // for server, just the session key is required to encrypt/decrypt anything
-            if ((session != null) && (session.Context.ClientCapability.ProtocolVersion >= RemotingConstants.ProtocolVersionWin8RTM))
+            if (Session is ServerRemoteSession session && session.Context.ClientCapability.ProtocolVersion >= RemotingConstants.ProtocolVersionWin8RTM)
             {
                 _rsaCryptoProvider.GenerateSessionKey();
             }

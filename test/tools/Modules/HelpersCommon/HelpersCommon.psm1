@@ -351,7 +351,7 @@ function New-ComplexPassword
     $password = [string]::Empty
     # Windows password complexity rule requires minimum 8 characters and using at least 3 of the
     # buckets above, so we just pick one from each bucket twice.
-    # https://docs.microsoft.com/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
+    # https://learn.microsoft.com/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
     1..2 | ForEach-Object {
         $Password += $numbers[(Get-Random $numbers.Length)] + $lowercase[(Get-Random $lowercase.Length)] +
             $uppercase[(Get-Random $uppercase.Length)] + $symbols[(Get-Random $symbols.Length)]
@@ -395,4 +395,141 @@ function Get-WsManSupport {
         return $true
     }
     return $false
+}
+
+function Test-IsWindowsArm64 {
+    return $IsWindows -and [System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64
+}
+
+function Test-IsWinWow64 {
+    return $IsWindows -and [System.Environment]::Is64BitOperatingSystem -and -not [System.Environment]::Is64BitProcess
+}
+
+function Test-IsPreview
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version,
+
+        [switch]$IsLTS
+    )
+
+    if ($IsLTS.IsPresent) {
+        ## If we are building a LTS package, then never consider it preview.
+        return $false
+    }
+
+    return $Version -like '*-*'
+}
+
+<#
+    .Synopsis
+        Tests if a version is a Release Candidate
+    .EXAMPLE
+        Test-IsReleaseCandidate -version '6.1.0-sometthing' # returns false
+        Test-IsReleaseCandidate -version '6.1.0-rc.1' # returns true
+        Test-IsReleaseCandidate -version '6.1.0' # returns false
+#>
+function Test-IsReleaseCandidate
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version
+    )
+
+    if ($Version -like '*-rc.*')
+    {
+        return $true
+    }
+
+    return $false
+}
+
+function Test-IsWinServer2012R2
+{
+    if (-not $IsWindows) {
+        return $false
+    }
+
+    $osInfo = [System.Environment]::OSVersion.Version
+    return ($osInfo.Major -eq 6 -and $osInfo.Minor -eq 3)
+}
+
+function Test-IsWindows2016 {
+    if (-not $IsWindows) {
+        return $false
+    }
+
+    $osInfo = [System.Environment]::OSVersion.Version
+    return ($osInfo.Major -eq 10 -and $osInfo.Minor -eq 0 -and $osInfo.Build -eq 14393)
+}
+
+
+# helpers for managing psdefaultparametervalues
+[system.collections.generic.Stack[hashtable]]$script:DefaultParameterValueStack = [system.collections.generic.Stack[hashtable]]::new()
+
+# Ensure that the global:PSDefaultParameterValues variable is a hashtable
+function Initialize-PSDefaultParameterValue {
+	if ( $global:PSDefaultParameterValues -isnot [hashtable] ) {
+		$global:PSDefaultParameterValues = @{}
+	}
+}
+
+# reset the stack
+function Reset-DefaultParameterValueStack {
+	$script:DefaultParameterValueStack = [system.collections.generic.Stack[hashtable]]::new()
+    Initialize-PSDefaultParameterValue
+}
+
+# return the current stack
+function Get-DefaultParameterValueStack {
+	$script:DefaultParameterValueStack
+}
+
+# PSDefaultParameterValue may not have both skip and pending keys
+function Test-PSDefaultParameterValue {
+    if ( $global:PSDefaultParameterValues -is [hashtable] ) {
+        if ( $global:PSDefaultParameterValues.ContainsKey('skip') -and $global:PSDefaultParameterValues.ContainsKey('pending') ) {
+            return $false
+        }
+        return $true
+    }
+    Initialize-PSDefaultParameterValue
+}
+
+# push a new value onto the stack
+# if $ht is null, then the current value of $global:PSDefaultParameterValues is pushed
+# if $NewValue is used, then $ht is used as the new value of $global:PSDefaultParameterValues
+function Push-DefaultParameterValueStack {
+	param ([hashtable]$ht, [switch]$NewValue)
+    Initialize-PSDefaultParameterValue
+
+	$script:DefaultParameterValueStack.Push($global:PSDefaultParameterValues.Clone())
+	if ( $ht ) {
+		if ( $NewValue ) {
+			$global:PSDefaultParameterValues = $ht
+		}
+		else {
+			foreach ($k in $ht.Keys) {
+				$global:PSDefaultParameterValues[$k] = $ht[$k]
+			}
+		}
+        if ( ! (Test-PSDefaultParameterValue)) {
+            Write-Warning -Message "PSDefaultParameterValues may not have both skip and pending keys, resetting."
+            Pop-DefaultParameterValueStack
+        }
+	}
+}
+
+function Pop-DefaultParameterValueStack {
+	try {
+		$global:PSDefaultParameterValues = $script:DefaultParameterValueStack.Pop()
+		return $true
+	}
+	catch {
+        Initialize-PSDefaultParameterValue
+		return $false
+	}
 }

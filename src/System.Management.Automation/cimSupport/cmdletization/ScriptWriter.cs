@@ -100,14 +100,12 @@ namespace Microsoft.PowerShell.Cmdletization
             }
             catch (InvalidOperationException e)
             {
-                XmlSchemaException schemaException = e.InnerException as XmlSchemaException;
-                if (schemaException != null)
+                if (e.InnerException is XmlSchemaException schemaException)
                 {
                     throw new XmlException(schemaException.Message, schemaException, schemaException.LineNumber, schemaException.LinePosition);
                 }
 
-                XmlException xmlException = e.InnerException as XmlException;
-                if (xmlException != null)
+                if (e.InnerException is XmlException xmlException)
                 {
                     throw xmlException;
                 }
@@ -249,7 +247,7 @@ function __cmdletization_BindCommonParameters
                     ? ("'" + CodeGeneration.EscapeSingleQuotedStringContent(cmdletMetadata.Obsolete.Message) + "'")
                     : string.Empty;
                 string newline = (attributes.Length > 0) ? Environment.NewLine : string.Empty;
-                attributes.AppendFormat(CultureInfo.InvariantCulture, "{0}[Obsolete({1})]", newline, obsoleteMsg);
+                attributes.Append(CultureInfo.InvariantCulture, $"{newline}[Obsolete({obsoleteMsg})]");
             }
 
             return attributes.ToString();
@@ -828,8 +826,7 @@ function __cmdletization_BindCommonParameters
         private CommandMetadata GetCommandMetadata(CommonCmdletMetadata cmdletMetadata)
         {
             string defaultParameterSetName = null;
-            StaticCmdletMetadataCmdletMetadata staticCmdletMetadata = cmdletMetadata as StaticCmdletMetadataCmdletMetadata;
-            if (staticCmdletMetadata != null)
+            if (cmdletMetadata is StaticCmdletMetadataCmdletMetadata staticCmdletMetadata)
             {
                 if (!string.IsNullOrEmpty(staticCmdletMetadata.DefaultCmdletParameterSet))
                 {
@@ -1202,7 +1199,11 @@ function __cmdletization_BindCommonParameters
                             MultiplyParameterSets(
                                 GetMethodParameterSet(method), StaticMethodParameterSetTemplate, commonParameterSets))
                     {
-                        if (!firstParameterSet) output.Write(", ");
+                        if (!firstParameterSet)
+                        {
+                            output.Write(", ");
+                        }
+
                         firstParameterSet = false;
                         output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
                     }
@@ -1353,7 +1354,11 @@ function __cmdletization_BindCommonParameters
             bool firstParameterSet = true;
             foreach (string parameterSetName in MultiplyParameterSets(GetMethodParameterSet(method), InstanceMethodParameterSetTemplate, commonParameterSets, queryParameterSets))
             {
-                if (!firstParameterSet) output.Write(", ");
+                if (!firstParameterSet)
+                {
+                    output.Write(", ");
+                }
+
                 firstParameterSet = false;
                 output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
             }
@@ -1495,7 +1500,11 @@ function __cmdletization_BindCommonParameters
             foreach (string queryParameterSetName in cmdletParameterMetadata.ParameterSets.Keys)
                 foreach (string parameterSetName in MultiplyParameterSets(queryParameterSetName, InstanceQueryParameterSetTemplate, commonParameterSets, methodParameterSets))
                 {
-                    if (!firstParameterSet) output.Write(", ");
+                    if (!firstParameterSet)
+                    {
+                        output.Write(", ");
+                    }
+
                     firstParameterSet = false;
                     output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
                 }

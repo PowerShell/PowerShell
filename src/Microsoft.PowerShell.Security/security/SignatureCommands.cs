@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override Signature PerformAction(string sourcePathOrExtension, byte[] content)
         {
-            return SignatureHelper.GetSignature(sourcePathOrExtension, System.Text.Encoding.Unicode.GetString(content));
+            return SignatureHelper.GetSignature(sourcePathOrExtension, content);
         }
     }
 
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets force parameter.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get

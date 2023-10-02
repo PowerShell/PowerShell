@@ -98,7 +98,7 @@ namespace System.Management.Automation.Internal
         }
 
         // graphics/color mode ESC[1;2;...m
-        private const string GraphicsRegex = @"(\x1b\[\d+(;\d+)*m)";
+        private const string GraphicsRegex = @"(\x1b\[\d*(;\d+)*m)";
 
         // CSI escape sequences
         private const string CsiRegex = @"(\x1b\[\?\d+[hl])";

@@ -733,7 +733,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets a new collection of typenames without "Deserialization." prefix
-        /// in the typename. This will allow to map type info/format info of the orignal type
+        /// in the typename. This will allow to map type info/format info of the original type
         /// for deserialized objects.
         /// </summary>
         /// <param name="typeNames"></param>
@@ -2159,7 +2159,10 @@ namespace System.Management.Automation
                     }
 
                     Dbg.Assert(key != null, "Dictionary keys should never be null");
-                    if (key == null) break;
+                    if (key == null)
+                    {
+                        break;
+                    }
 
                     WriteStartElement(SerializationStrings.DictionaryEntryTag);
                     WriteOneObject(key, null, SerializationStrings.DictionaryKey, depth);
@@ -3988,7 +3991,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Utilitily class for ReadDictionary(), supporting ordered or non-ordered Dictionaty methods.
+        /// Utility class for ReadDictionary(), supporting ordered or non-ordered Dictionary methods.
         /// </summary>
         private class PSDictionary
         {
@@ -5119,7 +5122,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// A class for identifying types which are treated as KnownType by Monad.
-    /// A KnownType is guranteed to be available on machine on which monad is
+    /// A KnownType is guaranteed to be available on machine on which monad is
     /// running.
     /// </summary>
     internal static class KnownTypes
@@ -5907,7 +5910,6 @@ namespace System.Management.Automation
     /// 2) values that can be serialized and deserialized during PowerShell remoting handshake
     ///    (in major-version compatible versions of PowerShell remoting)
     /// </summary>
-    [Serializable]
     public sealed class PSPrimitiveDictionary : Hashtable
     {
         #region Constructors
@@ -5933,10 +5935,7 @@ namespace System.Management.Automation
         public PSPrimitiveDictionary(Hashtable other)
             : base(StringComparer.OrdinalIgnoreCase)
         {
-            if (other == null)
-            {
-                throw new ArgumentNullException(nameof(other));
-            }
+            ArgumentNullException.ThrowIfNull(other);
 
             foreach (DictionaryEntry entry in other)
             {
@@ -6008,7 +6007,7 @@ namespace System.Management.Automation
                 typeof(PSPrimitiveDictionary)
             };
 
-        private void VerifyValue(object value)
+        private static void VerifyValue(object value)
         {
             // null is a primitive type
             if (value == null)
@@ -6066,7 +6065,7 @@ namespace System.Management.Automation
         public override void Add(object key, object value)
         {
             string keyAsString = VerifyKey(key);
-            this.VerifyValue(value);
+            VerifyValue(value);
             base.Add(keyAsString, value);
         }
 
@@ -6094,7 +6093,7 @@ namespace System.Management.Automation
             set
             {
                 string keyAsString = VerifyKey(key);
-                this.VerifyValue(value);
+                VerifyValue(value);
                 base[keyAsString] = value;
             }
         }
@@ -6122,7 +6121,7 @@ namespace System.Management.Automation
 
             set
             {
-                this.VerifyValue(value);
+                VerifyValue(value);
                 base[key] = value;
             }
         }
@@ -6526,7 +6525,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// If originalHash contains PSVersionTable, then just returns the Cloned copy of
-        /// the original hash. Othewise, creates a clone copy and add PSVersionInfo.GetPSVersionTable
+        /// the original hash. Otherwise, creates a clone copy and add PSVersionInfo.GetPSVersionTable
         /// to the clone and returns.
         /// </summary>
         /// <param name="originalHash"></param>

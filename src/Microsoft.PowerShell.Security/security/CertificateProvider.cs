@@ -724,16 +724,11 @@ namespace Microsoft.PowerShell.Commands
                 ThrowInvalidOperation(errorId, message);
             }
 
-            if (DynamicParameters != null)
+            if (DynamicParameters != null && DynamicParameters is ProviderRemoveItemDynamicParameters dp)
             {
-                ProviderRemoveItemDynamicParameters dp =
-                    DynamicParameters as ProviderRemoveItemDynamicParameters;
-                if (dp != null)
+                if (dp.DeleteKey)
                 {
-                    if (dp.DeleteKey)
-                    {
-                        fDeleteKey = true;
-                    }
+                    fDeleteKey = true;
                 }
             }
 
@@ -888,9 +883,8 @@ namespace Microsoft.PowerShell.Commands
                 object store = GetItemAtPath(destination, false, out isDestContainer);
 
                 X509Certificate2 certificate = cert as X509Certificate2;
-                X509NativeStore certstore = store as X509NativeStore;
 
-                if (certstore != null)
+                if (store is X509NativeStore certstore)
                 {
                     certstore.Open(true);
 
@@ -926,7 +920,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">
         /// The path of the certificate store to create.
         /// </param>
-        ///<param name="type">
+        /// <param name="type">
         /// Ignored.
         /// Only support store.
         /// </param>
@@ -1068,23 +1062,18 @@ namespace Microsoft.PowerShell.Commands
 
             if ((item != null) && isContainer)
             {
-                X509StoreLocation storeLocation = item as X509StoreLocation;
-                if (storeLocation != null)
+                if (item is X509StoreLocation storeLocation)
                 {
                     result = storeLocation.StoreNames.Count > 0;
                 }
-                else
+                else if (item is X509NativeStore store)
                 {
-                    X509NativeStore store = item as X509NativeStore;
-                    if (store != null)
+                    store.Open(IncludeArchivedCerts());
+                    IntPtr certContext = store.GetFirstCert();
+                    if (certContext != IntPtr.Zero)
                     {
-                        store.Open(IncludeArchivedCerts());
-                        IntPtr certContext = store.GetFirstCert();
-                        if (certContext != IntPtr.Zero)
-                        {
-                            store.FreeCert(certContext);
-                            result = true;
-                        }
+                        store.FreeCert(certContext);
+                        result = true;
                     }
                 }
             }
@@ -1259,20 +1248,15 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    X509StoreLocation storeLocation = item as X509StoreLocation;
-                    if (storeLocation != null)  // store location
+                    if (item is X509StoreLocation storeLocation)  // store location
                     {
                         WriteItemObject(item, path, isContainer);
                     }
-                    else // store
+                    else if (item is X509NativeStore store) // store
                     {
-                        X509NativeStore store = item as X509NativeStore;
-                        if (store != null)
-                        {
-                            // create X509Store
-                            X509Store outStore = new(store.StoreName, store.Location.Location);
-                            WriteItemObject(outStore, path, isContainer);
-                        }
+                        // create X509Store
+                        X509Store outStore = new(store.StoreName, store.Location.Location);
+                        WriteItemObject(outStore, path, isContainer);
                     }
                 }
             }
@@ -2644,51 +2628,46 @@ namespace Microsoft.PowerShell.Commands
         {
             CertificateFilterInfo filter = null;
 
-            if (DynamicParameters != null)
+            if (DynamicParameters != null && DynamicParameters is CertificateProviderDynamicParameters dp)
             {
-                CertificateProviderDynamicParameters dp =
-                    DynamicParameters as CertificateProviderDynamicParameters;
-                if (dp != null)
+                if (dp.CodeSigningCert)
                 {
-                    if (dp.CodeSigningCert)
-                    {
-                        filter = new CertificateFilterInfo();
-                        filter.Purpose = CertificatePurpose.CodeSigning;
-                    }
+                    filter = new CertificateFilterInfo();
+                    filter.Purpose = CertificatePurpose.CodeSigning;
+                }
 
-                    if (dp.DocumentEncryptionCert)
-                    {
-                        filter ??= new CertificateFilterInfo();
-                        filter.Purpose = CertificatePurpose.DocumentEncryption;
-                    }
+                if (dp.DocumentEncryptionCert)
+                {
+                    filter ??= new CertificateFilterInfo();
+                    filter.Purpose = CertificatePurpose.DocumentEncryption;
+                }
 
-                    if (dp.DnsName != null)
-                    {
-                        filter ??= new CertificateFilterInfo();
-                        filter.DnsName = new WildcardPattern(dp.DnsName, WildcardOptions.IgnoreCase);
-                    }
+                if (dp.DnsName != null)
+                {
+                    filter ??= new CertificateFilterInfo();
+                    filter.DnsName = new WildcardPattern(dp.DnsName, WildcardOptions.IgnoreCase);
+                }
 
-                    if (dp.Eku != null)
+                if (dp.Eku != null)
+                {
+                    filter ??= new CertificateFilterInfo();
+                    filter.Eku = new List<WildcardPattern>();
+                    foreach (var pattern in dp.Eku)
                     {
-                        filter ??= new CertificateFilterInfo();
-                        filter.Eku = new List<WildcardPattern>();
-                        foreach (var pattern in dp.Eku)
-                        {
-                            filter.Eku.Add(new WildcardPattern(pattern, WildcardOptions.IgnoreCase));
-                        }
+                        filter.Eku.Add(new WildcardPattern(pattern, WildcardOptions.IgnoreCase));
                     }
+                }
 
-                    if (dp.ExpiringInDays >= 0)
-                    {
-                        filter ??= new CertificateFilterInfo();
-                        filter.Expiring = DateTime.Now.AddDays(dp.ExpiringInDays);
-                    }
+                if (dp.ExpiringInDays >= 0)
+                {
+                    filter ??= new CertificateFilterInfo();
+                    filter.Expiring = DateTime.Now.AddDays(dp.ExpiringInDays);
+                }
 
-                    if (dp.SSLServerAuthentication)
-                    {
-                        filter ??= new CertificateFilterInfo();
-                        filter.SSLServerAuthentication = true;
-                    }
+                if (dp.SSLServerAuthentication)
+                {
+                    filter ??= new CertificateFilterInfo();
+                    filter.SSLServerAuthentication = true;
                 }
             }
 
@@ -3311,17 +3290,13 @@ namespace Microsoft.PowerShell.Commands
             foreach (X509Extension extension in cert.Extensions)
             {
                 // Filter to the OID for EKU
-                if (extension.Oid.Value == "2.5.29.37")
+                if (extension.Oid.Value == "2.5.29.37" && extension is X509EnhancedKeyUsageExtension ext)
                 {
-                    X509EnhancedKeyUsageExtension ext = extension as X509EnhancedKeyUsageExtension;
-                    if (ext != null)
+                    OidCollection oids = ext.EnhancedKeyUsages;
+                    foreach (Oid oid in oids)
                     {
-                        OidCollection oids = ext.EnhancedKeyUsages;
-                        foreach (Oid oid in oids)
-                        {
-                            EnhancedKeyUsageRepresentation ekuString = new(oid.FriendlyName, oid.Value);
-                            _ekuList.Add(ekuString);
-                        }
+                        EnhancedKeyUsageRepresentation ekuString = new(oid.FriendlyName, oid.Value);
+                        _ekuList.Add(ekuString);
                     }
                 }
             }
