@@ -2686,7 +2686,7 @@ namespace Microsoft.PowerShell.Commands
                 yield break;
             }
 
-            if (commandName.Equals(StartProcessCommandName)
+            if (commandName.Equals(StartProcessCommandName, StringComparison.OrdinalIgnoreCase)
                 && fakeBoundParameters.Contains(FilePathParameterName))
             {
                 string filePath = fakeBoundParameters[FilePathParameterName].ToString();
