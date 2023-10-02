@@ -744,7 +744,7 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
     }
 
-    Context 'Verb parameter completion' {
+    Context 'Start-Process -Verb parameter completion' {
         BeforeAll {
             $testCmdPath = Join-Path -Path $TestDrive -ChildPath 'test.cmd'
             $testCmdVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testCmdPath).Verbs
