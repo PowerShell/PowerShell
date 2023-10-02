@@ -2681,32 +2681,35 @@ namespace Microsoft.PowerShell.Commands
             IDictionary fakeBoundParameters)
         {
             // -Verb is not supported on non-Windows platforms as well as Windows headless SKUs
-            if (Platform.IsWindowsDesktop)
+            if (!Platform.IsWindowsDesktop)
             {
-                var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+                yield break;
+            }
 
-                if (commandName.Equals(StartProcessCommandName)
-                    && fakeBoundParameters.Contains(FilePathParameterName))
+            if (commandName.Equals(StartProcessCommandName)
+                && fakeBoundParameters.Contains(FilePathParameterName))
+            {
+                string filePath = fakeBoundParameters[FilePathParameterName].ToString();
+                string fileExtension = Path.GetExtension(filePath);
+
+                if (!string.IsNullOrEmpty(fileExtension))
                 {
-                    string filePath = fakeBoundParameters[FilePathParameterName].ToString();
-                    string fileExtension = Path.GetExtension(filePath);
+                    var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
-                    if (!string.IsNullOrEmpty(fileExtension))
+                    string[] verbs = new ProcessStartInfo(filePath).Verbs;
+
+                    foreach (string verb in verbs)
                     {
-                        var processInfo = new ProcessStartInfo(filePath);
-
-                        foreach (string verb in processInfo.Verbs)
+                        if (verbPattern.IsMatch(verb))
                         {
-                            if (verbPattern.IsMatch(verb))
-                            {
-                                yield return new CompletionResult(verb);
-                            }
+                            yield return new CompletionResult(verb);
                         }
                     }
                 }
             }
         }
     }
+
 #if !UNIX
     /// <summary>
     /// ProcessCollection is a helper class used by Start-Process -Wait cmdlet to monitor the
