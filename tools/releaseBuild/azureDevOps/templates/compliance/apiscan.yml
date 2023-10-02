@@ -17,6 +17,8 @@ jobs:
       - name: branchCounter
         value: $[counter(variables['branchCounterKey'], 1)]
       - group: DotNetPrivateBuildAccess
+      - group: Azure Blob variable group
+      - group: ReleasePipelineSecrets
 
     pool:
       name: PowerShell1ES
@@ -53,6 +55,29 @@ jobs:
       retryCountOnTaskFailure: 2
 
     - pwsh: |
+        Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+        Install-AzCopy
+      displayName: Install AzCopy
+      retryCountOnTaskFailure: 2
+
+    - pwsh: |
+        Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+        $azcopy = Find-AzCopy
+        Write-Verbose -Verbose "Found AzCopy: $azcopy"
+
+        $winverifySymbolsPath = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)/winverify-symbols' -Force
+        Write-Host "##vso[task.setvariable variable=winverifySymbolsPath]$winverifySymbolsPath"
+
+        & $azcopy cp https://$(StorageAccount).blob.core.windows.net/winverify-private $winverifySymbolsPath --recursive
+
+        Get-ChildItem $winverifySymbolsPath -Recurse | Out-String | Write-Verbose -Verbose
+
+      displayName: Download winverify-private Artifacts
+      retryCountOnTaskFailure: 2
+      env:
+        AZCOPY_AUTO_LOGIN_TYPE: MSI
+
+    - pwsh: |
         Import-Module .\build.psm1 -force
         Find-DotNet
         Start-PSBuild -Configuration StaticAnalysis -PSModuleRestore -Clean -Runtime fxdependent-win-desktop
@@ -64,6 +89,39 @@ jobs:
         if (Test-Path $OutputFolder/ref) {
           Remove-Item -Recurse -Force $OutputFolder/ref
         }
+
+        $surrogateFileTemplate = @'
+        <?xml version="1.0" encoding="utf-8"?>
+        <APIScanSurrogates>
+          <Mappings>
+            <Mapping>
+              <SurrogateSet>
+                <BinarySet>
+                  <SymbolLocations>
+                    <SymbolLocation>{path_to_symbol}</SymbolLocation>
+                  </SymbolLocations>
+                  <Binary path="{path_to_dll}" />
+                </BinarySet>
+              </SurrogateSet>
+              <Targets>
+                <Binary path="{path_to_dll_in_build}" />
+              </Targets>
+            </Mapping>
+          </Mappings>
+        </APIScanSurrogates>
+        '@
+
+        $pathToDll = Get-ChildItem -Path $OutputFolder -Filter 'getfilesiginforedist.dll' -Recurse | Where-Object { $_.fullname -like '*win-x64*' } | Select-Object -First 1 -ExpandProperty FullName
+
+        $surrogateFile = Join-Path $(Pipeline.Workspace) 'APIScanSurrogates.xml'
+        $surrogateFileContent = $surrogateFileTemplate -replace '{path_to_symbol}', '$(winverifySymbolsPath)\winverify-private' -replace '{path_to_dll}', '$(winverifySymbolsPath)\winverify-private\getfilesiginforedist.dll' -replace '{path_to_dll_in_build}', $pathToDll
+        $surrogateFileContent | Out-File -FilePath $surrogateFile -Force
+
+        Write-Verbose -Verbose -Message "Surrogate file content:"
+        Get-Content -Path $surrogateFile -Raw | Out-String | Write-Verbose -Verbose
+
+        Write-Host "##vso[task.setvariable variable=surrogateFilePath]$(Pipeline.Workspace)"
+
       workingDirectory: '$(Build.SourcesDirectory)'
       displayName: 'Build PowerShell Source'
 
@@ -117,6 +175,7 @@ jobs:
         verbosityLevel: standard
         # write a status update every 5 minutes.  Default is 1 minute
         statusUpdateInterval: '00:05:00'
+        surrogateConfigurationFolder : $(surrogateFilePath)
       env:
         AzureServicesAuthConnectionString: RunAs=App;AppId=$(APIScanClient);TenantId=$(APIScanTenant);AppKey=$(APIScanSecret)
 
