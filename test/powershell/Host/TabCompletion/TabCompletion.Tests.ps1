@@ -746,14 +746,14 @@ ConstructorTestClass(int i, bool b)
 
     Context 'Start-Process -Verb parameter completion' {
         BeforeAll {
-            $allVerbs = 'edit', 'open', 'play', 'print', 'printto', 'runas', 'runasuser'
-            $verbsStartingWithP = 'play', 'print', 'printto'
-            $cmdVerbs = 'edit', 'open', 'print', 'runas', 'runasuser'
-            $exeVerbs = 'open', 'runas', 'runasuser'
-            $exeVerbsStartingWithRun = 'runas', 'runasuser'
-            $txtVerbs = 'open', 'print', 'printto'
-            $txtVerbsStartingWithPrin = 'print', 'printto'
-            $wavVerbs = 'open', 'play'
+            $allVerbs = 'Edit', 'Open', 'Play', 'Print', 'PrintTo', 'RunAs', 'RunAsUser'
+            $verbsStartingWithP = 'Play', 'Print', 'PrintTo'
+            $cmdVerbs = 'Edit', 'Open', 'Print', 'RunAs', 'RunAsUser'
+            $exeVerbs = 'Open', 'RunAs', 'RunAsUser'
+            $exeVerbsStartingWithRun = 'RunAs', 'RunAsUser'
+            $txtVerbs = 'Open', 'Print', 'PrintTo'
+            $txtVerbsStartingWithPrin = 'Print', 'PrintTo'
+            $wavVerbs = 'Open', 'Play'
         }
 
         It "Should complete Verb parameter for '<TextInput>'" -TestCases @(
@@ -765,6 +765,7 @@ ConstructorTestClass(int i, bool b)
             @{ TextInput = 'Start-Process -FilePath LICENSE.txt -Verb '; ExpectedVerbs = $txtVerbs }
             @{ TextInput = 'Start-Process -FilePath LICENSE.txt -Verb prin'; ExpectedVerbs = $txtVerbsStartingWithPrin }
             @{ TextInput = 'Start-Process -FilePath Empty.wav -Verb '; ExpectedVerbs = $wavVerbs }
+            @{ TextInput = 'Start-Process -FilePath FileWithoutExtension -Verb '; ExpectedVerbs = $allVerbs }
         ) {
             param($TextInput, $ExpectedVerbs)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
@@ -2748,7 +2749,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         @{path = ""; parameter = "-conn"; expected = "ConnectionURI"},
         @{path = ""; parameter = "-op"; expected = "OptionSet"},
         @{path = ""; parameter = "-au"; expected = "Authentication"},
-        @{path = ""; parameter = "-ce"; expected = "CertificateThumbprint"},
+        @{path = ""; parameter = "-ce"; expected = "CertificateThumbPrint"},
         @{path = ""; parameter = "-se"; expected = "SessionOption"},
         @{path = ""; parameter = "-ap"; expected = "ApplicationName"},
         @{path = ""; parameter = "-po"; expected = "Port"},

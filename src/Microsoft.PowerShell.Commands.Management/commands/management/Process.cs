@@ -2666,21 +2666,21 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly Dictionary<string, string[]> fileExtensionVerbMapping = new(StringComparer.OrdinalIgnoreCase)
         {
-            { ".cmd", new string[] { "edit", "open", "print", "runas", "runasuser" } },
-            { ".exe", new string[] { "open", "runas", "runasuser" } },
-            { ".txt", new string[] { "open", "print", "printto" } },
-            { ".wav", new string[] { "open", "play" } }
+            { ".cmd", new string[] { "Edit", "Open", "Print", "RunAs", "RunAsUser" } },
+            { ".exe", new string[] { "Open", "RunAs", "RunAsUser" } },
+            { ".txt", new string[] { "Open", "Print", "PrintTo" } },
+            { ".wav", new string[] { "Open", "Play" } }
         };
 
         private readonly string[] allVerbs = new string[]
         {
-            "edit",
-            "open",
-            "play",
-            "print",
-            "printto",
-            "runas",
-            "runasuser"
+            "Edit",
+            "Open",
+            "Play",
+            "Print",
+            "PrintTo",
+            "RunAs",
+            "RunAsUser"
         };
 
         /// <summary>
