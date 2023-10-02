@@ -2664,7 +2664,7 @@ namespace Microsoft.PowerShell.Commands
         private const string StartProcessCommandName = "Start-Process";
         private const string FilePathParameterName = "FilePath";
 
-        private readonly Dictionary<string, string[]> FileExtensionVerbMapping = new(StringComparer.OrdinalIgnoreCase)
+        private readonly Dictionary<string, string[]> fileExtensionVerbMapping = new(StringComparer.OrdinalIgnoreCase)
         {
             { ".cmd", new string[] { "edit", "open", "print", "runas", "runasuser" } },
             { ".exe", new string[] { "open", "runas", "runasuser" } },
@@ -2672,7 +2672,7 @@ namespace Microsoft.PowerShell.Commands
             { ".wav", new string[] { "open", "play" } }
         };
 
-        private readonly string[] AllVerbs = new string[]
+        private readonly string[] allVerbs = new string[]
         {
             "edit",
             "open",
@@ -2708,7 +2708,7 @@ namespace Microsoft.PowerShell.Commands
                 string fileExtension = Path.GetExtension(filePath);
 
                 if (!string.IsNullOrEmpty(fileExtension)
-                    && FileExtensionVerbMapping.TryGetValue(fileExtension, out string[] verbs))
+                    && fileExtensionVerbMapping.TryGetValue(fileExtension, out string[] verbs))
                 {
                     foreach (string verb in verbs)
                     {
@@ -2722,7 +2722,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            foreach (string verb in AllVerbs)
+            foreach (string verb in allVerbs)
             {
                 if (verbPattern.IsMatch(verb))
                 {
