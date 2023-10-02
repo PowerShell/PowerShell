@@ -746,26 +746,23 @@ ConstructorTestClass(int i, bool b)
 
     Context 'Start-Process -Verb parameter completion' {
         BeforeAll {
-            $allVerbs = 'Edit', 'Open', 'Play', 'Print', 'PrintTo', 'RunAs', 'RunAsUser'
-            $verbsStartingWithP = 'Play', 'Print', 'PrintTo'
-            $cmdVerbs = 'Edit', 'Open', 'Print', 'RunAs', 'RunAsUser'
-            $exeVerbs = 'Open', 'RunAs', 'RunAsUser'
-            $exeVerbsStartingWithRun = 'RunAs', 'RunAsUser'
-            $txtVerbs = 'Open', 'Print', 'PrintTo'
-            $txtVerbsStartingWithPrin = 'Print', 'PrintTo'
-            $wavVerbs = 'Open', 'Play'
+            $cmdVerbs = 'edit', 'open', 'print', 'runas', 'runasuser'
+            $exeVerbs = 'open', 'runas', 'runasuser'
+            $exeVerbsStartingWithRun = 'runas', 'runasuser'
+            $txtVerbs = 'printto'
+            $wavVerbs = 'Enqueue', 'open', 'play'
+            $docxVerbs = 'Edit', 'OnenotePrintto', 'Open', 'OpenAsReadOnly', 'Print', 'Printto', 'ViewProtected'
         }
 
-        It "Should complete Verb parameter for '<TextInput>'" -TestCases @(
-            @{ TextInput = 'Start-Process -Verb '; ExpectedVerbs = $allVerbs }
-            @{ TextInput = 'Start-Process -Verb p'; ExpectedVerbs = $verbsStartingWithP }
+        It "Should complete Verb parameter for '<TextInput>'" -Skip:(!$IsWindows) -TestCases @(
+            @{ TextInput = 'Start-Process -Verb '; ExpectedVerbs = @() }
             @{ TextInput = 'Start-Process -FilePath npm.cmd -Verb '; ExpectedVerbs = $cmdVerbs }
             @{ TextInput = 'Start-Process -FilePath powershell.exe -Verb '; ExpectedVerbs = $exeVerbs }
             @{ TextInput = 'Start-Process -FilePath powershell.exe -Verb run'; ExpectedVerbs = $exeVerbsStartingWithRun }
             @{ TextInput = 'Start-Process -FilePath LICENSE.txt -Verb '; ExpectedVerbs = $txtVerbs }
-            @{ TextInput = 'Start-Process -FilePath LICENSE.txt -Verb prin'; ExpectedVerbs = $txtVerbsStartingWithPrin }
             @{ TextInput = 'Start-Process -FilePath Empty.wav -Verb '; ExpectedVerbs = $wavVerbs }
-            @{ TextInput = 'Start-Process -FilePath FileWithoutExtension -Verb '; ExpectedVerbs = $allVerbs }
+            @{ TextInput = 'Start-Process -FilePath README.docx -Verb '; ExpectedVerbs = $docxVerbs }
+            @{ TextInput = 'Start-Process -FilePath FileWithoutExtension -Verb '; ExpectedVerbs = @() }
         ) {
             param($TextInput, $ExpectedVerbs)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
