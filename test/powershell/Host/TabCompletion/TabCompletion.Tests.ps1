@@ -757,6 +757,8 @@ ConstructorTestClass(int i, bool b)
             $testWavVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testWavPath).Verbs
             $testDocxPath = Join-Path -Path $TestDrive -ChildPath 'test.docx'
             $testDocxVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testDocxPath).Verbs
+            $testFileWithNoExtensionPath = Join-Path -Path $TestDrive -ChildPath 'test'
+            $testFileWithNoExtensionVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testFileWithNoExtensionPath).Verbs
         }
 
         It "Should complete Verb parameter for '<TextInput>'" -Skip:(!([System.Management.Automation.Platform]::IsWindowsDesktop)) -TestCases @(
@@ -767,7 +769,7 @@ ConstructorTestClass(int i, bool b)
             @{ TextInput = "Start-Process -FilePath $testTxtPath -Verb "; ExpectedVerbs = $testTxtVerbs }
             @{ TextInput = "Start-Process -FilePath $testWavPath -Verb "; ExpectedVerbs = $testWavVerbs }
             @{ TextInput = "Start-Process -FilePath $testDocxPath -Verb "; ExpectedVerbs = $testDocxVerbs }
-            @{ TextInput = 'Start-Process -FilePath FileWithoutExtension -Verb '; ExpectedVerbs = @() }
+            @{ TextInput = "Start-Process -FilePath $testFileWithNoExtensionPath -Verb "; ExpectedVerbs = $testFileWithNoExtensionVerbs }
         ) {
             param($TextInput, $ExpectedVerbs)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
