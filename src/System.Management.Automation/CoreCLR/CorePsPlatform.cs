@@ -612,32 +612,13 @@ namespace System.Management.Automation
                     { ItemType.SymbolicLink,    'l' },
                 };
 
-                private const string OwnerReadGroupReadOtherRead = "-r--r--r--";
-                private const string OwnerReadWriteGroupReadOtherRead = "-rw-r--r--";
-                private const string DirectoryOwnerFullGroupReadExecOtherReadExec = "drwxr-xr-x";
-
                 /// <summary>Convert the mode to a string which is usable in our formatting.</summary>
                 /// <returns>The mode converted into a Unix style string similar to the output of ls.</returns>
                 public string GetModeString()
                 {
-                    Span<char> modeCharacters = stackalloc char[10];
+                    char[] modeCharacters = new char[10];
                     modeCharacters[0] = itemTypeTable[ItemType];
                     bool isExecutable;
-
-                    // We'll do a couple of common mode strings here to reduce allocations and improve performance a bit.
-                    // On an Ubuntu system (docker), these 3 are roughly 70% of all the permissions
-                    if ((Mode & 0xFFF) == 292)
-                    {
-                        return OwnerReadGroupReadOtherRead;
-                    }
-                    else if ((Mode & 0xFFF) == 420)
-                    {
-                        return OwnerReadWriteGroupReadOtherRead;
-                    }
-                    else if ((ItemType == ItemType.Directory) & ((Mode & 0xFFF) == 493))
-                    {
-                        return DirectoryOwnerFullGroupReadExecOtherReadExec;
-                    }
 
                     UnixFileMode modeInfo = (UnixFileMode)Mode;
                     modeCharacters[1] = modeInfo.HasFlag(UnixFileMode.UserRead) ? CanRead : NoPerm;
