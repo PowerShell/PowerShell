@@ -2749,7 +2749,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         @{path = ""; parameter = "-conn"; expected = "ConnectionURI"},
         @{path = ""; parameter = "-op"; expected = "OptionSet"},
         @{path = ""; parameter = "-au"; expected = "Authentication"},
-        @{path = ""; parameter = "-ce"; expected = "CertificateThumbPrint"},
+        @{path = ""; parameter = "-ce"; expected = "CertificateThumbprint"},
         @{path = ""; parameter = "-se"; expected = "SessionOption"},
         @{path = ""; parameter = "-ap"; expected = "ApplicationName"},
         @{path = ""; parameter = "-po"; expected = "Port"},
