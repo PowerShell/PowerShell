@@ -1456,14 +1456,11 @@ namespace System.Management.Automation
         /// </summary>
         public class VerbArgumentCompleter : IArgumentCompleter
         {
-            #region Command & Parameter Name Constants
-
             private const string GetVerbCommandName = "Get-Verb";
             private const string GroupParameterName = "Group";
             private const string GetCommandCommandName = "Get-Command";
             private const string NounParameterName = "Noun";
-
-            #endregion
+            private const string VerbParameterName = "Verb";
 
             /// <summary>
             /// Returns completion results for verb parameter.
@@ -1481,6 +1478,11 @@ namespace System.Management.Automation
                 CommandAst commandAst,
                 IDictionary fakeBoundParameters)
             {
+                if (!parameterName.Equals(VerbParameterName, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield break;
+                }
+
                 var verbs = new string[] { wordToComplete + "*" };
 
                 // Completion: Get-Verb -Group <group> -Verb <wordToComplete>
@@ -1515,10 +1517,10 @@ namespace System.Management.Automation
                 else if (commandName.Equals(GetCommandCommandName, StringComparison.OrdinalIgnoreCase)
                          && fakeBoundParameters.Contains(NounParameterName))
                 {
-                    var commandInfo = new CmdletInfo(GetCommandCommandName, typeof(GetCommandCommand));
-
                     using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
                     {
+                        var commandInfo = new CmdletInfo(GetCommandCommandName, typeof(GetCommandCommand));
+
                         ps.AddCommand(commandInfo);
                         ps.AddParameter(NounParameterName, fakeBoundParameters[NounParameterName]);
 
