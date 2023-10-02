@@ -746,19 +746,23 @@ ConstructorTestClass(int i, bool b)
 
     Context 'Start-Process -Verb parameter completion' {
         BeforeAll {
+            function GetProcessInfoVerbs($path) {
+                (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $path).Verbs
+            }
+
             $testCmdPath = Join-Path -Path $TestDrive -ChildPath 'test.cmd'
-            $testCmdVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testCmdPath).Verbs
+            $testCmdVerbs = GetProcessInfoVerbs $testCmdPath
             $testExePath = Join-Path -Path $TestDrive -ChildPath 'test.exe'
-            $testExeVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testExePath).Verbs
+            $testExeVerbs = GetProcessInfoVerbs $testExePath
             $testExeVerbsStartingWithRun = $testExeVerbs | Where-Object { $_ -like 'run*' }
             $testTxtPath = Join-Path -Path $TestDrive -ChildPath 'test.txt'
-            $testTxtVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testTxtPath).Verbs
+            $testTxtVerbs = GetProcessInfoVerbs $testTxtPath
             $testWavPath = Join-Path -Path $TestDrive -ChildPath 'test.wav'
-            $testWavVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testWavPath).Verbs
+            $testWavVerbs = GetProcessInfoVerbs $testWavPath
             $testDocxPath = Join-Path -Path $TestDrive -ChildPath 'test.docx'
-            $testDocxVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testDocxPath).Verbs
+            $testDocxVerbs = GetProcessInfoVerbs $testDocxPath
             $testFileWithNoExtensionPath = Join-Path -Path $TestDrive -ChildPath 'test'
-            $testFileWithNoExtensionVerbs = (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $testFileWithNoExtensionPath).Verbs
+            $testFileWithNoExtensionVerbs = GetProcessInfoVerbs $testFileWithNoExtensionPath
         }
 
         It "Should complete Verb parameter for '<TextInput>'" -Skip:(!([System.Management.Automation.Platform]::IsWindowsDesktop)) -TestCases @(
