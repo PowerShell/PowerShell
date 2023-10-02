@@ -749,9 +749,9 @@ ConstructorTestClass(int i, bool b)
             $cmdVerbs = 'edit', 'open', 'print', 'runas', 'runasuser'
             $exeVerbs = 'open', 'runas', 'runasuser'
             $exeVerbsStartingWithRun = 'runas', 'runasuser'
-            $txtVerbs = 'printto'
-            $wavVerbs = 'Enqueue', 'open', 'play'
-            $docxVerbs = 'Edit', 'OnenotePrintto', 'Open', 'OpenAsReadOnly', 'Print', 'Printto', 'ViewProtected'
+            $txtVerbs = 'open', 'print', 'printto'
+            $wavVerbs = 'Enqueue', 'open', 'Play'
+            $docxVerbs = 'open', 'print', 'printto'
         }
 
         It "Should complete Verb parameter for '<TextInput>'" -Skip:(!$IsWindows) -TestCases @(
