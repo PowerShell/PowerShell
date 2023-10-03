@@ -205,7 +205,9 @@
               <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
                   <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)" Name="SemanticVersion" KeyPath="yes"/>
                   <RegistryValue Type="string" Value="[VersionFolder]" Name="InstallLocation" />
+                  <RegistryValue Type="string" Value="[ProductCode]" Name="ProductCode" />
               </RegistryKey>
+
             </Component>
             <Component Id="SharedRegistryEntries">
               <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
@@ -286,7 +288,7 @@
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.PowerShellFileContextSubMenuDialogText)"/>
                 <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe" KeyPath="yes"/>
                 <RegistryKey Key="Command">
-                  <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe -Command &quot;$host.UI.RawUI.WindowTitle = '$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))'; if((Get-ExecutionPolicy ) -ne 'AllSigned') { Set-ExecutionPolicy -Scope Process Bypass }; &amp; '%1'&quot;"/>
+                  <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe -Command &quot;$host.UI.RawUI.WindowTitle = '$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))'; &amp; '%1'&quot;"/>
                 </RegistryKey>
               </RegistryKey>
             </Component>
@@ -325,7 +327,7 @@
       <Control Id="AddToPathCheckBox" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="ADD_PATH" CheckBoxValue="0" Text="Add $(var.ProductName) to Path Environment Variable"/>
       <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
       <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
-      <Control Id="DisableTelemetry" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="DISABLE_TELEMETRY" CheckBoxValue="0" Text="Disable Telemetry (Reboot or Restart of processes may be required)" ToolTip="Sets environment variable POWERSHELL_TELEMETRY_OPTOUT to 1, see https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_telemetry"/>
+      <Control Id="DisableTelemetry" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="DISABLE_TELEMETRY" CheckBoxValue="0" Text="Disable Telemetry (Reboot or Restart of processes may be required)" ToolTip="Sets environment variable POWERSHELL_TELEMETRY_OPTOUT to 1, see https://go.microsoft.com/fwlink/?linkid=2242006"/>
       <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="140" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
       <Control Id="ContextMenuRunPowerShell" Type="CheckBox" X="20" Y="160" Width="290" Height="17" Property="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.PowerShellFileContextSubMenuDialogText)' context menu for PowerShell files"/>
       <Control Id="LicenseLink" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">

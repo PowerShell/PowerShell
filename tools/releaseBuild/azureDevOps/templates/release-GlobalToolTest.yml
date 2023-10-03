@@ -61,8 +61,8 @@ jobs:
 
       displayName: Install .NET
       env:
-        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+        __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
         $branch = $ENV:BUILD_SOURCEBRANCH
@@ -85,8 +85,8 @@ jobs:
 
       displayName: Install global tool
       env:
-        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+        __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
         $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/${{ parameters.globalToolExeName }}"
@@ -148,5 +148,5 @@ jobs:
         }
       displayName: Basic validation
       env:
-        __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-        __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+        __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)

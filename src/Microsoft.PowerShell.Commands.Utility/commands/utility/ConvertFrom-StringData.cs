@@ -59,7 +59,6 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string line in lines)
             {
-
                 if (string.IsNullOrEmpty(line) || line[0] == '#')
                     continue;
 

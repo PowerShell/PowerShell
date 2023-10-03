@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
         /// If the results need to be not removed from the store
         /// after being written. Default is results are removed.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Keep
         {
             get
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter NoRecurse
         {
             get
@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         { get; set; }
 
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Wait
         {
             get
@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter AutoRemoveJob
         {
             get
@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter WriteEvents
         {
             get
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter WriteJobInResults
         {
             get

@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -839,11 +840,21 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // Don't return untrusted commands to trusted functions
-            if ((result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage) &&
-                (executionContext.LanguageMode == PSLanguageMode.FullLanguage))
+            // Don't return untrusted commands to trusted functions.
+            if (result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage && executionContext.LanguageMode == PSLanguageMode.FullLanguage)
             {
-                return true;
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                {
+                    return true;
+                }
+
+                // This audit log message is to inform the user that an expected command will not be available because it is not trusted
+                // when the machine is in policy enforcement mode.
+                SystemPolicy.LogWDACAuditMessage(
+                    context: executionContext,
+                    title: CommandBaseStrings.SearcherWDACLogTitle,
+                    message: StringUtil.Format(CommandBaseStrings.SearcherWDACLogMessage, result.Name, result.ModuleName ?? string.Empty),
+                    fqid: "CommandSearchFailureForUntrustedCommand");
             }
 
             // Don't allow invocation of trusted functions from debug breakpoints.

@@ -19,8 +19,8 @@ $script:Options = $null
 $dotnetMetadata = Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json
 $dotnetCLIChannel = $dotnetMetadata.Sdk.Channel
 $dotnetCLIQuality = $dotnetMetadata.Sdk.Quality
-$dotnetAzureFeed = if (-not $env:__DONET_RUNTIME_FEED ) { $dotnetMetadata.Sdk.azureFeed }
-$dotnetAzureFeedSecret = $env:__DONET_RUNTIME_FEED_KEY
+$dotnetAzureFeed = if (-not $env:__DOTNET_RUNTIME_FEED ) { $dotnetMetadata.Sdk.azureFeed }
+$dotnetAzureFeedSecret = $env:__DOTNET_RUNTIME_FEED_KEY
 $dotnetSDKVersionOveride = $dotnetMetadata.Sdk.sdkImageOverride
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
@@ -273,7 +273,7 @@ function Test-IsReleaseCandidate
     return $false
 }
 
-$optimizedFddRegex = 'fxdependent-(linux|alpine|win|win7|osx)-(x64|x86|arm64|arm)'
+$optimizedFddRegex = 'fxdependent-(linux|linux-musl|win|win7|osx)-(x64|x86|arm64|arm)'
 
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName="Default")]
@@ -307,9 +307,11 @@ function Start-PSBuild {
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         # If this parameter is not provided it will get determined automatically.
-        [ValidateSet("alpine-x64",
+        [ValidateSet("linux-musl-x64",
                      "fxdependent",
+                     "fxdependent-linux-musl-x64",
                      "fxdependent-linux-x64",
+                     "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
                      "linux-arm",
                      "linux-arm64",
@@ -428,6 +430,7 @@ Fix steps:
         PSModuleRestore=$PSModuleRestore
         ForMinimalSize=$ForMinimalSize
     }
+
     $script:Options = New-PSOptions @OptionsArguments
 
     if ($StopDevPowerShell) {
@@ -452,6 +455,17 @@ Fix steps:
     }
     else {
         $Arguments += "--self-contained"
+    }
+
+    if ($Options.Runtime -like 'win*') {
+        # Starting in .NET 8, the .NET SDK won't recognize version-specific RIDs by default, such as win7-x64,
+        # see https://learn.microsoft.com/dotnet/core/compatibility/sdk/8.0/rid-graph for details.
+        # It will cause huge amount of changes in our build infrastructure because our building and packaging
+        # scripts have the 'win7-xx' assumption regarding the target runtime.
+        #
+        # As a workaround, we use the old full RID graph during the build so that we can continue to use the
+        # 'win7-x64' and 'win7-x86' RIDs.
+        $Arguments += "/property:UseRidGraph=true"
     }
 
     if ($Options.Runtime -like 'win*' -or ($Options.Runtime -like 'fxdependent*' -and $environment.IsWindows)) {
@@ -797,6 +811,7 @@ function Restore-PSPackage
 
         if ($Options.Runtime -like 'win*') {
             $RestoreArguments += "/property:EnableWindowsTargeting=True"
+            $RestoreArguments += "/property:UseRidGraph=True"
         }
 
         if ($InteractiveAuth) {
@@ -883,9 +898,11 @@ function New-PSOptions {
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
-                     "alpine-x64",
+                     "linux-musl-x64",
                      "fxdependent",
+                     "fxdependent-linux-musl-x64",
                      "fxdependent-linux-x64",
+                     "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
                      "linux-arm",
                      "linux-arm64",
@@ -970,9 +987,14 @@ function New-PSOptions {
 
     # Build the Output path
     if (!$Output) {
-        if ($Runtime -like 'fxdependent*') {
+        if ($Runtime -like 'fxdependent*' -and ($Runtime -like 'fxdependent*linux*' -or $Runtime -like 'fxdependent*alpine*')) {
+            $outputRuntime = $Runtime -replace 'fxdependent-', ''
+            $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $outputRuntime, "publish", $Executable)
+        }
+        elseif ($Runtime -like 'fxdependent*') {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, "publish", $Executable)
-        } else {
+        }
+        else {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
         }
     } else {
@@ -1153,8 +1175,9 @@ function Publish-PSTestTools {
     $tools = @(
         @{ Path="${PSScriptRoot}/test/tools/TestAlc";     Output="library" }
         @{ Path="${PSScriptRoot}/test/tools/TestExe";     Output="exe" }
-        @{ Path="${PSScriptRoot}/test/tools/WebListener"; Output="exe" }
         @{ Path="${PSScriptRoot}/test/tools/TestService"; Output="exe" }
+        @{ Path="${PSScriptRoot}/test/tools/UnixSocket";  Output="exe" }
+        @{ Path="${PSScriptRoot}/test/tools/WebListener"; Output="exe" }
     )
 
     $Options = Get-PSOptions -DefaultToNew
@@ -1185,6 +1208,10 @@ function Publish-PSTestTools {
             if (-not $runtime) {
                 $runtime = $Options.Runtime
             }
+
+            # We are using non-version/distro specific RIDs for test tools, so we need to fix the runtime
+            # value here if it starts with 'win7'.
+            $runtime = $runtime -replace '^win7-', 'win-'
 
             Write-Verbose -Verbose -Message "Starting dotnet publish for $toolPath with runtime $runtime"
 
@@ -1319,7 +1346,7 @@ function Start-PSPester {
         # if we are building for Alpine, we must include the runtime as linux-x64
         # will not build runnable test tools
         if ( $environment.IsLinux -and $environment.IsAlpine ) {
-            $publishArgs['runtime'] = 'alpine-x64'
+            $publishArgs['runtime'] = 'linux-musl-x64'
         }
         Publish-PSTestTools @publishArgs | ForEach-Object {Write-Host $_}
 
@@ -1614,7 +1641,7 @@ function Publish-TestResults
         # NUnit allowed values are: Passed, Failed, Inconclusive or Ignored (the spec says Skipped but it doesn' work with Azure DevOps)
         # https://github.com/nunit/docs/wiki/Test-Result-XML-Format
         # Azure DevOps Reporting is so messed up for NUnit V2 and doesn't follow their own spec
-        # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
+        # https://learn.microsoft.com/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=yaml
         # So, we will map skipped to the actual value in the NUnit spec and they will ignore all results for tests which were not executed
         Get-Content $Path | ForEach-Object {
             $_ -replace 'result="Ignored"', 'result="Skipped"'

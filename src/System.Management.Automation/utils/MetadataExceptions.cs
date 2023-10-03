@@ -10,7 +10,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for all Metadata errors.
     /// </summary>
-    [Serializable]
     public class MetadataException : RuntimeException
     {
         internal const string MetadataMemberInitialization = "MetadataMemberInitialization";
@@ -21,9 +20,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        protected MetadataException(SerializationInfo info, StreamingContext context) : base(info, context)
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
+        protected MetadataException(SerializationInfo info, StreamingContext context)
         {
-            SetErrorCategory(ErrorCategory.MetadataError);
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -71,7 +71,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for all Validate attributes.
     /// </summary>
-    [Serializable]
     [SuppressMessage("Microsoft.Usage", "CA2240:ImplementISerializableCorrectly")]
     public class ValidationMetadataException : MetadataException
     {
@@ -109,7 +108,12 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        protected ValidationMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
+        protected ValidationMetadataException(SerializationInfo info, StreamingContext context)
+        {
+            throw new NotSupportedException();
+        }
+
         /// <summary>
         /// Initializes a new instance of ValidationMetadataException with the message set
         /// to typeof(ValidationMetadataException).FullName.
@@ -167,7 +171,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for all ArgumentTransformation attributes.
     /// </summary>
-    [Serializable]
     public class ArgumentTransformationMetadataException : MetadataException
     {
         internal const string ArgumentTransformationArgumentsShouldBeStrings = "ArgumentTransformationArgumentsShouldBeStrings";
@@ -177,8 +180,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ArgumentTransformationMetadataException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
+        {
+            throw new NotSupportedException();
+        }
 
         /// <summary>
         /// Initializes a new instance of ArgumentTransformationMetadataException with the message set
@@ -215,7 +221,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for all parameter binding exceptions related to metadata attributes.
     /// </summary>
-    [Serializable]
     public class ParsingMetadataException : MetadataException
     {
         internal const string ParsingTooManyParameterSets = "ParsingTooManyParameterSets";
@@ -225,8 +230,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ParsingMetadataException(SerializationInfo info, StreamingContext context)
-            : base(info, context) { }
+        {
+            throw new NotSupportedException();
+        }
 
         /// <summary>
         /// Initializes a new instance of ParsingMetadataException with the message set

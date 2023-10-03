@@ -2434,6 +2434,13 @@ namespace Microsoft.PowerShell.Commands
 
                     bool exists = false;
 
+                   // junctions require an absolute path
+                    if (!Path.IsPathRooted(strTargetPath))
+                    {
+                        WriteError(new ErrorRecord(new ArgumentException(FileSystemProviderStrings.JunctionAbsolutePath), "NotAbsolutePath", ErrorCategory.InvalidArgument, strTargetPath));
+                        return;
+                    }
+
                     try
                     {
                         exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
@@ -4908,30 +4915,30 @@ namespace Microsoft.PowerShell.Commands
                 // make sure we return two backslashes so it still results in a UNC path
                 parentPath = "\\\\";
             }
+
+            if (!parentPath.EndsWith(StringLiterals.DefaultPathSeparator)
+                && Utils.PathIsDevicePath(parentPath)
+                && parentPath.Length - parentPath.Replace(StringLiterals.DefaultPathSeparatorString, string.Empty).Length == 3)
+            {
+                // Device paths start with either "\\.\" or "\\?\"
+                // When referring to the root, like: "\\.\CDROM0\" then it needs the trailing separator to be valid.
+                parentPath += StringLiterals.DefaultPathSeparator;
+            }
 #endif
+            s_tracer.WriteLine("GetParentPath returning '{0}'", parentPath);
             return parentPath;
         }
 
         // Note: we don't use IO.Path.IsPathRooted as this deals with "invalid" i.e. unnormalized paths
         private static bool IsAbsolutePath(string path)
         {
-            bool result = false;
-
             // check if we're on a single root filesystem and it's an absolute path
             if (LocationGlobber.IsSingleFileSystemAbsolutePath(path))
             {
                 return true;
             }
 
-            // Find the drive separator
-            int index = path.IndexOf(':');
-
-            if (index != -1)
-            {
-                result = true;
-            }
-
-            return result;
+            return path.Contains(':');
         }
 
         /// <summary>
@@ -7371,7 +7378,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 // Check for UTF-7 by checking for code page 65000
-                // See: https://docs.microsoft.com/en-us/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
+                // See: https://learn.microsoft.com/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
                 if (value != null && value.CodePage == 65000)
                 {
                     _provider.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
@@ -7863,7 +7870,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/windows/win32/fileio/reparse-point-tags
+                // The name surrogate bit 0x20000000 is defined in https://learn.microsoft.com/windows/win32/fileio/reparse-point-tags
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
                 // (like symlinks and mount points).
                 // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
@@ -8096,7 +8103,7 @@ namespace System.Management.Automation.Internal
 
                 // Directories don't normally have alternate streams, so this is not an exceptional state.
                 // If a directory has no alternate data streams, FindFirstStreamW returns ERROR_HANDLE_EOF.
-                // If the file system (such as FAT32) does not support alternate streams, then 
+                // If the file system (such as FAT32) does not support alternate streams, then
                 // ERROR_INVALID_PARAMETER is returned by FindFirstStreamW. See documentation:
                 // https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-findfirststreamw
                 if (error == NativeMethods.ERROR_HANDLE_EOF || error == NativeMethods.ERROR_INVALID_PARAMETER)

@@ -103,14 +103,21 @@ namespace System.Management.Automation
                 // Get the lock down policy with no handle. This only impacts command discovery,
                 // as the real language mode assignment will be done when we read the script
                 // contents.
-                SystemEnforcementMode scriptSpecificPolicy = SystemPolicy.GetLockdownPolicy(_path, null);
-                if (scriptSpecificPolicy != SystemEnforcementMode.Enforce)
+                switch (SystemPolicy.GetLockdownPolicy(_path, null))
                 {
-                    this.DefiningLanguageMode = PSLanguageMode.FullLanguage;
-                }
-                else
-                {
-                    this.DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                    case SystemEnforcementMode.None:
+                        DefiningLanguageMode = PSLanguageMode.FullLanguage;
+                        break;
+
+                    case SystemEnforcementMode.Audit:
+                        // For policy audit mode, language mode is set to CL but audit messages are emitted to log
+                        // instead of applying restrictions.
+                        DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                        break;
+
+                    case SystemEnforcementMode.Enforce:
+                        DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                        break;
                 }
             }
         }
@@ -523,7 +530,6 @@ namespace System.Management.Automation
                                     {
                                         DefiningLanguageMode = Context.LanguageMode;
                                     }
-
                                     break;
 
                                 case SystemScriptFileEnforcement.Allow:
@@ -531,6 +537,17 @@ namespace System.Management.Automation
                                     break;
 
                                 case SystemScriptFileEnforcement.AllowConstrained:
+                                    DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                                    break;
+
+                                case SystemScriptFileEnforcement.AllowConstrainedAudit:
+                                    SystemPolicy.LogWDACAuditMessage(
+                                        context: Context,
+                                        title: SecuritySupportStrings.ExternalScriptWDACLogTitle,
+                                        message: string.Format(Globalization.CultureInfo.CurrentUICulture, SecuritySupportStrings.ExternalScriptWDACLogMessage, _path),
+                                        fqid: "ScriptFileNotTrustedByPolicy");
+                                    // We set the language mode to Constrained Language, even though in policy audit mode no restrictions are applied
+                                    // and instead an audit log message is generated wherever a restriction would be applied.
                                     DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
                                     break;
 
@@ -594,7 +611,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the name and version tuple of a PSSnapin.
     /// </summary>
-    [Serializable]
     public class PSSnapInSpecification
     {
         internal PSSnapInSpecification(string psSnapinName)

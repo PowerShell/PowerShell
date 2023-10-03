@@ -22,9 +22,14 @@ Describe "Windows platform file signatures" -Tags 'Feature' {
 }
 
 Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWindows') {
-    $PSDefaultParameterValues = @{ "It:Skip" = (-not $IsWindows) }
-
     BeforeAll {
+        $shouldSkip = (-not $IsWindows) -or (Test-IsWinServer2012R2)
+
+        if ($shouldSkip) {
+            Push-DefaultParameterValueStack @{ "it:skip" = $shouldSkip }
+            return
+        }
+
         $session = New-PSSession -UseWindowsPowerShell
         try {
             # New-SelfSignedCertificate runs in implicit remoting so do all the
@@ -83,9 +88,22 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
     }
 
     AfterAll {
-        Remove-Item -Path Cert:\LocalMachine\Root\$caRootThumbprint -Force
-        Remove-Item -Path Cert:\LocalMachine\TrustedPublisher\$signingThumbprint -Force
-        Remove-Item -Path Cert:\CurrentUser\My\$signingThumbprint -Force
+        if ($shouldSkip) {
+            return
+        }
+
+        $paths = @(
+            "Cert:\LocalMachine\Root\$caRootThumbprint"
+            "Cert:\LocalMachine\TrustedPublisher\$signingThumbprint"
+            "Cert:\CurrentUser\My\$signingThumbprint"
+        )
+
+        foreach($path in $paths) {
+            if (Test-Path $path -PathType Leaf) {
+                # failing to remove is not fatal
+                Remove-Item -Force -Path $path -ErrorAction Ignore
+            }
+        }
     }
 
     It "Validates signature using path on even char count with Encoding <Encoding>" -TestCases @(

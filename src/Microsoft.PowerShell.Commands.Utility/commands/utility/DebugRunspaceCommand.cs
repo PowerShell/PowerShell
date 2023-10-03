@@ -407,8 +407,7 @@ namespace Microsoft.PowerShell.Commands
         private void HandleRunspaceAvailabilityChanged(object sender, RunspaceAvailabilityEventArgs e)
         {
             // Ignore nested commands.
-            LocalRunspace localRunspace = sender as LocalRunspace;
-            if (localRunspace != null)
+            if (sender is LocalRunspace localRunspace)
             {
                 var basePowerShell = localRunspace.GetCurrentBasePowerShell();
                 if ((basePowerShell != null) && (basePowerShell.IsNested))
@@ -438,8 +437,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void HandlePipelineOutputDataReady(object sender, EventArgs e)
         {
-            PipelineReader<PSObject> reader = sender as PipelineReader<PSObject>;
-            if (reader != null && reader.IsOpen)
+            if (sender is PipelineReader<PSObject> reader && reader.IsOpen)
             {
                 WritePipelineCollection(reader.NonBlockingRead(), PSStreamObjectType.Output);
             }
@@ -447,8 +445,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void HandlePipelineErrorDataReady(object sender, EventArgs e)
         {
-            PipelineReader<object> reader = sender as PipelineReader<object>;
-            if (reader != null && reader.IsOpen)
+            if (sender is PipelineReader<object> reader && reader.IsOpen)
             {
                 WritePipelineCollection(reader.NonBlockingRead(), PSStreamObjectType.Error);
             }
@@ -538,8 +535,7 @@ namespace Microsoft.PowerShell.Commands
             // Only enable and disable the host's runspace if we are in process attach mode.
             if (_debugger is ServerRemoteDebugger)
             {
-                LocalRunspace localRunspace = runspace as LocalRunspace;
-                if ((localRunspace != null) && (localRunspace.ExecutionContext != null) && (localRunspace.ExecutionContext.EngineHostInterface != null))
+                if ((runspace is LocalRunspace localRunspace) && (localRunspace.ExecutionContext != null) && (localRunspace.ExecutionContext.EngineHostInterface != null))
                 {
                     try
                     {
@@ -552,8 +548,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static void SetLocalMode(System.Management.Automation.Debugger debugger, bool localMode)
         {
-            ServerRemoteDebugger remoteDebugger = debugger as ServerRemoteDebugger;
-            if (remoteDebugger != null)
+            if (debugger is ServerRemoteDebugger remoteDebugger)
             {
                 remoteDebugger.LocalDebugMode = localMode;
             }

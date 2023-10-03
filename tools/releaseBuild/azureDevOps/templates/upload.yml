@@ -21,6 +21,7 @@ steps:
     ContainerName: '$(AzureVersion)'
     resourceGroup: '$(StorageResourceGroup)'
   condition: succeeded()
+  retryCountOnTaskFailure: 2
 
 - task: AzureFileCopy@4
   displayName: 'upload signed min-size package (for Guest Config) to Azure - ${{ parameters.architecture }}'
@@ -32,6 +33,7 @@ steps:
     ContainerName: '$(AzureVersion)-gc'
     resourceGroup: '$(StorageResourceGroup)'
   condition: and(eq('${{ parameters.architecture }}', 'x64'), succeeded())
+  retryCountOnTaskFailure: 2
 
 - template: upload-final-results.yml
   parameters:
@@ -49,6 +51,7 @@ steps:
     ContainerName: '$(AzureVersion)-private'
     resourceGroup: '$(StorageResourceGroup)'
   condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
+  retryCountOnTaskFailure: 2
 
 # Disable upload task as the symbols package is not currently used and we want to avoid publishing this in releases
 #- task: AzureFileCopy@4
@@ -77,3 +80,4 @@ steps:
     ContainerName: '$(AzureVersion)-private'
     resourceGroup: '$(StorageResourceGroup)'
   condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'), eq(variables['SHOULD_SIGN'], 'true'))
+  retryCountOnTaskFailure: 2

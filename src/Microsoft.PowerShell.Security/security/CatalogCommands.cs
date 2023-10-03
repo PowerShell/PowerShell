@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Catalog version.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public int CatalogVersion
         {
             get
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Detailed
         {
             get { return detailed; }
@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Patterns used to exclude files from DiskPaths and Catalog.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string[] FilesToSkip
         {
             get

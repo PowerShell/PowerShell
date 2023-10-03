@@ -164,9 +164,6 @@ End time: {0:yyyyMMddHHmmss}
   <data name="DebuggerSourceCodeFormat" xml:space="preserve">
     <value>{0}:{1,-3} {2}</value>
   </data>
-  <data name="CommandFailed" xml:space="preserve">
-    <value>An error occurred while running '{0}': {1}</value>
-  </data>
   <data name="SessionDoesNotSupportDebugger" xml:space="preserve">
     <value>
 The current session does not support debugging; execution will continue.

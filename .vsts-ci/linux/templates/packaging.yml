@@ -90,3 +90,4 @@ jobs:
         Write-Host "##vso[artifact.upload containerfolder=rpm;artifactname=rpm]$packagePath"
       }
     displayName: Upload packages
+    retryCountOnTaskFailure: 2

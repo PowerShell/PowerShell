@@ -19,7 +19,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Performing EventSource initialization in the Static Constructor since this is thread safe.
         /// Static constructors are guaranteed to be run only once per application domain, before any instances of a class are created or any static members are accessed.
-        /// https://docs.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/static-constructors.
+        /// https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/static-constructors.
         /// </summary>
         static TelemetryWrapper()
         {

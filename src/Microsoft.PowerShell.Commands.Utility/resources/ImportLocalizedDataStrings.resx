@@ -143,4 +143,10 @@
   <data name="IncorrectVariableName" xml:space="preserve">
     <value>The BindingVariable name '{0}' is invalid.</value>
   </data>
+  <data name="WDACLogTitle" xml:space="preserve">
+    <value>Import-LocalizedData Cmdlet</value>
+  </data>
+  <data name="WDACLogMessage" xml:space="preserve">
+    <value>Additional supported commands (via SupportedCommand parameter) will not be allowed in ConstrainedLanguage mode.</value>
+  </data>
 </root>

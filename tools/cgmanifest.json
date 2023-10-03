@@ -24,8 +24,48 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "JetBrains.Annotations",
+          "Version": "2021.2.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Json.More.Net",
+          "Version": "1.9.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "JsonPointer.Net",
+          "Version": "3.0.3"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "JsonSchema.Net",
+          "Version": "5.2.5"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "Markdig.Signed",
-          "Version": "0.31.0"
+          "Version": "0.33.0"
         }
       },
       "DevelopmentDependency": false
@@ -65,7 +105,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.5.0"
+          "Version": "4.7.0"
         }
       },
       "DevelopmentDependency": false
@@ -75,16 +115,6 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.5.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "Microsoft.CSharp",
           "Version": "4.7.0"
         }
       },
@@ -135,7 +165,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.PowerShell.MarkdownRender",
-          "Version": "7.2.0"
+          "Version": "7.2.1"
         }
       },
       "DevelopmentDependency": false
@@ -195,17 +225,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "7.0.1"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "Namotion.Reflection",
-          "Version": "2.1.0"
+          "Version": "7.0.5"
         }
       },
       "DevelopmentDependency": false
@@ -216,16 +236,6 @@
         "Nuget": {
           "Name": "Newtonsoft.Json",
           "Version": "13.0.3"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "NJsonSchema",
-          "Version": "10.8.0"
         }
       },
       "DevelopmentDependency": false
@@ -335,7 +345,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers.Unstable",
-          "Version": "1.2.0.435"
+          "Version": "1.2.0.507"
         }
       },
       "DevelopmentDependency": true
@@ -365,7 +375,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Collections.Immutable",
-          "Version": "6.0.0"
+          "Version": "7.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -465,7 +475,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.AccountManagement",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -475,7 +485,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.Protocols",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -535,7 +545,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Management",
-          "Version": "7.0.1"
+          "Version": "7.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -595,7 +605,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Reflection.Metadata",
-          "Version": "6.0.1"
+          "Version": "7.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -635,7 +645,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Pkcs",
-          "Version": "7.0.1"
+          "Version": "7.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -745,7 +755,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceProcess.ServiceController",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -784,6 +794,16 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "System.Text.Json",
+          "Version": "6.0.2"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "System.Threading.AccessControl",
           "Version": "7.0.1"
         }
@@ -795,7 +815,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Web.Services.Description",
-          "Version": "4.9.0"
+          "Version": "4.10.0"
         }
       },
       "DevelopmentDependency": false
