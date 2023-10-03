@@ -2663,7 +2663,6 @@ namespace Microsoft.PowerShell.Commands
     {
         private const string StartProcessCommandName = "Start-Process";
         private const string FilePathParameterName = "FilePath";
-        private const string VerbParameterName = "Verb";
 
         /// <summary>
         /// Returns completion results for verb parameter.
@@ -2682,8 +2681,7 @@ namespace Microsoft.PowerShell.Commands
             IDictionary fakeBoundParameters)
         {
             // -Verb is not supported on non-Windows platforms as well as Windows headless SKUs
-            if (!Platform.IsWindowsDesktop
-                || !parameterName.Equals(VerbParameterName, StringComparison.OrdinalIgnoreCase))
+            if (!Platform.IsWindowsDesktop)
             {
                 yield break;
             }
