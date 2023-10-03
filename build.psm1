@@ -273,7 +273,7 @@ function Test-IsReleaseCandidate
     return $false
 }
 
-$optimizedFddRegex = 'fxdependent-(linux|linux-musl|win|win7|osx)-(x64|x86|arm64|arm)'
+$optimizedFddRegex = 'fxdependent-(linux|win|win7|osx)-(x64|x86|arm64|arm)'
 
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName="Default")]
@@ -309,7 +309,7 @@ function Start-PSBuild {
         # If this parameter is not provided it will get determined automatically.
         [ValidateSet("linux-musl-x64",
                      "fxdependent",
-                     "fxdependent-linux-musl-x64",
+                     "fxdependent-noopt-linux-musl-x64",
                      "fxdependent-linux-x64",
                      "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
@@ -900,7 +900,7 @@ function New-PSOptions {
         [ValidateSet("",
                      "linux-musl-x64",
                      "fxdependent",
-                     "fxdependent-linux-musl-x64",
+                     "fxdependent-noopt-linux-musl-x64",
                      "fxdependent-linux-x64",
                      "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
