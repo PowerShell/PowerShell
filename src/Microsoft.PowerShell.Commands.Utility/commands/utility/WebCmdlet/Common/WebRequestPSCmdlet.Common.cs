@@ -915,17 +915,10 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            // Resume requires OutFile.
+            // Resume requires OutFile and can't be used with OutFolder..
             if (Resume.IsPresent && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeOutFileMissing, "WebCmdletResumeOutFileMissingException");
-                ThrowTerminatingError(error);
-            }
-
-            // Resume can't be used with OutFolder.
-            if (Resume.IsPresent && OutFolder is not null)
-            {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeConflict, "WebCmdletResumeConflictException");
                 ThrowTerminatingError(error);
             }
 

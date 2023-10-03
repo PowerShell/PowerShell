@@ -207,9 +207,6 @@
   <data name="ReadResponseProgressStatus" xml:space="preserve">
     <value>Downloaded: {0} of {1}</value>
   </data>
-  <data name="ResumeConflict" xml:space="preserve">
-    <value>The Resume switch can only be used with OutFile not with OutFolder.</value>
-  </data>
   <data name="ResumeOutFileMissing" xml:space="preserve">
     <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide valid OutFile parameter value when using the Resume parameter, then retry.</value>
   </data>
