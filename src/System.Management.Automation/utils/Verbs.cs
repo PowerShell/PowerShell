@@ -1139,6 +1139,8 @@ namespace System.Management.Automation
         /// Explains what the verb is meant to do with its object.
         /// </summary>
         public string Description { get; internal set; }
+
+        internal VerbInfo() { }
     }
 
     internal static class Verbs
