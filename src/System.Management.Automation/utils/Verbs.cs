@@ -1460,7 +1460,6 @@ namespace System.Management.Automation
             private const string GroupParameterName = "Group";
             private const string GetCommandCommandName = "Get-Command";
             private const string NounParameterName = "Noun";
-            private const string VerbParameterName = "Verb";
 
             /// <summary>
             /// Returns completion results for verb parameter.
@@ -1478,11 +1477,6 @@ namespace System.Management.Automation
                 CommandAst commandAst,
                 IDictionary fakeBoundParameters)
             {
-                if (!parameterName.Equals(VerbParameterName, StringComparison.OrdinalIgnoreCase))
-                {
-                    yield break;
-                }
-
                 var verbs = new string[] { wordToComplete + "*" };
 
                 // Completion: Get-Verb -Group <group> -Verb <wordToComplete>
