@@ -141,11 +141,9 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ShouldSaveToOutFile)
             {   
-                string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
+                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
 
-                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(outFilePath)}"));
-
-                StreamHelper.SaveStreamToFile(baseResponseStream, outFilePath, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
+                StreamHelper.SaveStreamToFile(baseResponseStream, _qualifiedOutFile, this, response.Content.Headers.ContentLength.GetValueOrDefault(), _cancelToken.Token);
             }
 
             if (!string.IsNullOrEmpty(StatusCodeVariable))

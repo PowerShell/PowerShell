@@ -735,20 +735,20 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $uri.Authority
     }
 
-    It "Invoke-WebRequest -OutFile folder Downloads the file and names it" {
+    It "Invoke-WebRequest -OutFolder Downloads the file and names it" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $content = Invoke-WebRequest -Uri $uri
         $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
 
         # ensure the file does not exist
         Remove-Item -Force -ErrorAction Ignore -Path $outFile
-        Invoke-WebRequest -Uri $uri -OutFile $TestDrive
+        Invoke-WebRequest -Uri $uri -OutFolder $TestDrive
 
         Test-Path $outFile | Should -Be $true
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
-    It "Invoke-WebRequest -OutFile folder Downloads the file and names it as the Content-Disposition header if present." -TestCases @(
+    It "Invoke-WebRequest -OutFolder Downloads the file and names it as the Content-Disposition header if present." -TestCases @(
         @{ Value = 'DownloadedFile.txt' }
         @{ Value = '"DownloadedFile.txt"' }
         @{ Value = "'DownloadedFile.txt'" }
@@ -767,7 +767,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         # ensure the file does not exist
         Remove-Item -Force -ErrorAction Ignore -Path $outFile
-        Invoke-WebRequest -Uri $uri -OutFile $TestDrive
+        Invoke-WebRequest -Uri $uri -OutFolder $TestDrive
 
         Test-Path $outFile | Should -BeTrue
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
@@ -2044,12 +2044,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         It "Invoke-WebRequest -Resume requires -OutFile" {
             { Invoke-WebRequest -Resume -Uri $resumeUri -ErrorAction Stop } |
-                Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                Should -Throw -ErrorId 'WebCmdletResumeOutFileMissingException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
 
-        It "Invoke-WebRequest -Resume should fail if -OutFile folder" {
-            { Invoke-WebRequest -Resume -Uri $resumeUri -OutFile $TestDrive -ErrorAction Stop } |
-                Should -Throw -ErrorId 'WebCmdletResumeNotFilePathException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+        It "Invoke-WebRequest -Resume should fail if -OutFolder" {
+            { Invoke-WebRequest -Resume -Uri $resumeUri -OutFolder $TestDrive -ErrorAction Stop } |
+                Should -Throw -ErrorId 'WebCmdletResumeConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
 
         It "Invoke-WebRequest -Resume Downloads the whole file when the file does not exist" {
@@ -2743,20 +2743,20 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $uri.Authority
     }
 
-    It "Invoke-RestMethod -OutFile folder Downloads the file and names it" {
+    It "Invoke-RestMethod -OutFolder Downloads the file and names it" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $content = Invoke-WebRequest -Uri $uri
         $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
 
         # ensure the file does not exist
         Remove-Item -Force -ErrorAction Ignore -Path $outFile
-        Invoke-RestMethod -Uri $uri -OutFile $TestDrive
+        Invoke-RestMethod -Uri $uri -OutFolder $TestDrive
 
         Test-Path $outFile | Should -Be $true
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
-    It "Invoke-RestMethod -OutFile folder Downloads the file and names it as the Content-Disposition header if present." -TestCases @(
+    It "Invoke-RestMethod -OutFolder folder Downloads the file and names it as the Content-Disposition header if present." -TestCases @(
         @{ Value = 'DownloadedFile.txt' }
         @{ Value = '"DownloadedFile.txt"' }
         @{ Value = "'DownloadedFile.txt'" }
@@ -2775,7 +2775,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         # ensure the file does not exist
         Remove-Item -Force -ErrorAction Ignore -Path $outFile
-        Invoke-RestMethod -Uri $uri -OutFile $TestDrive
+        Invoke-RestMethod -Uri $uri -OutFolder $TestDrive
 
         Test-Path $outFile | Should -BeTrue
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
@@ -3977,12 +3977,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         It "Invoke-RestMethod -Resume requires -OutFile" {
             { Invoke-RestMethod -Resume -Uri $resumeUri -ErrorAction Stop } |
-                Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                Should -Throw -ErrorId 'WebCmdletResumeOutFileMissingException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
 
-        It "Invoke-RestMethod -Resume should fail if -OutFile folder" {
-            { Invoke-RestMethod -Resume -Uri $resumeUri -OutFile $TestDrive -ErrorAction Stop } |
-                Should -Throw -ErrorId 'WebCmdletResumeNotFilePathException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+        It "Invoke-RestMethod -Resume should fail if -OutFolder" {
+            { Invoke-RestMethod -Resume -Uri $resumeUri -OutFolder $TestDrive -ErrorAction Stop } |
+                Should -Throw -ErrorId 'WebCmdletResumeConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
 
         It "Invoke-RestMethod -Resume Downloads the whole file when the file does not exist" {

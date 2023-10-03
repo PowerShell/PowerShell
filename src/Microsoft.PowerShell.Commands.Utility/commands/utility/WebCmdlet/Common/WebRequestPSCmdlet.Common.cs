@@ -459,6 +459,13 @@ namespace Microsoft.PowerShell.Commands
         public virtual string OutFile { get; set; }
 
         /// <summary>
+        /// Gets or sets the OutFolder property.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        public virtual string OutFolder { get; set; }
+
+        /// <summary>
         /// Gets or sets the PassThrough property.
         /// </summary>
         [Parameter]
@@ -493,7 +500,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal bool ShouldResume => Resume.IsPresent && _resumeSuccess;
 
-        internal bool ShouldSaveToOutFile => !string.IsNullOrEmpty(OutFile);
+        internal bool ShouldSaveToOutFile => !string.IsNullOrEmpty(OutFile) || !string.IsNullOrEmpty(OutFolder);
 
         internal bool ShouldWriteToPipeline => !ShouldSaveToOutFile || PassThru;
 
@@ -867,27 +874,33 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Output ??
-            if (PassThru.IsPresent && OutFile is null)
+            if (OutFile is not null && OutFolder is not null)
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(PassThru));
+                ErrorRecord error = GetValidationError(WebCmdletStrings.OutputConflict, "WebCmdletOutputConflictException");
+                ThrowTerminatingError(error);
+            }
+
+            if (PassThru.IsPresent && OutFile is null && OutFolder is null)
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.PassThruOutFileMissing, "WebCmdletPassThruOutFileMissingException");
                 ThrowTerminatingError(error);
             }
 
             // Resume requires OutFile.
             if (Resume.IsPresent && OutFile is null)
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing, "WebCmdletOutFileMissingException", nameof(Resume));
+                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeOutFileMissing, "WebCmdletResumeOutFileMissingException");
+                ThrowTerminatingError(error);
+            }
+
+            // Resume can't be used with OutFolder.
+            if (Resume.IsPresent && OutFolder is not null)
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeConflict, "WebCmdletResumeConflictException");
                 ThrowTerminatingError(error);
             }
 
             _qualifiedOutFile = ShouldSaveToOutFile ? QualifiedOutFile : null;
-
-            // OutFile must not be a directory to use Resume.
-            if (Resume.IsPresent && Directory.Exists(_qualifiedOutFile))
-            {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeNotFilePath, "WebCmdletResumeNotFilePathException", _qualifiedOutFile);
-                ThrowTerminatingError(error);
-            }
         }
 
         internal virtual void PrepareSession()
@@ -1264,6 +1277,11 @@ namespace Microsoft.PowerShell.Commands
 
                 _cancelToken = new CancellationTokenSource();
                 response = client.SendAsync(currentRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+                
+                if (OutFolder is not null)
+                {
+                    _qualifiedOutFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
+                }
 
                 if (handleRedirect
                     && _maximumRedirection is not 0
