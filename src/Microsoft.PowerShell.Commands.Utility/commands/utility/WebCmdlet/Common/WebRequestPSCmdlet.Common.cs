@@ -1328,7 +1328,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (OutFolder is not null)
                 {
-                    _qualifiedOutFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
+                    _qualifiedOutFile = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
                 }
 
                 if (handleRedirect
