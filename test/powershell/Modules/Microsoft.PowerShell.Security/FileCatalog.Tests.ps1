@@ -70,7 +70,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
 
             try
             {
-                $null = New-FileCatalog -Path $sourcePath -CatalogFilePath $catalogPath -CatalogVersion 1.0
+                $null = New-FileCatalog -Path $sourcePath -CatalogFilePath $catalogPath -CatalogVersion 1
                 $result = Test-FileCatalog -Path $sourcePath -CatalogFilePath $catalogPath -Detailed
             }
             finally
@@ -103,7 +103,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             # Validate result properties
             $result.Status | Should -Be "Valid"
             $result.Signature.Status | Should -Be "NotSigned"
-            $result.HashAlgorithm | Should -Be "SHA1"
+            $result.HashAlgorithm | Should -Be "SHA256"
         }
 
         It "NewFileCatalogWithSingleFile" {
