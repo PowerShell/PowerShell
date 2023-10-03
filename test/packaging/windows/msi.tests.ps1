@@ -115,6 +115,22 @@ Describe -Name "Windows MSI" -Fixture {
         $runtime = $env:PSMsiRuntime
         $muEnabled = Test-IsMuEnabled
 
+        $propertiesRegKeyParent = "HKLM:\SOFTWARE\Microsoft\PowerShellCore"
+        if ($channel -eq "preview") {
+            $propertiesRegKeyName = "PreviewInstallerProperties"
+        } else {
+            $propertiesRegKeyName = "InstallerProperties"
+        }
+
+        # Rename the registry key that contains the saved installer
+        # properties so that the tests don't overwrite them.
+        $propertiesRegKeyPath = Join-Path -Path $propertiesRegKeyParent -ChildPath $propertiesRegKeyName
+        $propertiesBackupRegKeyName = "BackupInstallerProperties"
+        $propertiesBackupRegKeyPath = Join-Path -Path $propertiesRegKeyParent -ChildPath $propertiesBackupRegKeyName
+        if (Test-Path -Path $propertiesRegKeyPath) {
+            Rename-Item -Path $propertiesRegKeyPath -NewName $propertiesBackupRegKeyName
+        }
+
         # Get any existing powershell in the path
         $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
                 Where-Object {$_ -like '*files\powershell*'})
@@ -133,10 +149,17 @@ Describe -Name "Windows MSI" -Fixture {
 
     AfterAll {
         Set-StrictMode -Version 3.0
+
+        # Restore the original saved installer properties registry key.
+        Remove-Item -Path $propertiesRegKeyPath -ErrorAction SilentlyContinue
+        if (Test-Path -Path $propertiesBackupRegKeyPath) {
+            Rename-Item -Path $propertiesBackupRegKeyPath -NewName $propertiesRegKeyName
+        }
     }
 
     BeforeEach {
         $error.Clear()
+        Remove-Item -Path $propertiesRegKeyPath -ErrorAction SilentlyContinue
     }
 
     Context "Upgrade code" {
