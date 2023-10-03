@@ -2692,9 +2692,8 @@ namespace Microsoft.PowerShell.Commands
                 && fakeBoundParameters.Contains(FilePathParameterName))
             {
                 string filePath = fakeBoundParameters[FilePathParameterName].ToString();
-                string fileExtension = Path.GetExtension(filePath);
 
-                if (!string.IsNullOrEmpty(fileExtension))
+                if (Path.HasExtension(filePath))
                 {
                     var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
