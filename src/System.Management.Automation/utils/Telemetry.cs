@@ -699,16 +699,19 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
 
-            // Package up the module name, version, and known tag as a metric.
+            // Package up the module name, version, and known tags as a metric.
+            // Note that the allowed tags will be a comma separated list which will need to
+            // be handled in the telemetry query.
             try
             {
                 string allowedModuleName = GetModuleName(moduleInfo.Name);
                 string allowedModuleVersion = allowedModuleName == Anonymous ? AnonymousVersion : moduleInfo.Version?.ToString();
-                string allowedModuleTag = moduleInfo.Tags.FirstOrDefault(t => s_knownModuleTags.Contains(t)) ?? NoTag;
+                var allowedModuleTags = moduleInfo.Tags.Where(t => s_knownModuleTags.Contains(t)).Distinct();
+                string allowedModuleTagString = allowedModuleTags.Any() ? string.Join(',', allowedModuleTags) : NoTag;
 
                 s_telemetryClient.
                     GetMetric(new MetricIdentifier(string.Empty, telemetryType.ToString(), "uuid", "SessionId", "ModuleName", "Version", "Tag")).
-                    TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, allowedModuleName, allowedModuleVersion, allowedModuleTag); 
+                    TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, allowedModuleName, allowedModuleVersion, allowedModuleTagString); 
             }
             catch
             {
