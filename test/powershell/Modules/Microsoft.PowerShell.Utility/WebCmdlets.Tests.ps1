@@ -4085,7 +4085,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         It "Invoke-RestMethod -Resume should fail if -OutFolder" {
             { Invoke-RestMethod -Resume -Uri $resumeUri -OutFolder $TestDrive -ErrorAction Stop } |
-                Should -Throw -ErrorId 'WebCmdletResumeConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                Should -Throw -ErrorId 'WebCmdletResumeConflict,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
 
         It "Invoke-RestMethod -Resume Downloads the whole file when the file does not exist" {

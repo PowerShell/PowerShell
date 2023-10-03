@@ -190,7 +190,7 @@
     <value>The cmdlet cannot run because the following conflicting parameters are specified: OutFile and OutFolder. Specify either OutFile or OutFolder, then retry.</value>
   </data>
   <data name="PassThruOutFileMissing" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameters is missing: OutFile, OutFolder. Specify either a valid OutFile or OutFolder parameter value when using the PassThru parameter, then retry.</value>
+    <value>The cmdlet cannot run because the following parameters are missing: OutFile, OutFolder. Specify either a valid OutFile or OutFolder parameter value when using the PassThru parameter, then retry.</value>
   </data>
   <data name="ProxyCredentialConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
