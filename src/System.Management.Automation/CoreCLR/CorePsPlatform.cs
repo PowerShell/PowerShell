@@ -612,11 +612,30 @@ namespace System.Management.Automation
                     { ItemType.SymbolicLink,    'l' },
                 };
 
+                // We'll create a few common mode strings here to reduce allocations and improve performance a bit.
+                private const string OwnerReadGroupReadOtherRead = "-r--r--r--";
+                private const string OwnerReadWriteGroupReadOtherRead = "-rw-r--r--";
+                private const string DirectoryOwnerFullGroupReadExecOtherReadExec = "drwxr-xr-x";
+
                 /// <summary>Convert the mode to a string which is usable in our formatting.</summary>
                 /// <returns>The mode converted into a Unix style string similar to the output of ls.</returns>
                 public string GetModeString()
                 {
-                    char[] modeCharacters = new char[10];
+                    // On an Ubuntu system (docker), these 3 are roughly 70% of all the permissions
+                    if ((Mode & 0xFFF) == 292)
+                    {
+                        return OwnerReadGroupReadOtherRead;
+                    }
+                    else if ((Mode & 0xFFF) == 420)
+                    {
+                       return OwnerReadWriteGroupReadOtherRead;
+                    }
+                    else if ((ItemType == ItemType.Directory) & ((Mode & 0xFFF) == 493))
+                    {
+                        return DirectoryOwnerFullGroupReadExecOtherReadExec;
+                    }
+
+                    Span<char> modeCharacters = stackalloc char[10];
                     modeCharacters[0] = itemTypeTable[ItemType];
                     bool isExecutable;
 
