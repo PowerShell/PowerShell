@@ -506,7 +506,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Helper Properties
 
-        internal string QualifiedOutFile => QualifyFilePath(OutFile);
+        internal string QualifiedOutFile => OutFolder is null ? QualifyFilePath(OutFile) : QualifyFilePath(OutFolder);
 
         internal string _qualifiedOutFile;
 
@@ -915,7 +915,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            // Resume requires OutFile and can't be used with OutFolder..
+            // Resume requires OutFile and can't be used with OutFolder.
             if (Resume.IsPresent && OutFile is null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeOutFileMissing, "WebCmdletResumeOutFileMissingException");
