@@ -115,7 +115,12 @@ Describe -Name "Windows MSI" -Fixture {
         $runtime = $env:PSMsiRuntime
         $muEnabled = Test-IsMuEnabled
 
-        $propertiesRegKeyParent = "HKLM:\SOFTWARE\Microsoft\PowerShellCore"
+        if ($runtime -like '*x86*') {
+            $propertiesRegKeyParent = "HKLM:\SOFTWARE\Wow6432Node\Microsoft\PowerShellCore"
+        } else {
+            $propertiesRegKeyParent = "HKLM:\SOFTWARE\Microsoft\PowerShellCore"
+        }
+
         if ($channel -eq "preview") {
             $propertiesRegKeyName = "PreviewInstallerProperties"
         } else {
