@@ -1865,8 +1865,8 @@ dir -Recurse `
         It "Test completion with common parameters" {
             $inputStr = 'invoke-webrequest -out'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 3
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-OutBuffer,-OutFile,-OutVariable"
+            $res.CompletionMatches | Should -HaveCount 4
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-OutBuffer,-OutFile,-OutFolder,-OutVariable"
         }
 
         It "Test completion with exact match" {
