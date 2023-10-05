@@ -563,7 +563,7 @@ Fix steps:
             Write-Verbose "Building with shim" -Verbose
             $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
 
-            if ($Options.Runtime -eq 'fxdependent') {
+            if ($Options.Runtime -eq 'fxdependent' -or $Options.Runtime -eq 'fxdependent-noopt-linux-musl-x64') {
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk"
             } elseif ($Options.Runtime -eq 'fxdependent-win-desktop') {
                 $Arguments += "/property:SDKToUse=Microsoft.NET.Sdk.WindowsDesktop"
