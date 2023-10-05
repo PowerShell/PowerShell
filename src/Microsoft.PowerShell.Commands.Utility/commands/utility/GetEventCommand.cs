@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Gets events from the event queue.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Event", DefaultParameterSetName = "BySource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097014")]
+    [Cmdlet(VerbsCommon.Get, "Event", DefaultParameterSetName = "BySource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097014")]    
     [OutputType(typeof(PSEventArgs))]
     public class GetEventCommand : PSCmdlet
     {
@@ -59,6 +59,24 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// If set, will return results in descending order (most recent event first)
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true)]
+        public SwitchParameter Descending { get; set; }
+
+        /// <summary>
+        /// If provided, will only return the first N results.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true)]
+        public long First { get; set; } = 0;
+
+        /// <summary>
+        /// If provided, will skip the first N results.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true)]
+        public long Skip { get; set; } = 0;
+
         private int _eventId = -1;
 
         #endregion parameters
@@ -69,15 +87,19 @@ namespace Microsoft.PowerShell.Commands
         /// Get the requested events.
         /// </summary>
         protected override void EndProcessing()
-        {
+        {                        
             bool foundMatch = false;
-
+            long outputCount = 0;
+            long skipCount   = 0;
             // Go through all the received events and write them to the output
             // pipeline
             List<PSEventArgs> eventArgsCollection;
             lock (Events.ReceivedEvents.SyncRoot)
             {
                 eventArgsCollection = new List<PSEventArgs>(Events.ReceivedEvents);
+                if (this.Descending) {
+                    eventArgsCollection.Reverse();
+                }
             }
 
             foreach (PSEventArgs eventArg in eventArgsCollection)
@@ -95,6 +117,17 @@ namespace Microsoft.PowerShell.Commands
                 {
                     continue;
                 }
+
+                if (Skip > 0 && skipCount < Skip) {
+                    skipCount++;
+                    continue;
+                }
+                
+                if (First > 0 && outputCount >= First) {                    
+                    break;
+                }
+
+                outputCount++;
 
                 WriteObject(eventArg);
                 foundMatch = true;
