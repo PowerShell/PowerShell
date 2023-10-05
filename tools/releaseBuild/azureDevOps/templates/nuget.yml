@@ -111,7 +111,7 @@ jobs:
   - task: ExtractFiles@1
     displayName: 'Extract files alpine-fxdependent'
     inputs:
-      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-alpine-fxdependent.tar.gz'
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-musl-fxdependent.tar.gz'
       destinationFolder: '$(alpineFxdPath)'
 
   - template: SetVersionVariables.yml

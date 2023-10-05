@@ -594,7 +594,7 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
-                    Architecture = "linux-musl-x64"
+                    Architecture = "musl-x64"
                     ExcludeSymbolicLinks = $true
                     R2RVerification = [R2RVerification]@{
                         R2RState = 'R2R'
