@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Reflection;
 
 namespace System.Management.Automation
 {
@@ -49,7 +50,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="parameterType"/> is null.
         /// </exception>
-        public RuntimeDefinedParameter(string name, Type parameterType, Collection<Attribute> attributes)
+        public RuntimeDefinedParameter(string name, Type parameterType = null, Collection<Attribute> attributes = null)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -58,7 +59,7 @@ namespace System.Management.Automation
 
             if (parameterType == null)
             {
-                throw PSTraceSource.NewArgumentNullException(nameof(parameterType));
+                parameterType = typeof(PSObject);
             }
 
             _name = name;
@@ -67,6 +68,45 @@ namespace System.Management.Automation
             if (attributes != null)
             {
                 Attributes = attributes;
+            } else {
+                // If the attributes were empty, 
+                Attributes = new Collection<Attribute>();
+                // make a parameter attribute
+                ParameterAttribute almostEmptyParameter = new ParameterAttribute();
+                // and make it ValueFromPipelineByPropertyName
+                almostEmptyParameter.ValueFromPipelineByPropertyName = true;
+                Attributes.Add(almostEmptyParameter);
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new instance of a runtime-defined parameter using ParameterMetaData.
+        /// </summary>
+        /// <param name="parameterMetadata">Existing Parameter Metadata (the same class the represents information about a parameter) </param>
+        /// <param name="positionOffset">The position offset.  If this is non-zero, parameter positions will be shifted based off of this number.</param>        
+        public RuntimeDefinedParameter(ParameterMetadata parameterMetadata, int positionOffset = 0) {
+            _name = parameterMetadata.Name;
+            _parameterType = parameterMetadata.ParameterType;
+            Attributes = new Collection<Attribute>();
+            foreach (Attribute attributeOfParameter in parameterMetadata.Attributes) {
+                if (attributeOfParameter is ParameterAttribute) {
+                     ParameterAttribute newParameterAttribute = new ParameterAttribute();
+                     ParameterAttribute oldParameterAttribute = (ParameterAttribute)attributeOfParameter;
+                     foreach (PropertyInfo reflectedProperty in oldParameterAttribute.GetType().GetProperties()) {
+                        if (!reflectedProperty.CanWrite) { continue; }
+                        var oldValue = reflectedProperty.GetValue(oldParameterAttribute);                        
+                        if (positionOffset != 0 && reflectedProperty.Name == "Position") {
+                            if ((int)oldValue != int.MinValue) {
+                                reflectedProperty.SetValue(newParameterAttribute, ((int)oldValue + positionOffset));
+                            }
+                        } else if (oldValue != null) {
+                            reflectedProperty.SetValue(newParameterAttribute, oldValue);
+                        }
+                     }
+                     Attributes.Add(newParameterAttribute);                     
+                } else {
+                    Attributes.Add(attributeOfParameter);
+                }
             }
         }
 
