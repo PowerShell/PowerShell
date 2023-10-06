@@ -456,7 +456,7 @@ function Start-PSPackage {
                     $Arguments = @{
                         PackageSourcePath = $Source
                         Name = $Name
-                        PackageNameSuffix = 'musl-fxdependent'
+                        PackageNameSuffix = 'musl-noopt-fxdependent'
                         Version = $Version
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
