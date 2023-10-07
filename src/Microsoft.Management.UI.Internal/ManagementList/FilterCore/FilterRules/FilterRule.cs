@@ -10,6 +10,7 @@ namespace Microsoft.Management.UI.Internal
     /// The base class for all filtering rules.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public abstract class FilterRule : IEvaluate
     {
         /// <summary>
@@ -47,12 +48,6 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="item">The item to evaluate.</param>
         /// <returns>Returns true if the item meets the criteria. False otherwise.</returns>
         public abstract bool Evaluate(object item);
-
-        /// <summary>
-        /// Creates a clone of this FilterRule.
-        /// </summary>
-        /// <returns>Returns a clone of this FilterRule.</returns>
-        public abstract FilterRule Clone();
 
         #region EvaluationResultInvalidated
 

@@ -12,6 +12,7 @@ namespace Microsoft.Management.UI.Internal
     /// a FilterRule value to its DisplayName.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class FilterRuleToDisplayNameConverter : IValueConverter
     {
         /// <summary>

@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(errorMessage,
                 serviceName,
                 displayName,
-                (innerException == null) ? string.Empty : innerException.Message);
+                (innerException == null) ? category.ToString() : innerException.Message);
 
             var exception = new ServiceCommandException(message, innerException);
             exception.ServiceName = serviceName;

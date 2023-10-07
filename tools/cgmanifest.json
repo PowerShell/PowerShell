@@ -35,7 +35,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Json.More.Net",
-          "Version": "1.8.0"
+          "Version": "1.9.0"
         }
       },
       "DevelopmentDependency": false
@@ -45,7 +45,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonPointer.Net",
-          "Version": "3.0.1"
+          "Version": "3.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -55,7 +55,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonSchema.Net",
-          "Version": "4.1.8"
+          "Version": "5.2.6"
         }
       },
       "DevelopmentDependency": false
@@ -65,7 +65,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Markdig.Signed",
-          "Version": "0.32.0"
+          "Version": "0.33.0"
         }
       },
       "DevelopmentDependency": false
@@ -105,7 +105,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.6.0"
+          "Version": "4.7.0"
         }
       },
       "DevelopmentDependency": false
@@ -115,7 +115,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.6.0"
+          "Version": "4.7.0"
         }
       },
       "DevelopmentDependency": false
@@ -225,7 +225,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "7.0.4"
+          "Version": "7.0.5"
         }
       },
       "DevelopmentDependency": false
@@ -475,7 +475,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.AccountManagement",
-          "Version": "7.0.0"
+          "Version": "7.0.1"
         }
       },
       "DevelopmentDependency": false

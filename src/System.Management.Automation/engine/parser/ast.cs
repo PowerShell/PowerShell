@@ -8451,8 +8451,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
-            int backtick = name.IndexOf('`');
-            if (backtick != -1)
+            if (name.Contains('`'))
             {
                 name = name.Replace("``", "`");
             }
