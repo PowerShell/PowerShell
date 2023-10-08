@@ -12,7 +12,7 @@ namespace System.Management.Automation
     /// </summary>
     public class ScopeArgumentCompleter : IArgumentCompleter
     {
-        private readonly string[] scopes = new string[] { "Global", "Local", "Script" };
+        private static readonly string[] scopes = new string[] { "Global", "Local", "Script" };
 
         /// <summary>
         /// Returns completion results for verb parameter.
