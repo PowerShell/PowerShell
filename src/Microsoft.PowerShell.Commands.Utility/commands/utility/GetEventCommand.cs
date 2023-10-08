@@ -60,19 +60,19 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// If set, will return results in descending order (most recent event first)
+        /// Gets or sets the order of results.  If set, will return results in descending order (most recent event first).
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Descending { get; set; }
 
         /// <summary>
-        /// If provided, will only return the first N results.
+        /// Gets or sets the number of events to return.  If provided, will only return the first N results.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public long First { get; set; } = 0;
 
         /// <summary>
-        /// If provided, will skip the first N results.
+        /// Gets or Sets the number of events to skip.  If provided, will skip the first N results.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public long Skip { get; set; } = 0;
@@ -118,12 +118,14 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (Skip > 0 && skipCount < Skip) {
+                if (Skip > 0 && skipCount < Skip)
+                {
                     skipCount++;
                     continue;
                 }
                 
-                if (First > 0 && outputCount >= First) {                    
+                if (First > 0 && outputCount >= First)
+                {
                     break;
                 }
 
@@ -134,37 +136,38 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Generate an error if we couldn't find the subscription identifier,
-            // and no globbing was done.
-            if (!foundMatch)
+            // and no globbing was done (and Skip and First were not passed).
+            if (!foundMatch && Skip == 0 && First == 0)
             {
                 bool lookingForSource = (_sourceIdentifier != null) &&
                     (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier));
                 bool lookingForId = (_eventId >= 0);
 
-                if (lookingForSource || lookingForId)
-                {
-                    object identifier = null;
-                    string error = null;
-
-                    if (lookingForSource)
-                    {
-                        identifier = _sourceIdentifier;
-                        error = EventingStrings.SourceIdentifierNotFound;
-                    }
-                    else if (lookingForId)
-                    {
-                        identifier = _eventId;
-                        error = EventingStrings.EventIdentifierNotFound;
-                    }
-
-                    ErrorRecord errorRecord = new(
-                        new ArgumentException(string.Format(System.Globalization.CultureInfo.CurrentCulture, error, identifier)),
-                        "INVALID_SOURCE_IDENTIFIER",
-                        ErrorCategory.InvalidArgument,
-                        null);
-
-                    WriteError(errorRecord);
+                if (! (lookingForSource || lookingForId)) {
+                    return;
                 }
+                
+                object identifier = null;
+                string error = null;
+
+                if (lookingForSource)
+                {
+                    identifier = _sourceIdentifier;
+                    error = EventingStrings.SourceIdentifierNotFound;
+                }
+                else if (lookingForId)
+                {
+                    identifier = _eventId;
+                    error = EventingStrings.EventIdentifierNotFound;
+                }
+
+                ErrorRecord errorRecord = new(
+                    new ArgumentException(string.Format(System.Globalization.CultureInfo.CurrentCulture, error, identifier)),
+                    "INVALID_SOURCE_IDENTIFIER",
+                    ErrorCategory.InvalidArgument,
+                    null);
+
+                WriteError(errorRecord);                
             }
         }
     }
