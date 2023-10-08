@@ -143,7 +143,8 @@ namespace Microsoft.PowerShell.Commands
                     (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier));
                 bool lookingForId = (_eventId >= 0);
 
-                if (! (lookingForSource || lookingForId)) {
+                if (!(lookingForSource || lookingForId))
+                {
                     return;
                 }
                 
