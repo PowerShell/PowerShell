@@ -2734,7 +2734,7 @@ namespace Microsoft.PowerShell.Commands
                             string name = p.Pattern;
                             if (!WildcardPattern.ContainsWildcardCharacters(name))
                             {
-                                manifestInfo.DeclaredFunctionExports.Add(AddPrefixToCommandName(name, defaultCommandPrefix));
+                                manifestInfo.DeclaredFunctionExports.Add(name);
                             }
                             else
                             {
@@ -2762,7 +2762,7 @@ namespace Microsoft.PowerShell.Commands
                             string name = p.Pattern;
                             if (!WildcardPattern.ContainsWildcardCharacters(name))
                             {
-                                manifestInfo.DeclaredCmdletExports.Add(AddPrefixToCommandName(name, defaultCommandPrefix));
+                                manifestInfo.DeclaredCmdletExports.Add(name);
                             }
                             else
                             {
@@ -2790,7 +2790,7 @@ namespace Microsoft.PowerShell.Commands
                             string name = p.Pattern;
                             if (!WildcardPattern.ContainsWildcardCharacters(name))
                             {
-                                manifestInfo.DeclaredAliasExports.Add(AddPrefixToCommandName(name, defaultCommandPrefix));
+                                manifestInfo.DeclaredAliasExports.Add(name);
                             }
                             else
                             {
@@ -2866,6 +2866,11 @@ namespace Microsoft.PowerShell.Commands
                     foreach (PSModuleInfo fakeNestedModuleInfo in CreateFakeModuleObject(nestedModules))
                     {
                         manifestInfo.AddNestedModule(fakeNestedModuleInfo);
+                    }
+
+                    if (!string.IsNullOrEmpty(resolvedCommandPrefix))
+                    {
+                        AddPrefixToExports(manifestInfo, resolvedCommandPrefix);
                     }
 
                     return manifestInfo;
@@ -3486,7 +3491,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            UpdateCommandCollection(manifestInfo.DeclaredFunctionExports, exportedFunctions);
+                            UpdateCommandCollection(manifestInfo.DeclaredFunctionExports, exportedFunctions, manifestInfo.Prefix);
                         }
                     }
 
@@ -3502,7 +3507,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            UpdateCommandCollection(manifestInfo.DeclaredCmdletExports, exportedCmdlets);
+                            UpdateCommandCollection(manifestInfo.DeclaredCmdletExports, exportedCmdlets, manifestInfo.Prefix);
                         }
                     }
 
@@ -3518,7 +3523,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            UpdateCommandCollection(manifestInfo.DeclaredAliasExports, exportedAliases);
+                            UpdateCommandCollection(manifestInfo.DeclaredAliasExports, exportedAliases, manifestInfo.Prefix);
                         }
                     }
 
@@ -3577,6 +3582,26 @@ namespace Microsoft.PowerShell.Commands
             manifestInfo.LanguageMode = (manifestScriptInfo != null) ? manifestScriptInfo.DefiningLanguageMode : (PSLanguageMode?)null;
 
             return manifestInfo;
+        }
+
+        private static void AddPrefixToExports(PSModuleInfo manifestInfo, string prefix)
+        {
+            void UpdateCollection(Collection<string> exportedCommands)
+            {
+                if (exportedCommands is null)
+                {
+                    return;
+                }
+
+                for (int i = 0; i < exportedCommands.Count; i++)
+                {
+                    exportedCommands[i] = AddPrefixToCommandName(exportedCommands[i], prefix);
+                }
+            }
+
+            UpdateCollection(manifestInfo.DeclaredFunctionExports);
+            UpdateCollection(manifestInfo.DeclaredCmdletExports);
+            UpdateCollection(manifestInfo.DeclaredAliasExports);
         }
 
         private static void PropagateExportedTypesFromNestedModulesToRootModuleScope(ImportModuleOptions options, PSModuleInfo manifestInfo)
@@ -3676,7 +3701,7 @@ namespace Microsoft.PowerShell.Commands
             list.AddRange(updated);
         }
 
-        private static void UpdateCommandCollection(Collection<string> list, List<WildcardPattern> patterns)
+        private static void UpdateCommandCollection(Collection<string> list, List<WildcardPattern> patterns, string prefix)
         {
             if (list == null)
             {
@@ -3703,7 +3728,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (SessionStateUtilities.MatchesAnyWildcardPattern(element, patterns, false))
                 {
-                    updated.Add(element);
+                    updated.Add(AddPrefixToCommandName(element, prefix));
                 }
             }
 
