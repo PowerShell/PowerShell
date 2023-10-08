@@ -750,15 +750,15 @@ ConstructorTestClass(int i, bool b)
             $globalScope = 'Global'
             $localScope = 'Local'
             $scriptScope = 'Script'
-            $allCommands = 'Clear-Variable', 'Export-Alias', 'Get-Alias', 'Get-PSDrive', 'Get-Variable', 'Import-Alias', 'New-Alias', 'New-PSDrive', 'New-Variable', 'Remove-Alias', 'Remove-PSDrive', 'Remove-Variable', 'Set-Alias', 'Set-Variable'
+            $allScopeCommands = 'Clear-Variable', 'Export-Alias', 'Get-Alias', 'Get-PSDrive', 'Get-Variable', 'Import-Alias', 'New-Alias', 'New-PSDrive', 'New-Variable', 'Remove-Alias', 'Remove-PSDrive', 'Remove-Variable', 'Set-Alias', 'Set-Variable'
         }
 
         It "Should complete '<ParameterInput>' for '<Commands>'" -TestCases @(
-            @{ Commands = $allCommands; ParameterInput = "-Scope "; ExpectedScopes = $allScopes }
-            @{ Commands = $allCommands; ParameterInput = "-Scope G"; ExpectedScopes = $globalScope }
-            @{ Commands = $allCommands; ParameterInput = "-Scope Lo"; ExpectedScopes = $localScope }
-            @{ Commands = $allCommands; ParameterInput = "-Scope Scr"; ExpectedScopes = $scriptScope }
-            @{ Commands = $allCommands; ParameterInput = "-Scope NonExistentScope"; ExpectedScopes = @() }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope "; ExpectedScopes = $allScopes }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope G"; ExpectedScopes = $globalScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope Lo"; ExpectedScopes = $localScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope Scr"; ExpectedScopes = $scriptScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope NonExistentScope"; ExpectedScopes = @() }
         ) {
             param($Commands, $ParameterInput, $ExpectedScopes)
             foreach ($command in $Commands) {
