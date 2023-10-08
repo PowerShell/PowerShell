@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel; // Win32Exception
 using System.Diagnostics; // Process class
@@ -2663,6 +2664,8 @@ namespace Microsoft.PowerShell.Commands
     {
         private const string StartProcessCommandName = "Start-Process";
         private const string FilePathParameterName = "FilePath";
+        private const string GetCommandCommandName = "Get-Command";
+        private const string CommandParameterName = "Name";
 
         /// <summary>
         /// Returns completion results for verb parameter.
@@ -2686,24 +2689,62 @@ namespace Microsoft.PowerShell.Commands
                 yield break;
             }
 
+            // Completion: Start-Process -FilePath <path> -Verb <wordToComplete>
             if (commandName.Equals(StartProcessCommandName, StringComparison.OrdinalIgnoreCase)
                 && fakeBoundParameters.Contains(FilePathParameterName))
             {
                 string filePath = fakeBoundParameters[FilePathParameterName].ToString();
 
+                // Complete file verbs if extension exists
                 if (Path.HasExtension(filePath))
                 {
-                    var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-
-                    string[] verbs = new ProcessStartInfo(filePath).Verbs;
-
-                    foreach (string verb in verbs)
+                    foreach (string verb in CompleteFileVerbs(filePath, wordToComplete))
                     {
-                        if (verbPattern.IsMatch(verb))
+                        yield return new CompletionResult(verb);
+                    }
+
+                    yield break;
+                }
+
+                // Otherwise check if command is an Application to resolve executable full path with extension
+                // e.g if powershell was given, resolve to powershell.exe to get verbs
+                using (var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
+                {
+                    var commandInfo = new CmdletInfo(GetCommandCommandName, typeof(GetCommandCommand));
+
+                    ps.AddCommand(commandInfo);
+                    ps.AddParameter(CommandParameterName, filePath);
+
+                    Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
+
+                    if (commands.Count == 1 && commands[0].CommandType == CommandTypes.Application)
+                    {
+                        foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
                         {
                             yield return new CompletionResult(verb);
                         }
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Completes file verbs.
+        /// </summary>
+        /// <param name="filePath">The file path to get verbs.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <returns>List of file verbs to complete.</returns>
+        private static IEnumerable<string> CompleteFileVerbs(string filePath, string wordToComplete)
+        {
+            var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            string[] verbs = new ProcessStartInfo(filePath).Verbs;
+
+            foreach (string verb in verbs)
+            {
+                if (verbPattern.IsMatch(verb))
+                {
+                    yield return verb;
                 }
             }
         }

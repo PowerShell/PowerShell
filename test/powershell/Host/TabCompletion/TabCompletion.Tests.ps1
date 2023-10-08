@@ -750,30 +750,32 @@ ConstructorTestClass(int i, bool b)
                 (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $path).Verbs
             }
 
-            $testCmdPath = Join-Path -Path $TestDrive -ChildPath 'test.cmd'
-            $testCmdVerbs = GetProcessInfoVerbs $testCmdPath
-            $testExePath = Join-Path -Path $TestDrive -ChildPath 'test.exe'
-            $testExeVerbs = GetProcessInfoVerbs $testExePath
-            $testExeVerbsStartingWithRun = $testExeVerbs | Where-Object { $_ -like 'run*' }
-            $testTxtPath = Join-Path -Path $TestDrive -ChildPath 'test.txt'
-            $testTxtVerbs = GetProcessInfoVerbs $testTxtPath
-            $testWavPath = Join-Path -Path $TestDrive -ChildPath 'test.wav'
-            $testWavVerbs = GetProcessInfoVerbs $testWavPath
-            $testDocxPath = Join-Path -Path $TestDrive -ChildPath 'test.docx'
-            $testDocxVerbs = GetProcessInfoVerbs $testDocxPath
-            $testFileWithNoExtensionPath = Join-Path -Path $TestDrive -ChildPath 'test'
-            $testFileWithNoExtensionVerbs = GetProcessInfoVerbs $testFileWithNoExtensionPath
+            $cmdPath = Join-Path -Path $TestDrive -ChildPath 'test.cmd'
+            $cmdVerbs = GetProcessInfoVerbs $cmdPath
+            $exePath = Join-Path -Path $TestDrive -ChildPath 'test.exe'
+            $exeVerbs = GetProcessInfoVerbs $exePath
+            $exeVerbsStartingWithRun = $exeVerbs | Where-Object { $_ -like 'run*' }
+            $powerShellExeWithNoExtension = 'powershell'
+            $txtPath = Join-Path -Path $TestDrive -ChildPath 'test.txt'
+            $txtVerbs = GetProcessInfoVerbs $txtPath
+            $wavPath = Join-Path -Path $TestDrive -ChildPath 'test.wav'
+            $wavVerbs = GetProcessInfoVerbs $wavPath
+            $docxPath = Join-Path -Path $TestDrive -ChildPath 'test.docx'
+            $docxVerbs = GetProcessInfoVerbs $docxPath
+            $fileWithNoExtensionPath = Join-Path -Path $TestDrive -ChildPath 'test'
+            $fileWithNoExtensionVerbs = GetProcessInfoVerbs $fileWithNoExtensionPath
         }
 
         It "Should complete Verb parameter for '<TextInput>'" -Skip:(!([System.Management.Automation.Platform]::IsWindowsDesktop)) -TestCases @(
             @{ TextInput = 'Start-Process -Verb '; ExpectedVerbs = @() }
-            @{ TextInput = "Start-Process -FilePath $testCmdPath -Verb "; ExpectedVerbs =  $testCmdVerbs }
-            @{ TextInput = "Start-Process -FilePath $testExePath -Verb "; ExpectedVerbs = $testExeVerbs }
-            @{ TextInput = "Start-Process -FilePath $testExePath -Verb run"; ExpectedVerbs = $testExeVerbsStartingWithRun }
-            @{ TextInput = "Start-Process -FilePath $testTxtPath -Verb "; ExpectedVerbs = $testTxtVerbs }
-            @{ TextInput = "Start-Process -FilePath $testWavPath -Verb "; ExpectedVerbs = $testWavVerbs }
-            @{ TextInput = "Start-Process -FilePath $testDocxPath -Verb "; ExpectedVerbs = $testDocxVerbs }
-            @{ TextInput = "Start-Process -FilePath $testFileWithNoExtensionPath -Verb "; ExpectedVerbs = $testFileWithNoExtensionVerbs }
+            @{ TextInput = "Start-Process -FilePath $cmdPath -Verb "; ExpectedVerbs =  $cmdVerbs }
+            @{ TextInput = "Start-Process -FilePath $exePath -Verb "; ExpectedVerbs = $exeVerbs }
+            @{ TextInput = "Start-Process -FilePath $exePath -Verb run"; ExpectedVerbs = $exeVerbsStartingWithRun }
+            @{ TextInput = "Start-Process -FilePath $powerShellExeWithNoExtension -Verb "; ExpectedVerbs = $exeVerbs }
+            @{ TextInput = "Start-Process -FilePath $txtPath -Verb "; ExpectedVerbs = $txtVerbs }
+            @{ TextInput = "Start-Process -FilePath $wavPath -Verb "; ExpectedVerbs = $wavVerbs }
+            @{ TextInput = "Start-Process -FilePath $docxPath -Verb "; ExpectedVerbs = $docxVerbs }
+            @{ TextInput = "Start-Process -FilePath $fileWithNoExtensionPath -Verb "; ExpectedVerbs = $fileWithNoExtensionVerbs }
         ) {
             param($TextInput, $ExpectedVerbs)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
