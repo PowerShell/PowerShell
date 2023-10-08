@@ -80,26 +80,39 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs a new instance of a runtime-defined parameter using ParameterMetaData.
+        /// Initializes a new instance of a runtime-defined parameter using ParameterMetaData.
+        /// All parameter attributes will be reconstructed to avoid potential conflicts.
+        /// All other attributes will be applied to both the dynamic parameter and the metadata
         /// </summary>
-        /// <param name="parameterMetadata">Existing Parameter Metadata (the same class the represents information about a parameter) </param>
+        /// <param name="parameterMetadata">Existing Parameter Metadata (the same class the represents information about a parameter).</param>
         /// <param name="positionOffset">The position offset.  If this is non-zero, parameter positions will be shifted based off of this number.</param>        
         public RuntimeDefinedParameter(ParameterMetadata parameterMetadata, int positionOffset = 0) {
             _name = parameterMetadata.Name;
             _parameterType = parameterMetadata.ParameterType;
             Attributes = new Collection<Attribute>();
-            foreach (Attribute attributeOfParameter in parameterMetadata.Attributes) {
-                if (attributeOfParameter is ParameterAttribute) {
+            foreach (Attribute attributeOfParameter in parameterMetadata.Attributes)
+            {
+                if (attributeOfParameter is ParameterAttribute)
+                {
                      ParameterAttribute newParameterAttribute = new ParameterAttribute();
                      ParameterAttribute oldParameterAttribute = (ParameterAttribute)attributeOfParameter;
-                     foreach (PropertyInfo reflectedProperty in oldParameterAttribute.GetType().GetProperties()) {
-                        if (!reflectedProperty.CanWrite) { continue; }
+                     foreach (PropertyInfo reflectedProperty in oldParameterAttribute.GetType().GetProperties())
+                     {
+                        if (!reflectedProperty.CanWrite)
+                        {
+                            continue;
+                        }
+                                                
                         var oldValue = reflectedProperty.GetValue(oldParameterAttribute);                        
-                        if (positionOffset != 0 && reflectedProperty.Name == "Position") {
-                            if ((int)oldValue != int.MinValue) {
-                                reflectedProperty.SetValue(newParameterAttribute, ((int)oldValue + positionOffset));
+                        if (positionOffset != 0 && reflectedProperty.Name == "Position")
+                        {
+                            if ((int)oldValue != int.MinValue)
+                            {
+                                reflectedProperty.SetValue(newParameterAttribute, (int)oldValue + positionOffset);
                             }
-                        } else if (oldValue != null) {
+                        }
+                        else if (oldValue != null) 
+                        {
                             reflectedProperty.SetValue(newParameterAttribute, oldValue);
                         }
                      }
