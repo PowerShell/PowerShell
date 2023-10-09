@@ -65,6 +65,8 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
 
+                // ContentLength is always the partial length, while ContentRange is the full length
+                // Without Request.Range set, ContentRange is null and partial length (ContentLength) equals to full length
                 StreamHelper.SaveStreamToFile(responseStream, outFilePath, this, response.Content.Headers.ContentRange?.Length.GetValueOrDefault() ?? response.Content.Headers.ContentLength.GetValueOrDefault(), perReadTimeout, _cancelToken.Token);
             }
         }
