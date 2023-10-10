@@ -17,7 +17,6 @@ steps:
     $azcopy = Find-AzCopy
     Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
-    & $azcopy login
     & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) $(System.ArtifactsDirectory) --recursive
 
     $packagesPath = Get-ChildItem -Path $(System.ArtifactsDirectory)\*.deb -Recurse -File | Select-Object -First 1 -ExpandProperty DirectoryName

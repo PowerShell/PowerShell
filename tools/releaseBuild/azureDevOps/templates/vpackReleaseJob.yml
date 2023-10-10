@@ -39,8 +39,6 @@ jobs:
       $azcopy = Find-AzCopy
       Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
-      & $azcopy login
-
       Write-Host "running: $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)"
 
       & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)

@@ -22,8 +22,6 @@ steps:
     $azcopy = Find-AzCopy
     Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
-    & $azcopy login
-
     & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/* $(System.ArtifactsDirectory) --recursive
 
   displayName: Download Azure Artifacts
