@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation.Runspaces;
 using System.Text;
-
+using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal
@@ -501,27 +501,28 @@ namespace System.Management.Automation.Internal
 
                             foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
-                                if (commandPattern.IsMatch(entry.Value.Name) ||
-                                    (fuzzyMatcher is not null && fuzzyMatcher.IsFuzzyMatch(entry.Value.Name, pattern)) ||
-                                    (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(entry.Value.Name), StringComparison.OrdinalIgnoreCase)))
+                                string entryName = ModuleCmdletBase.AddPrefixToCommandName(entry.Value.Name, entry.Value.Prefix);
+                                if (commandPattern.IsMatch(entryName) ||
+                                    (fuzzyMatcher is not null && fuzzyMatcher.IsFuzzyMatch(entryName, pattern)) ||
+                                    (useAbbreviationExpansion && string.Equals(pattern, AbbreviateName(entryName), StringComparison.OrdinalIgnoreCase)))
                                 {
                                     CommandInfo current = null;
                                     switch (entry.Value.CommandType)
                                     {
                                         case CommandTypes.Alias:
-                                            current = new AliasInfo(entry.Value.Name, definition: null, context);
+                                            current = new AliasInfo(entryName, definition: null, context);
                                             break;
                                         case CommandTypes.Function:
-                                            current = new FunctionInfo(entry.Value.Name, ScriptBlock.EmptyScriptBlock, context);
+                                            current = new FunctionInfo(entryName, ScriptBlock.EmptyScriptBlock, context);
                                             break;
                                         case CommandTypes.Filter:
-                                            current = new FilterInfo(entry.Value.Name, ScriptBlock.EmptyScriptBlock, context);
+                                            current = new FilterInfo(entryName, ScriptBlock.EmptyScriptBlock, context);
                                             break;
                                         case CommandTypes.Configuration:
-                                            current = new ConfigurationInfo(entry.Value.Name, ScriptBlock.EmptyScriptBlock, context);
+                                            current = new ConfigurationInfo(entryName, ScriptBlock.EmptyScriptBlock, context);
                                             break;
                                         case CommandTypes.Cmdlet:
-                                            current = new CmdletInfo(entry.Value.Name, implementingType: null, helpFile: null, PSSnapin: null, context);
+                                            current = new CmdletInfo(entryName, implementingType: null, helpFile: null, PSSnapin: null, context);
                                             break;
                                         default:
                                             Dbg.Assert(false, "cannot be hit");

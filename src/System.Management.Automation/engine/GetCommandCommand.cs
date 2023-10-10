@@ -1443,7 +1443,8 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 foreach ((string functionName, FunctionInfo functionInfo) in module.SessionState.Internal.GetFunctionTable())
                                 {
-                                    if (matcher.IsMatch(functionName) && functionInfo.IsImported)
+                                    string prefixedFunctionName = ModuleCmdletBase.AddPrefixToCommandName(functionName, functionInfo.Prefix);
+                                    if (matcher.IsMatch(prefixedFunctionName) && functionInfo.IsImported)
                                     {
                                         // make sure function doesn't come from the current module's nested module
                                         if (functionInfo.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
@@ -1457,7 +1458,8 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 foreach (var alias in module.SessionState.Internal.GetAliasTable())
                                 {
-                                    if (matcher.IsMatch(alias.Key) && alias.Value.IsImported)
+                                    string prefixedAlias = ModuleCmdletBase.AddPrefixToCommandName(alias.Key, alias.Value.Prefix);
+                                    if (matcher.IsMatch(prefixedAlias) && alias.Value.IsImported)
                                     {
                                         // make sure alias doesn't come from the current module's nested module
                                         if (alias.Value.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
