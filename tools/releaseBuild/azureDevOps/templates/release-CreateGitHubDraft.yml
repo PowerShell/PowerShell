@@ -17,7 +17,6 @@ steps:
     $azcopy = Find-AzCopy
     Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
-    & $azcopy login --service-principal --application-id $(PowerShellReleaseSPN)
     & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) $(System.ArtifactsDirectory) --recursive
 
     $packagesPath = Get-ChildItem -Path $(System.ArtifactsDirectory)\*.deb -Recurse -File | Select-Object -First 1 -ExpandProperty DirectoryName
@@ -27,7 +26,7 @@ steps:
   displayName: Download Azure Artifacts
   retryCountOnTaskFailure: 2
   env:
-    AZCOPY_SPA_CLIENT_SECRET: $(PowerShellReleaseSPNSecret)
+    AZCOPY_AUTO_LOGIN_TYPE: MSI
 
 - pwsh: |
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty FullName
