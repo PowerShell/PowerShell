@@ -22,13 +22,13 @@ steps:
     $azcopy = Find-AzCopy
     Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
-    & $azcopy login --service-principal --application-id $(PowerShellReleaseSPN)
+    & $azcopy login
 
     & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/* $(System.ArtifactsDirectory) --recursive
 
   displayName: Download Azure Artifacts
   env:
-    AZCOPY_SPA_CLIENT_SECRET: $(PowerShellReleaseSPNSecret)
+    AZCOPY_AUTO_LOGIN_TYPE: MSI
 
 - pwsh: |
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name

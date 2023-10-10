@@ -39,7 +39,7 @@ jobs:
       $azcopy = Find-AzCopy
       Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
-      & $azcopy login --service-principal --application-id $(PowerShellReleaseSPN)
+      & $azcopy login
 
       Write-Host "running: $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)"
 
@@ -47,7 +47,7 @@ jobs:
     displayName: 'Download Azure Artifacts'
     retryCountOnTaskFailure: 2
     env:
-      AZCOPY_SPA_CLIENT_SECRET: $(PowerShellReleaseSPNSecret)
+      AZCOPY_AUTO_LOGIN_TYPE: MSI
 
   - pwsh: 'Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name'
     displayName: 'Capture Artifact Listing'
