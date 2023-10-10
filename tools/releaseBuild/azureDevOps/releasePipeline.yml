@@ -356,6 +356,7 @@ stages:
 
   - job: PublishPkgsMsftCom
 
+    timeoutInMinutes: 120
     pool:
       name: PowerShell1ES
       demands:
