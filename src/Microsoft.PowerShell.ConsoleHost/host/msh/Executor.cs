@@ -13,11 +13,11 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Executor wraps a Pipeline instance, and provides helper methods for executing commands in that pipeline.  It is used to
+    /// Executor wraps a Pipeline instance, and provides helper methods for executing commands in that pipeline. It is used to
     /// provide bookkeeping and structure to the use of pipeline in such a way that they can be interrupted and cancelled by a
-    /// break event handler, and track nesting of pipelines (which happens with interrupted input loops (aka subshells) and use
-    /// of tab-completion in prompts.  The bookkeeping is necessary because the break handler is static and global, and there is
-    /// no means for tying a break handler to an instance of an object.
+    /// break event handler, and to track nesting of pipelines (which happens with interrupted input loops (aka subshells) and 
+    /// use of tab-completion in prompts). The bookkeeping is necessary because the break handler is static and global, and
+    /// there is no means for tying a break handler to an instance of an object.
     ///
     /// The class' instance methods manage a single pipeline.  The class' static methods track the outstanding instances to
     /// ensure that only one instance is 'active' (and therefore cancellable) at a time.
@@ -44,8 +44,8 @@ namespace Microsoft.PowerShell
         /// </param>
         /// <param name="isPromptFunctionExecutor">
         /// True if the instance will be used to execute the prompt function, which will delay stopping the pipeline by some
-        /// milliseconds.  This we prevent us from stopping the pipeline so quickly that when the user leans on the ctrl-c key
-        /// that the prompt "stops working" (because it is being stopped faster than it can run to completion).
+        /// milliseconds.  This will prevent us from stopping the pipeline so quickly that, when the user leans on the ctrl-c
+        /// key, the prompt "stops working" (because it is being stopped faster than it can run to completion).
         /// </param>
         internal Executor(ConsoleHost parent, bool useNestedPipelines, bool isPromptFunctionExecutor)
         {
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell
 
             PipelineReader<PSObject> reader = (PipelineReader<PSObject>)sender;
 
-            // we use NonBlockingRead instead of Read, as Read would block if the reader has no objects.  While it would be
+            // We use NonBlockingRead instead of Read, as Read would block if the reader has no objects.  While it would be
             // inconsistent for this method to be called when there are no objects, since it will be called synchronously on
             // the pipeline thread, blocking in this call until an object is streamed would deadlock the pipeline. So we
             // prefer to take no chance of blocking.
@@ -80,7 +80,6 @@ namespace Microsoft.PowerShell
         }
 
         // called on the pipeline thread
-
         private void ErrorObjectStreamHandler(object sender, EventArgs e)
         {
             // e is just an empty instance of EventArgs, so we ignore it. sender is the PipelineReader that raised it's
@@ -88,7 +87,7 @@ namespace Microsoft.PowerShell
 
             PipelineReader<object> reader = (PipelineReader<object>)sender;
 
-            // we use NonBlockingRead instead of Read, as Read would block if the reader has no objects.  While it would be
+            // We use NonBlockingRead instead of Read, as Read would block if the reader has no objects.  While it would be
             // inconsistent for this method to be called when there are no objects, since it will be called synchronously on
             // the pipeline thread, blocking in this call until an object is streamed would deadlock the pipeline. So we
             // prefer to take no chance of blocking.
@@ -101,7 +100,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// This method handles the failure in executing pipeline asynchronously.
+        /// This method handles failures in executing the pipeline asynchronously.
         /// </summary>
         /// <param name="ex"></param>
         private void AsyncPipelineFailureHandler(Exception ex)
@@ -110,8 +109,8 @@ namespace Microsoft.PowerShell
             if (ex is IContainsErrorRecord cer)
             {
                 er = cer.ErrorRecord;
-                // Exception inside the error record is ParentContainsErrorRecordException which
-                // doesn't have stack trace. Replace it with top level exception.
+                // The exception inside the error record is ParentContainsErrorRecordException, which
+                // doesn't have a stack trace. Replace it with the top level exception.
                 er = new ErrorRecord(er, ex);
             }
 
@@ -228,9 +227,9 @@ namespace Microsoft.PowerShell
                         }
                         catch (PipelineClosedException)
                         {
-                            // This exception can occurs when input is closed. This can happen
-                            // for various reasons. For ex:Command in the pipeline is invalid and
-                            // command discovery throws exception which closes the pipeline and
+                            // This Exception can occur when the input is closed. This can happen
+                            // for various reasons. For example: The command in the pipeline is invalid and
+                            // command discovery throws an exception, which closes the pipeline and
                             // hence the Input pipe.
                             break;
                         }
@@ -293,25 +292,25 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// All calls to the Runspace to execute a command line must be done with this function, which properly synchronizes
-        /// access to the running pipeline between the main thread and the break handler thread.  This synchronization is
+        /// access to the running pipeline between the main thread and the break handler thread. This synchronization is
         /// necessary so that executions can be aborted with Ctrl-C (including evaluation of the prompt and collection of
-        /// command-completion candidates.
+        /// command-completion candidates).
         ///
         /// On any given Executor instance, ExecuteCommand should be called at most once at a time by any one thread. It is NOT
         /// reentrant.
         /// </summary>
         /// <param name="command">
-        /// The command line to be executed.  Must be non-null.
+        /// The command line to be executed. Must be non-null.
         /// </param>
         /// <param name="exceptionThrown">
         /// Receives the Exception thrown by the execution of the command, if any. If no exception is thrown, then set to null.
         /// Can be tested to see if the execution was successful or not.
         /// </param>
         /// <param name="options">
-        /// options to govern the execution
+        /// Options to govern the execution
         /// </param>
         /// <returns>
-        /// the object stream resulting from the execution.  May be null.
+        /// The object stream resulting from the execution. May be null.
         /// </returns>
         internal Collection<PSObject> ExecuteCommand(string command, out Exception exceptionThrown, ExecutionOptions options)
         {
@@ -441,14 +440,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Executes a command (by calling this.ExecuteCommand), and coerces the first result object to a string.  Any Exception
-        /// thrown in the course of execution is returned thru the exceptionThrown parameter.
+        /// Executes a command (by calling this.ExecuteCommand), and coerces the first result object to a string. Any Exception
+        /// thrown in the course of execution is returned through the exceptionThrown parameter.
         /// </summary>
         /// <param name="command">
-        /// The command to execute.  May be any valid monad command.
+        /// The command to execute. May be any valid monad command.
         /// </param>
         /// <param name="exceptionThrown">
-        /// Receives the Exception thrown by the execution of the command, if any. If no exception is thrown, then set to null.
+        /// Receives the Exception thrown by the execution of the command, if any. Set to null if no exception is thrown.
         /// Can be tested to see if the execution was successful or not.
         /// </param>
         /// <returns>
@@ -493,11 +492,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Executes a command (by calling this.ExecuteCommand), and coerces the first result object to a bool.  Any Exception
+        /// Executes a command (by calling this.ExecuteCommand), and coerces the first result object to a bool. Any Exception
         /// thrown in the course of execution is caught and ignored.
         /// </summary>
         /// <param name="command">
-        /// The command to execute.  May be any valid monad command.
+        /// The command to execute. May be any valid monad command.
         /// </param>
         /// <returns>
         /// The Nullable`bool representation of the first result object returned, or null if an exception was thrown or no
@@ -511,14 +510,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Executes a command (by calling this.ExecuteCommand), and coerces the first result object to a bool.  Any Exception
-        /// thrown in the course of execution is returned thru the exceptionThrown parameter.
+        /// Executes a command (by calling this.ExecuteCommand), and coerces the first result object to a bool. Any Exception
+        /// thrown in the course of execution is returned through the exceptionThrown parameter.
         /// </summary>
         /// <param name="command">
-        /// The command to execute.  May be any valid monad command.
+        /// The command to execute. May be any valid monad command.
         /// </param>
         /// <param name="exceptionThrown">
-        /// Receives the Exception thrown by the execution of the command, if any. If no exception is thrown, then set to null.
+        /// Receives the Exception thrown by the execution of the command, if any. Set to null if no exception is thrown.
         /// Can be tested to see if the execution was successful or not.
         /// </param>
         /// <returns>
@@ -557,7 +556,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Cancels execution of the current instance.  If the current instance is not running, then does nothing.  Called in
+        /// Cancels execution of the current instance. Does nothing if the current instance is not running. Called in
         /// response to a break handler, by the static Executor.Cancel method.
         /// </summary>
         private void Cancel()
@@ -601,7 +600,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Resets the instance to its post-ctor state.  Does not cancel execution.
+        /// Resets the instance to its post-ctor state. Does not cancel execution.
         /// </summary>
         private void Reset()
         {
@@ -617,7 +616,7 @@ namespace Microsoft.PowerShell
         /// handler is triggered and calls the static Cancel method.
         /// </summary>
         /// <value>
-        /// The instance to make current.  Null is allowed.
+        /// The instance to make current. Null is allowed.
         /// </value>
         /// <remarks>
         /// Here are some state-transition cases to illustrate the use of CurrentExecutor
@@ -679,8 +678,8 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Cancels the execution of the current instance (the instance last passed to PushCurrentExecutor), if any.  If no
-        /// instance is Current, then does nothing.
+        /// Cancels the execution of the current instance (the instance last passed to PushCurrentExecutor), if any. Does
+        /// nothing if no instance is Current.
         /// </summary>
         internal static void CancelCurrentExecutor()
         {
