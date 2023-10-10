@@ -16,6 +16,7 @@ namespace Microsoft.Management.UI.Internal
     /// Allows the state of the ManagementList to be saved and restored.
     /// </summary>
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class ManagementListStateDescriptor : StateDescriptor<ManagementList>
     {
         #region Fields
