@@ -12,7 +12,7 @@ namespace System.Management.Automation
     /// </summary>
     public class ScopeArgumentCompleter : IArgumentCompleter
     {
-        private static readonly string[] scopes = new string[] { "Global", "Local", "Script" };
+        private static readonly string[] s_Scopes = new string[] { "Global", "Local", "Script" };
 
         /// <summary>
         /// Returns completion results for verb parameter.
@@ -32,7 +32,7 @@ namespace System.Management.Automation
         {
             var scopePattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
-            foreach (string scope in scopes)
+            foreach (string scope in s_Scopes)
             {
                 if (scopePattern.IsMatch(scope))
                 {
