@@ -898,7 +898,7 @@ namespace Microsoft.PowerShell.Commands
                 _timeOutSpecified = true;
             }
         }
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether to return after any one process exits.
         /// </summary>
@@ -1047,7 +1047,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            
+
             if (PassThru)
             {
                 WriteObject(_processList, enumerateCollection: true);
@@ -2717,11 +2717,14 @@ namespace Microsoft.PowerShell.Commands
 
                     Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
 
-                    if (commands.Count == 1 && commands[0].CommandType == CommandTypes.Application)
+                    foreach (CommandInfo command in commands)
                     {
-                        foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
+                        if (command.CommandType == CommandTypes.Application)
                         {
-                            yield return new CompletionResult(verb);
+                            foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
+                            {
+                                yield return new CompletionResult(verb);
+                            }
                         }
                     }
                 }
