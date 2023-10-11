@@ -2721,7 +2721,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (command.CommandType == CommandTypes.Application)
                         {
-                            foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
+                            foreach (string verb in CompleteFileVerbs(command.Source, wordToComplete))
                             {
                                 yield return new CompletionResult(verb);
                             }
