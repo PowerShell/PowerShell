@@ -898,7 +898,7 @@ namespace Microsoft.PowerShell.Commands
                 _timeOutSpecified = true;
             }
         }
-
+        
         /// <summary>
         /// Gets or sets a value indicating whether to return after any one process exits.
         /// </summary>
@@ -1047,7 +1047,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-
+            
             if (PassThru)
             {
                 WriteObject(_processList, enumerateCollection: true);
