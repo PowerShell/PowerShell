@@ -601,7 +601,7 @@ namespace System.Management.Automation
                 private const char StickyAndNotExec = 'T';
 
                 // The item type and the character representation for the first element in the stat string
-                private readonly Dictionary<ItemType, char> itemTypeTable = new()
+                private static readonly Dictionary<ItemType, char> itemTypeTable = new()
                 {
                     { ItemType.BlockDevice,     'b' },
                     { ItemType.CharacterDevice, 'c' },
@@ -631,7 +631,8 @@ namespace System.Management.Automation
                     {
                        return OwnerReadWriteGroupReadOtherRead;
                     }
-                    else if ((ItemType == ItemType.Directory) & ((Mode & 0xFFF) == 493))
+
+                    if (ItemType == ItemType.Directory & (Mode & 0xFFF) == 493)
                     {
                         return DirectoryOwnerFullGroupReadExecOtherReadExec;
                     }
