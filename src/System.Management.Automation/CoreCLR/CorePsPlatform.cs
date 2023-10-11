@@ -626,7 +626,8 @@ namespace System.Management.Automation
                     {
                         return OwnerReadGroupReadOtherRead;
                     }
-                    else if ((Mode & 0xFFF) == 420)
+
+                    if ((Mode & 0xFFF) == 420)
                     {
                        return OwnerReadWriteGroupReadOtherRead;
                     }
