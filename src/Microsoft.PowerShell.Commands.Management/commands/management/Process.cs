@@ -2717,14 +2717,12 @@ namespace Microsoft.PowerShell.Commands
 
                     Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
 
-                    foreach (CommandInfo command in commands)
+                    // PATHEXT gives us executable command extensions in order so we can complete verbs from first extension
+                    if (commands.Count >= 1 && commands[0].CommandType == CommandTypes.Application)
                     {
-                        if (command.CommandType == CommandTypes.Application)
+                        foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
                         {
-                            foreach (string verb in CompleteFileVerbs(command.Source, wordToComplete))
-                            {
-                                yield return new CompletionResult(verb);
-                            }
+                            yield return new CompletionResult(verb);
                         }
                     }
                 }
