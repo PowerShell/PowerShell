@@ -2667,7 +2667,6 @@ namespace Microsoft.PowerShell.Commands
         private const string GetCommandCommandName = "Get-Command";
         private const string CommandParameterName = "Name";
         private const string CommandTypeParameterName = "CommandType";
-        private const string ApplicationCommandType = "Application";
 
         /// <summary>
         /// Returns completion results for verb parameter.
@@ -2716,7 +2715,7 @@ namespace Microsoft.PowerShell.Commands
 
                     ps.AddCommand(commandInfo);
                     ps.AddParameter(CommandParameterName, filePath);
-                    ps.AddParameter(CommandTypeParameterName, ApplicationCommandType);
+                    ps.AddParameter(CommandTypeParameterName, CommandTypes.Application);
 
                     Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
 
