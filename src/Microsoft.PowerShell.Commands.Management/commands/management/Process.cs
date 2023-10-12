@@ -2665,7 +2665,7 @@ namespace Microsoft.PowerShell.Commands
         private const string StartProcessCommandName = "Start-Process";
         private const string FilePathParameterName = "FilePath";
         private const string GetCommandCommandName = "Get-Command";
-        private const string CommandParameterName = "Name";
+        private const string CommandNameParameterName = "Name";
         private const string CommandTypeParameterName = "CommandType";
 
         /// <summary>
@@ -2714,7 +2714,7 @@ namespace Microsoft.PowerShell.Commands
                     var commandInfo = new CmdletInfo(GetCommandCommandName, typeof(GetCommandCommand));
 
                     ps.AddCommand(commandInfo);
-                    ps.AddParameter(CommandParameterName, filePath);
+                    ps.AddParameter(CommandNameParameterName, filePath);
                     ps.AddParameter(CommandTypeParameterName, CommandTypes.Application);
 
                     Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
