@@ -2666,6 +2666,8 @@ namespace Microsoft.PowerShell.Commands
         private const string FilePathParameterName = "FilePath";
         private const string GetCommandCommandName = "Get-Command";
         private const string CommandParameterName = "Name";
+        private const string CommandTypeParameterName = "CommandType";
+        private const string ApplicationCommandType = "Application";
 
         /// <summary>
         /// Returns completion results for verb parameter.
@@ -2714,11 +2716,12 @@ namespace Microsoft.PowerShell.Commands
 
                     ps.AddCommand(commandInfo);
                     ps.AddParameter(CommandParameterName, filePath);
+                    ps.AddParameter(CommandTypeParameterName, ApplicationCommandType);
 
                     Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
 
                     // PATHEXT gives us executable command extensions in order so we can complete verbs from first extension
-                    if (commands.Count >= 1 && commands[0].CommandType == CommandTypes.Application)
+                    if (commands.Count >= 1)
                     {
                         foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
                         {
