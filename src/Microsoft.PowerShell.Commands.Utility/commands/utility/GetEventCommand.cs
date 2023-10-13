@@ -97,7 +97,8 @@ namespace Microsoft.PowerShell.Commands
             lock (Events.ReceivedEvents.SyncRoot)
             {
                 eventArgsCollection = new List<PSEventArgs>(Events.ReceivedEvents);
-                if (this.Descending) {
+                if (this.Descending)
+                {
                     eventArgsCollection.Reverse();
                 }
             }
