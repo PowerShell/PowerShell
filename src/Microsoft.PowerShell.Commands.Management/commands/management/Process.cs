@@ -2662,12 +2662,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class VerbArgumentCompleter : IArgumentCompleter
     {
-        private const string StartProcessCommandName = "Start-Process";
-        private const string FilePathParameterName = "FilePath";
-        private const string GetCommandCommandName = "Get-Command";
-        private const string CommandNameParameterName = "Name";
-        private const string CommandTypeParameterName = "CommandType";
-
         /// <summary>
         /// Returns completion results for verb parameter.
         /// </summary>
@@ -2691,10 +2685,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Completion: Start-Process -FilePath <path> -Verb <wordToComplete>
-            if (commandName.Equals(StartProcessCommandName, StringComparison.OrdinalIgnoreCase)
-                && fakeBoundParameters.Contains(FilePathParameterName))
+            if (commandName.Equals("Start-Process", StringComparison.OrdinalIgnoreCase)
+                && fakeBoundParameters.Contains("FilePath"))
             {
-                string filePath = fakeBoundParameters[FilePathParameterName].ToString();
+                string filePath = fakeBoundParameters["FilePath"].ToString();
 
                 // Complete file verbs if extension exists
                 if (Path.HasExtension(filePath))
@@ -2711,15 +2705,15 @@ namespace Microsoft.PowerShell.Commands
                 // e.g if powershell was given, resolve to powershell.exe to get verbs
                 using (var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
                 {
-                    var commandInfo = new CmdletInfo(GetCommandCommandName, typeof(GetCommandCommand));
+                    var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
 
                     ps.AddCommand(commandInfo);
-                    ps.AddParameter(CommandNameParameterName, filePath);
-                    ps.AddParameter(CommandTypeParameterName, CommandTypes.Application);
+                    ps.AddParameter("Name", filePath);
+                    ps.AddParameter("CommandType", CommandTypes.Application);
 
                     Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
 
-                    // PATHEXT gives us executable command extensions in order so we can complete verbs from first extension
+                    // Start-Process & Get-Command select first found application based on PATHEXT environment variable
                     if (commands.Count >= 1)
                     {
                         foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
