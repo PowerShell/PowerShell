@@ -13,13 +13,45 @@ namespace Microsoft.PowerShell.Commands
     public class GetPSCallStackCommand : PSCmdlet
     {
         /// <summary>
+        /// Gets or sets the number of items to return.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName=true)]
+        public uint First { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets the number of items to skip.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName=true)]
+        public uint Skip { get; set; } = 0;
+
+        /// <summary>
         /// Get the call stack.
         /// </summary>
         protected override void ProcessRecord()
         {
+            uint skipped = 0;
+            uint count   = 0;            
             foreach (CallStackFrame frame in Context.Debugger.GetCallStack())
             {
-                WriteObject(frame);
+                if (this.Skip > 0 && skipped < this.Skip)
+                {
+                    skipped++;
+                    continue;
+                }
+
+                if (this.First > 0)
+                {
+                    if (count >= this.First)
+                    {
+                        break;
+                    }
+                    count++;
+                    WriteObject(frame);    
+                }
+                else
+                {
+                    WriteObject(frame);
+                }
             }
         }
     }
