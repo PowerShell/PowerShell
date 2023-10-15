@@ -823,81 +823,69 @@ namespace Microsoft.PowerShell.Commands
                     bool isDuplicate;
                     bool resultFound = FindCommandForName(options, commandName, isPattern, true, ref count, out isDuplicate);
 
-                    // If we didn't find the command, or if it had a wildcard, also see if it
-                    // is in an available module
-                    if (!resultFound || isPattern)
+                    if (!resultFound && !isPattern)
                     {
-                        // If the command name had no wildcards or was module-qualified,
-                        // import the module so that we can return the fully structured data.
+                        // We didn't find the command among the imported modules.
+                        // So we try to find it among the available modules.
                         // This uses the same code path as module auto-loading.
-                        if ((!isPattern) || (!string.IsNullOrEmpty(moduleName)))
+                        try
                         {
-                            string tempCommandName = commandName;
-                            if ((!isModuleQualified) && (!string.IsNullOrEmpty(moduleName)))
-                            {
-                                tempCommandName = moduleName + "\\" + commandName;
-                            }
-
-                            try
-                            {
-                                CommandDiscovery.LookupCommandInfo(tempCommandName, this.MyInvocation.CommandOrigin, this.Context);
-                            }
-                            catch (CommandNotFoundException)
-                            {
-                                // Ignore, LookupCommandInfo doesn't handle wildcards.
-                            }
-
-                            resultFound = FindCommandForName(options, commandName, isPattern, false, ref count, out isDuplicate);
+                            _ = CommandDiscovery.LookupCommandInfo(commandName, MyInvocation.CommandOrigin, Context);
                         }
-                        // Show additional commands from available modules only if ListImported is not specified
-                        else if (!ListImported)
+                        catch (CommandNotFoundException)
                         {
-                            if (TotalCount < 0 || count < TotalCount)
+                            // Ignore, LookupCommandInfo doesn't handle wildcards.
+                        }
+
+                        resultFound = FindCommandForName(options, commandName, isPattern, false, ref count, out isDuplicate);
+                    }
+
+                    if (!ListImported
+                        && (TotalCount < 0 || count < TotalCount)
+                        && (isPattern || (resultFound && All)))
+                    {
+                        IEnumerable<CommandInfo> commands;
+                        if (UseFuzzyMatching)
+                        {
+                            foreach (var commandScore in ModuleUtils.GetFuzzyMatchingCommands(
+                                plainCommandName,
+                                Context,
+                                MyInvocation.CommandOrigin,
+                                _fuzzyMatcher,
+                                rediscoverImportedModules: true,
+                                moduleVersionRequired: _isFullyQualifiedModuleSpecified))
                             {
-                                IEnumerable<CommandInfo> commands;
-                                if (UseFuzzyMatching)
+                                _commandScores.Add(commandScore);
+                            }
+
+                            commands = _commandScores.Select(static x => x.Command);
+                        }
+                        else
+                        {
+                            commands = ModuleUtils.GetMatchingCommands(
+                                plainCommandName,
+                                Context,
+                                MyInvocation.CommandOrigin,
+                                rediscoverImportedModules: true,
+                                moduleVersionRequired: _isFullyQualifiedModuleSpecified,
+                                useAbbreviationExpansion: UseAbbreviationExpansion);
+                        }
+
+                        foreach (CommandInfo command in commands)
+                        {
+                            // Cannot pass in "command" by ref (foreach iteration variable)
+                            CommandInfo current = command;
+
+                            if (IsCommandMatch(ref current, out isDuplicate) && (!IsCommandInResult(current)) && IsParameterMatch(current))
+                            {
+                                _accumulatedResults.Add(current);
+
+                                // Make sure we don't exceed the TotalCount parameter
+                                ++count;
+
+                                if (TotalCount >= 0 && count >= TotalCount)
                                 {
-                                    foreach (var commandScore in ModuleUtils.GetFuzzyMatchingCommands(
-                                        plainCommandName,
-                                        Context,
-                                        MyInvocation.CommandOrigin,
-                                        _fuzzyMatcher,
-                                        rediscoverImportedModules: true,
-                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified))
-                                    {
-                                        _commandScores.Add(commandScore);
-                                    }
-
-                                    commands = _commandScores.Select(static x => x.Command);
-                                }
-                                else
-                                {
-                                    commands = ModuleUtils.GetMatchingCommands(
-                                        plainCommandName,
-                                        Context,
-                                        MyInvocation.CommandOrigin,
-                                        rediscoverImportedModules: true,
-                                        moduleVersionRequired: _isFullyQualifiedModuleSpecified,
-                                        useAbbreviationExpansion: UseAbbreviationExpansion);
-                                }
-
-                                foreach (CommandInfo command in commands)
-                                {
-                                    // Cannot pass in "command" by ref (foreach iteration variable)
-                                    CommandInfo current = command;
-
-                                    if (IsCommandMatch(ref current, out isDuplicate) && (!IsCommandInResult(current)) && IsParameterMatch(current))
-                                    {
-                                        _accumulatedResults.Add(current);
-
-                                        // Make sure we don't exceed the TotalCount parameter
-                                        ++count;
-
-                                        if (TotalCount >= 0 && count >= TotalCount)
-                                        {
-                                            break;
-                                        }
-                                    }
+                                    break;
                                 }
                             }
                         }

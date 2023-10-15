@@ -496,8 +496,14 @@ namespace System.Management.Automation.Internal
                         if (modules.Count == 1)
                         {
                             PSModuleInfo psModule = modules[0];
-                            tempModuleInfo = new PSModuleInfo(psModule.Name, psModule.Path, context: null, sessionState: null);
-                            tempModuleInfo.SetModuleBase(psModule.ModuleBase);
+                            string tempBaseModulePath = Path.GetDirectoryName(modulePath);
+                            if (tempBaseModulePath.Equals(psModule.ModuleBase, StringComparison.Ordinal))
+                            {
+                                continue;
+                            }
+
+                            tempModuleInfo = new PSModuleInfo(psModule.Name, modulePath, context: null, sessionState: null);
+                            tempModuleInfo.SetModuleBase(tempBaseModulePath);
 
                             foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
