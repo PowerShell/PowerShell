@@ -70,11 +70,14 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        VerbInfo verb = new();
-                        verb.Verb = field.Name;
-                        verb.AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name);
-                        verb.Group = groupName;
-                        verb.Description = VerbDescriptions.GetVerbDescription(field.Name);
+                        var verb = new VerbInfo()
+                        {
+                            Verb = field.Name,
+                            AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name),
+                            Group = groupName,
+                            Description = VerbDescriptions.GetVerbDescription(field.Name)
+                        };
+
                         WriteObject(verb);
                     }
                 }
