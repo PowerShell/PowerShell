@@ -945,7 +945,7 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
     }
 
     It 'Errors for invalid ExecutionPolicy string' {
-        $out = pwsh -nologo -noprofile -executionpolicy foo -c 'exit 0' 2>&1
+        $out = pwsh -nologo -noprofile -executionpolicy NonExistingExecutionPolicy -c 'exit 0' 2>&1
         $out | Should -Not -BeNullOrEmpty
         $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
     }
