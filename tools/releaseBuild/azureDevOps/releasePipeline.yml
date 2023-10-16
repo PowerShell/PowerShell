@@ -341,6 +341,7 @@ stages:
 - stage: PublishPackages
   displayName: Publish packages
   dependsOn: GitHubManualTasks
+  timeoutInMinutes: 120
   jobs:
   - job: PublishNuget
 
@@ -356,6 +357,7 @@ stages:
 
   - job: PublishPkgsMsftCom
 
+    timeoutInMinutes: 120
     pool:
       name: PowerShell1ES
       demands:
