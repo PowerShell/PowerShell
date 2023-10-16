@@ -867,7 +867,7 @@ namespace PSTests.Parallel
 
             Assert.True(cpp.AbortStartup);
             Assert.True(cpp.NoExit);
-            Assert.False(cpp.ShowShortHelp);
+            Assert.True(cpp.ShowShortHelp);
             Assert.True(cpp.ShowBanner);
             Assert.Equal((uint)ConsoleHost.ExitCodeSuccess, cpp.ExitCode);
             Assert.Equal(commandLine[1], cpp.ExecutionPolicy);
