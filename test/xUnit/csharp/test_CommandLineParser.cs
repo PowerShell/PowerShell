@@ -868,10 +868,12 @@ namespace PSTests.Parallel
             Assert.True(cpp.AbortStartup);
             Assert.True(cpp.NoExit);
             Assert.True(cpp.ShowShortHelp);
-            Assert.True(cpp.ShowBanner);
-            Assert.Equal((uint)ConsoleHost.ExitCodeSuccess, cpp.ExitCode);
+            Assert.False(cpp.ShowBanner);
+            Assert.Equal((uint)ConsoleHost.ExitCodeBadCommandLineParameter, cpp.ExitCode);
             Assert.Equal(commandLine[1], cpp.ExecutionPolicy);
-            Assert.Null(cpp.ErrorMessage);
+            Assert.Equal(
+                string.Format(CommandLineParameterParserStrings.InvalidExecutionPolicyArgument, "InvalidPolicy"),
+                cpp.ErrorMessage);
         }
 
         [Theory]
