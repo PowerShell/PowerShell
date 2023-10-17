@@ -767,19 +767,20 @@ ConstructorTestClass(int i, bool b)
         }
 
         It "Should complete Verb parameter for '<TextInput>'" -Skip:(!([System.Management.Automation.Platform]::IsWindowsDesktop)) -TestCases @(
-            @{ TextInput = 'Start-Process -Verb '; ExpectedVerbs = @() }
-            @{ TextInput = "Start-Process -FilePath $cmdPath -Verb "; ExpectedVerbs =  $cmdVerbs }
-            @{ TextInput = "Start-Process -FilePath $exePath -Verb "; ExpectedVerbs = $exeVerbs }
-            @{ TextInput = "Start-Process -FilePath $exePath -Verb run"; ExpectedVerbs = $exeVerbsStartingWithRun }
-            @{ TextInput = "Start-Process -FilePath $powerShellExeWithNoExtension -Verb "; ExpectedVerbs = $exeVerbs }
-            @{ TextInput = "Start-Process -FilePath $txtPath -Verb "; ExpectedVerbs = $txtVerbs }
-            @{ TextInput = "Start-Process -FilePath $wavPath -Verb "; ExpectedVerbs = $wavVerbs }
-            @{ TextInput = "Start-Process -FilePath $docxPath -Verb "; ExpectedVerbs = $docxVerbs }
-            @{ TextInput = "Start-Process -FilePath $fileWithNoExtensionPath -Verb "; ExpectedVerbs = $fileWithNoExtensionVerbs }
+            @{ TextInput = 'Start-Process -Verb '; ExpectedVerbs = '' }
+            @{ TextInput = "Start-Process -FilePath $cmdPath -Verb "; ExpectedVerbs =  $cmdVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $exePath -Verb "; ExpectedVerbs = $exeVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $exePath -Verb run"; ExpectedVerbs = $exeVerbsStartingWithRun -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $powerShellExeWithNoExtension -Verb "; ExpectedVerbs = $exeVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $txtPath -Verb "; ExpectedVerbs = $txtVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $wavPath -Verb "; ExpectedVerbs = $wavVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $docxPath -Verb "; ExpectedVerbs = $docxVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $fileWithNoExtensionPath -Verb "; ExpectedVerbs = $fileWithNoExtensionVerbs -join ' ' }
         ) {
             param($TextInput, $ExpectedVerbs)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
-            $res.CompletionMatches.CompletionText | Should -BeExactly $ExpectedVerbs
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $ExpectedVerbs
         }
     }
 
