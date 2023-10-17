@@ -746,18 +746,18 @@ ConstructorTestClass(int i, bool b)
 
     Context 'Get-Verb & Get-Command -Verb parameter completion' {
         BeforeAll {
-            $allVerbs = 'Add', 'Clear', 'Close', 'Copy', 'Enter', 'Exit', 'Find', 'Format', 'Get', 'Hide', 'Join', 'Lock', 'Move', 'New', 'Open', 'Optimize', 'Push', 'Pop', 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Search', 'Select', 'Set', 'Show', 'Skip', 'Split', 'Step', 'Switch', 'Undo', 'Unlock', 'Watch', 'Connect', 'Disconnect', 'Read', 'Receive', 'Send', 'Write', 'Backup', 'Checkpoint', 'Compare', 'Compress', 'Convert', 'ConvertFrom', 'ConvertTo', 'Dismount', 'Edit', 'Expand', 'Export', 'Group', 'Import', 'Initialize', 'Limit', 'Merge', 'Mount', 'Out', 'Publish', 'Restore', 'Save', 'Sync', 'Unpublish', 'Update', 'Debug', 'Measure', 'Ping', 'Repair', 'Resolve', 'Test', 'Trace', 'Approve', 'Assert', 'Build', 'Complete', 'Confirm', 'Deny', 'Deploy', 'Disable', 'Enable', 'Install', 'Invoke', 'Register', 'Request', 'Restart', 'Resume', 'Start', 'Stop', 'Submit', 'Suspend', 'Uninstall', 'Unregister', 'Wait', 'Use', 'Block', 'Grant', 'Protect', 'Revoke', 'Unblock', 'Unprotect'
-            $verbsStartingWithRe = 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Read', 'Receive', 'Restore', 'Repair', 'Resolve', 'Register', 'Request', 'Restart', 'Resume', 'Revoke'
-            $verbsStartingWithEx = 'Exit', 'Expand', 'Export'
-            $verbsStartingWithConv = 'Convert', 'ConvertFrom', 'ConvertTo'
-            $lifeCycleVerbsStartingWithRe = 'Register', 'Request', 'Restart', 'Resume'
-            $dataVerbsStartingwithEx = 'Expand', 'Export'
-            $lifeCycleAndCommmonVerbsStartingWithRe = 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Register', 'Request', 'Restart', 'Resume'
-            $allLifeCycleAndCommonVerbs = 'Add', 'Clear', 'Close', 'Copy', 'Enter', 'Exit', 'Find', 'Format', 'Get', 'Hide', 'Join', 'Lock', 'Move', 'New', 'Open', 'Optimize', 'Push', 'Pop', 'Redo', 'Remove', 'Rename', 'Reset', 'Resize', 'Search', 'Select', 'Set', 'Show', 'Skip', 'Split', 'Step', 'Switch', 'Undo', 'Unlock', 'Watch', 'Approve', 'Assert', 'Build', 'Complete', 'Confirm', 'Deny', 'Deploy', 'Disable', 'Enable', 'Install', 'Invoke', 'Register', 'Request', 'Restart', 'Resume', 'Start', 'Stop', 'Submit', 'Suspend', 'Uninstall', 'Unregister', 'Wait'
-            $allJsonVerbs = 'ConvertFrom', 'ConvertTo', 'Test'
-            $jsonVerbsStartingWithConv = 'ConvertFrom', 'ConvertTo'
-            $allJsonAndJobVerbs = 'ConvertFrom', 'ConvertTo', 'Debug', 'Get', 'Receive', 'Remove', 'Start', 'Stop', 'Test', 'Wait'
-            $jsonAndJobVerbsStartingWithSt = 'Start', 'Stop'
+            $allVerbs = 'Add Approve Assert Backup Block Build Checkpoint Clear Close Compare Complete Compress Confirm Connect Convert ConvertFrom ConvertTo Copy Debug Deny Deploy Disable Disconnect Dismount Edit Enable Enter Exit Expand Export Find Format Get Grant Group Hide Import Initialize Install Invoke Join Limit Lock Measure Merge Mount Move New Open Optimize Out Ping Pop Protect Publish Push Read Receive Redo Register Remove Rename Repair Request Reset Resize Resolve Restart Restore Resume Revoke Save Search Select Send Set Show Skip Split Start Step Stop Submit Suspend Switch Sync Test Trace Unblock Undo Uninstall Unlock Unprotect Unpublish Unregister Update Use Wait Watch Write'
+            $verbsStartingWithRe = 'Read Receive Redo Register Remove Rename Repair Request Reset Resize Resolve Restart Restore Resume Revoke'
+            $verbsStartingWithEx = 'Exit Expand Export'
+            $verbsStartingWithConv = 'Convert ConvertFrom ConvertTo'
+            $lifeCycleVerbsStartingWithRe = 'Register Request Restart Resume'
+            $dataVerbsStartingwithEx = 'Expand Export'
+            $lifeCycleAndCommmonVerbsStartingWithRe = 'Redo Register Remove Rename Request Reset Resize Restart Resume'
+            $allLifeCycleAndCommonVerbs = 'Add Approve Assert Build Clear Close Complete Confirm Copy Deny Deploy Disable Enable Enter Exit Find Format Get Hide Install Invoke Join Lock Move New Open Optimize Pop Push Redo Register Remove Rename Request Reset Resize Restart Resume Search Select Set Show Skip Split Start Step Stop Submit Suspend Switch Undo Uninstall Unlock Unregister Wait Watch'
+            $allJsonVerbs = 'ConvertFrom ConvertTo Test'
+            $jsonVerbsStartingWithConv = 'ConvertFrom ConvertTo'
+            $allJsonAndJobVerbs = 'ConvertFrom ConvertTo Debug Get Receive Remove Start Stop Test Wait'
+            $jsonAndJobVerbsStartingWithSt = 'Start Stop'
         }
     }
 
@@ -769,7 +769,7 @@ ConstructorTestClass(int i, bool b)
         @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb Re'; ExpectedVerbs = $lifeCycleAndCommmonVerbsStartingWithRe }
         @{ TextInput = 'Get-Verb -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
         @{ TextInput = 'Get-Verb -Group Data -Verb Ex'; ExpectedVerbs = $dataVerbsStartingwithEx }
-        @{ TextInput = 'Get-Verb -Group NonExistentGroup -Verb '; ExpectedVerbs = @() }
+        @{ TextInput = 'Get-Verb -Group NonExistentGroup -Verb '; ExpectedVerbs = '' }
         @{ TextInput = 'Get-Verb -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
         @{ TextInput = 'Get-Command -Verb '; ExpectedVerbs = $allVerbs }
         @{ TextInput = 'Get-Command -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
@@ -779,11 +779,12 @@ ConstructorTestClass(int i, bool b)
         @{ TextInput = 'Get-Command -Noun Json -Verb Conv'; ExpectedVerbs = $jsonVerbsStartingWithConv }
         @{ TextInput = 'Get-Command -Noun Json, Job -Verb '; ExpectedVerbs = $allJsonAndJobVerbs }
         @{ TextInput = 'Get-Command -Noun Json, Job -Verb St'; ExpectedVerbs = $jsonAndJobVerbsStartingWithSt }
-        @{ TextInput = 'Get-Command -Noun NonExistentNoun -Verb '; ExpectedVerbs = @() }
+        @{ TextInput = 'Get-Command -Noun NonExistentNoun -Verb '; ExpectedVerbs = '' }
     ) {
         param($TextInput, $ExpectedVerbs)
         $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
-        $res.CompletionMatches.CompletionText | Should -BeExactly $ExpectedVerbs
+        $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+        $completionText -join ' ' | Should -BeExactly $ExpectedVerbs
     }
 
     Context "Format cmdlet's View paramter completion" {
