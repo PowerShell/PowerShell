@@ -1301,6 +1301,11 @@ class InheritedClassTest : System.Attribute
         }
     }
 
+    It 'Should correct slashes in UNC path completion' -Skip:(!$IsWindows) {
+        $Res = TabExpansion2 -inputScript 'Get-ChildItem //localhost/c$/Windows'
+        $Res.CompletionMatches[0].CompletionText | Should -Be "'\\localhost\c$\Windows'"
+    }
+
     It 'Should keep custom drive names when completing file paths' {
         $TempDriveName = "asdf"
         $null = New-PSDrive -Name $TempDriveName -PSProvider FileSystem -Root $HOME

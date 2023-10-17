@@ -151,7 +151,9 @@
       <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
       <ComponentRef Id="MURegistryEntries"/>
       <ComponentRef Id="RegistryEntries"/>
-      <ComponentRef Id="SharedRegistryEntries"/>
+      <?if $(var.IsPreview)!=True?>
+      <ComponentRef Id="AppPath"/>
+      <?endif?>
       <ComponentRef Id="SetPath"/>
       <ComponentRef Id="Telemetry"/>
       <ComponentRef Id="DisableTelemetry"/>
@@ -209,13 +211,15 @@
               </RegistryKey>
 
             </Component>
-            <Component Id="SharedRegistryEntries">
+            <?if $(var.IsPreview)!=True?>
+            <Component Id="AppPath">
               <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
               <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
                   <!-- As a shared path, the last one to install will overwrite any previous value. It also needs to be in its own component to properly ref-count and be removed when appropriate. -->
                   <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe" KeyPath="yes"/>
               </RegistryKey>
             </Component>
+            <?endif?>
             <Component Id="DisableTelemetry" Guid="{E86F5C91-3721-4C5C-A31F-1F0A5A468573}" KeyPath="yes">
               <Condition>DISABLE_TELEMETRY</Condition>
               <Environment Id="PowerShellTelemetryOptout" Action="set" Name="POWERSHELL_TELEMETRY_OPTOUT" Permanent="no" System="yes" Value="1"/>
