@@ -746,7 +746,7 @@ ConstructorTestClass(int i, bool b)
 
     Context 'Scope parameter completion' {
         BeforeAll {
-            $allScopes = 'Global', 'Local', 'Script'
+            $allScopes = 'Global Local Script'
             $globalScope = 'Global'
             $localScope = 'Local'
             $scriptScope = 'Script'
@@ -758,13 +758,14 @@ ConstructorTestClass(int i, bool b)
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope G"; ExpectedScopes = $globalScope }
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope Lo"; ExpectedScopes = $localScope }
             @{ Commands = $allScopeCommands; ParameterInput = "-Scope Scr"; ExpectedScopes = $scriptScope }
-            @{ Commands = $allScopeCommands; ParameterInput = "-Scope NonExistentScope"; ExpectedScopes = @() }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope NonExistentScope"; ExpectedScopes = '' }
         ) {
             param($Commands, $ParameterInput, $ExpectedScopes)
             foreach ($command in $Commands) {
                 $joinedCommand = "$command $ParameterInput"
                 $res = TabExpansion2 -inputScript $joinedCommand -cursorColumn $joinedCommand.Length
-                $res.CompletionMatches.CompletionText | Should -BeExactly $ExpectedScopes
+                $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+                $completionText -join ' ' | Should -BeExactly $ExpectedScopes
             }
         }
     }
