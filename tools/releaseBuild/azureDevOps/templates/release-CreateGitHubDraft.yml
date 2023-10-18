@@ -7,13 +7,13 @@ steps:
 - template: release-SetReleaseTagAndContainerName.yml
 
 - pwsh: |
-    Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+    Import-module '$(BUILD.SOURCESDIRECTORY)/PowerShell/build.psm1'
     Install-AzCopy
   displayName: Install AzCopy
   retryCountOnTaskFailure: 2
 
 - pwsh: |
-    Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+    Import-module '$(BUILD.SOURCESDIRECTORY)/PowerShell/build.psm1'
     $azcopy = Find-AzCopy
     Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
@@ -89,7 +89,7 @@ steps:
       $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
     }
 
-    $filePath = "$env:BUILD_SOURCESDIRECTORY/CHANGELOG/$fileName"
+    $filePath = "$env:BUILD_SOURCESDIRECTORY/PowerShell/CHANGELOG/$fileName"
     Write-Verbose -Verbose "Selected Log file: $filePath"
 
     if (-not (Test-Path $filePath)) {
