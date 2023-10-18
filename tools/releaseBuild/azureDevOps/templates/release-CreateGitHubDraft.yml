@@ -65,15 +65,15 @@ steps:
   displayName: 'Set release version'
 
 - template: Sbom.yml@ComplianceRepo
-    parameters:
-      BuildDropPath: '$(PackagesRoot)'
-      Build_Repository_Uri: 'https://github.com/powershell/powershell.git'
-      displayName: PowerShell Hashes SBOM
-      packageName: PowerShell Artifact Hashes
-      packageVersion: $(ReleaseVersion)
-      # Optional - Path to scan for components or CGManifest.json
-      # Same as source scan path for Component Governance
-      # sourceScanPath: <folderPath>
+  parameters:
+    BuildDropPath: '$(PackagesRoot)'
+    Build_Repository_Uri: 'https://github.com/powershell/powershell.git'
+    displayName: PowerShell Hashes SBOM
+    packageName: PowerShell Artifact Hashes
+    packageVersion: $(ReleaseVersion)
+    # Optional - Path to scan for components or CGManifest.json
+    # Same as source scan path for Component Governance
+    # sourceScanPath: <folderPath>
 
 - pwsh: |
     Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
