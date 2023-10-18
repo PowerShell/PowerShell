@@ -205,6 +205,19 @@ configuration:
       - addReply:
           reply: This issue has been marked as "Waiting on Author" and has not had any activity for **7 day**. It has been closed for housekeeping purposes.
       - closeIssue
+    - description: Resolution no activity 
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isOpen
+      - isIssue
+      - hasLabel:
+          label: Resolution-No Activity
+      actions:
+      - addReply:
+          reply: This issue has been marked as "No Activity". It has been closed for housekeeping purposes.
+      - closeIssue
     - description: This is for closing issues that have no activity for 6 months.
       frequencies:
       - hourly:
@@ -213,12 +226,24 @@ configuration:
       - isIssue
       - isOpen
       - noActivitySince:
-          days: 10
+          months: 6
       actions:
       - addReply:
-          reply: This issue has not had any activity in 6 months, if this is a bug please try to reproduce on the latest version of PowerShell and reopen this issue or open a new issue with updated details. 
-      - closeIssue
+          reply: This issue has not had any activity in 6 months, if this is a bug please try to reproduce on the latest version of PowerShell and reopen a new issue and reference this issue if this is still a blocker for you. 
+      - addLabel:
+            label: Resolution-No Activity
     eventResponderTasks:
+    description: Reopen issues with no activity if its the author who has commented
+    - if:
+      - payloadType: Issue_Comment
+      - isActivitySender:
+          issueAuthor: True
+      - hasLabel:
+          label: Resolution-No Activity
+      then:
+      - removeLabel:
+          label: Resolution-No Activity
+      - reopenIssue
     - if:
       - payloadType: Pull_Request
       - hasLabel:
