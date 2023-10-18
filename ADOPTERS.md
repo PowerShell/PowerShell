@@ -12,7 +12,7 @@ Example entry:
 
 This is a list of adopters using PowerShell in production or in their products (in alphabetical order):
 
-* [Azure Cloud Shell](https://shell.azure.com/) provides a batteries-included browser-based PowerShell environment used by Azure administrators to manage their environment.
+* [Azure Cloud Shell](https://shell.azure.com/) provides a battery-included browser-based PowerShell environment used by Azure administrators to manage their environment.
   It includes up-to-date PowerShell modules for `Azure`, `AzureAD`, `Exchange`, `Teams`, and many more.
   More information about Azure Cloud Shell is available at [Azure Cloud Shell Overview.](https://learn.microsoft.com/azure/cloud-shell/overview)
 * [Azure Functions - PowerShell](https://github.com/Azure/azure-functions-powershell-worker) is a serverless compute service to execute PowerShell scripts in the cloud without worrying about managing resources.
