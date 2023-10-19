@@ -70,9 +70,7 @@ steps:
     displayName: PowerShell Hashes SBOM
     packageName: PowerShell Artifact Hashes
     packageVersion: $(ReleaseVersion)
-    # Optional - Path to scan for components or CGManifest.json
-    # Same as source scan path for Component Governance
-    # sourceScanPath: <folderPath>
+    sourceScanPath: '$(PackagesRoot)'
 
 - pwsh: |
     Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
