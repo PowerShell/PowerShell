@@ -117,6 +117,19 @@ Describe "Get-Command" -Tag CI {
     BeforeAll {
         Import-Module Microsoft.PowerShell.Management
     }
+
+    Context "Prefix tests" {
+        It "Should not find the non-prefixed commands" {
+            $TestModulePath = Join-Path -Path $testdrive PrefixModuleTest
+            $ModuleFilePath = Join-Path -Path $TestModulePath PrefixModuleTest.psm1
+            $null = New-Item -Path $TestModulePath -Force -ItemType Directory
+            "function Test-DemoCommand1 {}" | Set-Content -Path $ModuleFilePath -Force
+            Import-Module $ModuleFilePath -Prefix PrefixTest
+            Get-Command -Name Test-DemoCommand1* -All | Should -HaveCount 0
+            {Get-Command -Name Test-DemoCommand1 -All -ErrorAction Stop} | Should -Throw -ErrorId 'CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand'
+        }
+    }
+
     Context "-Syntax tests" {
         It "Should return a string object when -Name is an alias and -Syntax is specified" {
             $Result = Get-Command -Name del -Syntax
