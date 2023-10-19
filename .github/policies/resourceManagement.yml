@@ -235,7 +235,6 @@ configuration:
       - addLabel:
             label: Resolution-No Activity
     eventResponderTasks:
-    description: Reopen issues with no activity if its the author who has commented
     - if:
       - payloadType: Issue_Comment
       - isActivitySender:
@@ -246,6 +245,7 @@ configuration:
       - removeLabel:
           label: Resolution-No Activity
       - reopenIssue
+      description: Reopen issues with no activity if its the author who has commented
     - if:
       - payloadType: Pull_Request
       - hasLabel:
