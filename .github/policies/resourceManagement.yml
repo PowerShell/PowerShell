@@ -214,6 +214,8 @@ configuration:
       - isIssue
       - hasLabel:
           label: Resolution-No Activity
+      - noActivitySince:
+          days: 7
       actions:
       - addReply:
           reply: This issue has been marked as "No Activity". It has been closed for housekeeping purposes.
@@ -226,7 +228,7 @@ configuration:
       - isIssue
       - isOpen
       - noActivitySince:
-          months: 6
+          days: 180
       actions:
       - addReply:
           reply: This issue has not had any activity in 6 months, if this is a bug please try to reproduce on the latest version of PowerShell and reopen a new issue and reference this issue if this is still a blocker for you. 
