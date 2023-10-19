@@ -3569,6 +3569,13 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null);
+                    if (_totalFiles > 0 && _copiedFiles == _totalFiles)
+                    {
+                        _copyStopwatch.Stop();
+                        var progress = new ProgressRecord(COPY_FILE_ACTIVITY_ID, " ", " ");
+                        progress.RecordType = ProgressRecordType.Completed;
+                        WriteProgress(progress);
+                    }
                 }
             }
 
