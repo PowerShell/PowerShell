@@ -1424,6 +1424,7 @@ namespace System.Management.Automation
 
         internal static class Separators
         {
+            internal static readonly char[] Backslash = new char[] { '\\' };
             internal static readonly char[] Directory = new char[] { '\\', '/' };
             internal static readonly char[] DirectoryOrDrive = new char[] { '\\', '/', ':' };
             internal static readonly char[] SpaceOrTab = new char[] { ' ', '\t' };
