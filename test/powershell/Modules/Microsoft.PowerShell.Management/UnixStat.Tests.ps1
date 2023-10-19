@@ -68,8 +68,12 @@ Describe "UnixFileSystem additions" -Tag "CI" {
                 set-itresult -skip -because "chmod '$mode' failed"
             }
             else {
+                $unixMode = ((/bin/ls -dl $Item) -split " ")[0]
                 $i = Get-Item $Item
-                $i.UnixMode | Should -BeExactly $Perm
+                if ($unixMode -ne $Perm) {
+                    set-itresult -skip -because "file mode not set correctly ($Perm != $unixMode)"
+                }
+                $i.UnixMode | Should -BeExactly $Perm -Because "File mode is: $unixMode"
             }
         }
 
