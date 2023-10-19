@@ -45,7 +45,7 @@
     <PackageReference Include="System.Security.Permissions" Version="8.0.0-rc.1.23419.4" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0-rc.1.23419.4" />
     <!-- the following package(s) are from the powershell org -->
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0-preview.3" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0-preview.4" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0-preview.2" />
     <!-- Signing APIs -->
     <PackageReference Include="Microsoft.Security.Extensions" Version="1.2.0" />
