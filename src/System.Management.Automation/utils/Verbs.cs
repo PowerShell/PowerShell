@@ -1456,11 +1456,6 @@ namespace System.Management.Automation
         /// </summary>
         public class VerbArgumentCompleter : IArgumentCompleter
         {
-            private const string GetVerbCommandName = "Get-Verb";
-            private const string GroupParameterName = "Group";
-            private const string GetCommandCommandName = "Get-Command";
-            private const string NounParameterName = "Noun";
-
             /// <summary>
             /// Returns completion results for verb parameter.
             /// </summary>
@@ -1480,12 +1475,12 @@ namespace System.Management.Automation
                 var verbs = new string[] { wordToComplete + "*" };
 
                 // Completion: Get-Verb -Group <group> -Verb <wordToComplete>
-                if (commandName.Equals(GetVerbCommandName, StringComparison.OrdinalIgnoreCase)
-                    && fakeBoundParameters.Contains(GroupParameterName))
+                if (commandName.Equals("Get-Verb", StringComparison.OrdinalIgnoreCase)
+                    && fakeBoundParameters.Contains("Group"))
                 {
                     string[] groups = null;
 
-                    object groupParameterValue = fakeBoundParameters[GroupParameterName];
+                    object groupParameterValue = fakeBoundParameters["Group"];
                     Type groupParameterValueType = groupParameterValue.GetType();
 
                     if (groupParameterValueType == typeof(string))
@@ -1508,15 +1503,15 @@ namespace System.Management.Automation
                 }
 
                 // Completion: Get-Command -Noun <noun> -Verb <wordToComplete>
-                else if (commandName.Equals(GetCommandCommandName, StringComparison.OrdinalIgnoreCase)
-                         && fakeBoundParameters.Contains(NounParameterName))
+                else if (commandName.Equals("Get-Command", StringComparison.OrdinalIgnoreCase)
+                         && fakeBoundParameters.Contains("Noun"))
                 {
                     using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
                     {
-                        var commandInfo = new CmdletInfo(GetCommandCommandName, typeof(GetCommandCommand));
+                        var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
 
                         ps.AddCommand(commandInfo);
-                        ps.AddParameter(NounParameterName, fakeBoundParameters[NounParameterName]);
+                        ps.AddParameter("Noun", fakeBoundParameters["Noun"]);
 
                         Collection<CmdletInfo> commands = ps.Invoke<CmdletInfo>();
 
