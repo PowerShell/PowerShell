@@ -1513,6 +1513,11 @@ namespace System.Management.Automation
                         ps.AddCommand(commandInfo);
                         ps.AddParameter("Noun", fakeBoundParameters["Noun"]);
 
+                        if (fakeBoundParameters.Contains("Module"))
+                        {
+                            ps.AddParameter("Module", fakeBoundParameters["Module"]);
+                        }
+
                         Collection<CmdletInfo> commands = ps.Invoke<CmdletInfo>();
 
                         foreach (string verb in FilterByVerbsAndCommands(verbs, commands))

@@ -758,6 +758,10 @@ ConstructorTestClass(int i, bool b)
             $jsonVerbsStartingWithConv = 'ConvertFrom ConvertTo'
             $allJsonAndJobVerbs = 'ConvertFrom ConvertTo Debug Get Receive Remove Start Stop Test Wait'
             $jsonAndJobVerbsStartingWithSt = 'Start Stop'
+            $allObjectVerbs = 'Compare ForEach Group Measure New Select Sort Tee Where'
+            $allUtilityModuleObjectVerbs = 'Compare Group Measure New Select Sort Tee'
+            $allUtilityModuleObjectVerbsStartingWithS = 'Select Sort'
+            $allCoreModuleObjectVerbs = 'ForEach Where'
         }
     }
 
@@ -780,6 +784,10 @@ ConstructorTestClass(int i, bool b)
         @{ TextInput = 'Get-Command -Noun Json, Job -Verb '; ExpectedVerbs = $allJsonAndJobVerbs }
         @{ TextInput = 'Get-Command -Noun Json, Job -Verb St'; ExpectedVerbs = $jsonAndJobVerbsStartingWithSt }
         @{ TextInput = 'Get-Command -Noun NonExistentNoun -Verb '; ExpectedVerbs = '' }
+        @{ TextInput = 'Get-Command -Noun Object -Verb '; ExpectedVerbs = $allObjectVerbs }
+        @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb '; ExpectedVerbs = $allUtilityModuleObjectVerbs }
+        @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb S'; ExpectedVerbs = $allUtilityModuleObjectVerbsStartingWithS }
+        @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $allCoreModuleObjectVerbs }
     ) {
         param($TextInput, $ExpectedVerbs)
         $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
