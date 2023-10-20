@@ -34,18 +34,18 @@
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="8.0.0-rc.1.23419.4" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0-rc.1.23419.4" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0-rc.1.23419.4" />
-    <PackageReference Include="System.DirectoryServices" Version="8.0.0-rc.1.23419.4" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="8.0.0-rc.2.23479.6" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0-rc.2.23479.6" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0-rc.2.23479.6" />
+    <PackageReference Include="System.DirectoryServices" Version="8.0.0-rc.2.23479.6" />
     <!--PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" /-->
-    <PackageReference Include="System.Management" Version="8.0.0-rc.1.23419.4" />
+    <PackageReference Include="System.Management" Version="8.0.0-rc.2.23479.6" />
     <PackageReference Include="System.Security.AccessControl" Version="6.0.2-mauipre.1.22102.15" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0-rc.1.23419.4" />
-    <PackageReference Include="System.Security.Permissions" Version="8.0.0-rc.1.23419.4" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0-rc.1.23419.4" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0-rc.2.23479.6" />
+    <PackageReference Include="System.Security.Permissions" Version="8.0.0-rc.2.23479.6" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0-rc.2.23479.6" />
     <!-- the following package(s) are from the powershell org -->
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0-preview.3" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0-preview.4" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0-preview.2" />
     <!-- Signing APIs -->
     <PackageReference Include="Microsoft.Security.Extensions" Version="1.2.0" />
