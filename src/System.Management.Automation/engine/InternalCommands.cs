@@ -2686,6 +2686,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets strict mode in the current scope.
         /// </summary>
         [Parameter(ParameterSetName = "Version", Mandatory = true)]
+        [ArgumentCompleter(typeof(StrictModeVersionArgumentCompleter))]
         [ArgumentToPSVersionTransformation]
         [ValidateVersion]
         [Alias("v")]
@@ -2717,6 +2718,42 @@ namespace Microsoft.PowerShell.Commands
             Context.EngineSessionState.CurrentScope.StrictModeVersion = _version;
         }
     }
+
+    /// <summary>
+    /// Provides argument completion for StrictMode Version parameter.
+    /// </summary>
+    public class StrictModeVersionArgumentCompleter : IArgumentCompleter
+    {
+        private static readonly string[] s_StrictModeVersions = new string[] { "1.0", "2.0", "3.0", "Latest" };
+
+        /// <summary>
+        /// Returns completion results for version parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of Completion Results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+        {
+            var strictModeVersionPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            foreach (string version in s_StrictModeVersions)
+            {
+                if (strictModeVersionPattern.IsMatch(version))
+                {
+                    yield return new CompletionResult(version);
+                }
+            }
+        }
+    }
+
     #endregion Set-StrictMode
 
     #endregion Built-in cmdlets that are used by or require direct access to the engine.
