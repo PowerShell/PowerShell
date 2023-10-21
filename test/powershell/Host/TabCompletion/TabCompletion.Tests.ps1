@@ -784,7 +784,7 @@ ConstructorTestClass(int i, bool b)
         @{ TextInput = 'Get-Command -Noun Json, Job -Verb '; ExpectedVerbs = $allJsonAndJobVerbs }
         @{ TextInput = 'Get-Command -Noun Json, Job -Verb St'; ExpectedVerbs = $jsonAndJobVerbsStartingWithSt }
         @{ TextInput = 'Get-Command -Noun NonExistentNoun -Verb '; ExpectedVerbs = '' }
-        @{ TextInput = 'Get-Command -Noun Object -Verb '; ExpectedVerbs = $allObjectVerbs }
+        @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility,Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $allObjectVerbs }
         @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb '; ExpectedVerbs = $utilityModuleObjectVerbs }
         @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb S'; ExpectedVerbs = $utilityModuleObjectVerbsStartingWithS }
         @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $coreModuleObjectVerbs }
