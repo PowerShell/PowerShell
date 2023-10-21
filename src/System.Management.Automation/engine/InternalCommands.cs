@@ -2724,7 +2724,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class StrictModeVersionArgumentCompleter : IArgumentCompleter
     {
-        private static readonly string[] s_StrictModeVersions = new string[] { "1.0", "2.0", "3.0", "Latest" };
+        private static readonly string[] s_StrictModeVersions = new string[] { "Latest", "3.0", "2.0", "1.0" };
 
         /// <summary>
         /// Returns completion results for version parameter.
