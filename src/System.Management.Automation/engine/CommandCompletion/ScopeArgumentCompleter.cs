@@ -15,7 +15,7 @@ namespace System.Management.Automation
         private static readonly string[] s_Scopes = new string[] { "Global", "Local", "Script" };
 
         /// <summary>
-        /// Returns completion results for verb parameter.
+        /// Returns completion results for scope parameter.
         /// </summary>
         /// <param name="commandName">The command name.</param>
         /// <param name="parameterName">The parameter name.</param>
