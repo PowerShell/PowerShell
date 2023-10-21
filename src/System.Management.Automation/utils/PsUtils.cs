@@ -335,7 +335,8 @@ namespace System.Management.Automation
             "NestedModules",
             "RootModule",
             "ModuleToProcess",
-            "ModuleVersion"
+            "ModuleVersion",
+            "DefaultCommandPrefix"
         };
 
         internal static Hashtable GetModuleManifestProperties(string psDataFilePath, string[] keys)

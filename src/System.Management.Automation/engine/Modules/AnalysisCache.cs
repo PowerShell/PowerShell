@@ -121,11 +121,12 @@ namespace System.Management.Automation
                     }
 
                     result = new ConcurrentDictionary<string, CommandTypes>(3, moduleManifestProperties.Count, StringComparer.OrdinalIgnoreCase);
+                    string defaultPrefix = moduleManifestProperties["DefaultCommandPrefix"] as string;
 
                     var sawWildcard = false;
-                    var hadCmdlets = AddPsd1EntryToResult(result, moduleManifestProperties["CmdletsToExport"], CommandTypes.Cmdlet, ref sawWildcard);
-                    var hadFunctions = AddPsd1EntryToResult(result, moduleManifestProperties["FunctionsToExport"], CommandTypes.Function, ref sawWildcard);
-                    var hadAliases = AddPsd1EntryToResult(result, moduleManifestProperties["AliasesToExport"], CommandTypes.Alias, ref sawWildcard);
+                    var hadCmdlets = AddPsd1EntryToResult(result, defaultPrefix, moduleManifestProperties["CmdletsToExport"], CommandTypes.Cmdlet, ref sawWildcard);
+                    var hadFunctions = AddPsd1EntryToResult(result, defaultPrefix, moduleManifestProperties["FunctionsToExport"], CommandTypes.Function, ref sawWildcard);
+                    var hadAliases = AddPsd1EntryToResult(result, defaultPrefix, moduleManifestProperties["AliasesToExport"], CommandTypes.Alias, ref sawWildcard);
 
                     var analysisSucceeded = hadCmdlets && hadFunctions && hadAliases;
 
@@ -296,11 +297,12 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static bool AddPsd1EntryToResult(ConcurrentDictionary<string, CommandTypes> result, object value, CommandTypes commandTypeToAdd, ref bool sawWildcard)
+        private static bool AddPsd1EntryToResult(ConcurrentDictionary<string, CommandTypes> result, string defaultPrefix, object value, CommandTypes commandTypeToAdd, ref bool sawWildcard)
         {
             string command = value as string;
             if (command != null)
             {
+                command = ModuleCmdletBase.AddPrefixToCommandName(command, defaultPrefix);
                 return AddPsd1EntryToResult(result, command, commandTypeToAdd, ref sawWildcard);
             }
 
@@ -309,7 +311,7 @@ namespace System.Management.Automation
             {
                 foreach (var o in commands)
                 {
-                    if (!AddPsd1EntryToResult(result, o, commandTypeToAdd, ref sawWildcard))
+                    if (!AddPsd1EntryToResult(result, defaultPrefix, o, commandTypeToAdd, ref sawWildcard))
                         return false;
                 }
 
