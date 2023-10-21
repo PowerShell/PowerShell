@@ -29,6 +29,12 @@ resources:
     name: Internal-PowerShellTeam-Tools
     ref: main-mirror
 
+  - repository: ComplianceRepo
+    type: github
+    endpoint: ComplianceGHRepo
+    name: PowerShell/compliance
+    ref: master
+
 variables:
   - name: runCodesignValidationInjection
     value : false
@@ -341,7 +347,6 @@ stages:
 - stage: PublishPackages
   displayName: Publish packages
   dependsOn: GitHubManualTasks
-  timeoutInMinutes: 120
   jobs:
   - job: PublishNuget
 
