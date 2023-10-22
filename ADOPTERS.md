@@ -35,5 +35,5 @@ This is a list of adopters using PowerShell in production or in their products (
 * [GitHub Actions Python builds](https://github.com/actions/python-versions) GitHub Actions uses PowerShell to automate building Python from source for its runners.
 * [Microsoft HoloLens](https://www.microsoft.com/hololens) makes extensive use of PowerShell 7+ throughout the development cycle to automate tasks such as firmware assembly and automated testing.
 * [Power BI](https://powerbi.microsoft.com/) provides PowerShell users a set of cmdlets in [MicrosoftPowerBIMgmt](https://learn.microsoft.com/powershell/power-bi) module to manage and automate the Power BI service.
-  This is in addition to Power BI leveraging PowerShell,internally for various engineering systems and infrastructure for its service.
+  This is in addition to Power BI leveraging PowerShell, internally for various engineering systems and infrastructure for its service.
 * [Windows 10 IoT Core](https://learn.microsoft.com/windows/iot-core/windows-iot-core) is a small form factor Windows edition for IoT devices and now you can easily include the [PowerShell package](https://github.com/ms-iot/iot-adk-addonkit/blob/master/Tools/IoTCoreImaging/Docs/Import-PSCoreRelease.md#Import-PSCoreRelease) in your imaging process.
