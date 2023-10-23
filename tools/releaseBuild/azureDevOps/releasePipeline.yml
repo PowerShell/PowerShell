@@ -147,8 +147,9 @@ stages:
   - job: ValidatePkgNames
     displayName: Validate Package Names
     pool:
-      # testing
-      vmImage: windows-latest
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
     variables:
     - group: 'Azure Blob variable group'
     steps:
