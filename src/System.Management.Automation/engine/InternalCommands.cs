@@ -2744,7 +2744,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var strictModeVersionPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
-            foreach (string version in s_StrictModeVersions)
+            foreach (string version in s_strictModeVersions)
             {
                 if (strictModeVersionPattern.IsMatch(version))
                 {
