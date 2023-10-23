@@ -238,7 +238,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonSchema.Net 5.2.5 - MIT
+JsonSchema.Net 5.2.6 - MIT
 
 
 
@@ -2989,7 +2989,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Private.ServiceModel 4.10.2 - MIT
+System.Private.ServiceModel 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3854,7 +3854,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Duplex 4.10.2 - MIT
+System.ServiceModel.Duplex 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3890,7 +3890,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Http 4.10.2 - MIT
+System.ServiceModel.Http 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3926,7 +3926,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.NetTcp 4.10.2 - MIT
+System.ServiceModel.NetTcp 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3962,7 +3962,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Primitives 4.10.2 - MIT
+System.ServiceModel.Primitives 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3998,7 +3998,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Security 4.10.2 - MIT
+System.ServiceModel.Security 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
