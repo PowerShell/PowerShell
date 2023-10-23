@@ -869,6 +869,13 @@ namespace System.Management.Automation
             return c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar;
         }
 
+        internal static Encoding GetPathEncoding(string path)
+        {
+            using StreamReader reader = new(path, Encoding.Default, detectEncodingFromByteOrderMarks: true);
+            _ = reader.Read();
+            return reader.CurrentEncoding;
+        }
+
         #endregion
     }
 }

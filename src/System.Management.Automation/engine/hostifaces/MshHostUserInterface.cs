@@ -1241,13 +1241,6 @@ namespace System.Management.Automation.Host
         /// </summary>
         internal void FlushContentToDisk()
         {
-            static Encoding GetPathEncoding(string path)
-            {
-                using StreamReader reader = new StreamReader(path, Encoding.Default, detectEncodingFromByteOrderMarks: true);
-                _ = reader.Read();
-                return reader.CurrentEncoding;
-            }
-
             lock (OutputBeingLogged)
             {
                 if (!_disposed)
@@ -1256,7 +1249,7 @@ namespace System.Management.Automation.Host
                     {
                         try
                         {
-                            var currentEncoding = GetPathEncoding(this.Path);
+                            var currentEncoding = PathUtils.GetPathEncoding(this.Path);
 
                             // Try to first open the file with permissions that will allow us to read from it
                             // later.
