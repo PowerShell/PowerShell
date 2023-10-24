@@ -3,22 +3,22 @@
 Welcome to the PowerShell GitHub Community!
 [PowerShell](https://learn.microsoft.com/powershell/scripting/overview) is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized
 for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
-It includes a command-line shell, an associated scripting language and a framework for processing cmdlets.
+It includes a command-line shell, an associated scripting language, and a framework for processing cmdlets.
 
 [logo]: https://raw.githubusercontent.com/PowerShell/PowerShell/master/assets/ps_black_64.svg?sanitize=true
 
 ## Windows PowerShell vs. PowerShell Core
 
-Although this repository started as a fork of the Windows PowerShell codebase, changes made in this repository do not make their way back to Windows PowerShell 5.1 automatically.
+Although this repository started as a fork of the Windows PowerShell codebase, changes made in this repository are not automatically ported back to Windows PowerShell 5.1.
 This also means that [issues tracked here][issues] are only for PowerShell Core 6 and higher.
-Windows PowerShell specific issues should be reported with the [Feedback Hub app][feedback-hub], by choosing "Apps > PowerShell" in category.
+Windows PowerShell specific issues should be reported with the [Feedback Hub app][feedback-hub], by choosing "Apps > PowerShell" in the category.
 
 [issues]: https://github.com/PowerShell/PowerShell/issues
 [feedback-hub]: https://support.microsoft.com/windows/send-feedback-to-microsoft-with-the-feedback-hub-app-f59187f8-8739-22d6-ba93-f66612949332
 
 ## New to PowerShell?
 
-If you are new to PowerShell and would like to learn more, we recommend reviewing the [getting started][] documentation.
+If you are new to PowerShell and want to learn more, we recommend reviewing the [getting started][] documentation.
 
 [getting started]: https://learn.microsoft.com/powershell/scripting/learn/more-powershell-learning
 
@@ -53,7 +53,7 @@ You can download and install a PowerShell package for any of the following platf
 | Kali Linux               | [.deb][rl-deb]          | [.deb][pv-deb]                | [Instructions][in-kali]       |
 | Many Linux distributions | [Snapcraft][rl-snap]    | [Snapcraft][pv-snap]          |                               |
 
-You can also download the PowerShell binary archives for Windows, macOS and Linux.
+You can also download the PowerShell binary archives for Windows, macOS, and Linux.
 
 | Platform       | Downloads (stable)                                  | Downloads (preview)                             | How to Install                                 |
 | ---------------| --------------------------------------------------- | ------------------------------------------------| -----------------------------------------------|
@@ -156,7 +156,7 @@ Create or join a [discussion](https://github.com/PowerShell/PowerShell/discussio
 
 Want to chat with other members of the PowerShell community?
 
-There are dozens of topic specific channels on our community-driven PowerShell Virtual User Group, which you can join on:
+There are dozens of topic-specific channels on our community-driven PowerShell Virtual User Group, which you can join on:
 
 * [Gitter](https://gitter.im/PowerShell/PowerShell)
 * [Discord](https://discord.gg/PowerShell)
@@ -198,13 +198,13 @@ If you have any problems building, consult the developer [FAQ][].
 
 ## Downloading the Source Code
 
-You can just clone the repository:
+You can clone the repository:
 
 ```sh
 git clone https://github.com/PowerShell/PowerShell.git
 ```
 
-See [working with the PowerShell repository](https://github.com/PowerShell/PowerShell/tree/master/docs/git) for more information.
+For more information, see [working with the PowerShell repository](https://github.com/PowerShell/PowerShell/tree/master/docs/git).
 
 ## Developing and Contributing
 
@@ -249,7 +249,7 @@ The governance policy for the PowerShell project is described [here][].
 ## [Code of Conduct][conduct-md]
 
 This project has adopted the [Microsoft Open Source Code of Conduct][conduct-code].
-For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact [opencode@microsoft.com][conduct-email] with any additional questions or comments.
+For more information, see the [Code of Conduct FAQ][conduct-FAQ] or contact [opencode@microsoft.com][conduct-email] with any additional questions or comments.
 
 [conduct-code]: https://opensource.microsoft.com/codeofconduct/
 [conduct-FAQ]: https://opensource.microsoft.com/codeofconduct/faq/
