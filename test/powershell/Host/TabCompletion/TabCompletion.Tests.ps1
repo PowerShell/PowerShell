@@ -763,36 +763,60 @@ ConstructorTestClass(int i, bool b)
             $utilityModuleObjectVerbsStartingWithS = 'Select Sort'
             $coreModuleObjectVerbs = 'ForEach Where'
         }
-    }
 
-    It "Should complete Verb parameter for '<TextInput>'" -TestCases @(
-        @{ TextInput = 'Get-Verb -Verb '; ExpectedVerbs = $allVerbs }
-        @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb '; ExpectedVerbs = $allLifeCycleAndCommonVerbs }
-        @{ TextInput = 'Get-Verb -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
-        @{ TextInput = 'Get-Verb -Group Lifecycle -Verb Re'; ExpectedVerbs = $lifeCycleVerbsStartingWithRe }
-        @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb Re'; ExpectedVerbs = $lifeCycleAndCommmonVerbsStartingWithRe }
-        @{ TextInput = 'Get-Verb -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
-        @{ TextInput = 'Get-Verb -Group Data -Verb Ex'; ExpectedVerbs = $dataVerbsStartingwithEx }
-        @{ TextInput = 'Get-Verb -Group NonExistentGroup -Verb '; ExpectedVerbs = '' }
-        @{ TextInput = 'Get-Verb -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
-        @{ TextInput = 'Get-Command -Verb '; ExpectedVerbs = $allVerbs }
-        @{ TextInput = 'Get-Command -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
-        @{ TextInput = 'Get-Command -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
-        @{ TextInput = 'Get-Command -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
-        @{ TextInput = 'Get-Command -Noun Json -Verb '; ExpectedVerbs = $allJsonVerbs }
-        @{ TextInput = 'Get-Command -Noun Json -Verb Conv'; ExpectedVerbs = $jsonVerbsStartingWithConv }
-        @{ TextInput = 'Get-Command -Noun Json, Job -Verb '; ExpectedVerbs = $allJsonAndJobVerbs }
-        @{ TextInput = 'Get-Command -Noun Json, Job -Verb St'; ExpectedVerbs = $jsonAndJobVerbsStartingWithSt }
-        @{ TextInput = 'Get-Command -Noun NonExistentNoun -Verb '; ExpectedVerbs = '' }
-        @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility,Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $allObjectVerbs }
-        @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb '; ExpectedVerbs = $utilityModuleObjectVerbs }
-        @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb S'; ExpectedVerbs = $utilityModuleObjectVerbsStartingWithS }
-        @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $coreModuleObjectVerbs }
-    ) {
-        param($TextInput, $ExpectedVerbs)
-        $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
-        $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-        $completionText -join ' ' | Should -BeExactly $ExpectedVerbs
+        It "Should complete Verb parameter for '<TextInput>'" -TestCases @(
+            @{ TextInput = 'Get-Verb -Verb '; ExpectedVerbs = $allVerbs }
+            @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb '; ExpectedVerbs = $allLifeCycleAndCommonVerbs }
+            @{ TextInput = 'Get-Verb -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
+            @{ TextInput = 'Get-Verb -Group Lifecycle -Verb Re'; ExpectedVerbs = $lifeCycleVerbsStartingWithRe }
+            @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb Re'; ExpectedVerbs = $lifeCycleAndCommmonVerbsStartingWithRe }
+            @{ TextInput = 'Get-Verb -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
+            @{ TextInput = 'Get-Verb -Group Data -Verb Ex'; ExpectedVerbs = $dataVerbsStartingwithEx }
+            @{ TextInput = 'Get-Verb -Group NonExistentGroup -Verb '; ExpectedVerbs = '' }
+            @{ TextInput = 'Get-Verb -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
+            @{ TextInput = 'Get-Command -Verb '; ExpectedVerbs = $allVerbs }
+            @{ TextInput = 'Get-Command -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
+            @{ TextInput = 'Get-Command -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
+            @{ TextInput = 'Get-Command -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
+            @{ TextInput = 'Get-Command -Noun Json -Verb '; ExpectedVerbs = $allJsonVerbs }
+            @{ TextInput = 'Get-Command -Noun Json -Verb Conv'; ExpectedVerbs = $jsonVerbsStartingWithConv }
+            @{ TextInput = 'Get-Command -Noun Json, Job -Verb '; ExpectedVerbs = $allJsonAndJobVerbs }
+            @{ TextInput = 'Get-Command -Noun Json, Job -Verb St'; ExpectedVerbs = $jsonAndJobVerbsStartingWithSt }
+            @{ TextInput = 'Get-Command -Noun NonExistentNoun -Verb '; ExpectedVerbs = '' }
+            @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility,Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $allObjectVerbs }
+            @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb '; ExpectedVerbs = $utilityModuleObjectVerbs }
+            @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb S'; ExpectedVerbs = $utilityModuleObjectVerbsStartingWithS }
+            @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $coreModuleObjectVerbs }
+        ) {
+            param($TextInput, $ExpectedVerbs)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $ExpectedVerbs
+        }
+    }
+    
+    Context 'StrictMode Version parameter completion' {
+        BeforeAll {
+            $allStrictModeVersions = '1.0 2.0 3.0 Latest'
+            $versionOne = '1.0'
+            $versionTwo = '2.0'
+            $versionThree = '3.0'
+            $latestVersion = 'Latest'
+        }
+
+        It "Should complete Version for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Set-StrictMode -Version "; ExpectedVersions = $allStrictModeVersions }
+            @{ TextInput = "Set-StrictMode -Version 1"; ExpectedVersions = $versionOne }
+            @{ TextInput = "Set-StrictMode -Version 2"; ExpectedVersions = $versionTwo }
+            @{ TextInput = "Set-StrictMode -Version 3"; ExpectedVersions = $versionThree }
+            @{ TextInput = "Set-StrictMode -Version Lat"; ExpectedVersions = $latestVersion }
+            @{ TextInput = "Set-StrictMode -Version NonExistentVersion"; ExpectedVersions = '' }
+        ) {
+            param($TextInput, $ExpectedVersions)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $ExpectedVersions
+        }
     }
 
     Context "Format cmdlet's View paramter completion" {
