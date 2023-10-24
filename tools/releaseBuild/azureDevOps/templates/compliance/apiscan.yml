@@ -1,0 +1,145 @@
+jobs:
+  - job: APIScan
+    variables:
+      - name: runCodesignValidationInjection
+        value : false
+      - name: NugetSecurityAnalysisWarningLevel
+        value: none
+      - name: ReleaseTagVar
+        value: fromBranch
+      # Defines the variables APIScanClient, APIScanTenant and APIScanSecret
+      - group: PS-PS-APIScan
+      # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
+      # A PAT in the wrong org will give a single Error 203. No PAT will give a single Error 401, and individual pdbs may be missing even if permissions are correct.
+      - group: symbols
+      - name: branchCounterKey
+        value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
+      - name: branchCounter
+        value: $[counter(variables['branchCounterKey'], 1)]
+      - group: DotNetPrivateBuildAccess
+
+    pool:
+      name: PowerShell1ES
+      demands:
+        - ImageOverride -equals PSMMS2019-Secure
+
+    # APIScan can take a long time
+    timeoutInMinutes: 180
+
+    steps:
+    - template: ../SetVersionVariables.yml
+      parameters:
+        ReleaseTagVar: $(ReleaseTagVar)
+        CreateJson: yes
+        UseJson: no
+
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Start-PSBootstrap
+      workingDirectory: '$(Build.SourcesDirectory)'
+      retryCountOnTaskFailure: 2
+      displayName: 'Bootstrap'
+      env:
+        __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Find-DotNet
+        dotnet tool install dotnet-symbol --tool-path $(Agent.ToolsDirectory)\tools\dotnet-symbol
+        $symbolToolPath = Get-ChildItem -Path $(Agent.ToolsDirectory)\tools\dotnet-symbol\dotnet-symbol.exe | Select-Object -First 1 -ExpandProperty FullName
+        Write-Host "##vso[task.setvariable variable=symbolToolPath]$symbolToolPath"
+      displayName: Install dotnet-symbol
+      retryCountOnTaskFailure: 2
+
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Find-DotNet
+        Start-PSBuild -Configuration StaticAnalysis -PSModuleRestore -Clean -Runtime fxdependent-win-desktop
+
+        $OutputFolder = Split-Path (Get-PSOutput)
+        Write-Host "##vso[task.setvariable variable=BinDir]$OutputFolder"
+      workingDirectory: '$(Build.SourcesDirectory)'
+      displayName: 'Build PowerShell Source'
+
+    - pwsh: |
+        Get-ChildItem -Path env:
+      displayName: Capture Environment
+      condition: succeededOrFailed()
+
+    # Explicitly download symbols for the drop since the SDL image doesn't have http://SymWeb access and APIScan cannot handle https yet.
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Find-DotNet
+        $pat = '$(SymbolServerPAT)'
+        if ($pat -like '*PAT*' -or $pat -eq '')
+        {
+          throw 'No PAT defined'
+        }
+        $url = 'https://microsoft.artifacts.visualstudio.com/defaultcollection/_apis/symbol/symsrv'
+        $(symbolToolPath) --authenticated-server-path $(SymbolServerPAT) $url --symbols -d "$env:BinDir\*" --recurse-subdirectories
+      displayName: 'Download Symbols for binaries'
+      retryCountOnTaskFailure: 2
+      workingDirectory: '$(Build.SourcesDirectory)'
+
+    - pwsh: |
+        Get-ChildItem '$(BinDir)' -File -Recurse |
+        Foreach-Object {
+          [pscustomobject]@{
+            Path = $_.FullName
+            Version = $_.VersionInfo.FileVersion
+            Md5Hash = (Get-FileHash -Algorithm MD5 -Path $_.FullName).Hash
+            Sha512Hash = (Get-FileHash -Algorithm SHA512 -Path $_.FullName).Hash
+          }
+        } | Export-Csv -Path '$(Build.SourcesDirectory)/ReleaseFileHash.csv'
+      displayName: 'Create release file hash artifact'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Build File Hash artifact'
+      inputs:
+        pathToPublish: '$(Build.SourcesDirectory)/ReleaseFileHash.csv'
+        artifactName: ReleaseFilesHash
+      retryCountOnTaskFailure: 2
+
+    - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@2
+      displayName: 'Run APIScan'
+      inputs:
+        softwareFolder: '$(BinDir)'
+        softwareName: PowerShell
+        softwareVersionNum: '$(ReleaseTagVar)'
+        isLargeApp: false
+        preserveTempFiles: false
+        verbosityLevel: standard
+        # write a status update every 5 minutes.  Default is 1 minute
+        statusUpdateInterval: '00:05:00'
+      env:
+        AzureServicesAuthConnectionString: RunAs=App;AppId=$(APIScanClient);TenantId=$(APIScanTenant);AppKey=$(APIScanSecret)
+
+    - task: securedevelopmentteam.vss-secure-development-tools.build-task-report.SdtReport@2
+      continueOnError: true
+      displayName: 'Guardian Export'
+      inputs:
+        GdnExportVstsConsole: true
+        GdnExportSarifFile: true
+        GdnExportHtmlFile: true
+        GdnExportAllTools: false
+        GdnExportGdnToolApiScan: true
+        #this didn't do anything GdnExportCustomLogsFolder: '$(Build.ArtifactStagingDirectory)/Guardian'
+
+    - task: TSAUpload@2
+      displayName: 'TSA upload'
+      inputs:
+        GdnPublishTsaOnboard: false
+        GdnPublishTsaConfigFile: '$(Build.SourcesDirectory)\tools\guardian\tsaconfig-APIScan.json'
+
+    - pwsh: |
+        Get-ChildItem -Path env:
+      displayName: Capture Environment
+      condition: succeededOrFailed()
+
+    - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
+      displayName: 'Publish Guardian Artifacts'
+      inputs:
+        AllTools: false
+        APIScan: true
+        ArtifactName: APIScan
