@@ -769,7 +769,7 @@ ConstructorTestClass(int i, bool b)
             }
         }
     }
-    
+
     Context 'StrictMode Version parameter completion' {
         BeforeAll {
             $allStrictModeVersions = '1.0 2.0 3.0 Latest'
