@@ -1,0 +1,28 @@
+parameters:
+  - name: skipPublish
+    default: false
+    type: boolean
+
+steps:
+  condition: and(eq('${{ parameters.skipPublish }}', 'false'), succeeded())
+  - name: Checkout PowerShell
+    uses: actions/checkout@v3
+    with:
+      repository: PowerShell/PowerShell
+      path: './powershell'
+  - name: Release latest PowerShell package msi installers to winget-pkgs
+    id: release_info
+    pwsh: |
+      # Get latest release from Github and release metadata
+      $targetRelease = Invoke-RestMethod -Uri https://api.github.com/repos/PowerShell/PowerShell/releases/latest
+      $installerUrls = $targetRelease | Select-Object -ExpandProperty assets | Where-Object -Property name -like "PowerShell*msi" | Select-Object -ExpandProperty browser_download_url
+      $releaseTag = $targetRelease.tag_name
+      echo $releaseTag
+      $version = $releaseTag.Trim("v")
+      echo $version
+      $pkgId = $version.Contains("-") ? "Microsoft.PowerShell.Preview" : "Microsoft.PowerShell"
+      echo $pkgId
+
+      # Update package using wingetcreate
+      Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
+      .\wingetcreate.exe update $pkgId --version $version --urls $installerUrls --submit --token ${{ secrets.PR_PAT }}
