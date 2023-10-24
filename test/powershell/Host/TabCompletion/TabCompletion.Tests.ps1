@@ -769,6 +769,30 @@ ConstructorTestClass(int i, bool b)
             }
         }
     }
+    
+    Context 'StrictMode Version parameter completion' {
+        BeforeAll {
+            $allStrictModeVersions = '1.0 2.0 3.0 Latest'
+            $versionOne = '1.0'
+            $versionTwo = '2.0'
+            $versionThree = '3.0'
+            $latestVersion = 'Latest'
+        }
+
+        It "Should complete Version for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Set-StrictMode -Version "; ExpectedVersions = $allStrictModeVersions }
+            @{ TextInput = "Set-StrictMode -Version 1"; ExpectedVersions = $versionOne }
+            @{ TextInput = "Set-StrictMode -Version 2"; ExpectedVersions = $versionTwo }
+            @{ TextInput = "Set-StrictMode -Version 3"; ExpectedVersions = $versionThree }
+            @{ TextInput = "Set-StrictMode -Version Lat"; ExpectedVersions = $latestVersion }
+            @{ TextInput = "Set-StrictMode -Version NonExistentVersion"; ExpectedVersions = '' }
+        ) {
+            param($TextInput, $ExpectedVersions)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $ExpectedVersions
+        }
+    }
 
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
