@@ -794,7 +794,7 @@ ConstructorTestClass(int i, bool b)
             $completionText -join ' ' | Should -BeExactly $ExpectedVerbs
         }
     }
-    
+
     Context 'StrictMode Version parameter completion' {
         BeforeAll {
             $allStrictModeVersions = '1.0 2.0 3.0 Latest'
