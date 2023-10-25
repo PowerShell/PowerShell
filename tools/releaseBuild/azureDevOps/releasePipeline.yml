@@ -347,7 +347,6 @@ stages:
 - stage: PublishPackages
   displayName: Publish packages
   dependsOn: GitHubManualTasks
-  timeoutInMinutes: 120
   jobs:
   - job: PublishNuget
 
