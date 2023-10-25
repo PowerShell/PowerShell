@@ -106,7 +106,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "7.0.11"
+          "Version": "7.0.13"
         }
       },
       "DevelopmentDependency": false
@@ -586,7 +586,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Private.ServiceModel",
-          "Version": "4.10.2"
+          "Version": "4.10.3"
         }
       },
       "DevelopmentDependency": false
@@ -706,7 +706,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Duplex",
-          "Version": "4.10.2"
+          "Version": "4.10.3"
         }
       },
       "DevelopmentDependency": false
@@ -716,7 +716,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Http",
-          "Version": "4.10.2"
+          "Version": "4.10.3"
         }
       },
       "DevelopmentDependency": false
@@ -726,7 +726,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.NetTcp",
-          "Version": "4.10.2"
+          "Version": "4.10.3"
         }
       },
       "DevelopmentDependency": false
@@ -736,7 +736,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Primitives",
-          "Version": "4.10.2"
+          "Version": "4.10.3"
         }
       },
       "DevelopmentDependency": false
@@ -746,7 +746,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceModel.Security",
-          "Version": "4.10.2"
+          "Version": "4.10.3"
         }
       },
       "DevelopmentDependency": false
@@ -826,7 +826,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Web.Services.Description",
-          "Version": "4.10.2"
+          "Version": "4.10.3"
         }
       },
       "DevelopmentDependency": false
