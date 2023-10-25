@@ -37,7 +37,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -97,7 +97,10 @@ function Start-PSPackage {
             }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-fxdependent") {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
-        } else {
+        } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-fxdependent-arm64") {
+            New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-arm64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
+        else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
 
@@ -489,6 +492,7 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "amd64"
                 }
                 foreach ($Distro in $Script:DebianDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -506,6 +510,7 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "x86_64"
                 }
                 foreach ($Distro in $Script:RedhatFullDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -524,6 +529,7 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "x86_64"
                 }
                 foreach ($Distro in $Script:RedhatFddDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -546,6 +552,7 @@ function Start-PSPackage {
                 }
                 foreach ($Distro in $Script:RedhatFddDistributions) {
                     $Arguments["Distribution"] = $Distro
+                    $Arguments["HostArchitecture"] = $HostArchitecture
                     if ($PSCmdlet.ShouldProcess("Create RPM Package for $Distro")) {
                         Write-Verbose -Verbose "Creating RPM Package for $Distro"
                         New-UnixPackage @Arguments
@@ -584,6 +591,7 @@ function Start-PSPackage {
                     Force = $Force
                     NoSudo = $NoSudo
                     LTS = $LTS
+                    HostArchitecture = "all"
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create $_ Package")) {
@@ -840,11 +848,8 @@ function New-UnixPackage {
         # This is a string because strings are appended to it
         [string]$Iteration = "1",
 
-        # Host architecture values allowed for deb type packages: amd64
-        # Host architecture values allowed for rpm type packages include: x86_64, aarch64, native, all, noarch, any
-        # Host architecture values allowed for osxpkg type packages include: x86_64, arm64
         [string]
-        [ValidateSet("x86_64", "amd64", "aarch64", "arm64", "native", "all", "noarch", "any")]
+        [ValidateSet("x86_64", "amd64", "aarch64", "native", "all", "noarch", "any")]
         $HostArchitecture,
 
         [Switch]
@@ -876,6 +881,8 @@ function New-UnixPackage {
             $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
             $Attributes.Add($ParameterAttr) > $null
             $Attributes.Add($ValidateSetAttr) > $null
+            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
+            $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
 
             $Dict.Add("Distribution", $Parameter) > $null
             return $Dict
@@ -977,6 +984,7 @@ function New-UnixPackage {
 
         # Destination for symlink to powershell executable
         $Link = Get-PwshExecutablePath -IsPreview:$IsPreview
+
         $links = @(New-LinkInfo -LinkDestination $Link -LinkTarget "$Destination/pwsh")
 
         if($LTS) {
@@ -1036,7 +1044,10 @@ function New-UnixPackage {
         # Setup package dependencies
         $Dependencies = @(Get-PackageDependencies @packageDependenciesParams)
 
-        $Arguments = Get-FpmArguments `
+        $Arguments = @()
+
+
+        $Arguments += Get-FpmArguments `
             -Name $Name `
             -Version $packageVersion `
             -Iteration $Iteration `
@@ -1052,6 +1063,7 @@ function New-UnixPackage {
             -LinkInfo $Links `
             -AppsFolder $AppsFolder `
             -Distribution $DebDistro `
+            -HostArchitecture $HostArchitecture `
             -ErrorAction Stop
 
         # Build package
@@ -1297,7 +1309,8 @@ function Get-FpmArguments
             return $true
         })]
         [String]$AppsFolder,
-        [String]$Distribution = 'rhel.7'
+        [String]$Distribution = 'rhel.7',
+        [string]$HostArchitecture
     )
 
     $Arguments = @(
@@ -1309,6 +1322,7 @@ function Get-FpmArguments
         "--vendor", "Microsoft Corporation",
         "--url", "https://microsoft.com/powershell",
         "--description", $Description,
+        "--architecture", $HostArchitecture,
         "--category", "shells",
         "-t", $Type,
         "-s", "dir"
