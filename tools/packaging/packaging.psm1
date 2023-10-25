@@ -840,6 +840,13 @@ function New-UnixPackage {
         # This is a string because strings are appended to it
         [string]$Iteration = "1",
 
+        # Host architecture values allowed for deb type packages: amd64
+        # Host architecture values allowed for rpm type packages include: x86_64, aarch64, native, all, noarch, any
+        # Host architecture values allowed for osxpkg type packages include: x86_64, arm64
+        [string]
+        [ValidateSet("x86_64", "amd64", "aarch64", "arm64", "native", "all", "noarch", "any")]
+        $HostArchitecture,
+
         [Switch]
         $Force,
 
@@ -870,8 +877,6 @@ function New-UnixPackage {
             $Attributes.Add($ParameterAttr) > $null
             $Attributes.Add($ValidateSetAttr) > $null
 
-            $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
-            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
             $Dict.Add("Distribution", $Parameter) > $null
             return $Dict
         }
