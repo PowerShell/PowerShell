@@ -3572,7 +3572,7 @@ function Start-MsiBuild {
 
     $outDir = $env:Temp
 
-    $wixPaths = Get-WixPath
+    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
 
     $extensionArgs = @()
     foreach ($extensionName in $Extension) {
