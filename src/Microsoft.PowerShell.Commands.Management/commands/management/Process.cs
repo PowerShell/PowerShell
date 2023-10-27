@@ -2703,7 +2703,6 @@ namespace Microsoft.PowerShell.Commands
 
                 // Otherwise check if command is an Application to resolve executable full path with extension
                 // e.g if powershell was given, resolve to powershell.exe to get verbs
-
                 using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
 
                 var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
