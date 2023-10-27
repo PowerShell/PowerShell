@@ -22,13 +22,13 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or Sets path from from which to get encoding.
+        /// Gets or sets path from from which to get encoding.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = PathParameterSet)]
         public string Path { get; set; }
 
         /// <summary>
-        /// Gets or Sets literal path from which to get encoding.
+        /// Gets or sets literal path from which to get encoding.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = LiteralPathParameterSet)]
         [Alias("PSPath", "LP")]
