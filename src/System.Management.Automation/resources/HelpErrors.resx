@@ -187,4 +187,7 @@ To update these Help topics, start PowerShell by using the "Run as Administrator
   <data name="CircularDependencyInHelpForwarding" xml:space="preserve">
     <value>ForwardHelpTargetName cannot refer to the function itself.</value>
   </data>
+  <data name="NoNetworkCommands" xml:space="preserve">
+    <value>Cannot get help from a network location when in a restricted session.</value>
+  </data>
 </root>
