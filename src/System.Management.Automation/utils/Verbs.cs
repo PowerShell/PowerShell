@@ -1506,24 +1506,23 @@ namespace System.Management.Automation
                 else if (commandName.Equals("Get-Command", StringComparison.OrdinalIgnoreCase)
                          && fakeBoundParameters.Contains("Noun"))
                 {
-                    using (var ps = PowerShell.Create(RunspaceMode.CurrentRunspace))
+                    using var ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+
+                    var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
+
+                    ps.AddCommand(commandInfo);
+                    ps.AddParameter("Noun", fakeBoundParameters["Noun"]);
+
+                    if (fakeBoundParameters.Contains("Module"))
                     {
-                        var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
+                        ps.AddParameter("Module", fakeBoundParameters["Module"]);
+                    }
 
-                        ps.AddCommand(commandInfo);
-                        ps.AddParameter("Noun", fakeBoundParameters["Noun"]);
+                    Collection<CmdletInfo> commands = ps.Invoke<CmdletInfo>();
 
-                        if (fakeBoundParameters.Contains("Module"))
-                        {
-                            ps.AddParameter("Module", fakeBoundParameters["Module"]);
-                        }
-
-                        Collection<CmdletInfo> commands = ps.Invoke<CmdletInfo>();
-
-                        foreach (string verb in FilterByVerbsAndCommands(verbs, commands))
-                        {
-                            yield return new CompletionResult(verb);
-                        }
+                    foreach (string verb in FilterByVerbsAndCommands(verbs, commands))
+                    {
+                        yield return new CompletionResult(verb);
                     }
 
                     yield break;
