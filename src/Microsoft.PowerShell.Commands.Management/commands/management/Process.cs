@@ -2703,23 +2703,23 @@ namespace Microsoft.PowerShell.Commands
 
                 // Otherwise check if command is an Application to resolve executable full path with extension
                 // e.g if powershell was given, resolve to powershell.exe to get verbs
-                using (var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
+
+                using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+
+                var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
+
+                ps.AddCommand(commandInfo);
+                ps.AddParameter("Name", filePath);
+                ps.AddParameter("CommandType", CommandTypes.Application);
+
+                Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
+
+                // Start-Process & Get-Command select first found application based on PATHEXT environment variable
+                if (commands.Count >= 1)
                 {
-                    var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
-
-                    ps.AddCommand(commandInfo);
-                    ps.AddParameter("Name", filePath);
-                    ps.AddParameter("CommandType", CommandTypes.Application);
-
-                    Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
-
-                    // Start-Process & Get-Command select first found application based on PATHEXT environment variable
-                    if (commands.Count >= 1)
+                    foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
                     {
-                        foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
-                        {
-                            yield return new CompletionResult(verb);
-                        }
+                        yield return new CompletionResult(verb);
                     }
                 }
             }
