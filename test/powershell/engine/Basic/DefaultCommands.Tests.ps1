@@ -310,6 +310,7 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
 "Cmdlet",       "Get-EventSubscriber",              "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-ExecutionPolicy",              "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-ExperimentalFeature",          "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
+"Cmdlet",       "Get-FileEncoding",                 "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None",
 "Cmdlet",       "Get-FileHash",                     "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-FormatData",                   "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Help",                         "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
