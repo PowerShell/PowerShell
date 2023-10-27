@@ -25,19 +25,21 @@ Describe "Get-FileEncoding" -Tags "CI" {
         param($EncodingName, $ExpectedEncoding)
         Set-Content -Path $testFilePath -Encoding $EncodingName -Value $content -Force
         (Get-FileEncoding -Path $testFilePath).BodyName | Should -Be $ExpectedEncoding
+        (Get-ChildItem -Path $testFilePath | Get-FileEncoding).BodyName | Should -Be $ExpectedEncoding
     }
 
     It "Validate Get-FileEncoding using -LiteralPath returns file encoding for '<EncodingName>'" -TestCases $testCases {
         param($EncodingName, $ExpectedEncoding)
         Set-Content -LiteralPath $testFileLiteralPath -Encoding $EncodingName -Value $content -Force
         (Get-FileEncoding -LiteralPath $testFileLiteralPath).BodyName | Should -Be $ExpectedEncoding
+        (Get-ChildItem -LiteralPath $testFileLiteralPath | Get-FileEncoding).BodyName | Should -Be $ExpectedEncoding
     }
 
     It "Should throw exception if path is not found using -Path" {
         { Get-FileEncoding -Path nonexistentpath } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.GetFileEncodingCommand'
     }
 
-    It "Should throw exception if path is not found using -Path" {
-        { Get-FileEncoding -Literal nonexistentpath } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.GetFileEncodingCommand'
+    It "Should throw exception if path is not found using -LiteralPath" {
+        { Get-FileEncoding -LiteralPath nonexistentpath } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.GetFileEncodingCommand'
     }
 }
