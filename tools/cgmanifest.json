@@ -186,7 +186,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Security.Extensions",
-          "Version": "1.2.0"
+          "Version": "1.3.0"
         }
       },
       "DevelopmentDependency": false
