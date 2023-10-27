@@ -1,5 +1,51 @@
 # Current preview release
 
+## [7.4.0-rc.1] - 2023-10-24
+
+### General Cmdlet Updates and Fixes
+
+- Fix `Test-Connection` due to .NET 8 changes (#20369) (#20531)
+- Add telemetry to check for specific tags when importing a module (#20371) (#20540)
+- Fix `Copy-Item` progress to only show completed when all files are copied (#20517) (#20544)
+- Fix `unixmode` to handle `setuid` and `sticky` when file is not an executable (#20366) (#20537)
+- Fix UNC path completion regression (#20419) (#20541)
+- Fix implicit remoting proxy cmdlets to act on common parameters (#20367) (#20530)
+- Fix `Get-Service` non-terminating error message to include category (#20276) (#20529)
+- Fixing regression in DSC (#20268) (#20528)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+
+</summary>
+
+<ul>
+<li>Update ThirdPartyNotices.txt file (Internal 28110)</li>
+<li>Update CGManifest for release</li>
+<li>Fix package version for .NET nuget packages (#20551) (#20552)</li>
+<li>Only registry App Path for release package (#20478) (#20549)</li>
+<li>Bump PSReadLine from 2.2.6 to 2.3.4 (#20305) (#20533)</li>
+<li>Bump Microsoft.Management.Infrastructure (#20511) (#20512) (#20433) (#20434) (#20534) (#20535) (#20545) (#20547)</li>
+<li>Bump to .NET 8 RC2 (#20510) (#20543)</li>
+
+<li>Add SBOM for release pipeline (#20519) (#20548)</li>
+<li>Bump version of <code>Microsoft.PowerShell.PSResourceGet</code> to <code>v1.0.0</code> (#20485) (#20538)</li>
+<li>Bump xunit.runner.visualstudio from 2.5.1 to 2.5.3 (#20486) (#20542)</li>
+<li>Bump JsonSchema.Net from 5.2.5 to 5.2.6 (#20421) (#20532)</li>
+<li>Fix alpine tar package name and do not crossgen alpine fxdependent package (#20459) (#20536)</li>
+<li>Increase timeout when publishing packages to <code>packages.microsoft.com</code> (#20470) (#20539)</li>
+<li>Block any preview vPack release (#20243) (#20526)</li>
+<li>Add surrogate file for compliance scanning (#20423)</li>
+</ul>
+
+</details>
+
+[7.4.0-rc.1]: https://github.com/PowerShell/PowerShell/compare/v7.4.0-preview.6...v7.4.0-rc.1
+
 ## [7.4.0-preview.6] - 2023-09-28
 
 ### General Cmdlet Updates and Fixes
