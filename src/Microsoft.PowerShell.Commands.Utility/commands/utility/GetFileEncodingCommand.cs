@@ -3,6 +3,7 @@
 
 using System.IO;
 using System.Management.Automation;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -10,6 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the Get-FileEncoding command.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "FileEncoding", DefaultParameterSetName = PathParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=1234567")]
+    [OutputType(typeof(Encoding))]
     public sealed class GetFileEncodingCommand : PSCmdlet
     {
         #region Parameter Sets
