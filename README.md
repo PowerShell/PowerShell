@@ -1,5 +1,11 @@
 # ![logo][] PowerShell
 
+<h1 align="center">
+  <a href="https://git.io/typing-svg">
+    <img src="https://readme-typing-svg.herokuapp.com/?lines=Hello,+There!+👋;Welcome+to+the;Poweshell+Github+Community&center=true&size=25">
+  </a>
+</h1>
+
 Welcome to the PowerShell GitHub Community!
 [PowerShell](https://learn.microsoft.com/powershell/scripting/overview) is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized
 for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
