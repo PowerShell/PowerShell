@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (readTimeout == Timeout.InfiniteTimeSpan)
             {
-                return await stream.ReadAsync(buffer, cancellationToken);
+                return await stream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
             }
 
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
