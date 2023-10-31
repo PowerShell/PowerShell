@@ -471,8 +471,8 @@
               <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="RegisterManifest" Value="[REGISTER_MANIFEST]" Type="string" />
               <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="EnablePSRemoting" Value="[ENABLE_PSREMOTING]" Type="string" />
               <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="DisableTelemetry" Value="[DISABLE_TELEMETRY]" Type="string" />
-              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="ContextMenuOpenPowerShell" Value="[ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL]" Type="string" />
-              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="ContextMenuRunPowerShell" Value="[ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL]" Type="string" />
+              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="AddExplorerContextMenuOpenPowerShell" Value="[ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL]" Type="string" />
+              <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="AddFileContextMenuRunPowerShell" Value="[ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL]" Type="string" />
               <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="UseMU" Value="[USE_MU]" Type="string" />
               <RegistryValue Root="HKLM" Key="$(var.InstallerPropertiesKey)" Name="EnableMU" Value="[ENABLE_MU]" Type="string" />
             </Component>
