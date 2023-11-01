@@ -227,6 +227,8 @@ configuration:
       filters:
       - isIssue
       - isOpen
+      - isNotLabeledWith:
+          label: KeepOpen
       - noActivitySince:
           days: 180
       actions:
