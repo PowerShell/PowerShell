@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell.Commands
             if (perReadTimeout == Timeout.InfiniteTimeSpan)
             {
                 // No timeout - use fast path
-                await source.CopyToAsync(destination, cancellationToken);
+                await source.CopyToAsync(destination, cancellationToken).ConfigureAwait(false);
                 return;
             }
 
