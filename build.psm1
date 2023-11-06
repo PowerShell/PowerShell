@@ -19,6 +19,7 @@ $script:Options = $null
 $dotnetMetadata = Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json
 $dotnetCLIChannel = $dotnetMetadata.Sdk.Channel
 $dotnetCLIQuality = $dotnetMetadata.Sdk.Quality
+# __DOTNET_RUNTIME_FEED and __DOTNET_RUNTIME_FEED_KEY are private variables used in release builds
 $dotnetAzureFeed = if (-not $env:__DOTNET_RUNTIME_FEED ) { $dotnetMetadata.Sdk.azureFeed } else { $env:__DOTNET_RUNTIME_FEED }
 $dotnetAzureFeedSecret = $env:__DOTNET_RUNTIME_FEED_KEY
 $dotnetSDKVersionOveride = $dotnetMetadata.Sdk.sdkImageOverride
