@@ -920,7 +920,7 @@ namespace System.Management.Automation.Runspaces
                                         # Handle `BoundParameters` to show as Key/Value pairs, need to check the type name as the type is internal
                                         elseif ($prop.Value.GetType().Name -eq 'PSBoundParametersDictionary') {
                                             $isFirstElement = $true
-                                            foreach ($key in $prop.Value.Keys) {
+                                            foreach ($key in ($prop.Value.Keys | Sort-Object) ) {
                                                 if ($isFirstElement) {
                                                     $null = $output.Append($newline)
                                                 }
