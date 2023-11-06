@@ -452,6 +452,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "Microsoft.PowerShell.Management",
                         "Microsoft.PowerShell.ODataUtils",
                         "Microsoft.PowerShell.Operation.Validation",
+                        "Microsoft.PowerShell.PSAdapter",
                         "Microsoft.PowerShell.PSResourceGet",
                         "Microsoft.PowerShell.RemotingTools",
                         "Microsoft.PowerShell.SecretManagement",
