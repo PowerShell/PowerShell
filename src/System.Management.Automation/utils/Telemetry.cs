@@ -444,6 +444,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "Microsoft.Medv.Administration.Commands.WorkspacePackager",
                         "Microsoft.PowerApps.Checker.PowerShell",
                         "Microsoft.PowerShell.Archive",
+                        "Microsoft.PowerShell.ConsoleGuiTools",
                         "Microsoft.PowerShell.Core",
                         "Microsoft.PowerShell.Crescendo",
                         "Microsoft.PowerShell.Diagnostics",
