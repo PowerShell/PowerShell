@@ -155,4 +155,17 @@ Describe 'Get-Error tests' -Tag CI {
         $out = pwsh -noprofile -command 'Set-StrictMode -Version Latest; $PSStyle.OutputRendering = "PlainText"; 1/0; Get-Error' | Out-String
         $out | Should -Match "Message : Attempted to divide by zero."
     }
+
+    It 'BoundParameters show as name/value pairs' {
+        try {
+            function test { [CmdletBinding()]param($A,$B) }
+            $Param = @{ A = "First"; B = "Second"; C = 24 }
+            test @Param
+        }
+        catch {
+        }
+
+        $out = Get-Error | Out-String
+        $out | Should -Match "BoundParameters\s+:\s+A : First\s+B : Second\s"
+    }
 }
