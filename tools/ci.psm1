@@ -541,7 +541,7 @@ function Invoke-CIFinish
                 }
                 'win-arm.*' {
                     $runPackageTest = $false
-                    $packageTypes = 'zip', 'zip-pdb', 'msix'
+                    $packageTypes = 'msi', 'zip', 'zip-pdb', 'msix'
                 }
             }
             $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime

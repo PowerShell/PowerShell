@@ -3450,7 +3450,7 @@ function New-ExePackage {
 
         # Architecture to use when creating the MSI
         [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64")]
+        [ValidateSet("x86", "x64", "arm64")]
         [ValidateNotNullOrEmpty()]
         [string] $ProductTargetArchitecture,
 
