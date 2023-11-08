@@ -21,6 +21,19 @@ parameters:
 steps:
 
 - pwsh: |
+      $configPath = "$(REPOROOT)/nuget.config"
+      Import-Module '$(REPOROOT)/build.psm1' -Force
+      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
+
+      if(-not (Test-Path $configPath))
+      {
+          throw "nuget.config is not created"
+      }
+      Get-Content $configPath | Write-Verbose -Verbose
+  displayName: 'Add nuget.config for Azure DevOps feed for packages'
+  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
+
+- pwsh: |
     Import-Module "$env:REPOROOT/build.psm1" -Force
     Start-PSBootstrap
 
