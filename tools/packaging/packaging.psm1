@@ -3207,7 +3207,7 @@ function Get-WixPath
             throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
         }
         else {
-            throw "The latest version of Wix Toolset 3.14 is required to create MSI package for arm. Please install it from https://powershellinfraartifacts.blob.core.windows.net/test/wix314-binaries.zip"
+            throw "The latest version of Wix Toolset 3.14 is required to create MSI package for arm. Please install it from https://aka.ms/ps-wix-3-14-zip"
         }
     }
 
