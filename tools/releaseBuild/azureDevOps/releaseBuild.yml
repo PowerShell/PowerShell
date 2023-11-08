@@ -19,7 +19,7 @@ parameters:
       - false
     default: false
   - name: InternalSDKBlobURL
-    displayName: URL to the blob havibg internal .NET SDK
+    displayName: URL to the blob having internal .NET SDK
     type: string
 
 resources:
