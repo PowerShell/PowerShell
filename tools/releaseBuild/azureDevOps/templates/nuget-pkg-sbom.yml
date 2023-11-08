@@ -23,7 +23,7 @@ steps:
 - pwsh: |
       $configPath = "$(REPOROOT)/nuget.config"
       Import-Module '$(REPOROOT)/build.psm1' -Force
-      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
+      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "$(REPOROOT)"
 
       if(-not (Test-Path $configPath))
       {
