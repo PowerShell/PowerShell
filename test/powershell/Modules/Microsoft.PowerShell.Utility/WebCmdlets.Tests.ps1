@@ -1706,6 +1706,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $result.Headers.Authorization | Should -Match "^$AuthType "
         }
+
+        It 'Invoke-WebRequest redacts Authorization header in ErrorRecord' {
+            $token = ConvertTo-SecureString -AsPlainText 'secret'
+            try {
+                Invoke-WebRequest -Authentication Bearer -Token $token -Uri https://localhost:443
+            }
+            catch {
+                $errorText = Get-Error $_ | Out-String
+            }
+
+            ($errorText | Select-String 'secret').Matches | Should -BeNullOrEmpty
+            ($errorText | Select-String '\*cret').Matches | Should -Not -BeNullOrEmpty
+        }
     }
 
     Context "Invoke-WebRequest -SslProtocol Test" {
@@ -3196,6 +3209,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $result = Invoke-RestMethod @params
 
             $result.Headers.Authorization | Should -Match "^$AuthType "
+        }
+
+        It 'Invoke-RestMethod redacts Authorization header in ErrorRecord' {
+            $token = ConvertTo-SecureString -AsPlainText 'secret'
+            try {
+                Invoke-RestMethod -Authentication Bearer -Token $token -Uri https://localhost:443
+            }
+            catch {
+                $errorText = Get-Error $_ | Out-String
+            }
+
+            ($errorText | Select-String 'secret').Matches | Should -BeNullOrEmpty
+            ($errorText | Select-String '\*cret').Matches | Should -Not -BeNullOrEmpty
         }
     }
 
