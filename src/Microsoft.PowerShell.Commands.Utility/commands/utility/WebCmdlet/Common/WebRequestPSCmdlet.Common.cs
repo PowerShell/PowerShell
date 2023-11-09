@@ -634,7 +634,7 @@ namespace Microsoft.PowerShell.Commands
                                     response.ReasonPhrase);
 
                                 HttpResponseException httpEx = new(message, response);
-                                ErrorRecord er = new(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                                ErrorRecord er = new(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, RedactAuthorizationHeader(request));
                                 string detailMsg = string.Empty;
                                 try
                                 {
@@ -675,7 +675,7 @@ namespace Microsoft.PowerShell.Commands
                             // (and still writing out the result), users can debug actual HTTP redirect problems.
                             if (_maximumRedirection == 0 && IsRedirectCode(response.StatusCode))
                             {
-                                ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
+                                ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, RedactAuthorizationHeader(request));
                                 er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
                                 WriteError(er);
                             }
@@ -687,7 +687,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (HttpRequestException ex)
                         {
-                            ErrorRecord er = new(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                            ErrorRecord er = new(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, RedactAuthorizationHeader(request));
                             if (ex.InnerException is not null)
                             {
                                 er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
@@ -1523,6 +1523,27 @@ namespace Microsoft.PowerShell.Commands
         private string GetBearerAuthorizationHeader()
         {
             return string.Create(CultureInfo.InvariantCulture, $"Bearer {new NetworkCredential(string.Empty, Token).Password}");
+        }
+
+        private static HttpRequestMessage RedactAuthorizationHeader(HttpRequestMessage request)
+        {
+            if (request.Headers is not null && request.Headers.Authorization is not null && request.Headers.Authorization.Parameter is not null)
+            {
+                // redact the auth parameter, but leave the last 4 characters for developers to validate
+                // the right token was sent
+                var authParameter = request.Headers.Authorization.Parameter;
+                var redactLength = authParameter.Length - 4;
+                if (redactLength < 0)
+                {
+                    redactLength = authParameter.Length;
+                }
+
+                request.Headers.Authorization = new AuthenticationHeaderValue(
+                    request.Headers.Authorization.Scheme,
+                    string.Concat("****", authParameter.Substring(redactLength).AsSpan()));
+            }
+
+            return request;
         }
 
         private void ProcessAuthentication()
