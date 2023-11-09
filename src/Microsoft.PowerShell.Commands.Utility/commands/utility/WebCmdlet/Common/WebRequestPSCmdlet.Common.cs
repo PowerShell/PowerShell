@@ -845,6 +845,27 @@ namespace Microsoft.PowerShell.Commands
             return string.Format("Bearer {0}", new NetworkCredential(string.Empty, Token).Password);
         }
 
+        private static HttpRequestMessage RedactAuthorizationHeader(HttpRequestMessage request)
+        {
+            if (request.Headers is not null && request.Headers.Authorization is not null && request.Headers.Authorization.Parameter is not null)
+            {
+                // redact the auth parameter, but leave the last 4 characters for developers to validate
+                // the right token was sent
+                var authParameter = request.Headers.Authorization.Parameter;
+                var redactLength = authParameter.Length - 4;
+                if (redactLength < 0)
+                {
+                    redactLength = authParameter.Length;
+                }
+
+                request.Headers.Authorization = new AuthenticationHeaderValue(
+                    request.Headers.Authorization.Scheme,
+                    string.Concat("****", authParameter.Substring(redactLength).AsSpan()));
+            }
+
+            return request;
+        }
+
         private void ProcessAuthentication()
         {
             if (Authentication == WebAuthenticationType.Basic)
@@ -1563,7 +1584,7 @@ namespace Microsoft.PowerShell.Commands
                                     string message = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
                                         (int)response.StatusCode, response.ReasonPhrase);
                                     HttpResponseException httpEx = new(message, response);
-                                    ErrorRecord er = new(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                                    ErrorRecord er = new(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, RedactAuthorizationHeader(request));
                                     string detailMsg = string.Empty;
                                     StreamReader reader = null;
                                     try
@@ -1607,7 +1628,7 @@ namespace Microsoft.PowerShell.Commands
                                         response.StatusCode == HttpStatusCode.Moved ||
                                         response.StatusCode == HttpStatusCode.MovedPermanently)
                                     {
-                                        ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
+                                        ErrorRecord er = new(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, RedactAuthorizationHeader(request));
                                         er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
                                         WriteError(er);
                                     }
@@ -1615,7 +1636,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (HttpRequestException ex)
                             {
-                                ErrorRecord er = new(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                                ErrorRecord er = new(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, RedactAuthorizationHeader(request));
                                 if (ex.InnerException != null)
                                 {
                                     er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
