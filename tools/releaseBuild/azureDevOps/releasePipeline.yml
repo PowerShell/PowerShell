@@ -290,8 +290,8 @@ stages:
         Update and merge the changelog for the release.
         This step is required for creating GitHub draft release.
 
-- stage: GitHubDraftRelease
-  displayName: Create GitHub draft release
+- stage: BlobPublic
+  displayName: Make Blob Public
   # do not include stages that are likely to fail in dependency as there is no way to force deploy.
   dependsOn: UpdateChangeLog
 
@@ -314,6 +314,40 @@ stages:
           steps:
           - template: templates/release-MakeContainerPublic.yml
 
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Copy Global tool packages to PSInfra storage
+      jobName: CopyBlobApproval
+      instructions: |
+        Approval for Copy global tool packages to PSInfra storage
+
+  - job: PSInfraBlobPublic
+    displayName: Copy global tools to PSInfra storage
+    dependsOn: CopyBlobApproval
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
+    variables:
+    - group: 'PSInfraStorage'
+
+    steps:
+    - checkout: none
+
+    - template: templates/release-CopyGlobalTools.yml
+      parameters:
+        sourceContainerName: 'tool' ##TODO change to tool-private before merging
+        destinationContainerName: 'tool'
+        sourceStorageAccountName: '$(GlobalToolStorageAccount)'
+        destinationStorageAccountName: '$(PSInfraStorageAccount)'
+        blobPrefix: '$(Version)'
+
+- stage: GitHubTasks
+  displayName: GitHub tasks
+  dependsOn: BlobPublic
+  jobs:
   - job: GitHubDraft
     displayName: Create GitHub Draft release
 
@@ -326,28 +360,24 @@ stages:
     - group: 'Azure Blob variable group'
     - group: 'AzDevOpsArtifacts'
     - group: ReleasePipelineSecrets
-    dependsOn: AzureBlobPublic
     steps:
     - template: templates/release-CreateGitHubDraft.yml
 
-- stage: GitHubManualTasks
-  displayName: GitHub manual tasks
-  dependsOn: GitHubDraftRelease
-  jobs:
   - deployment: PushTag
+    dependsOn: GitHubDraft
     displayName: Push Git Tag
     pool : server
     environment: PSReleasePushTag
 
   - deployment: MakeDraftPublic
+    dependsOn: PushTag
     displayName: Make GitHub Draft public
     pool : server
     environment: PSReleaseDraftPublic
-    dependsOn: PushTag
 
 - stage: PublishPackages
   displayName: Publish packages
-  dependsOn: GitHubManualTasks
+  dependsOn: GitHubTasks
   jobs:
   - job: PublishNuget
 
@@ -405,7 +435,7 @@ stages:
 - stage: ReleaseDocker
   displayName: Release Docker
   dependsOn:
-    - GitHubManualTasks
+    - GitHubTasks
   jobs:
   - deployment: ReleaseDocker
     displayName: Release Docker
@@ -504,7 +534,7 @@ stages:
         Notify the PM team to start the process of releasing to MU.
 
 - stage: UpdateDotnetDocker
-  dependsOn: GitHubManualTasks
+  dependsOn: GitHubTasks
   displayName: Update DotNet SDK Docker images
   jobs:
   - template: templates/release/approvalJob.yml
@@ -519,7 +549,7 @@ stages:
         4. create PR targeting nightly branch
 
 - stage: UpdateWinGet
-  dependsOn: GitHubManualTasks
+  dependsOn: GitHubTasks
   displayName: Add manifest entry to winget
   jobs:
   - template: templates/release/approvalJob.yml
@@ -530,7 +560,7 @@ stages:
         This is typically done by the community 1-2 days after the release.
 
 - stage: PublishMsix
-  dependsOn: GitHubManualTasks
+  dependsOn: GitHubTasks
   displayName: Publish MSIX to store
   jobs:
   - template: templates/release/approvalJob.yml
@@ -541,7 +571,7 @@ stages:
         Ask Steve to release MSIX bundle package to Store
 
 - stage: BuildInfoJson
-  dependsOn: GitHubManualTasks
+  dependsOn: GitHubTasks
   displayName: Upload BuildInfoJson
   jobs:
   - deployment: UploadJson
@@ -562,7 +592,7 @@ stages:
           - template: templates/release-BuildJson.yml
 
 - stage: ReleaseVPack
-  dependsOn: GitHubManualTasks
+  dependsOn: GitHubTasks
   displayName: Release VPack
   jobs:
   - job: KickoffvPack
@@ -611,7 +641,7 @@ stages:
         }
 
 - stage: ReleaseDeps
-  dependsOn: GitHubManualTasks
+  dependsOn: GitHubTasks
   displayName: Update pwsh.deps.json links
   jobs:
   - template: templates/release-UpdateDepsJson.yml

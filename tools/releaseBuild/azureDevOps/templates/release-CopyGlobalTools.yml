@@ -1,0 +1,45 @@
+parameters:
+- name: sourceContainerName
+  type: string
+  default: 'source-container'
+
+- name: destinationContainerName
+  type: string
+  default: 'destination-container'
+
+- name: sourceStorageAccountName
+  type: string
+  default: 'source-storage-account'
+
+- name: destinationStorageAccountName
+  type: string
+  default: 'destination-storage-account'
+
+- name: blobPrefix
+  type: string
+  default: '$(Version)'
+
+steps:
+- template: release-SetReleaseTagAndContainerName.yml
+
+- task: AzurePowerShell@5
+  inputs:
+    azureSubscription: '$(AzureFileCopySubscription)'
+    ScriptType: 'InlineScript'
+    Inline: |
+      $sourceContainerName = "${{ parameters.sourceContainerName }}"
+      $destinationContainerName = "${{ parameters.destinationContainerName }}"
+      $sourceStorageAccountName = "${{ parameters.sourceStorageAccountName }}"
+      $destinationStorageAccountName = "${{ parameters.destinationStorageAccountName }}"
+      $blobPrefix = "${{ parameters.blobPrefix }}"
+      $sourceContext = New-AzStorageContext -StorageAccountName $sourceStorageAccountName -UseConnectedAccount
+      $destinationContext = New-AzStorageContext -StorageAccountName $destinationStorageAccountName -UseConnectedAccount
+
+      $blobs = Get-AzStorageBlob -Container $sourceContainerName -Context $sourceContext -Prefix $blobPrefix
+      foreach ($blob in $blobs) {
+        $blobName = $blob.Name
+        $copyBlob = Start-AzStorageBlobCopy -SrcContainer $sourceContainerName -SrcBlob $blobName -DestContainer $destinationContainerName -Context $destinationContext
+        Write-Host "Copying blob $blobName from $sourceContainerName to $destinationContainerName"
+        $copyBlob = Get-AzStorageBlobCopyState -WaitForComplete
+      }
+    azurePowerShellVersion: 'LatestVersion'
