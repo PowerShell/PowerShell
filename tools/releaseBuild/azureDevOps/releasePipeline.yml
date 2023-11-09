@@ -334,8 +334,6 @@ stages:
     - group: 'PSInfraStorage'
 
     steps:
-    - checkout: none
-
     - template: templates/release-CopyGlobalTools.yml
       parameters:
         sourceContainerName: 'tool' ##TODO change to tool-private before merging
