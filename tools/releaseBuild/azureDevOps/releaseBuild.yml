@@ -21,7 +21,7 @@ parameters:
   - name: InternalSDKBlobURL
     displayName: URL to the blob having internal .NET SDK
     type: string
-    default: ''
+    default: ' '
 
 resources:
   repositories:
