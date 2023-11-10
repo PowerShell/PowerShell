@@ -844,6 +844,18 @@ function Invoke-PRBackport {
     }
 
     try {
+        $revParseParams = @(
+            '--verify'
+            "$commitId^{commit}"
+        )
+        Invoke-NativeCommand { git rev-parse --quiet $revParseParams }
+    }
+    catch {
+        throw "Commit does not exist. (git rev-parse $revParseParams)"
+    }
+
+
+    try {
         Invoke-NativeCommand { git cherry-pick $commitId }
     }
     catch {
