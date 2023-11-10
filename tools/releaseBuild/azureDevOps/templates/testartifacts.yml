@@ -24,8 +24,7 @@ jobs:
       Start-PSBootstrap
     displayName: Bootstrap
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
       Import-Module ./build.psm1
