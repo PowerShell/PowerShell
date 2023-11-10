@@ -825,7 +825,7 @@ $upstreamName = '(powershell(core)?)/(powershell)'
     }
 
     if ($upstreamMatchInfo.host -like '*azure.com') {
-        $remoteType = [RemoteType]::AzureRepo
+        [RemoteType] $remoteType = [RemoteType]::AzureRepo
     }
 
     Write-Verbose -Verbose "remotetype: $remoteType"
