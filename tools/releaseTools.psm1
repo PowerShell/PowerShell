@@ -907,7 +907,7 @@ function Invoke-PRBackport {
                 )
 
                 Write-Verbose -Verbose "az $parameters"
-                Invoke-NativeCommand { az $parameters }
+                $null = Invoke-NativeCommand { az $parameters }
             }
             "GitHub" {
                 Write-Verbose -Verbose "Creating PR using gh CLI"
