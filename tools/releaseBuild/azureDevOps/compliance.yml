@@ -23,6 +23,7 @@ parameters:
 - name: InternalSDKBlobURL
   displayName: URL to the blob havibg internal .NET SDK
   type: string
+  default: ' '
 
 variables:
   - name: DOTNET_CLI_TELEMETRY_OPTOUT
