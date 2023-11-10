@@ -796,14 +796,36 @@ function Invoke-PRBackport {
     }
 
     $upstream = $null
-    $upstreamName = 'powershell(core)?/powershell'
+    <#
+$upstreamName = '(powershell(core)?)/(powershell)'
+'mscodehub   git@ssh.dev.azure.com:v3/mscodehub/PowerShellCore/PowerShell (fetch)'
+-match "^mscodehub\s*[^@.]*\@?(.*)\:.*/([-\w]+)/$upstreamName.*fetch";@{org=$matches[2];project=$matches[3];repo=$matches[5];host=$matches[1]};$matches
+    #>
+    $upstreamName = '(powershell(core)?)/(powershell)'
     $upstream = Invoke-NativeCommand { git remote -v }
-    $upstream = $upstream | Where-Object { $_ -match "^$UpstreamRemote.*$upstreamName.*fetch" }
+    $upstream = $upstream | Where-Object { $_ -match "^$UpstreamRemote\s*[^@.]*\@?(.*)\:.*/([-\w]+)/$upstreamName.*fetch" }
 
     Write-Verbose -Verbose "found $upstream"
 
     if (!$upstream) {
         throw "Please create an upstream remote that points to $upstreamName"
+    }
+    enum RemoteType {
+        GitHub
+        AzureRepo
+    }
+
+    $remoteType = [RemoteType]::GitHub
+
+    $upstreamMatchInfo = @{
+        org     = $matches[2]
+        project = $matches[3]
+        repo    = $matches[5]
+        host    = $matches[1]
+    }
+
+    if ($upstreamMatchInfo.host -like '*azure.com') {
+        $remoteType = [RemoteType]::AzureRepo
     }
 
     Invoke-NativeCommand { git fetch $UpstreamRemote $Target }
@@ -830,7 +852,66 @@ function Invoke-PRBackport {
     }
 
     if ($PSCmdlet.ShouldProcess("Create the PR")) {
-        gh pr create --base $Target --title $backportTitle --body "Backport #$PrNumber" --web
+        $body = "Backport #$PrNumber"
+        switch($remoteType) {
+            [RemoteType]::AzureRepo {
+                git push --set-upstream $UpstreamRemote HEAD
+                $parameters = @(
+                    'repos'
+                    'pr'
+                    'create'
+                )
+                # Open in the browser
+                $parameters += @(
+                    '--open'
+                )
+                $parameters += @(
+                    '--target-branch'
+                    $Target
+                )
+                $parameters += @(
+                    '--title'
+                    $backportTitle
+                )
+                $parameters += @(
+                    '--description'
+                $body
+                )
+                $parameters += @(
+                    '--squash'
+                    'true'
+                )
+                $parameters += @(
+                    '--auto-complete'
+                    'true'
+                )
+                $parameters += @(
+                    '--delete-source-branch'
+                    'true'
+                )
+                $parameters += @(
+                    '--org'
+                    "https://dev.azure.com/$($upstreamMatchInfo.org)"
+                )
+                $parameters += @(
+                    '--project'
+                    $upstreamMatchInfo.project
+                )
+                $parameters += @(
+                    '--source-branch'
+                    $branchName
+                )
+                $parameters += @(
+                    '--repository'
+                    $upstreamMatchInfo.repo
+                )
+
+                Invoke-NativeCommand { az $parameters }
+            }
+            [RemoteType]::GitHub {
+                gh pr create --base $Target --title $backportTitle --body $body --web
+            }
+        }
     }
 }
 
