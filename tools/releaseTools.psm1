@@ -748,7 +748,10 @@ function Invoke-PRBackport {
         $Overwrite,
 
         [string]
-        $BranchPostFix
+        $BranchPostFix,
+
+        [string]
+        $UpstreamRemote = 'upstream'
     )
     function script:Invoke-NativeCommand {
         param(
@@ -793,14 +796,17 @@ function Invoke-PRBackport {
     }
 
     $upstream = $null
-    $upstreamName = 'powershell/powershell'
-    $upstream = Invoke-NativeCommand { git remote -v } | Where-Object { $_ -match "^upstream.*$upstreamName.*fetch" }
+    $upstreamName = 'powershell(core)?/powershell'
+    $upstream = Invoke-NativeCommand { git remote -v }
+    $upstream = $upstream | Where-Object { $_ -match "^$UpstreamRemote.*$upstreamName.*fetch" }
+
+    Write-Verbose -Verbose "found $upstream"
 
     if (!$upstream) {
         throw "Please create an upstream remote that points to $upstreamName"
     }
 
-    Invoke-NativeCommand { git fetch upstream $Target }
+    Invoke-NativeCommand { git fetch $UpstreamRemote $Target }
 
     $switch = '-c'
     if ($Overwrite) {
@@ -812,8 +818,8 @@ function Invoke-PRBackport {
         $branchName += "-$BranchPostFix"
     }
 
-    if ($PSCmdlet.ShouldProcess("Create branch $branchName from upstream/$Target")) {
-        Invoke-NativeCommand { git switch upstream/$Target $switch $branchName }
+    if ($PSCmdlet.ShouldProcess("Create branch $branchName from $UpstreamRemote/$Target")) {
+        Invoke-NativeCommand { git switch $UpstreamRemote/$Target $switch $branchName }
     }
 
     try {
