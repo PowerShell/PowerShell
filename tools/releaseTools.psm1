@@ -796,11 +796,6 @@ function Invoke-PRBackport {
     }
 
     $upstream = $null
-    <#
-$upstreamName = '(powershell(core)?)/(powershell)'
-'mscodehub   git@ssh.dev.azure.com:v3/mscodehub/PowerShellCore/PowerShell (fetch)'
--match "^mscodehub\s*[^@.]*\@?(.*)\:.*/([-\w]+)/$upstreamName.*fetch";@{org=$matches[2];project=$matches[3];repo=$matches[5];host=$matches[1]};$matches
-    #>
     $upstreamName = '(powershell(core)?)/(powershell)'
     $upstream = Invoke-NativeCommand { git remote -v }
     $upstream = $upstream | Where-Object { $_ -match "^$UpstreamRemote\s*[^@.]*\@?(.*)\:.*/([-\w]+)/$upstreamName.*fetch" }
@@ -858,7 +853,7 @@ $upstreamName = '(powershell(core)?)/(powershell)'
     if ($PSCmdlet.ShouldProcess("Create the PR")) {
         $body = "Backport #$PrNumber"
         switch($remoteType) {
-            [RemoteType]::AzureRepo {
+            "AzureRepo" {
                 Write-Verbose -Verbose "Pushing branch to $UpstreamRemote"
                 git push --set-upstream $UpstreamRemote HEAD
                 $parameters = @(
@@ -914,7 +909,7 @@ $upstreamName = '(powershell(core)?)/(powershell)'
                 Write-Verbose -Verbose "az $parameters"
                 Invoke-NativeCommand { az $parameters }
             }
-            [RemoteType]::GitHub {
+            "GitHub" {
                 Write-Verbose -Verbose "Creating PR using gh CLI"
                 gh pr create --base $Target --title $backportTitle --body $body --web
             }
