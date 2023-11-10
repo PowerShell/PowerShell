@@ -723,6 +723,72 @@ function Get-PRBackportReport {
         $prs
     }
 }
+enum RemoteType {
+    GitHub
+    AzureRepo
+}
+
+function Get-UpstreamInfo {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string[]]$Upstream,
+
+        [Parameter(Mandatory=$true)]
+        [string]$UpstreamRemote
+    )
+
+    $upstreamName = '(powershell(core)?)(/_git)?/(powershell)'
+    $pattern = "^$UpstreamRemote\s*(.*)\:(.*/([-\w.]+)/)?$upstreamName(\.git)?.*fetch"
+    #(.*/([-\w.]+))?(PowerShell(core)?)(/_git)?/(PowerShell)(\.git)?.*fetch
+    Write-Verbose -Verbose "searching for an upstream with regex: '$pattern'"
+    $upstream = $upstream | Where-Object { $_ -match $pattern }
+
+    Write-Verbose -Verbose "found $upstream"
+
+    if (!$upstream) {
+        throw "Please create an upstream remote that points to $upstreamName"
+    }
+
+    $matches | Format-Table | Out-String -Stream -Width 9999 | Write-Verbose
+    $org = $matches[3]
+    if ($org -ne 'github.com' -and $matches[1] -ne 'git@github.com') {
+        Write-Verbose 'parsing Azure repo remote' -Verbose
+        # Azure Repo remote
+        $project = $matches[4]
+        $repo = $matches[7]
+        $upstreamHost = $matches[1]
+
+        if ($upstreamHost -eq 'https') {
+            $upstreamHost = $org
+        }
+        if ($org -match '([^\..]*)\.') {
+            $org = $Matches[1]
+        }
+    } else {
+        Write-Verbose 'parsing github remote' -Verbose
+        # GitHub Repo remote
+        $org = $matches[4]
+        $repo = $matches[7]
+        $upstreamHost = 'github.com'
+        $project = $upstreamHost
+    }
+
+    $remoteType = [RemoteType]::GitHub
+
+    if ($upstreamHost -match '.*azure.com$' -or $upstreamHost -match '.*visualstudio.com$') {
+        [RemoteType] $remoteType = [RemoteType]::AzureRepo
+    }
+
+    $upstreamMatchInfo = @{
+        org     = $org
+        project = $project
+        repo    = $repo
+        host    = $upstreamHost
+        remoteType = $remoteType
+    }
+
+    return $upstreamMatchInfo
+}
 
 # Backports a PR
 # requires:
@@ -795,37 +861,12 @@ function Invoke-PRBackport {
         throw "PR is not merged ($state)"
     }
 
-    $upstream = $null
-    $upstreamName = '(powershell(core)?)/(powershell)'
     $upstream = Invoke-NativeCommand { git remote -v }
-    $upstream = $upstream | Where-Object { $_ -match "^$UpstreamRemote\s*[^@.]*\@?(.*)\:.*/([-\w]+)/$upstreamName.*fetch" }
-
-    Write-Verbose -Verbose "found $upstream"
-
-    if (!$upstream) {
-        throw "Please create an upstream remote that points to $upstreamName"
-    }
-    enum RemoteType {
-        GitHub
-        AzureRepo
-    }
-
-    $remoteType = [RemoteType]::GitHub
-
-    $upstreamMatchInfo = @{
-        org     = $matches[2]
-        project = $matches[3]
-        repo    = $matches[5]
-        host    = $matches[1]
-    }
-
-    if ($upstreamMatchInfo.host -like '*azure.com') {
-        [RemoteType] $remoteType = [RemoteType]::AzureRepo
-    }
+    $upstreamMatchInfo = Get-UpstreamInfo -Upstream $upstream -UpstreamRemote $UpstreamRemote
+    $remoteType = $upstreamMatchInfo.remoteType
 
     Write-Verbose -Verbose "remotetype: $remoteType"
     $upstreamMatchInfo | Format-Table | Out-String -Stream -Width 9999 | Write-Verbose -Verbose
-
 
     Invoke-NativeCommand { git fetch $UpstreamRemote $Target }
 
@@ -952,4 +993,4 @@ function Invoke-PRBackportApproved {
         }
 }
 
-Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport, Invoke-PRBackport, Invoke-PRBackportApproved
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode, Get-PRBackportReport, Invoke-PRBackport, Invoke-PRBackportApproved, Get-UpstreamInfo
