@@ -35,6 +35,12 @@ jobs:
         CreateJson: yes
         UseJson: no
 
+    - template: ../cloneToOfficialPath.yml
+
+    - template: ../insert-nuget-config-azfeed.yml
+      parameters:
+        repoRoot: $(PowerShellRoot)
+
     - pwsh: |
         Import-Module .\build.psm1 -force
         Start-PSBootstrap
