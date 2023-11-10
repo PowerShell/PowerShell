@@ -828,6 +828,10 @@ $upstreamName = '(powershell(core)?)/(powershell)'
         $remoteType = [RemoteType]::AzureRepo
     }
 
+    Write-Verbose -Verbose "remotetype: $remoteType"
+    $upstreamMatchInfo | Format-Table | Out-String -Stream -Width 9999 | Write-Verbose -Verbose
+
+
     Invoke-NativeCommand { git fetch $UpstreamRemote $Target }
 
     $switch = '-c'
