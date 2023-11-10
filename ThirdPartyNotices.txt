@@ -464,9 +464,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Security.Extensions 1.2.0 - MIT
+Microsoft.Security.Extensions 1.3.0 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) Microsoft Corporation
 
 MIT License
 

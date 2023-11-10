@@ -60,7 +60,6 @@ jobs:
       Start-PSBootStrap -Verbose
     displayName: Bootstrap
     env:
-      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - task: DownloadBuildArtifacts@0
