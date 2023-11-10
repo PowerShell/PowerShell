@@ -851,7 +851,7 @@ function Invoke-PRBackport {
         Invoke-NativeCommand { git rev-parse --quiet $revParseParams }
     }
     catch {
-        throw "Commit does not exist. (git rev-parse $revParseParams)"
+        throw "Commit does not exist.  Try fetching the upstream. (git rev-parse $revParseParams)"
     }
 
 
