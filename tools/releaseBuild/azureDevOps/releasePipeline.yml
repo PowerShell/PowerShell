@@ -336,7 +336,7 @@ stages:
     steps:
     - template: templates/release-CopyGlobalTools.yml
       parameters:
-        sourceContainerName: 'tool' ##TODO change to tool-private before merging
+        sourceContainerName: 'tool-private'
         destinationContainerName: 'tool'
         sourceStorageAccountName: '$(GlobalToolStorageAccount)'
         destinationStorageAccountName: '$(PSInfraStorageAccount)'
