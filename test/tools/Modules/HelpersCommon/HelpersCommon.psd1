@@ -48,6 +48,7 @@ FunctionsToExport = @(
         'Test-PSDefaultParameterValue'
         'Push-DefaultParameterValueStack'
         'Pop-DefaultParameterValueStack'
+        'Get-HelpNetworkTestCases'
     )
 
 CmdletsToExport= @()

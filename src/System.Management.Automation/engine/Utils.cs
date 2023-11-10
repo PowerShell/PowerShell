@@ -1256,7 +1256,8 @@ namespace System.Management.Automation
 #if UNIX
             return false;
 #else
-            return path.StartsWith(@"\\.\") || path.StartsWith(@"\\?\");
+            // device paths can be network paths, we would need windows to parse it.
+            return path.StartsWith(@"\\.\") || path.StartsWith(@"\\?\") || path.StartsWith(@"\\;");
 #endif
         }
 
@@ -1522,6 +1523,23 @@ namespace System.Management.Automation
                 >= 1152921504606847000 => $"{(bytes / 1152921504606847000.0).ToString("0.000000000")} EB",
                 _ => $"0 Bytes",
             };
+        }
+
+        /// <summary>
+        /// Returns true if the current session is restricted (JEA or similar sessions)
+        /// </summary>
+        /// <param name="context">ExecutionContext.</param>
+        /// <returns>True if the session is restricted.</returns>
+        internal static bool IsSessionRestricted(ExecutionContext context)
+        {
+                CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
+                // if import-module is visible, then the session is not restricted,
+                // because the user can load arbitrary code.
+                if (cmdletInfo != null && cmdletInfo.Visibility == SessionStateEntryVisibility.Public)
+                {        
+                   return false; 
+                }
+                return true;
         }
     }
 }
