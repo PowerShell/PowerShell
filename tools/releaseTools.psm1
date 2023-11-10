@@ -739,7 +739,6 @@ function Get-UpstreamInfo {
 
     $upstreamName = '(powershell(core)?)(/_git)?/(powershell)'
     $pattern = "^$UpstreamRemote\s*(.*)\:(.*/([-\w.]+)/)?$upstreamName(\.git)?.*fetch"
-    #(.*/([-\w.]+))?(PowerShell(core)?)(/_git)?/(PowerShell)(\.git)?.*fetch
     Write-Verbose -Verbose "searching for an upstream with regex: '$pattern'"
     $upstream = $upstream | Where-Object { $_ -match $pattern }
 
