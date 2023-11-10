@@ -376,5 +376,14 @@ configuration:
       then:
         - addReply:
             reply: " 📣 Hey @${issueAuthor}, how did we do? We would love to hear your feedback with the link below! 🗣️ \n\n🔗 https://forms.office.com/r/P926k48jRJ "
+    - if:
+      - payloadType: Issues_Comment
+      - isClosed
+      - noActivitySince:
+          days: 30
+      then:
+      - addReply:
+            reply: "Repo maintainers do not typically look at activity within issues that have been closed already, we suggest opening up a new issue if you are still blocked by this."
+      description: 
 onFailure:
 onSuccess:
