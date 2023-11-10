@@ -859,6 +859,7 @@ $upstreamName = '(powershell(core)?)/(powershell)'
         $body = "Backport #$PrNumber"
         switch($remoteType) {
             [RemoteType]::AzureRepo {
+                Write-Verbose -Verbose "Pushing branch to $UpstreamRemote"
                 git push --set-upstream $UpstreamRemote HEAD
                 $parameters = @(
                     'repos'
@@ -910,10 +911,15 @@ $upstreamName = '(powershell(core)?)/(powershell)'
                     $upstreamMatchInfo.repo
                 )
 
+                Write-Verbose -Verbose "az $parameters"
                 Invoke-NativeCommand { az $parameters }
             }
             [RemoteType]::GitHub {
+                Write-Verbose -Verbose "Creating PR using gh CLI"
                 gh pr create --base $Target --title $backportTitle --body $body --web
+            }
+            default {
+                throw "unknown remoteType: $remoteType"
             }
         }
     }
