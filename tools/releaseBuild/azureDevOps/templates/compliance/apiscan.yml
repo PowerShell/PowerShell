@@ -19,6 +19,7 @@ jobs:
       - group: DotNetPrivateBuildAccess
       - group: Azure Blob variable group
       - group: ReleasePipelineSecrets
+      - group: AzDevOpsArtifacts
 
     pool:
       name: PowerShell1ES
