@@ -760,6 +760,9 @@ function Get-UpstreamInfo {
         if ($upstreamHost -eq 'https') {
             $upstreamHost = $org
         }
+        # matches everything but `.` ending in a `.`
+        # in other word, matching the first part of a hostname.
+        # like `www.microsoft.com` it would match `www.` with `www` in a capture group.
         if ($org -match '([^\..]*)\.') {
             $org = $Matches[1]
         }
