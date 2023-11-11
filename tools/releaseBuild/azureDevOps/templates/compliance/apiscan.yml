@@ -19,6 +19,7 @@ jobs:
       - group: DotNetPrivateBuildAccess
       - group: Azure Blob variable group
       - group: ReleasePipelineSecrets
+      - group: AzDevOpsArtifacts
 
     pool:
       name: PowerShell1ES
@@ -35,11 +36,9 @@ jobs:
         CreateJson: yes
         UseJson: no
 
-    - template: ../cloneToOfficialPath.yml
-
     - template: ../insert-nuget-config-azfeed.yml
       parameters:
-        repoRoot: $(PowerShellRoot)
+        repoRoot: '$(Build.SourcesDirectory)'
 
     - pwsh: |
         Import-Module .\build.psm1 -force
