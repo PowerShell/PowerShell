@@ -218,7 +218,8 @@ configuration:
           days: 7
       actions:
       - addReply:
-          reply: This issue has been marked as "No Activity". It has been closed for housekeeping purposes.
+          reply: This issue has been marked as "No Activity" as there has been no activity for 6 months. It has been closed for housekeeping purposes.
+
       - closeIssue
     - description: This is for closing issues that have no activity for 6 months.
       frequencies:
