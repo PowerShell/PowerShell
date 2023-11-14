@@ -17,7 +17,7 @@
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="7.0.13" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="7.0.14" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="7.0.1" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="7.0.1" />
