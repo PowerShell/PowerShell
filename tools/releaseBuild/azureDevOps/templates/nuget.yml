@@ -269,7 +269,7 @@ jobs:
       azureSubscription: '$(GlobalToolSubscription)'
       Destination: AzureBlob
       storage: '$(GlobalToolStorageAccount)'
-      ContainerName: 'tool'
+      ContainerName: 'tool-private'
       blobPrefix: '$(Version)'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
