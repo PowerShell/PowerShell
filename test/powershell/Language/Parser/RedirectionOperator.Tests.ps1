@@ -173,7 +173,7 @@ Describe "Redirection and Set-Variable -append tests" -tags CI {
                         $a.Message | Should -BeExactly "verb"
                         }
                      },
-                 @{ Name = "Debug stream should be redirectable" 
+                 @{ Name = "Debug stream should be redirectable"
                      scriptBlock = { write-debug -debug deb 5>variable:a}
                      validation = {
                         $a |Should -BeOfType [System.Management.Automation.DebugRecord]
@@ -224,6 +224,24 @@ Describe "Redirection and Set-Variable -append tests" -tags CI {
             param ( $scriptBlock, $validation )
             . $scriptBlock
             . $validation
+        }
+
+        It 'Redirection of a native application is correct' {
+            $expected = @('Arg 0 is <hi>','Arg 1 is <bye>')
+            TestExe -echoargs hi bye > variable:observed
+            $observed | Should -Be $expected
+        }
+
+        It 'Redirection while in variable provider is correct' {
+            $expected = @('Arg 0 is <hi>','Arg 1 is <bye>')
+            try {
+                Push-Location variable:
+                TestExe -echoargs hi bye > observed
+            }
+            finally {
+                Pop-Location
+            }
+            $observed | Should -Be $expected
         }
     }
 }

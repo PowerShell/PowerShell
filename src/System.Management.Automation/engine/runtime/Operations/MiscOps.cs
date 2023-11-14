@@ -1090,10 +1090,23 @@ namespace System.Management.Automation
         //    dir > out
         internal override void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context)
         {
+            // Check first to see if File is a variable path. If so, we'll not create the FileBytePipe
+            bool redirectToVariable = false;
+            if (ExperimentalFeature.IsEnabled("PSRedirectToVariable"))
+            {
+                ProviderInfo p;
+                context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(File, out p, out _);
+                if (p != null && p.NameEquals(context.ProviderNames.Variable))
+                {
+                    redirectToVariable = true;
+                }
+            }
+
             if (commandProcessor is NativeCommandProcessor nativeCommand
                 && nativeCommand.CommandRuntime.ErrorMergeTo is not MshCommandRuntime.MergeDataStream.Output
                 && FromStream is RedirectionStream.Output
-                && !string.IsNullOrWhiteSpace(File))
+                && !string.IsNullOrWhiteSpace(File)
+                && !redirectToVariable)
             {
                 nativeCommand.StdOutDestination = FileBytePipe.Create(File, Appending);
                 return;
