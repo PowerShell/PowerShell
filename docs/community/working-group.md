@@ -77,6 +77,8 @@ This process is represented within the [`process_diagram.vsdx` Visio diagram](pr
 
    It's worth noting that Working Group members who repeatedly speak on behalf of the Working Group without
    consensus, they may be censured or removed from the team.
+1. The behavior of the Language Working Group is slightly modified from the work flow as show below.
+The behavior of that WG is described [here](#language-working-group-process).
 
 ### Working Groups reject the proposal
 
@@ -195,3 +197,66 @@ Working group members are individuals and in many cases volunteers.
 There may be situations where a working group member might exhibit behavior that is objectionable,
 exceed the authority defined in this document or violate the [Code of Conduct](../../CODE_OF_CONDUCT.md).
 We recommend to report such issues by using the [Report Content](https://docs.github.com/communities/maintaining-your-safety-on-github/reporting-abuse-or-spam) mechanism to bring it to the attention of the maintainers to review.
+
+## Language Working Group Process
+
+The PowerShell Language WG will follow the [C#](https://github.com/dotnet/csharplang) model for language enhancements.
+For _new feature proposals_, please create a [discussion](https://github.com/orgs/PowerShell/discussions/new?category=enhancements),
+and only submit a pull request if invited to do so by a member of the Language WG (a "champion").
+
+### Discussions
+
+Debate pertaining to language features takes place in the form of [Discussions](https://github.com/PowerShell/discussions) in this repo.
+If you want to suggest a feature, discuss current design notes or proposals, etc.,
+please [open a new Discussion topic](https://github.com/orgs/PowerShell/discussions/new?category=enhancements),
+
+Discussions that are short and stay on topic are much more likely to be read.
+If you leave comment number fifty, chances are that only a few people will read it.
+To make discussions easier to navigate and benefit from, please observe a few rules of thumb:
+
+- Discussion should be relevant to PowerShell language design. If they are not, they will be summarily closed.
+- Choose a descriptive topic that clearly communicates the scope of discussion.
+- Stick to the topic of the discussion. If a comment is tangential, or goes into detail on a subtopic, start a new discussion and link back.
+- Is your comment useful for others to read, or can it be adequately expressed with an emoji reaction to an existing comment?
+
+Proposals that only make existing syntax optionally illegal will be rejected by the language WG to prevent increased language complexity.
+
+### Proposals
+
+Once you have a fully fleshed out proposal describing a new language feature in syntactic and semantic detail,
+please [open an issue for it](https://github.com/powershell/powershell/issues/new/choose),
+and it will be labeled as a [Proposal](https://github.com/PowerShell/PowerShell/issues?q=is%3Aopen+is%3Aissue+label%3AProposal).
+The comment thread on the issue can be used to hash out or briefly discuss details of the proposal,
+as well as pros and cons of adopting it into PowerShell.
+If an issue does not meet the bar of being a full proposal, we may move it to a discussion, so that it can be "baked" further.
+Specific open issues or more expansive discussion with a proposal will often warrant opening a side discussion
+rather than cluttering the comment section on the issue.
+
+When a member of the Language WG finds that a proposal merits discussion,
+they can [Champion](https://github.com/PowerShell/PowerShell/issues?q=is%3Aopen+is%3Aissue+label%3A%22Champion%22) it,
+which means that they will bring it to the Language WG meeting.
+If the WG decides to work on adopting the feature, the proposer,
+the champion and others can collaborate on adding it as an RFC in the [PowerShell RFC](https://github.com/PowerShell/PowerShell-RFC) repository,
+where its evolution can be tracked over time.
+
+### Design Process
+
+[Proposals](#proposals) evolve as a result of decisions in Language WG meetings,
+which are informed by [discussions](https://github.com/PowerShell/PowerShell/discussions), experiments, and offline design work.
+
+In many cases it will be necessary to implement and share a prototype of a feature in order to land on the right design,
+and ultimately decide whether to adopt the feature.
+Prototypes help discover both implementation and usability issues of a feature.
+A prototype should be implemented in a fork of the [PowerShell](https://github.com/PowerShell/PowerShell) and meet the following bar:
+
+- Parsing (if applicable) should be resilient to experimentation: typing should not cause crashes.
+- Include minimal tests demonstrating the feature at work end-to-end.
+- Include minimal IDE support (keyword coloring, formatting, completion).
+
+Once approved, a feature should be fully implemented in [PowerShell](https://github.com/PowerShell/PowerShell),
+and fully documented in the appropriate help topic in [PowerShell Docs](https://github.com/PowerShell/PowerShell-Docs).
+
+**DISCLAIMER**: An active proposal is under active consideration for inclusion into a future version of the Powershell language
+but is not in any way guaranteed to ultimately be included in the next or any version of the language.
+A proposal may be postponed or rejected at any time during any phase of the above process based on feedback from the design team,
+community, code reviewers, or testing.
