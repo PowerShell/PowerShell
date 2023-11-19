@@ -183,11 +183,14 @@
   <data name="NotFilesystemPath" xml:space="preserve">
     <value>Path '{0}' is not a file system path. Please specify the path to a file in the file system.</value>
   </data>
-  <data name="OutFileMissing" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide a valid OutFile parameter value when using the {0} parameter, then retry.</value>
-  </data>
   <data name="OutFileWritingSkipped" xml:space="preserve">
     <value>The file will not be re-downloaded because the remote file is the same size as the OutFile: {0}</value>
+  </data>
+  <data name="OutputConflict" xml:space="preserve">
+    <value>The cmdlet cannot run because the following conflicting parameters are specified: OutFile and OutFolder. Specify either OutFile or OutFolder, then retry.</value>
+  </data>
+  <data name="PassThruOutFileMissing" xml:space="preserve">
+    <value>The cmdlet cannot run because the following parameters are missing: OutFile, OutFolder. Specify either a valid OutFile or OutFolder parameter value when using the PassThru parameter, then retry.</value>
   </data>
   <data name="ProxyCredentialConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
@@ -204,8 +207,8 @@
   <data name="ReadResponseProgressStatus" xml:space="preserve">
     <value>Downloaded: {0} of {1}</value>
   </data>
-   <data name="ResumeNotFilePath" xml:space="preserve">
-    <value>The Resume switch can only be used if OutFile targets a file but it resolves to a directory: {0}.</value>
+  <data name="ResumeOutFileMissing" xml:space="preserve">
+    <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide valid OutFile parameter value when using the Resume parameter, then retry.</value>
   </data>
   <data name="SessionConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: Session and SessionVariable. Specify either Session or SessionVariable, then retry.</value>
