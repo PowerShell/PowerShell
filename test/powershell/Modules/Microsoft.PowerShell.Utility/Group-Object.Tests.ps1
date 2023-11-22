@@ -131,8 +131,12 @@ Describe "Group-Object" -Tags "CI" {
         $result[0].Group | Should -Be '@{X=}'
     }
 
-    It "Should not throw with format-like strings containing curly braces (issue #20711)" {
-        { '{', '}', '{0}' | Group-Object } | Should -Not -Throw
+    It "Should handle format-like strings with curly braces like normal strings" {
+        $result = '{', '}', '{0}' | Group-Object
+        $result.Count | Should -Be 3
+        $result[0].Name | Should -Be '{'
+        $result[1].Name | Should -Be '{0}'
+        $result[2].Name | Should -Be '}'
     }
 }
 
