@@ -2126,6 +2126,9 @@ namespace Microsoft.PowerShell.Commands
                     jobAssigned = jobObject.AssignProcessToJobObject(processInfo.Process);
                 }
 
+                // Fetch process handle to trigger Process object to update its state by calling SetProcessHandle, discard result.
+                _ = process.Handle;
+
                 // Resume the process now that is has been set up.
                 processInfo.Resume();
 #endif
