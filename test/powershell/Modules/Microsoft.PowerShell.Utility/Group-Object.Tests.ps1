@@ -130,6 +130,10 @@ Describe "Group-Object" -Tags "CI" {
         $result[0].Name | Should -Be ""
         $result[0].Group | Should -Be '@{X=}'
     }
+
+    It "Should not throw with format-like strings containing curly braces (issue #20711)" {
+        { '{', '}', '{0}' | Group-Object } | Should -Not -Throw
+    }
 }
 
 Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-Object, Compare-Object)" -Tags "CI" {
