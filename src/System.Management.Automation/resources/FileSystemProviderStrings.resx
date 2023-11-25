@@ -345,6 +345,12 @@
   <data name="CopyingLocalBytesStatus" xml:space="preserve">
     <value>{0} of {1} ({2:0.0} MB/s)</value>
   </data>
+  <data name="RemovingLocalFileActivity" xml:space="preserve">
+    <value>Removed {0} of {1} files</value>
+  </data>
+  <data name="RemovingLocalBytesStatus" xml:space="preserve">
+    <value>{0} of {1} ({2:0.0} MB/s)</value>
+  </data>
   <data name="JunctionAbsolutePath" xml:space="preserve">
     <value>Creating a junction requires an absolute path for the target.</value>
   </data>
