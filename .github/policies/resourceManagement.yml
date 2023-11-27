@@ -242,8 +242,6 @@ configuration:
     eventResponderTasks:
     - if:
       - payloadType: Issue_Comment
-      - isActivitySender:
-          issueAuthor: True
       - hasLabel:
           label: Resolution-No Activity
       then:
