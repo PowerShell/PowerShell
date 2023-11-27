@@ -230,6 +230,8 @@ configuration:
       - isOpen
       - isNotLabeledWith:
           label: KeepOpen
+      - isNotLabeledWith:
+          label: Resolution-No Activity
       - noActivitySince:
           days: 180
       actions:
