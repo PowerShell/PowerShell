@@ -319,7 +319,6 @@ configuration:
       - removeLabel:
           label: Resolution-No Activity
       description: 
-      description: 
     - if:
       - payloadType: Pull_Request
       - not:
