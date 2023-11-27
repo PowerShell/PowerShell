@@ -3198,6 +3198,7 @@ function Get-WixPath
     )
 
     $wixToolsetBinPath = $IsProductArchitectureArm ? "${env:ProgramFiles(x86)}\Arm Support WiX Toolset *\bin" : "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
+    $wixToolsetBinPathForNonArm = "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
 
     Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
     if (-not (Test-Path $wixToolsetBinPath))
@@ -3207,6 +3208,11 @@ function Get-WixPath
             throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
         }
         else {
+            $nonArmPathExists = Test-Path $wixToolsetBinPathForNonArm
+            if ($nonArmPathExists)
+            {
+                Get-ChildItem -Recurse -Path $MdsDestinationFolder | Select-Object -ExpandProperty fullname
+            }
             throw "The latest version of Wix Toolset 3.14 is required to create MSI package for arm. Please install it from https://aka.ms/ps-wix-3-14-zip"
         }
     }
