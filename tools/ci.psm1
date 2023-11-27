@@ -622,7 +622,7 @@ function Invoke-CIFinish
     }
 }
 
-funtion Install-WixArmZip
+function Install-WixArmZip
 {
     # cleanup previous install
     if((Test-Path "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy")) {
