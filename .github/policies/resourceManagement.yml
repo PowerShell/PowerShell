@@ -311,6 +311,14 @@ configuration:
       then:
       - removeLabel:
           label: Waiting on Author
+    - if:
+      - payloadType: Issue_Comment
+      - hasLabel:
+          label: Resolution-No Activity
+      then:
+      - removeLabel:
+          label: Resolution-No Activity
+      description: 
       description: 
     - if:
       - payloadType: Pull_Request
