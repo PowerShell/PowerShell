@@ -52,7 +52,7 @@ internal static partial class Interop
 
             if (errorCode == ERROR_SUCCESS)
             {
-                uncPath = uncBuffer.Slice((int)bufferSize).ToString();
+                uncPath = ToString(uncBuffer.ToArray());
             }
             else if (errorCode == ERROR_MORE_DATA)
             {
@@ -64,7 +64,7 @@ internal static partial class Interop
 
                     if (errorCode == ERROR_SUCCESS)
                     {
-                        uncPath = uncBuffer.Slice((int)bufferSize).ToString();
+                        uncPath = ToString(uncBuffer.ToArray());
                     }
                 }
                 finally
@@ -77,6 +77,14 @@ internal static partial class Interop
             }
 
             return errorCode;
+        }
+
+        private static string ToString(ushort[] buffer)
+        {
+            // trim trailing null character
+            byte[] asBytes = new byte[(buffer.Length - 1) * sizeof(ushort)];
+            Buffer.BlockCopy(buffer, 0, asBytes, 0, asBytes.Length);
+            return System.Text.Encoding.Unicode.GetString(asBytes);
         }
     }
 }
