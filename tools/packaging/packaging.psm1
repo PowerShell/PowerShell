@@ -3208,10 +3208,13 @@ function Get-WixPath
             throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
         }
         else {
+            Write-Verbose "Checking if non arm wix toolset bin path existed..."
             $nonArmPathExists = Test-Path $wixToolsetBinPathForNonArm
+            Write-Verbose "path exists $nonArmPathExists"
             if ($nonArmPathExists)
             {
-                Get-ChildItem -Recurse -Path $MdsDestinationFolder | Select-Object -ExpandProperty fullname
+                Write-Verbose "getting child item"
+                Get-ChildItem -Recurse -Path $wixToolsetBinPathForNonArm | Select-Object -ExpandProperty fullname
             }
             throw "The latest version of Wix Toolset 3.14 is required to create MSI package for arm. Please install it from https://aka.ms/ps-wix-3-14-zip"
         }
