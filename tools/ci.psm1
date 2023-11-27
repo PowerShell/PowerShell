@@ -632,16 +632,16 @@ function Install-WixArmZip
     # This URI is for wix 3.14 which supports generating msi for arm architecures.
     $wixUriArmSupport = 'https://aka.ms/ps-wix-3-14-zip'
     $zipArmSupport = "$env:TEMP\wixArmSupport.zip"
-    $TargetRoot = "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy"
+    $targetRoot = "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy"
     Invoke-RestMethod -Uri $wixUriArmSupport -OutFile $zipArmSupport
 
-    $binPath = Join-Path -Path $TargetRoot -ChildPath 'bin'
-    Write-Verbose "Expanding $zipPath to $binPath ..." -Verbose
-    Expand-Archive -Path $zipPath -DestinationPath $binPath -Force
+    $binPath = Join-Path -Path $targetRoot -ChildPath 'bin'
+    Write-Verbose "Expanding $zipArmSupport to $binPath ..." -Verbose
+    Expand-Archive -Path $zipArmSupport -DestinationPath $binPath -Force
     $docExpandPath = Join-Path -Path $binPath -ChildPath 'doc'
     $sdkExpandPath = Join-Path -Path $binPath -ChildPath 'sdk'
-    $docTargetPath = Join-Path -Path $TargetRoot -ChildPath 'doc'
-    $sdkTargetPath = Join-Path -Path $TargetRoot -ChildPath 'sdk'
+    $docTargetPath = Join-Path -Path $targetRoot -ChildPath 'doc'
+    $sdkTargetPath = Join-Path -Path $targetRoot -ChildPath 'sdk'
     Write-Verbose "Fixing folder structure ..." -Verbose
     Move-Item -Path $docExpandPath -Destination $docTargetPath
     Move-Item -Path $sdkExpandPath -Destination $sdkTargetPath
