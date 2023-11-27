@@ -244,7 +244,7 @@ configuration:
       then:
       - removeLabel:
           label: Resolution-No Activity
-      description: Reopen issues with no activity if its the author who has commented
+      description: Remove resolution no activity label when anyone comments on an issue with the label.
     - if:
       - payloadType: Pull_Request
       - hasLabel:
