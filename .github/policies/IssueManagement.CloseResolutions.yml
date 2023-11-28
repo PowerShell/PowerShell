@@ -1,6 +1,6 @@
 id: IssueManagement.CloseResolutionTags
 name: GitOps.PullRequestIssueManagement
-description: GitOps.PullRequestIssueManagement primitive
+description: Closing issues with Resolution* 
 owner:
 resource: repository
 disabled: false

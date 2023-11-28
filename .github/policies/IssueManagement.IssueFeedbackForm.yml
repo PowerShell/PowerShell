@@ -1,6 +1,6 @@
-id: labelManagement.closeResolutionTag
+id: IssueManagement.IssueFeedbackForm
 name: GitOps.PullRequestIssueManagement
-description: GitOps.PullRequestIssueManagement primitive
+description: Bot to request the feedback for how we are doing in the repo
 owner:
 resource: repository
 disabled: false

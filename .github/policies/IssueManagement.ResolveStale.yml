@@ -1,6 +1,6 @@
 id: IssueManagement.ResolveStale
 name: GitOps.PullRequestIssueManagement
-description: GitOps.PullRequestIssueManagement primitive
+description: Other issue management rules for closing stale and waiting on author requests
 owner:
 resource: repository
 disabled: false

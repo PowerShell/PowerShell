@@ -1,6 +1,6 @@
 id: PRManagement
 name: GitOps.PullRequestIssueManagement
-description: GitOps.PullRequestIssueManagement primitive
+description: Collection of PR bot triaging behaviors
 owner:
 resource: repository
 disabled: false
