@@ -42,7 +42,16 @@ configuration:
       - addLabel:
             label: Resolution-No Activity
     eventResponder:
-    - description: Reopen issues with no activity if its the author who has commented
+    - description: Remove no resolution label if anyone comments
+      if:
+      - payloadType: Issue_Comment
+      - isActivitySender:
+          issueAuthor: True
+      - hasLabel:
+          label: Resolution-No Activity
+      then:
+      - removeLabel:
+          label: Resolution-No Activity
     - description: If new issue comment is author then remove waiting on author
       if:
       - payloadType: Issue_Comment
