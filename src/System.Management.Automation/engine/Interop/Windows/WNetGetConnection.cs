@@ -49,7 +49,8 @@ internal static partial class Interop
 
             if (errorCode == ERROR_SUCCESS)
             {
-                uncPath = uncBuffer.Slice(0, (int)bufferSize).ToString();
+                // exclude null terminator
+                uncPath = uncBuffer.Slice(0, (int)bufferSize - 1).ToString();
             }
             else if (errorCode == ERROR_MORE_DATA)
             {
@@ -61,7 +62,8 @@ internal static partial class Interop
 
                     if (errorCode == ERROR_SUCCESS)
                     {
-                        uncPath = uncBuffer.Slice(0, (int)bufferSize).ToString();
+                        // exclude null terminator
+                        uncPath = uncBuffer.Slice(0, (int)bufferSize - 1).ToString();
                     }
                 }
                 finally
