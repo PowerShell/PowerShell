@@ -1,0 +1,132 @@
+id: IssueManagement.CloseResolutionTags
+name: GitOps.PullRequestIssueManagement
+description: GitOps.PullRequestIssueManagement primitive
+owner:
+resource: repository
+disabled: false
+where:
+configuration:
+  resourceManagementConfiguration:
+    scheduledSearches:
+    - description: Close if marked as Resolution-Declined after one day of no activity
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-Declined
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as declined and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    - description: Close if marked as Resolution-By Design after one day of no activity
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-By Design
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as by-design and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    - description: Close if marked as Resolution-Won't Fix after one day of no activity
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-Won't Fix
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as won't fix and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    - description: Close if marked as Resolution-No Activity after one day of no activity 
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isOpen
+      - isIssue
+      - hasLabel:
+          label: Resolution-No Activity
+      - noActivitySince:
+          days: 7
+      actions:
+      - addReply:
+          reply: This issue has been marked as "No Activity" as there has been no activity for 6 months. It has been closed for housekeeping purposes.
+      - closeIssue
+    - description: Close if marked as Resolution-Duplicate after one day of no activity
+      frequencies:
+      - hourly:
+          hour: 3
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-Duplicate
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as duplicate and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    - description: Close if marked as Resolution-External after one day of no activity
+      frequencies:
+      - hourly:
+          hour: 3
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-External
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as external and has not had any activity for **1 day**. It has been be closed for housekeeping purposes.
+      - closeIssue
+    - description: Close if marked as Resolution-Answered after one day of no activity
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-Answered
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as answered and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    - description: Close if marked as Resolution-Fixed after one day of no activity
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isIssue
+      - isOpen
+      - hasLabel:
+          label: Resolution-Fixed
+      - noActivitySince:
+          days: 1
+      actions:
+      - addReply:
+          reply: This issue has been marked as fixed and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+onFailure:
+onSuccess:

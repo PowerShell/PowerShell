@@ -1,0 +1,228 @@
+id: PRManagement
+name: GitOps.PullRequestIssueManagement
+description: GitOps.PullRequestIssueManagement primitive
+owner:
+resource: repository
+disabled: false
+where:
+configuration:
+  resourceManagementConfiguration:
+    scheduledSearches:
+    - description: If Stale label and no activity since 10 days then close the PR
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isPullRequest
+      - isOpen
+      - hasLabel:
+          label: Waiting on Author
+      - hasLabel:
+          label: Stale
+      - noActivitySince:
+          days: 10
+      actions:
+      - closeIssue
+    - description: If PR has Waiting on Author label and no activity in 15 days label as stale.
+      frequencies:
+      - hourly:
+          hour: 3
+      filters:
+      - isPullRequest
+      - isOpen
+      - hasLabel:
+          label: Waiting on Author
+      - noActivitySince:
+          days: 15
+      - isNotLabeledWith:
+          label: Stale
+      actions:
+      - addLabel:
+          label: Stale
+      - addReply:
+          reply: This pull request has been automatically marked as stale because it has been marked as requiring author feedback but has not had any activity for **15 days**. It will be closed if no further activity occurs **within 10 days of this comment**.
+    - description: Label Review - Needed if PR is opened an no activity in 7 days but no other labels on it
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isPullRequest
+      - isOpen
+      - isNotLabeledWith:
+          label: Waiting on Author
+      - noActivitySince:
+          days: 7
+      - isNotLabeledWith:
+          label: Stale
+      - isNotLabeledWith:
+          label: Review - Needed
+      - isNotLabeledWith:
+          label: Review - Committee
+      - isNotDraftPullRequest
+      actions:
+      - addLabel:
+          label: Review - Needed
+      - addReply:
+          reply: >-
+            This pull request has been automatically marked as Review Needed because it has been there has not been any activity for **7 days**.
+
+            Maintainer, please provide feedback and/or mark it as `Waiting on Author`
+    - description: Add waiting on Author label if is draft PR, if no activity label
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isOpen
+      - isDraftPullRequest
+      - isNotLabeledWith:
+          label: Review - Committee
+      - isNotLabeledWith:
+          label: Waiting on Author
+      - isNotLabeledWith:
+          label: Stale
+      - noActivitySince:
+          days: 3
+      actions:
+      - addLabel:
+          label: Waiting on Author
+    eventResponderTasks:
+    - description: Reopen issues with no activity if its the author who has commented
+      if: 
+      - payloadType: Issue_Comment
+      - isActivitySender:
+          issueAuthor: True
+      - hasLabel:
+          label: Resolution-No Activity
+      then:
+      - removeLabel:
+          label: Resolution-No Activity
+    - description: If PR has AutoMerge Label then enable Automerge to squash
+      if:
+      - payloadType: Pull_Request
+      - hasLabel:
+          label: AutoMerge
+      then:
+      - enableAutoMerge:
+          mergeMethod: Squash
+    - description: If PR has label AutoMerge Removed then disable Automerge
+      if:
+      - payloadType: Pull_Request
+      - labelRemoved:
+          label: AutoMerge
+      then:
+      - disableAutoMerge
+    - description: If PR review requests changes then add label waiting on Author and remove review needed
+      if: 
+      - payloadType: Pull_Request_Review
+      - isAction:
+          action: Submitted
+      - isReviewState:
+          reviewState: Changes_requested
+      then:
+      - addLabel:
+          label: Waiting on Author
+      - removeLabel:
+          label: Review - Needed
+    - description: Remove Waiting on author if has label and activity from author
+      if:
+      - payloadType: Pull_Request
+      - isActivitySender:
+          issueAuthor: True
+      - not:
+          isAction:
+            action: Closed
+      - hasLabel:
+          label: Waiting on Author
+      - not:
+          titleContains:
+            pattern: "(WIP|Work in progress|\U0001F6A7)"
+            isRegex: True
+      then:
+      - removeLabel:
+          label: Waiting on Author
+    - description: (?)remove waiting on author if review by author and has waiting on author
+      if:
+      - payloadType: Pull_Request_Review
+      - isActivitySender:
+          issueAuthor: True
+      - hasLabel:
+          label: Waiting on Author
+      then:
+      - removeLabel:
+          label: Waiting on Author
+    - description: Remove Stale label if PR is closed by author
+      if:
+      - payloadType: Pull_Request
+      - not:
+          isAction:
+            action: Closed
+      - hasLabel:
+          label: Stale
+      - isActivitySender:
+          issueAuthor: True
+      then:
+      - removeLabel:
+          label: Stale
+    - description: Remove Stale label if PR is reviewed
+      if:
+      - payloadType: Pull_Request_Review
+      - hasLabel:
+          label: Stale
+      then:
+      - removeLabel:
+          label: Stale
+    - description: Remove Review Needed if PR is created or done any action by Admins and iSazonov
+      if:
+      - payloadType: Pull_Request
+      - hasLabel:
+          label: Review - Needed
+      - or:
+        - isAction:
+            action: Null
+        - isAction:
+            action: Closed
+        - isAction:
+            action: Reopened
+        - isAction:
+            action: Assigned
+        - isAction:
+            action: Unassigned
+        - isAction:
+            action: Unlabeled
+      - or:
+        - activitySenderHasPermission:
+            permission: Admin
+        - isActivitySender:
+            user: iSazonov
+            issueAuthor: False
+      then:
+      - removeLabel:
+          label: Review - Needed
+    - description: (?) Remove Review - Needed if issue comment is by admin or iSazonov
+      if:
+      - payloadType: Issue_Comment
+      - hasLabel:
+          label: Review - Needed
+      - or:
+        - activitySenderHasPermission:
+            permission: Admin
+        - isActivitySender:
+            user: iSazonov
+            issueAuthor: False
+      then:
+      - removeLabel:
+          label: Review - Needed
+    - description: (?) If inPRLabel then label in PR
+      if:
+      - payloadType: Pull_Request
+      then:
+      - inPrLabel:
+          label: In-PR
+    - description: (?) Clean email reply if issue comment
+      if:
+      - payloadType: Issue_Comment
+      then:
+      - cleanEmailReply
+    
+onFailure:
+onSuccess:

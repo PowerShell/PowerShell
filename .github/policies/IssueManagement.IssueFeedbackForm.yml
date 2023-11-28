@@ -1,0 +1,20 @@
+id: labelManagement.closeResolutionTag
+name: GitOps.PullRequestIssueManagement
+description: GitOps.PullRequestIssueManagement primitive
+owner:
+resource: repository
+disabled: false
+where:
+configuration:
+  resourceManagementConfiguration:
+    eventResponderTasks:
+      - description: Automatically commenting for feedback when an issue is closed
+      triggerOnOwnActions: true
+      if: 
+        - isAction: 
+            action: Closed
+      then:
+        - addReply:
+            reply: " 📣 Hey @${issueAuthor}, how did we do? We would love to hear your feedback with the link below! 🗣️ \n\n🔗 https://forms.office.com/r/P926k48jRJ "
+onFailure:
+onSuccess:
