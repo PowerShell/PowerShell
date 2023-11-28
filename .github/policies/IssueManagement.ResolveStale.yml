@@ -43,7 +43,7 @@ configuration:
           reply: This issue has not had any activity in 6 months, if this is a bug please try to reproduce on the latest version of PowerShell and reopen a new issue and reference this issue if this is still a blocker for you. 
       - addLabel:
             label: Resolution-No Activity
-    eventResponder:
+    eventResponderTasks:
     - description: Remove no resolution label if anyone comments
       if:
       - payloadType: Issue_Comment
