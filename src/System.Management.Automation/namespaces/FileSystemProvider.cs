@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// The path with all / normalized to \
         /// </returns>
-        private static string NormalizePath(string path)
+        internal static string NormalizePath(string path)
         {
             return GetCorrectCasedPath(path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator));
         }
@@ -3569,7 +3569,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     CopyItemLocalOrToSession(path, destinationPath, recurse, Force, null);
-                    if (_totalFiles > 0)
+                    if (Stopping || _copiedFiles == _totalFiles)
                     {
                         _copyStopwatch.Stop();
                         var progress = new ProgressRecord(COPY_FILE_ACTIVITY_ID, " ", " ");

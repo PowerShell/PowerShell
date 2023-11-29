@@ -238,7 +238,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonSchema.Net 5.2.5 - MIT
+JsonSchema.Net 5.2.6 - MIT
 
 
 
@@ -259,6 +259,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.ApplicationInsights 2.21.0 - MIT
 
 
+(c) Microsoft Corporation
 
 MIT License
 
@@ -463,9 +464,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Security.Extensions 1.2.0 - MIT
+Microsoft.Security.Extensions 1.3.0 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) Microsoft Corporation
 
 MIT License
 
@@ -2945,20 +2948,22 @@ SOFTWARE.
 System.Numerics.Vectors 4.5.0 - MIT
 
 
-(c) Microsoft Corporation.
+(c) 2023 GitHub, Inc.
+(c) Microsoft Corporation
+Copyright (c) .NET Foundation
 Copyright (c) 2011, Google Inc.
-(c) 1997-2005 Sean Eron Anderson.
+(c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1991-2017 Unicode, Inc.
+Copyright (c) 2015 The Chromium Authors
 Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
 Copyright (c) 2004-2006 Intel Corporation
 Copyright (c) .NET Foundation Contributors
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
 
 The MIT License (MIT)
 
@@ -2989,7 +2994,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Private.ServiceModel 4.10.2 - MIT
+System.Private.ServiceModel 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3854,7 +3859,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Duplex 4.10.2 - MIT
+System.ServiceModel.Duplex 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3890,7 +3895,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Http 4.10.2 - MIT
+System.ServiceModel.Http 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3926,7 +3931,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.NetTcp 4.10.2 - MIT
+System.ServiceModel.NetTcp 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3962,7 +3967,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Primitives 4.10.2 - MIT
+System.ServiceModel.Primitives 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3998,7 +4003,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Security 4.10.2 - MIT
+System.ServiceModel.Security 4.10.3 - MIT
 
 
 (c) Microsoft Corporation

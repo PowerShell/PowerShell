@@ -17,6 +17,8 @@ jobs:
       - name: branchCounter
         value: $[counter(variables['branchCounterKey'], 1)]
       - group: DotNetPrivateBuildAccess
+      - group: Azure Blob variable group
+      - group: ReleasePipelineSecrets
 
     pool:
       name: PowerShell1ES
@@ -33,6 +35,12 @@ jobs:
         CreateJson: yes
         UseJson: no
 
+    - template: ../cloneToOfficialPath.yml
+
+    - template: ../insert-nuget-config-azfeed.yml
+      parameters:
+        repoRoot: $(PowerShellRoot)
+
     - pwsh: |
         Import-Module .\build.psm1 -force
         Start-PSBootstrap
@@ -40,7 +48,6 @@ jobs:
       retryCountOnTaskFailure: 2
       displayName: 'Bootstrap'
       env:
-        __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
         __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
@@ -51,6 +58,29 @@ jobs:
         Write-Host "##vso[task.setvariable variable=symbolToolPath]$symbolToolPath"
       displayName: Install dotnet-symbol
       retryCountOnTaskFailure: 2
+
+    - pwsh: |
+        Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+        Install-AzCopy
+      displayName: Install AzCopy
+      retryCountOnTaskFailure: 2
+
+    - pwsh: |
+        Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+        $azcopy = Find-AzCopy
+        Write-Verbose -Verbose "Found AzCopy: $azcopy"
+
+        $winverifySymbolsPath = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)/winverify-symbols' -Force
+        Write-Host "##vso[task.setvariable variable=winverifySymbolsPath]$winverifySymbolsPath"
+
+        & $azcopy cp https://$(StorageAccount).blob.core.windows.net/winverify-private $winverifySymbolsPath --recursive
+
+        Get-ChildItem $winverifySymbolsPath -Recurse | Out-String | Write-Verbose -Verbose
+
+      displayName: Download winverify-private Artifacts
+      retryCountOnTaskFailure: 2
+      env:
+        AZCOPY_AUTO_LOGIN_TYPE: MSI
 
     - pwsh: |
         Import-Module .\build.psm1 -force
@@ -117,6 +147,7 @@ jobs:
         verbosityLevel: standard
         # write a status update every 5 minutes.  Default is 1 minute
         statusUpdateInterval: '00:05:00'
+        surrogateConfigurationFolder : $(surrogateFilePath)
       env:
         AzureServicesAuthConnectionString: RunAs=App;AppId=$(APIScanClient);TenantId=$(APIScanTenant);AppKey=$(APIScanSecret)
 

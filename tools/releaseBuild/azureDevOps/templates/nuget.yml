@@ -60,7 +60,6 @@ jobs:
       Start-PSBootStrap -Verbose
     displayName: Bootstrap
     env:
-      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - task: DownloadBuildArtifacts@0
@@ -280,7 +279,7 @@ jobs:
       azureSubscription: '$(GlobalToolSubscription)'
       Destination: AzureBlob
       storage: '$(GlobalToolStorageAccount)'
-      ContainerName: 'tool'
+      ContainerName: 'tool-private'
       blobPrefix: '$(Version)'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
     retryCountOnTaskFailure: 2
