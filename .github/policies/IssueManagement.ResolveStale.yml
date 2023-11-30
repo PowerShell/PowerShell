@@ -46,13 +46,12 @@ configuration:
       - addLabel:
             label: Resolution-No Activity
     eventResponderTasks:
-    - description: Remove no resolution label if anyone comments
+    - description: Remove no resolution label if anyone comments while in 7 day window
       if:
       - payloadType: Issue_Comment
-      - isActivitySender:
-          issueAuthor: True
       - hasLabel:
           label: Resolution-No Activity
+      - isOpen
       then:
       - removeLabel:
           label: Resolution-No Activity
