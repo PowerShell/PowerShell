@@ -65,7 +65,7 @@ configuration:
       - noActivitySince:
           days: 7
       actions:
-        - closeIssue
+      - closeIssue
     - description: Close if marked as Resolution-Duplicate after one day of no activity
       frequencies:
       - hourly:
