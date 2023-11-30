@@ -8,7 +8,7 @@ where:
 configuration:
   resourceManagementConfiguration:
     scheduledSearches:
-    - description: If Stale label and no activity since 10 days then close the PR
+    - description: If Stale label and waiting on author and no activity since 10 days then close the PR
       frequencies:
       - hourly:
           hour: 12

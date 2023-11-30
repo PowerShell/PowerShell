@@ -33,6 +33,8 @@ configuration:
       - isNotLabeledWith:
           label: KeepOpen
       - isNotLabeledWith:
+          label: Needs-Triage
+      - isNotLabeledWith:
           label: Resolution-No Activity
       - isNotLabeledWith:
           label: Issue-Meta
