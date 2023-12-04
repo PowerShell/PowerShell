@@ -12,7 +12,7 @@ configuration:
       triggerOnOwnActions: true
       if:
       - isAction: 
-        action: Closed
+          action: Closed
       - isNotLabeledWith:
           label: Resolution-No Activity
       then:
