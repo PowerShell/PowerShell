@@ -44,8 +44,8 @@ configuration:
       - addLabel:
             label: Resolution-No Activity
       - addReply:
-          reply: This issue has been marked as "No Activity" as there has been no activity for 6 months. If you are the author, you can re-open the issue using the button below or submit a new issue with updated details.
-    eventResponderTasks:
+          reply: This issue has not had any activity in 6 months, if there is no further activity in seven days, the issue will be closed automatically.\n\nActivity in this case refers to comments on the issue. If the issue is closed and you are the author, you can re-open the issue using the button below. Please add more information to be considered during re-triage. If you are not the author but the issue is impacting you after it has been closed, please submit a new issue with updated details and a link to this issue and the original.
+eventResponderTasks:
     - description: Remove no resolution label if anyone comments while in 7 day window
       if:
       - payloadType: Issue_Comment
