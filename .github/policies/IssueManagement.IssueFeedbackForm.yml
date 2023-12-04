@@ -1,4 +1,4 @@
-id: IssueManagement.IssueFeedbackForm
+id: IssueFeedbackForm
 name: GitOps.PullRequestIssueManagement
 description: Bot to request the feedback for how we are doing in the repo
 owner:
@@ -8,7 +8,7 @@ where:
 configuration:
   resourceManagementConfiguration:
     eventResponderTasks:
-      - description: Automatically commenting for feedback when an issue is closed
+      - description: Automatically commenting for feedback when an issue is closed,
         triggerOnOwnActions: true
         if: 
           - isAction:

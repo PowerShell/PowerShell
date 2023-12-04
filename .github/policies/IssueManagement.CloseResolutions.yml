@@ -1,4 +1,4 @@
-id: IssueManagement.CloseResolutionTags
+id: CloseResolutionTags
 name: GitOps.PullRequestIssueManagement
 description: Closing issues with Resolution* 
 owner:
