@@ -42,7 +42,7 @@ configuration:
           days: 180
       actions:
       - addReply:
-          reply: This issue has not had any activity in 6 months, if this is a bug please try to reproduce on the latest version of PowerShell and reopen a new issue and reference this issue if this is still a blocker for you. 
+          reply: This issue has been marked as "No Activity" as there has been no activity for 6 months. If you are the author, you can re-open the issue using the button below or submit a new issue with updated details.
       - addLabel:
             label: Resolution-No Activity
     eventResponderTasks:
