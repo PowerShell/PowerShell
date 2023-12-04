@@ -8,7 +8,7 @@ where:
 configuration:
   resourceManagementConfiguration:
     eventResponderTasks:
-    - description: Remove Waiting on Author label if issue comment is from author
+    - description: Add feedback response for survey after PR and issues closed and do not have resolution no activity
       triggerOnOwnActions: true
       if:
       - isAction: 
