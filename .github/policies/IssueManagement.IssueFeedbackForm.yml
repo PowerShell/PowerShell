@@ -1,4 +1,4 @@
-id: IssueFeedbackForm
+id: IssueManagement.IssueFeedbackForm
 name: GitOps.PullRequestIssueManagement
 description: Bot to request the feedback for how we are doing in the repo
 owner:
