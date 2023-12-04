@@ -8,14 +8,15 @@ where:
 configuration:
   resourceManagementConfiguration:
     eventResponderTasks:
-    - description: bot to get feedback 
+    - description: Remove Waiting on Author label if issue comment is from author
+      triggerOnOwnActions: true
       if:
       - isAction: 
-          action: Closed
+        action: Closed
       - isNotLabeledWith:
           label: Resolution-No Activity
       then:
-        - addReply:
-            reply: " 📣 Hey @${issueAuthor}, how did we do? We would love to hear your feedback with the link below! 🗣️ \n\n🔗 https://forms.office.com/r/P926k48jRJ "
+      - addReply:
+          reply: " 📣 Hey @${issueAuthor}, how did we do? We would love to hear your feedback with the link below! 🗣️ \n\n🔗 https://forms.office.com/r/P926k48jRJ "
 onFailure:
 onSuccess:
