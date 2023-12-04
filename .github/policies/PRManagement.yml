@@ -86,16 +86,6 @@ configuration:
       - addLabel:
           label: Waiting on Author
     eventResponderTasks:
-    - description: Reopen issues with no activity if its the author who has commented
-      if: 
-      - payloadType: Issue_Comment
-      - isActivitySender:
-          issueAuthor: True
-      - hasLabel:
-          label: Resolution-No Activity
-      then:
-      - removeLabel:
-          label: Resolution-No Activity
     - description: If PR has AutoMerge Label then enable Automerge to squash
       if:
       - payloadType: Pull_Request
@@ -150,7 +140,7 @@ configuration:
       then:
       - removeLabel:
           label: Waiting on Author
-    - description: Remove Stale label if PR is closed by author
+    - description: Remove Stale label if PR has activity from author which is not closure
       if:
       - payloadType: Pull_Request
       - not:
@@ -198,7 +188,7 @@ configuration:
       then:
       - removeLabel:
           label: Review - Needed
-    - description: (?) Remove Review - Needed if issue comment is by admin or iSazonov
+    - description: Remove Review - Needed if issue comment is by admin or iSazonov
       if:
       - payloadType: Issue_Comment
       - hasLabel:
@@ -223,6 +213,5 @@ configuration:
       - payloadType: Issue_Comment
       then:
       - cleanEmailReply
-    
 onFailure:
 onSuccess:
