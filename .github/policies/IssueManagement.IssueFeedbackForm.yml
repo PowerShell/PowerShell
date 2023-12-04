@@ -10,10 +10,10 @@ configuration:
     eventResponderTasks:
     - description: bot to get feedback 
       if:
-        - isAction: 
-            action: Closed
-        - isNotLabeledWith:
-            label: Resolution-No Activity
+      - isAction: 
+          action: Closed
+      - isNotLabeledWith:
+          label: Resolution-No Activity
       then:
         - addReply:
             reply: " 📣 Hey @${issueAuthor}, how did we do? We would love to hear your feedback with the link below! 🗣️ \n\n🔗 https://forms.office.com/r/P926k48jRJ "
