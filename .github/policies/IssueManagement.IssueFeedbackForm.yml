@@ -1,6 +1,6 @@
 id: IssueManagement.IssueFeedbackForm
 name: GitOps.PullRequestIssueManagement
-description: Bot to request the feedback for how we are doing in the repo
+description: Bot to request the feedback for how we are doing in the repo, Automatically commenting for feedback when an issue is close
 owner:
 resource: repository
 disabled: false
@@ -8,15 +8,12 @@ where:
 configuration:
   resourceManagementConfiguration:
     eventResponderTasks:
-      - description: Automatically commenting for feedback when an issue is closed,
-        triggerOnOwnActions: true
-        if: 
-        - isAction:
-            action: Closed
-        - isNotLabeledWith:
-            label: Resolution-No Activity
-        then:
-        - addReply:
-            reply: "Hey @${issueAuthor}, how did we do? We would love to hear your feedback with the link below!\n\n- https://forms.office.com/r/P926k48jRJ "
+      triggerOnOwnActions: true
+    - if: 
+      - isAction: 
+          action: Closed
+    then:
+      - addReply:
+          reply: " 📣 Hey @${issueAuthor}, how did we do? We would love to hear your feedback with the link below! 🗣️ \n\n🔗 https://forms.office.com/r/P926k48jRJ "
 onFailure:
 onSuccess:
