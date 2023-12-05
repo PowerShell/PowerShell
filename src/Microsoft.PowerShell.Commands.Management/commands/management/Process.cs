@@ -2444,7 +2444,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (hasRedirection)
             {
-                // STARTF_USESTDHANDLES
+                // Set STARTF_USESTDHANDLES only if there is redirection.
                 lpStartupInfo.dwFlags = 0x100;
             }
 
@@ -2793,9 +2793,6 @@ namespace Microsoft.PowerShell.Commands
 
     internal static class ProcessNativeMethods
     {
-        [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true)]
-        public static extern IntPtr GetStdHandle(int whichHandle);
-
         [DllImport(PinvokeDllNames.CreateProcessWithLogonWDllName, CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CreateProcessWithLogonW(string userName,
