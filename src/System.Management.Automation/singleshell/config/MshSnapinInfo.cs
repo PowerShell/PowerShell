@@ -408,7 +408,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns true if the PSSnapIn Id is valid. A PSSnapIn is valid
-        /// if-and-only-if it contains only /// "Alpha Numeric","-","_","."
+        /// if-and-only-if it contains only "Alpha Numeric","-","_","."
         /// characters.
         /// </summary>
         /// <param name="psSnapinId">PSSnapIn Id to validate.</param>
