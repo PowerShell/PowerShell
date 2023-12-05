@@ -42,7 +42,7 @@ configuration:
           days: 180
       actions:
       - addLabel:
-            label: Resolution-No Activity
+          label: Resolution-No Activity
       - addReply:
           reply: "This issue has not had any activity in 6 months, if there is no further activity in seven days, the issue will be closed automatically.\n\nActivity in this case refers to comments on the issue. If the issue is closed and you are the author, you can re-open the issue using the button below. Please add more information to be considered during retriage. If you are not the author but the issue is impacting you after it has been closed, please submit a new issue with updated details and a link to this issue and the original."
     eventResponderTasks:
@@ -81,15 +81,5 @@ configuration:
       then:
       - removeLabel:
           label: Needs-Triage
-    - description: Remove Waiting on Author label if issue comment is from author
-      if:
-      - payloadType: Issue_Comment
-      - isActivitySender:
-          issueAuthor: True
-      - hasLabel:
-          label: Waiting on Author
-      then:
-      - removeLabel:
-          label: Waiting on Author
 onFailure:
 onSuccess:
