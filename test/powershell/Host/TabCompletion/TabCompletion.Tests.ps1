@@ -2012,9 +2012,8 @@ dir -Recurse `
         }
 
         It "Test complete module file name" {
-            $inputStr = "using module test"
+            $inputStr = "using module testm"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | ForEach-Object { Write-Host $_.CompletionText }
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly ".${separator}testModule.psm1"
         }
