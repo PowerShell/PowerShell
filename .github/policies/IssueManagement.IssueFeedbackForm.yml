@@ -1,6 +1,6 @@
 id: IssueManagement.IssueFeedbackForm
 name: GitOps.PullRequestIssueManagement
-description: Bot to request the feedback for how we are doing in the repo, Automatically commenting for feedback when an issue is close
+description: Bot to request the feedback for how we are doing in the repo, replies on closed PRs and issues that are NOT labeled with no activity
 owner:
 resource: repository
 disabled: false

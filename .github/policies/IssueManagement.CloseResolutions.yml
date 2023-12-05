@@ -53,7 +53,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as won't fix and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
       - closeIssue
-    - description: Close if marked as Resolution-No Activity after one day of no activity 
+    - description: Close if marked as Resolution-No Activity after seven day of no activity, no reply 
       frequencies:
       - hourly:
           hour: 12
