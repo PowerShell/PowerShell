@@ -10,6 +10,6 @@
     "sdkImageOverride": "8.0.100-rtm.23551.15"
   },
   "internalfeed": {
-    "url": "https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-7.4-ga/nuget/v2"
+    "url": ""
   }
 }
