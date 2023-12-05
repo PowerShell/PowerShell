@@ -40,7 +40,7 @@
     <PackageReference Include="System.DirectoryServices" Version="8.0.0" />
     <!--PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" /-->
     <PackageReference Include="System.Management" Version="8.0.0" />
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.2-mauipre.1.22102.15" />
+    <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="8.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="8.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
