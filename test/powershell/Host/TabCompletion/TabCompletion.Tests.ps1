@@ -1372,7 +1372,7 @@ class InheritedClassTest : System.Attribute
     Context "Cmdlet name completion" {
         BeforeAll {
             $testCases = @(
-                @{ inputStr = "get-c*item"; expected = "Get-ChildItem" }
+                @{ inputStr = "get-ch*item"; expected = "Get-ChildItem" }
                 @{ inputStr = "set-alia?"; expected = "Set-Alias" }
                 @{ inputStr = "s*-alias"; expected = "Set-Alias" }
                 @{ inputStr = "se*-alias"; expected = "Set-Alias" }
@@ -2063,7 +2063,7 @@ dir -Recurse `
         }
 
         It "Test complete module file name" {
-            $inputStr = "using module test"
+            $inputStr = "using module testm"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly ".${separator}testModule.psm1"
