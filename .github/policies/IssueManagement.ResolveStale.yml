@@ -81,5 +81,13 @@ configuration:
       then:
       - removeLabel:
           label: Needs-Triage
+    - description: Remove Keep Open label if closed by someone 
+      if:
+      - payloadType: Issues
+      - isAction:
+          action: Closed
+      then:
+      - removeLabel:
+          label: KeepOpen
 onFailure:
 onSuccess:
