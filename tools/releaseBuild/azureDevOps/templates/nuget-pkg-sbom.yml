@@ -95,7 +95,8 @@ steps:
 
   displayName: Build reference assemblies
   env:
-    __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
 - ${{ each value in parameters.ListOfFiles }}:
   - pwsh: |
