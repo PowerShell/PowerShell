@@ -888,7 +888,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will start the service.
         /// </summary>
         /// <param name="serviceController">Service to start.</param>
-        /// <returns>True iff the service was started.</returns>
+        /// <returns>True if-and-only-if the service was started.</returns>
         internal bool DoStartService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -944,7 +944,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="serviceController">Service to stop.</param>
         /// <param name="force">Stop dependent services.</param>
         /// <param name="waitForServiceToStop"></param>
-        /// <returns>True iff the service was stopped.</returns>
+        /// <returns>True if-and-only-if the service was stopped.</returns>
         internal List<ServiceController> DoStopService(ServiceController serviceController, bool force, bool waitForServiceToStop)
         {
             // Ignore ServiceController.CanStop.  CanStop will be set false
@@ -1094,7 +1094,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will pause the service.
         /// </summary>
         /// <param name="serviceController">Service to pause.</param>
-        /// <returns>True iff the service was paused.</returns>
+        /// <returns>True if-and-only-if the service was paused.</returns>
         internal bool DoPauseService(ServiceController serviceController)
         {
             Exception exception = null;
@@ -1174,7 +1174,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will resume the service.
         /// </summary>
         /// <param name="serviceController">Service to resume.</param>
-        /// <returns>True iff the service was resumed.</returns>
+        /// <returns>True if-and-only-if the service was resumed.</returns>
         internal bool DoResumeService(ServiceController serviceController)
         {
             Exception exception = null;
