@@ -2126,7 +2126,6 @@ namespace Microsoft.PowerShell.Commands
                     jobAssigned = jobObject.AssignProcessToJobObject(processInfo.Process);
                 }
 
-                // Addresses issue #20400: Start-Process does not populate the process object's exit code with NoNewWindow switch
                 // Because the process wasn't spawned by .NET, we need to trigger .NET to get a lock on the handle of the process.
                 // Otherwise, .NET silently throws this exception when accessing properties like ExitCode: Process was not started by this object, so requested information cannot be determined.
                 // Fetching the process handle will trigger Process object to update its internal state by calling SetProcessHandle, the result is discarded as it's not used later in this code.
