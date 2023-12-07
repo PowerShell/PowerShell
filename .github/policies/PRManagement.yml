@@ -222,10 +222,5 @@ configuration:
       - inPrLabel:
           label: In-PR
     
-    - description: Clean email reply if issue comment - NOTE may be broke
-      if:
-      - payloadType: Issue_Comment
-      then:
-      - cleanEmailReply
 onFailure:
 onSuccess:
