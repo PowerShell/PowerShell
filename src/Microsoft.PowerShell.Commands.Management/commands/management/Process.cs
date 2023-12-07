@@ -2126,9 +2126,11 @@ namespace Microsoft.PowerShell.Commands
                     jobAssigned = jobObject.AssignProcessToJobObject(processInfo.Process);
                 }
 
-                // Because the process wasn't spawned by .NET, we need to trigger .NET to get a lock on the handle of the process.
-                // Otherwise, .NET silently throws this exception when accessing properties like ExitCode: Process was not started by this object, so requested information cannot be determined.
-                // Fetching the process handle will trigger Process object to update its internal state by calling SetProcessHandle, the result is discarded as it's not used later in this code.
+                // Since the process wasn't spawned by .NET, we need to trigger .NET to get a lock on the handle of the process.
+                // Otherwise, accessing properties like `ExitCode` will throw the following exception:
+                //   "Process was not started by this object, so requested information cannot be determined."
+                // Fetching the process handle will trigger the `Process` object to update its internal state by calling `SetProcessHandle`,
+                // the result is discarded as it's not used later in this code.
                 _ = process.Handle;
 
                 // Resume the process now that is has been set up.
