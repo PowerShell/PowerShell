@@ -39,6 +39,14 @@ configuration:
           label: Resolution-No Activity
       - isNotLabeledWith:
           label: Issue-Meta
+      - isNotLabeledWith:
+          label: Review - Needed
+      - isNotLabeledWith:
+          label: Review - Committee
+      - isNotLabeledWith:
+          label: Review - Maintainer
+      - isNotLabeledWith:
+          label: WG-NeedsReview
       - noActivitySince:
           days: 180
       actions:
