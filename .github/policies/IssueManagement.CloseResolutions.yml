@@ -23,6 +23,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as declined and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
       - closeIssue
+    
     - description: Close if marked as Resolution-By Design after one day of no activity
       frequencies:
       - hourly:
@@ -38,6 +39,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as by-design and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
       - closeIssue
+    
     - description: Close if marked as Resolution-Won't Fix after one day of no activity
       frequencies:
       - hourly:
@@ -53,6 +55,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as won't fix and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
       - closeIssue
+    
     - description: Close if marked as Resolution-No Activity after seven day of no activity, no reply 
       frequencies:
       - hourly:
@@ -66,6 +69,7 @@ configuration:
           days: 7
       actions:
       - closeIssue
+    
     - description: Close if marked as Resolution-Duplicate after one day of no activity
       frequencies:
       - hourly:
@@ -81,6 +85,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as duplicate and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
       - closeIssue
+    
     - description: Close if marked as Resolution-External after one day of no activity
       frequencies:
       - hourly:
@@ -96,6 +101,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as external and has not had any activity for **1 day**. It has been be closed for housekeeping purposes.
       - closeIssue
+    
     - description: Close if marked as Resolution-Answered after one day of no activity
       frequencies:
       - hourly:
@@ -111,6 +117,7 @@ configuration:
       - addReply:
           reply: This issue has been marked as answered and has not had any activity for **1 day**. It has been closed for housekeeping purposes.
       - closeIssue
+    
     - description: Close if marked as Resolution-Fixed after one day of no activity
       frequencies:
       - hourly:

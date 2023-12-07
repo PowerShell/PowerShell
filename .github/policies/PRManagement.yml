@@ -23,6 +23,7 @@ configuration:
           days: 10
       actions:
       - closeIssue
+
     - description: If PR has Waiting on Author label and no activity in 15 days label as stale.
       frequencies:
       - hourly:
@@ -41,6 +42,7 @@ configuration:
           label: Stale
       - addReply:
           reply: This pull request has been automatically marked as stale because it has been marked as requiring author feedback but has not had any activity for **15 days**. It will be closed if no further activity occurs **within 10 days of this comment**.
+    
     - description: Label Review - Needed if PR is opened an no activity in 7 days but no other labels on it
       frequencies:
       - hourly:
@@ -67,6 +69,7 @@ configuration:
             This pull request has been automatically marked as Review Needed because it has been there has not been any activity for **7 days**.
 
             Maintainer, please provide feedback and/or mark it as `Waiting on Author`
+    
     - description: Add waiting on Author label if is draft PR, if no activity label
       frequencies:
       - hourly:
@@ -86,6 +89,7 @@ configuration:
       - addLabel:
           label: Waiting on Author
     eventResponderTasks:
+    
     - description: If PR has AutoMerge Label then enable Automerge to squash
       if:
       - payloadType: Pull_Request
@@ -94,6 +98,7 @@ configuration:
       then:
       - enableAutoMerge:
           mergeMethod: Squash
+    
     - description: If PR has label AutoMerge Removed then disable Automerge
       if:
       - payloadType: Pull_Request
@@ -101,6 +106,7 @@ configuration:
           label: AutoMerge
       then:
       - disableAutoMerge
+    
     - description: If PR review requests changes then add label waiting on Author and remove review needed
       if: 
       - payloadType: Pull_Request_Review
@@ -113,6 +119,7 @@ configuration:
           label: Waiting on Author
       - removeLabel:
           label: Review - Needed
+    
     - description: Remove Waiting on author if has label and activity from author
       if:
       - payloadType: Pull_Request
@@ -130,6 +137,7 @@ configuration:
       then:
       - removeLabel:
           label: Waiting on Author
+    
     - description: remove waiting on author if review by author and has waiting on author
       if:
       - payloadType: Pull_Request_Review
@@ -140,6 +148,7 @@ configuration:
       then:
       - removeLabel:
           label: Waiting on Author
+    
     - description: Remove Stale label if PR has activity from author which is not closure
       if:
       - payloadType: Pull_Request
@@ -153,6 +162,7 @@ configuration:
       then:
       - removeLabel:
           label: Stale
+    
     - description: Remove Stale label if PR is reviewed
       if:
       - payloadType: Pull_Request_Review
@@ -161,6 +171,7 @@ configuration:
       then:
       - removeLabel:
           label: Stale
+    
     - description: Remove Review Needed if PR is created or done any action by Admins and iSazonov
       if:
       - payloadType: Pull_Request
@@ -188,6 +199,7 @@ configuration:
       then:
       - removeLabel:
           label: Review - Needed
+    
     - description: Remove Review - Needed if issue comment is by admin or iSazonov
       if:
       - payloadType: Issue_Comment
@@ -202,12 +214,14 @@ configuration:
       then:
       - removeLabel:
           label: Review - Needed
+    
     - description: If inPRLabel then label in PR
       if:
       - payloadType: Pull_Request
       then:
       - inPrLabel:
           label: In-PR
+    
     - description: Clean email reply if issue comment - NOTE may be broke
       if:
       - payloadType: Issue_Comment
