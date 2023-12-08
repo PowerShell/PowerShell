@@ -47,6 +47,8 @@ configuration:
           label: Review - Maintainer
       - isNotLabeledWith:
           label: WG-NeedsReview
+      - isNotLabeledWith:
+          label: Up-for-Grabs
       - noActivitySince:
           days: 180
       actions:
