@@ -2421,44 +2421,39 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetStartupInfo(ProcessStartInfo startinfo, ref ProcessNativeMethods.STARTUPINFO lpStartupInfo, ref int creationFlags)
         {
+            bool hasRedirection = false;
             // RedirectionStandardInput
             if (_redirectstandardinput != null)
             {
+                hasRedirection = true;
                 startinfo.RedirectStandardInput = true;
                 _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
                 lpStartupInfo.hStdInput = GetSafeFileHandleForRedirection(_redirectstandardinput, FileMode.Open);
-            }
-            else
-            {
-                lpStartupInfo.hStdInput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-10), false);
             }
 
             // RedirectionStandardOutput
             if (_redirectstandardoutput != null)
             {
+                hasRedirection = true;
                 startinfo.RedirectStandardOutput = true;
                 _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
                 lpStartupInfo.hStdOutput = GetSafeFileHandleForRedirection(_redirectstandardoutput, FileMode.Create);
-            }
-            else
-            {
-                lpStartupInfo.hStdOutput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-11), false);
             }
 
             // RedirectionStandardError
             if (_redirectstandarderror != null)
             {
+                hasRedirection = true;
                 startinfo.RedirectStandardError = true;
                 _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
                 lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, FileMode.Create);
             }
-            else
-            {
-                lpStartupInfo.hStdError = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-12), false);
-            }
 
-            // STARTF_USESTDHANDLES
-            lpStartupInfo.dwFlags = 0x100;
+            if (hasRedirection)
+            {
+                // Set STARTF_USESTDHANDLES only if there is redirection.
+                lpStartupInfo.dwFlags = 0x100;
+            }
 
             if (startinfo.CreateNoWindow)
             {
@@ -2805,9 +2800,6 @@ namespace Microsoft.PowerShell.Commands
 
     internal static class ProcessNativeMethods
     {
-        [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true)]
-        public static extern IntPtr GetStdHandle(int whichHandle);
-
         [DllImport(PinvokeDllNames.CreateProcessWithLogonWDllName, CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CreateProcessWithLogonW(string userName,
