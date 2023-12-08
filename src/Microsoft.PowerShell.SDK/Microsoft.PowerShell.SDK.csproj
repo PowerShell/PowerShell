@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="5.0.17" />
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
@@ -33,6 +34,7 @@
     <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.3" />
     <PackageReference Include="System.ServiceModel.Security" Version="4.10.3" />
     <PackageReference Include="System.Private.ServiceModel" Version="4.10.3" />
+    <PackageReference Include="System.Web.Services.Description" Version="4.10.3" />
     <!-- the source could not be found for the following package(s) -->
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.0" />
   </ItemGroup>
