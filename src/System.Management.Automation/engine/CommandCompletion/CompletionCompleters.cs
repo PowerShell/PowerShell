@@ -4786,6 +4786,7 @@ namespace System.Management.Automation
                     foreach (dynamic child in childItemOutput)
                     {
                         var childName = GetChildNameFromPsObject(child, provider.ItemSeparator);
+
                         // TryAdd is used because some providers (like SCCM) may include duplicate PSPaths in a container.
                         if (childrenInfoTable.TryAdd(childName, child.PSIsContainer))
                         {
