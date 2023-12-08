@@ -47,8 +47,7 @@ configuration:
           label: Review - Maintainer
       - isNotLabeledWith:
           label: WG-NeedsReview
-      - isNotLabeledWith:
-          label: Up-for-Grabs
+     # Up for grabs labeled issues will get closed after a 6 months of no activity unless KeepOpen label is included
       - noActivitySince:
           days: 180
       actions:
