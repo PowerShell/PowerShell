@@ -9,8 +9,8 @@ namespace Microsoft.Management.UI.Internal
     /// The IsEmptyFilterRule evaluates an item to determine whether it
     /// is empty or not.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class IsEmptyFilterRule : FilterRule
     {
         /// <summary>

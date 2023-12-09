@@ -261,31 +261,26 @@ namespace System.Management.Automation.Internal
         /// <exception cref="ObjectDisposedException"></exception>
         internal int Add(CommandProcessorBase commandProcessor)
         {
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+            if (commandProcessor is NativeCommandProcessor nativeCommand)
             {
-                if (commandProcessor is NativeCommandProcessor nativeCommand)
+                if (_lastNativeCommand is not null)
                 {
-                    if (_lastNativeCommand is not null)
+                    // Only report experimental feature usage once per pipeline.
+                    if (!_haveReportedNativePipeUsage)
                     {
-                        // Only report experimental feature usage once per pipeline.
-                        if (!_haveReportedNativePipeUsage)
-                        {
-                            ApplicationInsightsTelemetry.SendExperimentalUseData(
-                                ExperimentalFeature.PSNativeCommandPreserveBytePipe,
-                                "p");
-                            _haveReportedNativePipeUsage = true;
-                        }
-
-                        _lastNativeCommand.DownStreamNativeCommand = nativeCommand;
-                        nativeCommand.UpstreamIsNativeCommand = true;
+                        ApplicationInsightsTelemetry.SendExperimentalUseData("PSNativeCommandPreserveBytePipe", "p");
+                        _haveReportedNativePipeUsage = true;
                     }
 
-                    _lastNativeCommand = nativeCommand;
+                    _lastNativeCommand.DownStreamNativeCommand = nativeCommand;
+                    nativeCommand.UpstreamIsNativeCommand = true;
                 }
-                else
-                {
-                    _lastNativeCommand = null;
-                }
+
+                _lastNativeCommand = nativeCommand;
+            }
+            else
+            {
+                _lastNativeCommand = null;
             }
 
             commandProcessor.CommandRuntime.PipelineProcessor = this;
@@ -1446,7 +1441,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="e">Error which terminated the pipeline.</param>
         /// <param name="command">Command against which to log SecondFailure.</param>
-        /// <returns>True iff the pipeline was not already stopped.</returns>
+        /// <returns>True if-and-only-if the pipeline was not already stopped.</returns>
         internal bool RecordFailure(Exception e, InternalCommand command)
         {
             bool wasStopping = false;

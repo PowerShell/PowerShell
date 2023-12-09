@@ -4,7 +4,7 @@ on:
       - master
       - 'release/**'
 
-name: Check links for modified files
+name: Check modified markdown files
 permissions:
   contents: read
 
@@ -12,10 +12,30 @@ jobs:
   markdown-link-check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: gaurav-nelson/github-action-markdown-link-check@v1
       with:
         use-quiet-mode: 'yes'
         use-verbose-mode: 'yes'
         check-modified-files-only: 'yes'
         config-file: .github/workflows/markdown-link/config.json
+  markdown-lint:
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # Full git history is needed to get a proper
+        # list of changed files within `super-linter`
+        fetch-depth: 0
+    - name: Lint Markdown
+      uses: super-linter/super-linter@v5
+      env:
+        VALIDATE_ALL_CODEBASE: false
+        DEFAULT_BRANCH: master
+        FILTER_REGEX_INCLUDE: .*\.md
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VALIDATE_EDITORCONFIG: false

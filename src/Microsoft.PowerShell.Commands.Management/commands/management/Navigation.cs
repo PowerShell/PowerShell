@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the credential parameter.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        [Credential()]
+        [Credential]
         public PSCredential Credential { get; set; }
 
         #endregion Parameters
@@ -4128,7 +4128,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the provider that will be removed.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] PSProvider
         {
             get => _provider;

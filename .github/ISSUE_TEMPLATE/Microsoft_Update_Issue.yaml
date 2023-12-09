@@ -23,7 +23,7 @@ body:
       required: true
     - label: Refer to the [FAQ](https://github.com/PowerShell/PowerShell/blob/master/docs/FAQ.md).
       required: true
-    - label: Refer to [Differences between Windows PowerShell 5.1 and PowerShell](https://docs.microsoft.com/powershell/scripting/whats-new/differences-from-windows-powershell).
+    - label: Refer to [Differences between Windows PowerShell 5.1 and PowerShell](https://learn.microsoft.com/powershell/scripting/whats-new/differences-from-windows-powershell).
       required: true
 - type: textarea
   attributes:

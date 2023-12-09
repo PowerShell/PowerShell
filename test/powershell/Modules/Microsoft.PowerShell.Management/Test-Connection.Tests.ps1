@@ -105,10 +105,16 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
         It "Force IPv4 with implicit PingOptions" {
             $result = Test-Connection $testAddress -Count 1 -IPv4
 
-            $result[0].Address | Should -BeExactly $testAddress
-            $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
-            if ($IsWindows) {
-                $result[0].Reply.Options.DontFragment | Should -BeFalse
+            $resultStatus = $result.Reply.Status
+            if ($resultStatus -eq "Success") {
+                $result[0].Address | Should -BeExactly $testAddress
+                $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
+                if ($IsWindows) {
+                    $result[0].Reply.Options.DontFragment | Should -BeFalse
+                }
+            }
+            else {
+                Set-ItResult -Skipped -Because "Ping reply not Success, was: '$resultStatus'"
             }
         }
 
@@ -256,6 +262,15 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
 
     Context "MTUSizeDetect" {
         It "MTUSizeDetect works" {
+
+            $platform = Get-PlatformInfo
+            $platform | Out-String -Stream | Write-Verbose -Verbose
+
+            if ($platform.platform -match 'sles' -and $platform.version -match '15') {
+                Set-ItResult -Skipped -Because "MTUSizeDetect is not supported on OpenSUSE 15"
+                return
+            }
+
             $result = Test-Connection $testAddress -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus

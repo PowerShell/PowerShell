@@ -1304,6 +1304,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
     <value>Conflict in using PsDscRunAsCredential for Resource {0} because it already specifies PsDscRunAsCredential value. We can only use one PsDscRunAsCredential for the composite resource. </value>
   </data>
+  <data name="PsDscMissingSchemaStore" xml:space="preserve">
+    <value>Unable to find DSC schema store at "{0}". Please ensure PSDesiredStateConfiguration v3 module is installed.</value>
+  </data>
   <data name="ParserError" xml:space="preserve">
     <value>{0}</value>
   </data>

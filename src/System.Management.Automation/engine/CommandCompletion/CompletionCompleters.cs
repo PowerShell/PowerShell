@@ -708,7 +708,18 @@ namespace System.Management.Automation
                     break;
             }
 
-            Diagnostics.Assert(matchedParameterName != null, "we should find matchedParameterName from the BoundArguments");
+            if (matchedParameterName is null)
+            {
+                // The pseudo binder has skipped a parameter
+                // This will happen when completing parameters for commands with dynamic parameters.
+                result = GetParameterCompletionResults(
+                    parameterName,
+                    bindingInfo.ValidParameterSetsFlags,
+                    bindingInfo.UnboundParameters,
+                    withColon);
+                return result;
+            }
+
             MergedCompiledCommandParameter param = bindingInfo.BoundParameters[matchedParameterName];
 
             WildcardPattern pattern = WildcardPattern.Get(parameterName + "*", WildcardOptions.IgnoreCase);
@@ -4618,9 +4629,24 @@ namespace System.Management.Automation
                 string basePath;
                 if (!relativePaths)
                 {
-                    basePath = dirInfo.FullName.EndsWith(provider.ItemSeparator)
-                        ? providerPrefix + dirInfo.FullName
-                        : providerPrefix + dirInfo.FullName + provider.ItemSeparator;
+                    if (pathInfo.Drive is null)
+                    {
+                        basePath = dirInfo.FullName;
+                    }
+                    else
+                    {
+                        int stringStartIndex = pathInfo.Drive.Root.EndsWith(provider.ItemSeparator) && pathInfo.Drive.Root.Length > 1
+                            ? pathInfo.Drive.Root.Length - 1
+                            : pathInfo.Drive.Root.Length;
+
+                        basePath = pathInfo.Drive.VolumeSeparatedByColon
+                            ? string.Concat(pathInfo.Drive.Name, ":", dirInfo.FullName.AsSpan(stringStartIndex))
+                            : string.Concat(pathInfo.Drive.Name, dirInfo.FullName.AsSpan(stringStartIndex));
+                    }
+
+                    basePath = basePath.EndsWith(provider.ItemSeparator)
+                        ? providerPrefix + basePath
+                        : providerPrefix + basePath + provider.ItemSeparator;
                     basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
                 }
                 else
@@ -4738,17 +4764,20 @@ namespace System.Management.Automation
                     // Save relevant info and try again to get just the names.
                     foreach (dynamic child in childItemOutput)
                     {
-                        childrenInfoTable.Add(GetChildNameFromPsObject(child, provider.ItemSeparator), child.PSIsContainer);
+                        // TryAdd is used because some providers (like SCCM) may include duplicate PSPaths in a container.
+                        _ = childrenInfoTable.TryAdd(GetChildNameFromPsObject(child, provider.ItemSeparator), child.PSIsContainer);
                     }
 
                     _ = context.Helper.CurrentPowerShell
                         .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-ChildItem")
                         .AddParameter("LiteralPath", pathInfo.Path)
-                        .AddParameter("Name");
+                        .AddParameter("Name")
+                        .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object")
+                        .AddParameter("Unique");
                     childItemOutput = context.Helper.ExecuteCurrentPowerShell(out _);
-                    foreach (var child in childItemOutput)
+                    foreach (PSObject child in childItemOutput)
                     {
-                        var childName = (string)child.BaseObject;
+                        string childName = (string)child.BaseObject;
                         childNameList.Add(childName);
                     }
                 }
@@ -4757,8 +4786,12 @@ namespace System.Management.Automation
                     foreach (dynamic child in childItemOutput)
                     {
                         var childName = GetChildNameFromPsObject(child, provider.ItemSeparator);
-                        childrenInfoTable.Add(childName, child.PSIsContainer);
-                        childNameList.Add(childName);
+
+                        // TryAdd is used because some providers (like SCCM) may include duplicate PSPaths in a container.
+                        if (childrenInfoTable.TryAdd(childName, child.PSIsContainer))
+                        {
+                            childNameList.Add(childName);
+                        }
                     }
                 }
 
@@ -5375,6 +5408,20 @@ namespace System.Management.Automation
             "pv"
         };
 
+        private static readonly HashSet<string> s_localScopeCommandNames = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Microsoft.PowerShell.Core\\ForEach-Object",
+            "ForEach-Object",
+            "foreach",
+            "%",
+            "Microsoft.PowerShell.Core\\Where-Object",
+            "Where-Object",
+            "where",
+            "?",
+            "BeforeAll",
+            "BeforeEach"
+        };
+
         private sealed class VariableInfo
         {
             internal Type LastDeclaredConstraint;
@@ -5592,6 +5639,17 @@ namespace System.Management.Automation
                 return AstVisitAction.Continue;
             }
 
+            public override AstVisitAction VisitForEachStatement(ForEachStatementAst forEachStatementAst)
+            {
+                if (forEachStatementAst.Extent.StartOffset > StopSearchOffset || forEachStatementAst.Variable == CompletionVariableAst)
+                {
+                    return AstVisitAction.StopVisit;
+                }
+
+                SaveVariableInfo(forEachStatementAst.Variable.VariablePath.UserPath, variableType: null, isConstraint: false);
+                return AstVisitAction.Continue;
+            }
+
             public override AstVisitAction VisitAttribute(AttributeAst attributeAst)
             {
                 // Attributes can't assign values to variables so they aren't interesting.
@@ -5605,12 +5663,46 @@ namespace System.Management.Automation
 
             public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
             {
-                return scriptBlockExpressionAst != Top ? AstVisitAction.SkipChildren : AstVisitAction.Continue;
+                if (scriptBlockExpressionAst == Top)
+                {
+                    return AstVisitAction.Continue;
+                }
+
+                Ast parent = scriptBlockExpressionAst.Parent;
+                // This loop checks if the scriptblock is used as a command, or an argument for a command, eg: ForEach-Object -Process {$Var1 = "Hello"}, {Var2 = $true}
+                while (true)
+                {
+                    if (parent is CommandAst cmdAst)
+                    {
+                        string cmdName = cmdAst.GetCommandName();
+                        return s_localScopeCommandNames.Contains(cmdName)
+                            || (cmdAst.CommandElements[0] is ScriptBlockExpressionAst && cmdAst.InvocationOperator == TokenKind.Dot)
+                            ? AstVisitAction.Continue
+                            : AstVisitAction.SkipChildren;
+                    }
+
+                    if (parent is not CommandExpressionAst and not PipelineAst and not StatementBlockAst and not ArrayExpressionAst and not ArrayLiteralAst)
+                    {
+                        return AstVisitAction.SkipChildren;
+                    }
+
+                    parent = parent.Parent;
+                }
             }
 
-            public override AstVisitAction VisitScriptBlock(ScriptBlockAst scriptBlockAst)
+            public override AstVisitAction VisitDataStatement(DataStatementAst dataStatementAst)
             {
-                return scriptBlockAst != Top ? AstVisitAction.SkipChildren : AstVisitAction.Continue;
+                if (dataStatementAst.Extent.StartOffset >= StopSearchOffset)
+                {
+                    return AstVisitAction.StopVisit;
+                }
+
+                if (dataStatementAst.Variable is not null)
+                {
+                    SaveVariableInfo(dataStatementAst.Variable, variableType: null, isConstraint: false);
+                }
+
+                return AstVisitAction.SkipChildren;
             }
         }
 

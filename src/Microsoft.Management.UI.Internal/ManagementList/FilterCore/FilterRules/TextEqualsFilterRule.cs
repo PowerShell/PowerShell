@@ -10,8 +10,8 @@ namespace Microsoft.Management.UI.Internal
     /// The TextEqualsFilterRule class evaluates a string item to
     /// check if it is equal to the rule's value.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class TextEqualsFilterRule : TextFilterRule
     {
         private static readonly string TextEqualsCharactersRegexPattern = "^{0}$";

@@ -48,8 +48,70 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
             Pop-Location
         }
     }
-    It 'Resolve-Path should support user specified base paths' {
-        $Expected = Join-Path -Path .\ -ChildPath fakeroot
-        Resolve-Path -Path $fakeRoot -RelativeBasePath $testRoot | Should -BeExactly $Expected
+    It 'Resolve-Path RelativeBasePath should handle <Scenario>' -TestCases @(
+        @{
+            Scenario = "Absolute Path, Absolute ReleativeBasePath"
+            Path     = $root
+            Basepath = $testRoot
+            Expected = $root, ".$([System.IO.Path]::DirectorySeparatorChar)fakeroot"
+            CD       = $null
+        }
+        @{
+            Scenario = "Relative Path, Absolute ReleativeBasePath"
+            Path     = ".$([System.IO.Path]::DirectorySeparatorChar)fakeroot"
+            Basepath = $testRoot
+            Expected = $root, ".$([System.IO.Path]::DirectorySeparatorChar)fakeroot"
+            CD       = $null
+        }
+        @{
+            Scenario = "Relative Path, Relative ReleativeBasePath"
+            Path     = ".$([System.IO.Path]::DirectorySeparatorChar)fakeroot"
+            Basepath = ".$([System.IO.Path]::DirectorySeparatorChar)"
+            Expected = $root, ".$([System.IO.Path]::DirectorySeparatorChar)fakeroot"
+            CD       = $testRoot
+        }
+        @{
+            Scenario = "Invalid Path, Absolute ReleativeBasePath"
+            Path     = Join-Path $testRoot ThisPathDoesNotExist
+            Basepath = $root
+            Expected = $null
+            CD       = $null
+        }
+        @{
+            Scenario = "Invalid Path, Invalid ReleativeBasePath"
+            Path     = Join-Path $testRoot ThisPathDoesNotExist
+            Basepath = Join-Path $testRoot ThisPathDoesNotExist
+            Expected = $null
+            CD       = $null
+        }
+    ) -Test {
+        param($Path, $BasePath, $Expected, $CD)
+        
+        if ($null -eq $Expected)
+        {
+            {Resolve-Path -Path $Path -RelativeBasePath $BasePath -ErrorAction Stop} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
+            {Resolve-Path -Path $Path -RelativeBasePath $BasePath -ErrorAction Stop -Relative} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
+        }
+        else
+        {
+            try
+            {
+                $OldLocation = if ($null -ne $CD)
+                {
+                    $PWD
+                    Set-Location $CD
+                }
+
+                (Resolve-Path -Path $Path -RelativeBasePath $BasePath).ProviderPath | Should -BeExactly $Expected[0]
+                Resolve-Path -Path $Path -RelativeBasePath $BasePath -Relative | Should -BeExactly $Expected[1]
+            }
+            finally
+            {
+                if ($null -ne $OldLocation)
+                {
+                    Set-Location $OldLocation
+                }
+            }
+        }
     }
 }
