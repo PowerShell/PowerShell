@@ -175,10 +175,10 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 openfilestream = new FileStream(
-                    path, 
-                    FileMode.Open, 
-                    FileAccess.Read, 
-                    FileShare.Read, 
+                    path,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.Read,
                     64 * 1024,
                     FileOptions.SequentialScan);
                 byte[] bytehash = ComputeHash(openfilestream);
