@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+Import-Module HelpersCommon
+
 Describe 'Online help tests for PowerShell Cmdlets' -Tags "Feature" {
 
     # The csv files (V2Cmdlets.csv and V3Cmdlets.csv) contain a list of cmdlets and expected HelpURIs.
@@ -59,5 +61,20 @@ Describe 'Get-Help -Online is not supported on Nano Server and IoT' -Tags "CI" {
 
     It "Get-help -online <cmdletName> throws InvalidOperation." -Skip:$skipTest {
         { Get-Help Get-Help -Online } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetHelpCommand"
+    }
+}
+
+Describe 'Get-Help should throw on network paths' -Tags "CI" {
+    BeforeAll {
+        $script:skipTest = -not $IsWindows
+    }
+
+    It "Get-Help should throw not on <command>" -Skip:$skipTest -TestCases (Get-HelpNetworkTestCases -PositiveCases) {
+        param(
+            $Command,
+            $ExpectedError
+        )
+
+        { Get-Help -Name $Command  } | Should -Not -Throw
     }
 }

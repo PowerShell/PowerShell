@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Security;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -1311,6 +1312,28 @@ namespace System.Management.Automation
 
             return resultType;
         }
+
+        /// <summary>
+        /// Returns only the elements that passed the attribute's validation.
+        /// </summary>
+        /// <param name="elementsToValidate">The objects to validate.</param>
+        internal IEnumerable GetValidatedElements(IEnumerable elementsToValidate)
+        {
+            foreach (var el in elementsToValidate)
+            {
+                try
+                {
+                    ValidateElement(el);
+                }
+                catch (ValidationMetadataException)
+                {
+                    // Element was not in range - drop
+                    continue;
+                }
+
+                yield return el;
+            }
+        }
     }
 
     /// <summary>
@@ -1333,11 +1356,11 @@ namespace System.Management.Automation
         /// Gets or sets the custom error message pattern that is displayed to the user.
         /// The text representation of the object being validated and the validating regex is passed as
         /// the first and second formatting parameters to the ErrorMessage formatting pattern.
-        /// <example>
+        /// <c>
         /// <code>
         /// [ValidatePattern("\s+", ErrorMessage="The text '{0}' did not pass validation of regex '{1}'")]
         /// </code>
-        /// </example>
+        /// </c>
         /// </summary>
         public string ErrorMessage { get; set; }
 
@@ -1399,11 +1422,11 @@ namespace System.Management.Automation
         /// Gets or sets the custom error message that is displayed to the user.
         /// The item being validated and the validating scriptblock is passed as the first and second
         /// formatting argument.
-        /// <example>
+        /// <c>
         /// <code>
         /// [ValidateScript("$_ % 2", ErrorMessage = "The item '{0}' did not pass validation of script '{1}'")]
         /// </code>
-        /// </example>
+        /// </c>
         /// </summary>
         public string ErrorMessage { get; set; }
 
@@ -1664,11 +1687,11 @@ namespace System.Management.Automation
         /// Gets or sets the custom error message that is displayed to the user.
         /// The item being validated and a text representation of the validation set is passed as the
         /// first and second formatting argument to the <see cref="ErrorMessage"/> formatting pattern.
-        /// <example>
+        /// <c>
         /// <code>
         /// [ValidateSet("A","B","C", ErrorMessage="The item '{0}' is not part of the set '{1}'.")
         /// </code>
-        /// </example>
+        /// </c>
         /// </summary>
         public string ErrorMessage { get; set; }
 
@@ -1829,11 +1852,21 @@ namespace System.Management.Automation
             {
                 if (ExecutionContext.IsMarkedAsUntrusted(arguments))
                 {
-                    throw new ValidationMetadataException(
-                        "ValidateTrustedDataFailure",
-                        null,
-                        Metadata.ValidateTrustedDataFailure,
-                        arguments);
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateTrustedDataFailure",
+                            null,
+                            Metadata.ValidateTrustedDataFailure,
+                            arguments);
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: null,
+                        title: Metadata.WDACParameterArgNotTrustedLogTitle,
+                        message: StringUtil.Format(Metadata.WDACParameterArgNotTrustedMessage, arguments),
+                        fqid: "ParameterArgumentNotTrusted",
+                        dropIntoDebugger: true);
                 }
             }
         }

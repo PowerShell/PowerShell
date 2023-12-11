@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         /// Any using statements required by the auto-generated type.
         /// </summary>
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
-        [ValidateNotNull()]
+        [ValidateNotNull]
         [Alias("Using")]
         public string[] UsingNamespace { get; set; } = Array.Empty<string>();
 
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Flag to pass the resulting types along.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>
@@ -556,15 +556,24 @@ namespace Microsoft.PowerShell.Commands
         {
             // Prevent code compilation in ConstrainedLanguage mode, or NoLanguage mode under system lock down.
             if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage ||
-                (SessionState.LanguageMode == PSLanguageMode.NoLanguage && 
-                 SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce))
+                (SessionState.LanguageMode == PSLanguageMode.NoLanguage && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce))
             {
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSNotSupportedException(AddTypeStrings.CannotDefineNewType),
-                        nameof(AddTypeStrings.CannotDefineNewType),
-                        ErrorCategory.PermissionDenied,
-                        targetObject: null));
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            new PSNotSupportedException(AddTypeStrings.CannotDefineNewType),
+                            nameof(AddTypeStrings.CannotDefineNewType),
+                            ErrorCategory.PermissionDenied,
+                            targetObject: null));
+                }
+
+                SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
+                    title: AddTypeStrings.AddTypeLogTitle,
+                    message: AddTypeStrings.AddTypeLogMessage,
+                    fqid: "AddTypeCmdletDisabled",
+                    dropIntoDebugger: true);
             }
 
             // 'ConsoleApplication' and 'WindowsApplication' types are currently not working in .NET Core

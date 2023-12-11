@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -32,7 +33,8 @@ namespace Microsoft.PowerShell.Commands
         private bool _skipCertificateCheck;
         private bool _noProxy;
         private bool _disposed;
-        private int _timeoutSec;
+        private TimeSpan _connectionTimeout;
+        private UnixDomainSocketEndPoint? _unixSocket;
 
         /// <summary>
         /// Contains true if an existing HttpClient had to be disposed and recreated since the WebSession was last used.
@@ -142,7 +144,9 @@ namespace Microsoft.PowerShell.Commands
 
         internal bool SkipCertificateCheck { set => SetStructVar(ref _skipCertificateCheck, value); }
 
-        internal int TimeoutSec { set => SetStructVar(ref _timeoutSec, value); }
+        internal TimeSpan ConnectionTimeout { set => SetStructVar(ref _connectionTimeout, value); }
+
+        internal UnixDomainSocketEndPoint UnixSocket { set => SetClassVar(ref _unixSocket, value); }
 
         internal bool NoProxy
         {
@@ -195,7 +199,18 @@ namespace Microsoft.PowerShell.Commands
 
         private HttpClient CreateHttpClient()
         {
-            HttpClientHandler handler = new();
+            SocketsHttpHandler handler = new();
+
+            if (_unixSocket is not null)
+            {
+                handler.ConnectCallback = async (context, token) =>
+                {
+                    Socket socket = new(AddressFamily.Unix, SocketType.Stream, ProtocolType.IP);
+                    await socket.ConnectAsync(_unixSocket).ConfigureAwait(false);
+
+                    return new NetworkStream(socket, ownsSocket: false);
+                };
+            }
 
             handler.CookieContainer = Cookies;
             handler.AutomaticDecompression = DecompressionMethods.All;
@@ -204,9 +219,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 handler.Credentials = Credentials;
             }
-            else
+            else if (UseDefaultCredentials)
             {
-                handler.UseDefaultCredentials = UseDefaultCredentials;
+                handler.Credentials = CredentialCache.DefaultCredentials;
             }
 
             if (_noProxy)
@@ -220,13 +235,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (Certificates is not null)
             {
-                handler.ClientCertificates.AddRange(Certificates);
+                handler.SslOptions.ClientCertificates = new X509CertificateCollection(Certificates);
             }
 
             if (_skipCertificateCheck)
             {
-                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                handler.SslOptions.RemoteCertificateValidationCallback = delegate { return true; };
             }
 
             handler.AllowAutoRedirect = _allowAutoRedirect;
@@ -235,12 +249,12 @@ namespace Microsoft.PowerShell.Commands
                 handler.MaxAutomaticRedirections = MaximumRedirection;
             }
 
-            handler.SslProtocols = (SslProtocols)_sslProtocol;
+            handler.SslOptions.EnabledSslProtocols = (SslProtocols)_sslProtocol;
 
-            // Check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
+            // Check timeout setting (in seconds)
             return new HttpClient(handler)
             {
-                Timeout = _timeoutSec is 0 ? TimeSpan.FromMilliseconds(Timeout.Infinite) : TimeSpan.FromSeconds(_timeoutSec)
+                Timeout = _connectionTimeout
             };
         }
 

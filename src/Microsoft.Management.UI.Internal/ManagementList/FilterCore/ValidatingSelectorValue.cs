@@ -16,8 +16,8 @@ namespace Microsoft.Management.UI.Internal
     /// <typeparam name="T">
     /// The generic parameter.
     /// </typeparam>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class ValidatingSelectorValue<T> : ValidatingValueBase
     {
         #region Properties
@@ -131,11 +131,6 @@ namespace Microsoft.Management.UI.Internal
 
             set
             {
-                if (value != null && !value.GetType().IsSerializable)
-                {
-                    throw new ArgumentException("The DisplayNameConverter must be serializable.", "value");
-                }
-
                 this.displayNameConverter = value;
             }
         }

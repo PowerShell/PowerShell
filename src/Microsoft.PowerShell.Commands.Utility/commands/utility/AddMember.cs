@@ -147,8 +147,8 @@ namespace Microsoft.PowerShell.Commands
         /// The name of the new NoteProperty member.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = NotePropertySingleMemberSet)]
-        [ValidateNotePropertyNameAttribute()]
-        [NotePropertyTransformationAttribute()]
+        [ValidateNotePropertyNameAttribute]
+        [NotePropertyTransformationAttribute]
         [ValidateNotNullOrEmpty]
         public string NotePropertyName
         {
@@ -560,9 +560,8 @@ namespace Microsoft.PowerShell.Commands
         {
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
-                string notePropertyName = arguments as string;
                 PSMemberTypes memberType;
-                if (notePropertyName != null && LanguagePrimitives.TryConvertTo<PSMemberTypes>(notePropertyName, out memberType))
+                if (arguments is string notePropertyName && LanguagePrimitives.TryConvertTo<PSMemberTypes>(notePropertyName, out memberType))
                 {
                     switch (memberType)
                     {

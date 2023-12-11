@@ -11,6 +11,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.PSTasks;
+using System.Management.Automation.Security;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -1205,14 +1206,25 @@ namespace Microsoft.PowerShell.Commands
             if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
                 object baseObject = PSObject.Base(inputObject);
+                var objectType = baseObject.GetType();
 
-                if (!CoreTypes.Contains(baseObject.GetType()))
+                if (!CoreTypes.Contains(objectType))
                 {
-                    PSInvalidOperationException exception =
-                        new PSInvalidOperationException(ParserStrings.InvokeMethodConstrainedLanguage);
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        PSInvalidOperationException exception =
+                            new PSInvalidOperationException(ParserStrings.InvokeMethodConstrainedLanguage);
 
-                    WriteError(new ErrorRecord(exception, "MethodInvocationNotSupportedInConstrainedLanguage", ErrorCategory.InvalidOperation, null));
-                    return true;
+                        WriteError(new ErrorRecord(exception, "MethodInvocationNotSupportedInConstrainedLanguage", ErrorCategory.InvalidOperation, null));
+                        return true;
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: Context,
+                        title: InternalCommandStrings.WDACLogTitle,
+                        message: StringUtil.Format(InternalCommandStrings.WDACLogMessage, objectType.FullName),
+                        fqid: "ForEachObjectCmdletMethodInvocationNotAllowed",
+                        dropIntoDebugger: true);
                 }
             }
 
@@ -2674,6 +2686,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets strict mode in the current scope.
         /// </summary>
         [Parameter(ParameterSetName = "Version", Mandatory = true)]
+        [ArgumentCompleter(typeof(StrictModeVersionArgumentCompleter))]
         [ArgumentToPSVersionTransformation]
         [ValidateVersion]
         [Alias("v")]
@@ -2705,6 +2718,42 @@ namespace Microsoft.PowerShell.Commands
             Context.EngineSessionState.CurrentScope.StrictModeVersion = _version;
         }
     }
+
+    /// <summary>
+    /// Provides argument completion for StrictMode Version parameter.
+    /// </summary>
+    public class StrictModeVersionArgumentCompleter : IArgumentCompleter
+    {
+        private static readonly string[] s_strictModeVersions = new string[] { "Latest", "3.0", "2.0", "1.0" };
+
+        /// <summary>
+        /// Returns completion results for version parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of Completion Results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+        {
+            var strictModeVersionPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            foreach (string version in s_strictModeVersions)
+            {
+                if (strictModeVersionPattern.IsMatch(version))
+                {
+                    yield return new CompletionResult(version);
+                }
+            }
+        }
+    }
+
     #endregion Set-StrictMode
 
     #endregion Built-in cmdlets that are used by or require direct access to the engine.

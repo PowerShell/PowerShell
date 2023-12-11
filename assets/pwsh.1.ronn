@@ -3,11 +3,17 @@ pwsh(1) -- PowerShell command-line shell and .NET REPL
 
 ## SYNOPSIS
 
-`pwsh` [`-NoLogo`] [`-NoExit`] [`-NoProfile`] [`-NonInteractive`]
-[`-InputFormat` {Text | XML}] [`-OutputFormat` {Text | XML}]
+`pwsh` [`-Login`] [ [`-File`] <filePath> [args] ]
+[`-Command` { - | <script-block> [`-args` <arg-array>] | <string>
+[<CommandParameters>] } ] [`-ConfigurationFile` <filePath>]
+[`-ConfigurationName` <string>] [`-CustomPipeName` <string>]
+[`-EncodedArguments` <Base64EncodedArguments>]
 [`-EncodedCommand` <Base64EncodedCommand>]
-[`-File` <filePath> <args>] [`-ExecutionPolicy` <ExecutionPolicy>]
-[`-Command` { `-` | <script-block> [`-args` <arg-array>] | <string> [<CommandParameters>] } ]
+[`-ExecutionPolicy` <ExecutionPolicy>] [`-Help`] [`-InputFormat` {Text | XML}]
+[`-Interactive`] [`-MTA`] [`-NoExit`] [`-NoLogo`] [`-NonInteractive`]
+[`-NoProfile`] [`-NoProfileLoadTime`] [`-OutputFormat` {Text | XML}]
+[`-SettingsFile` <filePath>] [`-SSHServerMode`] [`-STA`] [`-Version`]
+[`-WindowStyle` <style>] [`-WorkingDirectory` <directoryPath>]
 
 ## DESCRIPTION
 
@@ -17,62 +23,164 @@ command-line shell and associated scripting language.
 
 ## OPTIONS
 
-PowerShell accepts both `-` and `--` prefixed arguments.
+All parameters are case-insensitive.
 
-* `-NoLogo`:
-  Hides the copyright banner at startup.
+`pwsh` accepts both `-` and `--` prefixed arguments.
 
-* `-NoExit`:
-  Does not exit after running startup commands.
+Some parameters have abbreviated forms
 
-* `-NoProfile`:
-  Does not load the PowerShell profile.
+* `-File` | `-f`:
+  Runs the specified script in the local scope ("dot-sourced"), so that the
+  functions and variables that the script creates are available in the current
+  session. Enter the script file path and any parameters. File must be the last
+  parameter in the command, because all characters typed after the File
+  parameter name are interpreted as the script file path followed by the script
+  parameters.
 
-* `-NonInteractive`:
-  Does not present an interactive prompt to the user.
+* `-Command` | `-c`:
+  Executes the specified commands (and any parameters) as though they were
+  typed at the PowerShell command prompt, and then exits, unless NoExit is
+  specified. The value of Command can be `-`, a string or a script block. If
+  the value of Command is `-`, the command text is read from standard input. If
+  the value of Command is a script block, the script block must be enclosed in
+  braces (`{}`). You can specify a script block only when running PowerShell in
+  PowerShell. The results of the script block are returned to the parent shell
+  as deserialized XML objects, not live objects. If the value of Command is a
+  string, Command must be the last parameter in the command, because any
+  characters typed after the command are interpreted as the command arguments.
 
-* `-InputFormat`:
-  Describes the format of data sent to PowerShell.
-  Valid values are "Text" (text strings) or "XML" (serialized CLIXML format).
+  To write a string that runs a PowerShell command, use the format:
+  `& {<command>}` where the quotation marks indicate a string and the invoke
+  operator (`&`) causes the command to be executed.
 
-* `-OutputFormat`:
-  Determines how output from PowerShell is formatted.
-  Valid values are "Text" (text strings) or "XML" (serialized CLIXML format).
+* `-ConfigurationName` | `-config`:
+  Specifies a configuration endpoint in which PowerShell is run. This can be
+  any endpoint registered on the local machine including the default PowerShell
+  remoting endpoints or a custom endpoint having specific user role
+  capabilities.
 
-* `-EncodedCommand`:
+  Example: `pwsh -ConfigurationName AdminRoles`
+
+* `-CustomPipeName`:
+  Specifies the name to use for an additional IPC server (named pipe) used for
+  debugging and other cross-process communication. This offers a predictable
+  mechanism for connecting to other PowerShell instances. Typically used with
+  the **CustomPipeName** parameter on `Enter-PSHostProcess`.
+
+  This parameter was introduced in PowerShell 6.2.
+
+  For example:
+
+  ```powershell
+  # PowerShell instance 1
+  pwsh -CustomPipeName mydebugpipe
+  # PowerShell instance 2
+  Enter-PSHostProcess -CustomPipeName mydebugpipe
+  ```
+
+* `-EncodedArguments` | `-encodeda` | `-ea`:
+  Accepts a base-64-encoded string version of command arguments.
+  Use this parameter to submit command arguments to PowerShell that
+  require complex quotation marks or curly braces.
+
+* `-EncodedCommand` | `-e` | `-ec`:
   Accepts a base-64-encoded string version of a command.
   Use this parameter to submit commands to PowerShell that
   require complex quotation marks or curly braces.
 
-* `-File`:
-  Runs the specified script in the local scope ("dot-sourced"),
-  so that the functions and variables that the script creates are available in the current session.
-  Enter the script file path and any parameters.
-  File must be the last parameter in the command,
-  because all characters typed after the File parameter name are
-  interpreted as the script file path followed by the script parameters.
+* `-ExecutionPolicy` | `-ex` | `-ep`:
+  This parameter only applies to Windows computers. On non-Windows platforms,
+  the parameter and the value provided are ignored.
 
-* `-ExecutionPolicy`:
-  Sets the default execution policy for the current session and saves it in the
-  $env:PSExecutionPolicyPreference environment variable.
-  This parameter does not change the PowerShell execution policy that is set in the registry.
+* `-InputFormat` | `-inp` | `-if`:
+  Describes the format of data sent to PowerShell.
+  Valid values are "Text" (text strings) or "XML" (serialized CLIXML format).
 
-* `-Command`:
-  Executes the specified commands (and any parameters) as though they were typed at the PowerShell command prompt,
-  and then exits, unless NoExit is specified.
-  The value of Command can be `-`, a string or a script block.
-  If the value of Command is `-`, the command text is read from standard input.
-  If the value of Command is a script block, the script block must be enclosed in braces (`{}`).
-  You can specify a script block only when running PowerShell in PowerShell.
-  The results of the script block are returned to the parent shell as deserialized XML objects, not live objects.
-  If the value of Command is a string, Command must be the last parameter in the command,
-  because any characters typed after the command are interpreted as the command arguments.
+* `-Interactive` | `-i`:
+  Present an interactive prompt to the user. Inverse for NonInteractive
+  parameter.
 
-  To write a string that runs a PowerShell command,
-  use the format: `& {<command>}` where the quotation marks indicate a string and the
-  invoke operator (`&`) causes the command to be executed.
+* `-Login` | `-l`:
+  On Linux and macOS, starts PowerShell as a login shell, using `/bin/sh` to
+  execute login profiles such as `/etc/profile` and `~/.profile`.
 
-* `-Help`, `-?`, `/?`:
+  This parameter must come first to start PowerShell as a login shell. This
+  parameter is ignored if it is passed in another position.
+
+  To set up `pwsh` as the login shell:
+
+  - Verify that the full absolute path to `pwsh` is listed under `/etc/shells`
+    - This path is usually something like `/opt/microsoft/powershell/7/pwsh` on
+      Linux or `/usr/local/bin/pwsh` on macOS
+    - If `pwsh` isn't present in `/etc/shells`, use an editor to append the path
+      to `pwsh` on the last line. This requires elevated privileges to edit.
+  - Use the `chsh` utility to set your current user's shell to `pwsh`:
+
+    ```sh
+    chsh -s /usr/bin/pwsh
+    ```
+
+* -MTA
+  This parameter is only supported on Windows. Using this parameter on non-Windows
+  platforms results in an error.
+
+* `-NoExit` | `-noe`:
+  Doesn't exit after running startup commands.
+
+  Example: `pwsh -NoExit -Command Get-Date`
+
+* `-NoLogo` | `-nol`:
+  Hides the copyright banner at startup.
+
+* `-NonInteractive` | `-noni`:
+  Does not present an interactive prompt to the user.
+
+* `-NoProfile` | `-nop`:
+  Doesn't load the PowerShell profile.
+
+* `-OutputFormat` | `-o` | `-of``:
+  Determines how output from PowerShell is formatted. Valid values are "Text"
+  (text strings) or "XML" (serialized CLIXML format).
+
+  Example: `pwsh -o XML -c Get-Date`
+
+  When called within a PowerShell session, you get deserialized objects as
+  output rather plain strings. When called from other shells, the output is
+  string data formatted as CLIXML text.
+
+* `-SettingsFile` | `-settings`:
+  Overrides the system-wide `powershell.config.json` settings file for the
+  session. By default, system-wide settings are read from the
+  `powershell.config.json` in the `$PSHOME` directory.
+
+  Note that these settings aren't used by the endpoint specified by the
+  `-ConfigurationName` argument.
+
+  Example: `pwsh -SettingsFile c:\myproject\powershell.config.json`
+
+* `-SSHServerMode` | `-sshs`:
+  Used in `sshd_config` for running PowerShell as an SSH subsystem. It isn't
+  intended or supported for any other use.
+
+* -STA
+  This parameter is only supported on Windows. Using this parameter on
+  non-Windows platforms results in an error.
+
+* `-Version` | `-v`:
+  Displays the version of PowerShell. Additional parameters are ignored.
+
+* `-WindowStyle` | `-w`
+  Sets the window style for the session. Valid values are Normal, Minimized,
+  Maximized and Hidden. This parameter only applies to Windows. Using this
+  parameter on non-Windows platforms results in an error.
+
+* `-WorkingDirectory` | `-wd` | `-wo`
+  Sets the initial working directory by executing at startup. Any valid
+  PowerShell file path is supported.
+
+  To start PowerShell in your home directory, use: `pwsh -WorkingDirectory ~`
+
+* `-Help`, `-h`, `-?`, `/?`:
   Shows this message.
 
 ## FILES

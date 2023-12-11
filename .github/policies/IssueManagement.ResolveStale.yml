@@ -1,0 +1,107 @@
+id: IssueManagement.ResolveStale
+name: GitOps.PullRequestIssueManagement
+description: Other issue management rules for closing stale and waiting on author requests
+owner:
+resource: repository
+disabled: false
+where:
+configuration:
+  resourceManagementConfiguration:
+    scheduledSearches:
+    - description: Close if marked as Waiting on Author and no activity in 7 days
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isOpen
+      - isIssue
+      - hasLabel:
+          label: Waiting on Author
+      - noActivitySince:
+          days: 7
+      actions:
+      - addReply:
+          reply: This issue has been marked as "Waiting on Author" and has not had any activity for **7 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+    
+    - description: Label as Resolution-No Activity if not labeled with KeepOpen and no activity in 6 months
+      frequencies:
+      - hourly:
+          hour: 24
+      filters:
+      - isIssue
+      - isOpen
+      - isNotLabeledWith:
+          label: KeepOpen
+      - isNotLabeledWith:
+          label: Needs-Triage
+      - isNotLabeledWith:
+          label: Resolution-No Activity
+      - isNotLabeledWith:
+          label: Issue-Meta
+      - isNotLabeledWith:
+          label: Review - Needed
+      - isNotLabeledWith:
+          label: Review - Committee
+      - isNotLabeledWith:
+          label: Review - Maintainer
+      - isNotLabeledWith:
+          label: WG-NeedsReview
+     # Up for grabs labeled issues will get closed after a 6 months of no activity unless KeepOpen label is included
+      - noActivitySince:
+          days: 180
+      actions:
+      - addLabel:
+          label: Resolution-No Activity
+      - addReply:
+          reply: "This issue has not had any activity in 6 months, if there is no further activity in 7 days, the issue will be closed automatically.\n\nActivity in this case refers only to comments on the issue. If the issue is closed and you are the author, you can re-open the issue using the button below. Please add more information to be considered during retriage. If you are not the author but the issue is impacting you after it has been closed, please submit a new issue with updated details and a link to this issue and the original."
+    eventResponderTasks:
+    - description: Remove no resolution label if anyone comments while in 7 day window
+      if:
+      - payloadType: Issue_Comment
+      - hasLabel:
+          label: Resolution-No Activity
+      - isOpen
+      then:
+      - removeLabel:
+          label: Resolution-No Activity
+    
+    - description: If new issue comment is author then remove waiting on author
+      if:
+      - payloadType: Issue_Comment
+      - isActivitySender:
+          issueAuthor: True
+      - hasLabel:
+          label: Waiting on Author
+      then:
+      - removeLabel:
+          label: Waiting on Author
+    
+    - description: Remove Stale label if issue comment 
+      if:
+      - payloadType: Issue_Comment
+      - hasLabel:
+          label: Stale
+      then:
+      - removeLabel:
+          label: Stale
+    
+    - description: Remove Needs-Triage label if issue is closed
+      if:
+      - payloadType: Issues
+      - isAction:
+          action: Closed
+      then:
+      - removeLabel:
+          label: Needs-Triage
+    
+    - description: Remove Keep Open label if closed by someone 
+      if:
+      - payloadType: Issues
+      - isAction:
+          action: Closed
+      then:
+      - removeLabel:
+          label: KeepOpen
+onFailure:
+onSuccess:

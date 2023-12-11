@@ -361,8 +361,38 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
     }
 
     It "Should run 'whoami.exe' from FAT file system without error" -Skip:(!$IsWindows) {
+        if ((Test-IsWinServer2012R2) -or (Test-IsWindows2016)) {
+            Set-ItResult -Pending -Because "Marking as pending since whomai.exe is not found on T:\ on 2012R2 and 2016 after copying to VHD"
+            return
+        }
+
         $expected = & "$env:WinDir\System32\whoami.exe"
         $result = T:\whoami.exe
         $result | Should -BeExactly $expected
+    }
+}
+
+Describe "Native application invocation and getting cursor position" -Tags 'CI' {
+    It "Invoking a native application should not collect the cursor position" -Skip:($IsWindows) {
+        $expectCmd = Get-Command expect -Type Application -ErrorAction Ignore
+        $dateCmd = Get-Command date -Type Application -ErrorAction Ignore
+        # if date or expect are missing mark the test as pending
+        # test setup will need to ensure that these programs are present.
+        $missing = @()
+        if ($null -eq $expectCmd) {
+            $missing += "expect"
+        }
+        if ($null -eq $dateCmd) {
+            $missing += "date"
+        }
+        if ($missing.count -ne 0) {
+            $message = "missing command(s) {0}" -f ($missing -join ", ")
+            Set-ItResult -Pending -Because $message
+        }
+
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        $commandString = "spawn $powershell -nopro -c /bin/date; expect eof"
+        [string]$result = expect -c $commandString
+        $result.IndexOf("`e[6n") | Should -Be -1 -Because $result.replace("`e","``e").replace("`u{7}","<BELL>")
     }
 }

@@ -47,7 +47,7 @@ namespace System.Management.Automation
             { Utf8, Encoding.Default },
             { Utf8Bom, Encoding.UTF8 },
             { Utf8NoBom, Encoding.Default },
-            { Utf32, Encoding.UTF32 },  
+            { Utf32, Encoding.UTF32 },
         };
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace System.Management.Automation
         internal static void WarnIfObsolete(Cmdlet cmdlet, Encoding encoding)
         {
             // Check for UTF-7 by checking for code page 65000
-            // See: https://docs.microsoft.com/en-us/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
+            // See: https://learn.microsoft.com/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
             if (encoding != null && encoding.CodePage == 65000)
             {
                 cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);

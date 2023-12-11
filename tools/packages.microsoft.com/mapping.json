@@ -15,11 +15,19 @@
           "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
       },
       {
-          "url": "microsoft-rhel7.3-prod",
+          "url": "microsoft-rhel9.0-prod",
           "distribution": [
-              "trusty"
+              "stable"
           ],
           "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
+      },
+      {
+        "url": "cbl-mariner-2.0-prod-Microsoft-aarch64",
+        "distribution": [
+            "bionic"
+        ],
+        "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.aarch64.rpm",
+        "channel": "stable"
       },
       {
           "url": "cbl-mariner-2.0-prod-Microsoft-x86_64",
@@ -28,6 +36,14 @@
           ],
           "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.x86_64.rpm",
           "channel": "stable"
+      },
+      {
+          "url": "cbl-mariner-2.0-preview-Microsoft-aarch64",
+          "distribution": [
+              "bionic"
+          ],
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.aarch64.rpm",
+          "channel": "preview"
       },
       {
           "url": "cbl-mariner-2.0-preview-Microsoft-x86_64",

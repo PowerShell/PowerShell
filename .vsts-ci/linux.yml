@@ -55,6 +55,7 @@ variables:
   # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   __SuppressAnsiEscapeSequences: 1
+  nugetMultiFeedWarnLevel: none
 
 resources:
   repositories:

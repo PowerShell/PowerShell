@@ -4,6 +4,7 @@
 #nullable enable
 
 using System;
+using System.Buffers;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -29,6 +30,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly Stream _originalStreamToProxy;
         private readonly Cmdlet? _ownerCmdlet;
         private readonly CancellationToken _cancellationToken;
+        private readonly TimeSpan _perReadTimeout;
         private bool _isInitialized = false;
 
         #endregion Data
@@ -41,13 +43,15 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="initialCapacity">Presize the memory stream.</param>
         /// <param name="cmdlet">Owner cmdlet if any.</param>
         /// <param name="contentLength">Expected download size in Bytes.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet? cmdlet, long? contentLength, CancellationToken cancellationToken) : base(initialCapacity)
+        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet? cmdlet, long? contentLength, TimeSpan perReadTimeout, CancellationToken cancellationToken) : base(initialCapacity)
         {
             this._contentLength = contentLength;
             _originalStreamToProxy = stream;
             _ownerCmdlet = cmdlet;
             _cancellationToken = cancellationToken;
+            _perReadTimeout = perReadTimeout;
         }
         #endregion Constructors
 
@@ -228,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    read = _originalStreamToProxy.ReadAsync(buffer, 0, buffer.Length, cancellationToken).GetAwaiter().GetResult();
+                    read = _originalStreamToProxy.ReadAsync(buffer.AsMemory(), _perReadTimeout, cancellationToken).GetAwaiter().GetResult();
 
                     if (read > 0)
                     {
@@ -255,6 +259,84 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
+    internal static class StreamTimeoutExtensions
+    {
+        internal static async Task<int> ReadAsync(this Stream stream, Memory<byte> buffer, TimeSpan readTimeout, CancellationToken cancellationToken)
+        {
+            if (readTimeout == Timeout.InfiniteTimeSpan)
+            {
+                return await stream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
+            }
+
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            try
+            {
+                cts.CancelAfter(readTimeout);
+                return await stream.ReadAsync(buffer, cts.Token).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cts.IsCancellationRequested)
+                {
+                    throw new TimeoutException($"The request was canceled due to the configured OperationTimeout of {readTimeout.TotalSeconds} seconds elapsing", ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        internal static async Task CopyToAsync(this Stream source, Stream destination, TimeSpan perReadTimeout, CancellationToken cancellationToken)
+        {
+            if (perReadTimeout == Timeout.InfiniteTimeSpan)
+            {
+                // No timeout - use fast path
+                await source.CopyToAsync(destination, cancellationToken).ConfigureAwait(false);
+                return;
+            }
+
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(StreamHelper.ChunkSize);
+            CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            try
+            {
+                while (true)
+                {
+                    if (!cts.TryReset())
+                    {
+                        cts.Dispose();
+                        cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                    }
+
+                    cts.CancelAfter(perReadTimeout);
+                    int bytesRead = await source.ReadAsync(buffer, cts.Token).ConfigureAwait(false);
+                    if (bytesRead == 0)
+                    {
+                        break;
+                    }
+
+                    await destination.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken).ConfigureAwait(false);
+                }
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cts.IsCancellationRequested)
+                {
+                    throw new TimeoutException($"The request was canceled due to the configured OperationTimeout of {perReadTimeout.TotalSeconds} seconds elapsing", ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            finally
+            {
+                cts.Dispose();
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
+        }
+    }
+
     internal static class StreamHelper
     {
         #region Constants
@@ -270,11 +352,11 @@ namespace Microsoft.PowerShell.Commands
 
         #region Static Methods
 
-        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, long? contentLength, CancellationToken cancellationToken)
+        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, long? contentLength, TimeSpan perReadTimeout, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(cmdlet);
 
-            Task copyTask = input.CopyToAsync(output, cancellationToken);
+            Task copyTask = input.CopyToAsync(output, perReadTimeout, cancellationToken);
 
             bool wroteProgress = false;
             ProgressRecord record = new(
@@ -328,13 +410,14 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filePath">Output file name.</param>
         /// <param name="cmdlet">Current cmdlet (Invoke-WebRequest or Invoke-RestMethod).</param>
         /// <param name="contentLength">Expected download size in Bytes.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
         /// <param name="cancellationToken">CancellationToken to track the cmdlet cancellation.</param>
-        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, long? contentLength, CancellationToken cancellationToken)
+        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, long? contentLength, TimeSpan perReadTimeout, CancellationToken cancellationToken)
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
             FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
             using FileStream output = new(filePath, fileMode, FileAccess.Write, FileShare.Read);
-            WriteToStream(stream, output, cmdlet, contentLength, cancellationToken);
+            WriteToStream(stream, output, cmdlet, contentLength, perReadTimeout, cancellationToken);
         }
 
         // Precedence: BOM, charset, meta element, XML declaration
@@ -427,8 +510,6 @@ namespace Microsoft.PowerShell.Commands
 
             return encoding.GetBytes(str);
         }
-
-        internal static string GetResponseString(HttpResponseMessage response, CancellationToken cancellationToken) => response.Content.ReadAsStringAsync(cancellationToken).GetAwaiter().GetResult();
 
         internal static Stream GetResponseStream(HttpResponseMessage response, CancellationToken cancellationToken) => response.Content.ReadAsStreamAsync(cancellationToken).GetAwaiter().GetResult();
 

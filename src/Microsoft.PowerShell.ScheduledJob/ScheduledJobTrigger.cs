@@ -19,7 +19,6 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This class contains parameters used to define how/when a PowerShell job is
     /// run via the Windows Task Scheduler (WTS).
     /// </summary>
-    [Serializable]
     public sealed class ScheduledJobTrigger : ISerializable
     {
         #region Private Members

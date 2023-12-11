@@ -215,7 +215,7 @@ $PID
         # Verify we log that we are the script to create the scriptblock
         $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"⏎")))
 
-        # Verify we log that we are excuting the created scriptblock
+        # Verify we log that we are executing the created scriptblock
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
     }
 
@@ -246,7 +246,7 @@ $PID
         # Verify we log that we are the script to create the scriptblock
         $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"⏎")))
 
-        # Verify we log that we are excuting the created scriptblock
+        # Verify we log that we are executing the created scriptblock
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123␀' ;Write\-verbose 'after'")
     }
 
@@ -268,6 +268,9 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsMacOS
         [bool] $persistenceEnabled = $false
+
+        $currentWarningPreference = $WarningPreference
+        $WarningPreference = "SilentlyContinue"
 
         if ($IsSupportedEnvironment)
         {
@@ -306,6 +309,7 @@ Path:.*
     }
 
     AfterAll {
+        $WarningPreference = $currentWarningPreference
         if ($IsSupportedEnvironment -and !$persistenceEnabled)
         {
             # disable persistence if it wasn't enabled
@@ -369,7 +373,7 @@ $PID
             # Verify we log that we are the script to create the scriptblock
             $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script))
 
-            # Verify we log that we are excuting the created scriptblock
+            # Verify we log that we are executing the created scriptblock
             $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
         }
         catch {
@@ -407,7 +411,7 @@ $PID
             # Verify we log that we are the script to create the scriptblock
             $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script))
 
-            # Verify we log that we are excuting the created scriptblock
+            # Verify we log that we are executing the created scriptblock
             $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123␀' ;Write\-verbose 'after'")
         }
         catch {
@@ -444,6 +448,10 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsWindows
         [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
+
+        $currentWarningPreference = $WarningPreference
+        $WarningPreference = "SilentlyContinue"
+
         $scriptBlockLoggingCases = @(
             @{
                 name = 'normal script block'
@@ -461,6 +469,10 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
         {
             & "$PSHOME\RegisterManifest.ps1"
         }
+    }
+
+    AfterAll {
+        $WarningPreference = $currentWarningPreference
     }
 
     BeforeEach {

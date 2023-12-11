@@ -294,8 +294,7 @@ namespace System.Diagnostics.Eventing
         {
             dataDescriptor->Reserved = 0;
 
-            string sRet = data as string;
-            if (sRet != null)
+            if (data is string sRet)
             {
                 dataDescriptor->Size = (uint)((sRet.Length + 1) * 2);
                 return sRet;

@@ -59,7 +59,15 @@ jobs:
         artifact: authenticode-signed
         path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64-signed
         pattern: '**/pwshMarinerBuildAmd64.tar.gz'
-      displayName: Download mariner build
+      displayName: Download mariner amd64 build
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: authenticode-signed
+        path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64-signed
+        pattern: '**/pwshMarinerBuildArm64.tar.gz'
+      displayName: Download mariner arm64 build
 
   - ${{ if eq(variables.build,'alpine') }} :
     - task: DownloadPipelineArtifact@2
@@ -68,6 +76,14 @@ jobs:
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine-signed
         pattern: '**/pwshLinuxBuildAlpine.tar.gz'
       displayName: Download alpine build
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: authenticode-signed
+        path: $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64-signed
+        pattern: '**/pwshAlpineFxdBuildAmd64.tar.gz'
+      displayName: Download alpine framework dependent build
 
   - ${{ if eq(variables.build,'fxdependent') }} :
     - task: DownloadPipelineArtifact@2
@@ -110,13 +126,27 @@ jobs:
       inputs:
         artifact: pwshMarinerBuildAmd64-meta
         path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64-meta
-      displayName: Download mariner build meta
+      displayName: Download mariner x64 build meta
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: pwshMarinerBuildArm64-meta
+        path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64-meta
+      displayName: Download mariner arm64 build meta
 
   - ${{ if eq(variables.build,'alpine') }} :
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: pwshLinuxBuildAlpine-meta
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-meta
+      displayName: Download alpine build meta
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: pwshAlpineFxdBuildAmd64-meta
+        path: $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64-meta
       displayName: Download alpine build meta
 
   - ${{ if eq(variables.build,'fxdependent') }} :
@@ -152,15 +182,25 @@ jobs:
       }
 
       if ('$(build)' -eq 'rpm') {
+        # for mariner x64
         Write-Verbose -Verbose "Expanding $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64-signed/pwshMarinerBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64"
         New-Item -Path $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64 -ItemType Directory
         tar -xf $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64-signed/pwshMarinerBuildAmd64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64
+
+        # for mariner arm64
+        Write-Verbose -Verbose "Expanding $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64-signed/pwshMarinerBuildArm64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64"
+        New-Item -Path $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64 -ItemType Directory
+        tar -xf $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64-signed/pwshMarinerBuildArm64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64
       }
 
       if ('$(build)' -eq 'alpine') {
         Write-Verbose -Verbose "Expanding $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine-signed/pwshLinuxBuildAlpine.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuild"
         New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild -ItemType Directory
         tar -xf $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine-signed/pwshLinuxBuildAlpine.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuild
+
+        Write-Verbose -Verbose "Expanding $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64-signed/pwshAlpineFxdBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64"
+        New-Item -Path $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64 -ItemType Directory
+        tar -xf $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64-signed/pwshAlpineFxdBuildAmd64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshAlpineFxdBuildAmd64
       }
 
       if ('$(build)' -eq 'fxdependent') {
@@ -213,8 +253,7 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - powershell: |
       try {
@@ -254,6 +293,8 @@ jobs:
     displayName: Publish artifacts
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
+    retryCountOnTaskFailure: 2
+
 
   - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
 
@@ -388,6 +429,7 @@ jobs:
         Destination: AzureBlob
         storage: '$(StorageAccount)'
         ContainerName: '$(AzureVersion)'
+      retryCountOnTaskFailure: 2
 
   - template: upload-final-results.yml
     parameters:
@@ -403,6 +445,7 @@ jobs:
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)-gc'
     condition: and(eq(variables['buildName'], 'DEB'), succeeded())
+    retryCountOnTaskFailure: 2
 
   - template: upload-final-results.yml
     parameters:
@@ -419,6 +462,7 @@ jobs:
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
     condition: and(and(succeeded(), ne(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+    retryCountOnTaskFailure: 2
 
   # requires windows
   - task: AzureFileCopy@4
@@ -430,6 +474,7 @@ jobs:
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
     condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+    retryCountOnTaskFailure: 2
 
   - template: upload-final-results.yml
     parameters:

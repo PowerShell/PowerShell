@@ -21,10 +21,7 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
-        internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
-        internal const string PSNativeCommandPreserveBytePipe = "PSNativeCommandPreserveBytePipe";
         internal const string PSModuleAutoLoadSkipOfflineFilesFeatureName = "PSModuleAutoLoadSkipOfflineFiles";
-        internal const string PSCustomTableHeaderLabelDecoration = "PSCustomTableHeaderLabelDecoration";
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
         internal const string PSCommandWithArgs = "PSCommandWithArgs";
 
@@ -119,17 +116,8 @@ namespace System.Management.Automation
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
                 new ExperimentalFeature(
-                    name: PSNativeCommandErrorActionPreferenceFeatureName,
-                    description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
-                new ExperimentalFeature(
                     name: PSModuleAutoLoadSkipOfflineFilesFeatureName,
                     description: "Module discovery will skip over files that are marked by cloud providers as not fully on disk."),
-                new ExperimentalFeature(
-                    name: PSCustomTableHeaderLabelDecoration,
-                    description: "Formatting differentiation for table header labels that aren't property members"),
-                new ExperimentalFeature(
-                    name: PSNativeCommandPreserveBytePipe,
-                    description: "Byte output is retained when piping between two or more native commands"),
                 new ExperimentalFeature(
                     name: PSFeedbackProvider,
                     description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),

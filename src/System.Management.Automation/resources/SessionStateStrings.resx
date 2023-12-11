@@ -592,7 +592,7 @@
     <value>Drive that maps to the temporary directory path for the current user</value>
   </data>
   <data name="NewLinkTargetNotSpecified" xml:space="preserve">
-    <value>Link '{0}' cannot be created because Target was not specified.</value>
+    <value>Link '{0}' cannot be created because the target Value was not specified.</value>
   </data>
   <data name="DollarNullDescription" xml:space="preserve">
     <value>References to the null variable always return the null value. Assignments have no effect.</value>
@@ -647,5 +647,11 @@
   </data>
   <data name="CopyItemRemotelyPathIsNullOrEmpty" xml:space="preserve">
     <value>'{0}' parameter cannot be null or empty.</value>
+  </data>
+  <data name="WDACSessionStateVarLogTitle" xml:space="preserve">
+    <value>Session State Variables</value>
+  </data>
+  <data name="WDACSessionStateVarLogMessage" xml:space="preserve">
+    <value>Changing or creating the variable '{0}' scope to AllScope will be prevented in ConstrainedLanguage mode.</value>
   </data>
 </root>
