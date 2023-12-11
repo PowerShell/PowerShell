@@ -337,9 +337,12 @@ namespace Microsoft.PowerShell.Commands
             WriteToStream(stream, output, cmdlet, contentLength, cancellationToken);
         }
 
+        // Precedence: BOM, charset, meta element, XML declaration
         private static async Task<Encoding> GetStreamEncodingAsync(Stream stream, string? characterSet, CancellationToken cancellationToken)
         {
-            bool isDefaultEncoding = !TryGetEncodingFromCharset(characterSet, out Encoding encoding);
+            bool encodingSearchFailed = !TryGetEncodingFromCharset(characterSet, out Encoding encoding);
+
+            // Tries to detect encoding from BOM, if it fails fall back to encoding
             using StreamReader reader = new(stream, encoding, detectEncodingFromByteOrderMarks: true, leaveOpen: true);
 
             // We only look within the first 1k characters as the meta element and
@@ -348,17 +351,18 @@ namespace Microsoft.PowerShell.Commands
 
             char[] buffer = new char[bufferLength];
             await reader.ReadBlockAsync(buffer.AsMemory(), cancellationToken);
-            encoding = reader.CurrentEncoding;
             stream.Seek(0, SeekOrigin.Begin);
 
-            if (isDefaultEncoding)
+            // Only try to parse meta element and XML declaration if getting encoding from charset
+            // fails and detectEncodingFromByteOrderMarks doesn't change the encoding.
+            if (encodingSearchFailed && encoding == reader.CurrentEncoding)
             {
                 string substring = new(buffer);
 
-                // Check for a charset attribute on the meta element to override the default
+                // Check for a charset attribute on the meta element to override the default.
                 Match match = s_metaRegex.Match(substring);
 
-                // Check for a encoding attribute on the xml declaration to override the default
+                // Check for a encoding attribute on the xml declaration to override the default.
                 if (!match.Success)
                 {
                     match = s_xmlRegex.Match(substring);
@@ -373,6 +377,10 @@ namespace Microsoft.PowerShell.Commands
                         encoding = localEncoding;
                     }
                 }
+            }
+            else
+            {
+                encoding = reader.CurrentEncoding;
             }
 
             return encoding;
