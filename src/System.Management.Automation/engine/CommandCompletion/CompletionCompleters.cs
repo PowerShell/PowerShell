@@ -4629,22 +4629,19 @@ namespace System.Management.Automation
                 string basePath;
                 if (!relativePaths)
                 {
-                    string providerName = $"{provider.ModuleName}\\{provider.Name}::";
-                    if (pathInfo.Path.StartsWith(providerName, StringComparison.OrdinalIgnoreCase))
+                    if (pathInfo.Drive is null)
                     {
-                        basePath = pathInfo.Path.Substring(providerName.Length);
+                        basePath = dirInfo.FullName;
                     }
                     else
                     {
-                        providerName = $"{provider.Name}::";
-                        if (pathInfo.Path.StartsWith(providerName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            basePath = pathInfo.Path.Substring(providerName.Length);
-                        }
-                        else
-                        {
-                            basePath = pathInfo.Path;
-                        }
+                        int stringStartIndex = pathInfo.Drive.Root.EndsWith(provider.ItemSeparator) && pathInfo.Drive.Root.Length > 1
+                            ? pathInfo.Drive.Root.Length - 1
+                            : pathInfo.Drive.Root.Length;
+
+                        basePath = pathInfo.Drive.VolumeSeparatedByColon
+                            ? string.Concat(pathInfo.Drive.Name, ":", dirInfo.FullName.AsSpan(stringStartIndex))
+                            : string.Concat(pathInfo.Drive.Name, dirInfo.FullName.AsSpan(stringStartIndex));
                     }
 
                     basePath = basePath.EndsWith(provider.ItemSeparator)
@@ -4767,17 +4764,20 @@ namespace System.Management.Automation
                     // Save relevant info and try again to get just the names.
                     foreach (dynamic child in childItemOutput)
                     {
-                        childrenInfoTable.Add(GetChildNameFromPsObject(child, provider.ItemSeparator), child.PSIsContainer);
+                        // TryAdd is used because some providers (like SCCM) may include duplicate PSPaths in a container.
+                        _ = childrenInfoTable.TryAdd(GetChildNameFromPsObject(child, provider.ItemSeparator), child.PSIsContainer);
                     }
 
                     _ = context.Helper.CurrentPowerShell
                         .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-ChildItem")
                         .AddParameter("LiteralPath", pathInfo.Path)
-                        .AddParameter("Name");
+                        .AddParameter("Name")
+                        .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object")
+                        .AddParameter("Unique");
                     childItemOutput = context.Helper.ExecuteCurrentPowerShell(out _);
-                    foreach (var child in childItemOutput)
+                    foreach (PSObject child in childItemOutput)
                     {
-                        var childName = (string)child.BaseObject;
+                        string childName = (string)child.BaseObject;
                         childNameList.Add(childName);
                     }
                 }
@@ -4786,8 +4786,12 @@ namespace System.Management.Automation
                     foreach (dynamic child in childItemOutput)
                     {
                         var childName = GetChildNameFromPsObject(child, provider.ItemSeparator);
-                        childrenInfoTable.Add(childName, child.PSIsContainer);
-                        childNameList.Add(childName);
+
+                        // TryAdd is used because some providers (like SCCM) may include duplicate PSPaths in a container.
+                        if (childrenInfoTable.TryAdd(childName, child.PSIsContainer))
+                        {
+                            childNameList.Add(childName);
+                        }
                     }
                 }
 

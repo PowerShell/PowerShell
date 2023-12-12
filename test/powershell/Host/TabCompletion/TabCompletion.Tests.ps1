@@ -744,6 +744,30 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
     }
 
+    Context 'StrictMode Version parameter completion' {
+        BeforeAll {
+            $allStrictModeVersions = '1.0 2.0 3.0 Latest'
+            $versionOne = '1.0'
+            $versionTwo = '2.0'
+            $versionThree = '3.0'
+            $latestVersion = 'Latest'
+        }
+
+        It "Should complete Version for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Set-StrictMode -Version "; ExpectedVersions = $allStrictModeVersions }
+            @{ TextInput = "Set-StrictMode -Version 1"; ExpectedVersions = $versionOne }
+            @{ TextInput = "Set-StrictMode -Version 2"; ExpectedVersions = $versionTwo }
+            @{ TextInput = "Set-StrictMode -Version 3"; ExpectedVersions = $versionThree }
+            @{ TextInput = "Set-StrictMode -Version Lat"; ExpectedVersions = $latestVersion }
+            @{ TextInput = "Set-StrictMode -Version NonExistentVersion"; ExpectedVersions = '' }
+        ) {
+            param($TextInput, $ExpectedVersions)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $ExpectedVersions
+        }
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'
@@ -1276,6 +1300,11 @@ class InheritedClassTest : System.Attribute
         }
     }
 
+    It 'Should correct slashes in UNC path completion' -Skip:(!$IsWindows) {
+        $Res = TabExpansion2 -inputScript 'Get-ChildItem //localhost/c$/Windows'
+        $Res.CompletionMatches[0].CompletionText | Should -Be "'\\localhost\c$\Windows'"
+    }
+
     It 'Should keep custom drive names when completing file paths' {
         $TempDriveName = "asdf"
         $null = New-PSDrive -Name $TempDriveName -PSProvider FileSystem -Root $HOME
@@ -1292,7 +1321,7 @@ class InheritedClassTest : System.Attribute
     Context "Cmdlet name completion" {
         BeforeAll {
             $testCases = @(
-                @{ inputStr = "get-c*item"; expected = "Get-ChildItem" }
+                @{ inputStr = "get-ch*item"; expected = "Get-ChildItem" }
                 @{ inputStr = "set-alia?"; expected = "Set-Alias" }
                 @{ inputStr = "s*-alias"; expected = "Set-Alias" }
                 @{ inputStr = "se*-alias"; expected = "Set-Alias" }
@@ -1983,7 +2012,7 @@ dir -Recurse `
         }
 
         It "Test complete module file name" {
-            $inputStr = "using module test"
+            $inputStr = "using module testm"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly ".${separator}testModule.psm1"

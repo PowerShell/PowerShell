@@ -135,7 +135,7 @@ limitations under the License.
 
 ---------------------------------------------------------
 
-Markdig.Signed 0.32.0 - BSD-2-Clause
+Markdig.Signed 0.33.0 - BSD-2-Clause
 
 
 
@@ -172,7 +172,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Json.More.Net 1.8.0 - MIT
+Json.More.Net 1.9.0 - MIT
 
 
 (c) Microsoft 2023
@@ -205,7 +205,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonPointer.Net 3.0.1 - MIT
+JsonPointer.Net 3.0.3 - MIT
 
 
 (c) Microsoft 2023
@@ -238,7 +238,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonSchema.Net 4.1.8 - MIT
+JsonSchema.Net 5.2.6 - MIT
 
 
 
@@ -259,6 +259,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.ApplicationInsights 2.21.0 - MIT
 
 
+(c) Microsoft Corporation
 
 MIT License
 
@@ -343,7 +344,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.CodeAnalysis.Common 4.6.0 - MIT
+Microsoft.CodeAnalysis.Common 4.7.0 - MIT
 
 
 (c) Microsoft Corporation
@@ -363,51 +364,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.CodeAnalysis.CSharp 4.6.0 - MIT
+Microsoft.CodeAnalysis.CSharp 4.7.0 - MIT
 
 
 (c) Microsoft Corporation
 Copyright (c) Microsoft Corporation
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) Microsoft Corporation. Alle Rechte
-
-MIT License
-
-Copyright (c) <year> <copyright holders>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
----------------------------------------------------------
-
----------------------------------------------------------
-
-Microsoft.Management.Infrastructure 2.0.0 - MIT
-
-
-(c) Microsoft Corporation.
-
-MIT License
-
-Copyright (c) <year> <copyright holders>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
----------------------------------------------------------
-
----------------------------------------------------------
-
-Microsoft.Management.Infrastructure.Runtime.Unix 2.0.0 - MIT
-
-
-(c) Microsoft Corporation.
 
 MIT License
 
@@ -443,29 +406,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.PowerShell.Native 7.3.2 - MIT
+Microsoft.Security.Extensions 1.3.0 - MIT
 
 
 (c) Microsoft Corporation
-Copyright (c) by P.J. Plauger
-
-MIT License
-
-Copyright (c) <year> <copyright holders>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
----------------------------------------------------------
-
----------------------------------------------------------
-
-Microsoft.Security.Extensions 1.2.0 - MIT
-
-
+Copyright (c) Microsoft Corporation
 
 MIT License
 
@@ -696,7 +641,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 7.0.4 - MIT
+Microsoft.Windows.Compatibility 7.0.5 - MIT
 
 
 (c) Microsoft Corporation
@@ -2294,7 +2239,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.DirectoryServices.AccountManagement 7.0.0 - MIT
+System.DirectoryServices.AccountManagement 7.0.1 - MIT
 
 
 (c) Microsoft Corporation
@@ -2945,20 +2890,22 @@ SOFTWARE.
 System.Numerics.Vectors 4.5.0 - MIT
 
 
-(c) Microsoft Corporation.
+(c) 2023 GitHub, Inc.
+(c) Microsoft Corporation
+Copyright (c) .NET Foundation
 Copyright (c) 2011, Google Inc.
-(c) 1997-2005 Sean Eron Anderson.
+(c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1991-2017 Unicode, Inc.
+Copyright (c) 2015 The Chromium Authors
 Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
 Copyright (c) 2004-2006 Intel Corporation
 Copyright (c) .NET Foundation Contributors
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
 
 The MIT License (MIT)
 
@@ -2989,7 +2936,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Private.ServiceModel 4.10.2 - MIT
+System.Private.ServiceModel 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3854,7 +3801,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Duplex 4.10.2 - MIT
+System.ServiceModel.Duplex 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3890,7 +3837,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Http 4.10.2 - MIT
+System.ServiceModel.Http 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3926,7 +3873,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.NetTcp 4.10.2 - MIT
+System.ServiceModel.NetTcp 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3962,7 +3909,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Primitives 4.10.2 - MIT
+System.ServiceModel.Primitives 4.10.3 - MIT
 
 
 (c) Microsoft Corporation
@@ -3998,7 +3945,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Security 4.10.2 - MIT
+System.ServiceModel.Security 4.10.3 - MIT
 
 
 (c) Microsoft Corporation

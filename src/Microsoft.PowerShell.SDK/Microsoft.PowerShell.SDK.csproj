@@ -19,22 +19,22 @@
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="8.0.0-rc.1.23419.3" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="8.0.0-rc.1.23419.3" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0-rc.1.23419.3" />
+    <PackageReference Include="System.IO.Packaging" Version="8.0.0" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="8.0.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
     <!--
         the following package(s) are from https://github.com/dotnet/wcf
-        they are pinned to the version 4.10.2 due to a breaking change in newer versions.
+        they are pinned to the version 4.10.x due to a breaking change in newer versions.
         see https://github.com/PowerShell/PowerShell/issues/19238 for details.
      -->
-    <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.2" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.10.2" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.2" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.2" />
-    <PackageReference Include="System.ServiceModel.Security" Version="4.10.2" />
-    <PackageReference Include="System.Private.ServiceModel" Version="4.10.2" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.10.3" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.10.3" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.10.3" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.3" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.10.3" />
+    <PackageReference Include="System.Private.ServiceModel" Version="4.10.3" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.0-rc.1.23416.3" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.0" />
   </ItemGroup>
 
 </Project>
