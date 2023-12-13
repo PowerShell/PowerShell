@@ -245,7 +245,6 @@ namespace System.Management.Automation
             // they ship native libraries for Linux and macOS, but they aren't found because the extension is now
             // treated as part of the filename. If the libraryName contains a known extension for wrong OS, we
             // remove it and add the OS specific extension.
-
             var extension = Path.GetExtension(libraryName).ToLowerInvariant();
             string fullName;
 
