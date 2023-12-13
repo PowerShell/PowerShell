@@ -71,12 +71,13 @@ Describe "Can load a native assembly" -Tags "CI" {
             }
 "@
 
+        # mix up the extension to make sure the right one is loaded
         if ($IsWindows) {
-            $extension = "dll"
-        } elseif ($IsLinux) {
             $extension = "so"
-        } elseif ($IsMacOS) {
+        } elseif ($IsLinux) {
             $extension = "dylib"
+        } elseif ($IsMacOS) {
+            $extension = "dll"
         } else {
             throw "Unsupported OS"
         }

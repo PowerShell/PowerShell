@@ -240,10 +240,28 @@ namespace System.Management.Automation
         {
             s_nativeDllSubFolder ??= GetNativeDllSubFolderName(out s_nativeDllExtension);
             string folder = Path.GetDirectoryName(assembly.Location);
-            string fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName);
-            if (!fullName.EndsWith(s_nativeDllExtension, StringComparison.OrdinalIgnoreCase))
+
+            // Issue #20740 shows that some developers specify `.dll` in their DllImport attribute even though
+            // they ship native libraries for Linux and macOS, but they aren't found because the extension is now
+            // treated as part of the filename. If the libraryName contains a known extension for wrong OS, we
+            // remove it and add the OS specific extension.
+
+            var extension = Path.GetExtension(libraryName).ToLowerInvariant();
+            string fullName;
+
+            if (string.IsNullOrEmpty(extension))
             {
-                fullName += s_nativeDllExtension;
+                fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName) + s_nativeDllExtension;
+            }
+            else if ((extension == ".dll" && !Platform.IsWindows) ||
+                (extension == ".so" && !Platform.IsLinux) ||
+                (extension == ".dylib" && !Platform.IsMacOS))
+            {
+                fullName = Path.Combine(folder, s_nativeDllSubFolder, Path.GetFileNameWithoutExtension(libraryName)) + s_nativeDllExtension;
+            }
+            else
+            {
+                fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName);
             }
 
             return NativeLibrary.TryLoad(fullName, out IntPtr pointer) ? pointer : IntPtr.Zero;
