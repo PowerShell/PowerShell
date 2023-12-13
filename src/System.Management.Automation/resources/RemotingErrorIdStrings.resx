@@ -1714,4 +1714,10 @@ SSH client process terminated before connection could be established.</value>
   <data name="DISCUnknownConfigName" xml:space="preserve">
     <value>The session configuration file contains an unknown configuration option: {0}.</value>
   </data>
+  <data name="WDACGetPowerShellLogTitle" xml:space="preserve">
+    <value>ExpressionAst evaluation</value>
+  </data>
+  <data name="WDACGetPowerShellLogMessage" xml:space="preserve">
+    <value>Creating a PowerShell object from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in Constrained Language mode, unless the expression represents a constant value.</value>
+  </data>
 </root>

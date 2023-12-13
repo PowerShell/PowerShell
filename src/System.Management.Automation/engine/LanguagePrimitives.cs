@@ -3986,26 +3986,8 @@ namespace System.Management.Automation
                     //  - It's in FullLanguage but not because it's part of a parameter binding that is transitioning from ConstrainedLanguage to FullLanguage
                     // When this is invoked from a parameter binding in transition from ConstrainedLanguage environment to FullLanguage command, we disallow
                     // the property conversion because it's dangerous.
-                    if (ecFromTLS == null || (ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage && !ecFromTLS.LanguageModeTransitionInParameterBinding))
-                    {
-                        result = _constructor();
-                        var psobject = valueToConvert as PSObject;
-                        if (psobject != null)
-                        {
-                            // Use PSObject properties to perform conversion.
-                            SetObjectProperties(result, psobject, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, formatProvider, recursion, ignoreUnknownMembers);
-                        }
-                        else
-                        {
-                            // Use provided property dictionary to perform conversion.
-                            // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2
-                            IDictionary properties = valueToConvert as IDictionary;
-                            SetObjectProperties(result, properties, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: false);
-                        }
-
-                        typeConversion.WriteLine("Constructor result: \"{0}\".", result);
-                    }
-                    else
+                    bool canProceedWithConversion = ecFromTLS == null || (ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage && !ecFromTLS.LanguageModeTransitionInParameterBinding);
+                    if (!canProceedWithConversion)
                     {
                         if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
                         {
@@ -4023,6 +4005,23 @@ namespace System.Management.Automation
                             throw rte;
                         }
                     }
+
+                    result = _constructor();
+                    var psobject = valueToConvert as PSObject;
+                    if (psobject != null)
+                    {
+                        // Use PSObject properties to perform conversion.
+                        SetObjectProperties(result, psobject, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, formatProvider, recursion, ignoreUnknownMembers);
+                    }
+                    else
+                    {
+                        // Use provided property dictionary to perform conversion.
+                        // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2
+                        IDictionary properties = valueToConvert as IDictionary;
+                        SetObjectProperties(result, properties, resultType, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: false);
+                    }
+
+                    typeConversion.WriteLine("Constructor result: \"{0}\".", result);
 
                     return result;
                 }
