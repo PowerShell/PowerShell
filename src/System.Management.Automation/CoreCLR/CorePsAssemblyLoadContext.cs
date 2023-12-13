@@ -252,9 +252,7 @@ namespace System.Management.Automation
             {
                 fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName) + s_nativeDllExtension;
             }
-            else if ((extension == ".dll" && !Platform.IsWindows) ||
-                (extension == ".so" && !Platform.IsLinux) ||
-                (extension == ".dylib" && !Platform.IsMacOS))
+            else if (extension != s_nativeDllExtension)
             {
                 fullName = Path.Combine(folder, s_nativeDllSubFolder, Path.GetFileNameWithoutExtension(libraryName)) + s_nativeDllExtension;
             }
