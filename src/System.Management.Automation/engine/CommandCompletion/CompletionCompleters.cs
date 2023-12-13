@@ -4764,16 +4764,13 @@ namespace System.Management.Automation
                     // Save relevant info and try again to get just the names.
                     foreach (dynamic child in childItemOutput)
                     {
-                        // TryAdd is used because some providers (like SCCM) may include duplicate PSPaths in a container.
-                        _ = childrenInfoTable.TryAdd(GetChildNameFromPsObject(child, provider.ItemSeparator), child.PSIsContainer);
+                        childrenInfoTable.Add(GetChildNameFromPsObject(child, provider.ItemSeparator), child.PSIsContainer);
                     }
 
                     _ = context.Helper.CurrentPowerShell
                         .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-ChildItem")
                         .AddParameter("LiteralPath", pathInfo.Path)
-                        .AddParameter("Name")
-                        .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object")
-                        .AddParameter("Unique");
+                        .AddParameter("Name");
                     childItemOutput = context.Helper.ExecuteCurrentPowerShell(out _);
                     foreach (PSObject child in childItemOutput)
                     {
@@ -4786,12 +4783,8 @@ namespace System.Management.Automation
                     foreach (dynamic child in childItemOutput)
                     {
                         var childName = GetChildNameFromPsObject(child, provider.ItemSeparator);
-
-                        // TryAdd is used because some providers (like SCCM) may include duplicate PSPaths in a container.
-                        if (childrenInfoTable.TryAdd(childName, child.PSIsContainer))
-                        {
-                            childNameList.Add(childName);
-                        }
+                        childrenInfoTable.Add(childName, child.PSIsContainer);
+                        childNameList.Add(childName);
                     }
                 }
 
