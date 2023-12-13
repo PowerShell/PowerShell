@@ -49,7 +49,8 @@ Describe "Can load a native assembly" -Tags "CI" {
         Copy-Item -Path $sourceDllName -Destination $archFolder\$nativeDllName
 
         $managedDllPath = Join-Path $root managed.dll
-        $managedDll2Path = Join-Path $root managed2.dll
+        $managedDllPath_wrongextension = Join-Path $root managed2.dll
+        $managedDllPath_rightextension = Join-Path $root managed3.dll
 
         $source = @"
             using System;
@@ -71,6 +72,9 @@ Describe "Can load a native assembly" -Tags "CI" {
             }
 "@
 
+        Add-Type -OutputAssembly $managedDllPath -TypeDefinition $source
+        Add-Type -Assembly $managedDllPath
+
         # mix up the extension to make sure the right one is loaded
         if ($IsWindows) {
             $extension = "so"
@@ -82,7 +86,7 @@ Describe "Can load a native assembly" -Tags "CI" {
             throw "Unsupported OS"
         }
 
-        $source2 = @"
+        $source_wrongextension = @"
             using System;
             using System.Runtime.InteropServices;
             public class TestNativeClass3
@@ -102,11 +106,42 @@ Describe "Can load a native assembly" -Tags "CI" {
             }
 "@
 
-        Add-Type -OutputAssembly $managedDllPath -TypeDefinition $source
-        Add-Type -Assembly $managedDllPath
+        Add-Type -OutputAssembly $managedDllPath_wrongextension -TypeDefinition $source_wrongextension
+        Add-Type -Assembly $managedDllPath_wrongextension
 
-        Add-Type -OutputAssembly $managedDll2Path -TypeDefinition $source2
-        Add-Type -Assembly $managedDll2Path
+        # specify the right extension and ensure it's loaded
+        if ($IsWindows) {
+            $extension = "dll"
+        } elseif ($IsLinux) {
+            $extension = "so"
+        } elseif ($IsMacOS) {
+            $extension = "dylib"
+        } else {
+            throw "Unsupported OS"
+        }
+
+        $source_rightextension = @"
+            using System;
+            using System.Runtime.InteropServices;
+            public class TestNativeClass4
+            {
+                public static int Add(int a, int b)
+                {
+                    return (a + b);
+                }
+
+                public static void LoadNative()
+                {
+                    TestEntry();
+                }
+
+                [DllImport ("nativedll.$extension", CallingConvention = CallingConvention.Cdecl)]
+                internal static extern void TestEntry();
+            }
+"@
+
+        Add-Type -OutputAssembly $managedDllPath_rightextension -TypeDefinition $source_rightextension
+        Add-Type -Assembly $managedDllPath_rightextension
     }
 
     It "Can load native libary without extension" {
@@ -117,11 +152,19 @@ Describe "Can load a native assembly" -Tags "CI" {
         { [TestNativeClass2]::LoadNative() } | Should -Throw -ErrorId "EntryPointNotFoundException"
     }
 
-    It "Can load native libary with extension" {
+    It "Can load native libary with wrong extension" {
         # Managed dll is loaded
         [TestNativeClass3]::Add(1,2) | Should -Be 3
 
         # Native dll is loaded from the same managed dll
         { [TestNativeClass3]::LoadNative() } | Should -Throw -ErrorId "EntryPointNotFoundException"
+    }
+
+    It "Can load native libary with extension" {
+        # Managed dll is loaded
+        [TestNativeClass4]::Add(1,2) | Should -Be 3
+
+        # Native dll is loaded from the same managed dll
+        { [TestNativeClass4]::LoadNative() } | Should -Throw -ErrorId "EntryPointNotFoundException"
     }
 }
