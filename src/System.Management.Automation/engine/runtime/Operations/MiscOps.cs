@@ -714,7 +714,8 @@ namespace System.Management.Automation
                 // of invoking it. So the trustworthiness is defined by the trustworthiness of the
                 // script block's language mode.
                 bool isTrusted = scriptBlock.LanguageMode == PSLanguageMode.FullLanguage;
-                if (scriptBlock.LanguageMode == PSLanguageMode.ConstrainedLanguage && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+                if (scriptBlock.LanguageMode == PSLanguageMode.ConstrainedLanguage
+                    && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
                 {
                     // In audit mode, report but don't enforce.
                     isTrusted = true;
