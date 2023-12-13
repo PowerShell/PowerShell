@@ -3989,21 +3989,24 @@ namespace System.Management.Automation
                     bool canProceedWithConversion = ecFromTLS == null || (ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage && !ecFromTLS.LanguageModeTransitionInParameterBinding);
                     if (!canProceedWithConversion)
                     {
-                        if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+                        if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
                         {
-                            SystemPolicy.LogWDACAuditMessage(
+                            throw InterpreterError.NewInterpreterException(
+                                valueToConvert,
+                                typeof(RuntimeException),
+                                errorPosition: null,
+                                "HashtableToObjectConversionNotSupportedInDataSection",
+                                ParserStrings.HashtableToObjectConversionNotSupportedInDataSection,
+                                resultType.ToString());
+                        }
+
+                        // When in audit mode, we report but don't enforce, so we will proceed with the conversion.
+                        SystemPolicy.LogWDACAuditMessage(
                                 context: ecFromTLS,
                                 title: ExtendedTypeSystem.WDACHashTypeLogTitle,
                                 message: StringUtil.Format(ExtendedTypeSystem.WDACHashTypeLogMessage, resultType.FullName),
                                 fqid: "LanguageHashtableConversionNotAllowed",
                                 dropIntoDebugger: true);
-                        }
-                        else
-                        {
-                            RuntimeException rte = InterpreterError.NewInterpreterException(valueToConvert, typeof(RuntimeException), null,
-                                "HashtableToObjectConversionNotSupportedInDataSection", ParserStrings.HashtableToObjectConversionNotSupportedInDataSection, resultType.ToString());
-                            throw rte;
-                        }
                     }
 
                     result = _constructor();
