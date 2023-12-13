@@ -241,7 +241,7 @@ namespace System.Management.Automation
             s_nativeDllSubFolder ??= GetNativeDllSubFolderName(out s_nativeDllExtension);
             string folder = Path.GetDirectoryName(assembly.Location);
 
-            // Issue #20740 shows that some developers specify `.dll` in their DllImport attribute even though
+            // Some developers specify `.dll` in their DllImport attribute even though
             // they ship native libraries for Linux and macOS, but they aren't found because the extension is now
             // treated as part of the filename. If the libraryName contains a known extension for wrong OS, we
             // remove it and add the OS specific extension.
