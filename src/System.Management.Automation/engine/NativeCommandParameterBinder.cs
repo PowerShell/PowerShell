@@ -14,10 +14,11 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     using Language;
+	using static System.Management.Automation.Interpreter.InitializeLocalInstruction;
 
-    /// <summary>
-    /// The parameter binder for native commands.
-    /// </summary>
+	/// <summary>
+	/// The parameter binder for native commands.
+	/// </summary>
     internal class NativeCommandParameterBinder : ParameterBinderBase
     {
         #region ctor
@@ -400,40 +401,16 @@ namespace System.Management.Automation
             {
                 // Even if there are no wildcards, we still need to possibly
                 // expand ~ into the filesystem provider home directory path
-                ProviderInfo fileSystemProvider = Context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
-                string home = fileSystemProvider.Home;
-                if (string.Equals(arg, "~"))
+                if (ExpandTilde(parameter, arg))
                 {
-                    _arguments.Append(home);
-                    AddToArgumentList(parameter, home);
-                    argExpanded = true;
-                }
-                else if (arg.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
-                {
-                    var replacementString = string.Concat(home, arg.AsSpan(1));
-                    _arguments.Append(replacementString);
-                    AddToArgumentList(parameter, replacementString);
                     argExpanded = true;
                 }
             }
-#endif // UNIX
-
-#if !UNIX
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeWindowsTildeExpansion) && !usedQuotes)
+#else
+            if (!usedQuotes && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeWindowsTildeExpansion))
             {
-                var fileSystemProvider = Context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
-                var home = fileSystemProvider.Home;
-                if (string.Equals(arg, "~"))
+                if (ExpandTilde(parameter, arg))
                 {
-                    _arguments.Append(home);
-                    AddToArgumentList(parameter, home);
-                    argExpanded = true;
-                }
-                else if (arg.StartsWith("~/") || arg.StartsWith(@"~\"))
-                {
-                    var replacementString = string.Concat(home, arg.AsSpan(1));
-                    _arguments.Append(replacementString);
-                    AddToArgumentList(parameter, replacementString);
                     argExpanded = true;
                 }
             }
@@ -444,6 +421,33 @@ namespace System.Management.Automation
                 _arguments.Append(arg);
                 AddToArgumentList(parameter, arg);
             }
+        }
+
+        /// <summary>
+        /// Replace tilde for unquoted arguments in the form ~ and ~/. For windows, ~\ is also expanded.
+        /// </summary>
+        /// <param name="arg">The argument that possibly needs expansion.</param>
+        /// <param name="parameter">The parameter associated with the operation.</param>
+        /// <returns>True if tilde expansion occurred.</returns>
+        private bool ExpandTilde(CommandParameterInternal parameter, string arg)
+        {
+            var fileSystemProvider = Context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
+            var home = fileSystemProvider.Home;
+            if (string.Equals(arg, "~"))
+			{
+                _arguments.Append(home);
+                AddToArgumentList(parameter, home);
+                return true;
+            }
+            else if (arg.StartsWith("~/") || (OperatingSystem.IsWindows() && arg.StartsWith(@"~\")))
+            {
+                var replacementString = string.Concat(home, arg.AsSpan(1));
+				_arguments.Append(replacementString);
+                AddToArgumentList(parameter, replacementString);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
