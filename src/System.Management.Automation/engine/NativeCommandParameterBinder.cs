@@ -14,7 +14,6 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     using Language;
-    using static System.Management.Automation.Interpreter.InitializeLocalInstruction;
 
     /// <summary>
     /// The parameter binder for native commands.
