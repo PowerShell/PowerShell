@@ -11,7 +11,7 @@ Describe "Import-Module" -Tags "CI" {
         New-ModuleManifest -Path "$testdrive\Modules\TestModule\1.1\TestModule.psd1" -ModuleVersion 1.1
         New-ModuleManifest -Path "$testdrive\Modules\TestModule\2.0\TestModule.psd1" -ModuleVersion 2.0
         [semver] $psver = $PSVersionTable.PSVersion
-        $nextPowerShellVersion = [version]::new($psver.Major + 1, 0)
+        $nextPowerShellVersion = [version]::new($psver.Major, $psver.Minor + 1)
         New-ModuleManifest -Path "$testdrive\Modules\TestModule\3.0\TestModule.psd1" -ModuleVersion 3.0 -PowerShellVersion $nextPowerShellVersion
     }
 
