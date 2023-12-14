@@ -14,11 +14,11 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     using Language;
-	using static System.Management.Automation.Interpreter.InitializeLocalInstruction;
+    using static System.Management.Automation.Interpreter.InitializeLocalInstruction;
 
-	/// <summary>
-	/// The parameter binder for native commands.
-	/// </summary>
+    /// <summary>
+    /// The parameter binder for native commands.
+    /// </summary>
     internal class NativeCommandParameterBinder : ParameterBinderBase
     {
         #region ctor
@@ -401,7 +401,7 @@ namespace System.Management.Automation
             {
                 // Even if there are no wildcards, we still need to possibly
                 // expand ~ into the filesystem provider home directory path
-                if (ExpandTilde(parameter, arg))
+                if (ExpandTilde(arg, parameter))
                 {
                     argExpanded = true;
                 }
@@ -409,7 +409,7 @@ namespace System.Management.Automation
 #else
             if (!usedQuotes && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeWindowsTildeExpansion))
             {
-                if (ExpandTilde(parameter, arg))
+                if (ExpandTilde(arg, parameter))
                 {
                     argExpanded = true;
                 }
@@ -429,12 +429,12 @@ namespace System.Management.Automation
         /// <param name="arg">The argument that possibly needs expansion.</param>
         /// <param name="parameter">The parameter associated with the operation.</param>
         /// <returns>True if tilde expansion occurred.</returns>
-        private bool ExpandTilde(CommandParameterInternal parameter, string arg)
+        private bool ExpandTilde(string arg, CommandParameterInternal parameter)
         {
             var fileSystemProvider = Context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
             var home = fileSystemProvider.Home;
             if (string.Equals(arg, "~"))
-			{
+            {
                 _arguments.Append(home);
                 AddToArgumentList(parameter, home);
                 return true;
@@ -442,7 +442,7 @@ namespace System.Management.Automation
             else if (arg.StartsWith("~/") || (OperatingSystem.IsWindows() && arg.StartsWith(@"~\")))
             {
                 var replacementString = string.Concat(home, arg.AsSpan(1));
-				_arguments.Append(replacementString);
+                _arguments.Append(replacementString);
                 AddToArgumentList(parameter, replacementString);
                 return true;
             }
