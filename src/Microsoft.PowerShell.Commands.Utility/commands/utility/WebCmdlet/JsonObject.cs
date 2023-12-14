@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
         public static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, out ErrorRecord error)
-            => ConvertFromJson(input, returnHashtable, maxDepth, jsonDateKind: JsonDateKind.Local, out error);
+            => ConvertFromJson(input, returnHashtable, maxDepth, jsonDateKind: JsonDateKind.Default, out error);
 
         /// <summary>
         /// Convert a JSON string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
