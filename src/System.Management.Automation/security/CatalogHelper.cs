@@ -423,7 +423,7 @@ namespace System.Management.Automation
             FileStream fileStream;
             try
             {
-                fileStream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+                fileStream = File.OpenRead(filePath);
             }
             catch (Exception e)
             {
