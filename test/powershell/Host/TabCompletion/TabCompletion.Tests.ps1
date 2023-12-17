@@ -784,6 +784,57 @@ ConstructorTestClass(int i, bool b)
         }
     }
 
+    Context 'Get-Verb & Get-Command -Verb parameter completion' {
+        BeforeAll {
+            $allVerbs = 'Add Approve Assert Backup Block Build Checkpoint Clear Close Compare Complete Compress Confirm Connect Convert ConvertFrom ConvertTo Copy Debug Deny Deploy Disable Disconnect Dismount Edit Enable Enter Exit Expand Export Find Format Get Grant Group Hide Import Initialize Install Invoke Join Limit Lock Measure Merge Mount Move New Open Optimize Out Ping Pop Protect Publish Push Read Receive Redo Register Remove Rename Repair Request Reset Resize Resolve Restart Restore Resume Revoke Save Search Select Send Set Show Skip Split Start Step Stop Submit Suspend Switch Sync Test Trace Unblock Undo Uninstall Unlock Unprotect Unpublish Unregister Update Use Wait Watch Write'
+            $verbsStartingWithRe = 'Read Receive Redo Register Remove Rename Repair Request Reset Resize Resolve Restart Restore Resume Revoke'
+            $verbsStartingWithEx = 'Exit Expand Export'
+            $verbsStartingWithConv = 'Convert ConvertFrom ConvertTo'
+            $lifeCycleVerbsStartingWithRe = 'Register Request Restart Resume'
+            $dataVerbsStartingwithEx = 'Expand Export'
+            $lifeCycleAndCommmonVerbsStartingWithRe = 'Redo Register Remove Rename Request Reset Resize Restart Resume'
+            $allLifeCycleAndCommonVerbs = 'Add Approve Assert Build Clear Close Complete Confirm Copy Deny Deploy Disable Enable Enter Exit Find Format Get Hide Install Invoke Join Lock Move New Open Optimize Pop Push Redo Register Remove Rename Request Reset Resize Restart Resume Search Select Set Show Skip Split Start Step Stop Submit Suspend Switch Undo Uninstall Unlock Unregister Wait Watch'
+            $allJsonVerbs = 'ConvertFrom ConvertTo Test'
+            $jsonVerbsStartingWithConv = 'ConvertFrom ConvertTo'
+            $allJsonAndJobVerbs = 'ConvertFrom ConvertTo Debug Get Receive Remove Start Stop Test Wait'
+            $jsonAndJobVerbsStartingWithSt = 'Start Stop'
+            $allObjectVerbs = 'Compare ForEach Group Measure New Select Sort Tee Where'
+            $utilityModuleObjectVerbs = 'Compare Group Measure New Select Sort Tee'
+            $utilityModuleObjectVerbsStartingWithS = 'Select Sort'
+            $coreModuleObjectVerbs = 'ForEach Where'
+        }
+
+        It "Should complete Verb parameter for '<TextInput>'" -TestCases @(
+            @{ TextInput = 'Get-Verb -Verb '; ExpectedVerbs = $allVerbs }
+            @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb '; ExpectedVerbs = $allLifeCycleAndCommonVerbs }
+            @{ TextInput = 'Get-Verb -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
+            @{ TextInput = 'Get-Verb -Group Lifecycle -Verb Re'; ExpectedVerbs = $lifeCycleVerbsStartingWithRe }
+            @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb Re'; ExpectedVerbs = $lifeCycleAndCommmonVerbsStartingWithRe }
+            @{ TextInput = 'Get-Verb -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
+            @{ TextInput = 'Get-Verb -Group Data -Verb Ex'; ExpectedVerbs = $dataVerbsStartingwithEx }
+            @{ TextInput = 'Get-Verb -Group NonExistentGroup -Verb '; ExpectedVerbs = '' }
+            @{ TextInput = 'Get-Verb -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
+            @{ TextInput = 'Get-Command -Verb '; ExpectedVerbs = $allVerbs }
+            @{ TextInput = 'Get-Command -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
+            @{ TextInput = 'Get-Command -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
+            @{ TextInput = 'Get-Command -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
+            @{ TextInput = 'Get-Command -Noun Json -Verb '; ExpectedVerbs = $allJsonVerbs }
+            @{ TextInput = 'Get-Command -Noun Json -Verb Conv'; ExpectedVerbs = $jsonVerbsStartingWithConv }
+            @{ TextInput = 'Get-Command -Noun Json, Job -Verb '; ExpectedVerbs = $allJsonAndJobVerbs }
+            @{ TextInput = 'Get-Command -Noun Json, Job -Verb St'; ExpectedVerbs = $jsonAndJobVerbsStartingWithSt }
+            @{ TextInput = 'Get-Command -Noun NonExistentNoun -Verb '; ExpectedVerbs = '' }
+            @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility,Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $allObjectVerbs }
+            @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb '; ExpectedVerbs = $utilityModuleObjectVerbs }
+            @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb S'; ExpectedVerbs = $utilityModuleObjectVerbsStartingWithS }
+            @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $coreModuleObjectVerbs }
+        ) {
+            param($TextInput, $ExpectedVerbs)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $ExpectedVerbs
+        }
+    }
+
     Context 'StrictMode Version parameter completion' {
         BeforeAll {
             $allStrictModeVersions = '1.0 2.0 3.0 Latest'
