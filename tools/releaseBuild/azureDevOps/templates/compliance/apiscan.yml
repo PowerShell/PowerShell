@@ -19,6 +19,7 @@ jobs:
       - group: DotNetPrivateBuildAccess
       - group: Azure Blob variable group
       - group: ReleasePipelineSecrets
+      - group: AzDevOpsArtifacts
 
     pool:
       name: PowerShell1ES
@@ -35,6 +36,10 @@ jobs:
         CreateJson: yes
         UseJson: no
 
+    - template: ../insert-nuget-config-azfeed.yml
+      parameters:
+        repoRoot: '$(Build.SourcesDirectory)'
+
     - pwsh: |
         Import-Module .\build.psm1 -force
         Start-PSBootstrap
@@ -42,7 +47,6 @@ jobs:
       retryCountOnTaskFailure: 2
       displayName: 'Bootstrap'
       env:
-        __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
         __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |

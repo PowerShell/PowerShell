@@ -18,4 +18,9 @@ steps:
     $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
     Write-Host "sending " + $vstsCommandString
     Write-Host "##$vstsCommandString"
+
+    $version = '$(ReleaseTag)'.ToLowerInvariant().Substring(1)
+    $vstsCommandString = "vso[task.setvariable variable=Version]$version"
+    Write-Host ("sending " + $vstsCommandString)
+    Write-Host "##$vstsCommandString"
   displayName: Set container name

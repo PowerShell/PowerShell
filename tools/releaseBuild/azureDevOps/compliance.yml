@@ -19,6 +19,12 @@ resources:
     name: PowerShell/compliance
     ref: master
 
+parameters:
+- name: InternalSDKBlobURL
+  displayName: URL to the blob havibg internal .NET SDK
+  type: string
+  default: ' '
+
 variables:
   - name: DOTNET_CLI_TELEMETRY_OPTOUT
     value: 1
@@ -33,6 +39,9 @@ variables:
   # Defines the variables CgPat, CgOrganization, and CgProject
   - group: 'ComponentGovernance'
   - group: 'PoolNames'
+  - name: __DOTNET_RUNTIME_FEED
+    value: ${{ parameters.InternalSDKBlobURL }}
+
 
 stages:
   - stage: compliance
