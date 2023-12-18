@@ -447,28 +447,28 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
         It "Test-FileCatalog should pass when target file has an open reader with FileMode Open FileAccess Read and FileShare Read" {
             $script:catalogPath = "$env:TEMP\TestCatalogFileOpenValidation.cat"
             $null = New-FileCatalog -Path "$env:TEMP\testCatalog\" -CatalogFilePath $script:catalogPath -CatalogVersion 2
-            $fileHandle = [System.IO.File]::Open("$env:TEMP\testCatalog\test.txt", [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::Read)
-           try{
+            $fileStream = [System.IO.File]::Open("$env:TEMP\testCatalog\test.txt", [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::Read)
+            try{
                 $result = Test-FileCatalog -Path "$env:TEMP\testCatalog\" -CatalogFilePath $script:catalogPath
                 $result | Should -Be "Valid"
             }
             finally {
-                $fileHandle.Close()
-                $fileHandle.Dispose()
+                $fileStream.Close()
+                $fileStream.Dispose()
             }
         }
 
         It "Test-FileCatalog should pass when target file has an open reader with FileMode Open FileAccess Read and FileShare ReadWrite" {
             $script:catalogPath = "$env:TEMP\TestCatalogFileOpenValidation.cat"
             $null = New-FileCatalog -Path "$env:TEMP\testCatalog\" -CatalogFilePath $script:catalogPath -CatalogVersion 2
-            $fileHandle = [System.IO.File]::Open("$env:TEMP\testCatalog\test.txt", [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+            $fileStream = [System.IO.File]::Open("$env:TEMP\testCatalog\test.txt", [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
             try{
                 $result = Test-FileCatalog -Path "$env:TEMP\testCatalog\" -CatalogFilePath $script:catalogPath
                 $result | Should -Be "Valid"
             }
             finally {
-                $fileHandle.Close()
-                $fileHandle.Dispose()
+                $fileStream.Close()
+                $fileStream.Dispose()
             }
         }
     }
