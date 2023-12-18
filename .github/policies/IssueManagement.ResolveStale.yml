@@ -24,6 +24,22 @@ configuration:
           reply: This issue has been marked as "Waiting on Author" and has not had any activity for **7 day**. It has been closed for housekeeping purposes.
       - closeIssue
     
+    - description: Close if marked as needs repro and no activity in 7 days
+      frequencies:
+      - hourly:
+          hour: 12
+      filters:
+      - isOpen
+      - isIssue
+      - hasLabel:
+          label: Needs-Repro
+      - noActivitySince:
+          days: 7
+      actions:
+      - addReply:
+          reply: This issue has been marked as "Needs-Repro" and has not had any activity for **7 day**. It has been closed for housekeeping purposes.
+      - closeIssue
+
     - description: Label as Resolution-No Activity if not labeled with KeepOpen and no activity in 6 months
       frequencies:
       - hourly:
@@ -76,6 +92,17 @@ configuration:
       then:
       - removeLabel:
           label: Waiting on Author
+    
+     - description: If new issue comment is author then remove needs repro
+      if:
+      - payloadType: Issue_Comment
+      - isActivitySender:
+          issueAuthor: True
+      - hasLabel:
+          label: Needs-Repro
+      then:
+      - removeLabel:
+          label: Needs-Repro
     
     - description: Remove Stale label if issue comment 
       if:
