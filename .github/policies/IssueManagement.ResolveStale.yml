@@ -121,11 +121,9 @@ configuration:
       - removeLabel:
           label: KeepOpen
 
-    - description: If new issue comment is author then remove needs repro
+    - description: If new issue comment then remove needs repro in case it includes repro steps
       if:
       - payloadType: Issue_Comment
-      - isActivitySender:
-          issueAuthor: True
       - hasLabel:
           label: Needs-Repro
       then:
