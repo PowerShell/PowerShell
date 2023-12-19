@@ -744,6 +744,32 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
     }
 
+    Context 'Scope parameter completion' {
+        BeforeAll {
+            $allScopes = 'Global Local Script'
+            $globalScope = 'Global'
+            $localScope = 'Local'
+            $scriptScope = 'Script'
+            $allScopeCommands = 'Clear-Variable', 'Export-Alias', 'Get-Alias', 'Get-PSDrive', 'Get-Variable', 'Import-Alias', 'New-Alias', 'New-PSDrive', 'New-Variable', 'Remove-Alias', 'Remove-PSDrive', 'Remove-Variable', 'Set-Alias', 'Set-Variable'
+        }
+
+        It "Should complete '<ParameterInput>' for '<Commands>'" -TestCases @(
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope "; ExpectedScopes = $allScopes }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope G"; ExpectedScopes = $globalScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope Lo"; ExpectedScopes = $localScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope Scr"; ExpectedScopes = $scriptScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope NonExistentScope"; ExpectedScopes = '' }
+        ) {
+            param($Commands, $ParameterInput, $ExpectedScopes)
+            foreach ($command in $Commands) {
+                $joinedCommand = "$command $ParameterInput"
+                $res = TabExpansion2 -inputScript $joinedCommand -cursorColumn $joinedCommand.Length
+                $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+                $completionText -join ' ' | Should -BeExactly $ExpectedScopes
+            }
+        }
+    }
+
     Context 'Get-Verb & Get-Command -Verb parameter completion' {
         BeforeAll {
             $allVerbs = 'Add Approve Assert Backup Block Build Checkpoint Clear Close Compare Complete Compress Confirm Connect Convert ConvertFrom ConvertTo Copy Debug Deny Deploy Disable Disconnect Dismount Edit Enable Enter Exit Expand Export Find Format Get Grant Group Hide Import Initialize Install Invoke Join Limit Lock Measure Merge Mount Move New Open Optimize Out Ping Pop Protect Publish Push Read Receive Redo Register Remove Rename Repair Request Reset Resize Resolve Restart Restore Resume Revoke Save Search Select Send Set Show Skip Split Start Step Stop Submit Suspend Switch Sync Test Trace Unblock Undo Uninstall Unlock Unprotect Unpublish Unregister Update Use Wait Watch Write'
