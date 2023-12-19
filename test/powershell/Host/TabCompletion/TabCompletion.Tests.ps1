@@ -744,6 +744,46 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
     }
 
+    Context 'Start-Process -Verb parameter completion' {
+        BeforeAll {
+            function GetProcessInfoVerbs($path) {
+                (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $path).Verbs
+            }
+
+            $cmdPath = Join-Path -Path $TestDrive -ChildPath 'test.cmd'
+            $cmdVerbs = GetProcessInfoVerbs $cmdPath
+            $exePath = Join-Path -Path $TestDrive -ChildPath 'test.exe'
+            $exeVerbs = GetProcessInfoVerbs $exePath
+            $exeVerbsStartingWithRun = $exeVerbs | Where-Object { $_ -like 'run*' }
+            $powerShellExeWithNoExtension = 'powershell'
+            $txtPath = Join-Path -Path $TestDrive -ChildPath 'test.txt'
+            $txtVerbs = GetProcessInfoVerbs $txtPath
+            $wavPath = Join-Path -Path $TestDrive -ChildPath 'test.wav'
+            $wavVerbs = GetProcessInfoVerbs $wavPath
+            $docxPath = Join-Path -Path $TestDrive -ChildPath 'test.docx'
+            $docxVerbs = GetProcessInfoVerbs $docxPath
+            $fileWithNoExtensionPath = Join-Path -Path $TestDrive -ChildPath 'test'
+            $fileWithNoExtensionVerbs = GetProcessInfoVerbs $fileWithNoExtensionPath
+        }
+
+        It "Should complete Verb parameter for '<TextInput>'" -Skip:(!([System.Management.Automation.Platform]::IsWindowsDesktop)) -TestCases @(
+            @{ TextInput = 'Start-Process -Verb '; ExpectedVerbs = '' }
+            @{ TextInput = "Start-Process -FilePath $cmdPath -Verb "; ExpectedVerbs =  $cmdVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $exePath -Verb "; ExpectedVerbs = $exeVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $exePath -Verb run"; ExpectedVerbs = $exeVerbsStartingWithRun -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $powerShellExeWithNoExtension -Verb "; ExpectedVerbs = $exeVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $txtPath -Verb "; ExpectedVerbs = $txtVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $wavPath -Verb "; ExpectedVerbs = $wavVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $docxPath -Verb "; ExpectedVerbs = $docxVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $fileWithNoExtensionPath -Verb "; ExpectedVerbs = $fileWithNoExtensionVerbs -join ' ' }
+        ) {
+            param($TextInput, $ExpectedVerbs)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $ExpectedVerbs
+        }
+    }
+
     Context 'Scope parameter completion' {
         BeforeAll {
             $allScopes = 'Global Local Script'
