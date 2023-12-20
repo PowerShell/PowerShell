@@ -744,6 +744,123 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$TestVar1'
     }
 
+    Context 'Start-Process -Verb parameter completion' {
+        BeforeAll {
+            function GetProcessInfoVerbs($path) {
+                (New-Object -TypeName System.Diagnostics.ProcessStartInfo -ArgumentList $path).Verbs
+            }
+
+            $cmdPath = Join-Path -Path $TestDrive -ChildPath 'test.cmd'
+            $cmdVerbs = GetProcessInfoVerbs $cmdPath
+            $exePath = Join-Path -Path $TestDrive -ChildPath 'test.exe'
+            $exeVerbs = GetProcessInfoVerbs $exePath
+            $exeVerbsStartingWithRun = $exeVerbs | Where-Object { $_ -like 'run*' }
+            $powerShellExeWithNoExtension = 'powershell'
+            $txtPath = Join-Path -Path $TestDrive -ChildPath 'test.txt'
+            $txtVerbs = GetProcessInfoVerbs $txtPath
+            $wavPath = Join-Path -Path $TestDrive -ChildPath 'test.wav'
+            $wavVerbs = GetProcessInfoVerbs $wavPath
+            $docxPath = Join-Path -Path $TestDrive -ChildPath 'test.docx'
+            $docxVerbs = GetProcessInfoVerbs $docxPath
+            $fileWithNoExtensionPath = Join-Path -Path $TestDrive -ChildPath 'test'
+            $fileWithNoExtensionVerbs = GetProcessInfoVerbs $fileWithNoExtensionPath
+        }
+
+        It "Should complete Verb parameter for '<TextInput>'" -Skip:(!([System.Management.Automation.Platform]::IsWindowsDesktop)) -TestCases @(
+            @{ TextInput = 'Start-Process -Verb '; ExpectedVerbs = '' }
+            @{ TextInput = "Start-Process -FilePath $cmdPath -Verb "; ExpectedVerbs =  $cmdVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $exePath -Verb "; ExpectedVerbs = $exeVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $exePath -Verb run"; ExpectedVerbs = $exeVerbsStartingWithRun -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $powerShellExeWithNoExtension -Verb "; ExpectedVerbs = $exeVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $txtPath -Verb "; ExpectedVerbs = $txtVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $wavPath -Verb "; ExpectedVerbs = $wavVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $docxPath -Verb "; ExpectedVerbs = $docxVerbs -join ' ' }
+            @{ TextInput = "Start-Process -FilePath $fileWithNoExtensionPath -Verb "; ExpectedVerbs = $fileWithNoExtensionVerbs -join ' ' }
+        ) {
+            param($TextInput, $ExpectedVerbs)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $ExpectedVerbs
+        }
+    }
+
+    Context 'Scope parameter completion' {
+        BeforeAll {
+            $allScopes = 'Global Local Script'
+            $globalScope = 'Global'
+            $localScope = 'Local'
+            $scriptScope = 'Script'
+            $allScopeCommands = 'Clear-Variable', 'Export-Alias', 'Get-Alias', 'Get-PSDrive', 'Get-Variable', 'Import-Alias', 'New-Alias', 'New-PSDrive', 'New-Variable', 'Remove-Alias', 'Remove-PSDrive', 'Remove-Variable', 'Set-Alias', 'Set-Variable'
+        }
+
+        It "Should complete '<ParameterInput>' for '<Commands>'" -TestCases @(
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope "; ExpectedScopes = $allScopes }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope G"; ExpectedScopes = $globalScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope Lo"; ExpectedScopes = $localScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope Scr"; ExpectedScopes = $scriptScope }
+            @{ Commands = $allScopeCommands; ParameterInput = "-Scope NonExistentScope"; ExpectedScopes = '' }
+        ) {
+            param($Commands, $ParameterInput, $ExpectedScopes)
+            foreach ($command in $Commands) {
+                $joinedCommand = "$command $ParameterInput"
+                $res = TabExpansion2 -inputScript $joinedCommand -cursorColumn $joinedCommand.Length
+                $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+                $completionText -join ' ' | Should -BeExactly $ExpectedScopes
+            }
+        }
+    }
+
+    Context 'Get-Verb & Get-Command -Verb parameter completion' {
+        BeforeAll {
+            $allVerbs = 'Add Approve Assert Backup Block Build Checkpoint Clear Close Compare Complete Compress Confirm Connect Convert ConvertFrom ConvertTo Copy Debug Deny Deploy Disable Disconnect Dismount Edit Enable Enter Exit Expand Export Find Format Get Grant Group Hide Import Initialize Install Invoke Join Limit Lock Measure Merge Mount Move New Open Optimize Out Ping Pop Protect Publish Push Read Receive Redo Register Remove Rename Repair Request Reset Resize Resolve Restart Restore Resume Revoke Save Search Select Send Set Show Skip Split Start Step Stop Submit Suspend Switch Sync Test Trace Unblock Undo Uninstall Unlock Unprotect Unpublish Unregister Update Use Wait Watch Write'
+            $verbsStartingWithRe = 'Read Receive Redo Register Remove Rename Repair Request Reset Resize Resolve Restart Restore Resume Revoke'
+            $verbsStartingWithEx = 'Exit Expand Export'
+            $verbsStartingWithConv = 'Convert ConvertFrom ConvertTo'
+            $lifeCycleVerbsStartingWithRe = 'Register Request Restart Resume'
+            $dataVerbsStartingwithEx = 'Expand Export'
+            $lifeCycleAndCommmonVerbsStartingWithRe = 'Redo Register Remove Rename Request Reset Resize Restart Resume'
+            $allLifeCycleAndCommonVerbs = 'Add Approve Assert Build Clear Close Complete Confirm Copy Deny Deploy Disable Enable Enter Exit Find Format Get Hide Install Invoke Join Lock Move New Open Optimize Pop Push Redo Register Remove Rename Request Reset Resize Restart Resume Search Select Set Show Skip Split Start Step Stop Submit Suspend Switch Undo Uninstall Unlock Unregister Wait Watch'
+            $allJsonVerbs = 'ConvertFrom ConvertTo Test'
+            $jsonVerbsStartingWithConv = 'ConvertFrom ConvertTo'
+            $allJsonAndJobVerbs = 'ConvertFrom ConvertTo Debug Get Receive Remove Start Stop Test Wait'
+            $jsonAndJobVerbsStartingWithSt = 'Start Stop'
+            $allObjectVerbs = 'Compare ForEach Group Measure New Select Sort Tee Where'
+            $utilityModuleObjectVerbs = 'Compare Group Measure New Select Sort Tee'
+            $utilityModuleObjectVerbsStartingWithS = 'Select Sort'
+            $coreModuleObjectVerbs = 'ForEach Where'
+        }
+
+        It "Should complete Verb parameter for '<TextInput>'" -TestCases @(
+            @{ TextInput = 'Get-Verb -Verb '; ExpectedVerbs = $allVerbs }
+            @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb '; ExpectedVerbs = $allLifeCycleAndCommonVerbs }
+            @{ TextInput = 'Get-Verb -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
+            @{ TextInput = 'Get-Verb -Group Lifecycle -Verb Re'; ExpectedVerbs = $lifeCycleVerbsStartingWithRe }
+            @{ TextInput = 'Get-Verb -Group Lifecycle, Common -Verb Re'; ExpectedVerbs = $lifeCycleAndCommmonVerbsStartingWithRe }
+            @{ TextInput = 'Get-Verb -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
+            @{ TextInput = 'Get-Verb -Group Data -Verb Ex'; ExpectedVerbs = $dataVerbsStartingwithEx }
+            @{ TextInput = 'Get-Verb -Group NonExistentGroup -Verb '; ExpectedVerbs = '' }
+            @{ TextInput = 'Get-Verb -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
+            @{ TextInput = 'Get-Command -Verb '; ExpectedVerbs = $allVerbs }
+            @{ TextInput = 'Get-Command -Verb Re'; ExpectedVerbs = $verbsStartingWithRe }
+            @{ TextInput = 'Get-Command -Verb Ex'; ExpectedVerbs = $verbsStartingWithEx }
+            @{ TextInput = 'Get-Command -Verb Conv'; ExpectedVerbs = $verbsStartingWithConv }
+            @{ TextInput = 'Get-Command -Noun Json -Verb '; ExpectedVerbs = $allJsonVerbs }
+            @{ TextInput = 'Get-Command -Noun Json -Verb Conv'; ExpectedVerbs = $jsonVerbsStartingWithConv }
+            @{ TextInput = 'Get-Command -Noun Json, Job -Verb '; ExpectedVerbs = $allJsonAndJobVerbs }
+            @{ TextInput = 'Get-Command -Noun Json, Job -Verb St'; ExpectedVerbs = $jsonAndJobVerbsStartingWithSt }
+            @{ TextInput = 'Get-Command -Noun NonExistentNoun -Verb '; ExpectedVerbs = '' }
+            @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility,Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $allObjectVerbs }
+            @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb '; ExpectedVerbs = $utilityModuleObjectVerbs }
+            @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Utility -Verb S'; ExpectedVerbs = $utilityModuleObjectVerbsStartingWithS }
+            @{ TextInput = 'Get-Command -Noun Object -Module Microsoft.PowerShell.Core -Verb '; ExpectedVerbs = $coreModuleObjectVerbs }
+        ) {
+            param($TextInput, $ExpectedVerbs)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $ExpectedVerbs
+        }
+    }
+
     Context 'StrictMode Version parameter completion' {
         BeforeAll {
             $allStrictModeVersions = '1.0 2.0 3.0 Latest'
@@ -1345,7 +1462,7 @@ class InheritedClassTest : System.Attribute
     Context "Cmdlet name completion" {
         BeforeAll {
             $testCases = @(
-                @{ inputStr = "get-c*item"; expected = "Get-ChildItem" }
+                @{ inputStr = "get-ch*item"; expected = "Get-ChildItem" }
                 @{ inputStr = "set-alia?"; expected = "Set-Alias" }
                 @{ inputStr = "s*-alias"; expected = "Set-Alias" }
                 @{ inputStr = "se*-alias"; expected = "Set-Alias" }
@@ -2036,7 +2153,7 @@ dir -Recurse `
         }
 
         It "Test complete module file name" {
-            $inputStr = "using module test"
+            $inputStr = "using module testm"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly ".${separator}testModule.psm1"

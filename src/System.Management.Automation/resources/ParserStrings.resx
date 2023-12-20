@@ -1361,4 +1361,10 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
     <value>The ForEach keyword will fail '{0}' iteration item method invocation when run in Constrained Language mode.</value>
   </data>
+  <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">
+    <value>Expression Evaluation May Fail</value>
+  </data>
+  <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
+    <value>Creating a steppable pipeline from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in Constrained Language mode, unless the expression represents a constant value.</value>
+  </data>
 </root>
