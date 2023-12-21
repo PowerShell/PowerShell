@@ -885,6 +885,32 @@ ConstructorTestClass(int i, bool b)
         }
     }
 
+    Context 'Help Module parameter completion' {
+        BeforeAll {
+            $utilityModule = 'Microsoft.PowerShell.Utility'
+            $managementModule = 'Microsoft.PowerShell.Management'
+            $allMicrosoftPowerShellModules = (Get-Module -Name Microsoft.PowerShell* -ListAvailable).Name
+            Import-Module -Name $allMicrosoftPowerShellModules -ErrorAction SilentlyContinue
+            $allMicrosoftPowerShellModules = ($allMicrosoftPowerShellModules | Sort-Object -Unique) -join ' '
+        }
+
+        It "Should complete Module for '<TextInput>'" -TestCases @(
+            @{ TextInput = "Save-Help -Module Microsoft.PowerShell.U"; ExpectedModules = $utilityModule }
+            @{ TextInput = "Update-Help -Module Microsoft.PowerShell.U"; ExpectedModules = $utilityModule }
+            @{ TextInput = "Save-Help -Module Microsoft.PowerShell.Man"; ExpectedModules = $managementModule }
+            @{ TextInput = "Update-Help -Module Microsoft.PowerShell.Man"; ExpectedModules = $managementModule }
+            @{ TextInput = "Save-Help -Module Microsoft.Powershell"; ExpectedModules = $allMicrosoftPowerShellModules }
+            @{ TextInput = "Update-Help -Module Microsoft.PowerShell"; ExpectedModules = $allMicrosoftPowerShellModules }
+            @{ TextInput = "Save-Help -Module NonExistentModulePrefix"; ExpectedModules = '' }
+            @{ TextInput = "Update-Help -Module NonExistentModulePrefix"; ExpectedModules = '' }
+        ) {
+            param($TextInput, $ExpectedModules)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object -Unique
+            $completionText -join ' ' | Should -BeExactly $ExpectedModules
+        }
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'

@@ -2185,6 +2185,22 @@ namespace System.Management.Automation
                         NativeCompletionGetHelpCommand(context, parameterName, /* isHelpRelated: */ true, result);
                         break;
                     }
+                case "Save-Help":
+                    {
+                        if (parameterName.Equals("Module", StringComparison.OrdinalIgnoreCase))
+                        {
+                            CompleteModule(context, result);
+                        }
+                        break;
+                    }
+                case "Update-Help":
+                    {
+                        if (parameterName.Equals("Module", StringComparison.OrdinalIgnoreCase))
+                        {
+                            CompleteModule(context, result);
+                        }
+                        break;
+                    }
                 case "Invoke-Expression":
                     {
                         if (parameterName.Equals("Command", StringComparison.OrdinalIgnoreCase))
@@ -3032,37 +3048,42 @@ namespace System.Management.Automation
             }
             else if (!string.IsNullOrEmpty(paramName) && paramName.Equals("Module", StringComparison.OrdinalIgnoreCase))
             {
-                RemoveLastNullCompletionResult(result);
-
-                var modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                var moduleResults = CompleteModuleName(context, loadedModulesOnly: true);
-                if (moduleResults != null)
-                {
-                    foreach (CompletionResult moduleResult in moduleResults)
-                    {
-                        if (!modules.Contains(moduleResult.ToolTip))
-                        {
-                            modules.Add(moduleResult.ToolTip);
-                            result.Add(moduleResult);
-                        }
-                    }
-                }
-
-                moduleResults = CompleteModuleName(context, loadedModulesOnly: false);
-                if (moduleResults != null)
-                {
-                    foreach (CompletionResult moduleResult in moduleResults)
-                    {
-                        if (!modules.Contains(moduleResult.ToolTip))
-                        {
-                            modules.Add(moduleResult.ToolTip);
-                            result.Add(moduleResult);
-                        }
-                    }
-                }
-
-                result.Add(CompletionResult.Null);
+                CompleteModule(context, result);
             }
+        }
+
+        private static void CompleteModule(CompletionContext context, List<CompletionResult> result)
+        {
+            RemoveLastNullCompletionResult(result);
+
+            var modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var moduleResults = CompleteModuleName(context, loadedModulesOnly: true);
+            if (moduleResults != null)
+            {
+                foreach (CompletionResult moduleResult in moduleResults)
+                {
+                    if (!modules.Contains(moduleResult.ToolTip))
+                    {
+                        modules.Add(moduleResult.ToolTip);
+                        result.Add(moduleResult);
+                    }
+                }
+            }
+
+            moduleResults = CompleteModuleName(context, loadedModulesOnly: false);
+            if (moduleResults != null)
+            {
+                foreach (CompletionResult moduleResult in moduleResults)
+                {
+                    if (!modules.Contains(moduleResult.ToolTip))
+                    {
+                        modules.Add(moduleResult.ToolTip);
+                        result.Add(moduleResult);
+                    }
+                }
+            }
+
+            result.Add(CompletionResult.Null);
         }
 
         private static void NativeCompletionGetHelpCommand(CompletionContext context, string paramName, bool isHelpRelated, List<CompletionResult> result)
