@@ -889,7 +889,9 @@ ConstructorTestClass(int i, bool b)
         BeforeAll {
             $utilityModule = 'Microsoft.PowerShell.Utility'
             $managementModule = 'Microsoft.PowerShell.Management'
-            $allPowerShellModules = ((Get-Module -Name Microsoft.Power* -ListAvailable).Name | Sort-Object -Unique) -join ' '
+            $allMicrosoftPowerShellModules = (Get-Module -Name Microsoft.PowerShell* -ListAvailable).Name
+            Import-Module -Name $allMicrosoftPowerShellModules -ErrorAction SilentlyContinue
+            $allMicrosoftPowerShellModules = ($allMicrosoftPowerShellModules | Sort-Object -Unique) -join ' '
         }
 
         It "Should complete Module for '<TextInput>'" -TestCases @(
@@ -897,8 +899,8 @@ ConstructorTestClass(int i, bool b)
             @{ TextInput = "Update-Help -Module Microsoft.PowerShell.U"; ExpectedModules = $utilityModule }
             @{ TextInput = "Save-Help -Module Microsoft.PowerShell.Man"; ExpectedModules = $managementModule }
             @{ TextInput = "Update-Help -Module Microsoft.PowerShell.Man"; ExpectedModules = $managementModule }
-            @{ TextInput = "Save-Help -Module Microsoft.Power"; ExpectedModules = $allPowerShellModules }
-            @{ TextInput = "Update-Help -Module Microsoft.Power"; ExpectedModules = $allPowerShellModules }
+            @{ TextInput = "Save-Help -Module Microsoft.Powershell"; ExpectedModules = $allMicrosoftPowerShellModules }
+            @{ TextInput = "Update-Help -Module Microsoft.PowerShell"; ExpectedModules = $allMicrosoftPowerShellModules }
             @{ TextInput = "Save-Help -Module NonExistentModulePrefix"; ExpectedModules = '' }
             @{ TextInput = "Update-Help -Module NonExistentModulePrefix"; ExpectedModules = '' }
         ) {
