@@ -895,12 +895,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 Uri uri = new System.Uri("ssh://" + hostname);
 
-                // Extract original hostname from URI with preserved case
+                // Extract original host from URI with preserved case
                 // This is needed since System.Uri canonicalizes URI and makes host lowercase
-                int originalHostnameIndex = uri.OriginalString.IndexOf(uri.Host, StringComparison.OrdinalIgnoreCase);
-                string originalHostName = uri.OriginalString.Substring(originalHostnameIndex, uri.Host.Length);
+                int originalHostIndex = uri.OriginalString.IndexOf(uri.Host, StringComparison.OrdinalIgnoreCase);
+                string originalHost = originalHostIndex != -1 
+                    ? uri.OriginalString.Substring(originalHostIndex, uri.Host.Length)
+                    : uri.Host;
 
-                host = ResolveComputerName(originalHostName);
+                host = ResolveComputerName(originalHost);
                 ValidateComputerName(new string[] { host });
                 if (uri.UserInfo != string.Empty)
                 {
