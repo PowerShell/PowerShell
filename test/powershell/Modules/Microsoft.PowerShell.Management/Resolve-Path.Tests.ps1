@@ -16,6 +16,19 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
             @{ wd = $fakeRoot; target = $testRoot; expected = $testRoot }
             @{ wd = $testRoot; target = Join-Path $fakeRoot "file.txt"; expected = Join-Path "." "fakeroot" "file.txt" }
         )
+
+        $hiddenFilePath1 = Join-Path -Path $TestDrive -ChildPath 'test1.txt'
+        $hiddenFile1 = New-Item -Path $hiddenFilePath1 -ItemType File
+        $hiddenFile1.Attributes = "Hidden"
+        $relativeHiddenFilePath1 = ".$([System.IO.Path]::DirectorySeparatorChar)test1.txt"
+
+        $hiddenFilePath2 = Join-Path -Path $TestDrive -ChildPath 'test2.txt'
+        $hiddenFile2 = New-Item -Path $hiddenFilePath2 -ItemType File
+        $hiddenFile2.Attributes = "Hidden"
+        $relativeHiddenFilePath2 = ".$([System.IO.Path]::DirectorySeparatorChar)test2.txt"
+
+        $hiddenFileWildcardPath = Join-Path -Path $TestDrive -ChildPath 'test*.txt'
+        $relativeHiddenFileWildcardPath = ".$([System.IO.Path]::DirectorySeparatorChar)test*.txt"
     }
     AfterAll {
         Remove-PSDrive -Name $driveName -Force
@@ -86,7 +99,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         }
     ) -Test {
         param($Path, $BasePath, $Expected, $CD)
-        
+
         if ($null -eq $Expected)
         {
             {Resolve-Path -Path $Path -RelativeBasePath $BasePath -ErrorAction Stop} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
@@ -113,5 +126,47 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
                 }
             }
         }
+    }
+
+    It "Resolve-Path -Path '<Path>' -RelativeBasePath '<BasePath>' -Force:<Force> should return '<ExpectedResult>'" -TestCases @(
+        @{
+            Path           = $relativeHiddenFilePath1
+            BasePath       = $TestDrive
+            Force          = $false
+            ExpectedResult = $hiddenFilePath1
+        }
+        @{
+            Path           = $relativeHiddenFilePath2
+            BasePath       = $TestDrive
+            Force          = $false
+            ExpectedResult = $hiddenFilePath2
+        }
+        @{
+            Path           = $relativeHiddenFileWildcardPath
+            BasePath       = $TestDrive
+            Force          = $false
+            ExpectedResult = $null
+        }
+        @{
+            Path           = $relativeHiddenFilePath1
+            BasePath       = $TestDrive
+            Force          = $true
+            ExpectedResult = $hiddenFilePath1
+        }
+        @{
+            Path           = $relativeHiddenFilePath2
+            BasePath       = $TestDrive
+            Force          = $true
+            ExpectedResult = $hiddenFilePath2
+        }
+        @{
+            Path           = $relativeHiddenFileWildcardPath
+            BasePath       = $TestDrive
+            Force          = $true
+            ExpectedResult = @($hiddenFilePath1, $hiddenFilePath2)
+        }
+    ) {
+        param($Path, $BasePath, $Force, $ExpectedResult)
+        (Resolve-Path -Path $Path -RelativeBasePath $BasePath -Force:$Force).Path | Should -BeExactly $ExpectedResult
     }
 }
