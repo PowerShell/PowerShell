@@ -10,8 +10,8 @@ Describe "Convert-Path tests" -Tag CI {
         $hiddenFile1 = New-Item -Path $hiddenFilePath1 -ItemType File
         $hiddenFile2 = New-Item -Path $hiddenFilePath2 -ItemType File
 
-        $relativeHiddenFilePath1 = ".$([System.IO.Path]::DirectorySeparatorChar)test1.txt"
-        $relativeHiddenFilePath2 = ".$([System.IO.Path]::DirectorySeparatorChar)test2.txt"
+        $relativeHiddenFilePath1 = ".$([System.IO.Path]::DirectorySeparatorChar)$($hiddenFilePrefix)test1.txt"
+        $relativeHiddenFilePath2 = ".$([System.IO.Path]::DirectorySeparatorChar)$($hiddenFilePrefix)test2.txt"
 
         if ($IsWindows) {
             $hiddenFile1.Attributes = "Hidden"
@@ -19,7 +19,7 @@ Describe "Convert-Path tests" -Tag CI {
         }
 
         $hiddenFileWildcardPath = Join-Path -Path $TestDrive -ChildPath "$($hiddenFilePrefix)test*.txt"
-        $relativeHiddenFileWildcardPath = ".$([System.IO.Path]::DirectorySeparatorChar)test*.txt"
+        $relativeHiddenFileWildcardPath = ".$([System.IO.Path]::DirectorySeparatorChar)$($hiddenFilePrefix)test*.txt"
     }
 
     It "Convert-Path should handle provider qualified paths" {
