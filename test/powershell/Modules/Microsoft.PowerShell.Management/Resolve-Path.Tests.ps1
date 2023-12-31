@@ -17,17 +17,21 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
             @{ wd = $testRoot; target = Join-Path $fakeRoot "file.txt"; expected = Join-Path "." "fakeroot" "file.txt" }
         )
 
-        $hiddenFilePrefix = [System.Environment]::OSVersion.Platform -eq 'Unix' ? '.' : ''
+        $hiddenFilePrefix = ($IsLinux -or $IsMacOS) ? '.' : ''
 
         $hiddenFilePath1 = Join-Path -Path $TestDrive -ChildPath "$($hiddenFilePrefix)test1.txt"
-        $hiddenFile1 = New-Item -Path $hiddenFilePath1 -ItemType File
-        $hiddenFile1.Attributes = "Hidden"
-        $relativeHiddenFilePath1 = ".$([System.IO.Path]::DirectorySeparatorChar)test1.txt"
-
         $hiddenFilePath2 = Join-Path -Path $TestDrive -ChildPath "$($hiddenFilePrefix)test2.txt"
+
+        $hiddenFile1 = New-Item -Path $hiddenFilePath1 -ItemType File
         $hiddenFile2 = New-Item -Path $hiddenFilePath2 -ItemType File
-        $hiddenFile2.Attributes = "Hidden"
+
+        $relativeHiddenFilePath1 = ".$([System.IO.Path]::DirectorySeparatorChar)test1.txt"
         $relativeHiddenFilePath2 = ".$([System.IO.Path]::DirectorySeparatorChar)test2.txt"
+
+        if ($IsWindows) {
+            $hiddenFile1.Attributes = "Hidden"
+            $hiddenFile2.Attributes = "Hidden"
+        }
 
         $hiddenFileWildcardPath = Join-Path -Path $TestDrive -ChildPath "$($hiddenFilePrefix)test*.txt"
         $relativeHiddenFileWildcardPath = ".$([System.IO.Path]::DirectorySeparatorChar)test*.txt"
