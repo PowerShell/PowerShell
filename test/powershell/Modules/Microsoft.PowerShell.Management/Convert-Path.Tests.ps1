@@ -2,17 +2,19 @@
 # Licensed under the MIT License.
 Describe "Convert-Path tests" -Tag CI {
     BeforeAll {
-        $hiddenFilePath1 = Join-Path -Path $TestDrive -ChildPath 'test1.txt'
+        $hiddenFilePrefix = [System.Environment]::OSVersion.Platform -eq 'Unix' ? '.' : ''
+
+        $hiddenFilePath1 = Join-Path -Path $TestDrive -ChildPath "$($hiddenFilePrefix)test1.txt"
         $hiddenFile1 = New-Item -Path $hiddenFilePath1 -ItemType File
         $hiddenFile1.Attributes = "Hidden"
         $relativeHiddenFilePath1 = ".$([System.IO.Path]::DirectorySeparatorChar)test1.txt"
 
-        $hiddenFilePath2 = Join-Path -Path $TestDrive -ChildPath 'test2.txt'
+        $hiddenFilePath2 = Join-Path -Path $TestDrive -ChildPath "$($hiddenFilePrefix)test2.txt"
         $hiddenFile2 = New-Item -Path $hiddenFilePath2 -ItemType File
         $hiddenFile2.Attributes = "Hidden"
         $relativeHiddenFilePath2 = ".$([System.IO.Path]::DirectorySeparatorChar)test2.txt"
 
-        $hiddenFileWildcardPath = Join-Path -Path $TestDrive -ChildPath 'test*.txt'
+        $hiddenFileWildcardPath = Join-Path -Path $TestDrive -ChildPath "$($hiddenFilePrefix)test*.txt"
         $relativeHiddenFileWildcardPath = ".$([System.IO.Path]::DirectorySeparatorChar)test*.txt"
     }
 
