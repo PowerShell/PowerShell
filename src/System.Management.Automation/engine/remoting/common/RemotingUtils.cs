@@ -97,19 +97,9 @@ namespace System.Management.Automation.Remoting
         /// <returns>Resolved computer name.</returns>
         internal static string ResolveComputerName(string computerName)
         {
-            Diagnostics.Assert(computerName != null, "Null ComputerName");
-
-            if (string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase))
-            {
-                // tracer.WriteEvent(ref PSEventDescriptors.PS_EVENT_HOSTNAMERESOLVE);
-                // tracer.Dispose();
-                // tracer.OperationalChannel.WriteVerbose(PSEventId.HostNameResolve, PSOpcode.Method, PSTask.CreateRunspace);
-                return s_LOCALHOST;
-            }
-            else
-            {
-                return computerName;
-            }
+            return string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase)
+                ? s_LOCALHOST
+                : computerName;
         }
     }
 }
