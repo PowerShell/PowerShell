@@ -59,10 +59,9 @@ namespace System.Management.Automation.Remoting
             }
             catch (UriFormatException)
             {
-                cmdlet.ThrowTerminatingError(new ErrorRecord(
-                    new ArgumentException(PSRemotingErrorInvariants.FormatResourceString(
-                        RemotingErrorIdStrings.InvalidComputerName)), "PSSessionInvalidComputerName",
-                            ErrorCategory.InvalidArgument, hostname));
+                ArgumentException exception = new(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidComputerName));
+                ErrorRecord errorRecord = new(exception, "PSSessionInvalidComputerName", ErrorCategory.InvalidArgument, hostname);
+                cmdlet.ThrowTerminatingError(errorRecord);
             }
         }
 
@@ -72,7 +71,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="cmdlet">PSRemoting base cmdlet.</param>
         /// <param name="computerNames">collection of computer
-        /// names to validate</param>
+        /// names to validate.</param>
         internal static void ValidateComputerName(PSRemotingBaseCmdlet cmdlet, string[] computerNames)
         {
             foreach (string computerName in computerNames)
@@ -81,10 +80,9 @@ namespace System.Management.Automation.Remoting
                 if (!(nametype == UriHostNameType.Dns || nametype == UriHostNameType.IPv4 ||
                     nametype == UriHostNameType.IPv6))
                 {
-                    cmdlet.ThrowTerminatingError(new ErrorRecord(
-                        new ArgumentException(PSRemotingErrorInvariants.FormatResourceString(
-                            RemotingErrorIdStrings.InvalidComputerName)), "PSSessionInvalidComputerName",
-                                ErrorCategory.InvalidArgument, computerNames));
+                    ArgumentException exception = new(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidComputerName));
+                    ErrorRecord errorRecord = new(exception, "PSSessionInvalidComputerName", ErrorCategory.InvalidArgument, computerNames);
+                    cmdlet.ThrowTerminatingError(errorRecord);
                 }
             }
         }
