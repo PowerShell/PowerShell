@@ -70,7 +70,7 @@ namespace System.Management.Automation.Remoting
         /// happen to be a Uri. If so this throws an error.
         /// </summary>
         /// <param name="cmdlet">PSRemoting base cmdlet.</param>
-        /// <param name="computerNames">collection of computer
+        /// <param name="computerNames">Collection of computer
         /// names to validate.</param>
         internal static void ValidateComputerName(PSRemotingBaseCmdlet cmdlet, string[] computerNames)
         {
