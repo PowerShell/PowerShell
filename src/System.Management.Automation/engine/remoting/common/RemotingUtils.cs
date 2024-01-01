@@ -59,9 +59,7 @@ namespace System.Management.Automation.Remoting
             }
             catch (UriFormatException)
             {
-                ArgumentException exception = new(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidComputerName));
-                ErrorRecord errorRecord = new(exception, "PSSessionInvalidComputerName", ErrorCategory.InvalidArgument, hostname);
-                cmdlet.ThrowTerminatingError(errorRecord);
+                ReportInvalidComputerName(cmdlet, hostname);
             }
         }
 
@@ -80,9 +78,7 @@ namespace System.Management.Automation.Remoting
                 if (!(nametype == UriHostNameType.Dns || nametype == UriHostNameType.IPv4 ||
                     nametype == UriHostNameType.IPv6))
                 {
-                    ArgumentException exception = new(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidComputerName));
-                    ErrorRecord errorRecord = new(exception, "PSSessionInvalidComputerName", ErrorCategory.InvalidArgument, computerNames);
-                    cmdlet.ThrowTerminatingError(errorRecord);
+                    ReportInvalidComputerName(cmdlet, computerNames);
                 }
             }
         }
@@ -98,6 +94,18 @@ namespace System.Management.Automation.Remoting
             return string.Equals(computerName, ".", StringComparison.OrdinalIgnoreCase)
                 ? s_LOCALHOST
                 : computerName;
+        }
+
+        /// <summary>
+        /// Report invalid computer name terminating error.
+        /// </summary>
+        /// <param name="cmdlet">PSRemoting base cmdlet.</param>
+        /// <param name="targetObject">Error record target object.</param>
+        private static void ReportInvalidComputerName(PSRemotingBaseCmdlet cmdlet, object targetObject)
+        {
+            ArgumentException exception = new(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidComputerName));
+            ErrorRecord errorRecord = new(exception, "PSSessionInvalidComputerName", ErrorCategory.InvalidArgument, targetObject);
+            cmdlet.ThrowTerminatingError(errorRecord);
         }
     }
 }
