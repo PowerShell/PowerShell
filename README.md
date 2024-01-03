@@ -134,6 +134,11 @@ You can also download the PowerShell binary archives for Windows, macOS, and Lin
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
+## Upgrading PowerShell
+
+For best results when upgrading, you should use the same install method you used when you first installed PowerShell. For more information on 
+upgrading your exsiting install of PowerShell, visit [Upgrading an Existing Installation](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.4#upgrading-an-existing-installation).
+
 ## Community Dashboard
 
 [Dashboard](https://aka.ms/PSPublicDashboard) with visualizations for community contributions and project status using PowerShell, Azure, and PowerBI.
