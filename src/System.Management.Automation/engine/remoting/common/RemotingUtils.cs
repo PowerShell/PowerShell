@@ -75,7 +75,9 @@ namespace System.Management.Automation.Remoting
             foreach (string computerName in computerNames)
             {
                 UriHostNameType nametype = Uri.CheckHostName(computerName);
-                if (!(nametype == UriHostNameType.Dns || nametype == UriHostNameType.IPv4 ||
+                
+                if (!(nametype == UriHostNameType.Dns || 
+                    nametype == UriHostNameType.IPv4 ||
                     nametype == UriHostNameType.IPv6))
                 {
                     ReportInvalidComputerName(cmdlet, computerNames);
