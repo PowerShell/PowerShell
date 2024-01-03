@@ -55,13 +55,13 @@ Describe 'ClassHelp' {
             $xDocument,
             $xmlSchemaSet,
             {
-                param ($sender, $eventArgs)
+                param ($node, $data)
 
-                if ($eventArgs.Severity -in 'Error', 'Warning') {
+                if ($data.Severity -in 'Error', 'Warning') {
                     $message = 'Line {0}, Column {1}, {2}' -f @(
-                        $eventArgs.LineNumber
-                        $eventArgs.LinePosition
-                        $eventArgs.Message
+                        $data.LineNumber
+                        $data.LinePosition
+                        $data.Message
                     )
                     $validateErrors.Add($message)
                 }
