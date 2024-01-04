@@ -42,9 +42,7 @@ git rebase origin/master
 Covering all possible git scenarios is behind the scope of the current document.
 Git has excellent documentation and lots of materials available online.
 
-We are leaving few links here:
-
-[Git pretty flowchart](http://justinhileman.info/article/git-pretty/): what to do, when your local repo became a mess.
+We are leaving a few links here:
 
 [Linus]:https://wincent.com/wiki/git_rebase%3A_you're_doing_it_wrong
 

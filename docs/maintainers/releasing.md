@@ -30,11 +30,6 @@ This is to help track the release preparation work.
 1. Create the draft and publish the release in Github.
 1. Merge the `release-<Release Tag>` branch to `master` in `powershell/powershell` and delete the `release-<Release Tag>` branch.
 1. Publish Linux packages to Microsoft YUM/APT repositories.
-1. Trigger the release docker builds for Linux and Windows container images.
-   - Linux: push a branch named `docker` to `powershell/powershell` repository to trigger the build at [powershell docker hub](https://hub.docker.com/r/microsoft/powershell/builds/).
-     Delete the `docker` branch once the builds succeed.
-   - Windows: queue a new build in `PowerShell Windows Docker Build` on VSTS.
-1. Verify the generated docker container images.
 1. [Update the homebrew formula](#homebrew) for the macOS package.
    This task usually will be taken care of by the community,
    so we can wait for one day or two and see if the homebrew formula has already been updated,
