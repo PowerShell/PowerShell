@@ -136,8 +136,9 @@ To install a specific version, visit [releases](https://github.com/PowerShell/Po
 
 ## Upgrading PowerShell
 
-For best results when upgrading, you should use the same install method you used when you first installed PowerShell. For more information on 
-upgrading your exsiting install of PowerShell, visit [Upgrading an Existing Installation](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.4#upgrading-an-existing-installation).
+For best results when upgrading, you should use the same install method you used when you first
+installed PowerShell. The update method will be different for each platform and install method. For
+more information, see [Installing PowerShell](https://learn.microsoft.com/powershell/scripting/install/installing-powershell).
 
 ## Community Dashboard
 
