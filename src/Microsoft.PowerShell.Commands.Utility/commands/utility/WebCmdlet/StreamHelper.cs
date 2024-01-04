@@ -204,10 +204,12 @@ namespace Microsoft.PowerShell.Commands
             }
 
             _isInitialized = true;
+            byte[]? buffer = null;
             try
             {
                 long totalRead = 0;
-                byte[] buffer = new byte[StreamHelper.ChunkSize];
+                buffer = ArrayPool<byte>.Shared.Rent(StreamHelper.ChunkSize);
+                var mem = buffer.AsMemory();
                 ProgressRecord record = new(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
                 string totalDownloadSize = _contentLength is null ? "???" : Utils.DisplayHumanReadableFileSize((long)_contentLength);
                 for (int read = 1; read > 0; totalRead += read)
@@ -232,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    read = _originalStreamToProxy.ReadAsync(buffer.AsMemory(), _perReadTimeout, cancellationToken).GetAwaiter().GetResult();
+                    read = _originalStreamToProxy.ReadAsync(mem, _perReadTimeout, cancellationToken).GetAwaiter().GetResult();
 
                     if (read > 0)
                     {
@@ -256,7 +258,109 @@ namespace Microsoft.PowerShell.Commands
                 Dispose();
                 throw;
             }
+            finally
+            {
+                if (buffer != null)
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                }
+            }
         }
+    }
+
+    internal static class StreamReaderTimeoutExtensions
+    {
+        private static async ValueTask<int> ReadBlockAsyncInternal(this StreamReader reader, Memory<char> buffer, TimeSpan perReadTimeout, CancellationToken cancellationToken)
+        {
+            int n = 0, i;
+            do
+            {
+                i = await reader.ReadAsync(buffer.Slice(n), perReadTimeout, cancellationToken).ConfigureAwait(false);
+                n += i;
+            } while (i > 0 && n < buffer.Length);
+
+            return n;
+        }
+
+        internal static async Task<int> ReadBlockAsync(this StreamReader reader, Memory<char> buffer, TimeSpan readTimeout, CancellationToken cancellationToken)
+        {
+            if (readTimeout == Timeout.InfiniteTimeSpan)
+            {
+                return await reader.ReadBlockAsync(buffer, cancellationToken).ConfigureAwait(false);
+            }
+
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            try
+            {
+                cts.CancelAfter(readTimeout);
+                return await reader.ReadBlockAsyncInternal(buffer, readTimeout, cts.Token).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cts.IsCancellationRequested)
+                {
+                    throw new TimeoutException($"The request was canceled due to the configured OperationTimeout of {readTimeout.TotalSeconds} seconds elapsing", ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        internal static async Task<int> ReadAsync(this StreamReader reader, Memory<char> buffer, TimeSpan readTimeout, CancellationToken cancellationToken)
+        {
+            if (readTimeout == Timeout.InfiniteTimeSpan)
+            {
+                return await reader.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
+            }
+
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            try
+            {
+                cts.CancelAfter(readTimeout);
+                return await reader.ReadAsync(buffer, cts.Token).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cts.IsCancellationRequested)
+                {
+                    throw new TimeoutException($"The request was canceled due to the configured OperationTimeout of {readTimeout.TotalSeconds} seconds elapsing", ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        internal static async Task<string> ReadToEndAsync(this StreamReader reader, TimeSpan perReadTimeout, CancellationToken cancellationToken)
+        {
+            if (perReadTimeout == Timeout.InfiniteTimeSpan)
+            {
+                return await reader.ReadToEndAsync(cancellationToken);
+            }
+
+            int useBufferSize = 4096;
+            char[] chars = ArrayPool<char>.Shared.Rent(useBufferSize);
+            try
+            {
+                Memory<char> buffer = chars.AsMemory();
+                StringBuilder sb = new StringBuilder(useBufferSize);
+                int charsRead = 0;
+                while ((charsRead = await reader.ReadAsync(buffer, perReadTimeout, cancellationToken)) != 0)
+                {
+                    sb.Append(chars, 0, charsRead);
+                }
+
+                return sb.ToString();
+            }
+            finally
+            {
+                ArrayPool<char>.Shared.Return(chars);
+            }
+        }
+
     }
 
     internal static class StreamTimeoutExtensions
@@ -421,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Precedence: BOM, charset, meta element, XML declaration
-        private static async Task<Encoding> GetStreamEncodingAsync(Stream stream, string? characterSet, CancellationToken cancellationToken)
+        private static async Task<Encoding> GetStreamEncodingAsync(Stream stream, string? characterSet, TimeSpan perReadTimeout, CancellationToken cancellationToken)
         {
             bool encodingSearchFailed = !TryGetEncodingFromCharset(characterSet, out Encoding encoding);
 
@@ -433,7 +537,7 @@ namespace Microsoft.PowerShell.Commands
             int bufferLength = (int)Math.Min(reader.BaseStream.Length, 1024);
 
             char[] buffer = new char[bufferLength];
-            await reader.ReadBlockAsync(buffer.AsMemory(), cancellationToken);
+            await reader.ReadBlockAsync(buffer.AsMemory(), perReadTimeout, cancellationToken);
             stream.Seek(0, SeekOrigin.Begin);
 
             // Only try to parse meta element and XML declaration if getting encoding from charset
@@ -469,11 +573,10 @@ namespace Microsoft.PowerShell.Commands
             return encoding;
         }
 
-        internal static string DecodeStream(Stream stream, string? characterSet, out Encoding encoding, CancellationToken cancellationToken)
+        internal static string DecodeStream(Stream stream, string? characterSet, out Encoding encoding, TimeSpan perReadTimeout, CancellationToken cancellationToken)
         {
-            encoding = GetStreamEncodingAsync(stream, characterSet, cancellationToken).GetAwaiter().GetResult();
-
-            return new StreamReader(stream, encoding, leaveOpen: true).ReadToEndAsync(cancellationToken).GetAwaiter().GetResult();
+            encoding = GetStreamEncodingAsync(stream, characterSet, perReadTimeout, cancellationToken).GetAwaiter().GetResult();
+            return new StreamReader(stream, encoding, leaveOpen: true).ReadToEndAsync(perReadTimeout, cancellationToken).GetAwaiter().GetResult();
         }
 
         internal static bool TryGetEncodingFromCharset(string? characterSet, out Encoding encoding)
