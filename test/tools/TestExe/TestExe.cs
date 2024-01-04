@@ -36,6 +36,10 @@ namespace TestExe
                     case "-stderr":
                         Console.Error.WriteLine(args[1]);
                         break;
+                    case "-stderrandout":
+                        Console.WriteLine(args[1]);
+                        Console.Error.WriteLine(args[1]);
+                        break;
                     case "-readbytes":
                         ReadBytes();
                         break;

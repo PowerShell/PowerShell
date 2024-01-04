@@ -817,7 +817,10 @@ namespace System.Management.Automation
                 if (_stdOutByteTransfer is not null)
                 {
                     _stdOutByteTransfer.EOF.GetAwaiter().GetResult();
-                    return null;
+                    if (!_nativeProcess.StartInfo.RedirectStandardError)
+                    {
+                        return null;
+                    }
                 }
 
                 // If adding was completed and collection is empty (IsCompleted == true)
@@ -843,7 +846,7 @@ namespace System.Management.Automation
             }
             else
             {
-                if (_stdOutByteTransfer is not null)
+                if (_stdOutByteTransfer is not null && !_nativeProcess.StartInfo.RedirectStandardError)
                 {
                     return null;
                 }
@@ -886,7 +889,7 @@ namespace System.Management.Automation
                 if (!_isRunningInBackground)
                 {
                     // Wait for input writer to finish.
-                    if (!UpstreamIsNativeCommand)
+                    if (!UpstreamIsNativeCommand || _nativeProcess.StartInfo.RedirectStandardError)
                     {
                         _inputWriter.Done();
                     }
@@ -1771,7 +1774,7 @@ namespace System.Management.Automation
 
             // we incrementing refCount on the same thread and before running any processing
             // so it's safe to do it without Interlocked.
-            if (process.StartInfo.RedirectStandardOutput)
+            if (process.StartInfo.RedirectStandardOutput && stdOutDestination is null)
             {
                 _refCount++;
             }
