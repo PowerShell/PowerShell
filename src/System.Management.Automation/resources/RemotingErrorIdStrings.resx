@@ -123,6 +123,9 @@
   <data name="OutOfMemory" xml:space="preserve">
     <value>Out of process memory.</value>
   </data>
+  <data name="UnsupportedOSForRemoteEnumeration" xml:space="preserve">
+    <value>Remote PSSession enumeration with -ComputerName is only supported on Windows and not "{0}".</value>
+  </data>
   <data name="PipelineIdsDoNotMatch" xml:space="preserve">
     <value>Pipeline ID "{0}" does not match the InstanceId of the pipeline that is currently running, "{1}".</value>
   </data>
