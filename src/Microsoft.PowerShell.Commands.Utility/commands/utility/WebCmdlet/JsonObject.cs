@@ -512,17 +512,14 @@ namespace Microsoft.PowerShell.Commands
                     || obj is Uri
                     || obj is double
                     || obj is float
-                    || obj is decimal)
+                    || obj is decimal
+                    || obj is BigInteger)
             {
                 rv = obj;
             }
             else if (obj is Newtonsoft.Json.Linq.JObject jObject)
             {
                 rv = jObject.ToObject<Dictionary<object, object>>();
-            }
-            else if (obj is BigInteger bi)
-            {
-                rv = new JRaw(bi.ToString(NumberFormatInfo.InvariantInfo));
             }
             else
             {
