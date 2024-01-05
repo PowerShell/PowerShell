@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Language;
+using System.Numerics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -518,6 +519,10 @@ namespace Microsoft.PowerShell.Commands
             else if (obj is Newtonsoft.Json.Linq.JObject jObject)
             {
                 rv = jObject.ToObject<Dictionary<object, object>>();
+            }
+            else if (obj is BigInteger bi)
+            {
+                rv = new JRaw(bi.ToString(NumberFormatInfo.InvariantInfo));
             }
             else
             {
