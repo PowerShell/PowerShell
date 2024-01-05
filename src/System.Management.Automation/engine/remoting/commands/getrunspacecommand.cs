@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
 #if UNIX
-            if (ComputerName.Length > 0)
+            if (ComputerName?.Length > 0)
             {
                 ErrorRecord err = new(
                     new NotImplementedException(
