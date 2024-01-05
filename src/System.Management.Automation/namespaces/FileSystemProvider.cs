@@ -3319,12 +3319,12 @@ namespace Microsoft.PowerShell.Commands
 
                     if (itemExistsDynamicParameters.OlderThan.HasValue)
                     {
-                        result = lastWriteTime < itemExistsDynamicParameters.OlderThan.Value;
+                        result &= lastWriteTime < itemExistsDynamicParameters.OlderThan.Value;
                     }
 
                     if (itemExistsDynamicParameters.NewerThan.HasValue)
                     {
-                        result = lastWriteTime > itemExistsDynamicParameters.NewerThan.Value;
+                        result &= lastWriteTime > itemExistsDynamicParameters.NewerThan.Value;
                     }
                 }
             }

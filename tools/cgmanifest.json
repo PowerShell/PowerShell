@@ -56,7 +56,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonSchema.Net",
-          "Version": "5.4.0"
+          "Version": "5.4.2"
         }
       },
       "DevelopmentDependency": false
@@ -66,7 +66,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Markdig.Signed",
-          "Version": "0.33.0"
+          "Version": "0.34.0"
         }
       },
       "DevelopmentDependency": false
@@ -76,7 +76,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.ApplicationInsights",
-          "Version": "2.21.0"
+          "Version": "2.22.0"
         }
       },
       "DevelopmentDependency": false
