@@ -24,7 +24,7 @@ configuration:
           reply: This issue has been marked as "Waiting on Author" and has not had any activity for **7 day**. It has been closed for housekeeping purposes.
       - closeIssue
     
-    - description: Label as Resolution-No Activity if not labeled with KeepOpen and no activity in 6 months
+    - description: Label as Resolution-No Activity if not labeled with KeepOpen or Up-For-Grabs and no activity in 6 months
       frequencies:
       - hourly:
           hour: 24
@@ -37,6 +37,8 @@ configuration:
           label: Needs-Triage
       - isNotLabeledWith:
           label: Resolution-No Activity
+      - isNotLabeledWith:
+          label: Up-For-Grabs
       - isNotLabeledWith:
           label: Issue-Meta
       - isNotLabeledWith:
