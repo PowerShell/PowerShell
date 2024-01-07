@@ -338,7 +338,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (perReadTimeout == Timeout.InfiniteTimeSpan)
             {
-                return await reader.ReadToEndAsync(cancellationToken);
+                return await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
             }
 
             int useBufferSize = 4096;
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands
                 Memory<char> buffer = chars.AsMemory();
                 StringBuilder sb = new StringBuilder(useBufferSize);
                 int charsRead = 0;
-                while ((charsRead = await reader.ReadAsync(buffer, perReadTimeout, cancellationToken)) != 0)
+                while ((charsRead = await reader.ReadAsync(buffer, perReadTimeout, cancellationToken).ConfigureAwait(false)) != 0)
                 {
                     sb.Append(chars, 0, charsRead);
                 }
@@ -537,7 +537,7 @@ namespace Microsoft.PowerShell.Commands
             int bufferLength = (int)Math.Min(reader.BaseStream.Length, 1024);
 
             char[] buffer = new char[bufferLength];
-            await reader.ReadBlockAsync(buffer.AsMemory(), perReadTimeout, cancellationToken);
+            await reader.ReadBlockAsync(buffer.AsMemory(), perReadTimeout, cancellationToken).ConfigureAwait(false);
             stream.Seek(0, SeekOrigin.Begin);
 
             // Only try to parse meta element and XML declaration if getting encoding from charset
