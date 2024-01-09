@@ -49,6 +49,9 @@ indent_style = tab
 
 # Dotnet code style settings:
 [*.cs]
+# Ignore xUnit analyzer rule "Do not use blocking task operations in test method"
+dotnet_diagnostic.xUnit1031.severity = none
+
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
 

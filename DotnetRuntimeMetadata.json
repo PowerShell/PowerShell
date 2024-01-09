@@ -4,12 +4,12 @@
     "quality": "daily",
     "qualityFallback": "preview",
     "packageVersionPattern": "8.0.0",
-    "sdkImageVersion": "8.0.100",
+    "sdkImageVersion": "8.0.101",
     "nextChannel": "8.0.1xx",
     "azureFeed": "",
-    "sdkImageOverride": "8.0.100-rtm.23551.15"
+    "sdkImageOverride": ""
   },
   "internalfeed": {
-    "url": "https://pkgs.dev.azure.com/powershell-rel/PowerShell/_packaging/powershell-7.4-ga/nuget/v2"
+    "url": ""
   }
 }
