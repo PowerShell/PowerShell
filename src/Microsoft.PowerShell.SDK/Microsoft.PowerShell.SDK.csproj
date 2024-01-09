@@ -17,7 +17,7 @@
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="5.0.17" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="System.IO.Packaging" Version="6.0.0" />
     <PackageReference Include="System.Net.Http.WinHttpHandler" Version="6.0.1" />
