@@ -58,6 +58,11 @@ jobs:
 
         $OutputFolder = Split-Path (Get-PSOutput)
         Write-Host "##vso[task.setvariable variable=BinDir]$OutputFolder"
+
+        Write-Verbose -Verbose -Message "Deleting ref folder from output folder"
+        if (Test-Path $OutputFolder/ref) {
+          Remove-Item -Recurse -Force $OutputFolder/ref
+        }
       workingDirectory: '$(Build.SourcesDirectory)'
       displayName: 'Build PowerShell Source'
 
