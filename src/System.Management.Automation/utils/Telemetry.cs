@@ -592,6 +592,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "WindowsSearch",
                         "WindowsServerBackup",
                         "WindowsUpdate",
+                        "WinGetCommandNotFound",
                         "wsscmdlets",
                         "wsssetup",
                         "wsus",
