@@ -36,7 +36,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Json.More.Net",
-          "Version": "1.9.0"
+          "Version": "1.9.3"
         }
       },
       "DevelopmentDependency": false
@@ -126,7 +126,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "5.0.10"
+          "Version": "5.0.17"
         }
       },
       "DevelopmentDependency": false
@@ -226,7 +226,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -346,7 +346,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers.Unstable",
-          "Version": "1.2.0.507"
+          "Version": "1.2.0.556"
         }
       },
       "DevelopmentDependency": true
@@ -436,7 +436,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Data.SqlClient",
-          "Version": "4.8.5"
+          "Version": "4.8.6"
         }
       },
       "DevelopmentDependency": false
@@ -506,7 +506,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -796,7 +796,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Text.Json",
-          "Version": "6.0.2"
+          "Version": "6.0.9"
         }
       },
       "DevelopmentDependency": false
@@ -816,7 +816,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Web.Services.Description",
-          "Version": "4.10.0"
+          "Version": "4.10.3"
         }
       },
       "DevelopmentDependency": false
