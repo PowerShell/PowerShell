@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -105,7 +106,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "7.0.14"
+          "Version": "7.0.15"
         }
       },
       "DevelopmentDependency": false
@@ -345,7 +346,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers.Unstable",
-          "Version": "1.2.0.507"
+          "Version": "1.2.0.556"
         }
       },
       "DevelopmentDependency": true
@@ -435,7 +436,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Data.SqlClient",
-          "Version": "4.8.5"
+          "Version": "4.8.6"
         }
       },
       "DevelopmentDependency": false
@@ -840,6 +841,5 @@
       },
       "DevelopmentDependency": false
     }
-  ],
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
+  ]
 }
