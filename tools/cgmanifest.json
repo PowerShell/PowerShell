@@ -365,7 +365,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers.Unstable",
-          "Version": "1.2.0.507"
+          "Version": "1.2.0.556"
         }
       },
       "DevelopmentDependency": true
@@ -455,7 +455,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Data.SqlClient",
-          "Version": "4.8.5"
+          "Version": "4.8.6"
         }
       },
       "DevelopmentDependency": false
