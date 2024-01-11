@@ -382,6 +382,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "CompatPowerShellGet",
                         "configci",
                         "ConfigurationManager",
+                        "CompletionPredictor",
                         "DataProtectionManager",
                         "dcbqos",
                         "deduplication",
