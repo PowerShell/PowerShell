@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (TotalCount == 0 || Tail == 0)
+            if (TotalCount == 0)
             {
                 // Don't read anything
                 return;
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
                     // as reading forwards. So we read forwards in this case.
                     // If Tail is positive, we seek the right position. Or, if the seek failed
                     // because of an unsupported encoding, we scan forward to get the tail content.
-                    if (Tail > 0)
+                    if (Tail >= 0)
                     {
                         bool seekSuccess = false;
 
