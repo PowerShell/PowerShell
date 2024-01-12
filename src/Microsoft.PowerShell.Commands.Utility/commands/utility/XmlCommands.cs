@@ -633,6 +633,88 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// Implements ConvertTo-CliXml command.
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2243:AttributeStringLiteralsShouldParseCorrectly")]
+    [Cmdlet(VerbsData.ConvertTo, "CliXml", HelpUri = "")]
+    [OutputType(typeof(string))]
+    public sealed class ConvertToClixmlCommand : PSCmdlet
+    {
+        #region Parameters
+
+        /// <summary>
+        /// Gets or sets input objects to be converted to CliXml object.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        public PSObject InputObject { get; set; }
+
+        /// <summary>
+        /// Gets or sets depth of serialization.
+        /// </summary>
+        [Parameter]
+        [ValidateRange(1, int.MaxValue)]
+        public int Depth { get; set; } = 2;
+
+        #endregion Parameters
+
+        #region Private Members
+
+        private readonly List<object> _inputObjectBuffer = new();
+
+        #endregion Private Members
+
+        #region Overrides
+
+        /// <summary>
+        /// Process record.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            _inputObjectBuffer.Add(InputObject);
+        }
+
+        /// <summary>
+        /// End Processing.
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            WriteObject(PSSerializer.Serialize(_inputObjectBuffer, Depth, enumerate: true));
+        }
+
+        #endregion Overrides
+    }
+
+    /// <summary>
+    /// Implements ConvertFrom-CliXml command.
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2243:AttributeStringLiteralsShouldParseCorrectly")]
+    [Cmdlet(VerbsData.ConvertFrom, "CliXml", HelpUri = "")]
+    public sealed class ConvertFromClixmlCommand : PSCmdlet
+    {
+        #region Parameters
+
+        /// <summary>
+        /// Gets or sets input object which is written in CliXml format.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        public string InputObject { get; set; }
+
+        #endregion Parameters
+
+        #region Overrides
+
+        /// <summary>
+        /// Process record.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteObject(PSSerializer.Deserialize(InputObject));
+        }
+
+        #endregion Overrides
+    }
+
+    /// <summary>
     /// Helper class to import single XML file.
     /// </summary>
     internal class ImportXmlHelper : IDisposable
