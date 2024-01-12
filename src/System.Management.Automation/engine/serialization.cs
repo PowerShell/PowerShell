@@ -123,7 +123,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serializes array of objects into PowerShell CliXml.
+        /// Serializes list of objects into PowerShell CliXml.
         /// </summary>
         /// <param name="source">The input objects to serialize.</param>
         /// <param name="depth">The depth of the members to serialize.</param>
