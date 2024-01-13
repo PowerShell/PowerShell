@@ -80,6 +80,60 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual | Should -Be ([System.Reflection.MethodAttributes]::Virtual)
     }
 
+    It 'can implement .NET interface static methods' {
+        Add-Type -TypeDefinition @'
+public interface IInterfaceWithStaticAbstractMethod
+{
+    static abstract int GetNoParameters();
+    static abstract int GetOneParameter(string value);
+    static abstract int GetTwoParameters(string value, int multiplier);
+}
+
+public static class InterfaceStaticAbstractMethodTest
+{
+    public static int GetNoParameters<T>() where T : IInterfaceWithStaticAbstractMethod
+        => T.GetNoParameters();
+
+    public static int GetOneParameter<T>(string value) where T : IInterfaceWithStaticAbstractMethod
+        => T.GetOneParameter(value);
+
+    public static int GetTwoParameters<T>(string value, int multiplier) where T : IInterfaceWithStaticAbstractMethod
+        => T.GetTwoParameters(value, multiplier);
+}
+'@
+
+        $C1 = Invoke-Expression @'
+class ClassWithStaticAbstractMethodInterface : IInterfaceWithStaticAbstractMethod {
+    static [int] GetNoParameters() { return 1 }
+    static [int] GetOneParameter([string]$Value) { return [int]$Value }
+    static [int] GetTwoParameters([string]$Value, [int]$Multiplier) { return ([int]$Value) * $Multiplier }
+    # Tests that the override uses the parameters when matching against the interface
+    static [int] GetTwoParameters([string]$Value, [string]$Multiplier) { return -1 }
+}
+[ClassWithStaticAbstractMethodInterface]
+'@
+
+        $v = $C1::GetNoParameters()
+        $v | Should -Be 1
+        $v | Should -BeOfType ([int])
+
+        $v = $C1::GetOneParameter("2")
+        $v | Should -Be 2
+        $v | Should -BeOfType ([int])
+
+        $v = $C1::GetTwoParameters("3", 3)
+        $v | Should -Be 9
+        $v | Should -BeOfType ([int])
+
+        $v = $C1::GetTwoParameters("3", "3")
+        $v | Should -Be -1
+        $v | Should -BeOfType ([int])
+
+        [InterfaceStaticAbstractMethodTest]::GetNoParameters[ClassWithStaticAbstractMethodInterface]() | Should -Be 1
+        [InterfaceStaticAbstractMethodTest]::GetOneParameter[ClassWithStaticAbstractMethodInterface]("2") | Should -Be 2
+        [InterfaceStaticAbstractMethodTest]::GetTwoParameters[ClassWithStaticAbstractMethodInterface]("2", 2) | Should -Be 4
+    }
+
     It 'allows use of defined later type as a property type' {
         class A { static [B]$b }
         class B : A {}
