@@ -123,6 +123,45 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Serializes list of objects into PowerShell CliXml.
+        /// </summary>
+        /// <param name="source">The input objects to serialize.</param>
+        /// <param name="depth">The depth of the members to serialize.</param>
+        /// <param name="enumerate">Enumerates input objects and serializes one at a time.</param>
+        /// <returns>The serialized object, as CliXml.</returns>
+        internal static string Serialize(IList<object> source, int depth, bool enumerate)
+        {
+            StringBuilder sb = new();
+
+            XmlWriterSettings xmlSettings = new()
+            {
+                CloseOutput = true,
+                Encoding = Encoding.Unicode,
+                Indent = true,
+                OmitXmlDeclaration = true
+            };
+
+            XmlWriter xw = XmlWriter.Create(sb, xmlSettings);
+            Serializer serializer = new(xw, depth, useDepthFromTypes: true);
+
+            if (enumerate)
+            {
+                foreach (object item in source)
+                {
+                    serializer.Serialize(item);
+                }
+            }
+            else
+            {
+                serializer.Serialize(source);
+            }
+
+            serializer.Done();
+
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Deserializes PowerShell CliXml into an object.
         /// </summary>
         /// <param name="source">The CliXml the represents the object to deserialize.</param>
