@@ -1,5 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '')]
+param()
+
 Describe "CliXml test" -Tags "CI" {
 
     BeforeAll {
@@ -177,6 +181,96 @@ Describe "CliXml test" -Tags "CI" {
             $path = "$testdrive/cred.xml"
             $cred | Export-Clixml -Path $path
             $cred = Import-Clixml -Path $path
+            $cred.UserName | Should -BeExactly "Foo"
+            $cred.Password | Should -BeOfType System.Security.SecureString
+        }
+    }
+
+    Context "ConvertTo-CliXml"{
+        BeforeAll {
+            $gpsList = Get-Process pwsh
+            $gps = $gpsList | Select-Object -First 1
+        }
+
+        It "Create by passing as parameter" {
+            $content = ConvertTo-CliXml -Depth 1 -InputObject ($gpsList | Select-Object -First 1)
+            $isExisted = $false
+
+            foreach($item in $content)
+            {
+                foreach($gpsItem in $gpsList)
+                {
+                    $checkId = $gpsItem.Id
+                    if (($null -ne $(Select-String -InputObject $item -SimpleMatch $checkId)) -and ($null -ne $(Select-String -InputObject $item -SimpleMatch "Id")))
+                    {
+                        $isExisted = $true
+                        break;
+                    }
+                }
+            }
+
+            $isExisted | Should -BeTrue
+        }
+
+        It "Create by passing as pipeline" {
+            $content = ($gpsList | Select-Object -First 1) | ConvertTo-CliXml -Depth 1
+
+            $isExisted = $false
+
+            foreach($item in $content)
+            {
+                foreach($gpsItem in $gpsList)
+                {
+                    $checkId = $gpsItem.Id
+                    if (($null -ne $(Select-String -InputObject $item -SimpleMatch $checkId)) -and ($null -ne $(Select-String -InputObject $item -SimpleMatch "Id")))
+                    {
+                        $isExisted = $true
+                        break;
+                    }
+                }
+            }
+
+            $isExisted | Should -BeTrue
+        }
+    }
+
+    Context "ConvertFrom-CliXml" {
+        BeforeAll {
+            $gpsList = Get-Process pwsh
+            $gps = $gpsList | Select-Object -First 1
+        }
+
+        It "Create by passing as parameter" {
+            $content = ConvertTo-CliXml -Depth 1 -InputObject $gps
+
+            $content | Should -Not -Be $null
+
+            $importedProcess = ConvertFrom-CliXml -InputObject $content
+            $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
+            $gps.ProcessName | Should -Be $importedProcess.ProcessName
+            $importedProcess.Id | Should -Not -BeNullOrEmpty
+            $gps.Id | Should -Be $importedProcess.Id
+        }
+
+        It "Create by passing as pipeline" {
+            $content = $gps | ConvertTo-CliXml -Depth 1
+
+            $content | Should -Not -Be $null
+
+            $importedProcess = $content | ConvertFrom-CliXml
+            $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
+            $gps.ProcessName | Should -Be $importedProcess.ProcessName
+            $importedProcess.Id | Should -Not -BeNullOrEmpty
+            $gps.Id | Should -Be $importedProcess.Id
+        }
+
+        It "Should import PSCredential" {
+            $UserName = "Foo"
+            $pass = ConvertTo-SecureString (New-RandomHexString) -AsPlainText -Force
+            $cred =  [PSCredential]::new($UserName, $pass)
+
+            $content = $cred | ConvertTo-CliXml
+            $cred = ConvertFrom-CliXml -InputObject $content
             $cred.UserName | Should -BeExactly "Foo"
             $cred.Password | Should -BeOfType System.Security.SecureString
         }
