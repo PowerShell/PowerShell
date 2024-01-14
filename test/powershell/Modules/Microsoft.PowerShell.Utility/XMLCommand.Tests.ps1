@@ -396,7 +396,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $testObject = 1,2,3
             $content = $testObject | ConvertTo-CliXml
             $testObject | Export-CliXml -Path $testfile
-            $content | Should -Be (Get-Content -Path $testfile -Raw)
+            $testfile | Should -FileContentMatchMultiline ([regex]::Escape($content))
             $out = ConvertFrom-CliXml -InputObject $content
             $out -is [array] | Should -BeTrue
             $out.Count | Should -Be 3
@@ -409,7 +409,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $testObject = [One]::New()
             $content = $testObject | ConvertTo-CliXml
             $testObject | Export-Clixml -Path $testfile
-            $content | Should -Be (Get-Content -Path $testfile -Raw)
+            $testfile | Should -FileContentMatchMultiline ([regex]::Escape($content))
             $deserialized_one = ConvertFrom-CliXml -InputObject $content
             $deserialized_one.value | Should -Be 1
             $deserialized_one.two | Should -Not -BeNullOrEmpty
@@ -422,7 +422,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $testObject = [One]::New()
             $content = $testObject | ConvertTo-CliXml -Depth 3
             $testObject | Export-CliXml -Path $testfile -Depth 3
-            $content | Should -Be (Get-Content -Path $testfile -Raw)
+            $testfile | Should -FileContentMatchMultiline ([regex]::Escape($content))
             $deserialized_one = ConvertFrom-CliXml -InputObject $content
             $deserialized_one.value | Should -Be 1
             $deserialized_one.two | Should -Not -BeNullOrEmpty
@@ -437,7 +437,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $testObject = @(1,2,3,4)
             $content = $testObject | ConvertTo-CliXml
             $testObject | Export-CliXml -Path $testfile
-            $content | Should -Be (Get-Content -Path $testfile -Raw)
+            $testfile | Should -FileContentMatchMultiline ([regex]::Escape($content))
             $out = ConvertFrom-CliXml -InputObject $content
             $out -is [array] | Should -BeTrue
             $out.Count | Should -Be 4
@@ -451,7 +451,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $testObject = @(1,2,3,4)
             $content = ConvertTo-CliXml -InputObject $testObject
             Export-CliXml -Path $testfile -InputObject $testObject
-            $content | Should -Be (Get-Content -Path $testfile -Raw)
+            $testfile | Should -FileContentMatchMultiline ([regex]::Escape($content))
             $out = ConvertFrom-CliXml -InputObject $content
             $out -is [System.Collections.ArrayList] | Should -BeTrue
             $out.Count | Should -Be 4
@@ -465,7 +465,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $testObject = [ordered]@{ a = 1; b = 2; c = 3; d = 4 }
             $content = $testObject | ConvertTo-CliXml
             $testObject | Export-CliXml -Path $testfile
-            $content | Should -Be (Get-Content -Path $testfile -Raw)
+            $testfile | Should -FileContentMatchMultiline ([regex]::Escape($content))
             $out = ConvertFrom-CliXml -InputObject $content
             $out -is [ordered] | Should -BeTrue
             $out.Count | Should -Be 4
@@ -477,7 +477,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $testObject = [PSCustomObject]@{ a = 1; b = 2; c = 3; d = 4 }
             $content = $testObject | ConvertTo-CliXml
             $testObject | Export-CliXml -Path $testfile
-            $content | Should -Be (Get-Content -Path $testfile -Raw)
+            $testfile | Should -FileContentMatchMultiline ([regex]::Escape($content))
             $out = ConvertFrom-CliXml -InputObject $content
             $out -is [pscustomobject] | Should -BeTrue
             $out.a | Should -Be 1
@@ -490,7 +490,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $testObject = [PSCustomObject]@{ a = 1; b = 2; c = 3; d = [PSCustomObject]@{ e = 4 } }
             $content = $testObject | ConvertTo-CliXml
             $testObject | Export-CliXml -Path $testfile
-            $content | Should -Be (Get-Content -Path $testfile -Raw)
+            $testfile | Should -FileContentMatchMultiline ([regex]::Escape($content))
             $out = ConvertFrom-CliXml -InputObject $content
             $out -is [pscustomobject] | Should -BeTrue
             $out.a | Should -Be 1
@@ -508,7 +508,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             )
             $content = $testObject | ConvertTo-CliXml
             $testObject | Export-CliXml -Path $testfile
-            $content | Should -Be (Get-Content -Path $testfile -Raw)
+            $testfile | Should -FileContentMatchMultiline ([regex]::Escape($content))
             $out = ConvertFrom-CliXml -InputObject $content
             $out -is [array] | Should -BeTrue
             $out.Count | Should -Be 3
@@ -523,7 +523,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             )
             $content = $testObject | ConvertTo-CliXml
             $testObject | Export-CliXml -Path $testfile
-            $content | Should -Be (Get-Content -Path $testfile -Raw)
+            $testfile | Should -FileContentMatchMultiline ([regex]::Escape($content))
             $out = ConvertFrom-CliXml -InputObject $content
             $out -is [pscustomobject] | Should -BeTrue
             $out.Property | Should -Be 1
@@ -535,7 +535,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             )
             $content = ConvertTo-CliXml -InputObject $testObject
             Export-CliXml -InputObject $testObject -Path $testfile
-            $content | Should -Be (Get-Content -Path $testfile -Raw)
+            $testfile | Should -FileContentMatchMultiline ([regex]::Escape($content))
             $out = ConvertFrom-CliXml -InputObject $content
             $out -is [System.Collections.ArrayList] | Should -BeTrue
             $out.Count | Should -Be 1
