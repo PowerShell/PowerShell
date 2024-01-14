@@ -1609,6 +1609,9 @@ namespace System.Management.Automation.Internal
         internal static bool OneDriveTestRecurseOn;
         internal static string OneDriveTestSymlinkName = "link-Beta";
 
+        // Test out smaller connection buffer size when calling WNetGetConnection.
+        internal static int WNetGetConnectionBufferSize;
+
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
         {
