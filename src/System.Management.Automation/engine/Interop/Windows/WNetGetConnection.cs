@@ -30,11 +30,11 @@ internal static partial class Interop
             Span<char> uncBuffer = stackalloc char[(int)bufferSize];
 
             char[]? rentedArray = null;
-            try
+            while (true)
             {
-                while (true)
+                int errorCode;
+                try
                 {
-                    int errorCode;
                     try
                     {
                         errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
@@ -45,32 +45,35 @@ internal static partial class Interop
                         return ERROR_NOT_SUPPORTED;
                     }
 
-                    if (errorCode == ERROR_MORE_DATA)
+                    if (errorCode == ERROR_SUCCESS)
                     {
-                        uncBuffer = rentedArray = ArrayPool<char>.Shared.Rent((int)bufferSize);
-                    }
-                    else
-                    {
-                        if (errorCode == ERROR_SUCCESS)
+                        // Cannot rely on bufferSize as it's only set if
+                        // the first call ended with ERROR_MORE_DATA,
+                        // instead slice at the null terminator.
+                        unsafe
                         {
-                            // Cannot rely on bufferSize as it's only set if
-                            // the first call ended with ERROR_MORE_DATA,
-                            // instead slice at the null terminator.
-                            int nullIdx = uncBuffer.IndexOf('\0');
-                            uncPath = uncBuffer.Slice(
-                                0,
-                                nullIdx == -1 ? uncBuffer.Length : nullIdx).ToString();
+                            fixed (char* uncBufferPtr = uncBuffer)
+                            {
+                                uncPath = new string(uncBufferPtr);
+                            }
                         }
-
-                        return errorCode;
                     }
                 }
-            }
-            finally
-            {
-                if (rentedArray is not null)
+                finally
                 {
-                    ArrayPool<char>.Shared.Return(rentedArray);
+                    if (rentedArray is not null)
+                    {
+                        ArrayPool<char>.Shared.Return(rentedArray);
+                    }
+                }
+
+                if (errorCode == ERROR_MORE_DATA)
+                {
+                    uncBuffer = rentedArray = ArrayPool<char>.Shared.Rent((int)bufferSize);
+                }
+                else
+                {
+                    return errorCode;
                 }
             }
         }
