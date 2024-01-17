@@ -946,10 +946,18 @@ namespace System.Management.Automation.Runspaces
                                                 $isFirstElement = $true
                                                 foreach ($value in $prop.Value) {
                                                     $null = $output.Append($newline)
-                                                    if (!$isFirstElement) {
-                                                        $null = $output.Append($newline)
+
+                                                    if ($value -is [Type] -or $value -is [string] -or $value.GetType().IsPrimitive) {
+                                                        # We want to display the primitive value, also includes strings and
+                                                        # types values, the latter containing a lot of uneeded properties.
+                                                        $null = $output.Append(""${prefix}$(' ' * $indent)${value}"")
                                                     }
-                                                    $null = $output.Append((Show-ErrorRecord $value $newIndent ($depth + 1)))
+                                                    else {
+                                                        if (!$isFirstElement) {
+                                                            $null = $output.Append($newline)
+                                                        }
+                                                        $null = $output.Append((Show-ErrorRecord $value $newIndent ($depth + 1)))
+                                                    }
                                                     $isFirstElement = $false
                                                 }
                                             }
