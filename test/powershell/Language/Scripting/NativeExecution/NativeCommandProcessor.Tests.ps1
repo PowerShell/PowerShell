@@ -217,7 +217,7 @@ Describe "Native Command Processor" -tags "Feature" {
     It 'Can redirect stdout and stderr to different files' {
         testexe -stderrandout testing > $TestDrive/stdout.txt 2> $TestDrive/stderr.txt
         Get-Content $TestDrive/stdout.txt | Should -Be testing
-        Get-Content $TestDrive/stderr.txt | Should -Be testing
+        Get-Content $TestDrive/stderr.txt | Should -Be gnitset
     }
 }
 
