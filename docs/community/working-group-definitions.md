@@ -61,7 +61,6 @@ However, it's expected that many issues will require input from both WGs.
 
 ### Members
 
-* @BrucePay
 * @daxian-dbw
 * @JamesWTruher
 * @rkeithhill
@@ -104,7 +103,6 @@ particularly given the long-lasting effects of language decisions.
 
 * @JamesWTruher
 * @daxian-dbw
-* @BrucePay
 * @SeeminglyScience
 
 ## Remoting
@@ -118,7 +116,6 @@ Given the commonality of serialization boundaries, the Remoting WG should also f
 ### Members
 
 * @anmenaga
-* @PaulHigin
 * @TravisEz13
 
 ## Cmdlets and Modules
@@ -147,6 +144,7 @@ These modules include:
 * @SteveL-MSFT
 * @jdhitsolutions
 * @TobiasPSP
+* @doctordns
 
 ## Security
 
@@ -156,7 +154,8 @@ in order to provide their expertise, concerns, and guidance.
 ### Members
 
 * @TravisEz13
-* @PaulHigin
+* @SydneySmithReal
+* @anamnavi
 
 ## Explicitly not Working Groups
 
