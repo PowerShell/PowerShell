@@ -4883,7 +4883,7 @@ namespace System.Management.Automation
 
             return childName.Substring(indexOfName + 1);
         }
-        
+
         /// <summary>
         /// Takes a path and rebuilds it with the specified variable replacements.
         /// Also escapes special characters as needed.
