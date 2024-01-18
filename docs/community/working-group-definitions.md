@@ -38,6 +38,7 @@ Special consideration should be given to topics like **backwards compatibility**
 * @adityapatwardhan (SDK)
 * @michaeltlombardi
 * @SeeminglyScience
+* @bergmeister
 
 ## Engine
 
