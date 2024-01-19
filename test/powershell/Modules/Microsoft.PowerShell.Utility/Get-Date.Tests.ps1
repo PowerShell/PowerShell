@@ -52,7 +52,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     It "using -uformat 'sStTuUVwWxXyYZ' produces the correct output" {
-        Get-Date -Date 1/1/0030 -UFormat %S%T%u%U%w%W%x%X%y%Y%% | Should -Be "0000:00:00202001/01/3000:00:00300030%"
+        Get-Date -Date 1/1/0030 -UFormat %S%T%u%U%w%W%x%X%y%Y%% | Should -Be "0000:00:002020001/01/3000:00:00300030%"
     }
 
     # Alternate 'week of year' test cases, generated using `date -d $date +%W` on linux
