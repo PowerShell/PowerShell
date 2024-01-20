@@ -485,7 +485,7 @@ Windows Registry Editor Version 5.00
 "@
             $badRegistryPath = Join-Path -Path $TestDrive -ChildPath badreg.reg
             $badRegistryContent | Set-Content -Path $badRegistryPath
-            reg import $badRegistryPath
+            reg.exe import $badRegistryPath
 
             $registryProviderSubkeyPath = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\badreg'
         }
@@ -501,7 +501,7 @@ Windows Registry Editor Version 5.00
         }
 
         AfterAll {
-            reg delete $registrySubkeyPath /f
+            reg.exe delete $registrySubkeyPath /f
         }
     }
 }
