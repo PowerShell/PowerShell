@@ -534,6 +534,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 sb.AppendFormat("{0:00}", week);
                             }
+                            
                             break;
 
                         case 'w':
