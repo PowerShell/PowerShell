@@ -210,13 +210,13 @@ namespace Microsoft.PowerShell.Commands
 
             var propertyTypePattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
-            foreach (RegistryValueKind registryValueType in Enum.GetValues(typeof(RegistryValueKind)))
+            foreach (RegistryValueKind registryValue in Enum.GetValues(typeof(RegistryValueKind)))
             {
-                string registryValueTypeString = registryValueType.ToString();
+                string registryValueString = registryValue.ToString();
 
-                if (propertyTypePattern.IsMatch(registryValueTypeString))
+                if (propertyTypePattern.IsMatch(registryValueString))
                 {
-                    yield return new CompletionResult(registryValueTypeString);
+                    yield return new CompletionResult(registryValueString);
                 }
             }
         }
