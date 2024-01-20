@@ -2,6 +2,11 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation;
+using System.Management.Automation.Language;
+using Microsoft.Win32;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -63,6 +68,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("Type")]
+        [ArgumentCompleter(typeof(PropertyTypeArgumentCompleter))]
         public string PropertyType { get; set; }
 
         /// <summary>
@@ -174,5 +180,45 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Command code
 
+    }
+
+    // <summary>
+    /// Provides argument completion for PropertyType parameter.
+    /// </summary>
+    public class PropertyTypeArgumentCompleter : IArgumentCompleter
+    {
+        /// <summary>
+        /// Returns completion results for PropertyType parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of Completion Results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+        {
+            if (!Platform.IsWindows)
+            {
+                yield break;
+            }
+
+            var propertyTypePattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            foreach (RegistryValueKind registryValueType in Enum.GetValues(typeof(RegistryValueKind)))
+            {
+                string registryValueTypeString = registryValueType.ToString();
+
+                if (propertyTypePattern.IsMatch(registryValueTypeString))
+                {
+                    yield return new CompletionResult(registryValueTypeString);
+                }
+            }
+        }
     }
 }
