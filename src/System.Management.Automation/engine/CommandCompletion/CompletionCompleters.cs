@@ -359,6 +359,8 @@ namespace System.Management.Automation
                     // but put these at the end as it's less likely any of the hidden
                     // commands are desired.  If we can't add anything to disambiguate,
                     // then we'll skip adding a completion result.
+                    var modulesWithCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    _ = modulesWithCommand.Add(((CommandInfo)commandList[0]).ModuleName);
                     for (int index = 1; index < commandList.Count; index++)
                     {
                         var commandInfo = commandList[index] as CommandInfo;
@@ -368,7 +370,7 @@ namespace System.Management.Automation
                         {
                             endResults.Add(GetCommandNameCompletionResult(commandInfo.Definition, commandInfo, addAmpersandIfNecessary, quote));
                         }
-                        else if (!string.IsNullOrEmpty(commandInfo.ModuleName))
+                        else if (!string.IsNullOrEmpty(commandInfo.ModuleName) && modulesWithCommand.Add(commandInfo.ModuleName))
                         {
                             var name = commandInfo.ModuleName + "\\" + commandInfo.Name;
                             endResults.Add(GetCommandNameCompletionResult(name, commandInfo, addAmpersandIfNecessary, quote));
