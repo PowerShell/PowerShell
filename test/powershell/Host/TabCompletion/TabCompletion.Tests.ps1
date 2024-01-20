@@ -911,6 +911,30 @@ ConstructorTestClass(int i, bool b)
         }
     }
 
+    Context 'New-ItemProperty -PropertyType parameter completion' {
+        BeforeAll {
+            $allRegistryValueKinds = 'Binary DWord ExpandString MultiString None QWord String Unknown'
+            $dwordValueKind = 'DWord'
+            $qwordValueKind = 'QWord'
+            $binaryValueKind = 'Binary'
+            $multiStringValueKind = 'MultiString'
+        }
+
+        It "Should complete Property Type for '<TextInput>'" -Skip:(!$IsWindows) -TestCases @(
+            @{ TextInput = "New-ItemProperty -PropertyType "; ExpectedPropertyTypes = $allRegistryValueKinds }
+            @{ TextInput = "New-ItemProperty -PropertyType d"; ExpectedPropertyTypes = $dwordValueKind }
+            @{ TextInput = "New-ItemProperty -PropertyType q"; ExpectedPropertyTypes = $qwordValueKind }
+            @{ TextInput = "New-ItemProperty -PropertyType bin"; ExpectedPropertyTypes = $binaryValueKind }
+            @{ TextInput = "New-ItemProperty -PropertyType multi"; ExpectedPropertyTypes = $multiStringValueKind }
+            @{ TextInput = "New-ItemProperty -PropertyType invalidproptype"; ExpectedPropertyTypes = '' }
+        ) {
+            param($TextInput, $ExpectedPropertyTypes)
+            $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object -Unique
+            $completionText -join ' ' | Should -BeExactly $ExpectedPropertyTypes
+        }
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'
