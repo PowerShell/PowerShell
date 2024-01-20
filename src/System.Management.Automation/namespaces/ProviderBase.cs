@@ -12,6 +12,7 @@ using System.Management.Automation.Host;
 using System.Resources;
 using System.Diagnostics.CodeAnalysis; // for fxcop
 using System.Security.AccessControl;
+using Microsoft.Win32;
 
 namespace System.Management.Automation.Provider
 {
@@ -457,7 +458,7 @@ namespace System.Management.Automation.Provider
         /// <param name="propertyName">
         /// The name of the property that should be created.
         /// </param>
-        /// <param name="propertyTypeName">
+        /// <param name="propertyType">
         /// The type of the property that should be created.
         /// </param>
         /// <param name="value">
@@ -473,7 +474,7 @@ namespace System.Management.Automation.Provider
         internal void NewProperty(
             string path,
             string propertyName,
-            string propertyTypeName,
+            RegistryValueKind propertyType,
             object value,
             CmdletProviderContext cmdletProviderContext)
         {
@@ -488,7 +489,7 @@ namespace System.Management.Automation.Provider
 
             // Call interface method
 
-            propertyProvider.NewProperty(path, propertyName, propertyTypeName, value);
+            propertyProvider.NewProperty(path, propertyName, propertyType, value);
         }
 
         /// <summary>
@@ -502,7 +503,7 @@ namespace System.Management.Automation.Provider
         /// <param name="propertyName">
         /// The name of the property that should be created.
         /// </param>
-        /// <param name="propertyTypeName">
+        /// <param name="propertyType">
         /// The type of the property that should be created.
         /// </param>
         /// <param name="value">
@@ -518,7 +519,7 @@ namespace System.Management.Automation.Provider
         internal object NewPropertyDynamicParameters(
             string path,
             string propertyName,
-            string propertyTypeName,
+            RegistryValueKind propertyType,
             object value,
             CmdletProviderContext cmdletProviderContext)
         {
@@ -529,7 +530,7 @@ namespace System.Management.Automation.Provider
                 return null;
             }
 
-            return propertyProvider.NewPropertyDynamicParameters(path, propertyName, propertyTypeName, value);
+            return propertyProvider.NewPropertyDynamicParameters(path, propertyName, propertyType, value);
         }
 
         /// <summary>

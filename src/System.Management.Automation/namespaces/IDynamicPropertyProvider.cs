@@ -2,6 +2,8 @@
 // Licensed under the MIT License.
 
 #nullable enable
+using Microsoft.Win32;
+
 namespace System.Management.Automation.Provider
 {
     #region IDynamicPropertyCmdletProvider
@@ -36,7 +38,7 @@ namespace System.Management.Automation.Provider
         /// <param name="propertyName">
         /// The name of the property that should be created.
         /// </param>
-        /// <param name="propertyTypeName">
+        /// <param name="propertyType">
         /// The type of the property that should be created.
         /// </param>
         /// <param name="value">
@@ -60,7 +62,7 @@ namespace System.Management.Automation.Provider
         void NewProperty(
             string path,
             string propertyName,
-            string propertyTypeName,
+            RegistryValueKind propertyType,
             object? value);
 
         /// <summary>
@@ -74,7 +76,7 @@ namespace System.Management.Automation.Provider
         /// <param name="propertyName">
         /// The name of the property that should be created.
         /// </param>
-        /// <param name="propertyTypeName">
+        /// <param name="propertyType">
         /// The type of the property that should be created.
         /// </param>
         /// <param name="value">
@@ -90,7 +92,7 @@ namespace System.Management.Automation.Provider
         object? NewPropertyDynamicParameters(
             string path,
             string propertyName,
-            string propertyTypeName,
+            RegistryValueKind propertyType,
             object? value);
 
         /// <summary>

@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
-
+using Microsoft.Win32;
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -668,7 +668,7 @@ namespace System.Management.Automation
         /// <param name="propertyName">
         /// The name of the property that should be created.
         /// </param>
-        /// <param name="propertyTypeName">
+        /// <param name="propertyType">
         /// The type of the property that should be created.
         /// </param>
         /// <param name="value">
@@ -701,7 +701,7 @@ namespace System.Management.Automation
         public Collection<PSObject> New(
             string path,
             string propertyName,
-            string propertyTypeName,
+            RegistryValueKind propertyType,
             object value)
         {
             Dbg.Diagnostics.Assert(
@@ -710,7 +710,7 @@ namespace System.Management.Automation
 
             // Parameter validation is done in the session state object
 
-            return _sessionState.NewProperty(new string[] { path }, propertyName, propertyTypeName, value, false, false);
+            return _sessionState.NewProperty(new string[] { path }, propertyName, propertyType, value, false, false);
         }
 
         /// <summary>
@@ -722,7 +722,7 @@ namespace System.Management.Automation
         /// <param name="propertyName">
         /// The name of the property that should be created.
         /// </param>
-        /// <param name="propertyTypeName">
+        /// <param name="propertyType">
         /// The type of the property that should be created.
         /// </param>
         /// <param name="value">
@@ -761,7 +761,7 @@ namespace System.Management.Automation
         public Collection<PSObject> New(
             string[] path,
             string propertyName,
-            string propertyTypeName,
+            RegistryValueKind propertyType,
             object value,
             bool force,
             bool literalPath)
@@ -772,7 +772,7 @@ namespace System.Management.Automation
 
             // Parameter validation is done in the session state object
 
-            return _sessionState.NewProperty(path, propertyName, propertyTypeName, value, force, literalPath);
+            return _sessionState.NewProperty(path, propertyName, propertyType, value, force, literalPath);
         }
 
         /// <summary>
@@ -821,7 +821,7 @@ namespace System.Management.Automation
         internal void New(
             string path,
             string propertyName,
-            string type,
+            RegistryValueKind type,
             object value,
             CmdletProviderContext context)
         {
@@ -876,7 +876,7 @@ namespace System.Management.Automation
         internal object NewPropertyDynamicParameters(
             string path,
             string propertyName,
-            string type,
+            RegistryValueKind type,
             object value,
             CmdletProviderContext context)
         {

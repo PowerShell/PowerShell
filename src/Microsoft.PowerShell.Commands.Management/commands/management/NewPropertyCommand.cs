@@ -114,10 +114,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Path != null && Path.Length > 0)
             {
-                return InvokeProvider.Property.NewPropertyDynamicParameters(Path[0], Name, PropertyType.ToString(), Value, context);
+                return InvokeProvider.Property.NewPropertyDynamicParameters(Path[0], Name, PropertyType, Value, context);
             }
 
-            return InvokeProvider.Property.NewPropertyDynamicParameters(".", Name, PropertyType.ToString(), Value, context);
+            return InvokeProvider.Property.NewPropertyDynamicParameters(".", Name, PropertyType, Value, context);
         }
 
         #endregion Parameters
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    InvokeProvider.Property.New(path, Name, PropertyType.ToString(), Value, CmdletProviderContext);
+                    InvokeProvider.Property.New(path, Name, PropertyType, Value, CmdletProviderContext);
                 }
                 catch (PSNotSupportedException notSupported)
                 {

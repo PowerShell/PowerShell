@@ -3,7 +3,7 @@
 
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
-
+using Microsoft.Win32;
 using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -63,7 +63,7 @@ namespace System.Management.Automation
         internal Collection<PSObject> NewProperty(
             string[] paths,
             string property,
-            string type,
+            RegistryValueKind type,
             object value,
             bool force,
             bool literalPath)
@@ -135,7 +135,7 @@ namespace System.Management.Automation
         internal void NewProperty(
             string[] paths,
             string property,
-            string type,
+            RegistryValueKind type,
             object value,
             CmdletProviderContext context)
         {
@@ -208,7 +208,7 @@ namespace System.Management.Automation
             CmdletProvider providerInstance,
             string path,
             string property,
-            string type,
+            RegistryValueKind type,
             object value,
             CmdletProviderContext context)
         {
@@ -302,7 +302,7 @@ namespace System.Management.Automation
         internal object NewPropertyDynamicParameters(
              string path,
             string propertyName,
-            string type,
+            RegistryValueKind type,
             object value,
             CmdletProviderContext context)
         {
@@ -377,7 +377,7 @@ namespace System.Management.Automation
             CmdletProvider providerInstance,
             string path,
             string propertyName,
-            string type,
+            RegistryValueKind type,
             object value,
             CmdletProviderContext context)
         {

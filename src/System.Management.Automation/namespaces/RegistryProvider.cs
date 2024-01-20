@@ -2121,7 +2121,7 @@ namespace Microsoft.PowerShell.Commands
         public void NewProperty(
             string path,
             string propertyName,
-            string type,
+            RegistryValueKind type,
             object value)
         {
             if (path == null)
@@ -2156,14 +2156,6 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(resource, action))
             {
-                // convert the type to a RegistryValueKind
-                RegistryValueKind kind;
-                if (!ParseKind(type, out kind))
-                {
-                    key.Close();
-                    return;
-                }
-
                 try
                 {
                     // Check to see if the property already exists
@@ -2171,7 +2163,7 @@ namespace Microsoft.PowerShell.Commands
                     if (Force || key.GetValue(propertyName) == null)
                     {
                         // Create the value
-                        SetRegistryValue(key, propertyName, value, kind, path);
+                        SetRegistryValue(key, propertyName, value, type, path);
                     }
                     else
                     {
@@ -2725,7 +2717,7 @@ namespace Microsoft.PowerShell.Commands
         public object NewPropertyDynamicParameters(
             string path,
             string propertyName,
-            string type,
+            RegistryValueKind type,
             object value)
         {
             return null;
