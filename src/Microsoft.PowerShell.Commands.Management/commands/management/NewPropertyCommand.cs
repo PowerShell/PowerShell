@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation;
+using Microsoft.Win32;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -63,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("Type")]
-        public string PropertyType { get; set; }
+        public RegistryValueKind PropertyType { get; set; }
 
         /// <summary>
         /// The value of the property to create on the item.
@@ -113,10 +114,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Path != null && Path.Length > 0)
             {
-                return InvokeProvider.Property.NewPropertyDynamicParameters(Path[0], Name, PropertyType, Value, context);
+                return InvokeProvider.Property.NewPropertyDynamicParameters(Path[0], Name, PropertyType.ToString(), Value, context);
             }
 
-            return InvokeProvider.Property.NewPropertyDynamicParameters(".", Name, PropertyType, Value, context);
+            return InvokeProvider.Property.NewPropertyDynamicParameters(".", Name, PropertyType.ToString(), Value, context);
         }
 
         #endregion Parameters
@@ -136,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    InvokeProvider.Property.New(path, Name, PropertyType, Value, CmdletProviderContext);
+                    InvokeProvider.Property.New(path, Name, PropertyType.ToString(), Value, CmdletProviderContext);
                 }
                 catch (PSNotSupportedException notSupported)
                 {
