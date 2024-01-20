@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Management.Automation;
-using System.Management.Automation.Language;
-using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Management.Automation;
+using System.Management.Automation.Language;
+using Microsoft.Win32;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
 
     }
 
-    // <summary>
+    /// <summary>
     /// Provides argument completion for PropertyType parameter.
     /// </summary>
     public class PropertyTypeArgumentCompleter : IArgumentCompleter
