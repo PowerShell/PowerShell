@@ -331,49 +331,55 @@ namespace System.Management.Automation
             List<CompletionResult> endResults = null;
             foreach (var keyValuePair in commandTable)
             {
-                var commandList = keyValuePair.Value as List<object>;
-                if (commandList != null)
+                if (keyValuePair.Value is List<object> commandList)
                 {
-                    endResults ??= new List<CompletionResult>();
-
-                    // The first command might be an un-prefixed commandInfo that we get by importing a module with the -Prefix parameter,
-                    // in that case, we should add the module name qualification because if the module is not in the module path, calling
-                    // 'Get-Foo' directly doesn't work
-                    string completionName = keyValuePair.Key;
-                    if (!includeModulePrefix)
+                    var modulesWithCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    var importedModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    var commandInfoArray = new CommandInfo[commandList.Count];
+                    for (int i = 0; i < commandInfoArray.Length; i++)
                     {
-                        var commandInfo = commandList[0] as CommandInfo;
-                        if (commandInfo != null && !string.IsNullOrEmpty(commandInfo.Prefix))
+                        var commandInfo = (CommandInfo)commandList[i];
+                        commandInfoArray[i] = commandInfo;
+                        if (commandInfo.CommandType == CommandTypes.Application)
                         {
-                            Diagnostics.Assert(!string.IsNullOrEmpty(commandInfo.ModuleName), "the module name should exist if commandInfo.Prefix is not an empty string");
-                            if (!ModuleCmdletBase.IsPrefixedCommand(commandInfo))
-                            {
-                                completionName = commandInfo.ModuleName + "\\" + completionName;
-                            }
+                            continue;
+                        }
+
+                        _ = modulesWithCommand.Add(commandInfo.ModuleName);
+                        if (commandInfo.CommandMetadata.CommandType is not null)
+                        {
+                            _ = importedModules.Add(commandInfo.ModuleName);
                         }
                     }
 
-                    results.Add(GetCommandNameCompletionResult(completionName, commandList[0], addAmpersandIfNecessary, quote));
-
-                    // For the other commands that are hidden, we need to disambiguate,
-                    // but put these at the end as it's less likely any of the hidden
-                    // commands are desired.  If we can't add anything to disambiguate,
-                    // then we'll skip adding a completion result.
-                    var modulesWithCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                    _ = modulesWithCommand.Add(((CommandInfo)commandList[0]).ModuleName);
-                    for (int index = 1; index < commandList.Count; index++)
+                    int moduleCount = modulesWithCommand.Count;
+                    modulesWithCommand.Clear();
+                    int index;
+                    if (commandInfoArray[0].CommandType == CommandTypes.Application
+                        || importedModules.Count == 1
+                        || moduleCount < 2)
                     {
-                        var commandInfo = commandList[index] as CommandInfo;
-                        Diagnostics.Assert(commandInfo != null, "Elements should always be CommandInfo");
+                        // We can use the short name for this command because there's no ambiguity about which command it resolves to.
+                        index = 1;
+                        results.Add(GetCommandNameCompletionResult(keyValuePair.Key, commandInfoArray[0], addAmpersandIfNecessary, quote));
+                        _ = modulesWithCommand.Add(commandInfoArray[0].ModuleName);
+                    }
+                    else
+                    {
+                        index = 0;
+                    }
 
+                    for (; index < commandInfoArray.Length; index++)
+                    {
+                        CommandInfo commandInfo = commandInfoArray[index];
                         if (commandInfo.CommandType == CommandTypes.Application)
                         {
-                            endResults.Add(GetCommandNameCompletionResult(commandInfo.Definition, commandInfo, addAmpersandIfNecessary, quote));
+                            results.Add(GetCommandNameCompletionResult(commandInfo.Definition, commandInfo, addAmpersandIfNecessary, quote));
                         }
                         else if (!string.IsNullOrEmpty(commandInfo.ModuleName) && modulesWithCommand.Add(commandInfo.ModuleName))
                         {
                             var name = commandInfo.ModuleName + "\\" + commandInfo.Name;
-                            endResults.Add(GetCommandNameCompletionResult(name, commandInfo, addAmpersandIfNecessary, quote));
+                            results.Add(GetCommandNameCompletionResult(name, commandInfo, addAmpersandIfNecessary, quote));
                         }
                     }
                 }
