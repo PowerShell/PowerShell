@@ -493,13 +493,13 @@ Windows Registry Editor Version 5.00
             }
         }
 
-        It "Validate non-terminating error for cast" -Skip (!$IsWindows) {
+        It "Validate non-terminating error for cast" {
             Get-ItemProperty -Path $registryProviderSubkeyPath -ErrorVariable err -ErrorAction SilentlyContinue
             $err | Should -HaveCount 1
             $err[0].Exception | Should -BeOfType [System.InvalidCastException]
         }
 
-        It "Validate terminating error for cast" -Skip (!$IsWindows) {
+        It "Validate terminating error for cast" {
             { Get-ItemProperty -Path $registryProviderSubkeyPath -ErrorAction Stop } | Should -Throw -ErrorId 'System.InvalidCastException,Microsoft.PowerShell.Commands.GetItemPropertyCommand'
         }
 
