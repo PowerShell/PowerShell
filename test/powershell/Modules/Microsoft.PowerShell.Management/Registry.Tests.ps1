@@ -497,6 +497,9 @@ Windows Registry Editor Version 5.00
             Get-ItemProperty -Path $registryProviderSubkeyPath -ErrorVariable err -ErrorAction SilentlyContinue
             $err | Should -HaveCount 1
             $err[0].Exception | Should -BeOfType [System.InvalidCastException]
+            $err[0].TargetObject | Should -BeExactly $registrySubkeyPath
+            $err[0].CategoryInfo.Category | Should -BeExactly 'WriteError'
+            $err[0].FullyQualifiedErrorId | Should -BeExactly 'System.InvalidCastException,Microsoft.PowerShell.Commands.GetItemPropertyCommand'
         }
 
         It "Validate terminating error for cast" {
