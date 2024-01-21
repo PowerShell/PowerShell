@@ -225,11 +225,15 @@ namespace Microsoft.PowerShell.Commands
 
             if (fakeBoundParameters.Contains("Path"))
             {
-                paths = ResolvePaths(ConvertParameterPathsToArray(fakeBoundParameters["Path"]), isLiteralPath: false);
+                paths = ResolvePaths(
+                    ConvertParameterPathsToArray(fakeBoundParameters["Path"]),
+                    isLiteralPath: false);
             }
             else if (fakeBoundParameters.Contains("LiteralPath"))
             {
-                paths = ResolvePaths(ConvertParameterPathsToArray(fakeBoundParameters["LiteralPath"]), isLiteralPath: true);
+                paths = ResolvePaths(
+                    ConvertParameterPathsToArray(fakeBoundParameters["LiteralPath"]),
+                    isLiteralPath: true);
             }
             else
             {
@@ -247,7 +251,11 @@ namespace Microsoft.PowerShell.Commands
 
                     if (propertyTypePattern.IsMatch(completionText))
                     {
-                        yield return new CompletionResult(completionText, completionText, CompletionResultType.ParameterValue, toolTip);
+                        yield return new CompletionResult(
+                            completionText,
+                            completionText,
+                            CompletionResultType.ParameterValue,
+                            toolTip);
                     }
                 }
             }
