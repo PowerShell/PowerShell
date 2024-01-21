@@ -940,7 +940,7 @@ ConstructorTestClass(int i, bool b)
             $multiStringValueKind = 'MultiString'
         }
 
-        It "Should complete Property Type for '<TextInput>'" -Skip:(!([System.Management.Automation.Platform]::IsWindows)) -TestCases @(
+        It "Should complete Property Type for '<TextInput>'" -Skip:(!$IsWindows) -TestCases @(
             @{ TextInput = "New-ItemProperty -PropertyType "; ExpectedPropertyTypes = $allRegistryValueKinds }
             @{ TextInput = "New-ItemProperty -PropertyType d"; ExpectedPropertyTypes = $dwordValueKind }
             @{ TextInput = "New-ItemProperty -PropertyType q"; ExpectedPropertyTypes = $qwordValueKind }
