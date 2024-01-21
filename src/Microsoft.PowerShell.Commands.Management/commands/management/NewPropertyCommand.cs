@@ -225,25 +225,19 @@ namespace Microsoft.PowerShell.Commands
 
             Collection<PathInfo> paths;
 
-            // Completion: New-ItemProperty -Path <path> -PropertyType <wordToComplete>
             if (fakeBoundParameters.Contains("Path"))
             {
                 paths = ResolvePaths(ConvertParameterPathsToArray(fakeBoundParameters["Path"]), isLiteralPath: false);
             }
-
-            // Completion: New-ItemProperty -LiteralPath <path> -PropertyType <wordToComplete>
             else if (fakeBoundParameters.Contains("LiteralPath"))
             {
                 paths = ResolvePaths(ConvertParameterPathsToArray(fakeBoundParameters["LiteralPath"]), isLiteralPath: true);
             }
-
-            // Just exit since we need to be sure we are completing for registry provider
             else
             {
                 yield break;
             }
 
-            // Perform completion if path is using registry provider
             if (paths.Count > 0 && paths[0].Provider.NameEquals("Registry"))
             {
                 var propertyTypePattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
@@ -292,7 +286,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 return new string[] { parameterPath.ToString() };
             }
-
             else if (parameterType.IsArray && parameterType.GetElementType() == typeof(object))
             {
                 return Array.ConvertAll((object[])parameterPath, path => path.ToString());
