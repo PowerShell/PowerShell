@@ -282,7 +282,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Converts object path to array of paths.
         /// </summary>
-        /// <param name="parameterPath">The object parameter path</param>
+        /// <param name="parameterPath">The object parameter path.</param>
         /// <returns>Array of path strings.</returns>
         private static string[] ConvertParameterPathsToArray(object parameterPath)
         {
