@@ -4,6 +4,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Language;
 
@@ -188,6 +190,17 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class PropertyTypeArgumentCompleter : IArgumentCompleter
     {
+        private static readonly OrderedDictionary s_RegistryCompletionResults = new()
+        {
+            { "String", "A normal string." },
+            { "ExpandString", "A string that contains unexpanded references to environment variables that are expanded when the value is retrieved." },
+            { "Binary", "Binary data in any form." },
+            { "DWord", "A 32-bit binary number." },
+            { "MultiString", "An array of strings." },
+            { "QWord", "A 64-bit binary number." },
+            { "Unknown", "An unsupported registry data type." }
+        };
+
         /// <summary>
         /// Returns completion results for PropertyType parameter.
         /// </summary>
@@ -204,22 +217,88 @@ namespace Microsoft.PowerShell.Commands
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
+            // -PropertyType parameter is only supported on Windows
             if (!Platform.IsWindows)
             {
                 yield break;
             }
 
-            var propertyTypePattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+            Collection<PathInfo> paths;
 
-            foreach (RegistryValueKind registryValue in Enum.GetValues(typeof(RegistryValueKind)))
+            // Completion: New-ItemProperty -Path <path> -PropertyType <wordToComplete>
+            if (fakeBoundParameters.Contains("Path"))
             {
-                string registryValueString = registryValue.ToString();
+                paths = ResolvePaths(ConvertParameterPathsToArray(fakeBoundParameters["Path"]), isLiteralPath: false);
+            }
 
-                if (propertyTypePattern.IsMatch(registryValueString))
+            // Completion: New-ItemProperty -LiteralPath <path> -PropertyType <wordToComplete>
+            else if (fakeBoundParameters.Contains("LiteralPath"))
+            {
+                paths = ResolvePaths(ConvertParameterPathsToArray(fakeBoundParameters["LiteralPath"]), isLiteralPath: true);
+            }
+
+            // Just exit since we need to be sure we are completing for registry provider
+            else
+            {
+                yield break;
+            }
+
+            // Perform completion if path is using registry provider
+            if (paths.Count > 0 && paths[0].Provider.NameEquals("Registry"))
+            {
+                var propertyTypePattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+                foreach (DictionaryEntry completionResult in s_RegistryCompletionResults)
                 {
-                    yield return new CompletionResult(registryValueString);
+                    string completionText = completionResult.Key.ToString();
+                    string toolTip = completionResult.Value.ToString();
+
+                    if (propertyTypePattern.IsMatch(completionText))
+                    {
+                        yield return new CompletionResult(completionText, completionText, CompletionResultType.ParameterValue, toolTip);
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// Resolve paths or literal paths using Resolve-Path.
+        /// </summary>
+        /// <param name="paths">The paths to resolve.</param>
+        /// <param name="isLiteralPath">Specifies if paths are literal paths.</param>
+        /// <returns>Collection of Pathinfo objects.</returns>
+        private static Collection<PathInfo> ResolvePaths(string[] paths, bool isLiteralPath)
+        {
+            using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+
+            ps.AddCommand("Microsoft.PowerShell.Management\\Resolve-Path");
+            ps.AddParameter(isLiteralPath ? "LiteralPath" : "Path", paths);
+
+            Collection<PathInfo> resolvedPaths = ps.Invoke<PathInfo>();
+
+            return resolvedPaths;
+        }
+
+        /// <summary>
+        /// Converts object path to array of paths.
+        /// </summary>
+        /// <param name="parameterPath">The object parameter path</param>
+        /// <returns>Array of path strings.</returns>
+        private static string[] ConvertParameterPathsToArray(object parameterPath)
+        {
+            Type parameterType = parameterPath.GetType();
+
+            if (parameterType == typeof(string))
+            {
+                return new string[] { parameterPath.ToString() };
+            }
+
+            else if (parameterType.IsArray && parameterType.GetElementType() == typeof(object))
+            {
+                return Array.ConvertAll((object[])parameterPath, path => path.ToString());
+            }
+
+            return Array.Empty<string>();
         }
     }
 }
