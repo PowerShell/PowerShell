@@ -977,11 +977,28 @@ ConstructorTestClass(int i, bool b)
             @{ TextInput = "New-ItemProperty -PropertyType bin"; ExpectedPropertyTypes = '' }
             @{ TextInput = "New-ItemProperty -PropertyType multi"; ExpectedPropertyTypes = '' }
             @{ TextInput = "New-ItemProperty -PropertyType invalidproptype"; ExpectedPropertyTypes = '' }
+
+            # All of these should return completion even with quotes included
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType '"; ExpectedPropertyTypes = $allRegistryValueKinds }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType 'bin"; ExpectedPropertyTypes = $binaryValueKind }
         ) {
             param($TextInput, $ExpectedPropertyTypes)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length
             $completionText = $res.CompletionMatches.CompletionText
             $completionText -join ' ' | Should -BeExactly $ExpectedPropertyTypes
+        }
+
+        It "Test fallback to provider of current location if no path specified" {
+            try {
+                Push-Location HKCU:\
+                $textInput = "New-ItemProperty -PropertyType "
+                $res = TabExpansion2 -inputScript $textInput -cursorColumn $textInput.Length
+                $completionText = $res.CompletionMatches.CompletionText
+                $completionText -join ' ' | Should -BeExactly $allRegistryValueKinds
+            }
+            finally {
+                Pop-Location
+            }
         }
 
         AfterAll {

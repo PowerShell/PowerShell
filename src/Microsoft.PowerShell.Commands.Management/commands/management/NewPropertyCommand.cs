@@ -188,15 +188,39 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class PropertyTypeArgumentCompleter : IArgumentCompleter
     {
-        private static readonly OrderedDictionary s_RegistryCompletionResults = new()
+        private static readonly string[] s_RegistryPropertyTypes = new string[]
         {
-            { "String", "A normal string." },
-            { "ExpandString", "A string that contains unexpanded references to environment variables that are expanded when the value is retrieved." },
-            { "Binary", "Binary data in any form." },
-            { "DWord", "A 32-bit binary number." },
-            { "MultiString", "An array of strings." },
-            { "QWord", "A 64-bit binary number." },
-            { "Unknown", "An unsupported registry data type." }
+            "String",
+            "ExpandString",
+            "Binary",
+            "DWord",
+            "MultiString",
+            "QWord",
+            "Unknown"
+        };
+
+        private static string GetRegistryPropertyTypeToolTip(string propertyTypeName) => propertyTypeName switch
+        {
+            "String" => TabCompletionStrings.RegistryStringToolTip,
+            "ExpandString" => TabCompletionStrings.RegistryExpandStringToolTip,
+            "Binary" => TabCompletionStrings.RegistryBinaryToolTip,
+            "DWord" => TabCompletionStrings.RegistryDWordToolTip,
+            "MultiString" => TabCompletionStrings.RegistryMultiStringToolTip,
+            "QWord" => TabCompletionStrings.RegistryQWordToolTip,
+            _ => TabCompletionStrings.RegistryUnknownToolTip
+        };
+
+        private static readonly char[] QuoteChars = new char[]
+        {
+            '\'',
+            '"',
+            '\u2018', // left single quotation mark
+            '\u2019', // right single quotation mark
+            '\u201a', // single low-9 quotation mark
+            '\u201b', // single high-reversed-9 quotation mark
+            '\u201c', // left double quotation mark
+            '\u201d', // right double quotation mark
+            '\u201E'  // low double left quote used in german
         };
 
         /// <summary>
@@ -225,79 +249,51 @@ namespace Microsoft.PowerShell.Commands
 
             if (fakeBoundParameters.Contains("Path"))
             {
-                paths = ResolvePaths(
-                    ConvertParameterPathsToArray(fakeBoundParameters["Path"]),
-                    isLiteralPath: false);
+                paths = ResolvePath(fakeBoundParameters["Path"], isLiteralPath: false);
             }
             else if (fakeBoundParameters.Contains("LiteralPath"))
             {
-                paths = ResolvePaths(
-                    ConvertParameterPathsToArray(fakeBoundParameters["LiteralPath"]),
-                    isLiteralPath: true);
+                paths = ResolvePath(fakeBoundParameters["LiteralPath"], isLiteralPath: true);
             }
             else
             {
-                yield break;
+                paths = ResolvePath(@".\", isLiteralPath: false);
             }
 
-            if (paths.Count > 0 && paths[0].Provider.NameEquals("Registry"))
+            if (paths[0].Provider.NameEquals("Registry"))
             {
-                var propertyTypePattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+                var propertyTypePattern = WildcardPattern.Get(wordToComplete.Trim(QuoteChars) + "*", WildcardOptions.IgnoreCase);
 
-                foreach (DictionaryEntry completionResult in s_RegistryCompletionResults)
+                foreach (string propertyType in s_RegistryPropertyTypes)
                 {
-                    string completionText = completionResult.Key.ToString();
-                    string toolTip = completionResult.Value.ToString();
-
-                    if (propertyTypePattern.IsMatch(completionText))
+                    if (propertyTypePattern.IsMatch(propertyType))
                     {
                         yield return new CompletionResult(
-                            completionText,
-                            completionText,
+                            propertyType,
+                            propertyType,
                             CompletionResultType.ParameterValue,
-                            toolTip);
+                            GetRegistryPropertyTypeToolTip(propertyType));
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Resolve paths or literal paths using Resolve-Path.
+        /// Resolve path or literal path using Resolve-Path.
         /// </summary>
-        /// <param name="paths">The paths to resolve.</param>
-        /// <param name="isLiteralPath">Specifies if paths are literal paths.</param>
+        /// <param name="path">The path to resolve.</param>
+        /// <param name="isLiteralPath">Specifies if path is literal path.</param>
         /// <returns>Collection of Pathinfo objects.</returns>
-        private static Collection<PathInfo> ResolvePaths(string[] paths, bool isLiteralPath)
+        private static Collection<PathInfo> ResolvePath(object path, bool isLiteralPath)
         {
             using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
 
             ps.AddCommand("Microsoft.PowerShell.Management\\Resolve-Path");
-            ps.AddParameter(isLiteralPath ? "LiteralPath" : "Path", paths);
+            ps.AddParameter(isLiteralPath ? "LiteralPath" : "Path", path);
 
-            Collection<PathInfo> resolvedPaths = ps.Invoke<PathInfo>();
+            Collection<PathInfo> output = ps.Invoke<PathInfo>();
 
-            return resolvedPaths;
-        }
-
-        /// <summary>
-        /// Converts object path to array of paths.
-        /// </summary>
-        /// <param name="parameterPath">The object parameter path.</param>
-        /// <returns>Array of path strings.</returns>
-        private static string[] ConvertParameterPathsToArray(object parameterPath)
-        {
-            Type parameterType = parameterPath.GetType();
-
-            if (parameterType == typeof(string))
-            {
-                return new string[] { parameterPath.ToString() };
-            }
-            else if (parameterType.IsArray && parameterType.GetElementType() == typeof(object))
-            {
-                return Array.ConvertAll((object[])parameterPath, path => path.ToString());
-            }
-
-            return Array.Empty<string>();
+            return output;
         }
     }
 }
