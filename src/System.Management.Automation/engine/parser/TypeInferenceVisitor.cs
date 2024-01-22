@@ -1159,7 +1159,7 @@ namespace System.Management.Automation
 
             if (commandInfo.OutputType.Count == 0
                 && commandInfo is IScriptCommandInfo scriptCommandInfo
-                && scriptCommandInfo.ScriptBlock is IParameterMetadataProvider scriptBlockWithParams)
+                && scriptCommandInfo.ScriptBlock.Ast is IParameterMetadataProvider scriptBlockWithParams)
             {
                 inferredTypes.AddRange(InferTypes(scriptBlockWithParams.Body));
                 return;
