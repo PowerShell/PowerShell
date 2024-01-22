@@ -988,7 +988,7 @@ ConstructorTestClass(int i, bool b)
             $completionText -join ' ' | Should -BeExactly $ExpectedPropertyTypes
         }
 
-        It "Test fallback to provider of current location if no path specified" {
+        It "Test fallback to provider of current location if no path specified" -Skip:(!$IsWindows) {
             try {
                 Push-Location HKCU:\
                 $textInput = "New-ItemProperty -PropertyType "
