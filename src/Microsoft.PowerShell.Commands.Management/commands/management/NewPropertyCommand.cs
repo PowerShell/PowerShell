@@ -183,6 +183,7 @@ namespace Microsoft.PowerShell.Commands
 
     }
 
+#if !UNIX
     /// <summary>
     /// Provides argument completion for PropertyType parameter.
     /// </summary>
@@ -302,4 +303,5 @@ namespace Microsoft.PowerShell.Commands
             return output;
         }
     }
+#endif
 }
