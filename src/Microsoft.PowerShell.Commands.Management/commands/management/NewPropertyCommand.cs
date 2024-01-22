@@ -267,9 +267,8 @@ namespace Microsoft.PowerShell.Commands
         /// Checks if parameter paths are from Registry provider.
         /// </summary>
         /// <param name="fakeBoundParameters">The fake bound parameters.</param>
-        /// <returns>Boolean indicating if paths are from Registry Provider</returns>
+        /// <returns>Boolean indicating if paths are from Registry Provider.</returns>
         private static bool IsRegistryProvider(IDictionary fakeBoundParameters)
-
         {
             Collection<PathInfo> paths;
 
