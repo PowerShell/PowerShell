@@ -4255,21 +4255,6 @@ function New-GlobalToolNupkgSource
             $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
         }
 
-        "PowerShell.Windows.arm32"
-        {
-            $PackageName = "PowerShell.Windows.arm32"
-            $RootFolder = New-TempFolder
-
-            Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
-
-            $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
-
-            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $WindowsBinPath for $PackageType"
-            Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
-            Remove-Item -Path $ridFolder/runtimes/win-x64 -Recurse -Force
-            $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
-        }
-
         default { throw "New-GlobalToolNupkgSource: Unknown package type: $PackageType" }
     }
 
