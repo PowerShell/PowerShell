@@ -1,11 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Language;
 
@@ -245,6 +243,34 @@ namespace Microsoft.PowerShell.Commands
                 yield break;
             }
 
+            if (!IsRegistryProvider(fakeBoundParameters))
+            {
+                yield break;
+            }
+
+            var propertyTypePattern = WildcardPattern.Get(wordToComplete.Trim(QuoteChars) + "*", WildcardOptions.IgnoreCase);
+
+            foreach (string propertyType in s_RegistryPropertyTypes)
+            {
+                if (propertyTypePattern.IsMatch(propertyType))
+                {
+                    yield return new CompletionResult(
+                        propertyType,
+                        propertyType,
+                        CompletionResultType.ParameterValue,
+                        GetRegistryPropertyTypeToolTip(propertyType));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if parameter paths are from Registry provider.
+        /// </summary>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>Boolean indicating if paths are from Registry Provider</returns>
+        private static bool IsRegistryProvider(IDictionary fakeBoundParameters)
+
+        {
             Collection<PathInfo> paths;
 
             if (fakeBoundParameters.Contains("Path"))
@@ -260,22 +286,7 @@ namespace Microsoft.PowerShell.Commands
                 paths = ResolvePath(@".\", isLiteralPath: false);
             }
 
-            if (paths.Count > 0 && paths[0].Provider.NameEquals("Registry"))
-            {
-                var propertyTypePattern = WildcardPattern.Get(wordToComplete.Trim(QuoteChars) + "*", WildcardOptions.IgnoreCase);
-
-                foreach (string propertyType in s_RegistryPropertyTypes)
-                {
-                    if (propertyTypePattern.IsMatch(propertyType))
-                    {
-                        yield return new CompletionResult(
-                            propertyType,
-                            propertyType,
-                            CompletionResultType.ParameterValue,
-                            GetRegistryPropertyTypeToolTip(propertyType));
-                    }
-                }
-            }
+            return paths.Count > 0 && paths[0].Provider.NameEquals("Registry");
         }
 
         /// <summary>
