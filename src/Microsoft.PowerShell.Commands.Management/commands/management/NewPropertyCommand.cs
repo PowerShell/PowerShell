@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
                 paths = ResolvePath(@".\", isLiteralPath: false);
             }
 
-            if (paths[0].Provider.NameEquals("Registry"))
+            if (paths.Count > 0 && paths[0].Provider.NameEquals("Registry"))
             {
                 var propertyTypePattern = WildcardPattern.Get(wordToComplete.Trim(QuoteChars) + "*", WildcardOptions.IgnoreCase);
 
