@@ -1028,7 +1028,7 @@ namespace System.Management.Automation
         /// For example, to construct a command string "get-process | foreach { $_.Name }"
         ///     <code>
         ///         PowerShell shell = PowerShell.Create("get-process").
-        ///                                     AddCommand("foreach { $_.Name }", true);
+        ///                                     AddScript("foreach { $_.Name }");
         ///     </code>
         /// </summary>
         /// <param name="script">
@@ -1067,7 +1067,7 @@ namespace System.Management.Automation
         /// For example, to construct a command string "get-process | foreach { $_.Name }"
         ///     <code>
         ///         PowerShell shell = PowerShell.Create("get-process").
-        ///                                     AddCommand("foreach { $_.Name }", true);
+        ///                                     AddScript("foreach { $_.Name }", true);
         ///     </code>
         /// </summary>
         /// <param name="script">
