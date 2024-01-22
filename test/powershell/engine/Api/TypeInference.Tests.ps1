@@ -1432,6 +1432,16 @@ Describe "Type inference Tests" -tags "CI" {
         )
         $null = [AstTypeInference]::InferTypeOf($FoundAst)
     }
+
+    It 'Should infer output from anonymous function' {
+        $res = [AstTypeInference]::InferTypeOf( { & {"Hello"} }.Ast)
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Should infer output from function without OutputType attribute' {
+        $res = [AstTypeInference]::InferTypeOf( { function MyHello{"Hello"};MyHello }.Ast)
+        $res.Name | Should -Be 'System.String'
+    }
 }
 
 Describe "AstTypeInference tests" -Tags CI {
