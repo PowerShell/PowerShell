@@ -1432,6 +1432,35 @@ Describe "Type inference Tests" -tags "CI" {
         )
         $null = [AstTypeInference]::InferTypeOf($FoundAst)
     }
+
+    It 'Infers type of command with all streams redirected to Success stream' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive *>&1 }.Ast)
+        $ExpectedTypeNames = @(
+            [ErrorRecord].FullName
+            [WarningRecord].FullName
+            [VerboseRecord].FullName
+            [DebugRecord].FullName
+            [InformationRecord].FullName
+            [PSDriveInfo].FullName
+        ) -join ';'
+        $res.Name -join ';' | Should -Be $ExpectedTypeNames
+    }
+
+    It 'Infers type of command with success stream redirected' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive *>&1 1>$null }.Ast)
+        $res.Count | Should -Be 0
+    }
+
+    It 'Infers type of command with some stream redirected to success' {
+        $res = [AstTypeInference]::InferTypeOf( { Get-PSDrive 3>&1 4>&1 }.Ast)
+        $res.Count | Should -Be 3
+        $ExpectedTypeNames = @(
+            [PSDriveInfo].FullName
+            [VerboseRecord].FullName
+            [WarningRecord].FullName
+        ) -join ';'
+        ($res.Name | Sort-Object) -join ';' | Should -Be $ExpectedTypeNames
+    }
 }
 
 Describe "AstTypeInference tests" -Tags CI {
