@@ -935,6 +935,7 @@ ConstructorTestClass(int i, bool b)
         BeforeAll {
             if ($IsWindows) {
                 $allRegistryValueKinds = 'String ExpandString Binary DWord MultiString QWord Unknown'
+                $allRegistryValueKindsWithQuotes = "'String' 'ExpandString' 'Binary' 'DWord' 'MultiString' 'QWord' 'Unknown'"
                 $dwordValueKind = 'DWord'
                 $qwordValueKind = 'QWord'
                 $binaryValueKind = 'Binary'
@@ -979,8 +980,8 @@ ConstructorTestClass(int i, bool b)
             @{ TextInput = "New-ItemProperty -PropertyType invalidproptype"; ExpectedPropertyTypes = '' }
 
             # All of these should return completion even with quotes included
-            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType '"; ExpectedPropertyTypes = $allRegistryValueKinds }
-            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType 'bin"; ExpectedPropertyTypes = $binaryValueKind }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType '"; ExpectedPropertyTypes = $allRegistryValueKindsWithQuotes }
+            @{ TextInput = "New-ItemProperty -Path $registryPath -PropertyType 'bin"; ExpectedPropertyTypes = "'$binaryValueKind'" }
         ) {
             param($TextInput, $ExpectedPropertyTypes)
             $res = TabExpansion2 -inputScript $TextInput -cursorColumn $TextInput.Length

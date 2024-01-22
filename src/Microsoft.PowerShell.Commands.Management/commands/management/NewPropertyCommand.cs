@@ -211,19 +211,6 @@ namespace Microsoft.PowerShell.Commands
             _ => TabCompletionStrings.RegistryUnknownToolTip
         };
 
-        private static readonly char[] QuoteChars = new char[]
-        {
-            '\'',
-            '"',
-            '\u2018', // left single quotation mark
-            '\u2019', // right single quotation mark
-            '\u201a', // single low-9 quotation mark
-            '\u201b', // single high-reversed-9 quotation mark
-            '\u201c', // left double quotation mark
-            '\u201d', // right double quotation mark
-            '\u201E'  // low double left quote used in german
-        };
-
         /// <summary>
         /// Returns completion results for PropertyType parameter.
         /// </summary>
@@ -245,14 +232,19 @@ namespace Microsoft.PowerShell.Commands
                 yield break;
             }
 
-            var propertyTypePattern = WildcardPattern.Get(wordToComplete.Trim(QuoteChars) + "*", WildcardOptions.IgnoreCase);
+            string quote = CompletionCompleters.HandleDoubleAndSingleQuote(ref wordToComplete);
+            var propertyTypePattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
 
             foreach (string propertyType in s_RegistryPropertyTypes)
             {
                 if (propertyTypePattern.IsMatch(propertyType))
                 {
+                    string completionText = quote == string.Empty
+                        ? propertyType
+                        : quote + propertyType + quote;
+
                     yield return new CompletionResult(
-                        propertyType,
+                        completionText,
                         propertyType,
                         CompletionResultType.ParameterValue,
                         GetRegistryPropertyTypeToolTip(propertyType));
