@@ -950,7 +950,7 @@ namespace System.Management.Automation.Runspaces
 
                                                     if ($value -is [Type]) {
                                                         # Just show the typename instead of it as an object
-                                                        $null = $output.Append(""${prefix}${valueIndent}[${value}]"")
+                                                        $null = $output.Append(""${prefix}${valueIndent}[$($value.ToString())]"")
                                                     }
                                                     elseif ($value -is [string] -or $value.GetType().IsPrimitive) {
                                                         $null = $output.Append(""${prefix}${valueIndent}${value}"")
@@ -964,6 +964,10 @@ namespace System.Management.Automation.Runspaces
                                                     $isFirstElement = $false
                                                 }
                                             }
+                                        }
+                                        elseif ($prop.Value -is [Type]) {
+                                            # Just show the typename instead of it as an object
+                                            $null = $output.Append(""[$($prop.Value.ToString())]"")
                                         }
                                         # Anything else, we convert to string.
                                         # ToString() can throw so we use LanguagePrimitives.TryConvertTo() to hide a convert error

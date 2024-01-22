@@ -7,9 +7,11 @@ Describe "Get-Error" -Tags "CI" {
         $null = $ps.AddScript(@'
             class GetErrorWithTypeArray : Exception {
                 [type[]]$Values
+                [type]$Type
 
                 GetErrorWithTypeArray ([string]$Message) : base($Message) {
-                    $this.Values = [type[]]@([string], [type])
+                    $this.Values = [type[]]@([string], [int])
+                    $this.Type = [bool]
                 }
             }
             try { throw [GetErrorWithTypeArray]::new("") } catch {}
@@ -34,24 +36,24 @@ Describe "Get-Error" -Tags "CI" {
 
         $formattedError | Should -Be @'
 Exception        :
-    Type    : GetErrorWithTypeArray
     Values  :
-        string
-        type
+              [System.String]
+              [System.Int32]
+    Type    : [System.Boolean]
     HResult : -2146233088
 CategoryInfo     : OperationStopped: (:) [], GetErrorWithTypeArray
 InvocationInfo   :
-    ScriptLineNumber : 8
+    ScriptLineNumber : 10
     OffsetInLine     : 19
     HistoryId        : 1
     Line             : try { throw [GetErrorWithTypeArray]::new("") } catch {}
 
     Statement        : throw [GetErrorWithTypeArray]::new("")
-    PositionMessage  : At line:8 char:19
+    PositionMessage  : At line:10 char:19
                        +             try { throw [GetErrorWithTypeArray]::new("") } catch {}
                        +                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CommandOrigin    : Internal
-ScriptStackTrace : at <ScriptBlock>, <No file>: line 8
+ScriptStackTrace : at <ScriptBlock>, <No file>: line 10
 '@.Trim()
     }
 
@@ -62,7 +64,7 @@ ScriptStackTrace : at <ScriptBlock>, <No file>: line 8
                 [object[]]$Values
 
                 GetErrorPrimitiveArray ([string]$Message) : base($Message) {
-                    $this.Values = @(1, "2", 0.5)
+                    $this.Values = @(1, "alpha", 0.5)
                 }
             }
             try { throw [GetErrorPrimitiveArray]::new("") } catch {}
@@ -83,9 +85,9 @@ ScriptStackTrace : at <ScriptBlock>, <No file>: line 8
 Exception        :
     Type    : GetErrorPrimitiveArray
     Values  :
-        1
-        2
-        0.5
+              1
+              alpha
+              0.5
     HResult : -2146233088
 CategoryInfo     : OperationStopped: (:) [], GetErrorPrimitiveArray
 InvocationInfo   :
