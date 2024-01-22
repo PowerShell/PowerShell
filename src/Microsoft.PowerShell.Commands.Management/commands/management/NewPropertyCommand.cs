@@ -67,7 +67,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("Type")]
+#if !UNIX
         [ArgumentCompleter(typeof(PropertyTypeArgumentCompleter))]
+#endif
         public string PropertyType { get; set; }
 
         /// <summary>
@@ -237,12 +239,6 @@ namespace Microsoft.PowerShell.Commands
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
-            // -PropertyType parameter is only supported on Windows
-            if (!Platform.IsWindows)
-            {
-                yield break;
-            }
-
             if (!IsRegistryProvider(fakeBoundParameters))
             {
                 yield break;
