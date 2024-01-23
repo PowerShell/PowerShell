@@ -459,7 +459,7 @@ using `
     }
 
     It 'Should work for property assignment of enum type with type inference' {
-        $res = TabExpansion2 -inputScript '$MyUnassignedVar = $psstyle.Progress.View; $MyUnassignedVar = "Class'
+        $res = TabExpansion2 -inputScript '[System.Management.Automation.ProgressView]$MyUnassignedVar = $psstyle.Progress.View; $MyUnassignedVar = "Class'
         $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
     }
 

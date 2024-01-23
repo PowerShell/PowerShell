@@ -1485,7 +1485,23 @@ namespace System.Management.Automation
                 }
             }
 
-            var pattern = new WildcardPattern(context.WordToComplete + "*", WildcardOptions.IgnoreCase);
+            string wordToComplete;
+            if (string.IsNullOrEmpty(context.WordToComplete))
+            {
+                if (context.TokenAtCursor is not null && context.TokenAtCursor.Kind != TokenKind.Equals)
+                {
+                    wordToComplete = context.TokenAtCursor.Text + "*";
+                }
+                else
+                {
+                    wordToComplete = "*";
+                }
+            }
+            else
+            {
+                wordToComplete = context.WordToComplete + "*";
+            }
+            var pattern = new WildcardPattern(wordToComplete, WildcardOptions.IgnoreCase);
             foreach (var name in values.Order())
             {
                 string quotedName = GetQuotedString(name, context);
