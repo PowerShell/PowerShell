@@ -4180,9 +4180,11 @@ function New-GlobalToolNupkgSource
             Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
 
             $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+            $shimsFolder = New-Item -Path (Join-Path $ridFolder "shims" "linux-musl-x64") -ItemType Directory -Force
 
             Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $AlpineBinPath for $PackageType"
             Copy-Item "$AlpineBinPath/*" -Destination $ridFolder -Recurse
+            Copy-Item "$AlpineBinPath/pwsh" -Destination $shimsFolder
             $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
         }
 
@@ -4194,9 +4196,12 @@ function New-GlobalToolNupkgSource
             Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
 
             $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+            $shimsFolder = New-Item -Path (Join-Path $ridFolder "shims" "linux-x64") -ItemType Directory -Force
 
             Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $LinuxBinPath for $PackageType"
             Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+            Copy-Item "$LinuxBinPath/pwsh" -Destination $shimsFolder
+
             Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
             Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
             Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
@@ -4212,9 +4217,12 @@ function New-GlobalToolNupkgSource
             Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
 
             $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+            $shimsFolder = New-Item -Path (Join-Path $ridFolder "shims" "linux-arm32") -ItemType Directory -Force
 
             Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $LinuxBinPath for $PackageType"
             Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+            Copy-Item "$LinuxBinPath/pwsh" -Destination $shimsFolder
+
             Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
             Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
             Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
@@ -4230,9 +4238,12 @@ function New-GlobalToolNupkgSource
             Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
 
             $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+            $shimsFolder = New-Item -Path (Join-Path $ridFolder "shims" "linux-arm64") -ItemType Directory -Force
 
             Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $LinuxBinPath for $PackageType"
             Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+            Copy-Item "$LinuxBinPath/pwsh" -Destination $shimsFolder
+
             Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
             Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
             Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
@@ -4248,9 +4259,12 @@ function New-GlobalToolNupkgSource
             Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
 
             $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+            $shimsFolder = New-Item -Path (Join-Path $ridFolder "shims" "win-x64") -ItemType Directory -Force
 
             Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $WindowsDesktopBinPath for $PackageType"
             Copy-Item "$WindowsDesktopBinPath/*" -Destination $ridFolder -Recurse
+            Copy-Item "$WindowsDesktopBinPath/pwsh.exe" -Destination $shimsFolder
+
             Remove-Item -Path $ridFolder/runtimes/win-arm -Recurse -Force
             $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
         }
