@@ -458,6 +458,21 @@ using `
         $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
     }
 
+    It 'Should work for property assignment of enum type with type inference' {
+        $res = TabExpansion2 -inputScript '$MyUnassignedVar = $psstyle.Progress.View; $MyUnassignedVar = "Class'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Classic"'
+    }
+
+    It 'Should work for property assignment of enum type with type inference with PowerShell class' {
+        $res = TabExpansion2 -inputScript 'enum Animals{Cat= 0;Dog= 1};class AnimalTestClass{[Animals] $Prop1};$Test1 = [AnimalTestClass]::new();$Test1.Prop1 = "C'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Cat"'
+    }
+
+    It 'Should work for variable assignment with type inference of PowerShell Enum' {
+        $res = TabExpansion2 -inputScript 'enum Animals{Cat= 0;Dog= 1}; [Animals]$TestVar1 = "D'
+        $res.CompletionMatches[0].CompletionText | Should -Be '"Dog"'
+    }
+
     It 'Should work for variable assignment of enum type: <inputStr>' -TestCases @(
         @{ inputStr = '$ErrorActionPreference = '; filter = ''; doubleQuotes = $false }
         @{ inputStr = '$ErrorActionPreference='; filter = ''; doubleQuotes = $false }

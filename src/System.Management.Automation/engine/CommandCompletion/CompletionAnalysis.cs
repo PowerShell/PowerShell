@@ -1421,18 +1421,86 @@ namespace System.Management.Automation
         {
             if (SafeExprEvaluator.TrySafeEval(memberExpression, context.ExecutionContext, out var evalValue))
             {
-                if (evalValue is null)
+                if (evalValue is not null)
                 {
+                    Type type = evalValue.GetType();
+                    if (type.IsEnum)
+                    {
+                        return GetResultForEnum(type, context);
+                    }
+
                     return null;
                 }
+            }
 
-                Type type = evalValue.GetType();
-                if (type.IsEnum)
+            if (!TryGetInferredCompletionsForAssignment(memberExpression, context, out List<CompletionResult> result))
+            {
+                result = null;
+            }
+
+            return result;
+        }
+
+        private static bool TryGetInferredCompletionsForAssignment(Ast expression, CompletionContext context, out List<CompletionResult> result)
+        {
+            result = new List<CompletionResult>();
+            IList<PSTypeName> inferredTypes;
+            if (expression.Parent is ConvertExpressionAst convertExpression)
+            {
+                inferredTypes = new PSTypeName[] { new(convertExpression.Type.TypeName) };
+            }
+            else
+            {
+                inferredTypes = AstTypeInference.InferTypeOf(expression);
+            }
+             
+            if (inferredTypes.Count == 0)
+            {
+                return false;
+            }
+
+            var values = new HashSet<string>();
+            foreach (PSTypeName type in inferredTypes)
+            {
+                Type loadedType = type.Type;
+                if (loadedType is not null)
                 {
-                    return GetResultForEnum(type, context);
+                    if (loadedType.IsEnum)
+                    {
+                        foreach (var value in Enum.GetNames(loadedType))
+                        {
+                            _ = values.Add(value);
+                        }
+                    }
+                }
+                else if (type is not null && type.TypeDefinitionAst.IsEnum)
+                {
+                    foreach (MemberAst member in type.TypeDefinitionAst.Members)
+                    {
+                        if (member is PropertyMemberAst property)
+                        {
+                            _ = values.Add(property.Name);
+                        }
+                    }
                 }
             }
-            return null;
+
+            var pattern = new WildcardPattern(context.WordToComplete + "*", WildcardOptions.IgnoreCase);
+            foreach (var name in values.Order())
+            {
+                string quotedName = GetQuotedString(name, context);
+                if (pattern.IsMatch(quotedName))
+                {
+                    result.Add(new CompletionResult(quotedName, name, CompletionResultType.Property, name));
+                }
+            }
+
+            if (result.Count == 0)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static bool TryGetCompletionsForVariableAssignment(
@@ -1501,7 +1569,7 @@ namespace System.Management.Automation
             // If the assignment itself was unconstrained, the variable still might be
             if (!TryGetTypeConstraintOnVariable(completionContext, variableAst.VariablePath.UserPath, out typeConstraint, out setConstraint))
             {
-                return false;
+                return TryGetInferredCompletionsForAssignment(variableAst, completionContext, out completions);
             }
 
             // Again try the [ValidateSet()] constraint first
