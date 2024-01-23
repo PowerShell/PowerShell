@@ -1634,7 +1634,7 @@ namespace Microsoft.PowerShell
             if (Platform.IsWindowsDesktop)
             {
                 // Note: this API can detect if a third-party screen reader is active, such as NVDA, but not the in-box Windows Narrator.
-                // Quoted from https://docs.microsoft.com/windows/win32/api/winuser/nf-winuser-systemparametersinfoa about the
+                // Quoted from https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-systemparametersinfoa about the
                 // accessibility parameter 'SPI_GETSCREENREADER':
                 // "Narrator, the screen reader that is included with Windows, does not set the SPI_SETSCREENREADER or SPI_GETSCREENREADER flags."
                 bool enabled = false;
@@ -2984,7 +2984,6 @@ namespace Microsoft.PowerShell
             private static readonly Stack<InputLoop> s_instanceStack = new Stack<InputLoop>();
         }
 
-        [Serializable]
         [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic", Justification =
             "This exception cannot be used outside of the console host application. It is not thrown by a library routine, only by an application.")]
         private sealed class ConsoleHostStartupException : Exception
@@ -2998,14 +2997,6 @@ namespace Microsoft.PowerShell
             internal
             ConsoleHostStartupException(string message)
                 : base(message)
-            {
-            }
-
-            private
-            ConsoleHostStartupException(
-                System.Runtime.Serialization.SerializationInfo info,
-                System.Runtime.Serialization.StreamingContext context)
-                : base(info, context)
             {
             }
 

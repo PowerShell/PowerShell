@@ -240,7 +240,7 @@ Describe "Set-Location" -Tags "CI" {
         It 'Should go to the parent folder on cd.. run' {
             Set-Location 'TestDrive:\'
             $ParentDir = (Get-Location).path
-            New-Item -Path 'TestDrive:\' -Name 'Directory1' -ItemType Directory
+            New-Item -Path 'TestDrive:\' -Name 'Directory1' -ItemType Directory -ErrorAction Ignore
             Set-Location 'TestDrive:\Directory1'
             cd..
             (Get-Location).Path | Should -BeExactly $ParentDir
@@ -256,7 +256,7 @@ Describe "Set-Location" -Tags "CI" {
         }
         It 'Should go to root of current drive on cd\ run (Linux/Mac)' -Skip:($IsWindows){
             Set-Location 'TestDrive:\'
-            New-Item -Path 'TestDrive:\Directory1' -Name 'Directory2' -ItemType Directory
+            New-Item -Path 'TestDrive:\Directory1' -Name 'Directory2' -ItemType Directory -ErrorAction Ignore
             Set-Location 'TestDrive:\Directory1\Directory2'
             cd\
             (Get-Location).Path | Should -BeExactly "/"

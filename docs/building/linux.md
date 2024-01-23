@@ -23,7 +23,7 @@ We use the [.NET Command-Line Interface][dotnet-cli] (`dotnet`) to build the man
 Installing the toolchain is as easy as running `Start-PSBootstrap` in PowerShell.
 Of course, this requires a self-hosted copy of PowerShell on Linux.
 
-Fortunately, this is as easy as [downloading and installing the package](https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux#binary-archives).
+Fortunately, this is as easy as [downloading and installing the package](https://learn.microsoft.com/en-us/powershell/scripting/install/install-other-linux#binary-archives).
 The `./tools/install-powershell.sh` script will also install the PowerShell package.
 
 In Bash:
@@ -53,7 +53,7 @@ The `Start-PSBootstrap` function does the following:
 
 If you want to use `dotnet` outside of `Start-PSBuild`, add `~/.dotnet` to your `PATH` environment variable.
 
-[dotnet-cli]: https://docs.microsoft.com/dotnet/core/tools/
+[dotnet-cli]: https://learn.microsoft.com/dotnet/core/tools/
 
 ## Build using our module
 

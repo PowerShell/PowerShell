@@ -54,6 +54,8 @@ variables:
   - group: fakeNugetKey
   - name: SBOMGenerator_Formats
     value: spdx:2.2
+  - name: nugetMultiFeedWarnLevel
+    value: none
 
 resources:
   repositories:
@@ -78,11 +80,6 @@ stages:
     parameters:
       channel: preview
       architecture: x86
-  - template: templates/windows-packaging.yml
-    parameters:
-      channel: preview
-      architecture: arm
-      runtimePrefix: win
   - template: templates/windows-packaging.yml
     parameters:
       channel: preview

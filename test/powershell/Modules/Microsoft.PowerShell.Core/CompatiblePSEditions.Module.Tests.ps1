@@ -451,9 +451,9 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
     BeforeAll {
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ( ! $IsWindows ) {
-            $PSDefaultParameterValues["it:skip"] = $true
+            Push-DefaultParameterValueStack @{ "it:skip" = $true }
+            return
         }
 
         $ModuleName = "DesktopModule"
@@ -468,7 +468,10 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        if ( ! $IsWindows ) {
+            Pop-DefaultParameterValueStack
+            return
+        }
     }
 
     Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
@@ -666,6 +669,11 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         }
 
         It "NoClobber WinCompat list in powershell.config is a Desktop-edition module" {
+            if (Test-IsWinWow64) {
+                Set-ItResult -Skipped -Because "This test is not applicable to WoW64."
+                return
+            }
+
             if (-not $desktopModuleToUse) {
                 throw 'Neither the "PersistentMemory" module nor the "RemoteDesktop" module is available. Please check and use a desktop-edition module that is under the System32 module path.'
             }
@@ -761,14 +769,16 @@ Remove-Module $desktopModuleToUse
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
     BeforeAll {
         $pwsh = "$PSHOME/pwsh"
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ( ! $IsWindows ) {
-            $PSDefaultParameterValues["it:skip"] = $true
+            Push-DefaultParameterValueStack @{  "it:skip" = $true }
+            return
         }
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        if ( ! $IsWindows ) {
+            Pop-DefaultParameterValueStack
+        }
     }
 
     Context "System32 module path prepended to PSModulePath" {
@@ -1403,8 +1413,7 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
 Describe "WinCompat importing should check availablity of built-in modules" -Tag "CI" {
     BeforeAll {
         if (-not $IsWindows ) {
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
+            Push-DefaultParameterValueStack @{  "it:skip" = $true }
             return
         }
 
@@ -1426,7 +1435,7 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
 
     AfterAll {
         if (-not $IsWindows) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            Pop-DefaultParameterValueStack
             return
         }
 
@@ -1481,6 +1490,11 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
     }
 
     It "Attempt to load a 'Desktop' edition module should fail because 'Export-PSSession' cannot be found" {
+        if (Test-IsWinWow64) {
+            Set-ItResult -Skipped -Because "This test is not applicable to WoW64."
+            return
+        }
+
         if (-not $desktopModuleToUse) {
             throw 'Neither the "PersistentMemory" module nor the "RemoteDesktop" module is available. Please check and use a desktop-edition module that is under the System32 module path.'
         }
@@ -1517,5 +1531,16 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
         $result[3] | Should -BeExactly 'Convert-String'
         $result[4] | Should -BeExactly 'ConvertFrom-String'
         $result[5] | Should -BeExactly 'CFS'
+    }
+
+    It 'ErrorAction should be used for cmdlet' {
+        try {
+            $out = Invoke-Expression 'get-AppLockerFileInformation NoSuch.exe -ErrorAction Stop; "after"'
+        }
+        catch {
+            # do nothing as we expect an error, but execution should not continue
+        }
+
+        $out | Should -Not -Contain 'after'
     }
 }

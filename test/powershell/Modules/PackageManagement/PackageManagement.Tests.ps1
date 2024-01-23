@@ -22,12 +22,34 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
         # register the asset directory
         $localSourceName = [Guid]::NewGuid().ToString("n")
         $localSourceLocation = Join-Path $PSScriptRoot assets
-        $newSourceResult = Register-PackageSource -Name $localSourceName -provider NuGet -Location $localSourceLocation -Force -Trusted
+        $newSourceResult = Register-PackageSource -Name $localSourceName -provider NuGet -Location $localSourceLocation -Force -Trusted -Verbose
         Write-Verbose -Verbose -Message "Register-PackageSource -Name $localSourceName -provider NuGet -Location $localSourceLocation -Force -Trusted"
         $newSourceResult | Out-String -Stream | Write-Verbose -Verbose
+        $localSourceCheck = Get-PackageSource -Name $localSourceName -ErrorAction Ignore
 
         $skipPackageTests = $false
-        if ($newSourceResult.Location -ne $localSourceLocation) {
+        # It is possible that Register-PackageSource appears to succeed but the source is not actually registered
+        # collect as much information as possible to help diagnose the problem
+        if (($newSourceResult.Location -ne $localSourceLocation) -or ($localSourceCheck.Location -ne $localSourceLocation)) {
+            Write-Verbose -Verbose "Skipping tests because local source could not be correctly created"
+            if ( $newSourceResult ) {
+                $newSourceResult | out-string -str | Write-Verbose -Verbose
+            }
+            else {
+                Write-Verbose "newSourceResult is null"
+            }
+
+            if ( $localSourceCheck ) {
+                $localSourceCheck | out-string -str | Write-Verbose -Verbose
+            }
+            else {
+                Write-Verbose "LocalSourceCheck is null"
+            }
+
+            if (-not $IsWindows) {
+                Get-ChildItem "$HOME/.config" -Recurse -File | out-string -str | Write-Verbose -Verbose
+            }
+
             $skipPackageTests = $true
         }
 
@@ -45,9 +67,15 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
     AfterAll {
         $ProgressPreference = $SavedProgressPreference
-        Unregister-PackageSource -Source $localSourceName -ErrorAction Ignore
-        Unregister-PackageSource -Name $gallerySourceName -ErrorAction Ignore
-        Uninstall-Module NanoServerPackage -ErrorAction Ignore -WarningAction SilentlyContinue
+        try {
+            # non-fatal errors
+            Unregister-PackageSource -Source $localSourceName -ErrorAction Ignore
+            Unregister-PackageSource -Name $gallerySourceName -ErrorAction Ignore
+            Uninstall-Module NanoServerPackage -ErrorAction Ignore -WarningAction SilentlyContinue
+        }
+        catch {
+            Write-Warning "Failure in AfterAll: $_"
+        }
     }
 
     It "get-packageprovider" {

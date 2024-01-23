@@ -1333,7 +1333,6 @@ namespace System.Management.Automation
     /// Defines the exception thrown when conversion from ScriptBlock to PowerShell is forbidden
     /// (i.e. when the script block has undeclared variables or more than one statement)
     /// </summary>
-    [Serializable]
     public class ScriptBlockToPowerShellNotSupportedException : RuntimeException
     {
         #region ctor
@@ -1387,9 +1386,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected ScriptBlockToPowerShellNotSupportedException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
 

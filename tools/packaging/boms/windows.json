@@ -212,10 +212,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "es-ES\\JsonSchema.Net.resources.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "es/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -812,6 +808,38 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/_manifest/spdx_2.2/manifest.cat",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/dependencies/*.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/LICENSE",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psd1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psm1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Notice.txt",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/PSGet.Format.ps1xml",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1",
     "FileType": "NonProduct"
   },
@@ -876,35 +904,7 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/_manifest/spdx_2.2/manifest.cat",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/LICENSE",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Notice.txt",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/dependencies/*.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psd1",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/PSGet.Format.ps1xml",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "mscordaccore_*.dll",
+    "Pattern": "Modules\\PSReadLine\\_manifest\\spdx_2.2\\manifest.cat",
     "FileType": "NonProduct"
   },
   {
@@ -929,10 +929,6 @@
   },
   {
     "Pattern": "msquic.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "nb-NO\\JsonSchema.Net.resources.dll",
     "FileType": "NonProduct"
   },
   {
@@ -2173,10 +2169,6 @@
   },
   {
     "Pattern": "sni.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "sv-SE\\JsonSchema.Net.resources.dll",
     "FileType": "NonProduct"
   },
   {

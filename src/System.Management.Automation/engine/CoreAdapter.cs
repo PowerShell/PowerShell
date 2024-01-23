@@ -5440,7 +5440,7 @@ namespace System.Management.Automation
             }
 
             XmlNodeList nodeChildren = node.ChildNodes;
-            // nodeChildren will not be null as we already verified iff the node has children.
+            // nodeChildren will not be null as we already verified that the node has children.
             if ((nodeChildren.Count == 1) && (nodeChildren[0].NodeType == XmlNodeType.Text))
             {
                 return node.InnerText;

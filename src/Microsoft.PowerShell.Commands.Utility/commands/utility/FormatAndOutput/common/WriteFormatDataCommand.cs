@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Force writing a file.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Do not overwrite file if exists.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [Alias("NoOverwrite")]
         public SwitchParameter NoClobber
         {
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Include scriptblocks for export.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter IncludeScriptBlock
         {
             get

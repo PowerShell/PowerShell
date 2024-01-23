@@ -70,8 +70,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             foreach (object obj in fe.formatValueList)
             {
-                FormatEntry feChild = obj as FormatEntry;
-                if (feChild != null)
+                if (obj is FormatEntry feChild)
                 {
                     if (currentDepth < maxRecursionDepth)
                     {
@@ -100,15 +99,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                FormatTextField ftf = obj as FormatTextField;
-                if (ftf != null)
+                if (obj is FormatTextField ftf)
                 {
                     this.AddToBuffer(ftf.text);
                     continue;
                 }
 
-                FormatPropertyField fpf = obj as FormatPropertyField;
-                if (fpf != null)
+                if (obj is FormatPropertyField fpf)
                 {
                     this.AddToBuffer(fpf.propertyValue);
                 }

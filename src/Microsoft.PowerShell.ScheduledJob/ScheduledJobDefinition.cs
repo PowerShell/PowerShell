@@ -20,7 +20,6 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// can be scheduled to run through either stand-alone or through the Windows
     /// Task Scheduler.
     /// </summary>
-    [Serializable]
     public sealed class ScheduledJobDefinition : ISerializable, IDisposable
     {
         #region Private Members
@@ -2241,7 +2240,6 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// <summary>
     /// Exception thrown for errors in Scheduled Jobs.
     /// </summary>
-    [Serializable]
     public class ScheduledJobException : SystemException
     {
         /// <summary>

@@ -22,12 +22,11 @@ Describe "Windows platform file signatures" -Tags 'Feature' {
 }
 
 Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWindows') {
-    $shouldSkip = (-not $IsWindows) -or (Test-IsWinServer2012R2)
-
-    $PSDefaultParameterValues = @{ "It:Skip" = $shouldSkip }
-
     BeforeAll {
+        $shouldSkip = (-not $IsWindows) -or (Test-IsWinServer2012R2)
+
         if ($shouldSkip) {
+            Push-DefaultParameterValueStack @{ "it:skip" = $shouldSkip }
             return
         }
 
@@ -89,14 +88,22 @@ Describe "Windows file content signatures" -Tags @('Feature', 'RequireAdminOnWin
     }
 
     AfterAll {
-
         if ($shouldSkip) {
             return
         }
 
-        Remove-Item -Path Cert:\LocalMachine\Root\$caRootThumbprint -Force
-        Remove-Item -Path Cert:\LocalMachine\TrustedPublisher\$signingThumbprint -Force
-        Remove-Item -Path Cert:\CurrentUser\My\$signingThumbprint -Force
+        $paths = @(
+            "Cert:\LocalMachine\Root\$caRootThumbprint"
+            "Cert:\LocalMachine\TrustedPublisher\$signingThumbprint"
+            "Cert:\CurrentUser\My\$signingThumbprint"
+        )
+
+        foreach($path in $paths) {
+            if (Test-Path $path -PathType Leaf) {
+                # failing to remove is not fatal
+                Remove-Item -Force -Path $path -ErrorAction Ignore
+            }
+        }
     }
 
     It "Validates signature using path on even char count with Encoding <Encoding>" -TestCases @(

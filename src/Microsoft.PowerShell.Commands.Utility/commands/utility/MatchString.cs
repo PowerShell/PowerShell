@@ -127,11 +127,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets the base name of the file containing the matching line.
+        /// </summary>
         /// <remarks>
         /// It will be the string "InputStream" if the object came from the input stream.
         /// This is a readonly property calculated from the path <see cref="Path"/>.
         /// </remarks>
-        /// </summary>
         /// <value>The file name.</value>
         public string Filename
         {
@@ -150,10 +150,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the full path of the file containing the matching line.
+        /// </summary>
         /// <remarks>
         /// It will be "InputStream" if the object came from the input stream.
         /// </remarks>
-        /// </summary>
         /// <value>The path name.</value>
         public string Path
         {
@@ -182,11 +182,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Returns the path of the matching file truncated relative to the <paramref name="directory"/> parameter.
+        /// </summary>
         /// <remarks>
         /// For example, if the matching path was c:\foo\bar\baz.c and the directory argument was c:\foo
         /// the routine would return bar\baz.c .
         /// </remarks>
-        /// </summary>
         /// <param name="directory">The directory base the truncation on.</param>
         /// <returns>The relative path that was produced.</returns>
         public string RelativePath(string directory)
@@ -232,12 +232,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns the string representation of this object. The format
         /// depends on whether a path has been set for this object or not.
+        /// </summary>
         /// <remarks>
         /// If the path component is set, as would be the case when matching
         /// in a file, ToString() would return the path, line number and line text.
         /// If path is not set, then just the line text is presented.
         /// </remarks>
-        /// </summary>
         /// <returns>The string representation of the match object.</returns>
         public override string ToString()
         {
@@ -1336,7 +1336,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the text encoding to process each file as.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding

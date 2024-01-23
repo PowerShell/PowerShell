@@ -87,5 +87,4 @@ jobs:
       targetPath: $(System.ArtifactsDirectory)
       artifactName: notice
     displayName: Publish notice artifacts
-    condition: always()
     retryCountOnTaskFailure: 2

@@ -32,6 +32,8 @@ jobs:
       value: '$(System.ArtifactsDirectory)/winFxdWinDesktop'
     - name: linuxFxdPath
       value: '$(System.ArtifactsDirectory)/linuxFxd'
+    - name: alpineFxdPath
+      value: '$(System.ArtifactsDirectory)/alpineFxd'
     - group: DotNetPrivateBuildAccess
 
   steps:
@@ -58,8 +60,7 @@ jobs:
       Start-PSBootStrap -Verbose
     displayName: Bootstrap
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download PowerShell build artifacts - finalResults'
@@ -106,6 +107,12 @@ jobs:
       archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-fxdependent.tar.gz'
       destinationFolder: '$(linuxFxdPath)'
 
+  - task: ExtractFiles@1
+    displayName: 'Extract files alpine-fxdependent'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-musl-noopt-fxdependent.tar.gz'
+      destinationFolder: '$(alpineFxdPath)'
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -127,6 +134,7 @@ jobs:
       Get-ChildItem $(linuxFxdPath)
       Get-ChildItem $(winFxdPath)
       Get-ChildItem $(winFxdWinDesktopPath)
+      Get-ChildItem $(alpineFxdPath)
     displayName: Capture fxd folders
 
   # Create Global Tool packages along with SBOM manifests
@@ -136,6 +144,7 @@ jobs:
       LinuxBinPath: $(linuxFxdPath)
       WindowsBinPath: $(winFxdPath)
       WindowsDesktopBinPath: $(winFxdWinDesktopPath)
+      AlpineBinPath: $(alpineFxdPath)
       DestinationPath: $(PackagePath)\globaltool
 
   - pwsh: |
@@ -270,7 +279,7 @@ jobs:
       azureSubscription: '$(GlobalToolSubscription)'
       Destination: AzureBlob
       storage: '$(GlobalToolStorageAccount)'
-      ContainerName: 'tool'
+      ContainerName: 'tool-private'
       blobPrefix: '$(Version)'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
     retryCountOnTaskFailure: 2

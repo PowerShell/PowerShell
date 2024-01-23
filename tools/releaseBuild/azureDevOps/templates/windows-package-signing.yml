@@ -97,12 +97,6 @@ jobs:
 
   - template: upload.yml
     parameters:
-      architecture: arm32
-      version: $(version)
-      msi: no
-
-  - template: upload.yml
-    parameters:
       architecture: arm64
       version: $(version)
       msi: no

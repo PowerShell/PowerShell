@@ -174,7 +174,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         It "-File should fail for script without .ps1 extension" -Skip:(!$IsWindows) {
             $Filename = 'test.xxx'
             Set-Content -Path $testdrive/$Filename -Value "'hello'"
-            & $powershell -NoProfile -File $testdrive/$Filename > $null
+            & $powershell -NoProfile -File $testdrive/$Filename 2>&1 $null
             $LASTEXITCODE | Should -Be 64
         }
 
@@ -942,6 +942,12 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $out = pwsh -nologo -noprofile -cwa 'param([switch]$switch) $switch.IsPresent' $param
             $out | Should -Be $expected
         }
+    }
+
+    It 'Errors for invalid ExecutionPolicy string' {
+        $out = pwsh -nologo -noprofile -executionpolicy NonExistingExecutionPolicy -c 'exit 0' 2>&1
+        $out | Should -Not -BeNullOrEmpty
+        $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
     }
 }
 

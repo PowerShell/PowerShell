@@ -266,7 +266,7 @@ namespace System.Management.Automation.Remoting
         /// This parameter holds the string in the resource file.
         /// </param>
         /// <param name="args">
-        /// Optional parameters required by the resource string formating information.
+        /// Optional parameters required by the resource string formatting information.
         /// </param>
         /// <returns>
         /// The formatted localized string.
@@ -282,7 +282,6 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This exception is used by remoting code to indicated a data structure handler related error.
     /// </summary>
-    [Serializable]
     public class PSRemotingDataStructureException : RuntimeException
     {
         #region Constructors
@@ -361,9 +360,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected PSRemotingDataStructureException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion Constructors
@@ -381,7 +381,6 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This exception is used by remoting code to indicate an error condition in network operations.
     /// </summary>
-    [Serializable]
     public class PSRemotingTransportException : RuntimeException
     {
         private int _errorCode;
@@ -470,37 +469,13 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentNullException">
         /// 1. info is null.
         /// </exception>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected PSRemotingTransportException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            _errorCode = info.GetInt32("ErrorCode");
-            _transportMessage = info.GetString("TransportMessage");
+            throw new NotSupportedException();
         }
 
         #endregion Constructors
-
-        /// <summary>
-        /// Serializes the exception data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            // If there are simple fields, serialize them with info.AddValue
-            info.AddValue("ErrorCode", _errorCode);
-            info.AddValue("TransportMessage", _transportMessage);
-        }
 
         /// <summary>
         /// Set the default ErrorRecord.
@@ -548,7 +523,6 @@ namespace System.Management.Automation.Remoting
     /// This exception is used by PowerShell's remoting infrastructure to notify a URI redirection
     /// exception.
     /// </summary>
-    [Serializable]
     public class PSRemotingTransportRedirectException : PSRemotingTransportException
     {
         #region Constructor
@@ -612,15 +586,10 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentNullException">
         /// 1. info is null.
         /// </exception>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected PSRemotingTransportRedirectException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            RedirectLocation = info.GetString("RedirectLocation");
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -646,27 +615,6 @@ namespace System.Management.Automation.Remoting
 
         #endregion
 
-        #region Public overrides
-
-        /// <summary>
-        /// Serializes the exception data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            // If there are simple fields, serialize them with info.AddValue
-            info.AddValue("RedirectLocation", RedirectLocation);
-        }
-
-        #endregion
-
         #region Properties
         /// <summary>
         /// String specifying a redirect location.
@@ -679,7 +627,6 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This exception is used by PowerShell Direct errors.
     /// </summary>
-    [Serializable]
     public class PSDirectException : RuntimeException
     {
         #region Constructor

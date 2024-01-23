@@ -53,7 +53,6 @@ Describe "Types referenced by PowerShell Standard should not be missing"  -Tags 
             "IsPrimitive",
             "IsValueType",
             "IsSignatureType",
-            "IsSerializable",
             "IsVisible"
 
         $tests = Import-Csv $assets | ForEach-Object {

@@ -221,10 +221,7 @@ namespace System.Management.Automation
             bool redirectedInformation = false;
             if (redirections != null)
             {
-                bool shouldProcessMergesFirst = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe)
-                    && isNativeCommand;
-
-                if (shouldProcessMergesFirst)
+                if (isNativeCommand)
                 {
                     foreach (CommandRedirection redirection in redirections)
                     {
@@ -237,7 +234,7 @@ namespace System.Management.Automation
 
                 foreach (CommandRedirection redirection in redirections)
                 {
-                    if (!shouldProcessMergesFirst || redirection is not MergingRedirection)
+                    if (!isNativeCommand || redirection is not MergingRedirection)
                     {
                         redirection.Bind(pipe, commandProcessor, context);
                     }
@@ -717,6 +714,18 @@ namespace System.Management.Automation
                 // of invoking it. So the trustworthiness is defined by the trustworthiness of the
                 // script block's language mode.
                 bool isTrusted = scriptBlock.LanguageMode == PSLanguageMode.FullLanguage;
+                if (scriptBlock.LanguageMode == PSLanguageMode.ConstrainedLanguage
+                    && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+                {
+                    // In audit mode, report but don't enforce.
+                    isTrusted = true;
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: context,
+                        title: ParserStrings.WDACGetSteppablePipelineLogTitle,
+                        message: ParserStrings.WDACGetSteppablePipelineLogMessage,
+                        fqid: "GetSteppablePipelineMayFail",
+                        dropIntoDebugger: true);
+                }
 
                 foreach (var commandAst in pipelineAst.PipelineElements.Cast<CommandAst>())
                 {
@@ -732,7 +741,7 @@ namespace System.Management.Automation
 
                         var exprAst = (ExpressionAst)commandElement;
                         var argument = Compiler.GetExpressionValue(exprAst, isTrusted, context);
-                        var splatting = (exprAst is VariableExpressionAst && ((VariableExpressionAst)exprAst).Splatted);
+                        var splatting = exprAst is VariableExpressionAst && ((VariableExpressionAst)exprAst).Splatted;
                         commandParameters.Add(CommandParameterInternal.CreateArgument(argument, exprAst, splatting));
                     }
 
@@ -800,8 +809,8 @@ namespace System.Management.Automation
             }
 
             object argumentValue = Compiler.GetExpressionValue(argumentAst, isTrusted, context);
-            bool spaceAfterParameter = (errorPos.EndLineNumber != argumentAst.Extent.StartLineNumber ||
-                                        errorPos.EndColumnNumber != argumentAst.Extent.StartColumnNumber);
+            bool spaceAfterParameter = errorPos.EndLineNumber != argumentAst.Extent.StartLineNumber ||
+                                       errorPos.EndColumnNumber != argumentAst.Extent.StartColumnNumber;
             return CommandParameterInternal.CreateParameterWithArgument(commandParameterAst, commandParameterAst.ParameterName,
                                                                         errorPos.Text, argumentAst, argumentValue,
                                                                         spaceAfterParameter);
@@ -1081,16 +1090,13 @@ namespace System.Management.Automation
         //    dir > out
         internal override void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context)
         {
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandPreserveBytePipe))
+            if (commandProcessor is NativeCommandProcessor nativeCommand
+                && nativeCommand.CommandRuntime.ErrorMergeTo is not MshCommandRuntime.MergeDataStream.Output
+                && FromStream is RedirectionStream.Output
+                && !string.IsNullOrWhiteSpace(File))
             {
-                if (commandProcessor is NativeCommandProcessor nativeCommand
-                    && nativeCommand.CommandRuntime.ErrorMergeTo is not MshCommandRuntime.MergeDataStream.Output
-                    && FromStream is RedirectionStream.Output
-                    && !string.IsNullOrWhiteSpace(File))
-                {
-                    nativeCommand.StdOutDestination = FileBytePipe.Create(File, Appending);
-                    return;
-                }
+                nativeCommand.StdOutDestination = FileBytePipe.Create(File, Appending);
+                return;
             }
 
             Pipe pipe = GetRedirectionPipe(context, pipelineProcessor);
