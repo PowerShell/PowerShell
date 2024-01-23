@@ -4600,3 +4600,34 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support OperationTimeoutSecond
         RunWithNetworkTimeout -Command Invoke-RestMethod -Uri $uri -OperationTimeoutSeconds 2 -WillTimeout -Arguments '-SkipCertificateCheck'
     }
 }
+
+
+Describe "Invoke-RestMethod should run in the default synchronization context (threadpool)" -Tag "CI" {
+    BeforeAll {
+        $oldProgress = $ProgressPreference
+        $ProgressPreference = 'SilentlyContinue'
+        $WebListener = Start-WebListener
+    }
+
+    AfterAll {
+        $ProgressPreference = $oldProgress
+    }
+
+    It "Invoke-RestMethod works after constructing a WindowsForm object" -Skip:(!$IsWindows) {
+        $env:URI_TO_TEST = Get-WebListenerUrl -Test 'Get'
+        $irmResult = $null
+        try {
+            $pwsh = Join-Path $PSHOME "pwsh"
+            $irmResult = & $pwsh -NoProfile {
+                Add-Type -AssemblyName System.Windows.Forms
+                $null = New-Object System.Windows.Forms.Form
+                Invoke-RestMethod $env:URI_TO_TEST
+            }
+        } finally {
+            $env:URI_TO_TEST = $null
+        }
+
+        # Simply making it this far is good enough to ensure we didn't hit a deadlock
+        $irmResult | Should -Not -BeNullOrEmpty
+    }
+}

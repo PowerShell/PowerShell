@@ -828,6 +828,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psm1",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Notice.txt",
     "FileType": "NonProduct"
   },
@@ -900,7 +904,7 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/Microsoft.PowerShell.PSResourceGet.psm1",
+    "Pattern": "Modules\\PSReadLine\\_manifest\\spdx_2.2\\manifest.cat",
     "FileType": "NonProduct"
   },
   {

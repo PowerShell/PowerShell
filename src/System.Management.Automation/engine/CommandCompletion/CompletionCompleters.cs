@@ -2211,6 +2211,22 @@ namespace System.Management.Automation
                         NativeCompletionGetHelpCommand(context, parameterName, /* isHelpRelated: */ true, result);
                         break;
                     }
+                case "Save-Help":
+                    {
+                        if (parameterName.Equals("Module", StringComparison.OrdinalIgnoreCase))
+                        {
+                            CompleteModule(context, result);
+                        }
+                        break;
+                    }
+                case "Update-Help":
+                    {
+                        if (parameterName.Equals("Module", StringComparison.OrdinalIgnoreCase))
+                        {
+                            CompleteModule(context, result);
+                        }
+                        break;
+                    }
                 case "Invoke-Expression":
                     {
                         if (parameterName.Equals("Command", StringComparison.OrdinalIgnoreCase))
@@ -3058,37 +3074,42 @@ namespace System.Management.Automation
             }
             else if (!string.IsNullOrEmpty(paramName) && paramName.Equals("Module", StringComparison.OrdinalIgnoreCase))
             {
-                RemoveLastNullCompletionResult(result);
-
-                var modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                var moduleResults = CompleteModuleName(context, loadedModulesOnly: true);
-                if (moduleResults != null)
-                {
-                    foreach (CompletionResult moduleResult in moduleResults)
-                    {
-                        if (!modules.Contains(moduleResult.ToolTip))
-                        {
-                            modules.Add(moduleResult.ToolTip);
-                            result.Add(moduleResult);
-                        }
-                    }
-                }
-
-                moduleResults = CompleteModuleName(context, loadedModulesOnly: false);
-                if (moduleResults != null)
-                {
-                    foreach (CompletionResult moduleResult in moduleResults)
-                    {
-                        if (!modules.Contains(moduleResult.ToolTip))
-                        {
-                            modules.Add(moduleResult.ToolTip);
-                            result.Add(moduleResult);
-                        }
-                    }
-                }
-
-                result.Add(CompletionResult.Null);
+                CompleteModule(context, result);
             }
+        }
+
+        private static void CompleteModule(CompletionContext context, List<CompletionResult> result)
+        {
+            RemoveLastNullCompletionResult(result);
+
+            var modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var moduleResults = CompleteModuleName(context, loadedModulesOnly: true);
+            if (moduleResults != null)
+            {
+                foreach (CompletionResult moduleResult in moduleResults)
+                {
+                    if (!modules.Contains(moduleResult.ToolTip))
+                    {
+                        modules.Add(moduleResult.ToolTip);
+                        result.Add(moduleResult);
+                    }
+                }
+            }
+
+            moduleResults = CompleteModuleName(context, loadedModulesOnly: false);
+            if (moduleResults != null)
+            {
+                foreach (CompletionResult moduleResult in moduleResults)
+                {
+                    if (!modules.Contains(moduleResult.ToolTip))
+                    {
+                        modules.Add(moduleResult.ToolTip);
+                        result.Add(moduleResult);
+                    }
+                }
+            }
+
+            result.Add(CompletionResult.Null);
         }
 
         private static void NativeCompletionGetHelpCommand(CompletionContext context, string paramName, bool isHelpRelated, List<CompletionResult> result)
@@ -4655,22 +4676,19 @@ namespace System.Management.Automation
                 string basePath;
                 if (!relativePaths)
                 {
-                    string providerName = $"{provider.ModuleName}\\{provider.Name}::";
-                    if (pathInfo.Path.StartsWith(providerName, StringComparison.OrdinalIgnoreCase))
+                    if (pathInfo.Drive is null)
                     {
-                        basePath = pathInfo.Path.Substring(providerName.Length);
+                        basePath = dirInfo.FullName;
                     }
                     else
                     {
-                        providerName = $"{provider.Name}::";
-                        if (pathInfo.Path.StartsWith(providerName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            basePath = pathInfo.Path.Substring(providerName.Length);
-                        }
-                        else
-                        {
-                            basePath = pathInfo.Path;
-                        }
+                        int stringStartIndex = pathInfo.Drive.Root.EndsWith(provider.ItemSeparator) && pathInfo.Drive.Root.Length > 1
+                            ? pathInfo.Drive.Root.Length - 1
+                            : pathInfo.Drive.Root.Length;
+
+                        basePath = pathInfo.Drive.VolumeSeparatedByColon
+                            ? string.Concat(pathInfo.Drive.Name, ":", dirInfo.FullName.AsSpan(stringStartIndex))
+                            : string.Concat(pathInfo.Drive.Name, dirInfo.FullName.AsSpan(stringStartIndex));
                     }
 
                     basePath = basePath.EndsWith(provider.ItemSeparator)
@@ -4886,10 +4904,22 @@ namespace System.Management.Automation
 
         private static string GetChildNameFromPsObject(dynamic psObject, char separator)
         {
-            // The obvious solution would be to use the "PSChildName" property
-            // but some providers don't have it (like the Variable provider)
-            // So we use a substring of "PSPath" instead.
-            string childName = psObject.PSPath ?? string.Empty;
+            if (((PSObject)psObject).BaseObject is string result)
+            {
+                // The "Get-ChildItem" call for this provider returned a string that we assume is the child name.
+                // This is what the SCCM provider returns.
+                return result;
+            }
+
+            string childName = psObject.PSChildName;
+            if (childName is not null)
+            {
+                return childName;
+            }
+
+            // Some providers (Like the variable provider) don't include a PSChildName property
+            // so we get the child name from the path instead.
+            childName = psObject.PSPath ?? string.Empty;
             int ProviderSeparatorIndex = childName.IndexOf("::", StringComparison.Ordinal);
             childName = childName.Substring(ProviderSeparatorIndex + 2);
             int indexOfName = childName.LastIndexOf(separator);
@@ -4900,7 +4930,7 @@ namespace System.Management.Automation
 
             return childName.Substring(indexOfName + 1);
         }
-        
+
         /// <summary>
         /// Takes a path and rebuilds it with the specified variable replacements.
         /// Also escapes special characters as needed.

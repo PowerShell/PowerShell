@@ -283,6 +283,16 @@ Describe "Get-Content" -Tags "CI" {
         Get-Content -Path $testPath -Tail 0 | Should -BeNullOrEmpty
     }
 
+    It "Should wait for content when using -Tail 0 and -Wait" {
+        $testValues = @(1,2,3)
+        $Job = Start-Job -ScriptBlock {Get-Content -Path $using:testPath -Tail 0 -Wait}
+        Start-Sleep -Seconds 3
+        Add-Content -Value $testValues -Path $testPath
+        Start-Sleep -Seconds 3
+        Compare-Object -ReferenceObject $testValues -DifferenceObject ($Job | Receive-Job) | Should -BeNullOrEmpty
+        $Job | Remove-Job -Force
+    }
+
     It "Should throw TailAndHeadCannotCoexist when both -Tail and -TotalCount are used" {
         {
         Get-Content -Path $testPath -Tail 1 -TotalCount 1 -ErrorAction Stop
