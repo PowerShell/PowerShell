@@ -946,11 +946,14 @@ namespace System.Management.Automation.Runspaces
                                                 $isFirstElement = $true
                                                 foreach ($value in $prop.Value) {
                                                     $null = $output.Append($newline)
+                                                    $valueIndent = ' ' * ($newIndent + 2)
 
-                                                    if ($value -is [Type] -or $value -is [string] -or $value.GetType().IsPrimitive) {
-                                                        # We want to display the primitive value, also includes strings and
-                                                        # types values, the latter containing a lot of uneeded properties.
-                                                        $null = $output.Append(""${prefix}$(' ' * $indent)${value}"")
+                                                    if ($value -is [Type]) {
+                                                        # Just show the typename instead of it as an object
+                                                        $null = $output.Append(""${prefix}${valueIndent}[$($value.ToString())]"")
+                                                    }
+                                                    elseif ($value -is [string] -or $value.GetType().IsPrimitive) {
+                                                        $null = $output.Append(""${prefix}${valueIndent}${value}"")
                                                     }
                                                     else {
                                                         if (!$isFirstElement) {
@@ -961,6 +964,10 @@ namespace System.Management.Automation.Runspaces
                                                     $isFirstElement = $false
                                                 }
                                             }
+                                        }
+                                        elseif ($prop.Value -is [Type]) {
+                                            # Just show the typename instead of it as an object
+                                            $null = $output.Append(""[$($prop.Value.ToString())]"")
                                         }
                                         # Anything else, we convert to string.
                                         # ToString() can throw so we use LanguagePrimitives.TryConvertTo() to hide a convert error
