@@ -129,6 +129,7 @@ namespace System.Management.Automation
 
         public TypeInferenceContext() : this(PowerShell.Create(RunspaceMode.CurrentRunspace))
         {
+            AnalyzedCommands = new HashSet<IParameterMetadataProvider>();
         }
 
         /// <summary>
@@ -142,6 +143,7 @@ namespace System.Management.Automation
             _powerShell = powerShell;
 
             Helper = new PowerShellExecutionHelper(powerShell);
+            AnalyzedCommands = new HashSet<IParameterMetadataProvider>();
         }
 
         // used to infer types in script properties attached to an object,
@@ -149,6 +151,8 @@ namespace System.Management.Automation
         public PSTypeName CurrentThisType { get; set; }
 
         public TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
+
+        public HashSet<IParameterMetadataProvider> AnalyzedCommands { get; }
 
         public TypeInferenceRuntimePermissions RuntimePermissions { get; set; }
 
@@ -1159,7 +1163,8 @@ namespace System.Management.Automation
 
             if (commandInfo.OutputType.Count == 0
                 && commandInfo is IScriptCommandInfo scriptCommandInfo
-                && scriptCommandInfo.ScriptBlock.Ast is IParameterMetadataProvider scriptBlockWithParams)
+                && scriptCommandInfo.ScriptBlock.Ast is IParameterMetadataProvider scriptBlockWithParams
+                && _context.AnalyzedCommands.Add(scriptBlockWithParams))
             {
                 inferredTypes.AddRange(InferTypes(scriptBlockWithParams.Body));
                 return;
