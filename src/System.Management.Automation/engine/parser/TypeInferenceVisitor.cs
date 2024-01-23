@@ -129,7 +129,6 @@ namespace System.Management.Automation
 
         public TypeInferenceContext() : this(PowerShell.Create(RunspaceMode.CurrentRunspace))
         {
-            AnalyzedCommands = new HashSet<IParameterMetadataProvider>();
         }
 
         /// <summary>
@@ -143,7 +142,6 @@ namespace System.Management.Automation
             _powerShell = powerShell;
 
             Helper = new PowerShellExecutionHelper(powerShell);
-            AnalyzedCommands = new HashSet<IParameterMetadataProvider>();
         }
 
         // used to infer types in script properties attached to an object,
@@ -152,7 +150,7 @@ namespace System.Management.Automation
 
         public TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
 
-        public HashSet<IParameterMetadataProvider> AnalyzedCommands { get; }
+        public HashSet<IParameterMetadataProvider> AnalyzedCommands { get; } = new HashSet<IParameterMetadataProvider>();
 
         public TypeInferenceRuntimePermissions RuntimePermissions { get; set; }
 
