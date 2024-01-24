@@ -831,9 +831,16 @@ namespace System.Management.Automation
         object ICustomAstVisitor.VisitNamedBlock(NamedBlockAst namedBlockAst)
         {
             var inferredTypes = new List<PSTypeName>();
-            for (var index = 0; index < namedBlockAst.Statements.Count; index++)
+            for (int index = 0; index < namedBlockAst.Statements.Count; index++)
             {
-                var ast = namedBlockAst.Statements[index];
+                StatementAst ast = namedBlockAst.Statements[index];
+                if (ast is AssignmentStatementAst)
+                {
+                    // Assignments don't output anything to the named block unless they are wrapped in parentheses
+                    // When they are wrapped in parentheses, they are seen as PipelineAst
+                    continue;
+                }
+
                 inferredTypes.AddRange(InferTypes(ast));
             }
 
@@ -902,8 +909,15 @@ namespace System.Management.Automation
         object ICustomAstVisitor.VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
             var inferredTypes = new List<PSTypeName>();
-            foreach (var ast in statementBlockAst.Statements)
+            foreach (StatementAst ast in statementBlockAst.Statements)
             {
+                if (ast is AssignmentStatementAst)
+                {
+                    // Assignments don't output anything to the named block unless they are wrapped in parentheses
+                    // When they are wrapped in parentheses, they are seen as PipelineAst
+                    continue;
+                }
+
                 inferredTypes.AddRange(InferTypes(ast));
             }
 
