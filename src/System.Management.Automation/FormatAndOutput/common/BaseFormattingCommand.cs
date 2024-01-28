@@ -365,7 +365,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return false;
         }
 
-        protected void WriteInternalErrorMessage(string message)
+        private void WriteInternalErrorMessage(string message)
         {
             FormatEntryData fed = new FormatEntryData();
             fed.outOfBand = true;

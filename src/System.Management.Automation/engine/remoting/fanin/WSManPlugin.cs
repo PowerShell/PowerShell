@@ -1193,103 +1193,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Was private. Made protected internal for easier testing.
-        /// </summary>
-        /// <param name="requestDetails"></param>
-        /// <returns></returns>
-        protected internal bool EnsureOptionsComply(
-            WSManNativeApi.WSManPluginRequest requestDetails)
-        {
-            WSManNativeApi.WSManOption[] options = requestDetails.operationInfo.optionSet.options;
-            bool isProtocolVersionDeclared = false;
-
-            for (int i = 0; i < options.Length; i++) // What about requestDetails.operationInfo.optionSet.optionsCount? It is a hold over from the C++ API. Safer is Length.
-            {
-                WSManNativeApi.WSManOption option = options[i];
-
-                if (string.Equals(option.name, WSManPluginConstants.PowerShellStartupProtocolVersionName, StringComparison.Ordinal))
-                {
-                    if (!EnsureProtocolVersionComplies(requestDetails, option.value))
-                    {
-                        return false;
-                    }
-
-                    isProtocolVersionDeclared = true;
-                }
-
-                if (string.Compare(option.name, 0, WSManPluginConstants.PowerShellOptionPrefix, 0, WSManPluginConstants.PowerShellOptionPrefix.Length, StringComparison.Ordinal) == 0)
-                {
-                    if (option.mustComply)
-                    {
-                        ReportOperationComplete(
-                            requestDetails,
-                            WSManPluginErrorCodes.OptionNotUnderstood,
-                            StringUtil.Format(
-                                RemotingErrorIdStrings.WSManPluginOptionNotUnderstood,
-                                option.name,
-                                System.Management.Automation.PSVersionInfo.GitCommitId,
-                                WSManPluginConstants.PowerShellStartupProtocolVersionValue));
-                        return false;
-                    }
-                }
-            }
-
-            if (!isProtocolVersionDeclared)
-            {
-                ReportOperationComplete(
-                    requestDetails,
-                    WSManPluginErrorCodes.ProtocolVersionNotFound,
-                    StringUtil.Format(
-                        RemotingErrorIdStrings.WSManPluginProtocolVersionNotFound,
-                        WSManPluginConstants.PowerShellStartupProtocolVersionName,
-                        System.Management.Automation.PSVersionInfo.GitCommitId,
-                        WSManPluginConstants.PowerShellStartupProtocolVersionValue));
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Verifies that the protocol version is in the correct syntax and supported.
-        /// </summary>
-        /// <param name="requestDetails"></param>
-        /// <param name="clientVersionString"></param>
-        /// <returns></returns>
-        protected internal bool EnsureProtocolVersionComplies(
-            WSManNativeApi.WSManPluginRequest requestDetails,
-            string clientVersionString)
-        {
-            if (string.Equals(clientVersionString, WSManPluginConstants.PowerShellStartupProtocolVersionValue, StringComparison.Ordinal))
-            {
-                return true;
-            }
-
-            // Check if major versions are equal and server's minor version is smaller..
-            // if so client's version is supported by the server. The understanding is
-            // that minor version changes do not break the protocol.
-            System.Version clientVersion = Utils.StringToVersion(clientVersionString);
-            System.Version serverVersion = Utils.StringToVersion(WSManPluginConstants.PowerShellStartupProtocolVersionValue);
-
-            if ((clientVersion != null) && (serverVersion != null) &&
-                (clientVersion.Major == serverVersion.Major) &&
-                (clientVersion.Minor >= serverVersion.Minor))
-            {
-                return true;
-            }
-
-            ReportOperationComplete(
-                requestDetails,
-                WSManPluginErrorCodes.ProtocolVersionNotMatch,
-                StringUtil.Format(
-                    RemotingErrorIdStrings.WSManPluginProtocolVersionNotMatch,
-                    WSManPluginConstants.PowerShellStartupProtocolVersionValue,
-                    System.Management.Automation.PSVersionInfo.GitCommitId,
-                    clientVersionString));
-            return false;
-        }
-
-        /// <summary>
         /// Static func to take care of unmanaged to managed transitions.
         /// </summary>
         /// <param name="pluginContext"></param>
@@ -1673,6 +1576,98 @@ namespace System.Management.Automation.Remoting
             }
 
             pluginToUse.Shutdown();
+        }
+
+        private static bool EnsureOptionsComply(
+            WSManNativeApi.WSManPluginRequest requestDetails)
+        {
+            WSManNativeApi.WSManOption[] options = requestDetails.operationInfo.optionSet.options;
+            bool isProtocolVersionDeclared = false;
+
+            for (int i = 0; i < options.Length; i++) // What about requestDetails.operationInfo.optionSet.optionsCount? It is a hold over from the C++ API. Safer is Length.
+            {
+                WSManNativeApi.WSManOption option = options[i];
+
+                if (string.Equals(option.name, WSManPluginConstants.PowerShellStartupProtocolVersionName, StringComparison.Ordinal))
+                {
+                    if (!EnsureProtocolVersionComplies(requestDetails, option.value))
+                    {
+                        return false;
+                    }
+
+                    isProtocolVersionDeclared = true;
+                }
+
+                if (string.Compare(option.name, 0, WSManPluginConstants.PowerShellOptionPrefix, 0, WSManPluginConstants.PowerShellOptionPrefix.Length, StringComparison.Ordinal) == 0)
+                {
+                    if (option.mustComply)
+                    {
+                        ReportOperationComplete(
+                            requestDetails,
+                            WSManPluginErrorCodes.OptionNotUnderstood,
+                            StringUtil.Format(
+                                RemotingErrorIdStrings.WSManPluginOptionNotUnderstood,
+                                option.name,
+                                System.Management.Automation.PSVersionInfo.GitCommitId,
+                                WSManPluginConstants.PowerShellStartupProtocolVersionValue));
+                        return false;
+                    }
+                }
+            }
+
+            if (!isProtocolVersionDeclared)
+            {
+                ReportOperationComplete(
+                    requestDetails,
+                    WSManPluginErrorCodes.ProtocolVersionNotFound,
+                    StringUtil.Format(
+                        RemotingErrorIdStrings.WSManPluginProtocolVersionNotFound,
+                        WSManPluginConstants.PowerShellStartupProtocolVersionName,
+                        System.Management.Automation.PSVersionInfo.GitCommitId,
+                        WSManPluginConstants.PowerShellStartupProtocolVersionValue));
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Verifies that the protocol version is in the correct syntax and supported.
+        /// </summary>
+        /// <param name="requestDetails"></param>
+        /// <param name="clientVersionString"></param>
+        /// <returns></returns>
+        private static bool EnsureProtocolVersionComplies(
+            WSManNativeApi.WSManPluginRequest requestDetails,
+            string clientVersionString)
+        {
+            if (string.Equals(clientVersionString, WSManPluginConstants.PowerShellStartupProtocolVersionValue, StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            // Check if major versions are equal and server's minor version is smaller..
+            // if so client's version is supported by the server. The understanding is
+            // that minor version changes do not break the protocol.
+            System.Version clientVersion = Utils.StringToVersion(clientVersionString);
+            System.Version serverVersion = Utils.StringToVersion(WSManPluginConstants.PowerShellStartupProtocolVersionValue);
+
+            if ((clientVersion != null) && (serverVersion != null) &&
+                (clientVersion.Major == serverVersion.Major) &&
+                (clientVersion.Minor >= serverVersion.Minor))
+            {
+                return true;
+            }
+
+            ReportOperationComplete(
+                requestDetails,
+                WSManPluginErrorCodes.ProtocolVersionNotMatch,
+                StringUtil.Format(
+                    RemotingErrorIdStrings.WSManPluginProtocolVersionNotMatch,
+                    WSManPluginConstants.PowerShellStartupProtocolVersionValue,
+                    System.Management.Automation.PSVersionInfo.GitCommitId,
+                    clientVersionString));
+            return false;
         }
 
         private static WSManPluginInstance GetFromActivePlugins(IntPtr pluginContext)

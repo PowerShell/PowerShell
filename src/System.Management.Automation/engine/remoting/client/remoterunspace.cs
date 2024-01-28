@@ -57,7 +57,7 @@ namespace System.Management.Automation
         /// </summary>
         private Queue<RunspaceEventQueueItem> _runspaceEventQueue = new Queue<RunspaceEventQueueItem>();
 
-        protected sealed class RunspaceEventQueueItem
+        private sealed class RunspaceEventQueueItem
         {
             public RunspaceEventQueueItem(RunspaceStateInfo runspaceStateInfo, RunspaceAvailability currentAvailability, RunspaceAvailability newAvailability)
             {
@@ -85,7 +85,7 @@ namespace System.Management.Automation
         /// If this property is true, runspace state check is
         /// not performed in AddToRunningPipelineList call.
         /// </summary>
-        protected bool ByPassRunspaceStateCheck
+        private bool ByPassRunspaceStateCheck
         {
             get
             {

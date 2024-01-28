@@ -376,7 +376,7 @@ namespace System.Management.Automation
         /// ObjectWriter of this stream. PipelineProcessor will read from
         /// ObjectReader of this stream.
         /// </summary>
-        protected PSDataCollectionStream<object> InputStream
+        private PSDataCollectionStream<object> InputStream
         {
             get
             {
@@ -805,61 +805,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Raises events for changes in execution state.
-        /// </summary>
-        protected void RaisePipelineStateEvents()
-        {
-            Queue<ExecutionEventQueueItem> tempEventQueue = null;
-            EventHandler<PipelineStateEventArgs> stateChanged = null;
-            bool runspaceHasAvailabilityChangedSubscribers = false;
-
-            lock (_syncRoot)
-            {
-                stateChanged = this.StateChanged;
-                runspaceHasAvailabilityChangedSubscribers = _runspace.HasAvailabilityChangedSubscribers;
-
-                if (stateChanged != null || runspaceHasAvailabilityChangedSubscribers)
-                {
-                    tempEventQueue = _executionEventQueue;
-                    _executionEventQueue = new Queue<ExecutionEventQueueItem>();
-                }
-                else
-                {
-                    // Clear the events if there are no EventHandlers. This
-                    // ensures that events do not get called for state
-                    // changes prior to their registration.
-                    _executionEventQueue.Clear();
-                }
-            }
-
-            if (tempEventQueue != null)
-            {
-                while (tempEventQueue.Count > 0)
-                {
-                    ExecutionEventQueueItem queueItem = tempEventQueue.Dequeue();
-
-                    if (runspaceHasAvailabilityChangedSubscribers && queueItem.NewRunspaceAvailability != queueItem.CurrentRunspaceAvailability)
-                    {
-                        _runspace.RaiseAvailabilityChangedEvent(queueItem.NewRunspaceAvailability);
-                    }
-
-                    // Exception raised in the eventhandler are not error in pipeline.
-                    // silently ignore them.
-                    if (stateChanged != null)
-                    {
-                        try
-                        {
-                            stateChanged(this, new PipelineStateEventArgs(queueItem.PipelineStateInfo));
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Initializes the underlying PowerShell object after verifying
         /// if the pipeline is in a state where it can be invoked.
         /// If invokeAndDisconnect is true then the remote PowerShell
@@ -952,6 +897,61 @@ namespace System.Management.Automation
                 ((RemoteRunspace)_runspace).RunspacePool.RemoteRunspacePoolInternal,
                 _powershell.InstanceId,
                 eventArgs.Data);
+        }
+
+        /// <summary>
+        /// Raises events for changes in execution state.
+        /// </summary>
+        private void RaisePipelineStateEvents()
+        {
+            Queue<ExecutionEventQueueItem> tempEventQueue = null;
+            EventHandler<PipelineStateEventArgs> stateChanged = null;
+            bool runspaceHasAvailabilityChangedSubscribers = false;
+
+            lock (_syncRoot)
+            {
+                stateChanged = this.StateChanged;
+                runspaceHasAvailabilityChangedSubscribers = _runspace.HasAvailabilityChangedSubscribers;
+
+                if (stateChanged != null || runspaceHasAvailabilityChangedSubscribers)
+                {
+                    tempEventQueue = _executionEventQueue;
+                    _executionEventQueue = new Queue<ExecutionEventQueueItem>();
+                }
+                else
+                {
+                    // Clear the events if there are no EventHandlers. This
+                    // ensures that events do not get called for state
+                    // changes prior to their registration.
+                    _executionEventQueue.Clear();
+                }
+            }
+
+            if (tempEventQueue != null)
+            {
+                while (tempEventQueue.Count > 0)
+                {
+                    ExecutionEventQueueItem queueItem = tempEventQueue.Dequeue();
+
+                    if (runspaceHasAvailabilityChangedSubscribers && queueItem.NewRunspaceAvailability != queueItem.CurrentRunspaceAvailability)
+                    {
+                        _runspace.RaiseAvailabilityChangedEvent(queueItem.NewRunspaceAvailability);
+                    }
+
+                    // Exception raised in the eventhandler are not error in pipeline.
+                    // silently ignore them.
+                    if (stateChanged != null)
+                    {
+                        try
+                        {
+                            stateChanged(this, new PipelineStateEventArgs(queueItem.PipelineStateInfo));
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>

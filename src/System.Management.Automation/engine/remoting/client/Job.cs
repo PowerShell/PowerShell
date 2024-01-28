@@ -1874,11 +1874,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Default constructor.
-        /// </summary>
-        protected PSRemotingJob() { }
-
-        /// <summary>
         /// Initialization common to both constructors.
         /// </summary>
         private void CommonInit(int throttleLimit, List<IThrottleOperation> helpers)

@@ -1155,8 +1155,8 @@ namespace System.Management.Automation.Internal
             RemoteDataObject<PSObject> dataToBeSent =
                 RemoteDataObject<PSObject>.CreateFrom(RemotingDestination.Server,
                 RemotingDataType.RemotePowerShellHostResponseData,
-                clientRunspacePoolId,
-                clientPowerShellId,
+                _clientRunspacePoolId,
+                _clientPowerShellId,
                 hostResponse.Encode());
 
             TransportManager.DataToBeSentCollection.Add<PSObject>(dataToBeSent,
@@ -1178,7 +1178,7 @@ namespace System.Management.Automation.Internal
                 {
                     // send input closed information to server
                     SendDataAsync(RemotingEncoder.GeneratePowerShellInputEnd(
-                        clientRunspacePoolId, clientPowerShellId));
+                        _clientRunspacePoolId, _clientPowerShellId));
                 }
             }
             else
@@ -1207,10 +1207,10 @@ namespace System.Management.Automation.Internal
         internal void ProcessReceivedData(RemoteDataObject<PSObject> receivedData)
         {
             // verify if this data structure handler is the intended recipient
-            if (receivedData.PowerShellId != clientPowerShellId)
+            if (receivedData.PowerShellId != _clientPowerShellId)
             {
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.PipelineIdsDoNotMatch,
-                                receivedData.PowerShellId, clientPowerShellId);
+                                receivedData.PowerShellId, _clientPowerShellId);
             }
 
             // decode the message and take appropriate action
@@ -1473,13 +1473,6 @@ namespace System.Management.Automation.Internal
 
         #endregion Data Structure Handler Methods
 
-        #region Protected Members
-
-        protected Guid clientRunspacePoolId;
-        protected Guid clientPowerShellId;
-
-        #endregion Protected Members
-
         #region Constructors
 
         /// <summary>
@@ -1496,8 +1489,8 @@ namespace System.Management.Automation.Internal
                     Guid clientRunspacePoolId, Guid clientPowerShellId)
         {
             TransportManager = transportManager;
-            this.clientRunspacePoolId = clientRunspacePoolId;
-            this.clientPowerShellId = clientPowerShellId;
+            _clientRunspacePoolId = clientRunspacePoolId;
+            _clientPowerShellId = clientPowerShellId;
             transportManager.SignalCompleted += OnSignalCompleted;
         }
 
@@ -1513,7 +1506,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                return clientPowerShellId;
+                return _clientPowerShellId;
             }
         }
 
@@ -1566,7 +1559,7 @@ namespace System.Management.Automation.Internal
             foreach (object inputObject in inputObjects)
             {
                 SendDataAsync(RemotingEncoder.GeneratePowerShellInput(inputObject,
-                    clientRunspacePoolId, clientPowerShellId));
+                    _clientRunspacePoolId, _clientPowerShellId));
             }
 
             if (!inputstream.IsOpen)
@@ -1577,7 +1570,7 @@ namespace System.Management.Automation.Internal
                 foreach (object inputObject in inputObjects)
                 {
                     SendDataAsync(RemotingEncoder.GeneratePowerShellInput(inputObject,
-                        clientRunspacePoolId, clientPowerShellId));
+                        _clientRunspacePoolId, _clientPowerShellId));
                 }
 
                 // we are sending input end to the server. Ignore the future
@@ -1586,7 +1579,7 @@ namespace System.Management.Automation.Internal
                 inputstream.DataReady -= HandleInputDataReady;
                 // stream close: send end of input
                 SendDataAsync(RemotingEncoder.GeneratePowerShellInputEnd(
-                    clientRunspacePoolId, clientPowerShellId));
+                    _clientRunspacePoolId, _clientPowerShellId));
             }
         }
 
@@ -1607,6 +1600,9 @@ namespace System.Management.Automation.Internal
         #endregion Private Methods
 
         #region Private Members
+
+        private readonly Guid _clientRunspacePoolId;
+        private readonly Guid _clientPowerShellId;
 
         // object for synchronizing input to be sent
         // to server powershell

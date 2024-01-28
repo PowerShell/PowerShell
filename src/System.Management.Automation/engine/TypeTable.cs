@@ -1556,7 +1556,7 @@ namespace System.Management.Automation.Runspaces
         private string _idGetScriptBlock;
         private string _idReferencedMemberName;
 
-        protected void InitIDs()
+        private void InitIDs()
         {
             var xmlNameTable = _reader.NameTable;
             _idTypeName = xmlNameTable.Add("TypeName");
