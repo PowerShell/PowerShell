@@ -50,7 +50,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The provider names for the single shell.
     /// </summary>
-    internal class SingleShellProviderNames : ProviderNames
+    internal sealed class SingleShellProviderNames : ProviderNames
     {
         /// <summary>
         /// Gets the name of the EnvironmentProvider.

@@ -11,7 +11,7 @@ namespace System.Management.Automation
     /// This is the interface between the ScriptCommandProcessor and the
     /// parameter binders required to bind parameters to a shell function.
     /// </summary>
-    internal class ScriptParameterBinderController : ParameterBinderController
+    internal sealed class ScriptParameterBinderController : ParameterBinderController
     {
         #region ctor
 

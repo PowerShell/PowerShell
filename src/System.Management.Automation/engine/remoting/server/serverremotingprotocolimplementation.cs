@@ -10,7 +10,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This class is an implementation of the abstract class ServerRemoteSessionDataStructureHandler.
     /// </summary>
-    internal class ServerRemoteSessionDSHandlerImpl : ServerRemoteSessionDataStructureHandler
+    internal sealed class ServerRemoteSessionDSHandlerImpl : ServerRemoteSessionDataStructureHandler
     {
         private readonly AbstractServerSessionTransportManager _transportManager;
         private readonly ServerRemoteSessionDSHandlerStateMachine _stateMachine;

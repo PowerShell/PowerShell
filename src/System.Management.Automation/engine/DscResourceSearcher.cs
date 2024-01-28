@@ -12,7 +12,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Searcher class for finding DscResources on the system.
     /// </summary>
-    internal class DscResourceSearcher : IEnumerable<DscResourceInfo>, IEnumerator<DscResourceInfo>
+    internal sealed class DscResourceSearcher : IEnumerable<DscResourceInfo>, IEnumerator<DscResourceInfo>
     {
         internal DscResourceSearcher(
             string resourceName,

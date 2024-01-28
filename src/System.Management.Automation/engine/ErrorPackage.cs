@@ -1707,7 +1707,7 @@ namespace System.Management.Automation
     /// Dummy generic class for type inference purposes on typed catch blocks.
     /// </summary>
     /// <typeparam name="TException">Anything that inherits Exception.</typeparam>
-    internal class ErrorRecord<TException> : ErrorRecord where TException : Exception
+    internal sealed class ErrorRecord<TException> : ErrorRecord where TException : Exception
     {
         public new TException Exception { get; }
 

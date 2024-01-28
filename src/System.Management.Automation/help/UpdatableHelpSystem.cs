@@ -77,7 +77,7 @@ namespace System.Management.Automation.Help
     /// <summary>
     /// Exception context.
     /// </summary>
-    internal class UpdatableHelpExceptionContext
+    internal sealed class UpdatableHelpExceptionContext
     {
         /// <summary>
         /// Class constructor.
@@ -171,7 +171,7 @@ namespace System.Management.Automation.Help
     /// <summary>
     /// Progress event arguments.
     /// </summary>
-    internal class UpdatableHelpProgressEventArgs : EventArgs
+    internal sealed class UpdatableHelpProgressEventArgs : EventArgs
     {
         /// <summary>
         /// Class constructor.
@@ -230,7 +230,7 @@ namespace System.Management.Automation.Help
     /// <summary>
     /// This class implements the Updatable Help System common operations.
     /// </summary>
-    internal class UpdatableHelpSystem : IDisposable
+    internal sealed class UpdatableHelpSystem : IDisposable
     {
         private readonly TimeSpan _defaultTimeout;
         private readonly Collection<UpdatableHelpProgressEventArgs> _progressEvents;
@@ -1573,7 +1573,7 @@ namespace System.Management.Automation.Help
     /// <summary>
     /// Controls the updatable help system drive.
     /// </summary>
-    internal class UpdatableHelpSystemDrive : IDisposable
+    internal sealed class UpdatableHelpSystemDrive : IDisposable
     {
         private readonly string _driveName;
         private readonly PSCmdlet _cmdlet;

@@ -1873,7 +1873,7 @@ namespace System.Management.Automation
 
         #endregion public type conversion
 
-        internal class EnumMultipleTypeConverter : EnumSingleTypeConverter
+        internal sealed class EnumMultipleTypeConverter : EnumSingleTypeConverter
         {
             public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
             {
@@ -4382,7 +4382,7 @@ namespace System.Management.Automation
 #nullable restore
 
         [System.Diagnostics.DebuggerDisplay("{_converter.Method.Name}")]
-        internal class ConversionData<T> : IConversionData
+        internal sealed class ConversionData<T> : IConversionData
         {
             private readonly PSConverter<T> _converter;
 
@@ -5630,11 +5630,12 @@ namespace System.Management.Automation
         // Whenever we see a conversion to PSCustomObject, we represent it as a conversion to InternalPSCustomObject
         // This is introduced to avoid breaking PSObject behavior.
         // (Because PSCustomObject is a typeaccelerator for PSObject, we needed a separate type to represent type conversions to PSCustomObject)
-        internal class InternalPSCustomObject
+        internal sealed class InternalPSCustomObject
         {
         }
 
-        internal class InternalPSObject : PSObject { }
+        internal sealed class InternalPSObject : PSObject
+        { }
 
         internal static IConversionData FigureConversion(Type fromType, Type toType)
         {
@@ -5823,7 +5824,8 @@ namespace System.Management.Automation
             return CacheConversion(fromType, toType, converter, rank);
         }
 
-        internal class Null { }
+        internal sealed class Null
+        { }
 
         private static IConversionData FigureConversionFromNull(Type toType)
         {

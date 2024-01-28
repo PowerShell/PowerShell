@@ -772,7 +772,7 @@ namespace System.Management.Automation.Language
 #endif
     }
 
-    internal class FunctionContext
+    internal sealed class FunctionContext
     {
         internal ScriptBlock _scriptBlock;
         internal string _file;
@@ -804,7 +804,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class Compiler : ICustomAstVisitor2
+    internal sealed class Compiler : ICustomAstVisitor2
     {
         internal static readonly ParameterExpression s_executionContextParameter;
         internal static readonly ParameterExpression s_functionContext;
@@ -980,13 +980,26 @@ namespace System.Management.Automation.Language
 
             switch (tokenKind)
             {
-                case TokenKind.Equals: return av.SetValue(this, right);
-                case TokenKind.PlusEquals: et = ExpressionType.Add; break;
-                case TokenKind.MinusEquals: et = ExpressionType.Subtract; break;
-                case TokenKind.MultiplyEquals: et = ExpressionType.Multiply; break;
-                case TokenKind.DivideEquals: et = ExpressionType.Divide; break;
-                case TokenKind.RemainderEquals: et = ExpressionType.Modulo; break;
-                case TokenKind.QuestionQuestionEquals: et = ExpressionType.Coalesce; break;
+                case TokenKind.Equals:
+                    return av.SetValue(this, right);
+                case TokenKind.PlusEquals:
+                    et = ExpressionType.Add;
+                    break;
+                case TokenKind.MinusEquals:
+                    et = ExpressionType.Subtract;
+                    break;
+                case TokenKind.MultiplyEquals:
+                    et = ExpressionType.Multiply;
+                    break;
+                case TokenKind.DivideEquals:
+                    et = ExpressionType.Divide;
+                    break;
+                case TokenKind.RemainderEquals:
+                    et = ExpressionType.Modulo;
+                    break;
+                case TokenKind.QuestionQuestionEquals:
+                    et = ExpressionType.Coalesce;
+                    break;
             }
 
             var exprs = new List<Expression>();
@@ -1917,7 +1930,7 @@ namespace System.Management.Automation.Language
             return false;
         }
 
-        internal class DefaultValueExpressionWrapper
+        internal sealed class DefaultValueExpressionWrapper
         {
             internal ExpressionAst Expression { get; set; }
 
@@ -6634,7 +6647,7 @@ namespace System.Management.Automation.Language
         #endregion Expressions
     }
 
-    internal class MemberAssignableValue : IAssignableValue
+    internal sealed class MemberAssignableValue : IAssignableValue
     {
         internal MemberExpressionAst MemberExpression { get; set; }
 
@@ -6694,7 +6707,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class InvokeMemberAssignableValue : IAssignableValue
+    internal sealed class InvokeMemberAssignableValue : IAssignableValue
     {
         internal InvokeMemberExpressionAst InvokeMemberExpressionAst { get; set; }
 
@@ -6784,7 +6797,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class IndexAssignableValue : IAssignableValue
+    internal sealed class IndexAssignableValue : IAssignableValue
     {
         internal IndexExpressionAst IndexExpressionAst { get; set; }
 
@@ -6874,7 +6887,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class ArrayAssignableValue : IAssignableValue
+    internal sealed class ArrayAssignableValue : IAssignableValue
     {
         internal ArrayLiteralAst ArrayLiteral { get; set; }
 
@@ -6918,7 +6931,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class PowerShellLoopExpression : Expression, Interpreter.IInstructionProvider
+    internal sealed class PowerShellLoopExpression : Expression, Interpreter.IInstructionProvider
     {
         public override bool CanReduce { get { return true; } }
 
@@ -6962,7 +6975,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class EnterLoopExpression : Expression, Interpreter.IInstructionProvider
+    internal sealed class EnterLoopExpression : Expression, Interpreter.IInstructionProvider
     {
         public override bool CanReduce { get { return true; } }
 
@@ -6996,7 +7009,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class UpdatePositionExpr : Expression, Interpreter.IInstructionProvider
+    internal sealed class UpdatePositionExpr : Expression, Interpreter.IInstructionProvider
     {
         public override bool CanReduce { get { return true; } }
 

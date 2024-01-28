@@ -14,7 +14,7 @@ using System.Management.Automation.Subsystem.DSC;
 
 namespace System.Management.Automation
 {
-    internal class CompletionContext
+    internal sealed class CompletionContext
     {
         internal List<Ast> RelatedAsts { get; set; }
 
@@ -58,7 +58,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class CompletionAnalysis
+    internal sealed class CompletionAnalysis
     {
         private readonly Ast _ast;
         private readonly Token[] _tokens;
@@ -325,7 +325,8 @@ namespace System.Management.Automation
                 while (last != null)
                 {
                     errorStatement = last as ErrorStatementAst;
-                    if (errorStatement != null) { break; }
+                    if (errorStatement != null)
+                    { break; }
 
                     last = last.Parent;
                 }
@@ -1774,7 +1775,8 @@ namespace System.Management.Automation
             var lastAst = completionContext.RelatedAsts.Last();
             var expandableString = lastAst as ExpandableStringExpressionAst;
             var constantString = lastAst as StringConstantExpressionAst;
-            if (constantString == null && expandableString == null) { return null; }
+            if (constantString == null && expandableString == null)
+            { return null; }
 
             string strValue = constantString != null ? constantString.Value : expandableString.Value;
 
@@ -2047,7 +2049,8 @@ namespace System.Management.Automation
                                             executionContext: completionContext.ExecutionContext)
                                         : null;
 
-                                    if (fullPath == null) { return result; }
+                                    if (fullPath == null)
+                                    { return result; }
 
                                     // Continue trying the filename/commandname completion for scenarios like this: $aa\d<tab>
                                     completionContext.WordToComplete = fullPath;
@@ -2455,7 +2458,7 @@ namespace System.Management.Automation
 
             return result;
         }
-      
+
         private static List<CompletionResult> CompleteUsingKeywords(int cursorOffset, Token[] tokens, ref int replacementIndex, ref int replacementLength)
         {
             var result = new List<CompletionResult>();

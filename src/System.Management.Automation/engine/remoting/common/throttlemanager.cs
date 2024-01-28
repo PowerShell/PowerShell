@@ -195,7 +195,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     /// <remarks>Throttle limit is currently set to 50. This value may be modified later based
     /// on a figure that we may arrive at out of experience.</remarks>
-    internal class ThrottleManager : IDisposable
+    internal sealed class ThrottleManager : IDisposable
     {
         #region Public (internal) Properties
 

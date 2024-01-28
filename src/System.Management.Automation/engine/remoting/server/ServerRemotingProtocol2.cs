@@ -14,7 +14,7 @@ namespace System.Management.Automation
     /// Handles all data structure handler communication with the client
     /// runspace pool.
     /// </summary>
-    internal class ServerRunspacePoolDataStructureHandler
+    internal sealed class ServerRunspacePoolDataStructureHandler
     {
         #region Constructors
 
@@ -427,7 +427,7 @@ namespace System.Management.Automation
     /// Handles all PowerShell data structure handler communication
     /// with the client side PowerShell.
     /// </summary>
-    internal class ServerPowerShellDataStructureHandler
+    internal sealed class ServerPowerShellDataStructureHandler
     {
         #region Private Members
         // transport manager using which this

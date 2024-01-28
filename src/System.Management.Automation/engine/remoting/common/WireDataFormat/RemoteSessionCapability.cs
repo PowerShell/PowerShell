@@ -16,7 +16,7 @@ namespace System.Management.Automation.Remoting
     /// be used in a capability negotiation algorithm to determine if it is possible to establish a
     /// connection between the client and the server.
     /// </summary>
-    internal class RemoteSessionCapability
+    internal sealed class RemoteSessionCapability
     {
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
@@ -277,7 +277,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// The HostInfo class.
     /// </summary>
-    internal class HostInfo
+    internal sealed class HostInfo
     {
         /// <summary>
         /// Host default data.

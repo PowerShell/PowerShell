@@ -753,7 +753,7 @@ namespace System.Management.Automation
 #endif
     }
 
-    internal class LocalVariable : PSVariable
+    internal sealed class LocalVariable : PSVariable
     {
         private readonly MutableTuple _tuple;
         private readonly int _tupleSlot;
@@ -824,7 +824,7 @@ namespace System.Management.Automation
     /// This class is used for $null.  It always returns null as a value and accepts
     /// any value when it is set and throws it away.
     /// </summary>
-    internal class NullVariable : PSVariable
+    internal sealed class NullVariable : PSVariable
     {
         /// <summary>
         /// Constructor that calls the base class constructor with name "null" and

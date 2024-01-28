@@ -391,7 +391,7 @@ namespace System.Management.Automation.Remoting
 
     /// <summary>
     /// </summary>
-    internal class WSManPluginShellSession : WSManPluginServerSession
+    internal sealed class WSManPluginShellSession : WSManPluginServerSession
     {
         #region Private Members
 
@@ -722,7 +722,7 @@ namespace System.Management.Automation.Remoting
         }
     }
 
-    internal class WSManPluginCommandSession : WSManPluginServerSession
+    internal sealed class WSManPluginCommandSession : WSManPluginServerSession
     {
         #region Private Members
 

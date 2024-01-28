@@ -195,7 +195,7 @@ namespace System.Management.Automation.Remoting
         #region Data structures
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class SECURITY_ATTRIBUTES
+        internal sealed class SECURITY_ATTRIBUTES
         {
             /// <summary>
             /// The size, in bytes, of this structure. Set this value to the size of the SECURITY_ATTRIBUTES structure.

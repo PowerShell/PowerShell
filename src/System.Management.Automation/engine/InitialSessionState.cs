@@ -5623,7 +5623,7 @@ end {
     // Guid is {15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}
 
     [EventSource(Name = "Microsoft-PowerShell-Runspaces")]
-    internal class RunspaceEventSource : EventSource
+    internal sealed class RunspaceEventSource : EventSource
     {
         internal static readonly RunspaceEventSource Log = new RunspaceEventSource();
 

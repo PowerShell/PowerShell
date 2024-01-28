@@ -64,7 +64,7 @@ namespace System.Management.Automation
     ///             <definition>definition text here</definition>
     ///         </definitionListItem>
     /// </summary>
-    internal class MamlNode
+    internal sealed class MamlNode
     {
         /// <summary>
         /// Constructor for HelpInfo.

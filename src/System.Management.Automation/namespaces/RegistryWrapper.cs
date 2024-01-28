@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    internal class RegistryWrapper : IRegistryWrapper
+    internal sealed class RegistryWrapper : IRegistryWrapper
     {
         private readonly RegistryKey _regKey;
 
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     }
 
-    internal class TransactedRegistryWrapper : IRegistryWrapper
+    internal sealed class TransactedRegistryWrapper : IRegistryWrapper
     {
         private readonly TransactedRegistryKey _txRegKey;
         private readonly CmdletProvider _provider;

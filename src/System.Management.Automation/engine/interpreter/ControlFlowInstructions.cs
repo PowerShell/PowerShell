@@ -149,7 +149,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal class BranchInstruction : OffsetInstruction
+    internal sealed class BranchInstruction : OffsetInstruction
     {
         private static Instruction[][][] s_caches;
 

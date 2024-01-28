@@ -12,7 +12,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The metadata associated with a parameter.
     /// </summary>
-    internal class CompiledCommandParameter
+    internal sealed class CompiledCommandParameter
     {
         #region ctor
 
@@ -581,7 +581,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Contains the collection type information for a parameter.
     /// </summary>
-    internal class ParameterCollectionTypeInformation
+    internal sealed class ParameterCollectionTypeInformation
     {
         /// <summary>
         /// Constructs a parameter collection type information object

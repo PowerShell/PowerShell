@@ -187,7 +187,7 @@ namespace System.Management.Automation.Interpreter
     {
     }
 
-    internal class DebugInfo
+    internal sealed class DebugInfo
     {
         // TODO: readonly
 
@@ -202,9 +202,12 @@ namespace System.Management.Automation.Interpreter
             // We allow comparison between int and DebugInfo here
             int IComparer<DebugInfo>.Compare(DebugInfo d1, DebugInfo d2)
             {
-                if (d1.Index > d2.Index) return 1;
-                else if (d1.Index == d2.Index) return 0;
-                else return -1;
+                if (d1.Index > d2.Index)
+                    return 1;
+                else if (d1.Index == d2.Index)
+                    return 0;
+                else
+                    return -1;
             }
         }
 

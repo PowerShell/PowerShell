@@ -341,7 +341,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Compares two ModuleSpecification objects for equality.
     /// </summary>
-    internal class ModuleSpecificationComparer : IEqualityComparer<ModuleSpecification>
+    internal sealed class ModuleSpecificationComparer : IEqualityComparer<ModuleSpecification>
     {
         /// <summary>
         /// Check if two module specifications are property-wise equal.

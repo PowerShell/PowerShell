@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace System.Management.Automation
 {
-    internal class FuzzyMatcher
+    internal sealed class FuzzyMatcher
     {
         internal readonly uint MinimumDistance;
 

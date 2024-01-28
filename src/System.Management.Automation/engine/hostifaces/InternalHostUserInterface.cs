@@ -12,7 +12,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal.Host
 {
-    internal partial
+    internal sealed partial
     class InternalHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
         internal

@@ -391,7 +391,7 @@ namespace System.Management.Automation.Language
 
     #region Internal Position
 
-    internal class PositionHelper
+    internal sealed class PositionHelper
     {
         private int[] _lineStartMap;
 

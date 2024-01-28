@@ -1182,7 +1182,7 @@ namespace System.Management.Automation.Host
     }
 
     // Holds runspace-wide transcription data / settings for PowerShell transcription
-    internal class TranscriptionData
+    internal sealed class TranscriptionData
     {
         internal TranscriptionData()
         {
@@ -1205,7 +1205,7 @@ namespace System.Management.Automation.Host
     }
 
     // Holds options for PowerShell transcription
-    internal class TranscriptionOption : IDisposable
+    internal sealed class TranscriptionOption : IDisposable
     {
         internal TranscriptionOption()
         {

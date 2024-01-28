@@ -12,7 +12,7 @@ namespace System.Management.Automation
     /// Command Help information are stored in 'help.xml' files. Location of these files
     /// can be found from through the engine execution context.
     /// </remarks>
-    internal class ScriptCommandHelpProvider : CommandHelpProvider
+    internal sealed class ScriptCommandHelpProvider : CommandHelpProvider
     {
         /// <summary>
         /// Constructor for CommandHelpProvider.

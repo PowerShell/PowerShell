@@ -541,7 +541,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>The Common Stat class.</summary>
-            public class CommonStat
+            public sealed class CommonStat
             {
                 /// <summary>The inode of the filesystem item.</summary>
                 public long Inode;
@@ -629,7 +629,7 @@ namespace System.Management.Automation
 
                     if ((Mode & 0xFFF) == 420)
                     {
-                       return OwnerReadWriteGroupReadOtherRead;
+                        return OwnerReadWriteGroupReadOtherRead;
                     }
 
                     if (ItemType == ItemType.Directory & (Mode & 0xFFF) == 493)

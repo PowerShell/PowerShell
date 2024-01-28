@@ -391,7 +391,7 @@ namespace Microsoft.PowerShell
     /// Helper class to return encryption results, and the IV used to
     /// do the encryption.
     /// </summary>
-    internal class EncryptionResult
+    internal sealed class EncryptionResult
     {
         internal EncryptionResult(string encrypted, string IV)
         {

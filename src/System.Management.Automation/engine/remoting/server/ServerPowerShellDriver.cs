@@ -16,7 +16,7 @@ namespace System.Management.Automation
     /// This class wraps a PowerShell object. It is used to function
     /// as a server side powershell.
     /// </summary>
-    internal class ServerPowerShellDriver
+    internal sealed class ServerPowerShellDriver
     {
         #region Private Members
 

@@ -12,7 +12,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Event handler argument.
     /// </summary>
-    internal class ServerSteppablePipelineDriverEventArg : EventArgs
+    internal sealed class ServerSteppablePipelineDriverEventArg : EventArgs
     {
         internal ServerSteppablePipelineDriver SteppableDriver;
 
@@ -25,7 +25,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Steppable pipeline driver event handler class.
     /// </summary>
-    internal class ServerSteppablePipelineSubscriber
+    internal sealed class ServerSteppablePipelineSubscriber
     {
         #region Private data
 

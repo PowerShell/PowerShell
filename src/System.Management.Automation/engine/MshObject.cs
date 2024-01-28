@@ -2083,7 +2083,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// This class is intended for internal use only.
         /// </remarks>
-        internal class AdapterSet
+        internal sealed class AdapterSet
         {
             #region Private Data
 
@@ -2117,7 +2117,7 @@ namespace System.Management.Automation
 
         #region Dynamic metaobject implementation
 
-        internal class PSDynamicMetaObject : DynamicMetaObject
+        internal sealed class PSDynamicMetaObject : DynamicMetaObject
         {
             internal PSDynamicMetaObject(Expression expression, PSObject value)
                 : base(expression, BindingRestrictions.Empty, value)

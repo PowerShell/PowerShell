@@ -36,7 +36,7 @@ using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Language
 {
-    internal class IsSafeValueVisitor : ICustomAstVisitor2
+    internal sealed class IsSafeValueVisitor : ICustomAstVisitor2
     {
         public static bool IsAstSafe(Ast ast, GetSafeValueVisitor.SafeValueContext safeValueContext)
         {

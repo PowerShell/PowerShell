@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Telemetry
     /// <summary>
     /// Set up the telemetry initializer to mask the platform specific names.
     /// </summary>
-    internal class NameObscurerTelemetryInitializer : ITelemetryInitializer
+    internal sealed class NameObscurerTelemetryInitializer : ITelemetryInitializer
     {
         // Report the platform name information as "na".
         private const string _notavailable = "na";

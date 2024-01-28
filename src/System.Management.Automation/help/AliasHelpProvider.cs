@@ -18,7 +18,7 @@ namespace System.Management.Automation
     /// The real information for alias is stored in command help. To retrieve the real
     /// help information, help forwarding is needed.
     /// </remarks>
-    internal class AliasHelpProvider : HelpProvider
+    internal sealed class AliasHelpProvider : HelpProvider
     {
         /// <summary>
         /// Initializes a new instance of AliasHelpProvider class.

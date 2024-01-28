@@ -1114,7 +1114,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The metadata associated with a bindable type.
     /// </summary>
-    internal class InternalParameterMetadata
+    internal sealed class InternalParameterMetadata
     {
         #region ctor
 
@@ -1330,7 +1330,8 @@ namespace System.Management.Automation
                 {
                     // When processing dynamic parameters, parameter definitions come from the user,
                     // Invalid data could be passed in, or the parameter could be actually disabled.
-                    if (parameterDefinition == null || parameterDefinition.IsDisabled()) { continue; }
+                    if (parameterDefinition == null || parameterDefinition.IsDisabled())
+                    { continue; }
                 }
 
                 CompiledCommandParameter parameter = new CompiledCommandParameter(parameterDefinition, processingDynamicParameters);
@@ -1516,7 +1517,8 @@ namespace System.Management.Automation
             try
             {
                 var expAttribute = member.GetCustomAttributes<ExperimentalAttribute>(inherit: false).FirstOrDefault();
-                if (expAttribute != null && expAttribute.ToHide) { return false; }
+                if (expAttribute != null && expAttribute.ToHide)
+                { return false; }
 
                 var hasAnyVisibleParamAttributes = false;
                 var paramAttributes = member.GetCustomAttributes<ParameterAttribute>(inherit: false);

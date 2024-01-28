@@ -157,7 +157,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// ConnectionStatusEventArgs.
     /// </summary>
-    internal class ConnectionStatusEventArgs : EventArgs
+    internal sealed class ConnectionStatusEventArgs : EventArgs
     {
         internal ConnectionStatusEventArgs(ConnectionStatus notification)
         {
@@ -174,7 +174,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// CreateCompleteEventArgs.
     /// </summary>
-    internal class CreateCompleteEventArgs : EventArgs
+    internal sealed class CreateCompleteEventArgs : EventArgs
     {
         internal RunspaceConnectionInfo ConnectionInfo { get; }
 
@@ -980,7 +980,7 @@ namespace System.Management.Automation.Remoting.Client
         {
         }
 
-        internal class CallbackNotificationInformation
+        internal sealed class CallbackNotificationInformation
         {
             // only one of the following 2 should be present..
             // anyway transportException takes precedence over remoteObject.

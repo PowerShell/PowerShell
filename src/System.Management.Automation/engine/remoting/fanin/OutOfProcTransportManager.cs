@@ -1078,7 +1078,7 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
     }
 
-    internal class OutOfProcessClientSessionTransportManager : ClientSessionTransportManagerBase
+    internal sealed class OutOfProcessClientSessionTransportManager : ClientSessionTransportManagerBase
     {
         #region Private Data
 
@@ -1318,7 +1318,8 @@ namespace System.Management.Automation.Remoting.Client
                     // use the ID and try to get a new handle...
                     Process newHandle = Process.GetProcessById(_serverProcess.Id);
                     // If the process was not found, we won't get here...
-                    if (_processCreated) newHandle.Kill();
+                    if (_processCreated)
+                        newHandle.Kill();
                 }
                 catch (Exception)
                 {
@@ -2182,7 +2183,7 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
     }
 
-    internal class OutOfProcessClientCommandTransportManager : BaseClientCommandTransportManager
+    internal sealed class OutOfProcessClientCommandTransportManager : BaseClientCommandTransportManager
     {
         #region Private Data
 
@@ -2483,7 +2484,7 @@ namespace System.Management.Automation.Remoting.Client
 
 namespace System.Management.Automation.Remoting.Server
 {
-    internal class OutOfProcessServerSessionTransportManager : AbstractServerSessionTransportManager
+    internal sealed class OutOfProcessServerSessionTransportManager : AbstractServerSessionTransportManager
     {
         #region Private Data
 
@@ -2505,7 +2506,7 @@ namespace System.Management.Automation.Remoting.Server
             _stdErrWriter = errWriter;
             _cmdTransportManagers = new Dictionary<Guid, OutOfProcessServerTransportManager>();
 
-            this.WSManTransportErrorOccured += (object sender, TransportErrorOccuredEventArgs e) => 
+            this.WSManTransportErrorOccured += (object sender, TransportErrorOccuredEventArgs e) =>
             {
                 string msg = e.Exception.TransportMessage ?? e.Exception.InnerException?.Message ?? string.Empty;
                 _stdErrWriter.WriteLine(StringUtil.Format(RemotingErrorIdStrings.RemoteTransportError, msg));
@@ -2587,7 +2588,7 @@ namespace System.Management.Automation.Remoting.Server
         #endregion
     }
 
-    internal class OutOfProcessServerTransportManager : AbstractServerTransportManager
+    internal sealed class OutOfProcessServerTransportManager : AbstractServerTransportManager
     {
         #region Private Data
 

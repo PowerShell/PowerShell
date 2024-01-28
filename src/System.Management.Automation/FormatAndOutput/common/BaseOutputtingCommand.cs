@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// it manages the formatting protocol and it writes to a generic
     /// screen host.
     /// </summary>
-    internal class OutCommandInner : ImplementationCommandBase
+    internal sealed class OutCommandInner : ImplementationCommandBase
     {
         #region tracer
         [TraceSource("format_out_OutCommandInner", "OutCommandInner")]

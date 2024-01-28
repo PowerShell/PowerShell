@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The parameter binder for real CLR objects that have properties and fields decorated with the parameter attributes.
     /// </summary>
-    internal class ReflectionParameterBinder : ParameterBinderBase
+    internal sealed class ReflectionParameterBinder : ParameterBinderBase
     {
         #region ctor
 

@@ -837,7 +837,7 @@ namespace System.Management.Automation.Internal
     /// Helper for exchanging keys and encrypting/decrypting
     /// secure strings for serialization in remoting.
     /// </summary>
-    internal class PSRemotingCryptoHelperServer : PSRemotingCryptoHelper
+    internal sealed class PSRemotingCryptoHelperServer : PSRemotingCryptoHelper
     {
         #region Private Members
 
@@ -967,7 +967,7 @@ namespace System.Management.Automation.Internal
     /// Helper for exchanging keys and encrypting/decrypting
     /// secure strings for serialization in remoting.
     /// </summary>
-    internal class PSRemotingCryptoHelperClient : PSRemotingCryptoHelper
+    internal sealed class PSRemotingCryptoHelperClient : PSRemotingCryptoHelper
     {
         #region Private Members
 
@@ -1085,7 +1085,7 @@ namespace System.Management.Automation.Internal
 
     #region TestHelpers
 
-    internal class TestHelperSession : RemoteSession
+    internal sealed class TestHelperSession : RemoteSession
     {
         internal override void StartKeyExchange()
         {

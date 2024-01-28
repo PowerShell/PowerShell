@@ -5073,7 +5073,7 @@ namespace System.Management.Automation
     /// This class is used to pre-process the command read by the host when it is in debug mode; its
     /// main intention is to implement the debugger commands ("s", "c", "o", etc)
     /// </summary>
-    internal class DebuggerCommandProcessor
+    internal sealed class DebuggerCommandProcessor
     {
         // debugger commands
         private const string ContinueCommand = "continue";
@@ -5162,7 +5162,8 @@ namespace System.Management.Automation
         public DebuggerCommand ProcessCommand(PSHost host, string command, InvocationInfo invocationInfo, IList<PSObject> output)
         {
             DebuggerCommand dbgCommand = DoProcessCommand(host, command, invocationInfo, output);
-            if (dbgCommand.ExecutedByDebugger || (dbgCommand.ResumeAction != null)) { _lastCommand = dbgCommand; }
+            if (dbgCommand.ExecutedByDebugger || (dbgCommand.ResumeAction != null))
+            { _lastCommand = dbgCommand; }
 
             return dbgCommand;
         }
@@ -5193,7 +5194,8 @@ namespace System.Management.Automation
             DebuggerCommand debuggerCommand;
             if (_commandTable.TryGetValue(command, out debuggerCommand))
             {
-                if (debuggerCommand.ExecutedByDebugger || (debuggerCommand.ResumeAction != null)) { _lastCommand = debuggerCommand; }
+                if (debuggerCommand.ExecutedByDebugger || (debuggerCommand.ResumeAction != null))
+                { _lastCommand = debuggerCommand; }
 
                 return debuggerCommand;
             }
@@ -5285,7 +5287,8 @@ namespace System.Management.Automation
         /// </summary>
         private void DisplayScript(PSHost host, IList<PSObject> output, InvocationInfo invocationInfo, Match match)
         {
-            if (invocationInfo == null) { return; }
+            if (invocationInfo == null)
+            { return; }
 
             //
             // Get the source code for the script
@@ -5412,7 +5415,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Class used to hold the output of the DebuggerCommandProcessor.
     /// </summary>
-    internal class DebuggerCommand
+    internal sealed class DebuggerCommand
     {
         public DebuggerCommand(string command, DebuggerResumeAction? action, bool repeatOnEnter, bool executedByDebugger)
         {

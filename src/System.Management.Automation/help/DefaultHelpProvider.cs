@@ -11,7 +11,7 @@ namespace System.Management.Automation
     /// Command Help information are stored in 'help.xml' files. Location of these files
     /// can be found from CommandDiscovery.
     /// </summary>
-    internal class DefaultHelpProvider : HelpFileHelpProvider
+    internal sealed class DefaultHelpProvider : HelpFileHelpProvider
     {
         /// <summary>
         /// Constructor for HelpProvider.

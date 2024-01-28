@@ -9,7 +9,7 @@ namespace System.Management.Automation.Help
     /// <summary>
     /// This class represents a help system URI.
     /// </summary>
-    internal class UpdatableHelpUri
+    internal sealed class UpdatableHelpUri
     {
         /// <summary>
         /// Class constructor.

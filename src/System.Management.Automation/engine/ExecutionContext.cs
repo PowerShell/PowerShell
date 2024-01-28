@@ -25,7 +25,7 @@ namespace System.Management.Automation
     /// around to commands. This is all of the information that lets you get
     /// at session state and the host interfaces.
     /// </summary>
-    internal class ExecutionContext
+    internal sealed class ExecutionContext
     {
         #region Properties
 
@@ -718,7 +718,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PipelineWriter ExternalProgressOutput { get; set; }
 
-        internal class SavedContextData
+        internal sealed class SavedContextData
         {
             private readonly bool _stepScript;
             private readonly bool _ignoreScriptDebug;

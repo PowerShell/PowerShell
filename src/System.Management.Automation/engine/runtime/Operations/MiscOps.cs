@@ -943,7 +943,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class MergingRedirection : CommandRedirection
+    internal sealed class MergingRedirection : CommandRedirection
     {
         internal MergingRedirection(RedirectionStream from, RedirectionStream to)
             : base(from)
@@ -1060,7 +1060,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class FileRedirection : CommandRedirection, IDisposable
+    internal sealed class FileRedirection : CommandRedirection, IDisposable
     {
         internal FileRedirection(RedirectionStream from, bool appending, string file)
             : base(from)
@@ -1326,7 +1326,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class ScriptBlockExpressionWrapper
+    internal sealed class ScriptBlockExpressionWrapper
     {
         private ScriptBlock _scriptBlock;
         private readonly IParameterMetadataProvider _ast;
@@ -1420,7 +1420,8 @@ namespace System.Management.Automation
 
     internal static class ExceptionHandlingOps
     {
-        internal class CatchAll { }
+        internal sealed class CatchAll
+        { }
 
         /// <summary>
         /// Represent a handler search result.
@@ -3342,7 +3343,7 @@ namespace System.Management.Automation
         // The solution is to pretend the object is enumerable, return a real but custom enumerator.  In places that don't care
         // about semantics (e.g. when writing to the pipe), the enumerator will work just fine.  In places where we care about
         // language semantics, we can check the type of the enumerator and use the non-enumerable semantics instead.
-        internal class NonEnumerableObjectEnumerator : IEnumerator
+        internal sealed class NonEnumerableObjectEnumerator : IEnumerator
         {
             internal static IEnumerator Create(object obj)
             {

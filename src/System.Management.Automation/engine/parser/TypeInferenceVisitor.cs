@@ -109,7 +109,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class PSTypeNameComparer : IEqualityComparer<PSTypeName>
+    internal sealed class PSTypeNameComparer : IEqualityComparer<PSTypeName>
     {
         public bool Equals(PSTypeName x, PSTypeName y)
         {
@@ -122,7 +122,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class TypeInferenceContext
+    internal sealed class TypeInferenceContext
     {
         public static readonly PSTypeName[] EmptyPSTypeNameArray = Array.Empty<PSTypeName>();
         private readonly PowerShell _powerShell;
@@ -443,7 +443,7 @@ namespace System.Management.Automation
                 if (value != null)
                 {
                     var typeObject = value.GetType();
-                    
+
                     if (typeObject.FullName.Equals("System.Management.Automation.PSObject", StringComparison.Ordinal))
                     {
                         var psobjectPropertyList = new List<PSMemberNameAndType>();
@@ -464,7 +464,7 @@ namespace System.Management.Automation
                     {
                         type = new PSTypeName(typeObject);
                     }
-                    
+
                     return true;
                 }
             }
@@ -527,7 +527,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class TypeInferenceVisitor : ICustomAstVisitor2
+    internal sealed class TypeInferenceVisitor : ICustomAstVisitor2
     {
         private readonly TypeInferenceContext _context;
 
@@ -2403,7 +2403,7 @@ namespace System.Management.Automation
 
                         continue;
                     }
-                    
+
                     if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>))
                     {
                         var valueType = type.GetGenericArguments()[0];

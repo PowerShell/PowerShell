@@ -18,7 +18,7 @@ namespace System.Management.Automation
     /// Class definition of CommandProcessor - This class provides interface to create
     /// and execute commands written in CLS compliant languages.
     /// </summary>
-    internal class CommandProcessor : CommandProcessorBase
+    internal sealed class CommandProcessor : CommandProcessorBase
     {
         #region ctor
 

@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements history and provides APIs for adding and fetching
     /// entries from history.
     /// </summary>
-    internal class History
+    internal sealed class History
     {
         /// <summary>
         /// Default history size.
@@ -326,9 +326,11 @@ namespace Microsoft.PowerShell.Commands
 
                         for (long i = baseId; i >= firstId; --i)
                         {
-                            if (firstId <= 1) break;
+                            if (firstId <= 1)
+                                break;
                             // if entry is null , continue the loop with the next entry
-                            if (_buffer[GetIndexFromId(i)] == null) continue;
+                            if (_buffer[GetIndexFromId(i)] == null)
+                                continue;
                             if (_buffer[GetIndexFromId(i)].Cleared)
                             {
                                 // we have to clear count entries before an id, so if an entry is null,decrement
@@ -359,9 +361,11 @@ namespace Microsoft.PowerShell.Commands
 
                         for (long i = baseId; i <= firstId; i++)
                         {
-                            if (firstId >= _countEntriesAdded) break;
+                            if (firstId >= _countEntriesAdded)
+                                break;
                             // if entry is null , continue the loop with the next entry
-                            if (_buffer[GetIndexFromId(i)] == null) continue;
+                            if (_buffer[GetIndexFromId(i)] == null)
+                                continue;
                             if (_buffer[GetIndexFromId(i)].Cleared)
                             {
                                 // we have to clear count entries before an id, so if an entry is null,increment first id
@@ -402,16 +406,19 @@ namespace Microsoft.PowerShell.Commands
 
                         for (long i = count - 1; i >= 0;)
                         {
-                            if (index > _countEntriesAdded) break;
+                            if (index > _countEntriesAdded)
+                                break;
                             if ((index <= 0 || GetIndexFromId(index) >= _buffer.Length) ||
                                 (_buffer[GetIndexFromId(index)].Cleared))
                             {
-                                index++; continue;
+                                index++;
+                                continue;
                             }
                             else
                             {
                                 entriesList.Add(_buffer[GetIndexFromId(index)].Clone());
-                                i--; index++;
+                                i--;
+                                index++;
                             }
                         }
                     }
@@ -431,7 +438,8 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
 
-                            if (index < 1) break;
+                            if (index < 1)
+                                break;
                             if ((index <= 0 || GetIndexFromId(index) >= _buffer.Length) ||
                                 (_buffer[GetIndexFromId(index)].Cleared))
                             { index--; continue; }
@@ -439,7 +447,8 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // clone the entry from the history buffer
                                 entriesList.Add(_buffer[GetIndexFromId(index)].Clone());
-                                i--; index--;
+                                i--;
+                                index--;
                             }
                         }
                     }
@@ -496,10 +505,12 @@ namespace Microsoft.PowerShell.Commands
 
                         for (long i = 0; i <= count - 1;)
                         {
-                            if (id > _countEntriesAdded) break;
+                            if (id > _countEntriesAdded)
+                                break;
                             if (!_buffer[GetIndexFromId(id)].Cleared && wildcardpattern.IsMatch(_buffer[GetIndexFromId(id)].CommandLine.Trim()))
                             {
-                                cmdlist.Add(_buffer[GetIndexFromId(id)].Clone()); i++;
+                                cmdlist.Add(_buffer[GetIndexFromId(id)].Clone());
+                                i++;
                             }
 
                             id++;
@@ -520,10 +531,12 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
 
-                            if (id < 1) break;
+                            if (id < 1)
+                                break;
                             if (!_buffer[GetIndexFromId(id)].Cleared && wildcardpattern.IsMatch(_buffer[GetIndexFromId(id)].CommandLine.Trim()))
                             {
-                                cmdlist.Add(_buffer[GetIndexFromId(id)].Clone()); i++;
+                                cmdlist.Add(_buffer[GetIndexFromId(id)].Clone());
+                                i++;
                             }
 
                             id--;

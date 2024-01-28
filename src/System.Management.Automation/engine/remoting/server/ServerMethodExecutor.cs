@@ -11,7 +11,7 @@ namespace System.Management.Automation.Remoting
     /// Responsible for routing messages from the server, blocking the callers and
     /// then waking them up when there is a response to their message.
     /// </summary>
-    internal class ServerMethodExecutor
+    internal sealed class ServerMethodExecutor
     {
         /// <summary>
         /// Default client pipeline id.

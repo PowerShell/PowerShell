@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Management.Automation.Win32Native;
 
-internal class SafeCATAdminHandle : SafeHandle
+internal sealed class SafeCATAdminHandle : SafeHandle
 {
     internal SafeCATAdminHandle() : base(IntPtr.Zero, true) { }
 
@@ -15,7 +15,7 @@ internal class SafeCATAdminHandle : SafeHandle
     protected override bool ReleaseHandle() => WinTrustMethods.CryptCATAdminReleaseContext(handle, 0);
 }
 
-internal class SafeCATHandle : SafeHandle
+internal sealed class SafeCATHandle : SafeHandle
 {
     internal SafeCATHandle() : base(IntPtr.Zero, true) { }
 
@@ -24,7 +24,7 @@ internal class SafeCATHandle : SafeHandle
     protected override bool ReleaseHandle() => WinTrustMethods.CryptCATClose(handle);
 }
 
-internal class SafeCATCDFHandle : SafeHandle
+internal sealed class SafeCATCDFHandle : SafeHandle
 {
     internal SafeCATCDFHandle() : base(IntPtr.Zero, true) { }
 

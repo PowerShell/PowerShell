@@ -15,7 +15,7 @@ namespace System.Management.Automation.Language
      * There is a number of similarities between these two classes, and changes (fixes) in this code
      * may need to be reflected in that class and vice versa
      */
-    internal class IsConstantValueVisitor : ICustomAstVisitor2
+    internal sealed class IsConstantValueVisitor : ICustomAstVisitor2
     {
         public static bool IsConstant(Ast ast, out object constantValue, bool forAttribute = false, bool forRequires = false)
         {
@@ -148,7 +148,7 @@ namespace System.Management.Automation.Language
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
-            if (statementBlockAst.Traps != null) 
+            if (statementBlockAst.Traps != null)
             {
                 return false;
             }
@@ -329,7 +329,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class ConstantValueVisitor : ICustomAstVisitor2
+    internal sealed class ConstantValueVisitor : ICustomAstVisitor2
     {
         internal bool AttributeArgument { get; set; }
 

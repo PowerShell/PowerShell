@@ -108,7 +108,7 @@ namespace System.Management.Automation
     /// An output object from the child process.
     /// If it's from the error stream isError will be true.
     /// </summary>
-    internal class ProcessOutputObject
+    internal sealed class ProcessOutputObject
     {
         /// <summary>
         /// Get the data from this object.
@@ -133,7 +133,7 @@ namespace System.Management.Automation
         }
     }
 
-    #nullable enable
+#nullable enable
     /// <summary>
     /// This exception is used by the NativeCommandProcessor to indicate an error
     /// when a native command returns a non-zero exit code.
@@ -187,12 +187,12 @@ namespace System.Management.Automation
         public int ProcessId { get; }
 
     }
-    #nullable restore
+#nullable restore
 
     /// <summary>
     /// Provides way to create and execute native commands.
     /// </summary>
-    internal class NativeCommandProcessor : CommandProcessorBase
+    internal sealed class NativeCommandProcessor : CommandProcessorBase
     {
         // This is the list of files which will trigger Legacy behavior if
         // PSNativeCommandArgumentPassing is set to "Windows".
@@ -1738,7 +1738,7 @@ namespace System.Management.Automation
         internal static bool IsServerSide { get; set; }
     }
 
-    internal class ProcessOutputHandler
+    internal sealed class ProcessOutputHandler
     {
         internal const string XmlCliTag = "#< CLIXML";
 
@@ -2014,7 +2014,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Helper class to handle writing input to a process.
     /// </summary>
-    internal class ProcessInputWriter
+    internal sealed class ProcessInputWriter
     {
         #region constructor
 

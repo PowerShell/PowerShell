@@ -229,7 +229,7 @@ namespace System.Management.Automation.Internal
     /// <remarks>
     /// This class is not safe for multi-threaded operations.
     /// </remarks>
-    internal class ObjectReader : ObjectReaderBase<object>
+    internal sealed class ObjectReader : ObjectReaderBase<object>
     {
         #region ctor
         /// <summary>
@@ -339,7 +339,7 @@ namespace System.Management.Automation.Internal
     /// <remarks>
     /// This class is not safe for multi-threaded operations.
     /// </remarks>
-    internal class PSObjectReader : ObjectReaderBase<PSObject>
+    internal sealed class PSObjectReader : ObjectReaderBase<PSObject>
     {
         #region ctor
         /// <summary>
@@ -480,7 +480,7 @@ namespace System.Management.Automation.Internal
     /// commands concurrently.
     /// Only Read() operation is supported currently.
     /// </remarks>
-    internal class PSDataCollectionReader<T, TResult>
+    internal sealed class PSDataCollectionReader<T, TResult>
         : ObjectReaderBase<TResult>
     {
         #region Private Data
@@ -639,7 +639,7 @@ namespace System.Management.Automation.Internal
     /// commands concurrently.
     /// Only Read() operation is supported currently.
     /// </remarks>
-    internal class PSDataCollectionPipelineReader<T, TReturn>
+    internal sealed class PSDataCollectionPipelineReader<T, TReturn>
         : ObjectReaderBase<TReturn>
     {
         #region Private Data

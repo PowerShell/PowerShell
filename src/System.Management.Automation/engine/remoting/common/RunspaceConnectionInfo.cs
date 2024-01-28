@@ -3177,7 +3177,7 @@ namespace System.Management.Automation.Runspaces
     /// - Windows Server Container does not require Hyper-V.
     /// - Hyper-V container requires Hyper-V and utility VM, which is different from normal VM.
     /// </summary>
-    internal class ContainerProcess
+    internal sealed class ContainerProcess
     {
         #region Private Data
 

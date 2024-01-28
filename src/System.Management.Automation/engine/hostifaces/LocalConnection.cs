@@ -367,7 +367,7 @@ namespace System.Management.Automation.Runspaces
         /// DebugPreference serves as a property bag to keep
         /// track of all process specific debug preferences.
         /// </summary>
-        public class DebugPreference
+        public sealed class DebugPreference
         {
             public string[] AppDomainNames;
         }

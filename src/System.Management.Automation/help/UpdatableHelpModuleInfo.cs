@@ -9,7 +9,7 @@ namespace System.Management.Automation.Help
     /// <summary>
     /// Updatable help system internal representation of the PSModuleInfo class.
     /// </summary>
-    internal class UpdatableHelpModuleInfo
+    internal sealed class UpdatableHelpModuleInfo
     {
 #if UNIX
         internal static readonly string HelpContentZipName = "HelpContent.zip";

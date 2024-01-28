@@ -3,7 +3,7 @@
 
 namespace System.Management.Automation
 {
-    internal class ParameterSetSpecificMetadata
+    internal sealed class ParameterSetSpecificMetadata
     {
         #region ctor
 

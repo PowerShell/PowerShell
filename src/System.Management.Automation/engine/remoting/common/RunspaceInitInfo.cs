@@ -8,7 +8,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// Class that encapsulates the information carried by the RunspaceInitInfo PSRP message.
     /// </summary>
-    internal class RunspacePoolInitInfo
+    internal sealed class RunspacePoolInitInfo
     {
         /// <summary>
         /// Min Runspaces setting on the server runspace pool.

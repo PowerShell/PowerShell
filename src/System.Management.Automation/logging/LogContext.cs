@@ -10,7 +10,7 @@ namespace System.Management.Automation
     /// LogContext info is collected by Msh Log Engine and passed on to log provider
     /// interface.
     /// </summary>
-    internal class LogContext
+    internal sealed class LogContext
     {
         #region Context Properties
 

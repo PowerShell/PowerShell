@@ -15,7 +15,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Searcher class for finding PS classes on the system.
     /// </summary>
-    internal class PSClassSearcher : IEnumerable<PSClassInfo>, IEnumerator<PSClassInfo>
+    internal sealed class PSClassSearcher : IEnumerable<PSClassInfo>, IEnumerator<PSClassInfo>
     {
         internal PSClassSearcher(
             string className,

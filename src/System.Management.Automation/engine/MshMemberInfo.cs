@@ -990,7 +990,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Type used to capture the properties inferred from Hashtable and PSObject.
     /// </summary>
-    internal class PSInferredProperty : PSPropertyInfo
+    internal sealed class PSInferredProperty : PSPropertyInfo
     {
         public PSInferredProperty(string name, PSTypeName typeName)
         {
@@ -1904,7 +1904,7 @@ namespace System.Management.Automation
         #endregion virtual implementation
     }
 
-    internal class PSMethodInvocationConstraints
+    internal sealed class PSMethodInvocationConstraints
     {
         internal PSMethodInvocationConstraints(
             Type methodTargetType,
@@ -2770,11 +2770,11 @@ namespace System.Management.Automation
     {
     }
 
-    internal class VOID
+    internal sealed class VOID
     {
     }
 
-    internal class PSOutParameter<T>
+    internal sealed class PSOutParameter<T>
     {
     }
 
@@ -2790,27 +2790,27 @@ namespace System.Management.Automation
     {
     }
 
-    internal class MethodGroup<T1> : MethodGroup
+    internal sealed class MethodGroup<T1> : MethodGroup
     {
     }
 
-    internal class MethodGroup<T1, T2> : MethodGroup
+    internal sealed class MethodGroup<T1, T2> : MethodGroup
     {
     }
 
-    internal class MethodGroup<T1, T2, T3, T4> : MethodGroup
+    internal sealed class MethodGroup<T1, T2, T3, T4> : MethodGroup
     {
     }
 
-    internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8> : MethodGroup
+    internal sealed class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8> : MethodGroup
     {
     }
 
-    internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> : MethodGroup
+    internal sealed class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> : MethodGroup
     {
     }
 
-    internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31,
+    internal sealed class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31,
         T32> : MethodGroup
     {
     }
@@ -3306,7 +3306,7 @@ namespace System.Management.Automation
     /// This is added to improve hosting PowerShell's PSObjects in a ASP.Net GridView
     /// Control
     /// </remarks>
-    internal class PSInternalMemberSet : PSMemberSet
+    internal sealed class PSInternalMemberSet : PSMemberSet
     {
         private readonly object _syncObject = new object();
         private readonly PSObject _psObject;
@@ -4006,7 +4006,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Collection of members.
     /// </summary>
-    internal class PSMemberInfoInternalCollection<T> : PSMemberInfoCollection<T>, IEnumerable<T> where T : PSMemberInfo
+    internal sealed class PSMemberInfoInternalCollection<T> : PSMemberInfoCollection<T>, IEnumerable<T> where T : PSMemberInfo
     {
         private OrderedDictionary _members;
         private int _countHidden;
@@ -4364,7 +4364,7 @@ namespace System.Management.Automation
 
     #region CollectionEntry
 
-    internal class CollectionEntry<T> where T : PSMemberInfo
+    internal sealed class CollectionEntry<T> where T : PSMemberInfo
     {
         internal delegate PSMemberInfoInternalCollection<T> GetMembersDelegate(PSObject obj);
 
@@ -4500,7 +4500,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class PSMemberInfoIntegratingCollection<T> : PSMemberInfoCollection<T>, IEnumerable<T> where T : PSMemberInfo
+    internal sealed class PSMemberInfoIntegratingCollection<T> : PSMemberInfoCollection<T>, IEnumerable<T> where T : PSMemberInfo
     {
         #region reserved names
 

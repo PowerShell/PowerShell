@@ -11,7 +11,7 @@ namespace System.Management.Automation.Remoting
     /// runspaces. It is also used to temporarily set a PowerShell object's host as
     /// the Runspace object's host when the PowerShell object is executed.
     /// </summary>
-    internal class ObjectRef<T> where T : class
+    internal sealed class ObjectRef<T> where T : class
     {
         /// <summary>
         /// New value.

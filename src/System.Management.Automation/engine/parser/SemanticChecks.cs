@@ -1783,7 +1783,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class RestrictedLanguageChecker : AstVisitor
+    internal sealed class RestrictedLanguageChecker : AstVisitor
     {
         private readonly Parser _parser;
         private readonly IEnumerable<string> _allowedCommands;

@@ -25,7 +25,7 @@ using Dbg = System.Diagnostics.Debug;
 namespace System.Management.Automation.Runspaces
 {
     // ReSharper disable RedundantCast
-    internal class TypesPs1xmlReader
+    internal sealed class TypesPs1xmlReader
     {
         public TypesPs1xmlReader(LoadContext context)
         {
@@ -1594,7 +1594,7 @@ namespace System.Management.Automation.Runspaces
     /// Internal class to provide a Hashtable key out of a Collection of strings
     /// preserving the evaluation of the key.
     /// </summary>
-    internal class ConsolidatedString : Collection<string>
+    internal sealed class ConsolidatedString : Collection<string>
     {
         protected override void SetItem(int index, string item)
         {
@@ -1691,7 +1691,7 @@ namespace System.Management.Automation.Runspaces
         }
     }
 
-    internal class LoadContext
+    internal sealed class LoadContext
     {
         internal XmlReader reader;
         internal ConcurrentBag<string> errors;

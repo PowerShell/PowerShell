@@ -12,7 +12,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Default implementation of ICommandRuntime for running Cmdlets standalone.
     /// </summary>
-    internal class DefaultCommandRuntime : ICommandRuntime2
+    internal sealed class DefaultCommandRuntime : ICommandRuntime2
     {
         private readonly List<object> _output;
         /// <summary>

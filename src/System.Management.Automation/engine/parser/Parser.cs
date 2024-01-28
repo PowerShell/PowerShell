@@ -8234,7 +8234,7 @@ namespace System.Management.Automation.Language
     // Guid is {eba789d9-533b-58d4-cd1f-2e6520e3a9c2}
 
     [EventSource(Name = "Microsoft-PowerShell-Parser")]
-    internal class ParserEventSource : EventSource
+    internal sealed class ParserEventSource : EventSource
     {
         internal static readonly ParserEventSource Log = new ParserEventSource();
 

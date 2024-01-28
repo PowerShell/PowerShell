@@ -1126,7 +1126,7 @@ namespace System.Management.Automation
     }
 
     [DebuggerDisplay("ModulePath = {ModulePath}")]
-    internal class ModuleCacheEntry
+    internal sealed class ModuleCacheEntry
     {
         public DateTime LastWriteTime;
         public string ModulePath;

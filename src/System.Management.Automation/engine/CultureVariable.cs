@@ -6,7 +6,7 @@ namespace System.Management.Automation
     /// <summary>
     /// A variable that represents $PSCulture.
     /// </summary>
-    internal class PSCultureVariable : PSVariable
+    internal sealed class PSCultureVariable : PSVariable
     {
         /// <summary>
         /// Constructs an instance of the variable.
@@ -33,7 +33,7 @@ namespace System.Management.Automation
     /// <summary>
     /// A variable that represents $PSUICulture.
     /// </summary>
-    internal class PSUICultureVariable : PSVariable
+    internal sealed class PSUICultureVariable : PSVariable
     {
         /// <summary>
         /// Constructs an instance of the variable.

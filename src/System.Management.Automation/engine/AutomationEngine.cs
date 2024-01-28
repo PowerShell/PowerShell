@@ -12,7 +12,7 @@ namespace System.Management.Automation
     /// This class aggregates the objects necessary for the Monad
     /// engine to run.
     /// </summary>
-    internal class AutomationEngine
+    internal sealed class AutomationEngine
     {
         static AutomationEngine()
         {

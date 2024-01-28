@@ -110,7 +110,7 @@ namespace System.Management.Automation
             Not
         }
 
-        internal class Token
+        internal sealed class Token
         {
             public string Text { get; set; }
 
@@ -164,7 +164,7 @@ namespace System.Management.Automation
         /// <summary>
         /// OR node for attributes separated by a comma.
         /// </summary>
-        internal class OrNode : Node
+        internal sealed class OrNode : Node
         {
             public Node Operand2 { get; set; }
 
@@ -190,7 +190,7 @@ namespace System.Management.Automation
         /// <summary>
         /// AND node for attributes separated by a plus(+) operator.
         /// </summary>
-        internal class AndNode : Node
+        internal sealed class AndNode : Node
         {
             public Node Operand2 { get; set; }
 
@@ -216,7 +216,7 @@ namespace System.Management.Automation
         /// <summary>
         /// NOT node for attribute preceded by an exclamation(!) operator.
         /// </summary>
-        internal class NotNode : Node
+        internal sealed class NotNode : Node
         {
             internal override bool Eval(object val)
             {
@@ -235,7 +235,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Leaf nodes of the expression tree.
         /// </summary>
-        internal class OperandNode : Node
+        internal sealed class OperandNode : Node
         {
             internal object _operandValue;
 

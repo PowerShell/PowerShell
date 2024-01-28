@@ -312,7 +312,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class FunctionLookupPath : VariablePath
+    internal sealed class FunctionLookupPath : VariablePath
     {
         internal FunctionLookupPath(string path)
             : base(path, VariablePathFlags.Function | VariablePathFlags.Unqualified)

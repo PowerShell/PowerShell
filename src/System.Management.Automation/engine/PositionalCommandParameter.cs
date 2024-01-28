@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace System.Management.Automation
 {
-    internal class PositionalCommandParameter
+    internal sealed class PositionalCommandParameter
     {
         #region ctor
 

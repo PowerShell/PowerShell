@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// using the metadata information provided by an instance of CommandParameterDefinition
     /// it's basically the hash table with the normalized values.
     /// </summary>
-    internal class MshParameter
+    internal sealed class MshParameter
     {
         internal Hashtable hash = null;
 
@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-    internal class NameEntryDefinition : HashtableEntryDefinition
+    internal sealed class NameEntryDefinition : HashtableEntryDefinition
     {
         internal const string NameEntryKey = "name";
 

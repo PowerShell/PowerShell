@@ -263,7 +263,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This is a wrapper class for RemoteSessionState.
     /// </summary>
-    internal class RemoteSessionStateInfo
+    internal sealed class RemoteSessionStateInfo
     {
         #region Constructors
 
@@ -304,7 +304,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This is the event arg that contains the state information.
     /// </summary>
-    internal class RemoteSessionStateEventArgs : EventArgs
+    internal sealed class RemoteSessionStateEventArgs : EventArgs
     {
         #region Constructors
 
@@ -332,7 +332,7 @@ namespace System.Management.Automation
         #endregion Public_Properties
     }
 
-    internal class RemoteSessionStateMachineEventArgs : EventArgs
+    internal sealed class RemoteSessionStateMachineEventArgs : EventArgs
     {
         #region Constructors
 

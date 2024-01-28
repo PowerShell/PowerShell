@@ -370,7 +370,7 @@ namespace System.Management.Automation.Interpreter
     /// <summary>
     /// A hybrid dictionary which compares based upon object identity.
     /// </summary>
-    internal class HybridReferenceDictionary<TKey, TValue> where TKey : class
+    internal sealed class HybridReferenceDictionary<TKey, TValue> where TKey : class
     {
         private KeyValuePair<TKey, TValue>[] _keysAndValues;
         private Dictionary<TKey, TValue> _dict;
@@ -577,7 +577,7 @@ namespace System.Management.Automation.Interpreter
     ///
     /// This class is not thread safe.
     /// </summary>
-    internal class CacheDict<TKey, TValue>
+    internal sealed class CacheDict<TKey, TValue>
     {
         private readonly Dictionary<TKey, KeyInfo> _dict = new Dictionary<TKey, KeyInfo>();
         private readonly LinkedList<TKey> _list = new LinkedList<TKey>();
@@ -681,7 +681,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal class ThreadLocal<T>
+    internal sealed class ThreadLocal<T>
     {
         private StorageInfo[] _stores;                                         // array of storage indexed by managed thread ID
         private static readonly StorageInfo[] s_updating = Array.Empty<StorageInfo>();   // a marker used when updating the array

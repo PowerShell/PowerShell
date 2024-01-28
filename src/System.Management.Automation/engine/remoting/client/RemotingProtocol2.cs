@@ -19,7 +19,7 @@ namespace System.Management.Automation.Internal
     /// Handles all PowerShell data structure handler communication with the
     /// server side RunspacePool.
     /// </summary>
-    internal class ClientRunspacePoolDataStructureHandler : IDisposable
+    internal sealed class ClientRunspacePoolDataStructureHandler : IDisposable
     {
         private bool _reconnecting = false;
 
@@ -826,7 +826,7 @@ namespace System.Management.Automation.Internal
             {
                 remoteSession?.DisconnectAsync();
             }
-            catch 
+            catch
             {
                 // remoteSession may have already been disposed resulting in unexpected exceptions.
             }
@@ -984,7 +984,7 @@ namespace System.Management.Automation.Internal
     /// Base class for ClientPowerShellDataStructureHandler to handle all
     /// references.
     /// </summary>
-    internal class ClientPowerShellDataStructureHandler
+    internal sealed class ClientPowerShellDataStructureHandler
     {
         #region Data Structure Handler events
 
@@ -1626,7 +1626,7 @@ namespace System.Management.Automation.Internal
         #endregion Private Members
     }
 
-    internal class InformationalMessage
+    internal sealed class InformationalMessage
     {
         internal object Message { get; }
 

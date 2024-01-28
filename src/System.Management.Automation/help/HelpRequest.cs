@@ -19,7 +19,7 @@ namespace System.Management.Automation
     /// Upon getting a help request, help engine will validate the help request and send the request to
     /// necessary help providers for processing.
     /// </summary>
-    internal class HelpRequest
+    internal sealed class HelpRequest
     {
         /// <summary>
         /// Constructor for HelpRequest.

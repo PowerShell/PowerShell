@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// Specialized class for the "expression" property.
     /// </summary>
-    internal class ExpressionEntryDefinition : HashtableEntryDefinition
+    internal sealed class ExpressionEntryDefinition : HashtableEntryDefinition
     {
         internal ExpressionEntryDefinition() : this(false)
         {
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private readonly bool _noGlobbing;
     }
 
-    internal class AlignmentEntryDefinition : HashtableEntryDefinition
+    internal sealed class AlignmentEntryDefinition : HashtableEntryDefinition
     {
         internal AlignmentEntryDefinition() : base(FormatParameterDefinitionKeys.AlignmentEntryKey,
                                     new Type[] { typeof(string) })
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private const string RightAlign = "right";
     }
 
-    internal class WidthEntryDefinition : HashtableEntryDefinition
+    internal sealed class WidthEntryDefinition : HashtableEntryDefinition
     {
         internal WidthEntryDefinition() : base(FormatParameterDefinitionKeys.WidthEntryKey,
                                     new Type[] { typeof(int) })
@@ -349,14 +349,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-    internal class LabelEntryDefinition : HashtableEntryDefinition
+    internal sealed class LabelEntryDefinition : HashtableEntryDefinition
     {
         internal LabelEntryDefinition() : base(FormatParameterDefinitionKeys.LabelEntryKey, new string[] { NameEntryDefinition.NameEntryKey }, new Type[] { typeof(string) }, false)
         {
         }
     }
 
-    internal class FormatStringDefinition : HashtableEntryDefinition
+    internal sealed class FormatStringDefinition : HashtableEntryDefinition
     {
         internal FormatStringDefinition() : base(FormatParameterDefinitionKeys.FormatStringEntryKey,
                                     new Type[] { typeof(string) })
@@ -390,7 +390,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-    internal class BooleanEntryDefinition : HashtableEntryDefinition
+    internal sealed class BooleanEntryDefinition : HashtableEntryDefinition
     {
         internal BooleanEntryDefinition(string entryKey) : base(entryKey, null)
         {
@@ -433,7 +433,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal const string DepthEntryKey = "depth";
     }
 
-    internal class FormatGroupByParameterDefinition : CommandParameterDefinition
+    internal sealed class FormatGroupByParameterDefinition : CommandParameterDefinition
     {
         protected override void SetEntries()
         {
@@ -452,7 +452,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-    internal class FormatTableParameterDefinition : FormatParameterDefinitionBase
+    internal sealed class FormatTableParameterDefinition : FormatParameterDefinitionBase
     {
         protected override void SetEntries()
         {
@@ -463,7 +463,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-    internal class FormatListParameterDefinition : FormatParameterDefinitionBase
+    internal sealed class FormatListParameterDefinition : FormatParameterDefinitionBase
     {
         protected override void SetEntries()
         {
@@ -472,12 +472,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-    internal class FormatWideParameterDefinition : FormatParameterDefinitionBase
+    internal sealed class FormatWideParameterDefinition : FormatParameterDefinitionBase
     {
         // no additional entries
     }
 
-    internal class FormatObjectParameterDefinition : CommandParameterDefinition
+    internal sealed class FormatObjectParameterDefinition : CommandParameterDefinition
     {
         protected override void SetEntries()
         {

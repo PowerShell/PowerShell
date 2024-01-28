@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell
     /// This is the default host implementing PSHost offering minimal host capabilities.
     /// Runspace is the primary user of this class.
     /// </summary>
-    internal class DefaultHost : PSHost
+    internal sealed class DefaultHost : PSHost
     {
         #region ctor
 

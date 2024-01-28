@@ -8,7 +8,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The parameter binder for runtime-defined parameters which are declared through the RuntimeDefinedParameterDictionary.
     /// </summary>
-    internal class RuntimeDefinedParameterBinder : ParameterBinderBase
+    internal sealed class RuntimeDefinedParameterBinder : ParameterBinderBase
     {
         #region ctor
 

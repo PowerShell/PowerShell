@@ -10,7 +10,7 @@ using System.Text;
 
 namespace System.Management.Automation.Runspaces
 {
-    internal class PSSnapInTypeAndFormatErrors
+    internal sealed class PSSnapInTypeAndFormatErrors
     {
         public string psSnapinName;
         // only one of fullPath or formatTable or typeData or typeDefinition should be specified..

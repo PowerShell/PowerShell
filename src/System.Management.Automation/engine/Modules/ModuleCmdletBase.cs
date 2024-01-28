@@ -7479,7 +7479,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Holds the result of a binary module analysis.
     /// </summary>
-    internal class BinaryAnalysisResult
+    internal sealed class BinaryAnalysisResult
     {
         /// <summary>
         /// The list of cmdlets detected from the binary.

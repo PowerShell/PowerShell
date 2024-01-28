@@ -11,7 +11,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The parameter binder for shell functions.
     /// </summary>
-    internal class ScriptParameterBinder : ParameterBinderBase
+    internal sealed class ScriptParameterBinder : ParameterBinderBase
     {
         #region ctor
 

@@ -16,7 +16,7 @@ namespace System.Management.Automation
     /// This is the interface between the NativeCommandProcessor and the
     /// parameter binders required to bind parameters to a minishell.
     /// </summary>
-    internal class MinishellParameterBinderController : NativeCommandParameterBinderController
+    internal sealed class MinishellParameterBinderController : NativeCommandParameterBinderController
     {
         #region ctor
 

@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     ///
     /// The code below is therefore mainly based on reverse engineering of admin\wmi\wbem\winmgmt\wbecomn\like.cpp
     /// </remarks>
-    internal class WildcardPatternToCimQueryParser : WildcardPatternParser
+    internal sealed class WildcardPatternToCimQueryParser : WildcardPatternParser
     {
         private readonly StringBuilder _result = new();
         private bool _needClientSideFiltering;

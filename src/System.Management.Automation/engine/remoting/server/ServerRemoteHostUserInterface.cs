@@ -15,7 +15,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// The ServerRemoteHostUserInterface class.
     /// </summary>
-    internal class ServerRemoteHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
+    internal sealed class ServerRemoteHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
         /// <summary>
         /// Server method executor.

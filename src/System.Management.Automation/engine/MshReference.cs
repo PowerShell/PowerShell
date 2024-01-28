@@ -81,7 +81,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class PSReference<T> : PSReference
+    internal sealed class PSReference<T> : PSReference
     {
         public PSReference(object value) : base(value)
         {

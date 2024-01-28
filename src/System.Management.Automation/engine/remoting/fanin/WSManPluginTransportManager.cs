@@ -386,7 +386,7 @@ namespace System.Management.Automation.Remoting
         }
     }
 
-    internal class WSManPluginCommandTransportManager : WSManPluginServerTransportManager
+    internal sealed class WSManPluginCommandTransportManager : WSManPluginServerTransportManager
     {
         private readonly WSManPluginServerTransportManager _serverTransportMgr;
         private System.Guid _cmdId;

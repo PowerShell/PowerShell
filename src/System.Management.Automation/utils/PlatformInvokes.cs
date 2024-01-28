@@ -11,7 +11,7 @@ namespace System.Management.Automation
     internal static class PlatformInvokes
     {
         [StructLayout(LayoutKind.Sequential)]
-        internal class FILETIME
+        internal sealed class FILETIME
         {
             internal uint dwLowDateTime;
             internal uint dwHighDateTime;
@@ -92,7 +92,7 @@ namespace System.Management.Automation
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class SecurityAttributes
+        internal sealed class SecurityAttributes
         {
             internal int nLength;
             internal SafeLocalMemHandle lpSecurityDescriptor;

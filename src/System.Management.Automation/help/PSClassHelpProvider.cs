@@ -12,7 +12,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
-    internal class PSClassHelpProvider : HelpProviderWithCache
+    internal sealed class PSClassHelpProvider : HelpProviderWithCache
     {
         /// <summary>
         /// Constructor for PSClassHelpProvider.

@@ -1454,7 +1454,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Provides argument completion for Verb parameter.
         /// </summary>
-        public class VerbArgumentCompleter : IArgumentCompleter
+        public sealed class VerbArgumentCompleter : IArgumentCompleter
         {
             /// <summary>
             /// Returns completion results for verb parameter.

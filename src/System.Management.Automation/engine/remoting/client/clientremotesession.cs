@@ -17,7 +17,7 @@ namespace System.Management.Automation.Remoting
     /// Currently the session is identified by the InstanceId of the runspacePool associated with it
     /// This can change in future if we start supporting multiple runspacePools per session.
     /// </summary>
-    internal class ClientRemoteSessionContext
+    internal sealed class ClientRemoteSessionContext
     {
         #region properties
 
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// Remote Session Implementation.
     /// </summary>
-    internal class ClientRemoteSessionImpl : ClientRemoteSession, IDisposable
+    internal sealed class ClientRemoteSessionImpl : ClientRemoteSession, IDisposable
     {
         [TraceSourceAttribute("CRSessionImpl", "ClientRemoteSessionImpl")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionImpl", "ClientRemoteSessionImpl");

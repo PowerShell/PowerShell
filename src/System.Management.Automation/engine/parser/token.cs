@@ -1562,7 +1562,7 @@ namespace System.Management.Automation.Language
         public bool Append { get; }
     }
 
-    internal class UnscannedSubExprToken : StringLiteralToken
+    internal sealed class UnscannedSubExprToken : StringLiteralToken
     {
         internal UnscannedSubExprToken(InternalScriptExtent scriptExtent, TokenFlags tokenFlags, string value, BitArray skippedCharOffsets)
             : base(scriptExtent, tokenFlags, TokenKind.StringLiteral, value)

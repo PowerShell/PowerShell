@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// Core inner implementation for format/xxx commands.
     /// </summary>
-    internal class InnerFormatShapeCommand : InnerFormatShapeCommandBase
+    internal sealed class InnerFormatShapeCommand : InnerFormatShapeCommandBase
     {
         /// <summary>
         /// Constructor to glue to the CRO.

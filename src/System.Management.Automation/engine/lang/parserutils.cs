@@ -1702,7 +1702,7 @@ namespace System.Management.Automation
     /// The simple enumerator class is used for the range operator '..'
     /// in expressions like 'A'..'B' | ForEach-Object { $_ }
     /// </summary>
-    internal class CharRangeEnumerator : IEnumerator
+    internal sealed class CharRangeEnumerator : IEnumerator
     {
         private readonly int _increment = 1;
 

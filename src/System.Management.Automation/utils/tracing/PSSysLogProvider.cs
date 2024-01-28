@@ -14,7 +14,7 @@ namespace System.Management.Automation.Tracing
     /// <summary>
     /// SysLog LogProvider implementation.
     /// </summary>
-    internal class PSSysLogProvider : LogProvider
+    internal sealed class PSSysLogProvider : LogProvider
     {
         private static readonly SysLogProvider s_provider;
 

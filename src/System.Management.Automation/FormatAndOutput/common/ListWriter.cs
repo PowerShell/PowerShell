@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// Class to write object properties in list form by using
     /// the host screen interfaces.
     /// </summary>
-    internal class ListWriter
+    internal sealed class ListWriter
     {
         /// <summary>
         /// Labels already padded with blanks, separator characters, etc.

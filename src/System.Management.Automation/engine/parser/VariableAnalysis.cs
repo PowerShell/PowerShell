@@ -17,7 +17,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class VariableAnalysisDetails
+    internal sealed class VariableAnalysisDetails
     {
         internal VariableAnalysisDetails()
         {
@@ -322,7 +322,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class VariableAnalysis : ICustomAstVisitor2
+    internal sealed class VariableAnalysis : ICustomAstVisitor2
     {
         // Tuple slots start at index 0.  >= 0 means a variable is allocated in the tuple.  -1 means we haven't
         // analyzed a specific use of a variable and don't know what slot it might be assigned to yet.

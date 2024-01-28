@@ -6,7 +6,7 @@ namespace System.Management.Automation
     /// <summary>
     /// A variable that represents $?
     /// </summary>
-    internal class QuestionMarkVariable : PSVariable
+    internal sealed class QuestionMarkVariable : PSVariable
     {
         /// <summary>
         /// Constructs an instance of the variable with execution context.

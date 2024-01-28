@@ -2071,7 +2071,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Ordered and case insensitive hashtable.
     /// </summary>
-    internal class CacheTable
+    internal sealed class CacheTable
     {
         /// <summary>
         /// An object collection is used to help make populating method cache table more efficient
@@ -2140,7 +2140,7 @@ namespace System.Management.Automation
     /// WMI method information.
     /// </summary>
     [DebuggerDisplay("MethodInformation: {methodDefinition}")]
-    internal class MethodInformation
+    internal sealed class MethodInformation
     {
         internal MethodBase method;
         private string _cachedMethodDefinition;
@@ -2576,7 +2576,7 @@ namespace System.Management.Automation
     /// For example, ManagementObjectAdapter uses this structure to store
     /// method parameter information.
     /// </summary>
-    internal class ParameterInformation
+    internal sealed class ParameterInformation
     {
         internal Type parameterType;
         internal object defaultValue;
@@ -2670,7 +2670,7 @@ namespace System.Management.Automation
         private static readonly Dictionary<Type, Dictionary<string, EventCacheEntry>> s_staticEventCacheTable
             = new Dictionary<Type, Dictionary<string, EventCacheEntry>>();
 
-        internal class MethodCacheEntry : CacheEntry
+        internal sealed class MethodCacheEntry : CacheEntry
         {
             internal readonly MethodInformation[] methodInformationStructures;
             /// <summary>
@@ -2717,7 +2717,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal class EventCacheEntry : CacheEntry
+        internal sealed class EventCacheEntry : CacheEntry
         {
             internal EventInfo[] events;
 
@@ -2727,7 +2727,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal class ParameterizedPropertyCacheEntry : CacheEntry
+        internal sealed class ParameterizedPropertyCacheEntry : CacheEntry
         {
             internal MethodInformation[] getterInformation;
             internal MethodInformation[] setterInformation;
@@ -2806,7 +2806,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal class PropertyCacheEntry : CacheEntry
+        internal sealed class PropertyCacheEntry : CacheEntry
         {
             internal delegate object GetterDelegate(object instance);
 
@@ -4663,7 +4663,7 @@ namespace System.Management.Automation
     /// <remarks>
     /// This class is created to avoid cluttering DotNetAdapter with if () { } blocks .
     /// </remarks>
-    internal class BaseDotNetAdapterForAdaptedObjects : DotNetAdapter
+    internal sealed class BaseDotNetAdapterForAdaptedObjects : DotNetAdapter
     {
         /// <summary>
         /// Return a collection representing the <paramref name="obj"/> object's
@@ -4921,7 +4921,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Adapter for properties in the inside PSObject if it has a null BaseObject.
     /// </summary>
-    internal class PSObjectAdapter : MemberRedirectionAdapter
+    internal sealed class PSObjectAdapter : MemberRedirectionAdapter
     {
         #region virtual
 
@@ -4988,7 +4988,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Adapter for properties inside a member set.
     /// </summary>
-    internal class PSMemberSetAdapter : MemberRedirectionAdapter
+    internal sealed class PSMemberSetAdapter : MemberRedirectionAdapter
     {
         #region virtual
 
@@ -5246,7 +5246,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Deals with XmlNode objects.
     /// </summary>
-    internal class XmlNodeAdapter : PropertyOnlyAdapter
+    internal sealed class XmlNodeAdapter : PropertyOnlyAdapter
     {
         #region virtual
         /// <summary>
@@ -5640,7 +5640,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Deals with DataRow objects.
     /// </summary>
-    internal class DataRowAdapter : PropertyOnlyAdapter
+    internal sealed class DataRowAdapter : PropertyOnlyAdapter
     {
         #region virtual
 
@@ -5763,7 +5763,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Deals with DataRowView objects.
     /// </summary>
-    internal class DataRowViewAdapter : PropertyOnlyAdapter
+    internal sealed class DataRowViewAdapter : PropertyOnlyAdapter
     {
         #region virtual
         /// <summary>
@@ -5884,7 +5884,7 @@ namespace System.Management.Automation
         #endregion virtual
     }
 
-    internal class TypeInference
+    internal sealed class TypeInference
     {
         [TraceSource("ETS", "Extended Type System")]
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");

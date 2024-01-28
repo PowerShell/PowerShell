@@ -9,7 +9,7 @@ namespace System.Management.Automation
     /// Class MamlClassHelpInfo keeps track of help information to be returned by
     /// class help provider.
     /// </summary>
-    internal class MamlClassHelpInfo : HelpInfo
+    internal sealed class MamlClassHelpInfo : HelpInfo
     {
         /// <summary>
         /// Constructor for custom HelpInfo object creation.

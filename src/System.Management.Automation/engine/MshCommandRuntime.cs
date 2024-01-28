@@ -26,7 +26,7 @@ namespace System.Management.Automation
     /// the WriteObject implementation in this class which, in turn, calls
     /// the downstream cmdlet.
     /// </summary>
-    internal class MshCommandRuntime : ICommandRuntime2
+    internal sealed class MshCommandRuntime : ICommandRuntime2
     {
         #region private_members
 

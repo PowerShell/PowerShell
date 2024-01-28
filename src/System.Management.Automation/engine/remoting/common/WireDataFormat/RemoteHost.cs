@@ -16,7 +16,7 @@ namespace System.Management.Automation.Remoting
     /// Executes methods; can be encoded and decoded for transmission over the
     /// wire.
     /// </summary>
-    internal class RemoteHostCall
+    internal sealed class RemoteHostCall
     {
         /// <summary>
         /// Method name.
@@ -280,17 +280,23 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private object SelectTargetObject(PSHost host)
         {
-            if (host == null || host.UI == null) { return null; }
+            if (host == null || host.UI == null)
+            { return null; }
 
-            if (_methodInfo.InterfaceType == typeof(PSHost)) { return host; }
+            if (_methodInfo.InterfaceType == typeof(PSHost))
+            { return host; }
 
-            if (_methodInfo.InterfaceType == typeof(IHostSupportsInteractiveSession)) { return host; }
+            if (_methodInfo.InterfaceType == typeof(IHostSupportsInteractiveSession))
+            { return host; }
 
-            if (_methodInfo.InterfaceType == typeof(PSHostUserInterface)) { return host.UI; }
+            if (_methodInfo.InterfaceType == typeof(PSHostUserInterface))
+            { return host.UI; }
 
-            if (_methodInfo.InterfaceType == typeof(IHostUISupportsMultipleChoiceSelection)) { return host.UI; }
+            if (_methodInfo.InterfaceType == typeof(IHostUISupportsMultipleChoiceSelection))
+            { return host.UI; }
 
-            if (_methodInfo.InterfaceType == typeof(PSHostRawUserInterface)) { return host.UI.RawUI; }
+            if (_methodInfo.InterfaceType == typeof(PSHostRawUserInterface))
+            { return host.UI.RawUI; }
 
             throw RemoteHostExceptions.NewUnknownTargetClassException(_methodInfo.InterfaceType.ToString());
         }
@@ -522,7 +528,7 @@ namespace System.Management.Automation.Remoting
     /// method response can be used to transport the result of an execution and then to
     /// simulate the execution on the other end.
     /// </summary>
-    internal class RemoteHostResponse
+    internal sealed class RemoteHostResponse
     {
         /// <summary>
         /// Call id.
@@ -585,7 +591,8 @@ namespace System.Management.Automation.Remoting
         private static void EncodeAndAddReturnValue(PSObject psObject, object returnValue)
         {
             // Do nothing if the return value is null.
-            if (returnValue == null) { return; }
+            if (returnValue == null)
+            { return; }
 
             // Otherwise add the property.
             RemoteHostEncoder.EncodeAndAddAsProperty(psObject, RemoteDataNameStrings.MethodReturnValue, returnValue);
@@ -614,9 +621,11 @@ namespace System.Management.Automation.Remoting
         private static Exception DecodeException(PSObject psObject)
         {
             object result = RemoteHostEncoder.DecodePropertyValue(psObject, RemoteDataNameStrings.MethodException, typeof(Exception));
-            if (result == null) { return null; }
+            if (result == null)
+            { return null; }
 
-            if (result is Exception) { return (Exception)result; }
+            if (result is Exception)
+            { return (Exception)result; }
 
             throw RemoteHostExceptions.NewDecodingFailedException();
         }

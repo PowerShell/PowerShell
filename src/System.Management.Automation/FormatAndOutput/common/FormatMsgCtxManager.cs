@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     ///
     /// IMPORTANT: The code using this class will have to provide ALL the callbacks.
     /// </summary>
-    internal class FormatMessagesContextManager
+    internal sealed class FormatMessagesContextManager
     {
         // callbacks declarations
         internal delegate OutputContext FormatContextCreationCallback(OutputContext parentContext, FormatInfoData formatData);

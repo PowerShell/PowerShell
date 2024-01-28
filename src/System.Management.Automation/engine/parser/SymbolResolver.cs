@@ -22,7 +22,7 @@ namespace System.Management.Automation.Language
         ScriptBlock     // script or anonymous script block
     }
 
-    internal class TypeLookupResult
+    internal sealed class TypeLookupResult
     {
         public TypeLookupResult(TypeDefinitionAst type = null)
         {
@@ -39,7 +39,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class Scope
+    internal sealed class Scope
     {
         internal Ast _ast;
         internal ScopeType _scopeType;
@@ -158,7 +158,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class SymbolTable
+    internal sealed class SymbolTable
     {
         internal readonly List<Scope> _scopes;
         internal readonly Parser _parser;
@@ -728,7 +728,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class SymbolResolvePostActionVisitor : DefaultCustomAstVisitor2
+    internal sealed class SymbolResolvePostActionVisitor : DefaultCustomAstVisitor2
     {
         internal SymbolResolver _symbolResolver;
 

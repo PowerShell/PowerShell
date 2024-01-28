@@ -12,7 +12,7 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
-    internal class TableWriter
+    internal sealed class TableWriter
     {
         /// <summary>
         /// Information about each column boundaries.

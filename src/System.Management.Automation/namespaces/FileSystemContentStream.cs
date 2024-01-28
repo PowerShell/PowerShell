@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
     /// propagate to the caller so that they can be written to the error pipeline
     /// if necessary.
     /// </remarks>
-    internal class FileSystemContentReaderWriter : IContentReader, IContentWriter
+    internal sealed class FileSystemContentReaderWriter : IContentReader, IContentWriter
     {
         #region tracer
 

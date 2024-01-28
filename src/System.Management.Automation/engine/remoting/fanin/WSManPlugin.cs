@@ -90,7 +90,7 @@ namespace System.Management.Automation.Remoting
     /// their lifetime is managed by WinRM.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    internal class WSManPluginOperationShutdownContext // TODO: Rename to OperationShutdownContext when removing the MC++ module.
+    internal sealed class WSManPluginOperationShutdownContext // TODO: Rename to OperationShutdownContext when removing the MC++ module.
     {
         #region Internal Members
 
@@ -124,7 +124,7 @@ namespace System.Management.Automation.Remoting
     /// Represents the logical grouping of all actions required to handle the
     /// lifecycle of shell sessions through the WinRM plugin.
     /// </summary>
-    internal class WSManPluginInstance
+    internal sealed class WSManPluginInstance
     {
         #region Private Members
 

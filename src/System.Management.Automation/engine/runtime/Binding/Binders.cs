@@ -1274,7 +1274,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class PSDynamicGetOrSetBinderKeyComparer : IEqualityComparer<PSGetOrSetDynamicMemberBinderKeyType>
+    internal sealed class PSDynamicGetOrSetBinderKeyComparer : IEqualityComparer<PSGetOrSetDynamicMemberBinderKeyType>
     {
         public bool Equals(PSGetOrSetDynamicMemberBinderKeyType x, PSGetOrSetDynamicMemberBinderKeyType y)
         {
@@ -5948,7 +5948,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The binder for setting a member, like $foo.bar = 1 or [foo]::bar = 1.
     /// </summary>
-    internal class PSSetMemberBinder : SetMemberBinder
+    internal sealed class PSSetMemberBinder : SetMemberBinder
     {
         private sealed class KeyComparer : IEqualityComparer<PSSetMemberBinderKeyType>
         {
@@ -6511,7 +6511,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class PSInvokeBinder : InvokeBinder
+    internal sealed class PSInvokeBinder : InvokeBinder
     {
         internal PSInvokeBinder(CallInfo callInfo) : base(callInfo)
         {
@@ -7554,7 +7554,7 @@ namespace System.Management.Automation.Language
         #endregion
     }
 
-    internal class PSCreateInstanceBinder : CreateInstanceBinder
+    internal sealed class PSCreateInstanceBinder : CreateInstanceBinder
     {
         private readonly CallInfo _callInfo;
         private readonly PSMethodInvocationConstraints _constraints;
@@ -7718,7 +7718,8 @@ namespace System.Management.Automation.Language
         internal static bool IsTargetTypeByRefLike(object target)
         {
             var targetValue = PSObject.Base(target);
-            if (targetValue == null) { return false; }
+            if (targetValue == null)
+            { return false; }
 
             var instanceType = targetValue as Type ?? targetValue.GetType();
             return instanceType.IsByRefLike;
@@ -7730,7 +7731,8 @@ namespace System.Management.Automation.Language
         internal static bool IsTargetTypeNonPublic(object target)
         {
             var targetValue = PSObject.Base(target);
-            if (targetValue == null) { return false; }
+            if (targetValue == null)
+            { return false; }
 
             var instanceType = targetValue as Type ?? targetValue.GetType();
             return !TypeResolver.IsPublic(instanceType);
@@ -7749,7 +7751,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class PSInvokeBaseCtorBinder : InvokeMemberBinder
+    internal sealed class PSInvokeBaseCtorBinder : InvokeMemberBinder
     {
         private readonly CallInfo _callInfo;
         private readonly PSMethodInvocationConstraints _constraints;

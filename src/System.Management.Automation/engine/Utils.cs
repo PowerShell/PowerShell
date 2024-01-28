@@ -1632,7 +1632,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Provides undo/redo functionality by using 2 instances of <seealso cref="BoundedStack{T}"/>.
     /// </summary>
-    internal class HistoryStack<T>
+    internal sealed class HistoryStack<T>
     {
         private readonly BoundedStack<T> _boundedUndoStack;
         private readonly BoundedStack<T> _boundedRedoStack;
@@ -1680,7 +1680,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// A bounded stack based on a linked list.
     /// </summary>
-    internal class BoundedStack<T> : LinkedList<T>
+    internal sealed class BoundedStack<T> : LinkedList<T>
     {
         private readonly int _capacity;
 

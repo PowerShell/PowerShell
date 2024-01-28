@@ -24,7 +24,7 @@ namespace System.Management.Automation.Internal.Host
     /// That leverage may be necessary to manage concurrent access between multiple pipelines sharing the same instance of
     /// PSHost.
     /// </summary>
-    internal class InternalHost : PSHost, IHostSupportsInteractiveSession
+    internal sealed class InternalHost : PSHost, IHostSupportsInteractiveSession
     {
         /// <summary>
         /// There should only be one instance of InternalHost per runspace (i.e. per engine), and all engine use of the host
@@ -235,7 +235,8 @@ namespace System.Management.Automation.Internal.Host
             // This needs to be in a try / catch, since the LocalRunspace cast
             // tries to verify that the host supports interactive sessions.
             // Tests hosts do not.
-            try { localRunspace = this.Runspace as LocalRunspace; }
+            try
+            { localRunspace = this.Runspace as LocalRunspace; }
             catch (PSNotImplementedException) { }
 
             if (localRunspace != null)

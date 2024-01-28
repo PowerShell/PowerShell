@@ -384,7 +384,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private readonly int _enumerationLimit;
     }
 
-    internal class TraversalInfo
+    internal sealed class TraversalInfo
     {
         internal TraversalInfo(int level, int maxDepth)
         {

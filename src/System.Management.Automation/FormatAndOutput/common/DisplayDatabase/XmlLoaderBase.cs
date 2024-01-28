@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// Entry logged by the loader and made available to external consumers.
     /// </summary>
-    internal class XmlLoaderLoggerEntry
+    internal sealed class XmlLoaderLoggerEntry
     {
         internal enum EntryType { Error, Trace }
 

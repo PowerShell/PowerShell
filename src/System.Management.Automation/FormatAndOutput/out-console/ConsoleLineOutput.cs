@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// Tear off class.
     /// </summary>
-    internal class DisplayCellsHost : DisplayCells
+    internal sealed class DisplayCellsHost : DisplayCells
     {
         internal DisplayCellsHost(PSHostRawUserInterface rawUserInterface)
         {

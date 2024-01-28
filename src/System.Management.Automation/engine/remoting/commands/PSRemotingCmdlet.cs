@@ -3341,7 +3341,7 @@ namespace Microsoft.PowerShell.Commands
     /// a method call. There are no separate events raised as
     /// part of method calls.
     /// </summary>
-    internal class ExecutionCmdletHelperRunspace : ExecutionCmdletHelper
+    internal sealed class ExecutionCmdletHelperRunspace : ExecutionCmdletHelper
     {
         /// <summary>
         /// Indicates whether or not the server should be using the steppable pipeline.
@@ -3491,7 +3491,7 @@ namespace Microsoft.PowerShell.Commands
     /// complete. The handler sends a StopComplete message in
     /// OperationComplete for both the calls.
     /// </summary>
-    internal class ExecutionCmdletHelperComputerName : ExecutionCmdletHelper
+    internal sealed class ExecutionCmdletHelperComputerName : ExecutionCmdletHelper
     {
         /// <summary>
         /// Determines if the command should be invoked and then disconnect the
@@ -3860,7 +3860,7 @@ namespace Microsoft.PowerShell.Commands
 
     #region QueryRunspaces
 
-    internal class QueryRunspaces
+    internal sealed class QueryRunspaces
     {
         #region Constructor
 

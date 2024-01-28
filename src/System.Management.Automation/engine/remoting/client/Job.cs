@@ -1725,7 +1725,7 @@ namespace System.Management.Automation
     /// <remarks>
     /// Not removing the prefix "PS" as this signifies powershell specific remoting job
     /// </remarks>
-    internal class PSRemotingJob : Job
+    internal sealed class PSRemotingJob : Job
     {
         #region Internal Constructors
 
@@ -1911,7 +1911,8 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                if (!(j is PSRemotingChildJob child)) continue;
+                if (!(j is PSRemotingChildJob child))
+                    continue;
                 if (string.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
                                 StringComparison.OrdinalIgnoreCase))
                 {
@@ -1934,7 +1935,8 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                if (!(j is PSRemotingChildJob child)) continue;
+                if (!(j is PSRemotingChildJob child))
+                    continue;
                 if (child.Runspace.InstanceId.Equals(runspace.InstanceId))
                 {
                     returnJobList.Add(child);
@@ -1957,7 +1959,8 @@ namespace System.Management.Automation
 
             foreach (Job j in ChildJobs)
             {
-                if (!(j is PSRemotingChildJob child)) continue;
+                if (!(j is PSRemotingChildJob child))
+                    continue;
                 if (child.Helper.Equals(helper))
                 {
                     returnJobList.Add(child);
@@ -2401,7 +2404,8 @@ namespace System.Management.Automation
             // Handle transition of child job to Debug halt state.
             if (e.JobStateInfo.State == JobState.AtBreakpoint)
             {
-                lock (_syncObject) { _debugChildJobsCount++; }
+                lock (_syncObject)
+                { _debugChildJobsCount++; }
 
                 // If any child jobs are Debug halted, we set state to Debug.
                 SetJobState(JobState.AtBreakpoint);
@@ -2413,7 +2417,8 @@ namespace System.Management.Automation
                 (e.PreviousJobStateInfo.State == JobState.AtBreakpoint))
             {
                 int totalDebugCount;
-                lock (_syncObject) { totalDebugCount = --_debugChildJobsCount; }
+                lock (_syncObject)
+                { totalDebugCount = --_debugChildJobsCount; }
 
                 if (totalDebugCount == 0)
                 {
@@ -2677,7 +2682,7 @@ namespace System.Management.Automation
     /// Simple throttle operation class for PSRemoting jobs created in the
     /// disconnected state.
     /// </summary>
-    internal class DisconnectedJobOperation : ExecutionCmdletHelper
+    internal sealed class DisconnectedJobOperation : ExecutionCmdletHelper
     {
         internal DisconnectedJobOperation(Pipeline pipeline)
         {
@@ -4156,7 +4161,7 @@ namespace System.Management.Automation
     /// <remarks>
     /// Not removing the prefix "PS" as this signifies powershell specific remoting job
     /// </remarks>
-    internal class PSInvokeExpressionSyncJob : PSRemotingChildJob
+    internal sealed class PSInvokeExpressionSyncJob : PSRemotingChildJob
     {
         #region Private Members
 
@@ -4233,7 +4238,8 @@ namespace System.Management.Automation
                 }
             }
 
-            if (!doCleanup) return;
+            if (!doCleanup)
+                return;
 
             foreach (ExecutionCmdletHelper helper in _helpers)
             {
@@ -4504,7 +4510,7 @@ namespace System.Management.Automation
 
     #region OutputProcessingState class
 
-    internal class OutputProcessingStateEventArgs : EventArgs
+    internal sealed class OutputProcessingStateEventArgs : EventArgs
     {
         internal bool ProcessingOutput { get; }
 

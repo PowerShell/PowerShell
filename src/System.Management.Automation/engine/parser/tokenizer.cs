@@ -579,7 +579,7 @@ namespace System.Management.Automation.Language
     // Class used to do a partial snapshot of the state of the tokenizer.
     // This is used for nested scans on the same string.
     //
-    internal class TokenizerState
+    internal sealed class TokenizerState
     {
         internal int NestedTokensAdjustment;
         internal string Script;
@@ -592,7 +592,7 @@ namespace System.Management.Automation.Language
     }
 
     [DebuggerDisplay("Mode = {Mode}; Script = {_script}")]
-    internal class Tokenizer
+    internal sealed class Tokenizer
     {
         private static readonly Dictionary<string, TokenKind> s_keywordTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);

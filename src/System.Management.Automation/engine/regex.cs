@@ -780,7 +780,7 @@ namespace System.Management.Automation
     ///
     /// for a more cases see the unit-test file RegexTest.cs
     /// </remarks>
-    internal class WildcardPatternToRegexParser : WildcardPatternParser
+    internal sealed class WildcardPatternToRegexParser : WildcardPatternParser
     {
         private StringBuilder _regexPattern;
         private RegexOptions _regexOptions;
@@ -953,7 +953,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class WildcardPatternMatcher
+    internal sealed class WildcardPatternMatcher
     {
         private readonly PatternElement[] _patternElements;
         private readonly CharacterNormalizer _characterNormalizer;
@@ -1335,7 +1335,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Translates a <see cref="WildcardPattern"/> into a DOS wildcard.
     /// </summary>
-    internal class WildcardPatternToDosWildcardParser : WildcardPatternParser
+    internal sealed class WildcardPatternToDosWildcardParser : WildcardPatternParser
     {
         private readonly StringBuilder _result = new StringBuilder();
 

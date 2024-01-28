@@ -2641,7 +2641,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Class that manages WSManAPI data. Has information like APIHandle which is created
         /// using WSManInitialize, InputStreamSet, OutputStreamSet.
         /// </summary>
-        internal class WSManAPIDataCommon : IDisposable
+        internal sealed class WSManAPIDataCommon : IDisposable
         {
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private IntPtr _handle;
@@ -2752,7 +2752,7 @@ namespace System.Management.Automation.Remoting.Client
                     else
                     {
 #endif
-                        result = WSManNativeApi.WSManDeinitialize(_handle, 0);
+                    result = WSManNativeApi.WSManDeinitialize(_handle, 0);
 #if !UNIX
                     }
 #endif

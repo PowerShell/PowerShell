@@ -121,7 +121,7 @@ namespace System.Management.Automation.Runspaces
         public abstract int Write(object obj, bool enumerateCollection);
     }
 
-    internal class DiscardingPipelineWriter : PipelineWriter
+    internal sealed class DiscardingPipelineWriter : PipelineWriter
     {
         private readonly ManualResetEvent _waitHandle = new ManualResetEvent(true);
 

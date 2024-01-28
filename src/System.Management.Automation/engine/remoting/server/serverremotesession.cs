@@ -25,7 +25,7 @@ namespace System.Management.Automation.Remoting
     ///
     /// All these together define the connection level parameters.
     /// </summary>
-    internal class ServerRemoteSessionContext
+    internal sealed class ServerRemoteSessionContext
     {
         #region Constructors
 
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Remoting
     /// This class controls a remote connection by using a Session data structure handler, which
     /// in turn contains a Finite State Machine, and a transport mechanism.
     /// </summary>
-    internal class ServerRemoteSession : RemoteSession
+    internal sealed class ServerRemoteSession : RemoteSession
     {
         [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
@@ -775,7 +775,7 @@ namespace System.Management.Automation.Remoting
                 // This parameter is only used by Out-Of-Proc transports (not WinRM transports).
                 var discConfiguration = new Remoting.DISCPowerShellConfiguration(
                     configFile: _configurationFile,
-                    roleVerifier: null, 
+                    roleVerifier: null,
                     validateFile: true);
                 rsSessionStateToUse = discConfiguration.GetInitialSessionState(_senderInfo);
             }

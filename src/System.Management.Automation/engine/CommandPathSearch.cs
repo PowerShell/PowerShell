@@ -15,7 +15,7 @@ namespace System.Management.Automation
     /// Used to enumerate the commands on the system that match the specified
     /// command name.
     /// </summary>
-    internal class CommandPathSearch : IEnumerable<string>, IEnumerator<string>
+    internal sealed class CommandPathSearch : IEnumerable<string>, IEnumerator<string>
     {
         [TraceSource("CommandSearch", "CommandSearch")]
         private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("CommandSearch", "CommandSearch");
@@ -111,7 +111,7 @@ namespace System.Management.Automation
                 sessionState.IsProviderLoaded(fileSystemProviderName);
 
             string? environmentCurrentDirectory = null;
-            
+
             try
             {
                 environmentCurrentDirectory = Directory.GetCurrentDirectory();

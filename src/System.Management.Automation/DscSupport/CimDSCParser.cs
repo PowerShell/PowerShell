@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
     /// All CIM operations are represented as methods of this class.
     /// </para>
     /// </summary>
-    internal class CimDSCParser
+    internal sealed class CimDSCParser
     {
         private readonly CimMofDeserializer _deserializer;
         private readonly CimMofDeserializer.OnClassNeeded _onClassNeeded;
@@ -481,7 +481,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
     /// </summary>
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes",
         Justification = "Needed Internal use only")]
-    internal class DscClassCacheEntry
+    internal sealed class DscClassCacheEntry
     {
         /// <summary>
         /// Store the RunAs Credentials that this DSC resource will use.

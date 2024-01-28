@@ -18,7 +18,7 @@ namespace System.Management.Automation
     /// Provider Help information are stored in 'help.xml' files. Location of these files
     /// can be found from CommandDiscovery.
     /// </remarks>
-    internal class ProviderHelpProvider : HelpProviderWithCache
+    internal sealed class ProviderHelpProvider : HelpProviderWithCache
     {
         /// <summary>
         /// Constructor for HelpProvider.

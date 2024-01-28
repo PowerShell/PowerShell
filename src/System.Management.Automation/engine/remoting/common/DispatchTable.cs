@@ -11,7 +11,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// The ServerDispatchTable class.
     /// </summary>
-    internal class ServerDispatchTable : DispatchTable<RemoteHostResponse>
+    internal sealed class ServerDispatchTable : DispatchTable<RemoteHostResponse>
     {
         // DispatchTable specialized for RemoteHostResponse.
     }

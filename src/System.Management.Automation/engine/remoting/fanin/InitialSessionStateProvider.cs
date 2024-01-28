@@ -30,7 +30,7 @@ namespace System.Management.Automation.Remoting
     /// This helper does not validate XML content as it is already validated
     /// by WSMan.
     /// </summary>
-    internal class ConfigurationDataFromXML
+    internal sealed class ConfigurationDataFromXML
     {
         #region Config XML Constants
 
@@ -897,7 +897,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// Configuration type entry.
     /// </summary>
-    internal class ConfigTypeEntry
+    internal sealed class ConfigTypeEntry
     {
         internal delegate bool TypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path);
 

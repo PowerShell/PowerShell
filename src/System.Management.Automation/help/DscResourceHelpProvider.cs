@@ -12,7 +12,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
-    internal class DscResourceHelpProvider : HelpProviderWithCache
+    internal sealed class DscResourceHelpProvider : HelpProviderWithCache
     {
         /// <summary>
         /// Constructor for DscResourceHelpProvider.

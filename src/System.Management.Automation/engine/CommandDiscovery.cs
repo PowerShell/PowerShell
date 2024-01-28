@@ -115,7 +115,7 @@ namespace System.Management.Automation
     /// <summary>
     /// CommandDiscovery...
     /// </summary>
-    internal class CommandDiscovery
+    internal sealed class CommandDiscovery
     {
         [TraceSource("CommandDiscovery", "Traces the discovery of cmdlets, scripts, functions, applications, etc.")]
         internal static readonly PSTraceSource discoveryTracer =
@@ -653,7 +653,8 @@ namespace System.Management.Automation
             }
 
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
-            if (etwEnabled) CommandDiscoveryEventSource.Log.CommandLookupStart(commandName);
+            if (etwEnabled)
+                CommandDiscoveryEventSource.Log.CommandLookupStart(commandName);
 
             CommandInfo result = null;
             string originalCommandName = commandName;
@@ -774,7 +775,8 @@ namespace System.Management.Automation
                 throw e;
             }
 
-            if (etwEnabled) CommandDiscoveryEventSource.Log.CommandLookupStop(commandName);
+            if (etwEnabled)
+                CommandDiscoveryEventSource.Log.CommandLookupStop(commandName);
 
             return result;
         }
@@ -944,7 +946,8 @@ namespace System.Management.Automation
                                                           ref Exception lastError)
         {
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
-            if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleAutoDiscoveryStart(commandName);
+            if (etwEnabled)
+                CommandDiscoveryEventSource.Log.ModuleAutoDiscoveryStart(commandName);
 
             CommandInfo result = null;
             try
@@ -969,9 +972,11 @@ namespace System.Management.Automation
 
                         // Get the available module files, preferring modules from $PSHOME so that user modules don't
                         // override system modules during auto-loading
-                        if (etwEnabled) CommandDiscoveryEventSource.Log.SearchingForModuleFilesStart();
+                        if (etwEnabled)
+                            CommandDiscoveryEventSource.Log.SearchingForModuleFilesStart();
                         var defaultAvailableModuleFiles = ModuleUtils.GetDefaultAvailableModuleFiles(isForAutoDiscovery: true, context);
-                        if (etwEnabled) CommandDiscoveryEventSource.Log.SearchingForModuleFilesStop();
+                        if (etwEnabled)
+                            CommandDiscoveryEventSource.Log.SearchingForModuleFilesStop();
 
                         foreach (string modulePath in defaultAvailableModuleFiles)
                         {
@@ -981,7 +986,8 @@ namespace System.Management.Automation
                             string moduleShortName = Path.GetFileNameWithoutExtension(expandedModulePath);
                             var exportedCommands = AnalysisCache.GetExportedCommands(expandedModulePath, false, context);
 
-                            if (exportedCommands == null) { continue; }
+                            if (exportedCommands == null)
+                            { continue; }
 
                             // Skip if module only has class or other types and no commands.
                             if (exportedCommands.TryGetValue(commandName, out CommandTypes exportedCommandTypes))
@@ -1036,7 +1042,8 @@ namespace System.Management.Automation
                 context.CommandDiscovery.UnregisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
             }
 
-            if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleAutoDiscoveryStop(commandName);
+            if (etwEnabled)
+                CommandDiscoveryEventSource.Log.ModuleAutoDiscoveryStop(commandName);
 
             return result;
         }
@@ -1082,7 +1089,8 @@ namespace System.Management.Automation
                 return null;
 
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
-            if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleAutoLoadingStart(commandName);
+            if (etwEnabled)
+                CommandDiscoveryEventSource.Log.ModuleAutoLoadingStart(commandName);
 
             try
             {
@@ -1136,7 +1144,8 @@ namespace System.Management.Automation
             }
             finally { context.CommandDiscovery.UnregisterLookupCommandInfoAction("ActiveModuleSearch", commandName); }
 
-            if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleAutoLoadingStop(commandName);
+            if (etwEnabled)
+                CommandDiscoveryEventSource.Log.ModuleAutoLoadingStop(commandName);
             return result;
         }
 
@@ -1145,10 +1154,18 @@ namespace System.Management.Automation
             HashSet<string> currentActionSet = null;
             switch (currentAction)
             {
-                case "ActivePreLookup": currentActionSet = _activePreLookup; break;
-                case "ActiveModuleSearch": currentActionSet = _activeModuleSearch; break;
-                case "ActiveCommandNotFound": currentActionSet = _activeCommandNotFound; break;
-                case "ActivePostCommand": currentActionSet = _activePostCommand; break;
+                case "ActivePreLookup":
+                    currentActionSet = _activePreLookup;
+                    break;
+                case "ActiveModuleSearch":
+                    currentActionSet = _activeModuleSearch;
+                    break;
+                case "ActiveCommandNotFound":
+                    currentActionSet = _activeCommandNotFound;
+                    break;
+                case "ActivePostCommand":
+                    currentActionSet = _activePostCommand;
+                    break;
             }
 
             if (currentActionSet.Contains(command))
@@ -1162,10 +1179,18 @@ namespace System.Management.Automation
             HashSet<string> currentActionSet = null;
             switch (currentAction)
             {
-                case "ActivePreLookup": currentActionSet = _activePreLookup; break;
-                case "ActiveModuleSearch": currentActionSet = _activeModuleSearch; break;
-                case "ActiveCommandNotFound": currentActionSet = _activeCommandNotFound; break;
-                case "ActivePostCommand": currentActionSet = _activePostCommand; break;
+                case "ActivePreLookup":
+                    currentActionSet = _activePreLookup;
+                    break;
+                case "ActiveModuleSearch":
+                    currentActionSet = _activeModuleSearch;
+                    break;
+                case "ActiveCommandNotFound":
+                    currentActionSet = _activeCommandNotFound;
+                    break;
+                case "ActivePostCommand":
+                    currentActionSet = _activePostCommand;
+                    break;
             }
 
             if (currentActionSet.Contains(command))
@@ -1451,7 +1476,7 @@ namespace System.Management.Automation
     /// A helper collection of strings that doesn't allow duplicate strings. Comparison
     /// is case-insensitive and done in the invariant culture.
     /// </summary>
-    internal class LookupPathCollection : Collection<string>
+    internal sealed class LookupPathCollection : Collection<string>
     {
         /// <summary>
         /// Default constructor.
@@ -1599,7 +1624,7 @@ namespace System.Management.Automation
     // Guid is {ea9e8155-5042-5537-0b73-8c0e6b53f398}
 
     [EventSource(Name = "Microsoft-PowerShell-CommandDiscovery")]
-    internal class CommandDiscoveryEventSource : EventSource
+    internal sealed class CommandDiscoveryEventSource : EventSource
     {
         internal static readonly CommandDiscoveryEventSource Log = new CommandDiscoveryEventSource();
 

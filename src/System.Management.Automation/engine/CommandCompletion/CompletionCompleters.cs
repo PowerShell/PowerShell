@@ -8668,7 +8668,7 @@ namespace System.Management.Automation
     /// use is for intellisense where you don't want to run arbitrary code, but you do want to know the values
     /// of various expressions so you can get the members.
     /// </summary>
-    internal class SafeExprEvaluator : ICustomAstVisitor2
+    internal sealed class SafeExprEvaluator : ICustomAstVisitor2
     {
         internal static bool TrySafeEval(ExpressionAst ast, ExecutionContext executionContext, out object value)
         {
@@ -8797,9 +8797,11 @@ namespace System.Management.Automation
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
-            if (statementBlockAst.Traps != null) return false;
+            if (statementBlockAst.Traps != null)
+                return false;
             // REVIEW: we could relax this to allow multiple statements
-            if (statementBlockAst.Statements.Count > 1) return false;
+            if (statementBlockAst.Statements.Count > 1)
+                return false;
             var pipeline = statementBlockAst.Statements.FirstOrDefault();
             return pipeline != null && (bool)pipeline.Accept(this);
         }
@@ -8904,7 +8906,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Completes with the property names of the InputObject.
     /// </summary>
-    internal class PropertyNameCompleter : IArgumentCompleter
+    internal sealed class PropertyNameCompleter : IArgumentCompleter
     {
         private readonly string _parameterNameOfInput;
 

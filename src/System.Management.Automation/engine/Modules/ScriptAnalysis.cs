@@ -14,7 +14,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Class describing a PowerShell module...
     /// </summary>
-    internal class ScriptAnalysis
+    internal sealed class ScriptAnalysis
     {
         internal static ScriptAnalysis Analyze(string path, ExecutionContext context)
         {
@@ -117,7 +117,7 @@ namespace System.Management.Automation
 
     // Defines the visitor that analyzes a script to determine its exports
     // and dependencies.
-    internal class ExportVisitor : AstVisitor2
+    internal sealed class ExportVisitor : AstVisitor2
     {
         internal ExportVisitor(bool forCompletion)
         {
@@ -572,7 +572,7 @@ namespace System.Management.Automation
 
     // Class to keep track of modules we need to import, and commands that should
     // be filtered out of them.
-    internal class RequiredModuleInfo
+    internal sealed class RequiredModuleInfo
     {
         internal string Name { get; set; }
 

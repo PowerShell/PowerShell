@@ -241,7 +241,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The scope searcher for variables.
     /// </summary>
-    internal class VariableScopeItemSearcher : ScopedItemSearcher<PSVariable>
+    internal sealed class VariableScopeItemSearcher : ScopedItemSearcher<PSVariable>
     {
         public VariableScopeItemSearcher(
             SessionStateInternal sessionState,
@@ -299,7 +299,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The scope searcher for aliases.
     /// </summary>
-    internal class AliasScopeItemSearcher : ScopedItemSearcher<AliasInfo>
+    internal sealed class AliasScopeItemSearcher : ScopedItemSearcher<AliasInfo>
     {
         public AliasScopeItemSearcher(
             SessionStateInternal sessionState,
@@ -352,7 +352,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The scope searcher for functions.
     /// </summary>
-    internal class FunctionScopeItemSearcher : ScopedItemSearcher<FunctionInfo>
+    internal sealed class FunctionScopeItemSearcher : ScopedItemSearcher<FunctionInfo>
     {
         public FunctionScopeItemSearcher(
             SessionStateInternal sessionState,
@@ -441,7 +441,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The scope searcher for drives.
     /// </summary>
-    internal class DriveScopeItemSearcher : ScopedItemSearcher<PSDriveInfo>
+    internal sealed class DriveScopeItemSearcher : ScopedItemSearcher<PSDriveInfo>
     {
         public DriveScopeItemSearcher(
             SessionStateInternal sessionState,

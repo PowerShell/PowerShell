@@ -93,7 +93,7 @@ namespace System.Management.Automation.Remoting
     /// Stores information about remote host methods. By storing information
     /// in this data structure we only need to transport enums on the wire.
     /// </summary>
-    internal class RemoteHostMethodInfo
+    internal sealed class RemoteHostMethodInfo
     {
         /// <summary>
         /// Interface type.

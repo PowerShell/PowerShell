@@ -23,7 +23,7 @@ namespace System.Management.Automation.Runspaces.Internal
     /// Class which supports pooling remote powerShell runspaces
     /// on the client.
     /// </summary>
-    internal class RemoteRunspacePoolInternal : RunspacePoolInternal, IDisposable
+    internal sealed class RemoteRunspacePoolInternal : RunspacePoolInternal, IDisposable
     {
         #region Constructor
 
@@ -1927,7 +1927,7 @@ namespace System.Management.Automation.Runspaces.Internal
     /// <summary>
     /// Class defining a remote command to connect to.
     /// </summary>
-    internal class ConnectCommandInfo
+    internal sealed class ConnectCommandInfo
     {
         /// <summary>
         /// Remote command instance Id.

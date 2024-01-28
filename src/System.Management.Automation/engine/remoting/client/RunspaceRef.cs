@@ -18,7 +18,7 @@ namespace System.Management.Automation.Remoting
     /// the CreatePipeline method and force it to be used as defined in this
     /// class.
     /// </summary>
-    internal class RunspaceRef
+    internal sealed class RunspaceRef
     {
         /// <summary>
         /// Runspace ref.

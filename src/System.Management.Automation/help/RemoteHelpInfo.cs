@@ -11,7 +11,7 @@ namespace System.Management.Automation
     /// Class MamlCommandHelpInfo keeps track of help information to be returned by
     /// command help provider.
     /// </summary>
-    internal class RemoteHelpInfo : BaseCommandHelpInfo
+    internal sealed class RemoteHelpInfo : BaseCommandHelpInfo
     {
         private readonly PSObject _deserializedRemoteHelp;
 

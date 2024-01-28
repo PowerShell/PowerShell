@@ -9,7 +9,7 @@ namespace System.Management.Automation
     /// This class holds the data for missing mandatory parameters for each parameter set as we
     /// are trying to process which parameter set to use based on the missing mandatory parameters.
     /// </summary>
-    internal class ParameterSetPromptingData
+    internal sealed class ParameterSetPromptingData
     {
         internal ParameterSetPromptingData(uint parameterSet, bool isDefaultSet)
         {

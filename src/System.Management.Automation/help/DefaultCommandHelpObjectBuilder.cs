@@ -16,7 +16,7 @@ namespace System.Management.Automation.Help
     /// <summary>
     /// Positional parameter comparer.
     /// </summary>
-    internal class PositionalParameterComparer : IComparer
+    internal sealed class PositionalParameterComparer : IComparer
     {
         /// <summary>
         /// </summary>

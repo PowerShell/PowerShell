@@ -28,7 +28,7 @@ namespace System.Management.Automation
     /// Remote runspace which will be created on the client side. This
     /// runspace is wrapped on a RunspacePool(1).
     /// </summary>
-    internal class RemoteRunspace : Runspace, IDisposable
+    internal sealed class RemoteRunspace : Runspace, IDisposable
     {
         #region Private Members
 
@@ -57,7 +57,7 @@ namespace System.Management.Automation
         /// </summary>
         private Queue<RunspaceEventQueueItem> _runspaceEventQueue = new Queue<RunspaceEventQueueItem>();
 
-        protected class RunspaceEventQueueItem
+        protected sealed class RunspaceEventQueueItem
         {
             public RunspaceEventQueueItem(RunspaceStateInfo runspaceStateInfo, RunspaceAvailability currentAvailability, RunspaceAvailability newAvailability)
             {
@@ -1260,7 +1260,8 @@ namespace System.Management.Automation
             // Update client remote debugger based on server capabilities.
             _applicationPrivateData = GetApplicationPrivateData();
             bool serverSupportsDebugging = SetDebugInfo(_applicationPrivateData);
-            if (!serverSupportsDebugging) { return; }
+            if (!serverSupportsDebugging)
+            { return; }
 
             // Set server side initial debug mode based on interactive host.
             DebugModes hostDebugMode = DebugModes.Default;
@@ -2923,7 +2924,7 @@ namespace System.Management.Automation
 
     #region RemoteSessionStateProxy
 
-    internal class RemoteSessionStateProxy : SessionStateProxy
+    internal sealed class RemoteSessionStateProxy : SessionStateProxy
     {
         private readonly RemoteRunspace _runspace;
 
@@ -2986,7 +2987,8 @@ namespace System.Management.Automation
                     _setVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
                     throw _setVariableCommandNotFoundException;
                 }
-                else throw;
+                else
+                    throw;
             }
 
             if (remotePipeline.Error.Count > 0)
@@ -3046,7 +3048,8 @@ namespace System.Management.Automation
                     _getVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
                     throw _getVariableCommandNotFoundException;
                 }
-                else throw;
+                else
+                    throw;
             }
 
             if (remotePipeline.Error.Count > 0)
@@ -3107,7 +3110,8 @@ namespace System.Management.Automation
                         _isInNoLanguageModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
                         throw _isInNoLanguageModeException;
                     }
-                    else throw;
+                    else
+                        throw;
                 }
 
                 return result;
@@ -3152,7 +3156,8 @@ namespace System.Management.Automation
                         _isInNoLanguageModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
                         throw _isInNoLanguageModeException;
                     }
-                    else throw;
+                    else
+                        throw;
                 }
 
                 return result;
@@ -3212,7 +3217,8 @@ namespace System.Management.Automation
                         _isInNoLanguageModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
                         return PSLanguageMode.NoLanguage;
                     }
-                    else throw;
+                    else
+                        throw;
                 }
 
                 return (PSLanguageMode)LanguagePrimitives.ConvertTo(result[0], typeof(PSLanguageMode), CultureInfo.InvariantCulture);

@@ -15,7 +15,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
-    internal class RemotePipeline : Pipeline
+    internal sealed class RemotePipeline : Pipeline
     {
         #region Private Members
 

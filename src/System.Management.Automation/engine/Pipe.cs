@@ -26,7 +26,7 @@ namespace System.Management.Automation.Internal
     /// AddItems and Retrieve should not be called simultaneously.
     /// ExternalReader and ExternalWriter can provide thread-safe buffering.
     /// </remarks>
-    internal class Pipe
+    internal sealed class Pipe
     {
         private readonly ExecutionContext _context;
 

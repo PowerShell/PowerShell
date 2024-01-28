@@ -10,7 +10,7 @@ namespace System.Management.Automation
     /// <summary>
     /// A collection of the attributes on the PSVariable object.
     /// </summary>
-    internal class PSVariableAttributeCollection : Collection<Attribute>
+    internal sealed class PSVariableAttributeCollection : Collection<Attribute>
     {
         #region constructor
 

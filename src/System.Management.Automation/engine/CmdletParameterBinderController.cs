@@ -19,7 +19,7 @@ namespace System.Management.Automation
     /// This is the interface between the CommandProcessor and the various
     /// parameter binders required to bind parameters to a cmdlet.
     /// </summary>
-    internal class CmdletParameterBinderController : ParameterBinderController
+    internal sealed class CmdletParameterBinderController : ParameterBinderController
     {
         #region tracer
 

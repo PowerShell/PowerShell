@@ -309,7 +309,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// </summary>
-    internal class DummyLogProvider : LogProvider
+    internal sealed class DummyLogProvider : LogProvider
     {
         /// <summary>
         /// Constructor.

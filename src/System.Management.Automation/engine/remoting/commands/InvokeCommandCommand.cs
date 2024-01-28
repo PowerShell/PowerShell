@@ -2122,7 +2122,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Encapsulates the Robust Connection retry progress bar.
     /// </summary>
-    internal class RobustConnectionProgress
+    internal sealed class RobustConnectionProgress
     {
         private System.Management.Automation.Host.PSHost _psHost;
         private readonly string _activity;

@@ -14,7 +14,7 @@ namespace System.Management.Automation.Help
     /// <summary>
     /// Represents each supported culture.
     /// </summary>
-    internal class CultureSpecificUpdatableHelp
+    internal sealed class CultureSpecificUpdatableHelp
     {
         /// <summary>
         /// Class constructor.
@@ -82,7 +82,7 @@ namespace System.Management.Automation.Help
     /// <summary>
     /// This class represents the HelpInfo metadata XML.
     /// </summary>
-    internal class UpdatableHelpInfo
+    internal sealed class UpdatableHelpInfo
     {
         /// <summary>
         /// Class constructor.

@@ -236,7 +236,7 @@ namespace System.Management.Automation.Language
 #nullable restore
 
 #if DEBUG
-    internal class CheckAllParentsSet : AstVisitor2
+    internal sealed class CheckAllParentsSet : AstVisitor2
     {
         internal CheckAllParentsSet(Ast root)
         {
@@ -383,7 +383,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Check if <see cref="TypeConstraintAst"/> contains <see cref="TypeBuilder "/> type.
     /// </summary>
-    internal class CheckTypeBuilder : AstVisitor2
+    internal sealed class CheckTypeBuilder : AstVisitor2
     {
         public override AstVisitAction VisitTypeConstraint(TypeConstraintAst ast)
         {

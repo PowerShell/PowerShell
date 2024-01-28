@@ -417,7 +417,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Batch execution context.
     /// </summary>
-    internal class BatchInvocationContext
+    internal sealed class BatchInvocationContext
     {
         private readonly AutoResetEvent _completionEvent;
 
@@ -6149,7 +6149,7 @@ namespace System.Management.Automation
     ///         result = powerShell.Invoke();
     ///     }
     /// </example>
-    internal class PowerShellStopper : IDisposable
+    internal sealed class PowerShellStopper : IDisposable
     {
         private readonly PipelineBase _pipeline;
         private readonly PowerShell _powerShell;

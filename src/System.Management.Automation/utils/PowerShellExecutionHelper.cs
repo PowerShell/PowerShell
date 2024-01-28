@@ -8,7 +8,7 @@ using System.Management.Automation.Runspaces;
 
 namespace System.Management.Automation
 {
-    internal class PowerShellExecutionHelper
+    internal sealed class PowerShellExecutionHelper
     {
         #region Constructors
 

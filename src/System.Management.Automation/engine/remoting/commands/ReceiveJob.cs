@@ -1591,7 +1591,7 @@ namespace Microsoft.PowerShell.Commands
 
     #region OutputProcessingState
 
-    internal class OutputProcessingState : IOutputProcessingState
+    internal sealed class OutputProcessingState : IOutputProcessingState
     {
         public event EventHandler<OutputProcessingStateEventArgs> OutputProcessingStateChanged;
 

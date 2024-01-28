@@ -287,7 +287,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Used to supply _WSMAN_USERNAME_PASSWORD_CREDS type credentials for
         /// WSManCreateSession.
         /// </summary>
-        internal class WSManUserNameAuthenticationCredentials : BaseWSManAuthenticationCredentials
+        internal sealed class WSManUserNameAuthenticationCredentials : BaseWSManAuthenticationCredentials
         {
             /// <summary>
             /// </summary>
@@ -387,7 +387,7 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// </summary>
-        internal class WSManCertificateThumbprintCredentials : BaseWSManAuthenticationCredentials
+        internal sealed class WSManCertificateThumbprintCredentials : BaseWSManAuthenticationCredentials
         {
             /// <summary>
             /// </summary>
@@ -615,14 +615,14 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class WSManDataStruct
+        internal sealed class WSManDataStruct
         {
             internal uint type;
             internal WSManBinaryOrTextDataStruct binaryOrTextData;
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class WSManBinaryOrTextDataStruct
+        internal sealed class WSManBinaryOrTextDataStruct
         {
             internal int bufferLength;
 
@@ -633,7 +633,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Used to supply WSMAN_DATA_BINARY/WSMAN_DATA_TEXT type in place of _WSMAN_DATA.
         /// </summary>
-        internal class WSManData_ManToUn : IDisposable
+        internal sealed class WSManData_ManToUn : IDisposable
         {
             private readonly WSManDataStruct _internalData;
 
@@ -761,7 +761,7 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        internal class WSManData_UnToMan
+        internal sealed class WSManData_UnToMan
         {
             /// <summary>
             /// Gets the type of data.
@@ -1001,7 +1001,7 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        internal class WSManStreamIDSet_UnToMan
+        internal sealed class WSManStreamIDSet_UnToMan
         {
             internal string[] streamIDs;
             internal int streamIDsCount;
@@ -1464,7 +1464,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Unmanaged to managed representation of WSMAN_SHELL_STARTUP_INFO.
         /// It unmarshals the unmanaged struct into this object for use by managed code.
         /// </summary>
-        internal class WSManShellStartupInfo_UnToMan
+        internal sealed class WSManShellStartupInfo_UnToMan
         {
             internal WSManStreamIDSet_UnToMan inputStreamSet;
             internal WSManStreamIDSet_UnToMan outputStreamSet;
@@ -1504,7 +1504,7 @@ namespace System.Management.Automation.Remoting.Client
         /// It wraps WSManEnvironmentVariableSetInternal and UnMarshals the unmanaged
         /// data into the object.
         /// </summary>
-        internal class WSManEnvironmentVariableSet
+        internal sealed class WSManEnvironmentVariableSet
         {
             internal uint varsCount;
             internal WSManEnvironmentVariableInternal[] vars;
@@ -1565,7 +1565,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Proxy Info used with WSManCreateSession.
         /// </summary>
-        internal class WSManProxyInfo : IDisposable
+        internal sealed class WSManProxyInfo : IDisposable
         {
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
             private struct WSManProxyInfoInternal
@@ -1756,7 +1756,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Used in different WSMan functions to supply async callback.
         /// </summary>
-        internal class WSManShellAsync
+        internal sealed class WSManShellAsync
         {
             [StructLayout(LayoutKind.Sequential)]
             internal struct WSManShellAsyncInternal
@@ -1823,7 +1823,7 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        internal class WSManCreateShellDataResult
+        internal sealed class WSManCreateShellDataResult
         {
             [StructLayout(LayoutKind.Sequential)]
             private struct WSManCreateShellDataResultInternal
@@ -1870,7 +1870,7 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        internal class WSManConnectDataResult
+        internal sealed class WSManConnectDataResult
         {
             [StructLayout(LayoutKind.Sequential)]
             private struct WSManConnectDataResultInternal
@@ -1915,7 +1915,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Used in the shell completion function delegate to refer to the data.
         /// </summary>
-        internal class WSManReceiveDataResult
+        internal sealed class WSManReceiveDataResult
         {
             /// <summary>
             /// The actual data.
@@ -2003,7 +2003,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// This is the managed representation of the WSMAN_PLUGIN_REQUEST struct.
         /// </summary>
-        internal class WSManPluginRequest
+        internal sealed class WSManPluginRequest
         {
             /// <summary>
             /// Unmarshalled WSMAN_SENDER_DETAILS struct.
@@ -2095,7 +2095,7 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        internal class WSManSenderDetails
+        internal sealed class WSManSenderDetails
         {
             internal string senderName;
             internal string authenticationMechanism;
@@ -2149,7 +2149,7 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        internal class WSManCertificateDetails
+        internal sealed class WSManCertificateDetails
         {
             internal string subject;
             internal string issuerName;
@@ -2198,7 +2198,7 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        internal class WSManOperationInfo
+        internal sealed class WSManOperationInfo
         {
             internal WSManFragmentInternal fragment;
             internal WSManFilterInternal filter;
@@ -2268,7 +2268,7 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        internal class WSManSelectorSet
+        internal sealed class WSManSelectorSet
         {
             internal int numberKeys;
             internal WSManKeyStruct[] keys;
@@ -3054,7 +3054,7 @@ namespace System.Management.Automation.Remoting.Client
     /// <summary>
     /// Concrete implementation of the PInvoke facade for use in the production code.
     /// </summary>
-    internal class WSManNativeApiFacade : IWSManNativeApiFacade
+    internal sealed class WSManNativeApiFacade : IWSManNativeApiFacade
     {
         int IWSManNativeApiFacade.WSManPluginGetOperationParameters(
             IntPtr requestDetails,

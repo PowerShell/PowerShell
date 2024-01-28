@@ -8,7 +8,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace System.Management.Automation.Internal
 {
-    internal class CabinetExtractor : ICabinetExtractor
+    internal sealed class CabinetExtractor : ICabinetExtractor
     {
         /// <summary>
         /// GC handle which prevents garbage collector from collecting this delegate.
@@ -164,7 +164,7 @@ namespace System.Management.Automation.Internal
     }
 
     // CabinetExtractor loader implementation
-    internal class CabinetExtractorLoader : ICabinetExtractorLoader
+    internal sealed class CabinetExtractorLoader : ICabinetExtractorLoader
     {
         private static CabinetExtractor s_extractorInstance;
         private static CabinetExtractorLoader s_instance;
@@ -571,7 +571,7 @@ namespace System.Management.Automation.Internal
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-        internal class FdiNotification
+        internal sealed class FdiNotification
         {
             internal int cb; // LONG
             internal string psz1; // char FAR *
@@ -599,7 +599,7 @@ namespace System.Management.Automation.Internal
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class FdiERF
+        internal sealed class FdiERF
         {
             internal int erfOper;
             internal int erfType;

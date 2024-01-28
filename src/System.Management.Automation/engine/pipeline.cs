@@ -25,7 +25,7 @@ namespace System.Management.Automation.Internal
     /// ExternalInput, ExternalSuccessOutput and ExternalErrorOutput, and
     /// those objects are thread-safe.
     /// </remarks>
-    internal class PipelineProcessor : IDisposable
+    internal sealed class PipelineProcessor : IDisposable
     {
         #region private_members
 

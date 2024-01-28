@@ -257,7 +257,7 @@ namespace System.Management.Automation.Internal
 
         private readonly MshCommandRuntime _commandRuntime;
 
-        internal class ValidateVariableName : ValidateArgumentsAttribute
+        internal sealed class ValidateVariableName : ValidateArgumentsAttribute
         {
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {

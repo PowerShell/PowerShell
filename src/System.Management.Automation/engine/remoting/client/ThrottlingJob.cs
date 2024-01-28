@@ -1261,7 +1261,7 @@ namespace System.Management.Automation
         #endregion Forwarding results to a cmdlet
     }
 
-    internal class ThrottlingJobChildAddedEventArgs : EventArgs
+    internal sealed class ThrottlingJobChildAddedEventArgs : EventArgs
     {
         internal Job AddedChildJob { get; }
 

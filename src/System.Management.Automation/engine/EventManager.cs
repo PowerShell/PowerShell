@@ -2168,7 +2168,7 @@ namespace System.Management.Automation
     /// This class provides a generic wrapper for event arguments.
     /// </summary>
     /// <typeparam name="T">event argument type</typeparam>
-    internal class PSEventArgs<T> : EventArgs
+    internal sealed class PSEventArgs<T> : EventArgs
     {
         /// <summary>
         /// Event arguments.
@@ -2434,7 +2434,7 @@ namespace System.Management.Automation
     /// This is to support the arguments to script blocks that we invoke automatically
     /// as a response to some events.
     /// </summary>
-    internal class EventAction
+    internal sealed class EventAction
     {
         public EventAction(PSEventSubscriber sender, PSEventArgs args)
         {

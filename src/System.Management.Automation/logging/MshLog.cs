@@ -1050,7 +1050,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Log context cache.
     /// </summary>
-    internal class LogContextCache
+    internal sealed class LogContextCache
     {
         internal string User { get; set; } = null;
     }

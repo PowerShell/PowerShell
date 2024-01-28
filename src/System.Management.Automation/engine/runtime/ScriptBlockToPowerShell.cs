@@ -11,7 +11,7 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation
 {
     // A visitor to walk an AST and validate that it can be converted to PowerShell.
-    internal class ScriptBlockToPowerShellChecker : AstVisitor
+    internal sealed class ScriptBlockToPowerShellChecker : AstVisitor
     {
         private readonly HashSet<string> _validVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 

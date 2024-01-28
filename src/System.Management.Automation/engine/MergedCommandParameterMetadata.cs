@@ -9,7 +9,7 @@ using System.Text;
 
 namespace System.Management.Automation
 {
-    internal class MergedCommandParameterMetadata
+    internal sealed class MergedCommandParameterMetadata
     {
         /// <summary>
         /// Replaces any existing metadata in this object with the metadata specified.
@@ -640,7 +640,7 @@ namespace System.Management.Automation
     /// Makes an association between a CompiledCommandParameter and the type
     /// of the parameter binder used to bind the parameter.
     /// </summary>
-    internal class MergedCompiledCommandParameter
+    internal sealed class MergedCompiledCommandParameter
     {
         /// <summary>
         /// Constructs an association between the CompiledCommandParameter and the

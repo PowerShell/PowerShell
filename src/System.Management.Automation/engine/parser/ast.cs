@@ -421,7 +421,7 @@ namespace System.Management.Automation.Language
 
     // A dummy class to hold an extent for open/close curlies so we can step in the debugger.
     // This Ast is never produced by the parser, only from the compiler.
-    internal class SequencePointAst : Ast
+    internal sealed class SequencePointAst : Ast
     {
         public SequencePointAst(IScriptExtent extent)
             : base(extent)
@@ -3639,7 +3639,7 @@ namespace System.Management.Automation.Language
         StaticConstructor,
     }
 
-    internal class CompilerGeneratedMemberFunctionAst : MemberAst, IParameterMetadataProvider
+    internal sealed class CompilerGeneratedMemberFunctionAst : MemberAst, IParameterMetadataProvider
     {
         internal CompilerGeneratedMemberFunctionAst(IScriptExtent extent, TypeDefinitionAst definingType, SpecialMemberFunctionType type)
             : base(extent)

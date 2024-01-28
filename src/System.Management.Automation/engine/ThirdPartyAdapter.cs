@@ -10,7 +10,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Internal wrapper for third-party adapters (PSPropertyAdapter)
     /// </summary>
-    internal class ThirdPartyAdapter : PropertyOnlyAdapter
+    internal sealed class ThirdPartyAdapter : PropertyOnlyAdapter
     {
         internal ThirdPartyAdapter(Type adaptedType, PSPropertyAdapter externalAdapter)
         {

@@ -85,7 +85,7 @@ namespace System.Management.Automation
     ///         a. caching and indexing to boost performance
     ///         b. localization.
     /// </summary>
-    internal class HelpSystem
+    internal sealed class HelpSystem
     {
         /// <summary>
         /// Constructor for HelpSystem.
@@ -800,7 +800,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Help progress info.
     /// </summary>
-    internal class HelpProgressEventArgs : EventArgs
+    internal sealed class HelpProgressEventArgs : EventArgs
     {
         internal bool Completed { get; set; }
 
@@ -812,7 +812,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This is the structure to keep track of HelpProvider Info.
     /// </summary>
-    internal class HelpProviderInfo
+    internal sealed class HelpProviderInfo
     {
         internal string AssemblyName = string.Empty;
         internal string ClassName = string.Empty;

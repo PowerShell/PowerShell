@@ -8,7 +8,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The ProviderCommandHelpInfo class.
     /// </summary>
-    internal class ProviderCommandHelpInfo : HelpInfo
+    internal sealed class ProviderCommandHelpInfo : HelpInfo
     {
         /// <summary>
         /// Help info.

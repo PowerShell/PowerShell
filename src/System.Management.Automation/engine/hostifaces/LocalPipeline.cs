@@ -1145,7 +1145,7 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Helper class that holds the thread used to execute pipelines when CreateThreadOptions.ReuseThread is used.
     /// </summary>
-    internal class PipelineThread : IDisposable
+    internal sealed class PipelineThread : IDisposable
     {
         /// <summary>
         /// Creates the worker thread and waits for it to be ready.
@@ -1263,7 +1263,7 @@ namespace System.Management.Automation.Runspaces
     /// To stop a pipeline, stop is called on each pipeline processor
     /// in the stack.
     /// </summary>
-    internal class PipelineStopper
+    internal sealed class PipelineStopper
     {
         /// <summary>
         /// Stack of current executing pipeline processor.

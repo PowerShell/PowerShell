@@ -1535,7 +1535,7 @@ namespace System.Management.Automation
     /// level for the thread is incremented.
     /// The Dispose method will decrement the thread indent level.
     /// </remarks>
-    internal class ScopeTracer : IDisposable
+    internal sealed class ScopeTracer : IDisposable
     {
         /// <summary>
         /// Constructor that traces the scope name
@@ -1786,7 +1786,7 @@ namespace System.Management.Automation
     [AttributeUsage(
          AttributeTargets.Field,
          AllowMultiple = false)]
-    internal class TraceSourceAttribute : Attribute
+    internal sealed class TraceSourceAttribute : Attribute
     {
         /// <summary>
         /// Constructor for the TraceSourceAttribute class.
@@ -1825,7 +1825,7 @@ namespace System.Management.Automation
     /// the configuration infrastructure which attributes are supported in
     /// the XML app-config file for our trace source.
     /// </summary>
-    internal class MonadTraceSource : TraceSource
+    internal sealed class MonadTraceSource : TraceSource
     {
         internal MonadTraceSource(string name)
             : base(name)

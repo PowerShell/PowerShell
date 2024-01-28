@@ -26,7 +26,7 @@ namespace System.Management.Automation.Remoting
     /// really fragmented. These objects are small. They are just wrapped into a single
     /// fragment.
     /// </summary>
-    internal class FragmentedRemoteObject
+    internal sealed class FragmentedRemoteObject
     {
         private byte[] _blob;
         private int _blobLength;
@@ -430,7 +430,7 @@ namespace System.Management.Automation.Remoting
     /// form of fragments. Every "fragment size" data will hold a blob identifying the fragment.
     /// The blob has "ObjectId","FragmentId","Properties like Start,End","BlobLength"
     /// </summary>
-    internal class SerializedDataStream : Stream, IDisposable
+    internal sealed class SerializedDataStream : Stream, IDisposable
     {
         [TraceSourceAttribute("SerializedDataStream", "SerializedDataStream")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("SerializedDataStream", "SerializedDataStream");
@@ -962,7 +962,7 @@ namespace System.Management.Automation.Remoting
     /// and a FragmentId. The last fragment also has an end of fragment marker. These fragments can be reassembled
     /// on the receiving end by sequencing the fragment ids.
     /// </summary>
-    internal class Fragmentor
+    internal sealed class Fragmentor
     {
         #region Global Constants
         private static readonly UTF8Encoding s_utf8Encoding = new UTF8Encoding();

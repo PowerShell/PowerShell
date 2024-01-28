@@ -1282,7 +1282,7 @@ namespace Microsoft.PowerShell.Commands
     /// Class that implements the IThrottleOperation in turn wrapping the
     /// opening of a runspace asynchronously within it.
     /// </summary>
-    internal class OpenRunspaceOperation : IThrottleOperation, IDisposable
+    internal sealed class OpenRunspaceOperation : IThrottleOperation, IDisposable
     {
         // Member variables to ensure that the ThrottleManager gets StartComplete
         // or StopComplete called only once per Start or Stop operation.

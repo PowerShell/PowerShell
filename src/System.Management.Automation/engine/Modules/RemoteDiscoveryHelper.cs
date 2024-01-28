@@ -618,7 +618,7 @@ namespace System.Management.Automation
             private string _fileData;
         }
 
-        internal class CimModule
+        internal sealed class CimModule
         {
             private readonly CimInstance _baseObject;
 

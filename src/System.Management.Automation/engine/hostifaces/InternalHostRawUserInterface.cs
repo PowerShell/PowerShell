@@ -8,8 +8,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal.Host
 {
-    internal
-    class InternalHostRawUserInterface : PSHostRawUserInterface
+    internal sealed class InternalHostRawUserInterface : PSHostRawUserInterface
     {
         internal
         InternalHostRawUserInterface(PSHostRawUserInterface externalRawUI, InternalHost parentHost)

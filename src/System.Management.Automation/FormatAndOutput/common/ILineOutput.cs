@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// and embedded newline processing
     /// It needs to be provided with two callbacks for line processing.
     /// </summary>
-    internal class WriteLineHelper
+    internal sealed class WriteLineHelper
     {
         #region callbacks
 
@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// TextWriter to generate data for the Monad pipeline in a streaming fashion:
     /// the provided callback will be called each time a line is written.
     /// </summary>
-    internal class StreamingTextWriter : TextWriter
+    internal sealed class StreamingTextWriter : TextWriter
     {
         #region tracer
         [TraceSource("StreamingTextWriter", "StreamingTextWriter")]

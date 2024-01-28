@@ -11,7 +11,7 @@ namespace System.Management.Automation.Remoting
     /// Provides an enumerator for iterating through a multi-dimensional array.
     /// This is needed to encode multi-dimensional arrays in remote host methods.
     /// </summary>
-    internal class Indexer : IEnumerable, IEnumerator
+    internal sealed class Indexer : IEnumerable, IEnumerator
     {
         /// <summary>
         /// Current.

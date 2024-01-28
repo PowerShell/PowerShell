@@ -40,7 +40,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal partial class LightLambda
+    internal sealed partial class LightLambda
     {
         private readonly StrongBox<object>[] _closure;
         private readonly Interpreter _interpreter;

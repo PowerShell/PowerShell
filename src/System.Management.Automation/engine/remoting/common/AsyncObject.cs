@@ -12,7 +12,7 @@ namespace System.Management.Automation.Remoting
     /// until the value is set. After the set all future gets are
     /// unblocked.
     /// </summary>
-    internal class AsyncObject<T> where T : class
+    internal sealed class AsyncObject<T> where T : class
     {
         /// <summary>
         /// Value.

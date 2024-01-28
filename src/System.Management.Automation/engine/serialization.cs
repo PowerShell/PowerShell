@@ -43,7 +43,7 @@ namespace System.Management.Automation
         RemotingOptions = UseDepthFromTypes | NoRootElement | NoNamespace | PreserveSerializationSettingOfOriginal,
     }
 
-    internal class SerializationContext
+    internal sealed class SerializationContext
     {
         private const int DefaultSerializationDepth = 2;
 
@@ -179,7 +179,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This class provides functionality for serializing a PSObject.
     /// </summary>
-    internal class Serializer
+    internal sealed class Serializer
     {
         #region constructor
 
@@ -303,7 +303,7 @@ namespace System.Management.Automation
         RemotingOptions = NoRootElement | NoNamespace,
     }
 
-    internal class DeserializationContext
+    internal sealed class DeserializationContext
     {
         internal DeserializationContext()
             : this(DeserializationOptions.None, null)
@@ -358,7 +358,7 @@ namespace System.Management.Automation
         internal readonly CimClassDeserializationCache<CimClassSerializationId> cimClassSerializationIdCache = new CimClassDeserializationCache<CimClassSerializationId>();
     }
 
-    internal class CimClassDeserializationCache<TKey>
+    internal sealed class CimClassDeserializationCache<TKey>
     {
         private readonly Dictionary<TKey, CimClass> _cimClassIdToClass = new Dictionary<TKey, CimClass>();
 
@@ -401,7 +401,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class CimClassSerializationCache<TKey>
+    internal sealed class CimClassSerializationCache<TKey>
     {
         private readonly HashSet<TKey> _cimClassesHeldByDeserializer = new HashSet<TKey>(EqualityComparer<TKey>.Default);
 
@@ -432,7 +432,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class CimClassSerializationId : Tuple<string, string, string, int>
+    internal sealed class CimClassSerializationId : Tuple<string, string, string, int>
     {
         public CimClassSerializationId(string className, string namespaceName, string computerName, int hashCode)
             : base(className, namespaceName, computerName, hashCode)
@@ -451,7 +451,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This class provides functionality for deserializing a PSObject.
     /// </summary>
-    internal class Deserializer
+    internal sealed class Deserializer
     {
         #region constructor
 
@@ -795,7 +795,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This internal helper class provides methods for serializing mshObject.
     /// </summary>
-    internal class InternalSerializer
+    internal sealed class InternalSerializer
     {
         #region constructor
 
@@ -2924,7 +2924,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This internal class provides methods for de-serializing mshObject.
     /// </summary>
-    internal class InternalDeserializer
+    internal sealed class InternalDeserializer
     {
         #region constructor
 
@@ -3993,33 +3993,39 @@ namespace System.Management.Automation
         /// <summary>
         /// Utility class for ReadDictionary(), supporting ordered or non-ordered Dictionary methods.
         /// </summary>
-        private class PSDictionary
+        private sealed class PSDictionary
         {
             private IDictionary dict;
             private readonly bool _isOrdered;
             private int _keyClashFoundIteration = 0;
 
-            public PSDictionary(bool isOrdered) {
+            public PSDictionary(bool isOrdered)
+            {
                 _isOrdered = isOrdered;
 
                 // By default use a non case-sensitive comparer
-                if (_isOrdered) {
+                if (_isOrdered)
+                {
                     dict = new OrderedDictionary(StringComparer.CurrentCultureIgnoreCase);
-                } else {
+                }
+                else
+                {
                     dict = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
                 }
             }
 
             public object DictionaryObject { get { return dict; } }
 
-            public void Add(object key, object value) {
+            public void Add(object key, object value)
+            {
                 // On the first collision, copy the hash table to one that uses the `key` object's default comparer.
                 if (_keyClashFoundIteration == 0 && dict.Contains(key))
                 {
                     _keyClashFoundIteration++;
                     IDictionary newDict = _isOrdered ? new OrderedDictionary(dict.Count) : new Hashtable(dict.Count);
 
-                    foreach (DictionaryEntry entry in dict) {
+                    foreach (DictionaryEntry entry in dict)
+                    {
                         newDict.Add(entry.Key, entry.Value);
                     }
 
@@ -4036,7 +4042,8 @@ namespace System.Management.Automation
                                             new OrderedDictionary(dict.Count, equalityComparer) :
                                             new Hashtable(dict.Count, equalityComparer);
 
-                    foreach (DictionaryEntry entry in dict) {
+                    foreach (DictionaryEntry entry in dict)
+                    {
                         newDict.Add(entry.Key, entry.Value);
                     }
 
@@ -4959,7 +4966,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Helper class for generating reference id.
     /// </summary>
-    internal class ReferenceIdHandlerForSerializer<T> where T : class
+    internal sealed class ReferenceIdHandlerForSerializer<T> where T : class
     {
         /// <summary>
         /// Get new reference id.
@@ -5025,7 +5032,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class ReferenceIdHandlerForDeserializer<T> where T : class
+    internal sealed class ReferenceIdHandlerForDeserializer<T> where T : class
     {
         private readonly Dictionary<string, T> _refId2object = new Dictionary<string, T>();
 
@@ -5067,7 +5074,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This class contains serialization information about a type.
     /// </summary>
-    internal class TypeSerializationInfo
+    internal sealed class TypeSerializationInfo
     {
         /// <summary>
         /// Constructor.
@@ -5673,7 +5680,7 @@ namespace System.Management.Automation
     /// 3) dictionary keeps only weak references to keys.
     /// </summary>
     /// <typeparam name="T">type of dictionary values</typeparam>
-    internal class WeakReferenceDictionary<T> : IDictionary<object, T>
+    internal sealed class WeakReferenceDictionary<T> : IDictionary<object, T>
     {
         private sealed class WeakReferenceEqualityComparer : IEqualityComparer<WeakReference>
         {

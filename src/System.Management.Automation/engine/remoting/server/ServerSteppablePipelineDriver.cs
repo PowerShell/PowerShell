@@ -58,7 +58,7 @@ namespace System.Management.Automation
     /// This class wraps a RunspacePoolInternal object. It is used to function
     /// as a server side runspacepool.
     /// </summary>
-    internal class ServerSteppablePipelineDriver
+    internal sealed class ServerSteppablePipelineDriver
     {
         #region Private Data
 

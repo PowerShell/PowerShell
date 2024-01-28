@@ -517,7 +517,7 @@ namespace System.Management.Automation.Language
     /// If TypeResolutionState doesn't add anything new compare to it's parent, we represent it as null.
     /// So, when we do lookup, we need to find first non-null TypeResolutionState.
     /// </summary>
-    internal class TypeResolutionState
+    internal sealed class TypeResolutionState
     {
         internal static readonly string[] systemNamespace = { "System" };
         internal static readonly Assembly[] emptyAssemblies = Array.Empty<Assembly>();

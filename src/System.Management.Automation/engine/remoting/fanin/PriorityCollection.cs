@@ -38,7 +38,7 @@ namespace System.Management.Automation.Remoting
     /// send the fragments to various machines thus saving
     /// fragmentation time.
     /// </summary>
-    internal class PrioritySendDataCollection
+    internal sealed class PrioritySendDataCollection
     {
         #region Private Data
 

@@ -77,7 +77,7 @@ namespace System.Management.Automation.Tracing
     ///   Payload: The event's message text formatted with arguments from the caller.
     ///   Example: (19E1025:3:10) [Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational] PowerShell console is starting up
     /// </remarks>
-    internal class SysLogProvider
+    internal sealed class SysLogProvider
     {
         // Ensure the string pointer is not garbage collected.
         private static IntPtr _nativeSyslogIdent = IntPtr.Zero;
@@ -189,7 +189,7 @@ namespace System.Management.Automation.Tracing
                 && IsEnabled(level, keywords);
         }
 
-#region resource manager
+        #region resource manager
 
         private static global::System.Resources.ResourceManager _resourceManager;
         private static global::System.Globalization.CultureInfo _resourceCulture;
@@ -234,7 +234,7 @@ namespace System.Management.Automation.Tracing
             return value;
         }
 
-#endregion resource manager
+        #endregion resource manager
 
         /// <summary>
         /// Gets the EventMessage for a given event.
@@ -242,7 +242,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="sb">The StringBuilder to append.</param>
         /// <param name="eventId">The id of the event to retrieve.</param>
         /// <param name="args">An array of zero or more payload objects.</param>
-        private static void GetEventMessage(StringBuilder sb, PSEventId eventId, params object[] args )
+        private static void GetEventMessage(StringBuilder sb, PSEventId eventId, params object[] args)
         {
             int parameterCount;
             string resourceName = EventResource.GetMessage((int)eventId, out parameterCount);
@@ -253,7 +253,7 @@ namespace System.Management.Automation.Tracing
                 // use a placeholder message that includes the event id.
                 resourceName = EventResource.GetMissingEventMessage(out parameterCount);
                 Diagnostics.Assert(false, sb.ToString());
-                args = new object[] {eventId};
+                args = new object[] { eventId };
             }
 
             string resourceValue = GetResourceString(resourceName);
@@ -267,7 +267,7 @@ namespace System.Management.Automation.Tracing
             }
         }
 
-#region logging
+        #region logging
 
         // maps a LogLevel to an associated SysLogPriority.
         private static readonly NativeMethods.SysLogPriority[] _levels =
@@ -354,7 +354,7 @@ namespace System.Management.Automation.Tracing
             }
         }
 
-#endregion logging
+        #endregion logging
     }
 
     internal enum LogLevel : uint

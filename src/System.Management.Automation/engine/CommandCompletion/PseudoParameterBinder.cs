@@ -908,7 +908,7 @@ namespace System.Management.Automation.Language
 
     #endregion "PseudoBindingInfo"
 
-    internal class PseudoParameterBinder
+    internal sealed class PseudoParameterBinder
     {
         /*
         /// <summary>

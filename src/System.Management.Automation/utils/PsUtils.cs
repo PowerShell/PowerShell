@@ -536,7 +536,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Equality comparer based on Object Identity.
     /// </summary>
-    internal class ReferenceEqualityComparer : IEqualityComparer
+    internal sealed class ReferenceEqualityComparer : IEqualityComparer
     {
         bool IEqualityComparer.Equals(object x, object y)
         {

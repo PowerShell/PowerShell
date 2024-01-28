@@ -12,7 +12,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// The ServerRemoteHostRawUserInterface class.
     /// </summary>
-    internal class ServerRemoteHostRawUserInterface : PSHostRawUserInterface
+    internal sealed class ServerRemoteHostRawUserInterface : PSHostRawUserInterface
     {
         /// <summary>
         /// Remote host user interface.

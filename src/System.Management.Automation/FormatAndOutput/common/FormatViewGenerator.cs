@@ -332,7 +332,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private bool _repeatHeader = false;
 
-        protected class DataBaseInfo
+        protected sealed class DataBaseInfo
         {
             internal TypeInfoDataBase db = null;
             internal ViewDefinition view = null;

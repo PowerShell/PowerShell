@@ -210,7 +210,7 @@ namespace System.Management.Automation.Internal
     /// the pipeline and hence the writer will not
     /// support certain features like Flush().
     /// </remarks>
-    internal class PSDataCollectionWriter<T> : ObjectWriter
+    internal sealed class PSDataCollectionWriter<T> : ObjectWriter
     {
         #region Constructors
 

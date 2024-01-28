@@ -18,7 +18,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The parameter binder for native commands.
     /// </summary>
-    internal class NativeCommandParameterBinder : ParameterBinderBase
+    internal sealed class NativeCommandParameterBinder : ParameterBinderBase
     {
         #region ctor
 
@@ -476,7 +476,7 @@ namespace System.Management.Automation
             afterPrev -= arrayExtent.StartOffset;
             beforeNext -= arrayExtent.StartOffset;
 
-            if (arrayText[afterPrev] == ',') 
+            if (arrayText[afterPrev] == ',')
             {
                 return ", ";
             }
@@ -485,7 +485,7 @@ namespace System.Management.Automation
             {
                 return " ,";
             }
-            
+
             return " , ";
         }
 

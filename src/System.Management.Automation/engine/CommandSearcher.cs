@@ -19,7 +19,7 @@ namespace System.Management.Automation
     /// Used to enumerate the commands on the system that match the specified
     /// command name.
     /// </summary>
-    internal class CommandSearcher : IEnumerable<CommandInfo>, IEnumerator<CommandInfo>
+    internal sealed class CommandSearcher : IEnumerable<CommandInfo>, IEnumerator<CommandInfo>
     {
         /// <summary>
         /// Constructs a command searching enumerator that resolves the location
@@ -951,7 +951,7 @@ namespace System.Management.Automation
 
             if (result != null)
             {
-                var formatString = result switch 
+                var formatString = result switch
                 {
                     FilterInfo => "Filter found: {0}",
                     ConfigurationInfo => "Configuration found: {0}",

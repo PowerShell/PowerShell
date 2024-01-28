@@ -29,7 +29,7 @@ namespace System.Management.Automation.Remoting
     /// However, the design can be easily modified to allow the reuse of the remote session
     /// to reconnect after the connection is closed.
     /// </summary>
-    internal class ClientRemoteSessionDSHandlerStateMachine
+    internal sealed class ClientRemoteSessionDSHandlerStateMachine
     {
         [TraceSourceAttribute("CRSessionFSM", "CRSessionFSM")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionFSM", "CRSessionFSM");
