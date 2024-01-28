@@ -984,7 +984,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
-                    }
+                }
                 else if (expressionAst.Parent is ArrayLiteralAst && expressionAst.Parent.Parent is CommandAst)
                 {
                     commandAst = (CommandAst)expressionAst.Parent.Parent;
@@ -4405,6 +4405,10 @@ namespace System.Management.Automation
             @"(^Microsoft\.PowerShell\.Core\\FileSystem::|^FileSystem::|^)(?:\\\\|//)(?![.|?])([^\\/]+)(?:\\|/)([^\\/]*)$",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        /// <summary>
+        /// Contains the value of an expression + script text of the expression itself.
+        /// Used by the File path completion code to store nested expressions in expandable strings so the variables can be reinserted into the completion text.
+        /// </summary>
         internal sealed class ExpressionValue
         {
             internal string expression;

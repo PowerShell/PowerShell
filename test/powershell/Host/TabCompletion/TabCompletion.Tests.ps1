@@ -1443,6 +1443,19 @@ class InheritedClassTest : System.Attribute
         }
     }
 
+    It 'Should be able to use subexpressions in path completion' {
+        $TempDir = Join-Path $TestDrive "FileCompletionTest\$($PSVersionTable.PSEdition)\Test"
+        $null = New-Item -Path $TempDir -Force -ItemType Directory
+        $InputText = $TempDir.Replace($PSVersionTable.PSEdition, '$($PSVersionTable.PSEdition)')
+        $Res = TabExpansion2 -inputScript $InputText
+        $Res.CompletionMatches[0].CompletionText | Should -BeLike "*$InputText*"
+    }
+
+    It 'Should add quotes and ampersand to command expression with variable' {
+        $Res = TabExpansion2 -inputScript '$PSHOME\pwsh'
+        $Res.CompletionMatches[0].CompletionText | Should -BeLike "& `"`$PSHOME*`""
+    }
+
     It 'Should correct slashes in UNC path completion' -Skip:(!$IsWindows) {
         $Res = TabExpansion2 -inputScript 'Get-ChildItem //localhost/c$/Windows'
         $Res.CompletionMatches[0].CompletionText | Should -Be "\\localhost\c$\Windows"
