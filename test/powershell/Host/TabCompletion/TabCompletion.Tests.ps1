@@ -1246,7 +1246,7 @@ class InheritedClassTest : System.Attribute
                 @{ inputStr = "bbbbbbb"; name = "bbbbbbb}"; localExpected = "& '.${separator}bbbbbbb}'"; oneSubExpected = "& '..${separator}bbbbbbb}'"; twoSubExpected = "& '..${separator}..${separator}bbbbbbb}'" }
                 @{ inputStr = "bbbbbb"; name = "bbbbbb("; localExpected = "& '.${separator}bbbbbb('"; oneSubExpected = "& '..${separator}bbbbbb('"; twoSubExpected = "& '..${separator}..${separator}bbbbbb('" }
                 @{ inputStr = "bbbbb"; name = "bbbbb)"; localExpected = "& '.${separator}bbbbb)'"; oneSubExpected = "& '..${separator}bbbbb)'"; twoSubExpected = "& '..${separator}..${separator}bbbbb)'" }
-                @{ inputStr = "bbbb"; name = "bbbb$"; localExpected = "& '.${separator}bbbb$'"; oneSubExpected = "& '..${separator}bbbb$'"; twoSubExpected = "& '..${separator}..${separator}bbbb$'" }
+                @{ inputStr = "bbbb"; name = "bbbb$"; localExpected = ".${separator}bbbb$"; oneSubExpected = "..${separator}bbbb$"; twoSubExpected = "..${separator}..${separator}bbbb$" }
                 @{ inputStr = "bbb"; name = "bbb'"; localExpected = "& '.${separator}bbb'''"; oneSubExpected = "& '..${separator}bbb'''"; twoSubExpected = "& '..${separator}..${separator}bbb'''" }
                 @{ inputStr = "bb"; name = "bb,"; localExpected = "& '.${separator}bb,'"; oneSubExpected = "& '..${separator}bb,'"; twoSubExpected = "& '..${separator}..${separator}bb,'" }
                 @{ inputStr = "b"; name = "b;"; localExpected = "& '.${separator}b;'"; oneSubExpected = "& '..${separator}b;'"; twoSubExpected = "& '..${separator}..${separator}b;'" }
@@ -1390,7 +1390,7 @@ class InheritedClassTest : System.Attribute
 
             $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
             $res.CompletionMatches | Should -HaveCount 1
-            $expectedPath = Join-Path $PSScriptRoot -ChildPath BugFix.Tests.ps1
+            $expectedPath = Join-Path '$PSScriptRoot' -ChildPath BugFix.Tests.ps1
             $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
         }
 
@@ -1415,9 +1415,9 @@ class InheritedClassTest : System.Attribute
             @{LiteralPath = 'BacktickTest[';   BacktickSingle = 1; BacktickDouble = 2;  LiteralBacktickSingle = 0; LiteralBacktickDouble = 0}
             @{LiteralPath = 'BacktickTest`[';  BacktickSingle = 3; BacktickDouble = 6;  LiteralBacktickSingle = 1; LiteralBacktickDouble = 2}
             @{LiteralPath = 'BacktickTest``['; BacktickSingle = 5; BacktickDouble = 10; LiteralBacktickSingle = 2; LiteralBacktickDouble = 4}
-            @{LiteralPath = 'BacktickTest$';   BacktickSingle = 0; BacktickDouble = 1;  LiteralBacktickSingle = 0; LiteralBacktickDouble = 1}
-            @{LiteralPath = 'BacktickTest`$';  BacktickSingle = 2; BacktickDouble = 3;  LiteralBacktickSingle = 1; LiteralBacktickDouble = 3}
-            @{LiteralPath = 'BacktickTest``$'; BacktickSingle = 4; BacktickDouble = 7;  LiteralBacktickSingle = 2; LiteralBacktickDouble = 5}
+            @{LiteralPath = 'BacktickTest$A';   BacktickSingle = 0; BacktickDouble = 1;  LiteralBacktickSingle = 0; LiteralBacktickDouble = 1}
+            @{LiteralPath = 'BacktickTest`$A';  BacktickSingle = 2; BacktickDouble = 3;  LiteralBacktickSingle = 1; LiteralBacktickDouble = 3}
+            @{LiteralPath = 'BacktickTest``$A'; BacktickSingle = 4; BacktickDouble = 7;  LiteralBacktickSingle = 2; LiteralBacktickDouble = 5}
         ) {
             param($LiteralPath, $BacktickSingle, $BacktickDouble, $LiteralBacktickSingle, $LiteralBacktickDouble)
             $NewPath = Join-Path -Path $TestDrive -ChildPath $LiteralPath
@@ -1445,7 +1445,7 @@ class InheritedClassTest : System.Attribute
 
     It 'Should correct slashes in UNC path completion' -Skip:(!$IsWindows) {
         $Res = TabExpansion2 -inputScript 'Get-ChildItem //localhost/c$/Windows'
-        $Res.CompletionMatches[0].CompletionText | Should -Be "'\\localhost\c$\Windows'"
+        $Res.CompletionMatches[0].CompletionText | Should -Be "\\localhost\c$\Windows"
     }
 
     It 'Should keep custom drive names when completing file paths' {
@@ -1582,12 +1582,9 @@ class InheritedClassTest : System.Attribute
                 @{ inputStr = '$global:max'; expected = '$global:MaximumHistoryCount'; setup = $null }
                 @{ inputStr = '$PSMod'; expected = '$PSModuleAutoLoadingPreference'; setup = $null }
                 ## tab completion for variable in path
-                ## if $PSHOME contains a space tabcompletion adds ' around the path
-                @{ inputStr = 'cd $PSHOME\Modu'; expected = if($PSHOME.Contains(' ')) { "'$(Join-Path $PSHOME 'Modules')'" } else { Join-Path $PSHOME 'Modules' }; setup = $null }
-                @{ inputStr = 'cd "$PSHOME\Modu"'; expected = "`"$(Join-Path $PSHOME 'Modules')`""; setup = $null }
-                @{ inputStr = '$PSHOME\System.Management.Au'; expected = if($PSHOME.Contains(' ')) { "`& '$(Join-Path $PSHOME 'System.Management.Automation.dll')'" }  else { Join-Path $PSHOME 'System.Management.Automation.dll'}; Setup = $null }
-                @{ inputStr = '"$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
-                @{ inputStr = '& "$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
+                @{ inputStr = 'cd "$PSHOME\Modu"'; expected = "`"$(Join-Path '$PSHOME' 'Modules')`""; setup = $null }
+                @{ inputStr = '"$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path '$PSHOME' 'System.Management.Automation.dll')`""; setup = $null }
+                @{ inputStr = '& "$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path '$PSHOME' 'System.Management.Automation.dll')`""; setup = $null }
                 ## tab completion AST-based tests
                 @{ inputStr = 'get-date | ForEach-Object { $PSItem.h'; expected = 'Hour'; setup = $null }
                 @{ inputStr = '$a=gps;$a[0].h'; expected = 'Handle'; setup = $null }
@@ -1615,7 +1612,7 @@ class InheritedClassTest : System.Attribute
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
             $beforeTab = "\\localhost\ADMIN$\boo"
-            $afterTab = "& '\\localhost\ADMIN$\Boot'"
+            $afterTab = "\\localhost\ADMIN$\Boot"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab

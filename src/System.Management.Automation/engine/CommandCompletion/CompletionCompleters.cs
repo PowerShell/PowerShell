@@ -589,7 +589,7 @@ namespace System.Management.Automation
             if (result.Count == 0)
             {
                 result = pseudoBinding.CommandName.Equals("Set-Location", StringComparison.OrdinalIgnoreCase)
-                             ? new List<CompletionResult>(CompleteFilename(context, containerOnly: true, extension: null))
+                             ? new List<CompletionResult>(CompleteFilename(context, containerOnly: true))
                              : new List<CompletionResult>(CompleteFilename(context));
             }
 
@@ -866,7 +866,7 @@ namespace System.Management.Automation
 
         #region Command Arguments
 
-        internal static List<CompletionResult> CompleteCommandArgument(CompletionContext context)
+        internal static List<CompletionResult> CompleteCommandArgument(CompletionContext context, List<ExpressionValue> nestedExpressions = null)
         {
             CommandAst commandAst = null;
             List<CompletionResult> result = new List<CompletionResult>();
@@ -924,7 +924,8 @@ namespace System.Management.Automation
 
                             if (secondToLastStringConstantAst != null || secondToLastExpandableStringAst != null)
                             {
-                                var fullPath = ConcatenateStringPathArguments(secondToLastAst, partialPathAst.Value, context);
+                                var fullPath = ConcatenateStringPathArguments(secondToLastAst, partialPathAst.Value, context, out List<ExpressionValue> tempNestedExpressions);
+                                nestedExpressions ??= tempNestedExpressions;
                                 expressionAst = secondToLastStringConstantAst != null
                                                     ? (ExpressionAst)secondToLastStringConstantAst
                                                     : (ExpressionAst)secondToLastExpandableStringAst;
@@ -938,9 +939,10 @@ namespace System.Management.Automation
                             {
                                 // Handle cases like: dir -Path .\cd, 'a b'\new<tab>
                                 var lastArrayElement = secondToLastArrayAst.Elements.LastOrDefault();
-                                var fullPath = ConcatenateStringPathArguments(lastArrayElement, partialPathAst.Value, context);
+                                var fullPath = ConcatenateStringPathArguments(lastArrayElement, partialPathAst.Value, context, out List<ExpressionValue> tempNestedExpressions);
                                 if (fullPath != null)
                                 {
+                                    nestedExpressions ??= tempNestedExpressions;
                                     expressionAst = secondToLastArrayAst;
 
                                     context.ReplacementIndex = ((InternalScriptPosition)lastArrayElement.Extent.StartScriptPosition).Offset;
@@ -951,9 +953,10 @@ namespace System.Management.Automation
                             else if (secondToLastParamAst != null)
                             {
                                 // Handle cases like: dir -Path: .\cd, 'a b'\new<tab> || dir -Path: 'a b'\new<tab>
-                                var fullPath = ConcatenateStringPathArguments(secondToLastParamAst.Argument, partialPathAst.Value, context);
+                                var fullPath = ConcatenateStringPathArguments(secondToLastParamAst.Argument, partialPathAst.Value, context, out List<ExpressionValue> tempNestedExpressions);
                                 if (fullPath != null)
                                 {
+                                    nestedExpressions ??= tempNestedExpressions;
                                     expressionAst = secondToLastParamAst.Argument;
 
                                     context.ReplacementIndex = ((InternalScriptPosition)secondToLastParamAst.Argument.Extent.StartScriptPosition).Offset;
@@ -966,9 +969,10 @@ namespace System.Management.Automation
                                     if (arrayArgAst != null)
                                     {
                                         var lastArrayElement = arrayArgAst.Elements.LastOrDefault();
-                                        fullPath = ConcatenateStringPathArguments(lastArrayElement, partialPathAst.Value, context);
+                                        fullPath = ConcatenateStringPathArguments(lastArrayElement, partialPathAst.Value, context, out List<ExpressionValue> tempNestedExpressions2);
                                         if (fullPath != null)
                                         {
+                                            nestedExpressions ??= tempNestedExpressions2;
                                             expressionAst = arrayArgAst;
 
                                             context.ReplacementIndex = ((InternalScriptPosition)lastArrayElement.Extent.StartScriptPosition).Offset;
@@ -980,7 +984,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
-                }
+                    }
                 else if (expressionAst.Parent is ArrayLiteralAst && expressionAst.Parent.Parent is CommandAst)
                 {
                     commandAst = (CommandAst)expressionAst.Parent.Parent;
@@ -1094,10 +1098,10 @@ namespace System.Management.Automation
                         switch (pseudoBinding.InfoType)
                         {
                             case PseudoBindingInfoType.PseudoBindingSucceed:
-                                result = GetArgumentCompletionResultsWithSuccessfulPseudoBinding(context, argLocation, commandAst);
+                                result = GetArgumentCompletionResultsWithSuccessfulPseudoBinding(context, argLocation, commandAst, nestedExpressions);
                                 break;
                             case PseudoBindingInfoType.PseudoBindingFail:
-                                result = GetArgumentCompletionResultsWithFailedPseudoBinding(context, argLocation, commandAst);
+                                result = GetArgumentCompletionResultsWithFailedPseudoBinding(context, argLocation, commandAst, nestedExpressions);
                                 break;
                         }
 
@@ -1142,7 +1146,8 @@ namespace System.Management.Automation
                             pseudoBinding.UnboundParameters,
                             pseudoBinding.DefaultParameterSetFlag,
                             uint.MaxValue,
-                            0);
+                            0,
+                            nestedExpressions: nestedExpressions);
                     }
                     else
                     {
@@ -1154,7 +1159,7 @@ namespace System.Management.Automation
                             {
                                 if (pattern.IsMatch(param.Parameter.Name))
                                 {
-                                    ProcessParameter(pseudoBinding.CommandName, commandAst, context, result, param);
+                                    ProcessParameter(pseudoBinding.CommandName, commandAst, context, result, param, nestedExpressions: nestedExpressions);
                                     break;
                                 }
 
@@ -1164,7 +1169,7 @@ namespace System.Management.Automation
                                     if (pattern.IsMatch(alias))
                                     {
                                         isAliasMatch = true;
-                                        ProcessParameter(pseudoBinding.CommandName, commandAst, context, result, param);
+                                        ProcessParameter(pseudoBinding.CommandName, commandAst, context, result, param, nestedExpressions: nestedExpressions);
                                         break;
                                     }
                                 }
@@ -1208,7 +1213,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    var fileCompletionResults = new List<CompletionResult>(CompleteFilename(context));
+                    var fileCompletionResults = new List<CompletionResult>(CompleteFilename(context, nestedExpressions));
                     if (tryCmdletCompletion)
                     {
                         // It's actually command name completion, other than argument completion
@@ -1317,7 +1322,7 @@ namespace System.Management.Automation
 
                         try
                         {
-                            return new List<CompletionResult>(CompleteFilename(context));
+                            return new List<CompletionResult>(CompleteFilename(context, nestedExpressions));
                         }
                         finally
                         {
@@ -1357,7 +1362,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    result = new List<CompletionResult>(CompleteFilename(context));
+                    result = new List<CompletionResult>(CompleteFilename(context, nestedExpressions));
                 }
                 finally
                 {
@@ -1377,40 +1382,37 @@ namespace System.Management.Automation
             return result;
         }
 
-        internal static string ConcatenateStringPathArguments(CommandElementAst stringAst, string partialPath, CompletionContext completionContext)
+        internal static string ConcatenateStringPathArguments(
+            CommandElementAst stringAst,
+            string partialPath,
+            CompletionContext completionContext,
+            out List<ExpressionValue> nestedExpressions)
         {
-            var constantPathAst = stringAst as StringConstantExpressionAst;
-            if (constantPathAst != null)
+            if (stringAst is StringConstantExpressionAst constantPathAst)
             {
-                string quote = string.Empty;
-                switch (constantPathAst.StringConstantType)
+                nestedExpressions = null;
+                string quote = constantPathAst.StringConstantType switch
                 {
-                    case StringConstantType.SingleQuoted:
-                        quote = "'";
-                        break;
-                    case StringConstantType.DoubleQuoted:
-                        quote = "\"";
-                        break;
-                    default:
-                        break;
-                }
+                    StringConstantType.SingleQuoted => "'",
+                    StringConstantType.DoubleQuoted => "\"",
+                    _ => string.Empty,
+                };
 
                 return quote + constantPathAst.Value + partialPath + quote;
             }
             else
             {
-                var expandablePathAst = stringAst as ExpandableStringExpressionAst;
-                string fullPath = null;
-                if (expandablePathAst != null &&
-                    IsPathSafelyExpandable(expandableStringAst: expandablePathAst,
+                if (stringAst is ExpandableStringExpressionAst expandablePathAst &&
+                    IsPathSafelyExpandable(expandableString: expandablePathAst,
                                            extraText: partialPath,
                                            executionContext: completionContext.ExecutionContext,
-                                           expandedString: out fullPath))
+                                           expandedString: out string fullPath, out nestedExpressions))
                 {
                     return fullPath;
                 }
             }
 
+            nestedExpressions = null;
             return null;
         }
 
@@ -1420,7 +1422,8 @@ namespace System.Management.Automation
         private static List<CompletionResult> GetArgumentCompletionResultsWithFailedPseudoBinding(
             CompletionContext context,
             ArgumentLocation argLocation,
-            CommandAst commandAst)
+            CommandAst commandAst,
+            List<ExpressionValue> nestedExpressions)
         {
             List<CompletionResult> result = new List<CompletionResult>();
 
@@ -1435,7 +1438,8 @@ namespace System.Management.Automation
                     bindingInfo.UnboundParameters,
                     bindingInfo.DefaultParameterSetFlag,
                     uint.MaxValue,
-                    argLocation.Position);
+                    argLocation.Position,
+                    nestedExpressions: nestedExpressions);
             }
             else
             {
@@ -1445,7 +1449,7 @@ namespace System.Management.Automation
                 {
                     if (pattern.IsMatch(param.Parameter.Name))
                     {
-                        ProcessParameter(bindingInfo.CommandName, commandAst, context, result, param);
+                        ProcessParameter(bindingInfo.CommandName, commandAst, context, result, param, nestedExpressions: nestedExpressions);
                         break;
                     }
 
@@ -1455,7 +1459,7 @@ namespace System.Management.Automation
                         if (pattern.IsMatch(alias))
                         {
                             isAliasMatch = true;
-                            ProcessParameter(bindingInfo.CommandName, commandAst, context, result, param);
+                            ProcessParameter(bindingInfo.CommandName, commandAst, context, result, param, nestedExpressions: nestedExpressions);
                             break;
                         }
                     }
@@ -1474,7 +1478,8 @@ namespace System.Management.Automation
         private static List<CompletionResult> GetArgumentCompletionResultsWithSuccessfulPseudoBinding(
             CompletionContext context,
             ArgumentLocation argLocation,
-            CommandAst commandAst)
+            CommandAst commandAst,
+            List<ExpressionValue> nestedExpressions)
         {
             PseudoBindingInfo bindingInfo = context.PseudoBindingInfo;
             Diagnostics.Assert(bindingInfo.InfoType.Equals(PseudoBindingInfoType.PseudoBindingSucceed), "Caller needs to make sure the pseudo binding was successful");
@@ -1527,7 +1532,7 @@ namespace System.Management.Automation
                             foreach (string param in parameterNames)
                             {
                                 MergedCompiledCommandParameter parameter = bindingInfo.BoundParameters[param];
-                                ProcessParameter(bindingInfo.CommandName, commandAst, context, result, parameter, bindingInfo.BoundArguments);
+                                ProcessParameter(bindingInfo.CommandName, commandAst, context, result, parameter, bindingInfo.BoundArguments, nestedExpressions);
                             }
 
                             return result;
@@ -1549,7 +1554,8 @@ namespace System.Management.Automation
                         bindingInfo.DefaultParameterSetFlag,
                         bindingInfo.ValidParameterSetsFlags,
                         argLocation.Position,
-                        bindingInfo.BoundArguments);
+                        bindingInfo.BoundArguments,
+                        nestedExpressions);
 
                     return result;
                 }
@@ -1584,7 +1590,7 @@ namespace System.Management.Automation
                     foreach (string param in parameterNames)
                     {
                         MergedCompiledCommandParameter parameter = bindingInfo.BoundParameters[param];
-                        ProcessParameter(bindingInfo.CommandName, commandAst, context, result, parameter, bindingInfo.BoundArguments);
+                        ProcessParameter(bindingInfo.CommandName, commandAst, context, result, parameter, bindingInfo.BoundArguments, nestedExpressions);
                     }
                 }
             }
@@ -1604,7 +1610,8 @@ namespace System.Management.Automation
             uint defaultParameterSetFlag,
             uint validParameterSetFlags,
             int position,
-            Dictionary<string, AstParameterArgumentPair> boundArguments = null)
+            Dictionary<string, AstParameterArgumentPair> boundArguments = null,
+            List<ExpressionValue> nestedExpressions = null)
         {
             bool isProcessedAsPositional = false;
             bool isDefaultParameterSetValid = defaultParameterSetFlag != 0 &&
@@ -1662,7 +1669,7 @@ namespace System.Management.Automation
                 {
                     if (bestMatchSet.ParameterSetFlag == defaultParameterSetFlag)
                     {
-                        ProcessParameter(commandName, commandAst, context, result, bestMatchParam, boundArguments);
+                        ProcessParameter(commandName, commandAst, context, result, bestMatchParam, boundArguments, nestedExpressions);
                         isProcessedAsPositional = result.Count > 0;
                     }
                     else
@@ -1673,14 +1680,14 @@ namespace System.Management.Automation
                 else
                 {
                     isProcessedAsPositional = true;
-                    ProcessParameter(commandName, commandAst, context, result, bestMatchParam, boundArguments);
+                    ProcessParameter(commandName, commandAst, context, result, bestMatchParam, boundArguments, nestedExpressions);
                 }
             }
 
             if (!isProcessedAsPositional && positionalParam != null)
             {
                 isProcessedAsPositional = true;
-                ProcessParameter(commandName, commandAst, context, result, positionalParam, boundArguments);
+                ProcessParameter(commandName, commandAst, context, result, positionalParam, boundArguments, nestedExpressions);
             }
 
             if (!isProcessedAsPositional)
@@ -1697,7 +1704,7 @@ namespace System.Management.Automation
                         // in the second pass, we check the remaining argument ones
                         if (parameterSetData.ValueFromRemainingArguments)
                         {
-                            ProcessParameter(commandName, commandAst, context, result, param, boundArguments);
+                            ProcessParameter(commandName, commandAst, context, result, param, boundArguments, nestedExpressions);
                             break;
                         }
                     }
@@ -1725,7 +1732,8 @@ namespace System.Management.Automation
             CompletionContext context,
             List<CompletionResult> result,
             MergedCompiledCommandParameter parameter,
-            Dictionary<string, AstParameterArgumentPair> boundArguments = null)
+            Dictionary<string, AstParameterArgumentPair> boundArguments = null,
+            List<ExpressionValue> nestedExpressions = null)
         {
             CompletionResult fullMatch = null;
             Type parameterType = GetEffectiveParameterType(parameter.Parameter.Type);
@@ -1868,7 +1876,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            NativeCommandArgumentCompletion(commandName, parameter.Parameter, result, commandAst, context, boundArguments);
+            NativeCommandArgumentCompletion(commandName, parameter.Parameter, result, commandAst, context, boundArguments, nestedExpressions);
         }
 
         private static IEnumerable<PSTypeName> NativeCommandArgumentCompletion_InferTypesOfArgument(
@@ -2056,7 +2064,8 @@ namespace System.Management.Automation
             List<CompletionResult> result,
             CommandAst commandAst,
             CompletionContext context,
-            Dictionary<string, AstParameterArgumentPair> boundArguments = null)
+            Dictionary<string, AstParameterArgumentPair> boundArguments = null,
+            List<ExpressionValue> nestedExpressions = null)
         {
             string parameterName = parameter.Name;
 
@@ -2336,13 +2345,13 @@ namespace System.Management.Automation
                 case "Push-Location":
                 case "Set-Location":
                     {
-                        NativeCompletionSetLocationCommand(context, parameterName, result);
+                        NativeCompletionSetLocationCommand(context, parameterName, result, nestedExpressions);
                         break;
                     }
                 case "Move-Item":
                 case "Copy-Item":
                     {
-                        NativeCompletionCopyMoveItemCommand(context, parameterName, result);
+                        NativeCompletionCopyMoveItemCommand(context, parameterName, result, nestedExpressions);
                         break;
                     }
                 case "New-Item":
@@ -2441,7 +2450,7 @@ namespace System.Management.Automation
 
                 default:
                     {
-                        NativeCompletionPathArgument(context, parameterName, result);
+                        NativeCompletionPathArgument(context, parameterName, result, nestedExpressions);
                         break;
                     }
             }
@@ -3039,7 +3048,7 @@ namespace System.Management.Automation
                     // ps1 files and directories. We only complete the files with .ps1 extension for Get-Command, because the -Syntax
                     // may only works on files with .ps1 extension
                     var ps1Extension = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { StringLiterals.PowerShellScriptFileExtension };
-                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, /* containerOnly: */ false, ps1Extension));
+                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, extension: ps1Extension));
                     if (moduleFilesResults.Count > 0)
                         result.AddRange(moduleFilesResults);
                 }
@@ -3100,7 +3109,7 @@ namespace System.Management.Automation
 
                 // ps1 files and directories
                 var ps1Extension = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { StringLiterals.PowerShellScriptFileExtension };
-                var fileResults = new List<CompletionResult>(CompleteFilename(context, /* containerOnly: */ false, ps1Extension));
+                var fileResults = new List<CompletionResult>(CompleteFilename(context, extension: ps1Extension));
                 if (fileResults.Count > 0)
                     result.AddRange(fileResults);
 
@@ -3358,7 +3367,7 @@ namespace System.Management.Automation
                                 StringLiterals.PowerShellILExecutableExtension,
                                 StringLiterals.PowerShellCmdletizationFileExtension
                             };
-                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, containerOnly: false, moduleExtensions));
+                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, extension: moduleExtensions));
                     if (moduleFilesResults.Count > 0)
                         result.AddRange(moduleFilesResults);
 
@@ -3381,7 +3390,7 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 var moduleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".dll" };
-                var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, /* containerOnly: */ false, moduleExtensions));
+                var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, extension: moduleExtensions));
                 if (moduleFilesResults.Count > 0)
                     result.AddRange(moduleFilesResults);
 
@@ -3821,7 +3830,7 @@ namespace System.Management.Automation
             result.Add(CompletionResult.Null);
         }
 
-        private static void NativeCompletionSetLocationCommand(CompletionContext context, string paramName, List<CompletionResult> result)
+        private static void NativeCompletionSetLocationCommand(CompletionContext context, string paramName, List<CompletionResult> result, List<ExpressionValue> nestedExpressions)
         {
             if (string.IsNullOrEmpty(paramName) ||
                 (!paramName.Equals("Path", StringComparison.OrdinalIgnoreCase) &&
@@ -3841,7 +3850,7 @@ namespace System.Management.Automation
 
             try
             {
-                var fileNameResults = CompleteFilename(context, containerOnly: true, extension: null);
+                var fileNameResults = CompleteFilename(context, nestedExpressions, containerOnly: true);
                 if (fileNameResults != null)
                     result.AddRange(fileNameResults);
             }
@@ -3922,7 +3931,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static void NativeCompletionCopyMoveItemCommand(CompletionContext context, string paramName, List<CompletionResult> result)
+        private static void NativeCompletionCopyMoveItemCommand(CompletionContext context, string paramName, List<CompletionResult> result, List<ExpressionValue> nestedExpressions)
         {
             if (string.IsNullOrEmpty(paramName))
             {
@@ -3931,7 +3940,7 @@ namespace System.Management.Automation
 
             if (paramName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase) || paramName.Equals("Path", StringComparison.OrdinalIgnoreCase))
             {
-                NativeCompletionPathArgument(context, paramName, result);
+                NativeCompletionPathArgument(context, paramName, result, nestedExpressions);
             }
             else if (paramName.Equals("Destination", StringComparison.OrdinalIgnoreCase))
             {
@@ -3943,7 +3952,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    var fileNameResults = CompleteFilename(context);
+                    var fileNameResults = CompleteFilename(context, nestedExpressions);
                     if (fileNameResults != null)
                         result.AddRange(fileNameResults);
                 }
@@ -3957,7 +3966,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static void NativeCompletionPathArgument(CompletionContext context, string paramName, List<CompletionResult> result)
+        private static void NativeCompletionPathArgument(CompletionContext context, string paramName, List<CompletionResult> result, List<ExpressionValue> nestedExpressions)
         {
             if (string.IsNullOrEmpty(paramName) ||
                 (!paramName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase) &&
@@ -3978,7 +3987,7 @@ namespace System.Management.Automation
 
             try
             {
-                var fileNameResults = CompleteFilename(context);
+                var fileNameResults = CompleteFilename(context, nestedExpressions);
                 if (fileNameResults != null)
                     result.AddRange(fileNameResults);
             }
@@ -4390,6 +4399,18 @@ namespace System.Management.Automation
 
         #region Filenames
 
+        // Matches file shares with and without the provider name and with either slash direction.
+        // Avoids matching Windows device paths like \\.\CDROM0 and \\?\Volume{b8f3fc1c-5cd6-4553-91e2-d6814c4cd375}\
+        private static readonly Regex s_shareMatch = new(
+            @"(^Microsoft\.PowerShell\.Core\\FileSystem::|^FileSystem::|^)(?:\\\\|//)(?![.|?])([^\\/]+)(?:\\|/)([^\\/]*)$",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        internal sealed class ExpressionValue
+        {
+            internal string expression;
+            internal string value;
+        }
+
         /// <summary>
         /// </summary>
         /// <param name="fileName"></param>
@@ -4409,44 +4430,60 @@ namespace System.Management.Automation
             return CompleteFilename(new CompletionContext { WordToComplete = fileName, Helper = helper, ExecutionContext = executionContext });
         }
 
-        internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context)
-        {
-            return CompleteFilename(context, containerOnly: false, extension: null);
-        }
-
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context, bool containerOnly, HashSet<string> extension)
+        internal static IEnumerable<CompletionResult> CompleteFilename(
+            CompletionContext context,
+            List<ExpressionValue> nestedExpressions = null,
+            bool asCommand = false,
+            bool containerOnly = false,
+            HashSet<string> extension = null
+            )
         {
             var wordToComplete = context.WordToComplete;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            StringConstantType stringType = quote switch
+            {
+                "" => StringConstantType.BareWord,
+                "\"" => StringConstantType.DoubleQuoted,
+                _ => StringConstantType.SingleQuoted,
+            };
+            Match shareMatch = s_shareMatch.Match(wordToComplete);
 
-            // First, try to match \\server\share
-            // support both / and \ when entering UNC paths for typing convenience (#17111)
-            var shareMatch = Regex.Match(wordToComplete, @"^(?:\\\\|//)([^\\/]+)(?:\\|/)([^\\/]*)$");
             if (shareMatch.Success)
             {
-                // Only match share names, no filenames.
-                var server = shareMatch.Groups[1].Value;
-                var sharePattern = WildcardPattern.Get(shareMatch.Groups[2].Value + "*", WildcardOptions.IgnoreCase);
-                var ignoreHidden = context.GetOption("IgnoreHiddenShares", @default: false);
-                var shares = GetFileShares(server, ignoreHidden);
+                bool includeProvider = !string.IsNullOrEmpty(shareMatch.Groups[1].Value);
+                string server = shareMatch.Groups[2].Value;
+                var sharePattern = WildcardPattern.Get(shareMatch.Groups[3].Value + "*", WildcardOptions.IgnoreCase);
+                bool ignoreHidden = context.GetOption("IgnoreHiddenShares", @default: false);
+                List<string> shares = GetFileShares(server, ignoreHidden);
                 if (shares.Count == 0)
                 {
                     return CommandCompletion.EmptyCompletionResult;
                 }
 
+                string baseTooltip = $"\\\\{server}\\";
+                string baseCompletionString = RebuildPathWithVars(
+                    path: includeProvider ? string.Concat(shareMatch.Groups[1].Value, baseTooltip) : baseTooltip,
+                    homePath: null,
+                    stringType,
+                    nestedExpressions,
+                    literalPath: true,
+                    out bool quotesAreNeeded);
+                bool containsNestedExpressions = nestedExpressions is not null && nestedExpressions.Count > 0;
                 var shareResults = new List<CompletionResult>(shares.Count);
                 foreach (var share in shares)
                 {
                     if (sharePattern.IsMatch(share))
                     {
-                        string shareFullPath = "\\\\" + server + "\\" + share;
-                        if (quote != string.Empty)
-                        {
-                            shareFullPath = quote + shareFullPath + quote;
-                        }
-
-                        shareResults.Add(new CompletionResult(shareFullPath, shareFullPath, CompletionResultType.ProviderContainer, shareFullPath));
+                        string toolTip = string.Concat(baseTooltip, share);
+                        string completionText = NewPathCompletionText(
+                            baseCompletionString,
+                            share,
+                            stringType,
+                            containsNestedExpressions,
+                            quotesAreNeeded,
+                            asCommand);
+                        shareResults.Add(new CompletionResult(completionText, toolTip, CompletionResultType.ProviderContainer, toolTip));
                     }
                 }
 
@@ -4505,22 +4542,6 @@ namespace System.Management.Automation
                 }
             }
 
-            StringConstantType stringType;
-            switch (quote)
-            {
-                case "":
-                    stringType = StringConstantType.BareWord;
-                    break;
-
-                case "\"":
-                    stringType = StringConstantType.DoubleQuoted;
-                    break;
-
-                default:
-                    stringType = StringConstantType.SingleQuoted;
-                    break;
-            }
-
             var useLiteralPath = context.GetOption("LiteralPaths", @default: false);
             if (useLiteralPath)
             {
@@ -4574,7 +4595,9 @@ namespace System.Management.Automation
                         useLiteralPath,
                         inputUsedHomeChar,
                         providerPrefix,
-                        stringType);
+                        stringType,
+                        asCommand,
+                        nestedExpressions);
                     break;
 
                 default:
@@ -4588,7 +4611,8 @@ namespace System.Management.Automation
                         useLiteralPath,
                         inputUsedHomeChar,
                         providerPrefix,
-                        stringType);
+                        stringType,
+                        nestedExpressions);
                     break;
             }
 
@@ -4609,6 +4633,8 @@ namespace System.Management.Automation
         /// <param name="inputUsedHome"></param>
         /// <param name="providerPrefix"></param>
         /// <param name="stringType"></param>
+        /// <param name="asCommand"></param>
+        /// <param name="nestedExpressions"></param>
         /// <returns></returns>
         private static List<CompletionResult> GetFileSystemProviderResults(
             CompletionContext context,
@@ -4621,7 +4647,9 @@ namespace System.Management.Automation
             bool literalPaths,
             bool inputUsedHome,
             string providerPrefix,
-            StringConstantType stringType)
+            StringConstantType stringType,
+            bool asCommand,
+            List<ExpressionValue> nestedExpressions)
         {
 #if DEBUG
             Diagnostics.Assert(provider.Name.Equals(FileSystemProvider.ProviderName), "Provider should be filesystem provider.");
@@ -4629,6 +4657,7 @@ namespace System.Management.Automation
             var enumerationOptions = _enumerationOptions;
             var results = new List<CompletionResult>();
             string homePath = inputUsedHome && !string.IsNullOrEmpty(provider.Home) ? provider.Home : null;
+            bool containsNestedExpressions = nestedExpressions is not null && nestedExpressions.Count > 0;
 
             WildcardPattern wildcardFilter;
             if (WildcardPattern.ContainsRangeWildcard(filterText))
@@ -4668,7 +4697,7 @@ namespace System.Management.Automation
                     basePath = basePath.EndsWith(provider.ItemSeparator)
                         ? providerPrefix + basePath
                         : providerPrefix + basePath + provider.ItemSeparator;
-                    basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
+                    basePath = RebuildPathWithVars(basePath, homePath, stringType, nestedExpressions, literalPaths, out baseQuotesNeeded);
                 }
                 else
                 {
@@ -4703,21 +4732,20 @@ namespace System.Management.Automation
                         }
 
                         basePath = basePath.Remove(basePath.Length - entry.Name.Length);
-                        basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
+                        basePath = RebuildPathWithVars(basePath, homePath, stringType, nestedExpressions, literalPaths, out baseQuotesNeeded);
                     }
 
                     var resultType = isContainer
                         ? CompletionResultType.ProviderContainer
                         : CompletionResultType.ProviderItem;
-                    
-                    bool leafQuotesNeeded;
+
                     var completionText = NewPathCompletionText(
                         basePath,
-                        EscapePath(entryName, stringType, literalPaths, out leafQuotesNeeded),
+                        EscapePath(entryName, stringType, literalPaths, out bool leafQuotesNeeded),
                         stringType,
-                        containsNestedExpressions: false,
+                        containsNestedExpressions,
                         forceQuotes: baseQuotesNeeded || leafQuotesNeeded,
-                        addAmpersand: false);
+                        asCommand: asCommand);
                     results.Add(new CompletionResult(completionText, entryName, resultType, entry.FullName));
                 }
             }
@@ -4738,6 +4766,7 @@ namespace System.Management.Automation
         /// <param name="inputUsedHome"></param>
         /// <param name="providerPrefix"></param>
         /// <param name="stringType"></param>
+        /// <param name="nestedExpressions"></param>
         /// <returns></returns>
         private static List<CompletionResult> GetDefaultProviderResults(
             CompletionContext context,
@@ -4749,12 +4778,14 @@ namespace System.Management.Automation
             bool literalPaths,
             bool inputUsedHome,
             string providerPrefix,
-            StringConstantType stringType)
+            StringConstantType stringType,
+            List<ExpressionValue> nestedExpressions)
         {
             string homePath = inputUsedHome && !string.IsNullOrEmpty(provider.Home)
                 ? provider.Home
                 : null;
 
+            bool containsNestedExpressions = nestedExpressions is not null && nestedExpressions.Count > 0;
             var pattern = WildcardPattern.Get(filterText, WildcardOptions.IgnoreCase);
             var results = new List<CompletionResult>();
 
@@ -4835,7 +4866,7 @@ namespace System.Management.Automation
                 }
 
                 bool baseQuotesNeeded;
-                basePath = RebuildPathWithVars(basePath, homePath, stringType, literalPaths, out baseQuotesNeeded);
+                basePath = RebuildPathWithVars(basePath, homePath, stringType, nestedExpressions, literalPaths, out baseQuotesNeeded);
 
                 foreach (var childName in childNameList)
                 {
@@ -4866,9 +4897,9 @@ namespace System.Management.Automation
                         basePath,
                         EscapePath(childName, stringType, literalPaths, out leafQuotesNeeded),
                         stringType,
-                        containsNestedExpressions: false,
+                        containsNestedExpressions,
                         forceQuotes: baseQuotesNeeded || leafQuotesNeeded,
-                        addAmpersand: false);
+                        asCommand: false);
                     results.Add(new CompletionResult(completionText, childName, resultType, baseTooltip + childName));
                 }
             }
@@ -4913,18 +4944,45 @@ namespace System.Management.Automation
             string path,
             string homePath,
             StringConstantType stringType,
+            List<ExpressionValue> nestedExpressions,
             bool literalPath,
             out bool quotesAreNeeded)
         {
             var sb = new StringBuilder(path.Length);
+            bool containsNestedExpressions = nestedExpressions is not null && nestedExpressions.Count > 0;
+            int expressionListIndex = 0;
+            int varInsertPosition = -1;
             int homeIndex = string.IsNullOrEmpty(homePath)
                 ? -1
                 : path.IndexOf(homePath, StringComparison.OrdinalIgnoreCase);
             quotesAreNeeded = false;
-            bool useSingleQuoteEscapeRules = stringType is StringConstantType.SingleQuoted or StringConstantType.BareWord;
+            bool useSingleQuoteEscapeRules = stringType is StringConstantType.SingleQuoted
+                || (stringType is StringConstantType.BareWord && !containsNestedExpressions);
 
             for (int i = 0; i < path.Length; i++)
             {
+                if (containsNestedExpressions && varInsertPosition < i)
+                {
+                    while (expressionListIndex < nestedExpressions.Count)
+                    {
+                        varInsertPosition = path.IndexOf(nestedExpressions[expressionListIndex].value, i, StringComparison.OrdinalIgnoreCase);
+                        if (varInsertPosition != -1)
+                        {
+                            break;
+                        }
+
+                        expressionListIndex++;
+                    }
+                }
+
+                if (i == varInsertPosition)
+                {
+                    _ = sb.Append(nestedExpressions[expressionListIndex].expression);
+                    i += nestedExpressions[expressionListIndex].value.Length - 1;
+                    expressionListIndex++;
+                    continue;
+                }
+
                 if (i == homeIndex)
                 {
                     _ = sb.Append('~');
@@ -5033,7 +5091,14 @@ namespace System.Management.Automation
                     break;
 
                 case '$':
-                    // $ needs to be escaped so following chars are not parsed as a variable/subexpression
+                    int nextCharIndex = index + 1;
+                    if (path.Length == nextCharIndex || (!path[nextCharIndex].IsVariableStart() && path[nextCharIndex] is not '(' and not '{'))
+                    {
+                        // Usually $ needs to be escaped so the following chars are not parsed as a variable/subexpression
+                        // however if it's the final char, or the next char can't be used for a variable/subexpression anyway then we skip escaping it.
+                        break;
+                    }
+
                     if (!useSingleQuoteEscapeRules)
                     {
                         _ = sb.Append('`');
@@ -5061,28 +5126,28 @@ namespace System.Management.Automation
             }
         }
 
-        private static string NewPathCompletionText(string parent, string leaf, StringConstantType stringType, bool containsNestedExpressions, bool forceQuotes, bool addAmpersand)
+        private static string NewPathCompletionText(string parent, string leaf, StringConstantType stringType, bool containsNestedExpressions, bool forceQuotes, bool asCommand)
         {
             string result;
             if (stringType == StringConstantType.SingleQuoted)
             {
-                result = addAmpersand ? $"& '{parent}{leaf}'" : $"'{parent}{leaf}'";
+                result = asCommand ? $"& '{parent}{leaf}'" : $"'{parent}{leaf}'";
             }
             else if (stringType == StringConstantType.DoubleQuoted)
             {
-                result = addAmpersand ? $"& \"{parent}{leaf}\"" : $"\"{parent}{leaf}\"";
+                result = asCommand ? $"& \"{parent}{leaf}\"" : $"\"{parent}{leaf}\"";
             }
             else
             {
-                if (forceQuotes)
+                if (forceQuotes || (asCommand && containsNestedExpressions))
                 {
                     if (containsNestedExpressions)
                     {
-                        result = addAmpersand ? $"& \"{parent}{leaf}\"" : $"\"{parent}{leaf}\"";
+                        result = asCommand ? $"& \"{parent}{leaf}\"" : $"\"{parent}{leaf}\"";
                     }
                     else
                     {
-                        result = addAmpersand ? $"& '{parent}{leaf}'" : $"'{parent}{leaf}'";
+                        result = asCommand ? $"& '{parent}{leaf}'" : $"'{parent}{leaf}'";
                     }
                 }
                 else
@@ -6125,7 +6190,7 @@ namespace System.Management.Automation
             if (lineKeyword.Value.Equals("EXTERNALHELP", StringComparison.OrdinalIgnoreCase))
             {
                 context.WordToComplete = keywordArgument.Value;
-                var result = new List<CompletionResult>(CompleteFilename(context, containerOnly: false, (new HashSet<string>() { ".xml" })));
+                var result = new List<CompletionResult>(CompleteFilename(context, extension: (new HashSet<string>() { ".xml" })));
                 return result.Count > 0 ? result : null;
             }
 
@@ -8231,53 +8296,77 @@ namespace System.Management.Automation
 
         #region Helpers
 
-        internal static bool IsPathSafelyExpandable(ExpandableStringExpressionAst expandableStringAst, string extraText, ExecutionContext executionContext, out string expandedString)
+        internal static bool IsPathSafelyExpandable(
+            ExpandableStringExpressionAst expandableString,
+            string extraText,
+            ExecutionContext executionContext,
+            out string expandedString,
+            out List<ExpressionValue> nestedExpressions)
         {
-            expandedString = null;
             // Expand the string if its type is DoubleQuoted or BareWord
-            var constType = expandableStringAst.StringConstantType;
-            if (constType == StringConstantType.DoubleQuotedHereString) { return false; }
+            var constType = expandableString.StringConstantType;
+            if (constType == StringConstantType.DoubleQuotedHereString)
+            {
+                expandedString = null;
+                nestedExpressions = null;
+                return false;
+            }
 
             Diagnostics.Assert(
                 constType == StringConstantType.BareWord ||
-                (constType == StringConstantType.DoubleQuoted && expandableStringAst.Extent.Text[0].IsDoubleQuote()),
+                (constType == StringConstantType.DoubleQuoted && expandableString.Extent.Text[0].IsDoubleQuote()),
                 "the string to be expanded should be either BareWord or DoubleQuoted");
 
-            var varValues = new List<string>();
-            foreach (ExpressionAst nestedAst in expandableStringAst.NestedExpressions)
+            string[] values = new string[expandableString.NestedExpressions.Count];
+            nestedExpressions = new List<ExpressionValue>(values.Length);
+            for (int i = 0; i < expandableString.NestedExpressions.Count; i++)
             {
-                if (!(nestedAst is VariableExpressionAst variableAst)) { return false; }
+                _ = SafeExprEvaluator.TrySafeEval(expandableString.NestedExpressions[i], executionContext, out object evaluatedValue);
+                string valueAsString = evaluatedValue as string;
 
-                string strValue = CombineVariableWithPartialPath(variableAst, null, executionContext);
-                if (strValue != null)
+                if (string.IsNullOrEmpty(valueAsString)
+                    && expandableString.NestedExpressions[i] is VariableExpressionAst variableAst
+                    && variableAst.VariablePath.UnqualifiedPath.Equals(SpecialVariables.PSScriptRoot, StringComparison.OrdinalIgnoreCase))
                 {
-                    varValues.Add(strValue);
+                    valueAsString = Path.GetDirectoryName(variableAst.Extent.File);
                 }
-                else
+
+                if (string.IsNullOrEmpty(valueAsString))
                 {
+                    expandedString = null;
                     return false;
                 }
+
+                values[i] = valueAsString;
+                nestedExpressions.Add(new ExpressionValue() { expression = expandableString.NestedExpressions[i].Extent.Text, value = valueAsString });
             }
 
-            var formattedString = string.Format(CultureInfo.InvariantCulture, expandableStringAst.FormatExpression, varValues.ToArray());
+            var formattedString = string.Format(CultureInfo.InvariantCulture, expandableString.FormatExpression, values);
             string quote = (constType == StringConstantType.DoubleQuoted) ? "\"" : string.Empty;
 
             expandedString = quote + formattedString + extraText + quote;
             return true;
         }
 
-        internal static string CombineVariableWithPartialPath(VariableExpressionAst variableAst, string extraText, ExecutionContext executionContext)
+        internal static string CombineVariableWithPartialPath(
+            VariableExpressionAst variableAst,
+            string extraText,
+            ExecutionContext executionContext,
+            out List<ExpressionValue> nestedExpressions)
         {
             var varPath = variableAst.VariablePath;
             if (!varPath.IsVariable && !varPath.DriveName.Equals("env", StringComparison.OrdinalIgnoreCase))
             {
+                nestedExpressions = null;
                 return null;
             }
 
             if (varPath.UnqualifiedPath.Equals(SpecialVariables.PSScriptRoot, StringComparison.OrdinalIgnoreCase)
                 && !string.IsNullOrEmpty(variableAst.Extent.File))
             {
-                return Path.GetDirectoryName(variableAst.Extent.File) + extraText;
+                var dirPath = Path.GetDirectoryName(variableAst.Extent.File);
+                nestedExpressions = new List<ExpressionValue> { new() { expression = variableAst.Extent.Text, value = dirPath } };
+                return dirPath + extraText;
             }
 
             try
@@ -8297,6 +8386,7 @@ namespace System.Management.Automation
 
                 if (strValue != null)
                 {
+                    nestedExpressions = new List<ExpressionValue> { new() { expression = variableAst.Extent.Text, value = strValue } };
                     return strValue + extraText;
                 }
             }
@@ -8304,6 +8394,7 @@ namespace System.Management.Automation
             {
             }
 
+            nestedExpressions = null;
             return null;
         }
 
