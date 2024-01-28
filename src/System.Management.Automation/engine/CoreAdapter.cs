@@ -2140,7 +2140,7 @@ namespace System.Management.Automation
     /// WMI method information.
     /// </summary>
     [DebuggerDisplay("MethodInformation: {methodDefinition}")]
-    internal sealed class MethodInformation
+    internal class MethodInformation
     {
         internal MethodBase method;
         private string _cachedMethodDefinition;
@@ -2576,7 +2576,7 @@ namespace System.Management.Automation
     /// For example, ManagementObjectAdapter uses this structure to store
     /// method parameter information.
     /// </summary>
-    internal sealed class ParameterInformation
+    internal class ParameterInformation
     {
         internal Type parameterType;
         internal object defaultValue;
