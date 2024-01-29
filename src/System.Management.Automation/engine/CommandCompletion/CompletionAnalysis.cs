@@ -1449,9 +1449,23 @@ namespace System.Management.Automation
             {
                 inferredTypes = new PSTypeName[] { new(convertExpression.Type.TypeName) };
             }
-            else
+            else if (expression is MemberExpressionAst)
             {
                 inferredTypes = AstTypeInference.InferTypeOf(expression);
+            }
+            else if (expression is VariableExpressionAst varExpression)
+            {
+                PSTypeName typeConstraint = CompletionCompleters.GetLastDeclaredTypeConstraint(varExpression, context.TypeInferenceContext);
+                if (typeConstraint is null)
+                {
+                    return false;
+                }
+
+                inferredTypes = new PSTypeName[] { new(varExpression.StaticType) };
+            }
+            else
+            {
+                return false;
             }
              
             if (inferredTypes.Count == 0)
