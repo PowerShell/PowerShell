@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public string RelativeBasePath
-        { 
+        {
             get
             {
                 return _relativeBasePath;
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
                             // Do not insert './' if result path is not relative
                             if (!adjustedPath.StartsWith(
                                     currentPath.Drive?.Root ?? currentPath.Path, StringComparison.OrdinalIgnoreCase) &&
-                                !adjustedPath.StartsWith('.'))
+                                !adjustedPath.StartsWith("." + currentPath.Provider.ItemSeparator, StringComparison.OrdinalIgnoreCase))
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }

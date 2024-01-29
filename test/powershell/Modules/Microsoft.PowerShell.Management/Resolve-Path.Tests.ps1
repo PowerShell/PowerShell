@@ -86,7 +86,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         }
     ) -Test {
         param($Path, $BasePath, $Expected, $CD)
-        
+
         if ($null -eq $Expected)
         {
             {Resolve-Path -Path $Path -RelativeBasePath $BasePath -ErrorAction Stop} | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
@@ -112,6 +112,19 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
                     Set-Location $OldLocation
                 }
             }
+        }
+    }
+
+    It 'returns filenames starting with period correctly' {
+        $testFile = Join-Path $TestDrive ".testfile"
+        $null = New-Item -Path $testFile -ItemType File -Force
+        try {
+            Push-Location $TestDrive
+            $result = Resolve-Path -Path ".testfile" -Relative
+            $result | Should -BeExactly (Join-Path '.' '.testfile')
+        }
+        finally {
+            Pop-Location
         }
     }
 }
