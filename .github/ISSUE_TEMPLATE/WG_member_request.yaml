@@ -3,6 +3,14 @@ description: Request membership to serve on a PowerShell Working Group
 title: Working Group Member Request
 labels: [WG-NeedsReview, Needs-Triage]
 body:
+- type: markdown
+  attributes:
+    value: |
+      Thank you for your interest in joining a PowerShell Working Group. Please complete the following public form to request membership to a PowerShell Working Group.
+- type: markdown  
+  attributes:
+    value: |
+      ## ⚠️ This form is public. Do not provide any personal or proprietary information. ⚠️   
 - type : dropdown
   id : request_type
   validations:
