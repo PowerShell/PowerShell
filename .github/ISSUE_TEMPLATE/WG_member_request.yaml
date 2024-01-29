@@ -1,0 +1,48 @@
+name: Working Group Member Request
+description: Request membership to serve on a PowerShell Working Group
+title: Working Group Member Request
+labels: [WG-NeedsReview, Needs-Triage]
+body:
+- type: checkboxes
+  attributes:
+    label: Name of Working Group you are requesting to join?
+    description: Please select the name of the working group you are requesting to join. (Select one)
+    options:
+    - label: Engine
+    - label: Remoting
+    - label: Cmdlets and Modules
+    - label: Security
+    - label: Interactive UX
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: How many hours per week can you commit to the working group?
+    description: Enter number of hours.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Why do you want to join this working group?
+    description: Please provide a brief description of why you want to join this working group.
+    placeholder: >
+      I want to join this working group because...
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: What skills do you bring to this working group?
+    description: Please provide a brief description of what skills you bring to this working group.
+    placeholder: >
+      I bring the following skills to this working group...
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Public links to articles, code, or other resources that demonstrate your skills.
+    description: Please provide public links to articles, code, or other resources that demonstrate your skills.
+    placeholder: >
+      I have the following public links to articles, code, or other resources that demonstrate my skills...
+  validations:
+    required: true
+
