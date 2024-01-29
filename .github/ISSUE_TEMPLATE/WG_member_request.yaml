@@ -1,7 +1,7 @@
 name: Working Group Member Request
 description: Request membership to serve on a PowerShell Working Group
 title: Working Group Member Request
-labels: [WG-NeedsReview, Needs-Triage]
+labels: [WG-NeedsReview, WG-Cmdlets, WG-Engine, WG-Interactive-Console, WG-Remoting, Needs-Triage]
 body:
 - type: markdown
   attributes:
