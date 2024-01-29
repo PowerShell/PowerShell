@@ -19,7 +19,6 @@ body:
       - "Engine"
       - "Remoting"
       - "Cmdlets and Modules"
-      - "Security"
       - "Interactive UX"
 - type: dropdown  
   id: time
