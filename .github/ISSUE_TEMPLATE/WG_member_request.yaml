@@ -6,11 +6,7 @@ body:
 - type: markdown
   attributes:
     value: |
-      Thank you for your interest in joining a PowerShell Working Group. Please complete the following public form to request membership to a PowerShell Working Group.
-- type: markdown  
-  attributes:
-    value: |
-      ## ⚠️ This form is public. Do not provide any personal or proprietary information. ⚠️   
+      ## Thank you for your interest in joining a PowerShell Working Group. Please complete the following public form to request membership to a PowerShell Working Group.
 - type : dropdown
   id : request_type
   validations:
@@ -25,12 +21,21 @@ body:
       - "Cmdlets and Modules"
       - "Security"
       - "Interactive UX"
-- type: input
-  attributes:
-    label: How many hours per week can you commit to the working group?
-    description: Enter number of hours.
+- type: dropdown  
+  id: time
   validations:
     required: true
+  attributes:
+    label: Can you provide at least 1 hour per week to the Working Group?
+    description: >-
+      Please select Yes or No.     
+    options:
+      - "Yes"
+      - "No"
+- type: markdown  
+  attributes:
+    value: |
+      ## ⚠️ This form is public. Do not provide any private or proprietary information. ⚠️   
 - type: textarea
   attributes:
     label: Why do you want to join this working group?
