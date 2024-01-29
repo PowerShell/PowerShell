@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
@@ -129,6 +130,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (ViewDefinition definition in viewdefinitions)
             {
+                this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, GetFormatDataStrings.ProcessRecord, definition.name));
                 if (definition.isHelpFormatter)
                     continue;
 

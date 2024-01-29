@@ -223,7 +223,7 @@ namespace System.Management.Automation
                     cie.Expression = new DisplayEntry(cpt.expression);
                 }
 
-                if (cpt.control != null)
+                if (cpt.control != null && cpt.control is ComplexControlBody)
                 {
                     cie.CustomControl = new CustomControl((ComplexControlBody)cpt.control, null);
                 }
