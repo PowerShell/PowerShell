@@ -3,18 +3,20 @@ description: Request membership to serve on a PowerShell Working Group
 title: Working Group Member Request
 labels: [WG-NeedsReview, Needs-Triage]
 body:
-- type: checkboxes
-  attributes:
-    label: Name of Working Group you are requesting to join?
-    description: Please select the name of the working group you are requesting to join. (Select one)
-    options:
-    - label: Engine
-    - label: Remoting
-    - label: Cmdlets and Modules
-    - label: Security
-    - label: Interactive UX
+- type : dropdown
+  id : request_type
   validations:
     required: true
+  attributes:
+    label: Name of Working Group you are requesting to join?
+    description: >-
+      Please select the name of the working group you are requesting to join. (Select one)
+    options:
+      - "Engine"
+      - "Remoting"
+      - "Cmdlets and Modules"
+      - "Security"
+      - "Interactive UX"
 - type: input
   attributes:
     label: How many hours per week can you commit to the working group?
