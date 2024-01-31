@@ -19,7 +19,7 @@ namespace System.Management.Automation.Internal
     /// Handles all PowerShell data structure handler communication with the
     /// server side RunspacePool.
     /// </summary>
-    internal class ClientRunspacePoolDataStructureHandler : IDisposable
+    internal sealed class ClientRunspacePoolDataStructureHandler : IDisposable
     {
         private bool _reconnecting = false;
 
@@ -826,7 +826,7 @@ namespace System.Management.Automation.Internal
             {
                 remoteSession?.DisconnectAsync();
             }
-            catch 
+            catch
             {
                 // remoteSession may have already been disposed resulting in unexpected exceptions.
             }
@@ -984,7 +984,7 @@ namespace System.Management.Automation.Internal
     /// Base class for ClientPowerShellDataStructureHandler to handle all
     /// references.
     /// </summary>
-    internal class ClientPowerShellDataStructureHandler
+    internal sealed class ClientPowerShellDataStructureHandler
     {
         #region Data Structure Handler events
 
@@ -1155,8 +1155,8 @@ namespace System.Management.Automation.Internal
             RemoteDataObject<PSObject> dataToBeSent =
                 RemoteDataObject<PSObject>.CreateFrom(RemotingDestination.Server,
                 RemotingDataType.RemotePowerShellHostResponseData,
-                clientRunspacePoolId,
-                clientPowerShellId,
+                _clientRunspacePoolId,
+                _clientPowerShellId,
                 hostResponse.Encode());
 
             TransportManager.DataToBeSentCollection.Add<PSObject>(dataToBeSent,
@@ -1178,7 +1178,7 @@ namespace System.Management.Automation.Internal
                 {
                     // send input closed information to server
                     SendDataAsync(RemotingEncoder.GeneratePowerShellInputEnd(
-                        clientRunspacePoolId, clientPowerShellId));
+                        _clientRunspacePoolId, _clientPowerShellId));
                 }
             }
             else
@@ -1207,10 +1207,10 @@ namespace System.Management.Automation.Internal
         internal void ProcessReceivedData(RemoteDataObject<PSObject> receivedData)
         {
             // verify if this data structure handler is the intended recipient
-            if (receivedData.PowerShellId != clientPowerShellId)
+            if (receivedData.PowerShellId != _clientPowerShellId)
             {
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.PipelineIdsDoNotMatch,
-                                receivedData.PowerShellId, clientPowerShellId);
+                                receivedData.PowerShellId, _clientPowerShellId);
             }
 
             // decode the message and take appropriate action
@@ -1473,13 +1473,6 @@ namespace System.Management.Automation.Internal
 
         #endregion Data Structure Handler Methods
 
-        #region Protected Members
-
-        protected Guid clientRunspacePoolId;
-        protected Guid clientPowerShellId;
-
-        #endregion Protected Members
-
         #region Constructors
 
         /// <summary>
@@ -1496,8 +1489,8 @@ namespace System.Management.Automation.Internal
                     Guid clientRunspacePoolId, Guid clientPowerShellId)
         {
             TransportManager = transportManager;
-            this.clientRunspacePoolId = clientRunspacePoolId;
-            this.clientPowerShellId = clientPowerShellId;
+            _clientRunspacePoolId = clientRunspacePoolId;
+            _clientPowerShellId = clientPowerShellId;
             transportManager.SignalCompleted += OnSignalCompleted;
         }
 
@@ -1513,7 +1506,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                return clientPowerShellId;
+                return _clientPowerShellId;
             }
         }
 
@@ -1566,7 +1559,7 @@ namespace System.Management.Automation.Internal
             foreach (object inputObject in inputObjects)
             {
                 SendDataAsync(RemotingEncoder.GeneratePowerShellInput(inputObject,
-                    clientRunspacePoolId, clientPowerShellId));
+                    _clientRunspacePoolId, _clientPowerShellId));
             }
 
             if (!inputstream.IsOpen)
@@ -1577,7 +1570,7 @@ namespace System.Management.Automation.Internal
                 foreach (object inputObject in inputObjects)
                 {
                     SendDataAsync(RemotingEncoder.GeneratePowerShellInput(inputObject,
-                        clientRunspacePoolId, clientPowerShellId));
+                        _clientRunspacePoolId, _clientPowerShellId));
                 }
 
                 // we are sending input end to the server. Ignore the future
@@ -1586,7 +1579,7 @@ namespace System.Management.Automation.Internal
                 inputstream.DataReady -= HandleInputDataReady;
                 // stream close: send end of input
                 SendDataAsync(RemotingEncoder.GeneratePowerShellInputEnd(
-                    clientRunspacePoolId, clientPowerShellId));
+                    _clientRunspacePoolId, _clientPowerShellId));
             }
         }
 
@@ -1608,6 +1601,9 @@ namespace System.Management.Automation.Internal
 
         #region Private Members
 
+        private readonly Guid _clientRunspacePoolId;
+        private readonly Guid _clientPowerShellId;
+
         // object for synchronizing input to be sent
         // to server powershell
         private readonly object _inputSyncObject = new object();
@@ -1626,7 +1622,7 @@ namespace System.Management.Automation.Internal
         #endregion Private Members
     }
 
-    internal class InformationalMessage
+    internal sealed class InformationalMessage
     {
         internal object Message { get; }
 
