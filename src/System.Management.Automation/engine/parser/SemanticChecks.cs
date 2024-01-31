@@ -1336,7 +1336,7 @@ namespace System.Management.Automation.Language
                 if (!nsPattern.IsMatch(usingStatementAst.Name.Value))
                 {
                     _parser.ReportError(
-                        usingStatementAst.Extent,
+                        usingStatementAst.Name.Extent,
                         nameof(ParserStrings.InvalidNamespaceValue),
                         ParserStrings.InvalidNamespaceValue);
                 }

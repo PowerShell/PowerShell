@@ -131,7 +131,7 @@ Describe "Using Namespace" -Tags "CI" {
     ShouldBeParseError "using namespace ''" InvalidNamespaceValue 16
     ShouldBeParseError "using namespace [System]" InvalidNamespaceValue 16
     ShouldBeParseError "using namespace ',System'" InvalidNamespaceValue 16
-    ShouldBeParseError "using namespace ]System" InvalidNamespaceValue 16
+    ShouldBeParseError "using namespace ']System'" InvalidNamespaceValue 16
     # TODO: add diagnostic (low pri)
     # ShouldBeParseError "using namespace System; using namespace System" UsingNamespaceAlreadySpecified 24
 }
