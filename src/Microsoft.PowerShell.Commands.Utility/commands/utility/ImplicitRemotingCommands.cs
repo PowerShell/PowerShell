@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute]
+        [ArgumentToEncodingTransformationAttribute()]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
@@ -2461,10 +2461,9 @@ function Get-PSImplicitRemotingSession
         {
             StringBuilder result = new();
 
-            if (_invocationInfo.BoundParameters.ContainsKey(nameof(Module)))
+            if (_invocationInfo.BoundParameters.TryGetValue(nameof(Module), out object moduleNames))
             {
-                string[] moduleNames = (string[])_invocationInfo.BoundParameters[nameof(Module)];
-                foreach (string moduleName in moduleNames)
+                foreach (string moduleName in (string[])moduleNames)
                 {
                     result.AppendFormat(
                         CultureInfo.InvariantCulture,

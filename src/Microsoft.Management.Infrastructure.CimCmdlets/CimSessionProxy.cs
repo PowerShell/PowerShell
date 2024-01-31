@@ -226,10 +226,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 lock (temporarySessionCacheLock)
                 {
-                    if (temporarySessionCache.ContainsKey(session))
+                    if (temporarySessionCache.TryGetValue(session, out uint refCount))
                     {
-                        temporarySessionCache[session]++;
-                        DebugHelper.WriteLogEx(@"Increase cimsession ref count {0}", 1, temporarySessionCache[session]);
+                        temporarySessionCache[session] = ++refCount;
+                        DebugHelper.WriteLogEx(@"Increase cimsession ref count {0}", 1, refCount);
                     }
                     else
                     {
@@ -253,11 +253,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 bool removed = false;
                 lock (temporarySessionCacheLock)
                 {
-                    if (temporarySessionCache.ContainsKey(session))
+                    if (temporarySessionCache.TryGetValue(session, out uint refCount))
                     {
-                        temporarySessionCache[session]--;
-                        DebugHelper.WriteLogEx(@"Decrease cimsession ref count {0}", 1, temporarySessionCache[session]);
-                        if (temporarySessionCache[session] == 0)
+                        temporarySessionCache[session] = --refCount;
+                        DebugHelper.WriteLogEx(@"Decrease cimsession ref count {0}", 1, refCount);
+                        if (refCount == 0)
                         {
                             removed = true;
                             temporarySessionCache.Remove(session);

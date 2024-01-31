@@ -450,29 +450,26 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            if (!this.curCimSessionWrapper.ContainsKey(session))
+            if (curCimSessionWrapper.TryGetValue(session, out CimSessionWrapper wrapper))
             {
-                return;
+                string name = wrapper.Name;
+                string computerName = wrapper.ComputerName;
+
+                DebugHelper.WriteLog("name {0}, computername {1}, id {2}, instanceId {3}", 1, name, computerName, wrapper.SessionId, wrapper.InstanceId);
+
+                HashSet<CimSessionWrapper> objects;
+                if (this.curCimSessionsByComputerName.TryGetValue(computerName, out objects))
+                {
+                    objects.Remove(wrapper);
+                }
+
+                if (this.curCimSessionsByName.TryGetValue(name, out objects))
+                {
+                    objects.Remove(wrapper);
+                }
+
+                RemoveSessionInternal(session, wrapper);
             }
-
-            CimSessionWrapper wrapper = this.curCimSessionWrapper[session];
-            string name = wrapper.Name;
-            string computerName = wrapper.ComputerName;
-
-            DebugHelper.WriteLog("name {0}, computername {1}, id {2}, instanceId {3}", 1, name, computerName, wrapper.SessionId, wrapper.InstanceId);
-
-            HashSet<CimSessionWrapper> objects;
-            if (this.curCimSessionsByComputerName.TryGetValue(computerName, out objects))
-            {
-                objects.Remove(wrapper);
-            }
-
-            if (this.curCimSessionsByName.TryGetValue(name, out objects))
-            {
-                objects.Remove(wrapper);
-            }
-
-            RemoveSessionInternal(session, wrapper);
         }
 
         /// <summary>
@@ -533,7 +530,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             // NOTES: use template function to implement this will save duplicate code
             foreach (uint id in ids)
             {
-                if (this.curCimSessionsById.ContainsKey(id))
+                if (curCimSessionsById.TryGetValue(id, out CimSessionWrapper wrapper))
                 {
                     if (sessionIds.Add(id))
                     {
@@ -564,9 +561,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             errorRecords = errRecords;
             foreach (Guid instanceid in instanceIds)
             {
-                if (this.curCimSessionsByInstanceId.ContainsKey(instanceid))
+                if (curCimSessionsByInstanceId.TryGetValue(instanceid, out CimSessionWrapper wrapper))
                 {
-                    CimSessionWrapper wrapper = this.curCimSessionsByInstanceId[instanceid];
                     if (!sessionIds.Contains(wrapper.SessionId))
                     {
                         sessionIds.Add(wrapper.SessionId);
@@ -640,9 +636,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             foreach (string computername in computernameArray)
             {
                 bool foundSession = false;
-                if (this.curCimSessionsByComputerName.ContainsKey(computername))
+                if (curCimSessionsByComputerName.TryGetValue(computername, out HashSet<CimSessionWrapper> wrappers))
                 {
-                    HashSet<CimSessionWrapper> wrappers = this.curCimSessionsByComputerName[computername];
                     foundSession = wrappers.Count > 0;
                     foreach (CimSessionWrapper wrapper in wrappers)
                     {
@@ -677,9 +672,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             errorRecords = errRecords;
             foreach (CimSession cimsession in cimsessions)
             {
-                if (this.curCimSessionWrapper.ContainsKey(cimsession))
+                if (curCimSessionWrapper.TryGetValue(cimsession, out CimSessionWrapper wrapper))
                 {
-                    CimSessionWrapper wrapper = this.curCimSessionWrapper[cimsession];
                     if (!sessionIds.Contains(wrapper.SessionId))
                     {
                         sessionIds.Add(wrapper.SessionId);
@@ -714,13 +708,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns>CimSession object.</returns>
         internal CimSession QuerySession(Guid cimSessionInstanceId)
         {
-            if (this.curCimSessionsByInstanceId.ContainsKey(cimSessionInstanceId))
-            {
-                CimSessionWrapper wrapper = this.curCimSessionsByInstanceId[cimSessionInstanceId];
-                return wrapper.CimSession;
-            }
-
-            return null;
+            return curCimSessionsByInstanceId.TryGetValue(cimSessionInstanceId, out CimSessionWrapper wrapper)
+                ? wrapper.CimSession
+                : null;
         }
         #endregion
     }

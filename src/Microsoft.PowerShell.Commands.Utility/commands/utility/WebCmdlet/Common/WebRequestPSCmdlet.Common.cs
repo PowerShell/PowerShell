@@ -703,12 +703,12 @@ namespace Microsoft.PowerShell.Commands
 
                         if (_followRelLink)
                         {
-                            if (!_relationLink.ContainsKey("next"))
+                            if (!_relationLink.TryGetValue("next", out string value))
                             {
                                 return;
                             }
 
-                            uri = new Uri(_relationLink["next"]);
+                            uri = new Uri(value);
                             followedRelLink++;
                         }
                     }

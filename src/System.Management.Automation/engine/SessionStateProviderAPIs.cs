@@ -1279,15 +1279,13 @@ namespace System.Management.Automation
             bool isDuplicateProvider = false;
 
             // Add the entry to the list of providers with that name
-            if (!Providers.ContainsKey(provider.Name))
+            if (!Providers.TryGetValue(provider.Name, out List<ProviderInfo> existingProviders))
             {
                 Providers.Add(provider.Name, new List<ProviderInfo>());
             }
             else
             {
                 // be sure the same provider from the same PSSnapin doesn't already exist
-
-                List<ProviderInfo> existingProviders = Providers[provider.Name];
 
                 foreach (ProviderInfo existingProvider in existingProviders)
                 {
