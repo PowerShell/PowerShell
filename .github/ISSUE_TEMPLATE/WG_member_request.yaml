@@ -5,9 +5,11 @@ labels: [WG-NeedsReview, WG-Cmdlets, WG-Engine, WG-Interactive-Console, WG-Remot
 body:
 - type: markdown
   attributes:
-    value: >-
+    value: |
       ## Thank you for your interest in joining a PowerShell Working Group. 
-
+- type: markdown
+  attributes:
+    value: |
       Please complete the following public form to request membership to a PowerShell Working Group. 
       Not all Working Groups are accepting new members at this time.
 - type : dropdown
