@@ -917,20 +917,8 @@ namespace System.Management.Automation.Runspaces
                                             $null = $output.Append($newline)
                                             $null = $output.Append($prop.Value)
                                         }
-                                        # Handle `BoundParameters` to show as Key/Value pairs, need to check the type name as the type is internal
-                                        elseif ($prop.Value.GetType().Name -eq 'PSBoundParametersDictionary') {
-                                            $isFirstElement = $true
-                                            foreach ($key in ($prop.Value.Keys | Sort-Object) ) {
-                                                if ($isFirstElement) {
-                                                    $null = $output.Append($newline)
-                                                }
-
-                                                $null = $output.Append(""${prefix}    ${accentColor}${key} : ${resetColor}$($prop.Value[$key])${newline}"")
-                                                $isFirstElement = $false
-                                            }
-                                        }
                                         # Dictionary and Hashtable we want to show as Key/Value pairs, we don't do the extra whitespace alignment here
-                                        elseif ($prop.Value.GetType().Name.StartsWith('Dictionary') -or $prop.Value.GetType().Name -eq 'Hashtable') {
+                                        elseif ($prop.Value -is [System.Collections.Dictionary]) {
                                             $isFirstElement = $true
                                             foreach ($key in $prop.Value.Keys) {
                                                 if ($isFirstElement) {
