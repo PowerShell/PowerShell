@@ -1321,9 +1321,8 @@ namespace System.Management.Automation.Language
             foreach (var typeDefinitionAst in typeDefinitions)
             {
                 var typeName = GetClassNameInAssembly(typeDefinitionAst);
-                if (!definedTypes.Contains(typeName))
+                if (definedTypes.Add(typeName))
                 {
-                    definedTypes.Add(typeName);
                     if ((typeDefinitionAst.TypeAttributes & TypeAttributes.Class) == TypeAttributes.Class)
                     {
                         defineTypeHelpers.Add(new DefineTypeHelper(parser, module, typeDefinitionAst, typeName));
