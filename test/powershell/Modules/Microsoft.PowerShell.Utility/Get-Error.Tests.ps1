@@ -163,6 +163,7 @@ Describe 'Get-Error tests' -Tag CI {
             test @Param
         }
         catch {
+            # do nothing
         }
 
         $out = Get-Error | Out-String
