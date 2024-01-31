@@ -6,7 +6,10 @@ body:
 - type: markdown
   attributes:
     value: |
-      ## Thank you for your interest in joining a PowerShell Working Group. Please complete the following public form to request membership to a PowerShell Working Group. Not all Working Groups are accepting new members at this time.
+      ## Thank you for your interest in joining a PowerShell Working Group. 
+
+      Please complete the following public form to request membership to a PowerShell Working Group. 
+      Not all Working Groups are accepting new members at this time.
 - type : dropdown
   id : request_type
   validations:
