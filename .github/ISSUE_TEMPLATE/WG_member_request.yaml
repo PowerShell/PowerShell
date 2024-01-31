@@ -15,6 +15,7 @@ body:
     label: Name of Working Group you are requesting to join?
     description: >-
       Please select the name of the working group you are requesting to join. (Select one)
+      Note: Not all Working Groups are accepting new members at this time.
     options:
       - "Engine"
       - "Remoting"
