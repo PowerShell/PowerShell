@@ -1333,7 +1333,6 @@ namespace System.Management.Automation.Language
             if (kind is UsingStatementKind.Namespace)
             {
                 Regex nsPattern = NamespacePattern();
-                string name = usingStatementAst.Name.Value;
                 if (!nsPattern.IsMatch(usingStatementAst.Name.Value))
                 {
                     _parser.ReportError(
