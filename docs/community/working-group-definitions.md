@@ -50,8 +50,8 @@ This includes (but is not limited to):
 * The language parser
 * The command and parameter binders
 * The module and provider systems
-    * `*-Item` cmdlets
-    * Providers
+  * `*-Item` cmdlets
+  * Providers
 * Performance
 * Componentization
 * AssemblyLoadContext
@@ -123,7 +123,7 @@ Given the commonality of serialization boundaries, the Remoting WG should also f
 
 The Cmdlet WG should focus on core/inbox modules whose source code lives within the
 `PowerShell/PowerShell` repository,
-including the proposal of new cmdlets and parameters, improvements and bug fixes to existing
+including the proposal of new cmdlets and parameters, improvements and bugfixes to existing
 cmdlets/parameters, and breaking changes.
 
 However, some modules that ship as part of the PowerShell package are managed in other source repositories.
@@ -170,12 +170,12 @@ This bucket is also not oriented a customer-facing deliverable and is already so
 so we don't need to address it as part of the WGs.
 
 * Build
-    * `build.psm1`
-    * `install-powershell.ps1`
-    * Build infrastructure and automation
+  * `build.psm1`
+  * `install-powershell.ps1`
+  * Build infrastructure and automation
 * Packaging
-    * Scripts
-    * Infrastructure
+  * Scripts
+  * Infrastructure
 
 ### Quality
 
@@ -184,10 +184,10 @@ Similar to the topic of building PowerShell, quality
 should be managed by the PowerShell Maintainers.
 
 * Test code
-    * Pester unit tests
-    * xUnit unit tests
+  * Pester unit tests
+  * xUnit unit tests
 * Test infrastructure
-    * Nightlies
-    * CI
+  * Nightlies
+  * CI
 * Code coverage
 * Pester
