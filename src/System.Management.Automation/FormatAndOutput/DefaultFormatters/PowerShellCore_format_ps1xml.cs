@@ -918,9 +918,9 @@ namespace System.Management.Automation.Runspaces
                                             $null = $output.Append($prop.Value)
                                         }
                                         # Dictionary and Hashtable we want to show as Key/Value pairs, we don't do the extra whitespace alignment here
-                                        elseif ($prop.Value -is [System.Collections.Dictionary]) {
+                                        elseif ($prop.Value -is [System.Collections.IDictionary]) {
                                             $isFirstElement = $true
-                                            foreach ($key in $prop.Value.Keys) {
+                                            foreach ($key in ($prop.Value.Keys | Sort-Object)) {
                                                 if ($isFirstElement) {
                                                     $null = $output.Append($newline)
                                                 }
