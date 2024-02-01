@@ -1229,6 +1229,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="UsingStatementNotSupported" xml:space="preserve">
     <value>This syntax of the 'using' statement is not supported.</value>
   </data>
+  <data name="InvalidNamespaceValue" xml:space="preserve">
+    <value>The specified namespace in the 'using' statement contains invalid characters.</value>
+  </data>
   <data name="InformationStream" xml:space="preserve">
     <value>information stream</value>
   </data>
