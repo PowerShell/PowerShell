@@ -1180,8 +1180,8 @@ namespace System.Management.Automation
         /// For example, to construct a command string "Get-Process | Select-Object -Property Name"
         ///     <code>
         ///         PowerShell shell = PowerShell.Create()
-        ///             .AddCommand("get-process")
-        ///             .AddCommand("select-object").AddParameter("property", "name");
+        ///             .AddCommand("Get-Process")
+        ///             .AddCommand("Select-Object").AddParameter("Property", "Name");
         ///     </code>
         /// </summary>
         /// <param name="parameterName">
