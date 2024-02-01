@@ -2801,7 +2801,7 @@ namespace System.Management.Automation.Language
             {
                 if (!string.IsNullOrEmpty(scriptFileName) && !Path.IsPathRooted(assemblyFileName))
                 {
-                    assemblyFileName = Path.GetDirectoryName(scriptFileName) + "\\" + assemblyFileName;
+                    assemblyFileName = Path.Combine(Path.GetDirectoryName(scriptFileName), assemblyFileName);
                 }
 
                 if (File.Exists(assemblyFileName))
