@@ -948,7 +948,9 @@ namespace System.Management.Automation
         /// Add a cmdlet to construct a command pipeline.
         /// For example, to construct a command string "get-process | sort-object",
         ///     <code>
-        ///         PowerShell shell = PowerShell.Create("get-process").AddCommand("sort-object");
+        ///         PowerShell shell = PowerShell.Create()
+        ///             .AddCommand("get-process")
+        ///             .AddCommand("sort-object");
         ///     </code>
         /// </summary>
         /// <param name="cmdlet">
@@ -986,7 +988,9 @@ namespace System.Management.Automation
         /// Add a cmdlet to construct a command pipeline.
         /// For example, to construct a command string "get-process | sort-object",
         ///     <code>
-        ///         PowerShell shell = PowerShell.Create("get-process").AddCommand("sort-object");
+        ///         PowerShell shell = PowerShell.Create()
+        ///             .AddCommand("get-process", true)
+        ///             .AddCommand("sort-object", true);
         ///     </code>
         /// </summary>
         /// <param name="cmdlet">
@@ -1027,8 +1031,8 @@ namespace System.Management.Automation
         /// Add a piece of script to construct a command pipeline.
         /// For example, to construct a command string "get-process | foreach { $_.Name }"
         ///     <code>
-        ///         PowerShell shell = PowerShell.Create("get-process").
-        ///                                     AddScript("foreach { $_.Name }");
+        ///         PowerShell shell = PowerShell.Create()
+        ///             .AddScript("get-process | foreach { $_.Name }");
         ///     </code>
         /// </summary>
         /// <param name="script">
@@ -1066,8 +1070,8 @@ namespace System.Management.Automation
         /// Add a piece of script to construct a command pipeline.
         /// For example, to construct a command string "get-process | foreach { $_.Name }"
         ///     <code>
-        ///         PowerShell shell = PowerShell.Create("get-process").
-        ///                                     AddScript("foreach { $_.Name }", true);
+        ///         PowerShell shell = PowerShell.Create()
+        ///             .AddScript("get-process | foreach { $_.Name }", true);
         ///     </code>
         /// </summary>
         /// <param name="script">
@@ -1175,8 +1179,9 @@ namespace System.Management.Automation
         /// Add a parameter to the last added command.
         /// For example, to construct a command string "get-process | select-object -property name"
         ///     <code>
-        ///         PowerShell shell = PowerShell.Create("get-process").
-        ///                                     AddCommand("select-object").AddParameter("property","name");
+        ///         PowerShell shell = PowerShell.Create()
+        ///             .AddCommand("get-process")
+        ///             .AddCommand("select-object").AddParameter("property", "name");
         ///     </code>
         /// </summary>
         /// <param name="parameterName">
@@ -1380,8 +1385,9 @@ namespace System.Management.Automation
         /// Adds an argument to the last added command.
         /// For example, to construct a command string "get-process | select-object name"
         ///     <code>
-        ///         PowerShell shell = PowerShell.Create("get-process").
-        ///                                     AddCommand("select-object").AddParameter("name");
+        ///         PowerShell shell = PowerShell.Create()
+        ///             .AddCommand("get-process")
+        ///             .AddCommand("select-object").AddArgument("name");
         ///     </code>
         /// This will add the value "name" to the positional parameter list of "select-object"
         /// cmdlet. When the command is invoked, this value will get bound to positional parameter 0
