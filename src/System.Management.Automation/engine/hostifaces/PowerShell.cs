@@ -946,7 +946,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a cmdlet to construct a command pipeline.
-        /// For example, to construct a command string "get-process | sort-object",
+        /// For example, to construct a command string "Get-Process | Sort-Object",
         ///     <code>
         ///         PowerShell shell = PowerShell.Create()
         ///             .AddCommand("get-process")
