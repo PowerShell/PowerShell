@@ -1386,8 +1386,8 @@ namespace System.Management.Automation
         /// For example, to construct a command string "Get-Process | Select-Object Name"
         ///     <code>
         ///         PowerShell shell = PowerShell.Create()
-        ///             .AddCommand("get-process")
-        ///             .AddCommand("select-object").AddArgument("name");
+        ///             .AddCommand("Get-Process")
+        ///             .AddCommand("Select-Object").AddArgument("Name");
         ///     </code>
         /// This will add the value "name" to the positional parameter list of "select-object"
         /// cmdlet. When the command is invoked, this value will get bound to positional parameter 0
