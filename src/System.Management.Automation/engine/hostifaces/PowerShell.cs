@@ -1032,7 +1032,7 @@ namespace System.Management.Automation
         /// For example, to construct a command string "Get-Process | ForEach-Object { $_.Name }"
         ///     <code>
         ///         PowerShell shell = PowerShell.Create()
-        ///             .AddScript("get-process | foreach { $_.Name }");
+        ///             .AddScript("Get-Process | ForEach-Object { $_.Name }");
         ///     </code>
         /// </summary>
         /// <param name="script">
