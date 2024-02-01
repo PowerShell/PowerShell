@@ -1197,6 +1197,20 @@ namespace System.Management.Automation
                 result.AddRange(CompletionCompleters.CompleteKeywords(completionContext, _tokens));
             }
 
+            if (result is null)
+            {
+                result = CompletionCompleters.CompleteKeywords(completionContext);
+                if (replacementIndex == -1 && result.Count > 0)
+                {
+                    replacementIndex = completionContext.CursorPosition.Offset;
+                    replacementLength = 0;
+                }
+            }
+            else
+            {
+                result.AddRange(CompletionCompleters.CompleteKeywords(completionContext));
+            }
+
             return result;
         }
 
