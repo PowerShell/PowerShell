@@ -989,8 +989,8 @@ namespace System.Management.Automation
         /// For example, to construct a command string "Get-Process | Sort-Object",
         ///     <code>
         ///         PowerShell shell = PowerShell.Create()
-        ///             .AddCommand("get-process", true)
-        ///             .AddCommand("sort-object", true);
+        ///             .AddCommand("Get-Process", true)
+        ///             .AddCommand("Sort-Object", true);
         ///     </code>
         /// </summary>
         /// <param name="cmdlet">
