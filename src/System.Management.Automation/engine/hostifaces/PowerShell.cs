@@ -1177,7 +1177,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a parameter to the last added command.
-        /// For example, to construct a command string "get-process | select-object -property name"
+        /// For example, to construct a command string "Get-Process | Select-Object -Property Name"
         ///     <code>
         ///         PowerShell shell = PowerShell.Create()
         ///             .AddCommand("get-process")
