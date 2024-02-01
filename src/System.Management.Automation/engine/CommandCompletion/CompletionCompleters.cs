@@ -8229,6 +8229,202 @@ namespace System.Management.Automation
 
         #endregion Hashtable Keys
 
+        #region Keywords
+        private static readonly string[] s_CommonKeyWords = new string[]
+        {
+            "break",
+            "class",
+            "continue",
+            "data",
+            "do",
+            "enum",
+            "exit",
+            "filter",
+            "for",
+            "foreach",
+            "function",
+            "if",
+            "return",
+            "switch",
+            "throw",
+            "trap",
+            "try",
+            "using",
+            "while"
+        };
+
+        private static readonly string[] s_TryKeywords = new string[]
+        {
+            "catch",
+            "finally"
+        };
+
+        private static readonly string[] s_IfKeywords = new string[]
+        {
+            "else",
+            "elseif"
+        };
+
+        private static readonly string[] s_ClassMemberKeywords = new string[]
+        {
+            "hidden",
+            "static"
+        };
+
+        private static readonly string[] s_doConditionKeywords = new string[]
+        {
+            "until",
+            "while"
+        };
+
+        private const string switchDefaultKeywordText = "default";
+        private const string inKeywordText = "in";
+
+        private static IEnumerable<CompletionResult> CompleteKeywordAtCursor(Token tokenAtCursor)
+        {
+            if (tokenAtCursor.Kind == TokenKind.For)
+            {
+                string val1 = TokenKind.For.Text();
+                string val2 = TokenKind.Foreach.Text();
+                yield return new(val1, val1, CompletionResultType.Keyword, GetKeywordTooltip(val1));
+                yield return new(val2, val2, CompletionResultType.Keyword, GetKeywordTooltip(val2));
+            }
+            else if (tokenAtCursor.Kind == TokenKind.Else)
+            {
+                string val1 = TokenKind.Else.Text();
+                string val2 = TokenKind.ElseIf.Text();
+                yield return new(val1, val1, CompletionResultType.Keyword, GetKeywordTooltip(val1));
+                yield return new(val2, val2, CompletionResultType.Keyword, GetKeywordTooltip(val2));
+            }
+            else
+            {
+                string val = tokenAtCursor.Kind.Text();
+                yield return new(val, val, CompletionResultType.Keyword, GetKeywordTooltip(val));
+            }
+        }
+
+        internal static List<CompletionResult> CompleteKeywords(CompletionContext context)
+        {
+            string wordToComplete = context.WordToComplete is null ? string.Empty : context.WordToComplete;
+            var result = new List<CompletionResult>();
+            Token tokenAtCursor = context.TokenAtCursor;
+            if (tokenAtCursor is not null && tokenAtCursor.Kind != TokenKind.DynamicKeyword && tokenAtCursor.TokenFlags.HasFlag(TokenFlags.Keyword))
+            {
+                result.AddRange(CompleteKeywordAtCursor(tokenAtCursor));
+                return result;
+            }
+
+            Ast lastAst = context.RelatedAsts[^1];
+            if (lastAst is SwitchStatementAst
+                || (lastAst is ErrorStatementAst errorStatement1 && errorStatement1.Kind is not null && errorStatement1.Kind.Kind == TokenKind.Switch)
+                || (lastAst is StatementBlockAst or StringConstantExpressionAst
+                && (lastAst.Parent is SwitchStatementAst
+                || (lastAst.Parent is ErrorStatementAst errorStatement && errorStatement.Kind is not null && errorStatement.Kind.Kind == TokenKind.Switch))))
+            {
+                if (switchDefaultKeywordText.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Add(new CompletionResult(switchDefaultKeywordText, switchDefaultKeywordText, CompletionResultType.Keyword, GetKeywordTooltip(switchDefaultKeywordText)));
+                }
+
+                return result;
+            }
+
+            int keywordPosition = tokenAtCursor is not null && tokenAtCursor.Kind == TokenKind.Identifier
+                ? tokenAtCursor.Extent.StartOffset
+                : context.CursorPosition.Offset;
+
+            int highestEndOffset = 0;
+            Ast astBeforeToken = context.RelatedAsts[0].FindAll(ast =>
+            {
+                if (keywordPosition >= ast.Extent.EndOffset && ast is not ScriptBlockAst and not NamedBlockAst)
+                {
+                    if (ast.Extent.EndOffset > highestEndOffset)
+                    {
+                        highestEndOffset = ast.Extent.EndOffset;
+                        return true;
+                    }
+                }
+
+                return false;
+            }, true).LastOrDefault();
+
+            if (astBeforeToken is ErrorStatementAst errorStatement2)
+            {
+                if (errorStatement2.Extent.Text.StartsWith("foreach", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (inKeywordText.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(new CompletionResult(inKeywordText, inKeywordText, CompletionResultType.Keyword, GetKeywordTooltip(inKeywordText)));
+                    }
+
+                    return result;
+                }
+                else if (errorStatement2.Extent.Text.StartsWith("do", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.AddRange(GetMatchingKeywords(s_doConditionKeywords, wordToComplete));
+                    return result;
+                }
+            }
+
+            string baseScript = context.RelatedAsts[0].Extent.Text.Remove(keywordPosition);
+            bool IsValidKeyword(string keyword)
+            {
+                _ = Parser.ParseInput(baseScript + keyword, null, out Token[] parsedTokens, out _);
+                for (int i = 0; i < parsedTokens.Length; i++)
+                {
+                    if (parsedTokens[i].Extent.StartOffset == keywordPosition)
+                    {
+                        return parsedTokens[i].TokenFlags.HasFlag(TokenFlags.Keyword);
+                    }
+                }
+
+                return false;
+            }
+
+            if (IsValidKeyword(s_ClassMemberKeywords[0]))
+            {
+                result.AddRange(GetMatchingKeywords(s_ClassMemberKeywords, wordToComplete));
+                return result;
+            }
+
+            if (IsValidKeyword(s_TryKeywords[0]))
+            {
+                result.AddRange(GetMatchingKeywords(s_TryKeywords, wordToComplete));
+            }
+
+            if (IsValidKeyword(s_IfKeywords[0]))
+            {
+                result.AddRange(GetMatchingKeywords(s_IfKeywords, wordToComplete));
+            }
+
+            if (IsValidKeyword(s_CommonKeyWords[0]))
+            {
+                result.AddRange(GetMatchingKeywords(s_CommonKeyWords, wordToComplete));
+            }
+
+            return result;
+        }
+
+        private static IEnumerable<CompletionResult> GetMatchingKeywords(string[] keywords, string wordToComplete)
+        {
+            foreach (string word in keywords)
+            {
+                if (word.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return new CompletionResult(word, word, CompletionResultType.Keyword, GetKeywordTooltip(word));
+                }
+            }
+        }
+
+        private static string GetKeywordTooltip(string keyword)
+        {
+            var resManager = ResourceManagerCache.GetResourceManager(typeof(CompletionCompleters).Assembly, "System.Management.Automation.resources.TabCompletionStrings");
+            string toolTip = resManager.GetString($"{keyword}KeywordDescription");
+            toolTip ??= keyword;
+            return toolTip;
+        }
+        #endregion
+
         #region Helpers
 
         internal static bool IsPathSafelyExpandable(ExpandableStringExpressionAst expandableStringAst, string extraText, ExecutionContext executionContext, out string expandedString)

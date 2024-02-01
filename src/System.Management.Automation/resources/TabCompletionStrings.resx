@@ -353,4 +353,198 @@ using namespace &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
 
 using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
   </data>
+  <data name="beginKeywordDescription" xml:space="preserve">
+    <value>Specifies a scriptblock that is run once every time the script/function is executed.
+
+begin {}</value>
+  </data>
+  <data name="breakKeywordDescription" xml:space="preserve">
+    <value>Exits the current control block or loop. If a label is specified, each encompassing control block will be exited until the label is reached.
+When used in a trap, it displays the trapped error and aborts execution of the script/function.
+
+break
+break &lt;LabelName&gt;</value>
+  </data>
+  <data name="catchKeywordDescription" xml:space="preserve">
+    <value>Specifies a scriptblock that is executed when a terminating error is caught.
+One or more exceptions can be specified to catch specific errors.
+
+catch {}
+catch &lt;[ExceptionType1]&gt;, &lt;[ExceptionType2]&gt; {}</value>
+  </data>
+  <data name="classKeywordDescription" xml:space="preserve">
+    <value>Specifies a PowerShell class definition.
+
+class &lt;[ClassName]&gt; {}
+class &lt;[ClassName]&gt; : &lt;[BaseClass1 or Interface1]&gt;, &lt;[Interface2]&gt; {}</value>
+</data>
+  <data name="cleanKeywordDescription" xml:space="preserve">
+    <value>Specifies a scriptblock that is run once every time the script/function is executed. This block is always run, regardless of any terminating errors.
+
+clean {}</value>
+  </data>
+  <data name="continueKeywordDescription" xml:space="preserve">
+    <value>Stops execution in the current statement block and advances the loop. If a label is specified, each encompassing control block will be exited until the label is reached.
+When used in a trap, it silences the trapped error and continues execution of the script/function.
+
+continue
+continue &lt;LabelName&gt;</value>
+  </data>
+  <data name="dataKeywordDescription" xml:space="preserve">
+    <value>Defines a scriptblock that is restricted to a specified subset of the PowerShell language.
+
+data {}
+data &lt;VariableName&gt; {}
+data -supportedCommand &lt;Command1&gt;, &lt;Command2&gt;</value>
+  </data>
+  <data name="doKeywordDescription" xml:space="preserve">
+    <value>Defines a loop that is executed one or more times, until the specified condition is met.
+
+do {} while ()
+do {} until ()
+:label do {} while ()
+:label do {} until ()</value>
+  </data>
+  <data name="dynamicParamKeywordDescription" xml:space="preserve">
+    <value>Defines a scriptblock that is executed to create dynamic parameters.
+
+dynamicparam {}</value>
+  </data>
+  <data name="elseKeywordDescription" xml:space="preserve">
+    <value>Defines a statement block that is executed if all previous if/elseif statements evaluate to false.
+
+else {}</value>
+  </data>
+  <data name="elseifKeywordDescription" xml:space="preserve">
+    <value>Defines a statement block that is executed if all previous if/elseif statements evaluate to false and the specified condition evaluates to true.
+
+elseif () {}</value>
+  </data>
+  <data name="endKeywordDescription" xml:space="preserve">
+    <value>Specifies a scriptblock that is run once every time the script/function is executed.
+The End block is executed after the Process block has finished processing incoming pipeline input.
+
+end {}</value>
+  </data>
+  <data name="enumKeywordDescription" xml:space="preserve">
+    <value>Defines a PowerShell type definition for an Enum.
+
+enum &lt;TypeName&gt; {}</value>
+  </data>
+  <data name="exitKeywordDescription" xml:space="preserve">
+    <value>When used inside a script, stops the rest of the script from being executed.
+When used interactively, exits the nested prompt (debugger, remote connection), at the top level it exits the shell itself.
+
+exit
+exit &lt;ExitCode&gt;</value>
+  </data>
+  <data name="filterKeywordDescription" xml:space="preserve">
+    <value>Defines a PowerShell function where the default block is a Process block rather than an End block.
+
+filter &lt;FilterName&gt; {param()}
+filter &lt;FilterName&gt; {param() dynamicparam {} begin {} process {} end {} clean {}}</value>
+  </data>
+  <data name="finallyKeywordDescription" xml:space="preserve">
+    <value>Defines a scriptblock that is always executed after the try block, regardless of any terminating errors.
+
+finally {}</value>
+  </data>
+  <data name="forKeywordDescription" xml:space="preserve">
+    <value>Defines a for loop.
+
+for (&lt;Initializer&gt;;&lt;Condition&gt;;&lt;AdvanceAction&gt;;) {}
+:label for (&lt;Initializer&gt;;&lt;Condition&gt;;&lt;AdvanceAction&gt;;) {}</value>
+  </data>
+  <data name="foreachKeywordDescription" xml:space="preserve">
+    <value>Defines a foreach loop.
+
+foreach (&lt;CurrentItemVariable&gt; in &lt;Collection&gt;) {}
+:label foreach (&lt;CurrentItemVariable&gt; in &lt;Collection&gt;) {}</value>
+  </data>
+  <data name="functionKeywordDescription" xml:space="preserve">
+    <value>Defines a PowerShell function.
+
+function &lt;FunctionName&gt; {param()}
+function &lt;FunctionName&gt; {param() dynamicparam {} begin {} process {} end {} clean {}}</value>
+  </data>
+  <data name="hiddenKeywordDescription" xml:space="preserve">
+    <value>Hides the specified class member from tab completion and Get-Member.
+
+hidden &lt;MemberName&gt;</value>
+  </data>
+  <data name="ifKeywordDescription" xml:space="preserve">
+    <value>Defines a statement block that is only executed if the specified condition evaluates to true.
+
+if () {}</value>
+  </data>
+  <data name="inKeywordDescription" xml:space="preserve">
+    <value>Required keyword in foreach loop definition.
+
+foreach (&lt;CurrentItemVariable&gt; in &lt;Collection&gt;) {}</value>
+  </data>
+  <data name="paramKeywordDescription" xml:space="preserve">
+    <value>Specifies the parameters for a scriptblock.
+
+param()</value>
+  </data>
+  <data name="processKeywordDescription" xml:space="preserve">
+    <value>Specifies a scriptblock that is run once for each item received from the pipeline.
+
+process {}</value>
+  </data>
+  <data name="returnKeywordDescription" xml:space="preserve">
+    <value>Stops execution of code in the current scriptblock and optionally returns the specified value.
+In class methods that return something, all code paths need to lead to a return statement.
+
+return
+return &lt;ValueToReturn&gt;</value>
+  </data>
+  <data name="staticKeywordDescription" xml:space="preserve">
+    <value>Defines the following class member as a static member.
+
+static &lt;MemberName&gt;</value>
+  </data>
+  <data name="switchKeywordDescription" xml:space="preserve">
+    <value>Defines a loop that evaluates the specified conditions for each item.
+
+switch (&lt;Collection&gt;) {}
+switch -OptionalParameters (&lt;Collection&gt;) {}
+:label switch -OptionalParameters (&lt;Collection&gt;) {}</value>
+  </data>
+  <data name="throwKeywordDescription" xml:space="preserve">
+    <value>Throws a terminating error, optionally with a string, ErrorRecord or Exception that describes the error.
+
+throw
+throw &lt;Expression&gt;</value>
+  </data>
+  <data name="trapKeywordDescription" xml:space="preserve">
+    <value>Defines a scriptblock that is executed when an unhandled exception is thrown in the script/function.
+
+trap {}</value>
+  </data>
+  <data name="tryKeywordDescription" xml:space="preserve">
+    <value>Defines a scriptblock that is executed and if a terminating error is thrown from the scriptblock, the configured catch or finally scriptblocks are executed.
+
+try {}</value>
+  </data>
+  <data name="untilKeywordDescription" xml:space="preserve">
+    <value>Defines a condition for a Do loop, if the condition is evaluated to true, the loop exits.
+
+do {} until ()</value>
+  </data>
+  <data name="usingKeywordDescription" xml:space="preserve">
+    <value>Defines an assembly, module, namespace, or namespace/type alias.
+
+using assembly
+using module
+using namespace
+using type</value>
+  </data>
+  <data name="whileKeywordDescription" xml:space="preserve">
+    <value>Defines either a While loop, or a condition for a Do loop.
+
+while () {}
+:label while () {}
+do {} while ()</value>
+  </data>
 </root>
