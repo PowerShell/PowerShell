@@ -340,7 +340,7 @@ Path:.*
         }
     }
 
-    It 'Verifies basic logging with no customizations' -Skip:(!$IsSupportedEnvironment) {
+    It 'Verifies basic logging with no customizations' -Skip:(!$IsMacOS) {
         try {
             $timeString = [DateTime]::Now.ToString('yyyy-MM-dd HH:mm:ss')
             $configFile = WriteLogSettings -LogId $logId
@@ -362,7 +362,7 @@ Path:.*
         }
     }
 
-    It 'Verifies scriptblock logging' -Skip:(!$IsSupportedEnvironment) {
+    It 'Verifies scriptblock logging' -Skip:(!$IsMacOS) {
         try {
             $script = @'
 $PID
@@ -399,7 +399,7 @@ $PID
         }
     }
 
-    It 'Verifies scriptblock logging with null character' -Skip:(!$IsSupportedEnvironment) {
+    It 'Verifies scriptblock logging with null character' -Skip:(!$IsMacOS) {
         try {
             $script = @'
 $PID
