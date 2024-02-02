@@ -430,21 +430,13 @@ $PID
         }
     }
 
-    # This is pending because it results in false positives (-Skip:(!$IsSupportedEnvironment) )
-    It 'Verifies logging level filtering works' {
-        try {
-            $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
-            $testPid = & $powershell -NoLogo -NoProfile -SettingsFile $configFile -Command '$PID'
+    # this is now specific to MacOS
+    It 'Verifies logging level filtering works' -skip:(!$IsMacOs) {
+        $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
+        $testPid = & $powershell -NoLogo -NoProfile -SettingsFile $configFile -Command '$PID'
 
-            $items = Get-MacOsSyslogItems -processId $testPid -logId $logId
-            $items | Should -Be $null -Because ("{0} Warning event logs were found" -f @($items).Count)
-        }
-        catch {
-            if (Test-Path $contentFile) {
-                Send-VstsLogFile -Path $contentFile
-            }
-            throw
-        }
+        $items = Get-MacOsSyslogItems -processId $testPid -logId $logId
+        $items | Should -Be $null -Because ("{0} Warning event logs were found" -f @($items).Count)
     }
 }
 
