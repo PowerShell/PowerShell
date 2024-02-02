@@ -405,7 +405,7 @@ do {} until ()
 :label do {} while ()
 :label do {} until ()</value>
   </data>
-  <data name="dynamicParamKeywordDescription" xml:space="preserve">
+  <data name="dynamicparamKeywordDescription" xml:space="preserve">
     <value>Defines a scriptblock that is executed to create dynamic parameters.
 
 dynamicparam {}</value>
