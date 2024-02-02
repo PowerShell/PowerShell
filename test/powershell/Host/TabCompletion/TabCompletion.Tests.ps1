@@ -491,7 +491,7 @@ using `
 
         $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
         if ($res.CompletionMatches.Count -gt 0) {
-            $actual = [string]::Join(",",$res.CompletionMatches.completiontext)
+            $actual = [string]::Join(",",($res.CompletionMatches | Where-Object ResultType -ne "Keyword").Completiontext)
         }
         else {
             $actual = ''
@@ -2364,7 +2364,8 @@ dir -Recurse `
         }
 
         It "Should not throw errors in tab completion with empty input ast" {
-            {[System.Management.Automation.CommandCompletion]::CompleteInput({}.Ast, @(), {}.Ast.Extent.StartScriptPosition, $null)} | Should -Not -Throw
+            $Ast = [System.Management.Automation.Language.Parser]::ParseInput('', [ref] $null, [ref] $null)
+            {[System.Management.Automation.CommandCompletion]::CompleteInput($Ast, @(), $Ast.Extent.StartScriptPosition, $null)} | Should -Not -Throw
         }
     }
 
