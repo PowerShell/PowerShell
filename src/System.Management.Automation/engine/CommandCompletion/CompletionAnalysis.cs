@@ -1143,20 +1143,6 @@ namespace System.Management.Automation
                 }
             }
 
-            if (result == null || result.Count == 0)
-            {
-                // Handle special file completion scenarios: .\+file.txt -> +<tab>
-                string input = completionContext.RelatedAsts[0].Extent.Text;
-                if (Regex.IsMatch(input, @"^[\S]+$") && completionContext.RelatedAsts.Count > 0 && completionContext.RelatedAsts[0] is ScriptBlockAst)
-                {
-                    replacementIndex = completionContext.RelatedAsts[0].Extent.StartScriptPosition.Offset;
-                    replacementLength = completionContext.RelatedAsts[0].Extent.EndScriptPosition.Offset - replacementIndex;
-
-                    completionContext.WordToComplete = input;
-                    result = CompleteFileNameAsCommand(completionContext);
-                }
-            }
-
             if (result is null || result.Count == 0)
             {
                 result = CompletionCompleters.CompleteKeywords(completionContext, _tokens);

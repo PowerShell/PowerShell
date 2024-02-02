@@ -2278,13 +2278,6 @@ dir -Recurse `
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $expected
         }
-
-        It "Complete file name starting with special char" {
-            $inputStr = ")"
-            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly "& '.${separator})file.txt'"
-        }
     }
 
     Context "Local tab completion with AST" {
