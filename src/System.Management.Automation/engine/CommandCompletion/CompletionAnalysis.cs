@@ -1157,10 +1157,10 @@ namespace System.Management.Automation
                 }
             }
 
-            if (result is null)
+            if (result is null || result.Count == 0)
             {
-                result = CompletionCompleters.CompleteKeywords(completionContext);
-                if (replacementIndex == -1 && result.Count > 0)
+                result = CompletionCompleters.CompleteKeywords(completionContext, _tokens);
+                if (result.Count > 0 && (tokenAtCursor is null || (tokenAtCursor.Kind != TokenKind.Identifier && !tokenAtCursor.TokenFlags.HasFlag(TokenFlags.Keyword))))
                 {
                     replacementIndex = completionContext.CursorPosition.Offset;
                     replacementLength = 0;
@@ -1168,7 +1168,7 @@ namespace System.Management.Automation
             }
             else
             {
-                result.AddRange(CompletionCompleters.CompleteKeywords(completionContext));
+                result.AddRange(CompletionCompleters.CompleteKeywords(completionContext, _tokens));
             }
 
             return result;
