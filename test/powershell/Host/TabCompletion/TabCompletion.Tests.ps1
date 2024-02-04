@@ -1085,6 +1085,201 @@ ConstructorTestClass(int i, bool b)
         }
     }
 
+    Context KeywordCompletion {
+        $CommonKeywords = "break","class","continue","data","do","enum","exit","filter","for","foreach","function","if","return","switch","throw","trap","try","while"
+        $TryKeywords = "catch", "finally"
+        $IfKeywords = "else", "elseif"
+        $DoConditionKeywords = "until", "while"
+        $BlockNames = 'param', 'dynamicparam', 'begin', 'process', 'end', 'clean'
+        # Each of these tests are run twice, once with no partial input and once with a partially complete keyword
+        $TestCases = @(
+            @{
+                Name = 'Incomplete try catch'
+                Expected = $TryKeywords
+                Text = 'try{}^'
+            }
+            @{
+                Name = 'Complete try catch'
+                Expected = $TryKeywords + $CommonKeywords
+                Text = 'try{}catch{}^'
+            }
+            @{
+                Name = 'Complete try finally'
+                Expected = $CommonKeywords
+                Text = 'try{}finally{}^'
+            }
+            @{
+                Name = 'Insert into complete try catch'
+                Expected = ,"catch"
+                Text = "try{}`n^`ncatch{}"
+            }
+            @{
+                Name = 'After if statement'
+                Expected = $IfKeywords + $CommonKeywords
+                Text = 'if($true){}^'
+            }
+            @{
+                Name = 'After else statement'
+                Expected = $CommonKeywords
+                Text = 'if($true){}else {}^'
+            }
+            @{
+                Name = 'Insert into if/else statement'
+                Expected = ,'elseif'
+                Text = 'if($true){}^ else {}'
+            }
+            @{
+                Name = 'Insert into if/else statement with missing statement'
+                Expected = $null
+                Text = 'if($true){}elseif ($true) ^ else {}', 'if($true){}elseif ($true) e^ else {}'
+            }
+            @{
+                Name = 'Incomplete foreach'
+                Expected = ,'in'
+                Text = 'foreach ($x ^'
+            }
+            @{
+                Name = 'Incomplete foreach with no variable'
+                Expected = $null
+                Text = 'foreach (^', 'foreach (i^'
+            }
+            @{
+                Name = 'Incomplete do'
+                Expected = $DoConditionKeywords
+                Text = 'do {} ^'
+            }
+            @{
+                Name = 'Incomplete do with no statement block'
+                Expected = $null
+                Text = "do`n^", "do`n u^"
+            }
+            @{
+                Name = 'Incomplete if'
+                Expected = $null
+                Text = 'if ($true) ^', 'if ($true) e^'
+            }
+            @{
+                Name = 'Incomplete function'
+                Expected = $null
+                Text = 'function X ^', 'function X p^'
+            }
+            @{
+                Name = 'Incomplete class'
+                Expected = $null
+                Text = 'class X ^', 'class X h^'
+            }
+            @{
+                Name = 'Incomplete enum'
+                Expected = $null
+                Text = 'enum X ^', 'enum X h^'
+            }
+            @{
+                Name = 'Insert into complete method member that already has hidden and static defined'
+                Expected = $null
+                Text = 'class X {hidden static [string] ^ DoSomething(){return ""}}', 'class X {hidden static [string] h^ DoSomething(){return ""}}'
+            }
+            @{
+                Name = 'Set a default value for property'
+                Expected = $null
+                Text = 'class X {[string] $Y = ^}', 'class X {[string] $Y = h^}'
+            }
+            @{
+                Name = 'Just after setting hidden and static, but before writing property'
+                Expected = $null
+                Text = 'class X {hidden static ^}', 'class X {hidden static h^}'
+            }
+            @{
+                Name = 'Defining a value in an Enum'
+                Expected = $null
+                Text = 'enum X {^}','enum X {h^}'
+            }
+            @{
+                Name = 'Inside function definition with whitespace after cursor'
+                Expected = $BlockNames + $CommonKeywords
+                Text = "function X {`n  ^  `n  `n}"
+            }
+            @{
+                Name = 'Completely empty script'
+                Expected = ,"using" + $BlockNames + $CommonKeywords
+                Text = "^"
+            }
+            @{
+                Name = 'Script that only contains using statements'
+                Expected = ,"using" + $BlockNames + $CommonKeywords
+                Text = "using namespace system;^"
+            }
+            @{
+                Name = 'Inside empty scriptblock'
+                Expected = $BlockNames + $CommonKeywords
+                Text = "& {^}"
+            }
+            @{
+                Name = 'On a new line in a script'
+                Expected = $CommonKeywords
+                Text = "Get-Process `n^"
+            }
+        )
+        It 'Complete keywords in scenario: <Name>' -TestCases $TestCases -test {
+            param([string[]] $Expected, [string[]] $Text)
+            foreach ($InputText in $Text)
+            {
+                $CursorIndex = $InputText.IndexOf('^')
+                $ActualInputText = $InputText.Remove($CursorIndex, 1)
+                $Result = (TabExpansion2 -cursorColumn $CursorIndex -inputScript $ActualInputText).CompletionMatches | Where-Object -Property ResultType -EQ Keyword
+                if ($null -eq $Expected)
+                {
+                    $Result | Should -Be $null
+                }
+                else
+                {
+                    $ActualExpected = $Expected -join ','
+                    $Result.CompletionText -join ',' | Should -Be $ActualExpected
+                    
+                    $PartialInput = $Expected[0].Remove(1)
+                    $ActualExpected = ($Expected | Where-Object {$_ -like "$PartialInput*"}) -join ','
+                    $Result = (TabExpansion2 -cursorColumn ($CursorIndex + 1) -inputScript ($ActualInputText.Insert($CursorIndex, $PartialInput))).CompletionMatches | Where-Object -Property ResultType -EQ Keyword
+                    $Result.CompletionText -join ',' | Should -Be $ActualExpected
+                }
+            }
+        }
+
+        # Tests for scenarios that only work with no partial input
+        It 'Complete keywords in scenario (no partial input): <Name>' -TestCases @(
+            @{
+                Name = 'Insert into complete property member'
+                Expected = 'hidden','static'
+                Text = 'class X {[string] ^ $Y}'
+            }
+            @{
+                Name = 'Insert into complete property member that already has hidden and static defined'
+                Expected = $null
+                Text = 'class X {hidden static [string] ^ $Y}'
+            }
+            @{
+                Name = 'Insert into complete method member'
+                Expected = 'hidden', 'static'
+                Text = 'class X {[string] ^ DoSomething(){return ""}}'
+            }
+            @{
+                Name = 'Inside param block'
+                Expected = $null
+                Text = 'function X {param(^)}'
+            }
+            @{
+                Name = 'Inside function definition with a named block defined'
+                Expected = $BlockNames | where {$_ -notin 'param', 'begin'}
+                Text = "function X {begin {} ^}"
+            }
+        ) -test {
+            param([string[]] $Expected, [string] $Text)
+            $CursorIndex = $Text.IndexOf('^')
+            $ActualInputText = $Text.Remove($CursorIndex, 1)
+            $Result = (TabExpansion2 -cursorColumn $CursorIndex -inputScript $ActualInputText).CompletionMatches | Where-Object -Property ResultType -EQ Keyword
+            $ActualExpected = $Expected -join ','
+            $Result.CompletionText -join ',' | Should -Be $ActualExpected
+        }
+    }
+
     It 'Should complete "Export-Counter -FileFormat" with available output formats' -Pending {
         $res = TabExpansion2 -inputScript 'Export-Counter -FileFormat ' -cursorColumn 'Export-Counter -FileFormat '.Length
         $res.CompletionMatches | Should -HaveCount 3
