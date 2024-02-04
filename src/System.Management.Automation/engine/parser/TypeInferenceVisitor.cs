@@ -584,6 +584,20 @@ namespace System.Management.Automation
             if (hashtableAst.KeyValuePairs.Count > 0)
             {
                 var properties = new List<PSMemberNameAndType>();
+                void AddInferredTypes(Ast ast, string keyName)
+                {
+                    bool foundAnyTypes = false;
+                    foreach (PSTypeName item in InferTypes(ast))
+                    {
+                        foundAnyTypes = true;
+                        properties.Add(new PSMemberNameAndType(keyName, item));
+                    }
+
+                    if (!foundAnyTypes)
+                    {
+                        properties.Add(new PSMemberNameAndType(keyName, new PSTypeName("System.Object")));
+                    }
+                }
 
                 foreach (var kv in hashtableAst.KeyValuePairs)
                 {
@@ -615,31 +629,18 @@ namespace System.Management.Automation
                                 _ = SafeExprEvaluator.TrySafeEval(expression, _context.ExecutionContext, out value);
                             }
 
-                            PSTypeName valueType;
                             if (value is null)
                             {
-                                valueType = new PSTypeName("System.Object");
-                            }
-                            else
-                            {
-                                valueType = new PSTypeName(value.GetType());
+                                AddInferredTypes(expression, name);
+                                continue;
                             }
 
+                            PSTypeName valueType = new(value.GetType());
                             properties.Add(new PSMemberNameAndType(name, valueType, value));
                         }
                         else
                         {
-                            bool foundAnyTypes = false;
-                            foreach (var item in InferTypes(kv.Item2))
-                            {
-                                foundAnyTypes = true;
-                                properties.Add(new PSMemberNameAndType(name, item));
-                            }
-
-                            if (!foundAnyTypes)
-                            {
-                                properties.Add(new PSMemberNameAndType(name, new PSTypeName("System.Object")));
-                            }
+                            AddInferredTypes(kv.Item2, name);
                         }
                     }
                 }
@@ -1639,7 +1640,7 @@ namespace System.Management.Automation
             var memberNameList = new List<string> { memberAsStringConst.Value };
             foreach (var type in exprType)
             {
-                if (type.Type == typeof(PSObject))
+                if (type.Type == typeof(PSObject) && type is not PSSyntheticTypeName)
                 {
                     continue;
                 }
