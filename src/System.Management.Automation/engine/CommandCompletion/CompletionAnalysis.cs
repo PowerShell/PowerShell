@@ -1461,7 +1461,7 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                inferredTypes = new PSTypeName[] { new(varExpression.StaticType) };
+                inferredTypes = new PSTypeName[] { typeConstraint };
             }
             else
             {
