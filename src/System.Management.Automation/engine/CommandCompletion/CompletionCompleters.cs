@@ -8543,12 +8543,13 @@ namespace System.Management.Automation
             if (surroundingAst is ScriptBlockAst scriptBlock)
             {
                 if (usingKeywordText.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase)
-                    && scriptBlock.Extent.StartOffset == 0 && astBeforeToken is null or UsingStatementAst)
+                    && scriptBlock.Extent.StartOffset == 0
+                    && (astBeforeToken is null || (astBeforeToken is UsingStatementAst && astBeforeToken.Extent.EndOffset != keywordPosition)))
                 {
                     result.Add(new CompletionResult(usingKeywordText, usingKeywordText, CompletionResultType.Keyword, GetKeywordTooltip(usingKeywordText)));
                 }
 
-                if (astBeforeToken is null or UsingStatementAst or ParamBlockAst or NamedBlockAst)
+                if (astBeforeToken is null or ParamBlockAst or NamedBlockAst || (astBeforeToken is UsingStatementAst && astBeforeToken.Extent.EndOffset != keywordPosition))
                 {
                     void AddNamedBlockKeyword(bool add, string blockName)
                     {
