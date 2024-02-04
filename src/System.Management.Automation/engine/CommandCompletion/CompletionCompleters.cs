@@ -8249,7 +8249,6 @@ namespace System.Management.Automation
             "throw",
             "trap",
             "try",
-            "using",
             "while"
         };
 
@@ -8280,6 +8279,7 @@ namespace System.Management.Automation
         private const string processKeywordText = "process";
         private const string endKeywordText = "end";
         private const string cleanKeywordText = "clean";
+        private const string usingKeywordText = "using";
 
         private static IEnumerable<CompletionResult> CompleteKeywordAtCursor(Token tokenAtCursor)
         {
@@ -8334,7 +8334,30 @@ namespace System.Management.Automation
                 && (ast.Extent.EndOffset > keywordEndPosition
                 || (ast.Extent.EndOffset == keywordEndPosition && ast is ScriptBlockAst scriptBlock && scriptBlock.Extent.StartOffset == 0)), true).Last();
 
-            if (surroundingAst is not ScriptBlockAst and not NamedBlockAst and not StatementBlockAst and not SubExpressionAst and not TypeDefinitionAst and not MemberAst)
+            var cmdAst = surroundingAst as CommandAst;
+            if (cmdAst is not null
+                && cmdAst.CommandElements[0].Extent == tokenAtCursor.Extent
+                && cmdAst.Parent is PipelineAst pipeline
+                && pipeline.PipelineElements[0].Extent.StartOffset == tokenAtCursor.Extent.StartOffset)
+            {
+                // The input is a partially complete word where the following elements makes it look like an actual command
+                // Example: if($true){}e<Tab> else {}
+                surroundingAst = pipeline.Parent;
+            }
+
+            if (surroundingAst is NamedBlockAst block
+                && block.Unnamed
+                && block.Statements.Count == 0
+                && !block.Extent.Text.StartsWith("param", StringComparison.OrdinalIgnoreCase)
+                && block.Parent is ScriptBlockAst sb)
+            {
+                // in a function definition with whitespace after the cursor it will see the unnamed block as the surroundingAst but the actual scriptblock is more interesting.
+                surroundingAst = sb;
+            }
+
+            if (surroundingAst is not ScriptBlockAst and not NamedBlockAst and not StatementBlockAst
+                and not SubExpressionAst and not TypeDefinitionAst and not MemberAst and not TryStatementAst and not IfStatementAst
+                || (surroundingAst is NamedBlockAst namedBlock && namedBlock.Extent.Text.StartsWith("param", StringComparison.OrdinalIgnoreCase)))
             {
                 return result;
             }
@@ -8360,17 +8383,26 @@ namespace System.Management.Automation
             }
             else if (surroundingAst is PropertyMemberAst propertyDefinition)
             {
-                result.AddRange(GetMemberKeywords(true, propertyDefinition.IsStatic, propertyDefinition.IsHidden, wordToComplete));
+                result.AddRange(GetMemberKeywords(
+                    !propertyDefinition.Parent.Extent.Text.StartsWith("enum", StringComparison.OrdinalIgnoreCase),
+                    propertyDefinition.IsStatic,
+                    propertyDefinition.IsHidden,
+                    wordToComplete));
                 return result;
             }
             else if (surroundingAst is TypeDefinitionAst typeDefinition)
             {
-                // a bit of a hack that assumes there are no line breaks between each keyword
-                // There's no ast for an incomplete member definition so we'd have to traverse the tokens to do a proper check.
-                Token tokenBeforePreviousToken = tokens[Array.IndexOf(tokens, tokenBeforeKeyword) - 1];
-                bool memberIsStatic = tokenBeforeKeyword.Kind == TokenKind.Static || tokenBeforePreviousToken.Kind == TokenKind.Static;
-                bool memberIsHidden = tokenBeforeKeyword.Kind == TokenKind.Hidden || tokenBeforePreviousToken.Kind == TokenKind.Hidden;
-                result.AddRange(GetMemberKeywords(true, memberIsStatic, memberIsHidden, wordToComplete));
+                if (!typeDefinition.Extent.Text.StartsWith("enum", StringComparison.OrdinalIgnoreCase)
+                    && tokenBeforeKeyword.Kind is TokenKind.NewLine or TokenKind.Semi or TokenKind.LCurly or TokenKind.Hidden or TokenKind.Static)
+                {
+                    // a bit of a hack that assumes there are no line breaks between each keyword
+                    // There's no ast for an incomplete member definition so we'd have to traverse the tokens to do a proper check.
+                    Token tokenBeforePreviousToken = tokens[Array.IndexOf(tokens, tokenBeforeKeyword) - 1];
+                    bool memberIsStatic = tokenBeforeKeyword.Kind == TokenKind.Static || tokenBeforePreviousToken.Kind == TokenKind.Static;
+                    bool memberIsHidden = tokenBeforeKeyword.Kind == TokenKind.Hidden || tokenBeforePreviousToken.Kind == TokenKind.Hidden;
+                    result.AddRange(GetMemberKeywords(true, memberIsStatic, memberIsHidden, wordToComplete));
+                }
+
                 return result;
             }
 
@@ -8403,6 +8435,7 @@ namespace System.Management.Automation
                 if (errorStatement2.Extent.Text.StartsWith("foreach", StringComparison.OrdinalIgnoreCase))
                 {
                     if (inKeywordText.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase)
+                        && errorStatement2.NestedAst is not null
                         && errorStatement2.NestedAst.Count == 1 && errorStatement2.NestedAst[0] is VariableExpressionAst varExpression
                         && varExpression.Extent.StartOffset == tokenBeforeKeyword.Extent.StartOffset)
                     {
@@ -8411,7 +8444,8 @@ namespace System.Management.Automation
 
                     return result;
                 }
-                else if (errorStatement2.Extent.Text.StartsWith("do", StringComparison.OrdinalIgnoreCase))
+                
+                if (errorStatement2.Extent.Text.StartsWith("do", StringComparison.OrdinalIgnoreCase))
                 {
                     if (errorStatement2.NestedAst is not null
                         && errorStatement2.NestedAst.Count == 1)
@@ -8422,7 +8456,8 @@ namespace System.Management.Automation
 
                     return result;
                 }
-                else if (errorStatement2.Extent.Text.StartsWith("try", StringComparison.OrdinalIgnoreCase))
+                
+                if (errorStatement2.Extent.Text.StartsWith("try", StringComparison.OrdinalIgnoreCase))
                 {
                     if (errorStatement2.NestedAst is not null
                         && errorStatement2.NestedAst.Count == 1)
@@ -8433,20 +8468,61 @@ namespace System.Management.Automation
 
                     return result;
                 }
-                else if (errorStatement2.Extent.Text.StartsWith("if", StringComparison.OrdinalIgnoreCase))
+                
+                if (errorStatement2.Extent.Text.StartsWith("if", StringComparison.OrdinalIgnoreCase)
+                    || errorStatement2.Extent.Text.StartsWith("function", StringComparison.OrdinalIgnoreCase)
+                    || errorStatement2.Extent.Text.StartsWith("class", StringComparison.OrdinalIgnoreCase)
+                    || errorStatement2.Extent.Text.StartsWith("enum", StringComparison.OrdinalIgnoreCase))
                 {
-                    // An If statement is only marked as an ErrorStatement if there's an issue with a condition, for example:
-                    // if ($true) {} elseif () <Tab> and no keywords would be valid in that scenario.
+                    // If the parser sees these statements as errorstatements then they are in a state where a keyword wouldn't be valid.
+                    // Eg. cursor is before the opening curly.
                     return result;
                 }
             }
-            else if (astBeforeToken is TryStatementAst)
+            else if (astBeforeToken is TryStatementAst tryStatement)
             {
-                result.AddRange(GetMatchingKeywords(s_TryKeywords, wordToComplete));
+                if (tryStatement.Finally is null)
+                {
+                    result.AddRange(GetMatchingKeywords(s_TryKeywords, wordToComplete));
+                }
             }
             else if (astBeforeToken is IfStatementAst ifStatement && ifStatement.ElseClause is null)
             {
-                result.AddRange(GetMatchingKeywords(s_IfKeywords, wordToComplete));
+                if (cmdAst is not null)
+                {
+                    // The surroundingAst was initially seen as a commandAst so the user is most likely inserting an element into an if statement:
+                    // if($true){}e<Tab> else {}
+                    if ("elseif".StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(new CompletionResult("elseif", "elseif", CompletionResultType.Keyword, GetKeywordTooltip("elseif")));
+                    }
+                    return result;
+                }
+                else
+                {
+                    result.AddRange(GetMatchingKeywords(s_IfKeywords, wordToComplete));
+                }
+            }
+            
+            if (surroundingAst is TryStatementAst tryStatement1)
+            {
+                if ("catch".StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Add(new CompletionResult("catch", "catch", CompletionResultType.Keyword, GetKeywordTooltip("catch")));
+                }
+
+                return result;
+            }
+
+            if (surroundingAst is IfStatementAst ifStatement1)
+            {
+                if ("elseif".StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase) && astBeforeToken is StatementBlockAst
+                        && (ifStatement1.ElseClause is null || ifStatement1.ElseClause.Extent.StartOffset > keywordPosition))
+                {
+                    result.Add(new CompletionResult("elseif", "elseif", CompletionResultType.Keyword, GetKeywordTooltip("elseif")));
+                }
+
+                return result;
             }
 
             string baseScript = context.RelatedAsts[0].Extent.Text.Remove(keywordPosition);
@@ -8466,6 +8542,12 @@ namespace System.Management.Automation
 
             if (surroundingAst is ScriptBlockAst scriptBlock)
             {
+                if (usingKeywordText.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase)
+                    && scriptBlock.Extent.StartOffset == 0 && astBeforeToken is null or UsingStatementAst)
+                {
+                    result.Add(new CompletionResult(usingKeywordText, usingKeywordText, CompletionResultType.Keyword, GetKeywordTooltip(usingKeywordText)));
+                }
+
                 if (astBeforeToken is null or UsingStatementAst or ParamBlockAst or NamedBlockAst)
                 {
                     void AddNamedBlockKeyword(bool add, string blockName)
@@ -8483,8 +8565,8 @@ namespace System.Management.Automation
 
                     AddNamedBlockKeyword(scriptBlock.DynamicParamBlock is null, dynamicparamKeywordText);
                     AddNamedBlockKeyword(scriptBlock.BeginBlock is null, beginKeywordText);
-                    AddNamedBlockKeyword(scriptBlock.ProcessBlock is null, processKeywordText);
-                    AddNamedBlockKeyword(scriptBlock.EndBlock is null, endKeywordText);
+                    AddNamedBlockKeyword(scriptBlock.ProcessBlock is null || (scriptBlock.ProcessBlock.Unnamed && scriptBlock.ProcessBlock.Statements.Count == 0), processKeywordText);
+                    AddNamedBlockKeyword(scriptBlock.EndBlock is null || (scriptBlock.EndBlock.Unnamed && scriptBlock.EndBlock.Statements.Count == 0), endKeywordText);
                     AddNamedBlockKeyword(scriptBlock.CleanBlock is null, cleanKeywordText);
                 }
 
