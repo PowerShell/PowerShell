@@ -354,59 +354,55 @@ using namespace &lt;AliasName&gt; = &lt;.NET-namespace&gt;</value>
 using type &lt;AliasName&gt; = &lt;.NET-type&gt;</value>
   </data>
   <data name="beginKeywordDescription" xml:space="preserve">
-    <value>Specifies a scriptblock that is run once every time the script/function is executed.
+    <value>Specifies a scriptblock that is executed at the beginning of a script/function, before any process block in the pipeline has been run.
 
 begin {}</value>
   </data>
   <data name="breakKeywordDescription" xml:space="preserve">
-    <value>Exits the current control block or loop. If a label is specified, each encompassing control block will be exited until the label is reached.
+    <value>Exits the current loop. If a label is specified, each encompassing loop will be exited until the label is reached.
 When used in a trap, it displays the trapped error and aborts execution of the script/function.
 
-break
-break &lt;LabelName&gt;</value>
+break &lt;Optional Label Name&gt;</value>
   </data>
   <data name="catchKeywordDescription" xml:space="preserve">
-    <value>Specifies a scriptblock that is executed when a terminating error is caught.
-One or more exceptions can be specified to catch specific errors.
+    <value>Specifies a scriptblock that is executed when a terminating error is caught in a previously defined Try block.
+Zero or more exceptions can be specified to catch specific errors.
 
-catch {}
-catch &lt;[ExceptionType1]&gt;, &lt;[ExceptionType2]&gt; {}</value>
+catch &lt;[Optional Exception 1]&gt;, &lt;[Optional Exception 2]&gt; {}</value>
   </data>
   <data name="classKeywordDescription" xml:space="preserve">
-    <value>Specifies a PowerShell class definition.
+    <value>Specifies a PowerShell class definition. A base class or one or more interfaces can optionally be specified.
 
-class &lt;[ClassName]&gt; {}
 class &lt;[ClassName]&gt; : &lt;[BaseClass1 or Interface1]&gt;, &lt;[Interface2]&gt; {}</value>
 </data>
   <data name="cleanKeywordDescription" xml:space="preserve">
-    <value>Specifies a scriptblock that is run once every time the script/function is executed. This block is always run, regardless of any terminating errors.
+    <value>Specifies a scriptblock that is run after a script/function is executed. This block is always run, regardless of any terminating errors.
 
 clean {}</value>
   </data>
   <data name="continueKeywordDescription" xml:space="preserve">
-    <value>Stops execution in the current statement block and advances the loop. If a label is specified, each encompassing control block will be exited until the label is reached.
+    <value>Advances the loop immediately, skipping over the remaining statements. If a label is specified, each encompassing loop will be exited until the label is reached.
 When used in a trap, it silences the trapped error and continues execution of the script/function.
 
-continue
-continue &lt;LabelName&gt;</value>
+continue &lt;Optional Label Name&gt;</value>
   </data>
   <data name="dataKeywordDescription" xml:space="preserve">
     <value>Defines a scriptblock that is restricted to a specified subset of the PowerShell language.
+A variable and a list of supported commands can optionally be specified.
 
-data {}
-data &lt;VariableName&gt; {}
-data -supportedCommand &lt;Command1&gt;, &lt;Command2&gt;</value>
+data &lt;VariableName&gt; -supportedCommand &lt;Command1&gt;, &lt;Command2&gt; {}</value>
   </data>
   <data name="doKeywordDescription" xml:space="preserve">
     <value>Defines a loop that is executed one or more times, until the specified condition is met.
+A label can optionally be set, allowing you to use continue and break statements from nested loops.
 
-do {} while ()
-do {} until ()
-:label do {} while ()
-:label do {} until ()</value>
+do {} while (&lt;Condition&gt;)
+do {} until (&lt;Condition&gt;)
+:label do {} while (&lt;Condition&gt;)
+:label do {} until (&lt;Condition&gt;)</value>
   </data>
   <data name="dynamicparamKeywordDescription" xml:space="preserve">
-    <value>Defines a scriptblock that is executed to create dynamic parameters.
+    <value>Defines a scriptblock that is executed when tab completing parameters and when the command is executed to create dynamic parameters.
 
 dynamicparam {}</value>
   </data>
@@ -418,11 +414,11 @@ else {}</value>
   <data name="elseifKeywordDescription" xml:space="preserve">
     <value>Defines a statement block that is executed if all previous if/elseif statements evaluate to false and the specified condition evaluates to true.
 
-elseif () {}</value>
+elseif (&lt;Condition&gt;) {}</value>
   </data>
   <data name="endKeywordDescription" xml:space="preserve">
-    <value>Specifies a scriptblock that is run once every time the script/function is executed.
-The End block is executed after the Process block has finished processing incoming pipeline input.
+    <value>Specifies a scriptblock that is executed after the containing script/function has run its begin and process blocks.
+The End block is executed after the Process block has finished processing all incoming pipeline input.
 
 end {}</value>
   </data>
@@ -433,9 +429,9 @@ enum &lt;TypeName&gt; {}</value>
   </data>
   <data name="exitKeywordDescription" xml:space="preserve">
     <value>When used inside a script, stops the rest of the script from being executed.
-When used interactively, exits the nested prompt (debugger, remote connection), at the top level it exits the shell itself.
+When used interactively, exits the nested prompt (debugger, remote connection), when used at the top level it exits the shell itself.
+An exit code can optionally be provided to inform the parent process about the script status.
 
-exit
 exit &lt;ExitCode&gt;</value>
   </data>
   <data name="filterKeywordDescription" xml:space="preserve">
@@ -451,12 +447,14 @@ finally {}</value>
   </data>
   <data name="forKeywordDescription" xml:space="preserve">
     <value>Defines a for loop.
+A label can optionally be set, allowing you to use continue and break statements from nested loops.
 
 for (&lt;Initializer&gt;;&lt;Condition&gt;;&lt;AdvanceAction&gt;;) {}
 :label for (&lt;Initializer&gt;;&lt;Condition&gt;;&lt;AdvanceAction&gt;;) {}</value>
   </data>
   <data name="foreachKeywordDescription" xml:space="preserve">
     <value>Defines a foreach loop.
+A label can optionally be set, allowing you to use continue and break statements from nested loops.
 
 foreach (&lt;CurrentItemVariable&gt; in &lt;Collection&gt;) {}
 :label foreach (&lt;CurrentItemVariable&gt; in &lt;Collection&gt;) {}</value>
@@ -475,7 +473,7 @@ hidden &lt;MemberName&gt;</value>
   <data name="ifKeywordDescription" xml:space="preserve">
     <value>Defines a statement block that is only executed if the specified condition evaluates to true.
 
-if () {}</value>
+if (&lt;Condition&gt;) {}</value>
   </data>
   <data name="inKeywordDescription" xml:space="preserve">
     <value>Required keyword in foreach loop definition.
@@ -488,7 +486,7 @@ foreach (&lt;CurrentItemVariable&gt; in &lt;Collection&gt;) {}</value>
 param()</value>
   </data>
   <data name="processKeywordDescription" xml:space="preserve">
-    <value>Specifies a scriptblock that is run once for each item received from the pipeline.
+    <value>Specifies a scriptblock that is executed once for each item received from the pipeline.
 
 process {}</value>
   </data>
@@ -496,8 +494,7 @@ process {}</value>
     <value>Stops execution of code in the current scriptblock and optionally returns the specified value.
 In class methods that return something, all code paths need to lead to a return statement.
 
-return
-return &lt;ValueToReturn&gt;</value>
+return &lt;Optional Value To Return&gt;</value>
   </data>
   <data name="staticKeywordDescription" xml:space="preserve">
     <value>Defines the following class member as a static member.
@@ -506,6 +503,8 @@ static &lt;MemberName&gt;</value>
   </data>
   <data name="switchKeywordDescription" xml:space="preserve">
     <value>Defines a loop that evaluates the specified conditions for each item.
+Various parameters for the Switch can optionally be set.
+A label can optionally be set, allowing you to use continue and break statements from nested loops.
 
 switch (&lt;Collection&gt;) {}
 switch -OptionalParameters (&lt;Collection&gt;) {}
@@ -514,8 +513,7 @@ switch -OptionalParameters (&lt;Collection&gt;) {}
   <data name="throwKeywordDescription" xml:space="preserve">
     <value>Throws a terminating error, optionally with a string, ErrorRecord or Exception that describes the error.
 
-throw
-throw &lt;Expression&gt;</value>
+throw &lt;Optional Expression&gt;</value>
   </data>
   <data name="trapKeywordDescription" xml:space="preserve">
     <value>Defines a scriptblock that is executed when an unhandled exception is thrown in the script/function.
@@ -523,17 +521,18 @@ throw &lt;Expression&gt;</value>
 trap {}</value>
   </data>
   <data name="tryKeywordDescription" xml:space="preserve">
-    <value>Defines a scriptblock that is executed and if a terminating error is thrown from the scriptblock, the configured catch or finally scriptblocks are executed.
+    <value>Defines a scriptblock that is executed.
+If a terminating error is thrown from the scriptblock the execution is stopped at the failing statement and the configured catch or finally scriptblocks are executed.
 
 try {}</value>
   </data>
   <data name="untilKeywordDescription" xml:space="preserve">
     <value>Defines a condition for a Do loop, if the condition is evaluated to true, the loop exits.
 
-do {} until ()</value>
+do {} until (&lt;Condition&gt;)</value>
   </data>
   <data name="usingKeywordDescription" xml:space="preserve">
-    <value>Defines an assembly, module, namespace, or namespace/type alias.
+    <value>Defines an assembly, module, namespace, or namespace/type alias to load.
 
 using assembly
 using module
@@ -542,9 +541,10 @@ using type</value>
   </data>
   <data name="whileKeywordDescription" xml:space="preserve">
     <value>Defines either a While loop, or a condition for a Do loop.
+A label can optionally be set, allowing you to use continue and break statements from nested loops.
 
-while () {}
-:label while () {}
-do {} while ()</value>
+while (&lt;Condition&gt;) {}
+:label while (&lt;Condition&gt;) {}
+do {} while (&lt;Condition&gt;)</value>
   </data>
 </root>
