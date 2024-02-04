@@ -79,6 +79,21 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$CurrentItem'
     }
 
+    It 'Should not complete parameter name' {
+        $res = TabExpansion2 -inputScript 'param($P'
+        $res.CompletionMatches.Count | Should -Be 0
+    }
+
+    It 'Should complete variable in default value of a parameter' {
+        $res = TabExpansion2 -inputScript 'param($PS = $P'
+        $res.CompletionMatches.Count | Should -BeGreaterThan 0
+    }
+
+    It 'Should not complete property name in class definition' {
+        $res = TabExpansion2 -inputScript 'class X {$P'
+        $res.CompletionMatches.Count | Should -Be 0
+    }
+
     foreach ($Operator in [System.Management.Automation.CompletionCompleters]::CompleteOperator(""))
     {
         It "Should complete $($Operator.CompletionText)" {
