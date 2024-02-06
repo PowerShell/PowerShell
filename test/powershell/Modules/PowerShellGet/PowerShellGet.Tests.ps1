@@ -244,7 +244,7 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a script correctly to the required location with AllUsers scope" {
-        Install-Script -Name $TestScript -Repository $RepositoryName -NoPathUpdate -Scope AllUsers
+        Install-Script -Name $TestScript -Repository $RepositoryName -NoPathUpdate -Scope AllUsers -Force
         $installedScriptInfo = Get-InstalledScript -Name $TestScript
 
         $installedScriptInfo | Should -Not -BeNullOrEmpty
