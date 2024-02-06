@@ -249,6 +249,7 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
         $installedScriptInfo | Should -Not -BeNullOrEmpty
         $installedScriptInfo.Name | Should -Be $TestScript
+        Write-Host ("InstalledLocation: " + $installedScriptInfo.InstalledLocation)
         $installedScriptInfo.InstalledLocation.StartsWith($script:ProgramFilesScriptsPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
     }
 
