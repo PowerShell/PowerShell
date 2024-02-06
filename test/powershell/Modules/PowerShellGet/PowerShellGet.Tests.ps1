@@ -88,7 +88,7 @@ function Initialize
     Get-PackageProvider -ListAvailable | Out-Null
 
     $repo = Get-PSRepository -ErrorAction SilentlyContinue |
-                Where-Object {$_.SourceLocation.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}
+                Where-Object {$_.SourceLocation.StartsWith($Uri, [System.StringComparison]::OrdinalIgnoreCase)}
     if($repo)
     {
         $script:RepositoryName = $repo.Name
