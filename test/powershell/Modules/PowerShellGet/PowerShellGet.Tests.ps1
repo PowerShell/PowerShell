@@ -86,7 +86,7 @@ function Initialize
 {
     # Cleaned up commands whose output to console by deleting or piping to Out-Null
     $repo = Get-PSRepository -ErrorAction SilentlyContinue |
-                Where-Object {$_.Uri.StartsWith($PSGalleryURL, [System.StringComparison]::OrdinalIgnoreCase)}
+                Where-Object {$_.Uri.AbsoluteUri.StartsWith($PSGalleryURL, [System.StringComparison]::OrdinalIgnoreCase)}
     if($repo)
     {
         $script:RepositoryName = $repo.Name
