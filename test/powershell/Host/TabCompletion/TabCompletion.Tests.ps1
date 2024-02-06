@@ -1100,8 +1100,13 @@ ConstructorTestClass(int i, bool b)
             }
             @{
                 Name = 'Complete try catch'
-                Expected = $TryKeywords + $CommonKeywords
+                Expected = ,'finally' + $CommonKeywords
                 Text = 'try{}catch{}^'
+            }
+            @{
+                Name = 'Complete try catch with exception specified'
+                Expected = $TryKeywords + $CommonKeywords
+                Text = 'try{} catch [System.Exception]{}^'
             }
             @{
                 Name = 'Complete try finally'
@@ -1218,6 +1223,41 @@ ConstructorTestClass(int i, bool b)
                 Expected = $CommonKeywords
                 Text = "Get-Process `n^"
             }
+            @{
+                Name = 'Insert into complete property member'
+                Expected = 'hidden','static'
+                Text = 'class X {[string] ^ $Y}'
+            }
+            @{
+                Name = 'Insert into complete property member that already has hidden and static defined'
+                Expected = $null
+                Text = 'class X {hidden static [string] ^ $Y}', 'class X {hidden static [string] h^ $Y}'
+            }
+            @{
+                Name = 'Insert into complete method member'
+                Expected = 'hidden', 'static'
+                Text = 'class X {[string] ^ DoSomething(){return ""}}'
+            }
+            @{
+                Name = 'Inside param block'
+                Expected = $null
+                Text = 'function X {param(^)}', 'function X {param(b^)}'
+            }
+            @{
+                Name = 'Inside function definition with a named block defined'
+                Expected = $BlockNames | where {$_ -notin 'param', 'begin'}
+                Text = "function X {begin {} ^}"
+            }
+            @{
+                Name = 'Inside scriptblock'
+                Expected = $BlockNames + $CommonKeywords
+                Text = "{^}"
+            }
+            @{
+                Name = 'Inside subexpression'
+                Expected = $CommonKeywords
+                Text = '$(^)'
+            }
         )
         It 'Complete keywords in scenario: <Name>' -TestCases $TestCases -test {
             param([string[]] $Expected, [string[]] $Text)
@@ -1241,42 +1281,6 @@ ConstructorTestClass(int i, bool b)
                     $Result.CompletionText -join ',' | Should -Be $ActualExpected
                 }
             }
-        }
-
-        # Tests for scenarios that only work with no partial input
-        It 'Complete keywords in scenario (no partial input): <Name>' -TestCases @(
-            @{
-                Name = 'Insert into complete property member'
-                Expected = 'hidden','static'
-                Text = 'class X {[string] ^ $Y}'
-            }
-            @{
-                Name = 'Insert into complete property member that already has hidden and static defined'
-                Expected = $null
-                Text = 'class X {hidden static [string] ^ $Y}'
-            }
-            @{
-                Name = 'Insert into complete method member'
-                Expected = 'hidden', 'static'
-                Text = 'class X {[string] ^ DoSomething(){return ""}}'
-            }
-            @{
-                Name = 'Inside param block'
-                Expected = $null
-                Text = 'function X {param(^)}'
-            }
-            @{
-                Name = 'Inside function definition with a named block defined'
-                Expected = $BlockNames | where {$_ -notin 'param', 'begin'}
-                Text = "function X {begin {} ^}"
-            }
-        ) -test {
-            param([string[]] $Expected, [string] $Text)
-            $CursorIndex = $Text.IndexOf('^')
-            $ActualInputText = $Text.Remove($CursorIndex, 1)
-            $Result = (TabExpansion2 -cursorColumn $CursorIndex -inputScript $ActualInputText).CompletionMatches | Where-Object -Property ResultType -EQ Keyword
-            $ActualExpected = $Expected -join ','
-            $Result.CompletionText -join ',' | Should -Be $ActualExpected
         }
     }
 
