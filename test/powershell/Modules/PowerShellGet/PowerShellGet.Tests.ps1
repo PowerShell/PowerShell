@@ -5,7 +5,8 @@
 $ProgressPreference = "SilentlyContinue"
 
 $RepositoryName = 'PSGallery'
-$SourceLocation = 'https://www.powershellgallery.com'
+$PSGalleryURL = 'https://www.powershellgallery.com'
+$SourceLocation = 'https://www.powershellgallery.com/api/v2'
 $TestModule = 'newTestModule'
 $TestScript = 'TestTestScript'
 $Initialized = $false
@@ -84,15 +85,11 @@ $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path
 function Initialize
 {
     # Cleaned up commands whose output to console by deleting or piping to Out-Null
-    Import-Module PackageManagement
-    Get-PackageProvider -ListAvailable | Out-Null
-
     $repo = Get-PSRepository -ErrorAction SilentlyContinue |
-                Where-Object {$_.SourceLocation.StartsWith($Uri, [System.StringComparison]::OrdinalIgnoreCase)}
+                Where-Object {$_.Uri.StartsWith($PSGalleryURL, [System.StringComparison]::OrdinalIgnoreCase)}
     if($repo)
     {
         $script:RepositoryName = $repo.Name
-        Set-PackageSource -Name $repo.Name -Trusted
     }
     else
     {
