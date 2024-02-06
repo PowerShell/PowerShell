@@ -8601,26 +8601,6 @@ namespace System.Management.Automation
             }
         }
 
-        private static void AddNamedBlockNameResults(List<CompletionResult> results, ScriptBlockAst scriptBlock, Ast astBeforeToken)
-        {
-            bool paramBlockDefined = scriptBlock.ParamBlock is not null;
-            bool dynamicBlockDefined = scriptBlock.DynamicParamBlock is not null;
-            bool beginBlockDefined = scriptBlock.BeginBlock is not null;
-            bool processBlockDefined = scriptBlock.ProcessBlock is not null;
-            bool endBlockDefined = scriptBlock.EndBlock is not null;
-            bool cleanBlockDefined = scriptBlock.CleanBlock is not null;
-
-            if ((endBlockDefined && scriptBlock.EndBlock.Unnamed)
-                || (processBlockDefined && scriptBlock.ProcessBlock.Unnamed))
-            {
-                if (astBeforeToken is null or UsingStatementAst or ParamBlockAst)
-                {
-
-                }
-            }
-            
-        }
-
         private static IEnumerable<CompletionResult> GetMatchingKeywords(string[] keywords, string wordToComplete)
         {
             foreach (string word in keywords)
