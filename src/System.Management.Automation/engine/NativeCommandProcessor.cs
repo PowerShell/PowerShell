@@ -969,11 +969,13 @@ namespace System.Management.Automation
                     }
 
                     const string errorId = nameof(CommandBaseStrings.ProgramExitedWithNonZeroCode);
+                    string hexFormatStr = Platform.IsWindows ? "0x{0:X8}" : "0x{0:X2}";
 
                     string errorMsg = StringUtil.Format(
                         CommandBaseStrings.ProgramExitedWithNonZeroCode,
                         NativeCommandName,
-                        _nativeProcess.ExitCode);
+                        _nativeProcess.ExitCode,
+                        String.Format(CultureInfo.InvariantCulture, hexFormatStr, _nativeProcess.ExitCode));
 
                     var exception = new NativeCommandExitException(
                         Path,
