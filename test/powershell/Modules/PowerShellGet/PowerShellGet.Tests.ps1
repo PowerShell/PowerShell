@@ -167,7 +167,8 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a module correctly to the required location with AllUsers scope" {
-        Install-Module -Name $TestModule -Repository $RepositoryName -Scope AllUsers -Verbose -Debug
+        Uninstall-PSResource -Name $TestModule -Scope AllUsers -Force -SkipDependencyCheck
+        Install-Module -Name $TestModule -Repository $RepositoryName -Scope AllUsers -Verbose -SkipPublisherCheck
 
         $module = Get-Module $TestModule -ListAvailable
         $module.Name | Should -Be $TestModule
@@ -244,7 +245,8 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a script correctly to the required location with AllUsers scope" {
-        Install-Script -Name $TestScript -Repository $RepositoryName -Scope AllUsers -Verbose -Debug
+        Uninstall-PSResource -Name $TestScript -Repository $RepositoryName -Scope AllUsers -Force -SkipDependencyCheck
+        Install-Script -Name $TestScript -Repository $RepositoryName -Scope AllUsers -Verbose -Debug -SkipPublisherCheck
         $installedScriptInfo = Get-InstalledScript -Name $TestScript
 
         $installedScriptInfo | Should -Not -BeNullOrEmpty
