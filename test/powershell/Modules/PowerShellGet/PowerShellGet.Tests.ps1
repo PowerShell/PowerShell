@@ -246,16 +246,20 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
     It "Should install a script correctly to the required location with AllUsers scope" {
         Uninstall-PSResource -Name $TestScript -Scope AllUsers -SkipDependencyCheck
-        Install-Script -Name $TestScript -Repository $RepositoryName -Scope AllUsers -Verbose -Confirm
+        $DebugPreference = 'Continue'
+        { Install-Script -Name $TestScript -Repository $RepositoryName -Scope AllUsers -Verbose -Debug } | Should -Not -Throw
+
+        Get-Error
+
         $installedScriptInfo = Get-InstalledScript -Name $TestScript
 
         $installedScriptInfo | Should -Not -BeNullOrEmpty
         $installedScriptInfo.Name | Should -Be $TestScript
-        Write-Verbose ("InstalledLocation: " + $installedScriptInfo.InstalledLocation)
         $installedScriptInfo.InstalledLocation.StartsWith($script:ProgramFilesScriptsPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
     }
 
     AfterAll {
+        $DebugPreference = 'SilentlyContinue'
         Remove-InstalledScripts
     }
 }
