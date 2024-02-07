@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+Import-Module .\PowerShellGet.pms1 -Force
 # no progress output during these tests
 $ProgressPreference = "SilentlyContinue"
 
@@ -247,7 +248,7 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
     It "Should install a script correctly to the required location with AllUsers scope" {
         Uninstall-PSResource -Name $TestScript -Scope AllUsers -SkipDependencyCheck
         $DebugPreference = 'Continue'
-        { Install-Script -Name $TestScript -Repository $RepositoryName -Scope AllUsers -Verbose -Debug } | Should -Not -Throw
+        Install-Script -Name $TestScript -Repository $RepositoryName -Scope AllUsers -Verbose -Debug
 
         Get-Error
 
