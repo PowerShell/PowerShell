@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 Import-Module .\PowerShellGet.pms1 -Force
+Import-Module .\Microsoft.PowerShell.PSResourceGet -Force
 # no progress output during these tests
 $ProgressPreference = "SilentlyContinue"
 
@@ -251,7 +252,7 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
         Install-Script -Name $TestScript -Repository $RepositoryName -Scope AllUsers -Verbose -Debug
 
         Write--Verbose -Verbose "Start - Getting error"
-        Get-Error | out-string | write-verbose -verbose 
+        Get-Error | out-string | write-verbose -verbose
         Write--Verbose -Verbose "Done - Getting error"
 
         $installedScriptInfo = Get-InstalledScript -Name $TestScript
