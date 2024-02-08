@@ -975,7 +975,7 @@ namespace System.Management.Automation
                         CommandBaseStrings.ProgramExitedWithNonZeroCode,
                         NativeCommandName,
                         _nativeProcess.ExitCode,
-                        String.Format(CultureInfo.InvariantCulture, hexFormatStr, _nativeProcess.ExitCode));
+                        string.Format(CultureInfo.InvariantCulture, hexFormatStr, _nativeProcess.ExitCode));
 
                     var exception = new NativeCommandExitException(
                         Path,
