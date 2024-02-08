@@ -4,7 +4,7 @@
 @{
     RootModule             = './Microsoft.PowerShell.PSResourceGet.dll'
     NestedModules          = @('./Microsoft.PowerShell.PSResourceGet.psm1')
-    ModuleVersion          = '1.0.2'
+    ModuleVersion          = '1.0.200'
     CompatiblePSEditions   = @('Core', 'Desktop')
     GUID                   = 'e4e0bda1-0703-44a5-b70d-8fe704cd0643'
     Author                 = 'Microsoft Corporation'

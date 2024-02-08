@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+Import-Module "$psscriptroot/Microsoft.PowerShell.PSResourceGet" -Force
 Import-Module "$psscriptroot/PowerShellGet.psm1" -Force
 
-Remove-Module Microsoft.PowerShell.PSResourceGet -Force
-Import-Module "$psscriptroot/Microsoft.PowerShell.PSResourceGet" -Force
+Get-Module | Out-String | Write-Verbose -Verbose
 
-Write-Verbose ("PowerShellGet module base: " + (get-command install-module).module.modulebase)
-Write-Verbose ("PSResourceGet module base: " + (get-command install-psresource).module.modulebase)
+Write-Verbose ("PowerShellGet module base: " + (get-command install-module).module.modulebase) -Verbose
+Write-Verbose ("PSResourceGet module base: " + (get-command install-psresource).module.modulebase) -Verbose
 
 # no progress output during these tests
 $ProgressPreference = "SilentlyContinue"
