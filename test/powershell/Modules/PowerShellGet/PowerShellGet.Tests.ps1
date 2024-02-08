@@ -1,8 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Import-Module .\PowerShellGet.pms1 -Force
-Import-Module .\Microsoft.PowerShell.PSResourceGet -Force
+Import-Module "$psscriptroot/PowerShellGet.psm1" -Force
+Import-Module "$psscriptroot/Microsoft.PowerShell.PSResourceGet" -Force
+
+Write-Verbose ("PowerShellGet module base: " + (get-command install-module).module.modulebase)
+Write-Verbose ("PSResourceGet module base: " + (get-command install-psresource).module.modulebase)
+
 # no progress output during these tests
 $ProgressPreference = "SilentlyContinue"
 
@@ -86,10 +90,6 @@ $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path
 
 function Initialize
 {
-    Write-Verbose ("PowerShellGet module base: " + (get-command install-module).module.modulebase)
-    Write-Verbose ("PSResourceGet module base: " + (get-command install-psresource).module.modulebase)
-
-
     # Cleaned up commands whose output to console by deleting or piping to Out-Null
     $repo = Get-PSRepository -ErrorAction SilentlyContinue |
                 Where-Object {$_.Uri.AbsoluteUri.StartsWith($PSGalleryURL, [System.StringComparison]::OrdinalIgnoreCase)}
