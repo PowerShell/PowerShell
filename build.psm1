@@ -876,13 +876,13 @@ function Restore-PSPester
     {
         Throw "The PSResourceGet module is not found in the test folder"
     }
-    Copy-Item  $PSScriptRoot\test\powershell\Modules\PowerShellGet\Microsoft.PowerShell.PSResourceGet -Destination $Destination -Recurse -Verbose
+    Copy-Item  $PSScriptRoot\test\powershell\Modules\PowerShellGet\Microsoft.PowerShell.PSResourceGet -Destination $Destination -Recurse -Verbose -Force
 
     if (-not (Test-Path "$PSScriptRoot\test\powershell\Modules\PowerShellGet\PowerShellGet"))
     {
         Throw "The PowerShellGet module is not found in the test folder"
     }
-    Copy-Item  $PSScriptRoot\test\powershell\Modules\PowerShellGet\PowerShellGet -Destination $Destination -Recurse -Verbose
+    Copy-Item  $PSScriptRoot\test\powershell\Modules\PowerShellGet\PowerShellGet -Destination $Destination -Recurse -Verbose -Force
 }
 
 function Compress-TestContent {
