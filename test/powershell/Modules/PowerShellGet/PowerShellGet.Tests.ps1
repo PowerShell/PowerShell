@@ -257,9 +257,9 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
         $DebugPreference = 'Continue'
         Install-Script -Name $TestScript -Repository $RepositoryName -Scope AllUsers -Verbose -Debug
 
-        Write--Verbose -Verbose "Start - Getting error"
+        Write-Verbose -Verbose "Start - Getting error"
         Get-Error | out-string | write-verbose -verbose
-        Write--Verbose -Verbose "Done - Getting error"
+        Write-Verbose -Verbose "Done - Getting error"
 
         $installedScriptInfo = Get-InstalledScript -Name $TestScript
 

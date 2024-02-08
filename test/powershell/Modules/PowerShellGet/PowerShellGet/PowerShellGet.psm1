@@ -1309,9 +1309,9 @@ param(
             $steppablePipeline.Process($_)
         } catch {
 
-            Write--Verbose -Verbose "Start - Getting error in PowerShellGet"
-            Get-Error | out-string | write-verbose -verbose
-            Write--Verbose -Verbose "Done - Getting error in PowerShellGet"
+            #Write-Verbose -Verbose "Start - Getting error in PowerShellGet"
+            #Get-Error | out-string | write-verbose -verbose
+            #Write-Verbose -Verbose "Done - Getting error in PowerShellGet"
 
 
             throw
