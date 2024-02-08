@@ -2,6 +2,8 @@
 # Licensed under the MIT License.
 
 Import-Module "$psscriptroot/PowerShellGet.psm1" -Force
+
+Remove-Module Microsoft.PowerShell.PSResourceGet -Force
 Import-Module "$psscriptroot/Microsoft.PowerShell.PSResourceGet" -Force
 
 Write-Verbose ("PowerShellGet module base: " + (get-command install-module).module.modulebase)
