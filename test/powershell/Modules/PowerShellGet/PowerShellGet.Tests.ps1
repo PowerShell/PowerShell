@@ -1,22 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-<#
-Import-Module "$psscriptroot/Microsoft.PowerShell.PSResourceGet" -Force
-Import-Module "$psscriptroot/PowerShellGet.psm1" -Force
-
-Get-Module | Out-String | Write-Verbose -Verbose
-
-Write-Verbose ("PowerShellGet module base: " + (get-command install-module).module.modulebase) -Verbose
-Write-Verbose ("PSResourceGet module base: " + (get-command install-psresource).module.modulebase) -Verbose
-#>
-
 # no progress output during these tests
 $ProgressPreference = "SilentlyContinue"
 
 $RepositoryName = 'PSGallery'
-$PSGalleryURL = 'https://www.powershellgallery.com'
-$SourceLocation = 'https://www.powershellgallery.com/api/v2'
+$SourceLocation = 'https://www.powershellgallery.com'
 $TestModule = 'newTestModule'
 $TestScript = 'TestTestScript'
 $Initialized = $false
@@ -95,11 +84,15 @@ $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path
 function Initialize
 {
     # Cleaned up commands whose output to console by deleting or piping to Out-Null
+    Import-Module PackageManagement
+    Get-PackageProvider -ListAvailable | Out-Null
+
     $repo = Get-PSRepository -ErrorAction SilentlyContinue |
-                Where-Object {$_.Uri.AbsoluteUri.StartsWith($PSGalleryURL, [System.StringComparison]::OrdinalIgnoreCase)}
+                Where-Object {$_.SourceLocation.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}
     if($repo)
     {
         $script:RepositoryName = $repo.Name
+        Set-PackageSource -Name $repo.Name -Trusted
     }
     else
     {
@@ -177,8 +170,7 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a module correctly to the required location with AllUsers scope" {
-        Uninstall-PSResource -Name $TestModule -Scope AllUsers -SkipDependencyCheck
-        Install-Module -Name $TestModule -Repository $RepositoryName -Scope AllUsers -SkipPublisherCheck
+        Install-Module -Name $TestModule -Repository $RepositoryName -Scope AllUsers
 
         $module = Get-Module $TestModule -ListAvailable
         $module.Name | Should -Be $TestModule
@@ -255,11 +247,8 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a script correctly to the required location with AllUsers scope" {
-        Uninstall-PSResource -Name $TestScript -Scope AllUsers -SkipDependencyCheck
-        Install-Script -Name $TestScript -Repository $RepositoryName -Scope AllUsers
-
-        #$installedScriptInfo = Get-InstalledScript -Name $TestScript
-        $installedScriptInfo = Get-InstalledPSResource -Name $TestScript -Scope AllUsers
+        Install-Script -Name $TestScript -Repository $RepositoryName -NoPathUpdate -Scope AllUsers
+        $installedScriptInfo = Get-InstalledScript -Name $TestScript
 
         $installedScriptInfo | Should -Not -BeNullOrEmpty
         $installedScriptInfo.Name | Should -Be $TestScript
