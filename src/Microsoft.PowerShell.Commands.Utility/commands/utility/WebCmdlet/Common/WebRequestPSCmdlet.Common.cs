@@ -700,20 +700,17 @@ namespace Microsoft.PowerShell.Commands
                             _cancelToken?.Dispose();
                             _cancelToken = null;
                         }
-
-                        if (_followRelLink)
-                        {
-                            if (!_relationLink.TryGetValue("next", out string value))
-                            {
-                                return;
-                            }
-
-                            uri = new Uri(value);
-                            followedRelLink++;
-                        }
                     }
+
+                    if (!_followRelLink || !_relationLink.TryGetValue("next", out string value))
+                    {
+                        break;
+                    }
+
+                    uri = new Uri(value);
+
                 }
-                while (_followRelLink && (followedRelLink < _maximumFollowRelLink));
+                while (++followedRelLink < _maximumFollowRelLink);
             }
             catch (CryptographicException ex)
             {
