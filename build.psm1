@@ -872,6 +872,7 @@ function Restore-PSPester
     )
     Save-Module -Name Pester -Path $Destination -Repository PSGallery -MaximumVersion 4.99
 
+    <#
     if (-not (Test-Path "$PSScriptRoot\test\powershell\Modules\PowerShellGet\Microsoft.PowerShell.PSResourceGet"))
     {
         Throw "The PSResourceGet module is not found in the test folder"
@@ -883,6 +884,7 @@ function Restore-PSPester
         Throw "The PowerShellGet module is not found in the test folder"
     }
     Copy-Item  $PSScriptRoot\test\powershell\Modules\PowerShellGet\PowerShellGet -Destination $Destination -Recurse -Verbose -Force
+    #>
 }
 
 function Compress-TestContent {
