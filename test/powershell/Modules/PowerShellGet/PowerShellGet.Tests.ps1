@@ -149,7 +149,7 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
     }
 
     It "Should install a module correctly to the required location with default CurrentUser scope" {
-        Install-Module -Name $TestModule -Repository $RepositoryName -Verbose -Confirm
+        Install-Module -Name $TestModule -Repository $RepositoryName
         $module = Get-Module -Name $TestModule -ListAvailable
         $module | Should -Not -BeNullOrEmpty
         $module.Name | Should -Be $TestModule
@@ -176,7 +176,7 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
     It "Should install a module correctly to the required location with AllUsers scope" {
         Uninstall-PSResource -Name $TestModule -Scope AllUsers -SkipDependencyCheck
-        Install-Module -Name $TestModule -Repository $RepositoryName -Scope AllUsers -Verbose -SkipPublisherCheck
+        Install-Module -Name $TestModule -Repository $RepositoryName -Scope AllUsers -SkipPublisherCheck
 
         $module = Get-Module $TestModule -ListAvailable
         $module.Name | Should -Be $TestModule
@@ -254,12 +254,7 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
     It "Should install a script correctly to the required location with AllUsers scope" {
         Uninstall-PSResource -Name $TestScript -Scope AllUsers -SkipDependencyCheck
-        $DebugPreference = 'Continue'
-        Install-Script -Name $TestScript -Repository $RepositoryName -Scope AllUsers -Verbose
-
-        Write-Verbose -Verbose "Start - Getting error"
-        Get-Error | out-string | write-verbose -verbose
-        Write-Verbose -Verbose "Done - Getting error"
+        Install-Script -Name $TestScript -Repository $RepositoryName -Scope AllUsers
 
         #$installedScriptInfo = Get-InstalledScript -Name $TestScript
         $installedScriptInfo = Get-InstalledPSResource -Name $TestScript -Scope AllUsers
@@ -270,7 +265,6 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     AfterAll {
-        $DebugPreference = 'SilentlyContinue'
         Remove-InstalledScripts
     }
 }
