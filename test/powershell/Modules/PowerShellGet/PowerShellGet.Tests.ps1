@@ -261,7 +261,8 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
         Get-Error | out-string | write-verbose -verbose
         Write-Verbose -Verbose "Done - Getting error"
 
-        $installedScriptInfo = Get-InstalledScript -Name $TestScript
+        #$installedScriptInfo = Get-InstalledScript -Name $TestScript
+        $installedScriptInfo = Get-InstalledPSResource -Name $TestScript -Scope AllUsers
 
         $installedScriptInfo | Should -Not -BeNullOrEmpty
         $installedScriptInfo.Name | Should -Be $TestScript
