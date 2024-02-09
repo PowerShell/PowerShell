@@ -133,7 +133,7 @@ namespace System.Management.Automation
         }
     }
 
-    #nullable enable
+#nullable enable
     /// <summary>
     /// This exception is used by the NativeCommandProcessor to indicate an error
     /// when a native command returns a non-zero exit code.
@@ -187,7 +187,7 @@ namespace System.Management.Automation
         public int ProcessId { get; }
 
     }
-    #nullable restore
+#nullable restore
 
     /// <summary>
     /// Provides way to create and execute native commands.
@@ -969,7 +969,11 @@ namespace System.Management.Automation
                     }
 
                     const string errorId = nameof(CommandBaseStrings.ProgramExitedWithNonZeroCode);
-                    string hexFormatStr = Platform.IsWindows ? "0x{0:X8}" : "0x{0:X2}";
+#if UNIX
+                    string hexFormatStr = "0x{0:X2}";
+#else
+                    string hexFormatStr = "0x{0:X8}";
+#endif
 
                     string errorMsg = StringUtil.Format(
                         CommandBaseStrings.ProgramExitedWithNonZeroCode,
