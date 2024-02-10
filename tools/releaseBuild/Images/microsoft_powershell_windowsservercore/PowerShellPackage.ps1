@@ -153,11 +153,8 @@ try
 
     if (!$Symbols -and $Runtime -notlike 'fxdependent*' -and !$ForMinimalSize)
     {
-        if ($Runtime -notmatch 'arm')
-        {
-            Write-Verbose "Starting powershell packaging(msi)..." -Verbose
-            Start-PSPackage @pspackageParams @releaseTagParam
-        }
+        Write-Verbose "Starting powershell packaging(msi)..." -Verbose
+        Start-PSPackage @pspackageParams @releaseTagParam
 
         $pspackageParams['Type']='msix'
         Write-Verbose "Starting powershell packaging(msix)..." -Verbose
