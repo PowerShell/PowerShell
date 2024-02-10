@@ -1078,7 +1078,16 @@ namespace Microsoft.PowerShell
                 {
                     ParseExecutionPolicy(args, ref i, ref _executionPolicy, CommandLineParameterParserStrings.MissingExecutionPolicyParameter);
                     ParametersUsed |= ParameterBitmap.ExecutionPolicy;
-                    ParametersUsed |= GetExecutionPolicy(_executionPolicy);
+                    var executionPolicy = GetExecutionPolicy(_executionPolicy);
+                    if (executionPolicy == ParameterBitmap.EPIncorrect)
+                    {
+                        SetCommandLineError(
+                            string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidExecutionPolicyArgument, _executionPolicy),
+                            showHelp: true);
+                        break;
+                    }
+
+                    ParametersUsed |= executionPolicy;
                 }
                 else if (MatchSwitch(switchKey, "encodedcommand", "e") || MatchSwitch(switchKey, "ec", "e"))
                 {

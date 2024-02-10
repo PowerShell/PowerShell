@@ -16,13 +16,11 @@ steps:
     $azcopy = Find-AzCopy
     Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
-    & $azcopy login --service-principal --application-id $(PowerShellReleaseSPN)
-
     & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/* $(System.ArtifactsDirectory) --recursive
 
   displayName: Download Azure Artifacts
   env:
-    AZCOPY_SPA_CLIENT_SECRET: $(PowerShellReleaseSPNSecret)
+    AZCOPY_AUTO_LOGIN_TYPE: MSI
 
 - pwsh: |
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name
@@ -44,7 +42,7 @@ steps:
 - pwsh: |
     $message = @()
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.tar.gz | ForEach-Object {
-        if($_.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?(linux|osx|linux-musl)+\-(x64\-fxdependent|x64|arm32|arm64|x64\-musl\-fxdependent)\.(tar\.gz)')
+        if($_.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?(linux|osx|linux-musl)+\-(x64\-fxdependent|x64|arm32|arm64|x64\-musl-noopt\-fxdependent)\.(tar\.gz)')
         {
             $messageInstance = "$($_.Name) is not a valid package name"
             $message += $messageInstance

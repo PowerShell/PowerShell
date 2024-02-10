@@ -147,4 +147,4 @@ See our [Pull Request Process][pull-request-process]
 [docs-contributing]: https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md
 [maintainers]: ../maintainers/README.md
 [wg]: ./working-group.md
-[wg-defintions]: ./working-group-definitions.md
+[wg-definitions]: ./working-group-definitions.md
