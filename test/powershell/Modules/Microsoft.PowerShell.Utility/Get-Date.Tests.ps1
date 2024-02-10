@@ -100,7 +100,8 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         @{date="2022-09-06"; week = "36" },
         @{date="2023-01-30"; week = "05" },
         @{date="2023-06-04"; week = "23" },
-        @{date="2023-10-11"; week = "41" }
+        @{date="2023-10-11"; week = "41" },
+        @{date="2024-02-09"; week = "05" }
     ) {
         param($date, $week)
         Get-Date -Date $date -UFormat %U | Should -BeExactly $week
