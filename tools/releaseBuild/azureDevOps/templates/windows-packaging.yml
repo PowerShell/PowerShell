@@ -270,7 +270,7 @@ jobs:
     displayName: Upload unsigned packages
     retryCountOnTaskFailure: 2
 
-  - ${{ if and(ne(variables['BuildConfiguration'],'minSize'), in(variables['Architecture'], 'x64', 'x86')) }}:
+  - ${{ if and(ne(variables['BuildConfiguration'],'minSize'), in(variables['Architecture'], 'x64', 'x86', 'arm64')) }}:
     - template: EsrpSign.yml@ComplianceRepo
       parameters:
           buildOutputPath: $(System.ArtifactsDirectory)\pkgSigned

@@ -5133,7 +5133,7 @@ namespace System.Management.Automation.Language
                             workingDirectory = Path.GetDirectoryName(scriptFileName);
                         }
 
-                        assemblyFileName = workingDirectory + @"\" + assemblyFileName;
+                        assemblyFileName = Path.Combine(workingDirectory, assemblyFileName);
                     }
                 }
                 catch
