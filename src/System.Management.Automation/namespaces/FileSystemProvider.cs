@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(FileSecurity), typeof(DirectorySecurity), ProviderCmdlet = ProviderCmdlet.GetAcl)]
     [OutputType(typeof(bool), typeof(string), typeof(FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(bool), typeof(string), typeof(DateTime), typeof(System.IO.FileInfo), typeof(System.IO.DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetItemProperty)]
-    [OutputType(typeof(string), typeof(System.IO.FileInfo), ProviderCmdlet = ProviderCmdlet.NewItem)]
+    [OutputType(typeof(string), typeof(System.IO.FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.NewItem)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This coupling is required")]
     public sealed partial class FileSystemProvider : NavigationCmdletProvider,
                                                      IContentCmdletProvider,
