@@ -238,7 +238,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonSchema.Net 5.4.2 - MIT
+JsonSchema.Net 5.5.0 - MIT
 
 
 
@@ -1870,7 +1870,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Data.SqlClient 4.8.5 - MIT
+System.Data.SqlClient 4.8.6 - MIT
 
 
 (c) Microsoft Corporation
@@ -2439,7 +2439,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Drawing.Common 8.0.0 - MIT
+System.Drawing.Common 8.0.1 - MIT
 
 
 (c) Microsoft Corporation
