@@ -297,6 +297,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             byte[] buffer = ArrayPool<byte>.Shared.Rent(StreamHelper.ChunkSize);
+            Memory<byte> bufMem = buffer.AsMemory(0, StreamHelper.ChunkSize);
             CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             try
             {
@@ -309,13 +310,13 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     cts.CancelAfter(perReadTimeout);
-                    int bytesRead = await source.ReadAsync(buffer, cts.Token).ConfigureAwait(false);
+                    int bytesRead = await source.ReadAsync(bufMem, cts.Token).ConfigureAwait(false);
                     if (bytesRead == 0)
                     {
                         break;
                     }
 
-                    await destination.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken).ConfigureAwait(false);
+                    await destination.WriteAsync(bufMem.Slice(0, bytesRead), cancellationToken).ConfigureAwait(false);
                 }
             }
             catch (TaskCanceledException ex)
@@ -433,6 +434,7 @@ namespace Microsoft.PowerShell.Commands
 
             char[] chars = ArrayPool<char>.Shared.Rent(useBufferSize);
             byte[] bytes = ArrayPool<byte>.Shared.Rent(useBufferSize * 4);
+            Memory<byte> byteMem = bytes.AsMemory(0, useBufferSize);
             try
             {
                 int bytesRead = 0;
@@ -440,7 +442,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Read at most the number of bytes that will fit in the input buffer. The
                     // return value is the actual number of bytes read, or zero if no bytes remain.
-                    bytesRead = stream.ReadAsync(bytes.AsMemory(), perReadTimeout, cancellationToken).GetAwaiter().GetResult();
+                    bytesRead = stream.ReadAsync(byteMem, perReadTimeout, cancellationToken).GetAwaiter().GetResult();
 
                     bool completed = false;
                     int byteIndex = 0;
