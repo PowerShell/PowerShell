@@ -56,7 +56,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonSchema.Net",
-          "Version": "5.5.0"
+          "Version": "5.5.1"
         }
       },
       "DevelopmentDependency": false
