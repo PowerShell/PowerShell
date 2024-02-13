@@ -151,8 +151,57 @@ namespace Microsoft.PowerShell.Commands
         /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
         public static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, out ErrorRecord error)
+            => ConvertFromJson(input, returnHashtable, maxDepth, jsonDateKind: JsonDateKind.Default, out error);
+
+        /// <summary>
+        /// Convert a JSON string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
+        /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
+        /// </summary>
+        /// <param name="input">The JSON text to convert.</param>
+        /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
+        /// instead of a <see cref="System.Management.Automation.PSObject"/>.</param>
+        /// <param name="maxDepth">The max depth allowed when deserializing the json input. Set to null for no maximum.</param>
+        /// <param name="jsonDateKind">Controls how DateTime values are to be converted.</param>
+        /// <param name="error">An error record if the conversion failed.</param>
+        /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
+        /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
+        internal static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, JsonDateKind jsonDateKind, out ErrorRecord error)
         {
             ArgumentNullException.ThrowIfNull(input);
+
+            DateParseHandling dateParseHandling;
+            DateTimeZoneHandling dateTimeZoneHandling;
+            switch (jsonDateKind)
+            {
+                case JsonDateKind.Default:
+                    dateParseHandling = DateParseHandling.DateTime;
+                    dateTimeZoneHandling = DateTimeZoneHandling.RoundtripKind;
+                    break;
+
+                case JsonDateKind.Local:
+                    dateParseHandling = DateParseHandling.DateTime;
+                    dateTimeZoneHandling = DateTimeZoneHandling.Local;
+                    break;
+
+                case JsonDateKind.Utc:
+                    dateParseHandling = DateParseHandling.DateTime;
+                    dateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    break;
+
+                case JsonDateKind.Offset:
+                    dateParseHandling = DateParseHandling.DateTimeOffset;
+                    dateTimeZoneHandling = DateTimeZoneHandling.Unspecified;
+                    break;
+
+                case JsonDateKind.String:
+                    dateParseHandling = DateParseHandling.None;
+                    dateTimeZoneHandling = DateTimeZoneHandling.Unspecified;
+                    break;
+
+                default:
+                    throw new ArgumentException($"Unknown JsonDateKind value requested '{jsonDateKind}'");
+            }
 
             error = null;
             try
@@ -161,6 +210,9 @@ namespace Microsoft.PowerShell.Commands
                     input,
                     new JsonSerializerSettings
                     {
+                        DateParseHandling = dateParseHandling,
+                        DateTimeZoneHandling = dateTimeZoneHandling,
+
                         // This TypeNameHandling setting is required to be secure.
                         TypeNameHandling = TypeNameHandling.None,
                         MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
