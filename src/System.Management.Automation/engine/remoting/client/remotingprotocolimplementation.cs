@@ -13,7 +13,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// Implements ServerRemoteSessionDataStructureHandler.
     /// </summary>
-    internal class ClientRemoteSessionDSHandlerImpl : ClientRemoteSessionDataStructureHandler, IDisposable
+    internal sealed class ClientRemoteSessionDSHandlerImpl : ClientRemoteSessionDataStructureHandler, IDisposable
     {
         [TraceSourceAttribute("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl")]
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl");
@@ -736,25 +736,11 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         /// <summary>
-        /// Public method for dispose.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Release all resources.
-        /// </summary>
-        /// <param name="disposing">If true, release all managed resources.</param>
-        protected void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _transportManager.Dispose();
-            }
+            _transportManager.Dispose();
         }
 
         #endregion IDisposable
