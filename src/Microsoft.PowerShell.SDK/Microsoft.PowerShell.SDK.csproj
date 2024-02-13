@@ -19,9 +19,9 @@
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="8.0.0" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="8.0.0" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
+    <PackageReference Include="System.IO.Packaging" Version="9.0.0-preview.1.24080.9" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="9.0.0-preview.1.24080.9" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.0-preview.1.24080.9" />
     <!--
         the following package(s) are from https://github.com/dotnet/wcf
         they are pinned to the version 4.10.x due to a breaking change in newer versions.
@@ -34,7 +34,7 @@
     <PackageReference Include="System.ServiceModel.Security" Version="4.10.3" />
     <PackageReference Include="System.Private.ServiceModel" Version="4.10.3" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.0-preview.1.24081.3" />
   </ItemGroup>
 
 </Project>
