@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="PowerShellGet" Version="2.2.5" />
     <PackageReference Include="PackageManagement" Version="1.4.8.1" />
-    <PackageReference Include="Microsoft.PowerShell.PSResourceGet" Version="1.0.1" />
+    <PackageReference Include="Microsoft.PowerShell.PSResourceGet" Version="1.0.2" />
     <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.2.5" />
     <PackageReference Include="PSReadLine" Version="2.3.4" />
     <PackageReference Include="ThreadJob" Version="2.0.3" />
