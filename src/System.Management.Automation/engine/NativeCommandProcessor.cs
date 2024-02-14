@@ -1645,16 +1645,20 @@ namespace System.Management.Automation
                 startInfo.UseShellExecute = false;
                 startInfo.RedirectStandardInput = redirectInput;
 
+                Encoding outputEncoding = Context.GetVariableValue(
+                    SpecialVariables.PSApplicationOutputEncodingVarPath) as Encoding
+                    ?? Console.OutputEncoding;
+
                 if (redirectOutput)
                 {
                     startInfo.RedirectStandardOutput = true;
-                    startInfo.StandardOutputEncoding = Console.OutputEncoding;
+                    startInfo.StandardOutputEncoding = outputEncoding;
                 }
 
                 if (redirectError)
                 {
                     startInfo.RedirectStandardError = true;
-                    startInfo.StandardErrorEncoding = Console.OutputEncoding;
+                    startInfo.StandardErrorEncoding = outputEncoding;
                 }
             }
 
