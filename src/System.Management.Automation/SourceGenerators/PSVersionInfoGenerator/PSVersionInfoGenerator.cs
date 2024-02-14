@@ -5,6 +5,8 @@ using System;
 using System.Globalization;
 using Microsoft.CodeAnalysis;
 
+#pragma warning disable RS1035
+
 namespace SMA
 {
     /// <summary>
@@ -128,3 +130,5 @@ namespace System.Management.Automation
         }
     }
 }
+
+#pragma warning restore
