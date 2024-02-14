@@ -1860,6 +1860,11 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Black' # 0 = NonPositive
         }
 
+        It 'Tab completion of $_ inside incomplete switch condition' {
+            $res = TabExpansion2 -inputScript 'Get-PSDrive | Sort-Object -Property {switch ($_.nam'
+            $res.CompletionMatches[0].CompletionText | Should -Be 'Name'
+        }
+
         It "Test [CommandCompletion]::GetNextResult" {
             $inputStr = "Get-Command -Type Alias,c"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
