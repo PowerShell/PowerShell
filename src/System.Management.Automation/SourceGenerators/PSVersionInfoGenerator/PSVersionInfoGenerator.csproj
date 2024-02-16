@@ -10,6 +10,7 @@
     <LangVersion>11.0</LangVersion>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <NoWarn>RS1035</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
