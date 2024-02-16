@@ -11,6 +11,6 @@
     <NuspecProperties>runtime=$(RID);version=$(SemVer);PackageName=$(PackageName)</NuspecProperties>
     <NuspecBasePath>$(StagingPath)</NuspecBasePath>
     <IsTool>True</IsTool>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
 </Project>
