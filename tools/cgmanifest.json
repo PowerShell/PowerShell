@@ -25,8 +25,8 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "JetBrains.Annotations",
-          "Version": "2021.2.0"
+          "Name": "Humanizer.Core",
+          "Version": "2.14.1"
         }
       },
       "DevelopmentDependency": false
@@ -36,7 +36,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Json.More.Net",
-          "Version": "1.9.0"
+          "Version": "2.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -46,7 +46,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonPointer.Net",
-          "Version": "3.0.3"
+          "Version": "4.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -56,7 +56,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonSchema.Net",
-          "Version": "5.5.1"
+          "Version": "6.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -226,7 +226,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "8.0.0"
+          "Version": "8.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -237,6 +237,46 @@
         "Nuget": {
           "Name": "Newtonsoft.Json",
           "Version": "13.0.3"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.android-arm.runtime.native.System.IO.Ports",
+          "Version": "9.0.0-preview.1.24080.9"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.android-arm64.runtime.native.System.IO.Ports",
+          "Version": "9.0.0-preview.1.24080.9"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.android-x64.runtime.native.System.IO.Ports",
+          "Version": "9.0.0-preview.1.24080.9"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.android-x86.runtime.native.System.IO.Ports",
+          "Version": "9.0.0-preview.1.24080.9"
         }
       },
       "DevelopmentDependency": false
@@ -265,8 +305,78 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "runtime.linux-bionic-arm64.runtime.native.System.IO.Ports",
+          "Version": "9.0.0-preview.1.24080.9"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.linux-bionic-x64.runtime.native.System.IO.Ports",
+          "Version": "9.0.0-preview.1.24080.9"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.linux-musl-arm.runtime.native.System.IO.Ports",
+          "Version": "9.0.0-preview.1.24080.9"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.linux-musl-arm64.runtime.native.System.IO.Ports",
+          "Version": "9.0.0-preview.1.24080.9"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.linux-musl-x64.runtime.native.System.IO.Ports",
+          "Version": "9.0.0-preview.1.24080.9"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "runtime.linux-x64.runtime.native.System.IO.Ports",
           "Version": "8.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.maccatalyst-arm64.runtime.native.System.IO.Ports",
+          "Version": "9.0.0-preview.1.24080.9"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.maccatalyst-x64.runtime.native.System.IO.Ports",
+          "Version": "9.0.0-preview.1.24080.9"
         }
       },
       "DevelopmentDependency": false
@@ -376,7 +486,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Collections.Immutable",
-          "Version": "7.0.0"
+          "Version": "8.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -506,7 +616,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "8.0.1"
+          "Version": "8.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -606,7 +716,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Reflection.Metadata",
-          "Version": "7.0.0"
+          "Version": "8.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -787,16 +897,6 @@
         "Nuget": {
           "Name": "System.Text.Encodings.Web",
           "Version": "8.0.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Text.Json",
-          "Version": "6.0.2"
         }
       },
       "DevelopmentDependency": false
