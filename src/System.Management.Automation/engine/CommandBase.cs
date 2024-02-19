@@ -69,6 +69,11 @@ namespace System.Management.Automation.Internal
         /// <value></value>
         internal IScriptExtent InvocationExtent { get; set; }
 
+        /// <summary>
+        /// Allows you to access the AST for this command invocation...
+        /// </summary>
+        internal CommandAst InvocationAst { get; set; }
+
         private InvocationInfo _myInvocation = null;
         /// <summary>
         /// Return the invocation data object for this command.

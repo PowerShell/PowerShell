@@ -2404,60 +2404,89 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Gets a ScriptBlock's Dynamic Parameters 
+        /// </summary>
+        /// <returns>A dictionary of dynamic parameters.</returns>
         public object GetDynamicParameters()
         {
-            _commandRuntime = (MshCommandRuntime)commandRuntime;
-
-            if (_scriptBlock.HasDynamicParameters)
-            {
-                var resultList = new List<object>();
-                Diagnostics.Assert(_functionContext._outputPipe == null, "Output pipe should not be set yet.");
-                _functionContext._outputPipe = new Pipe();
-                var objectStream = new ObjectStream();
-                var objectWriter = new ObjectWriter(objectStream);
-                objectStream.DataReady += (sender, args) =>
-                {
-                    var objectStream = sender as ObjectStream;
-                    while (objectStream.Count > 0)
-                    {
-                        var obj = objectStream.Read();
-                        RuntimeDefinedParameter runtimeDefinedParameter = obj as RuntimeDefinedParameter;
-                        runtimeDefinedParameter ??= (obj as PSObject)?.BaseObject as RuntimeDefinedParameter;
-                        if (runtimeDefinedParameter is RuntimeDefinedParameter)
-                        {
-                            RuntimeDefinedParameterDictionary runtimeParamDictionary = new() { { runtimeDefinedParameter.Name, runtimeDefinedParameter } };
-                            _parameterBinderController.MergeStaticAndDynamicParameterMetadata(runtimeParamDictionary);
-                            ParameterBindingException outgoingBindingException = null;
-                            _parameterBinderController.BindDynamicParameters(out outgoingBindingException);
-                            if (outgoingBindingException != null)
-                            {
-                                throw outgoingBindingException;
-                            }
-                            if (this.MyInvocation.BoundParameters.TryGetValue(runtimeDefinedParameter.Name, out var boundValue))
-                                this.SessionState.PSVariable.Set(runtimeDefinedParameter.Name, boundValue);
-                        }
-                        else
-                        {
-                            resultList.Add(obj);
-                        }
-                    }
-                };
-                _functionContext._outputPipe.ExternalWriter = objectWriter;
-                RunClause(
-                    clause: _runOptimized ? _scriptBlock.DynamicParamBlock : _scriptBlock.UnoptimizedDynamicParamBlock,
-                    dollarUnderbar: AutomationNull.Value,
-                    inputToProcess: AutomationNull.Value);
-                if (resultList.Count > 1)
-                {
-                    throw PSTraceSource.NewInvalidOperationException(
-                        AutomationExceptions.DynamicParametersWrongType,
-                        PSObject.ToStringParser(this.Context, resultList));
-                }
-
-                return resultList.Count == 0 ? null : PSObject.Base(resultList[0]);
+            // If there is not a dynamicParam block,
+            if (!_scriptBlock.HasDynamicParameters) {                
+                return null; // return nothing, since it cannot have dynamic parameters.
             }
 
-            return null;
+            // In order to bind dynamic parameters as soon as possible, we want to capture each output of the dynamic param block.
+            _commandRuntime = (MshCommandRuntime)commandRuntime;                        
+            var resultList = new List<object>();
+            // this works because normally the dynamic parameter block does not output to the pipeline
+            // (hence, no output pipe should already exist).
+            Diagnostics.Assert(_functionContext._outputPipe == null, "Output pipe should not be set yet.");
+
+            // So let's create one.
+            _functionContext._outputPipe = new Pipe();
+            var objectStream = new ObjectStream();
+            var objectWriter = new ObjectWriter(objectStream);        
+            _functionContext._outputPipe.ExternalWriter = objectWriter;
+            
+            // and also create a dictionary to accumulate dynamic parameters.
+            RuntimeDefinedParameterDictionary accumulatedDynamicParameters = new RuntimeDefinedParameterDictionary();
+            
+            // As data comes thru the output pipe
+            objectStream.DataReady += (sender, args) =>
+            {
+                var objectStream = sender as ObjectStream;
+                while (objectStream.Count > 0)
+                {
+                    // read each output
+                    var obj = objectStream.Read();
+                    // If it could be a RuntimeDefinedParameter
+                    RuntimeDefinedParameter runtimeDefinedParameter = obj as RuntimeDefinedParameter;
+                    // get a reference to the base object (since almost everything in PowerShell is wrapped in a PSObject)
+                    runtimeDefinedParameter ??= (obj as PSObject)?.BaseObject as RuntimeDefinedParameter;
+                    // If we could not cast to a runtime parameter
+                    if (!(runtimeDefinedParameter is RuntimeDefinedParameter))
+                    {
+                        // pass the result back thru
+                        resultList.Add(obj);
+                    } else 
+                    {
+                        // otherwise, accumulate that dynamic parameter.                       
+                        accumulatedDynamicParameters.Add(runtimeDefinedParameter.Name, runtimeDefinedParameter);
+                    }
+                }
+            };
+
+            // We want to provide dynamicParams with as much context as we can.
+            CommandAst commandAst = this.InvocationAst;
+                        
+            RunClause(
+                // Now we run the dynamic parameter block (which will trigger ObjectStream.DataReady).    
+                clause: _runOptimized ? _scriptBlock.DynamicParamBlock : _scriptBlock.UnoptimizedDynamicParamBlock,
+                // $_ should be the command with dynamic parameters
+                dollarUnderbar: this.MyInvocation.MyCommand, 
+                // $Input will be the CommandAST's elements (thus giving dynamicParam enough context to be conditional)
+                inputToProcess: commandAst != null ? commandAst.CommandElements : AutomationNull.Value 
+            );
+
+            // If more than one result is being outputted
+            if (resultList.Count > 1)
+            {
+                // then they have provided two properties, and we will throw
+                throw PSTraceSource.NewInvalidOperationException(
+                    AutomationExceptions.DynamicParametersWrongType,
+                    PSObject.ToStringParser(this.Context, resultList));
+            }
+
+            // If only one result was provided
+            if (resultList.Count == 1) {
+                return resultList[0]; // return that
+            } else if (accumulatedDynamicParameters.Count >= 1) {
+                // If one or more parameter was accumulated, return them.
+                return accumulatedDynamicParameters;
+            } else {
+                // Otherwise, return nothing.
+                return null;
+            }
         }
 
         /// <summary>
