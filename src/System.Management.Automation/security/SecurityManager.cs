@@ -651,8 +651,7 @@ namespace Microsoft.PowerShell
                     break;
 
                 case CommandTypes.ExternalScript:
-                    ExternalScriptInfo si = commandInfo as ExternalScriptInfo;
-                    if (si == null)
+                    if (commandInfo is not ExternalScriptInfo si)
                     {
                         reason = PSTraceSource.NewArgumentException("scriptInfo");
                     }

@@ -4,6 +4,7 @@
 #nullable enable
 
 using System;
+using System.Buffers;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -29,6 +30,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly Stream _originalStreamToProxy;
         private readonly Cmdlet? _ownerCmdlet;
         private readonly CancellationToken _cancellationToken;
+        private readonly TimeSpan _perReadTimeout;
         private bool _isInitialized = false;
 
         #endregion Data
@@ -41,13 +43,15 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="initialCapacity">Presize the memory stream.</param>
         /// <param name="cmdlet">Owner cmdlet if any.</param>
         /// <param name="contentLength">Expected download size in Bytes.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet? cmdlet, long? contentLength, CancellationToken cancellationToken) : base(initialCapacity)
+        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet? cmdlet, long? contentLength, TimeSpan perReadTimeout, CancellationToken cancellationToken) : base(initialCapacity)
         {
             this._contentLength = contentLength;
             _originalStreamToProxy = stream;
             _ownerCmdlet = cmdlet;
             _cancellationToken = cancellationToken;
+            _perReadTimeout = perReadTimeout;
         }
         #endregion Constructors
 
@@ -228,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    read = _originalStreamToProxy.ReadAsync(buffer, 0, buffer.Length, cancellationToken).GetAwaiter().GetResult();
+                    read = _originalStreamToProxy.ReadAsync(buffer.AsMemory(), _perReadTimeout, cancellationToken).GetAwaiter().GetResult();
 
                     if (read > 0)
                     {
@@ -255,6 +259,84 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
+    internal static class StreamTimeoutExtensions
+    {
+        internal static async Task<int> ReadAsync(this Stream stream, Memory<byte> buffer, TimeSpan readTimeout, CancellationToken cancellationToken)
+        {
+            if (readTimeout == Timeout.InfiniteTimeSpan)
+            {
+                return await stream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
+            }
+
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            try
+            {
+                cts.CancelAfter(readTimeout);
+                return await stream.ReadAsync(buffer, cts.Token).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cts.IsCancellationRequested)
+                {
+                    throw new TimeoutException($"The request was canceled due to the configured OperationTimeout of {readTimeout.TotalSeconds} seconds elapsing", ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        internal static async Task CopyToAsync(this Stream source, Stream destination, TimeSpan perReadTimeout, CancellationToken cancellationToken)
+        {
+            if (perReadTimeout == Timeout.InfiniteTimeSpan)
+            {
+                // No timeout - use fast path
+                await source.CopyToAsync(destination, cancellationToken).ConfigureAwait(false);
+                return;
+            }
+
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(StreamHelper.ChunkSize);
+            CancellationTokenSource cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            try
+            {
+                while (true)
+                {
+                    if (!cts.TryReset())
+                    {
+                        cts.Dispose();
+                        cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                    }
+
+                    cts.CancelAfter(perReadTimeout);
+                    int bytesRead = await source.ReadAsync(buffer, cts.Token).ConfigureAwait(false);
+                    if (bytesRead == 0)
+                    {
+                        break;
+                    }
+
+                    await destination.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken).ConfigureAwait(false);
+                }
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (cts.IsCancellationRequested)
+                {
+                    throw new TimeoutException($"The request was canceled due to the configured OperationTimeout of {perReadTimeout.TotalSeconds} seconds elapsing", ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            finally
+            {
+                cts.Dispose();
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
+        }
+    }
+
     internal static class StreamHelper
     {
         #region Constants
@@ -270,11 +352,11 @@ namespace Microsoft.PowerShell.Commands
 
         #region Static Methods
 
-        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, long? contentLength, CancellationToken cancellationToken)
+        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, long? contentLength, TimeSpan perReadTimeout, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(cmdlet);
 
-            Task copyTask = input.CopyToAsync(output, cancellationToken);
+            Task copyTask = input.CopyToAsync(output, perReadTimeout, cancellationToken);
 
             bool wroteProgress = false;
             ProgressRecord record = new(
@@ -328,16 +410,17 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filePath">Output file name.</param>
         /// <param name="cmdlet">Current cmdlet (Invoke-WebRequest or Invoke-RestMethod).</param>
         /// <param name="contentLength">Expected download size in Bytes.</param>
+        /// <param name="perReadTimeout">Time permitted between reads or Timeout.InfiniteTimeSpan for no timeout.</param>
         /// <param name="cancellationToken">CancellationToken to track the cmdlet cancellation.</param>
-        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, long? contentLength, CancellationToken cancellationToken)
+        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, long? contentLength, TimeSpan perReadTimeout, CancellationToken cancellationToken)
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
             FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
             using FileStream output = new(filePath, fileMode, FileAccess.Write, FileShare.Read);
-            WriteToStream(stream, output, cmdlet, contentLength, cancellationToken);
+            WriteToStream(stream, output, cmdlet, contentLength, perReadTimeout, cancellationToken);
         }
 
-        private static string StreamToString(Stream stream, Encoding encoding, CancellationToken cancellationToken)
+        private static string StreamToString(Stream stream, Encoding encoding, TimeSpan perReadTimeout, CancellationToken cancellationToken)
         {
             StringBuilder result = new(capacity: ChunkSize);
             Decoder decoder = encoding.GetDecoder();
@@ -348,51 +431,59 @@ namespace Microsoft.PowerShell.Commands
                 useBufferSize = encoding.GetMaxCharCount(10);
             }
 
-            char[] chars = new char[useBufferSize];
-            byte[] bytes = new byte[useBufferSize * 4];
-            int bytesRead = 0;
-            do
+            char[] chars = ArrayPool<char>.Shared.Rent(useBufferSize);
+            byte[] bytes = ArrayPool<byte>.Shared.Rent(useBufferSize * 4);
+            try
             {
-                // Read at most the number of bytes that will fit in the input buffer. The
-                // return value is the actual number of bytes read, or zero if no bytes remain.
-                bytesRead = stream.ReadAsync(bytes, 0, useBufferSize * 4, cancellationToken).GetAwaiter().GetResult();
-
-                bool completed = false;
-                int byteIndex = 0;
-
-                while (!completed)
+                int bytesRead = 0;
+                do
                 {
-                    // If this is the last input data, flush the decoder's internal buffer and state.
-                    bool flush = bytesRead is 0;
-                    decoder.Convert(bytes, byteIndex, bytesRead - byteIndex, chars, 0, useBufferSize, flush, out int bytesUsed, out int charsUsed, out completed);
+                    // Read at most the number of bytes that will fit in the input buffer. The
+                    // return value is the actual number of bytes read, or zero if no bytes remain.
+                    bytesRead = stream.ReadAsync(bytes.AsMemory(), perReadTimeout, cancellationToken).GetAwaiter().GetResult();
 
-                    // The conversion produced the number of characters indicated by charsUsed. Write that number
-                    // of characters to our result buffer
-                    result.Append(chars, 0, charsUsed);
+                    bool completed = false;
+                    int byteIndex = 0;
 
-                    // Increment byteIndex to the next block of bytes in the input buffer, if any, to convert.
-                    byteIndex += bytesUsed;
-
-                    // The behavior of decoder.Convert changed start .NET 3.1-preview2.
-                    // The change was made in https://github.com/dotnet/coreclr/pull/27229
-                    // The recommendation from .NET team is to not check for 'completed' if 'flush' is false.
-                    // Break out of the loop if all bytes have been read.
-                    if (!flush && bytesRead == byteIndex)
+                    while (!completed)
                     {
-                        break;
+                        // If this is the last input data, flush the decoder's internal buffer and state.
+                        bool flush = bytesRead is 0;
+                        decoder.Convert(bytes, byteIndex, bytesRead - byteIndex, chars, 0, useBufferSize, flush, out int bytesUsed, out int charsUsed, out completed);
+
+                        // The conversion produced the number of characters indicated by charsUsed. Write that number
+                        // of characters to our result buffer
+                        result.Append(chars, 0, charsUsed);
+
+                        // Increment byteIndex to the next block of bytes in the input buffer, if any, to convert.
+                        byteIndex += bytesUsed;
+
+                        // The behavior of decoder.Convert changed start .NET 3.1-preview2.
+                        // The change was made in https://github.com/dotnet/coreclr/pull/27229
+                        // The recommendation from .NET team is to not check for 'completed' if 'flush' is false.
+                        // Break out of the loop if all bytes have been read.
+                        if (!flush && bytesRead == byteIndex)
+                        {
+                            break;
+                        }
                     }
                 }
-            }
-            while (bytesRead != 0);
+                while (bytesRead != 0);
 
-            return result.ToString();
+                return result.ToString();
+            }
+            finally
+            {
+                ArrayPool<char>.Shared.Return(chars);
+                ArrayPool<byte>.Shared.Return(bytes);
+            }
         }
 
-        internal static string DecodeStream(Stream stream, string? characterSet, out Encoding encoding, CancellationToken cancellationToken)
+        internal static string DecodeStream(Stream stream, string? characterSet, out Encoding encoding, TimeSpan perReadTimeout, CancellationToken cancellationToken)
         {
             bool isDefaultEncoding = !TryGetEncoding(characterSet, out encoding);
 
-            string content = StreamToString(stream, encoding, cancellationToken);
+            string content = StreamToString(stream, encoding, perReadTimeout, cancellationToken);
             if (isDefaultEncoding)
             {
                 // We only look within the first 1k characters as the meta element and
@@ -415,7 +506,7 @@ namespace Microsoft.PowerShell.Commands
                     if (TryGetEncoding(characterSet, out Encoding localEncoding))
                     {
                         stream.Seek(0, SeekOrigin.Begin);
-                        content = StreamToString(stream, localEncoding, cancellationToken);
+                        content = StreamToString(stream, localEncoding, perReadTimeout, cancellationToken);
                         encoding = localEncoding;
                     }
                 }
@@ -458,8 +549,6 @@ namespace Microsoft.PowerShell.Commands
 
             return encoding.GetBytes(str);
         }
-
-        internal static string GetResponseString(HttpResponseMessage response, CancellationToken cancellationToken) => response.Content.ReadAsStringAsync(cancellationToken).GetAwaiter().GetResult();
 
         internal static Stream GetResponseStream(HttpResponseMessage response, CancellationToken cancellationToken) => response.Content.ReadAsStreamAsync(cancellationToken).GetAwaiter().GetResult();
 

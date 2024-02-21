@@ -53,7 +53,6 @@ jobs:
         {
           "x64" { "win7-x64" }
           "x86" { "win7-x86" }
-          "arm" { "win-arm"}
           "arm64" { "win-arm64" }
           "fxdependent" { "fxdependent" }
           "fxdependentWinDesktop" { "fxdependent-win-desktop" }
@@ -67,8 +66,7 @@ jobs:
       tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols @params
     displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols zip'
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
       $packageName = (Get-ChildItem '$(Build.ArtifactStagingDirectory)\Symbols_$(Architecture)').FullName

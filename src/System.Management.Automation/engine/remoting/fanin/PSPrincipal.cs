@@ -21,7 +21,6 @@ namespace System.Management.Automation.Remoting
     /// (a) Connecting User information
     /// (b) Connection String used by the user to connect to the server.
     /// </summary>
-    [Serializable]
     public sealed class PSSenderInfo : ISerializable
     {
         #region Private Data

@@ -21,13 +21,10 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
-        internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
-        internal const string PSNativeCommandPreserveBytePipe = "PSNativeCommandPreserveBytePipe";
         internal const string PSModuleAutoLoadSkipOfflineFilesFeatureName = "PSModuleAutoLoadSkipOfflineFiles";
-        internal const string PSCustomTableHeaderLabelDecoration = "PSCustomTableHeaderLabelDecoration";
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
         internal const string PSCommandWithArgs = "PSCommandWithArgs";
-        internal const string PSConstrainedAuditLogging = "PSConstrainedAuditLogging";
+        internal const string PSNativeWindowsTildeExpansion = nameof(PSNativeWindowsTildeExpansion);
 
         #endregion
 
@@ -120,17 +117,8 @@ namespace System.Management.Automation
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
                 new ExperimentalFeature(
-                    name: PSNativeCommandErrorActionPreferenceFeatureName,
-                    description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
-                new ExperimentalFeature(
                     name: PSModuleAutoLoadSkipOfflineFilesFeatureName,
                     description: "Module discovery will skip over files that are marked by cloud providers as not fully on disk."),
-                new ExperimentalFeature(
-                    name: PSCustomTableHeaderLabelDecoration,
-                    description: "Formatting differentiation for table header labels that aren't property members"),
-                new ExperimentalFeature(
-                    name: PSNativeCommandPreserveBytePipe,
-                    description: "Byte output is retained when piping between two or more native commands"),
                 new ExperimentalFeature(
                     name: PSFeedbackProvider,
                     description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
@@ -138,8 +126,9 @@ namespace System.Management.Automation
                     name: PSCommandWithArgs,
                     description: "Enable `-CommandWithArgs` parameter for pwsh"),
                 new ExperimentalFeature(
-                    name: PSConstrainedAuditLogging,
-                    description: "PowerShell restriction logging when WDAC (Windows Defender Application Control) Code Integrity policy is set to Audit mode.")
+                    name: PSNativeWindowsTildeExpansion,
+                    description: "On windows, expand unquoted tilde (`~`) with the user's current home folder."
+                )
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

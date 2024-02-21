@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell
             HResult Commit();
         }
 
-        [ComImport()]
+        [ComImport]
         [Guid("6332DEBF-87B5-4670-90C0-5E57B408A49E")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         internal interface ICustomDestinationList
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell
             Recent
         }
 
-        [ComImport()]
+        [ComImport]
         [Guid("92CA9DCD-5622-4BBA-A805-5E9F541BD8C9")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         internal interface IObjectArray
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell
                 [Out(), MarshalAs(UnmanagedType.Interface)] out object ppvObject);
         }
 
-        [ComImport()]
+        [ComImport]
         [Guid("5632B1A4-E38A-400A-928A-D4CD63230295")]
         [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
         internal interface IObjectCollection

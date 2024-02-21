@@ -43,7 +43,7 @@ jobs:
   - template: shouldSign.yml
 
   - pwsh: |
-      $pkgFilter = if ( '$(Architecture)' -eq 'arm' ) { "arm32" } else { '$(Architecture)' }
+      $pkgFilter = '$(Architecture)'
       if ($env:BuildConfiguration -eq 'minSize') { $pkgFilter += '-gc' }
 
       $vstsCommandString = "vso[task.setvariable variable=PkgFilter]$pkgFilter"
@@ -235,13 +235,14 @@ jobs:
       Write-Host ("sending " + $vstsCommandString)
       Write-Host "##$vstsCommandString"
     displayName: Compress signed files
+    retryCountOnTaskFailure: 2
+
 
   - pwsh: |
       $runtime = switch ($env:Architecture)
         {
           "x64" { "win7-x64" }
           "x86" { "win7-x86" }
-          "arm" { "win-arm"}
           "arm64" { "win-arm64" }
           "fxdependent" { "fxdependent" }
           "fxdependentWinDesktop" { "fxdependent-win-desktop" }
@@ -258,8 +259,7 @@ jobs:
       $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -BuildZip $signedPkg -location '$(PowerShellRoot)' -destination '$(System.ArtifactsDirectory)\pkgSigned' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' @params
     displayName: 'Build Windows Universal - $(Architecture) Package'
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
       Get-ChildItem '$(System.ArtifactsDirectory)\pkgSigned' | ForEach-Object {
@@ -268,8 +268,9 @@ jobs:
         Write-Host "##vso[artifact.upload containerfolder=signed;artifactname=signed]$packagePath"
       }
     displayName: Upload unsigned packages
+    retryCountOnTaskFailure: 2
 
-  - ${{ if and(ne(variables['BuildConfiguration'],'minSize'), in(variables['Architecture'], 'x64', 'x86')) }}:
+  - ${{ if and(ne(variables['BuildConfiguration'],'minSize'), in(variables['Architecture'], 'x64', 'x86', 'arm64')) }}:
     - template: EsrpSign.yml@ComplianceRepo
       parameters:
           buildOutputPath: $(System.ArtifactsDirectory)\pkgSigned
@@ -289,6 +290,7 @@ jobs:
           Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$packagePath"
         }
       displayName: Upload signed MSI to finalResults
+      retryCountOnTaskFailure: 2
 
     - task: AzureFileCopy@4
       displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
@@ -299,6 +301,7 @@ jobs:
         storage: '$(StorageAccount)'
         ContainerName: '$(AzureVersion)'
         resourceGroup: '$(StorageResourceGroup)'
+      retryCountOnTaskFailure: 2
 
     - pwsh: |
         cd $(PowerShellRoot)
@@ -345,6 +348,7 @@ jobs:
           Write-Host "##vso[artifact.upload containerfolder=signed;artifactname=signed]$packagePath"
         }
       displayName: Upload unsigned exe
+      retryCountOnTaskFailure: 2
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

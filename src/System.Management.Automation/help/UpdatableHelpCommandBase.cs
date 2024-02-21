@@ -78,8 +78,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the credential parameter.
         /// </summary>
-        [Parameter()]
-        [Credential()]
+        [Parameter]
+        [Credential]
         public PSCredential Credential
         {
             get { return _credential; }
@@ -210,9 +210,7 @@ namespace Microsoft.PowerShell.Commands
             _exceptions = new Dictionary<string, UpdatableHelpExceptionContext>();
             _helpSystem.OnProgressChanged += HandleProgressChanged;
 
-            Random rand = new Random();
-
-            activityId = rand.Next();
+            activityId = Random.Shared.Next();
         }
 
         #endregion
@@ -799,7 +797,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path">Path to resolve.</param>
         /// <returns>A list of directories.</returns>
-        private IEnumerable<string> RecursiveResolvePathHelper(string path)
+        private static IEnumerable<string> RecursiveResolvePathHelper(string path)
         {
             if (System.IO.Directory.Exists(path))
             {

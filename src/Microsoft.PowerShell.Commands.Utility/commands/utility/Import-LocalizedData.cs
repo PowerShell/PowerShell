@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -290,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
 
             fileName = Path.GetFileNameWithoutExtension(fileName);
 
-            CultureInfo culture = null;
+            CultureInfo culture;
             if (_uiculture == null)
             {
                 culture = CultureInfo.CurrentUICulture;
@@ -307,19 +308,33 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            CultureInfo currentCulture = culture;
+            List<CultureInfo> cultureList = new List<CultureInfo> { culture };
+            if (_uiculture == null && culture.Name != "en-US")
+            {
+                // .NET 4.8 presents en-US as a parent of any current culture when accessed via the CurrentUICulture
+                // property.
+                //
+                // This feature is not present when GetCultureInfo is called, therefore this fallback change only
+                // applies when the UICulture parameter is not supplied.
+                cultureList.Add(CultureInfo.GetCultureInfo("en-US"));
+            }
+
             string filePath;
             string fullFileName = fileName + ".psd1";
-            while (currentCulture != null && !string.IsNullOrEmpty(currentCulture.Name))
+            foreach (CultureInfo cultureToTest in cultureList)
             {
-                filePath = Path.Combine(dir, currentCulture.Name, fullFileName);
-
-                if (File.Exists(filePath))
+                CultureInfo currentCulture = cultureToTest;
+                while (currentCulture != null && !string.IsNullOrEmpty(currentCulture.Name))
                 {
-                    return filePath;
-                }
+                    filePath = Path.Combine(dir, currentCulture.Name, fullFileName);
 
-                currentCulture = currentCulture.Parent;
+                    if (File.Exists(filePath))
+                    {
+                        return filePath;
+                    }
+
+                    currentCulture = currentCulture.Parent;
+                }
             }
 
             filePath = Path.Combine(dir, fullFileName);

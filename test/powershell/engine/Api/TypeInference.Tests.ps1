@@ -1385,6 +1385,24 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name -join ' ' | Should -Be "System.IO.FileInfo System.IO.DirectoryInfo"
     }
 
+    It 'Infers closest variable type' {
+        $res = [AstTypeInference]::InferTypeOf( { [string]$TestVar = "";[hashtable]$TestVar = @{};$TestVar }.Ast)
+        $res.Name | Select-Object -Last 1 | Should -Be "System.Collections.Hashtable"
+    }
+
+    It 'Infers closest variable type and ignores unrelated param blocks' {
+        $res = [AstTypeInference]::InferTypeOf( {
+        [hashtable]$ParameterName=@{}
+        function Verb-Noun {
+            param
+            (
+                [string]$ParameterName
+            )
+        }
+        $ParameterName }.Ast)
+        $res.Name | Should -Be "System.Collections.Hashtable"
+    }
+
     It 'Infers type of $null after variable assignment' {
         $res = [AstTypeInference]::InferTypeOf( { $null = "Hello";$null }.Ast)
         $res.Count | Should -Be 0

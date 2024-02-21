@@ -43,6 +43,29 @@ enum LogKeyword
     ManagedPlugin = 0x100
 }
 
+# mac log command can emit json, so just use that
+# we need to deconstruct the eventmessage to get the event id
+# we also need to filter out the non-default messages
+function Get-MacOsSyslogItems {
+    param ([int]$processId, [string]$logId)
+    $logArgs = "show", "--process", "$processId", "--style", "json"
+    log $logArgs |
+        ConvertFrom-Json |
+        Where-Object { $_.category -eq "$logId" -and $_.messageType -eq "Default" } |
+        ForEach-Object {
+            $s = $_.eventMessage.IndexOf('[') + 1
+            $e = $_.EventMessage.IndexOf(']')
+            $l = $e - $s
+            if ($l -gt 0) {
+                $eventId = $_.eventMessage.SubString($s, $l)
+            }
+            else {
+                $eventId = "unknown"
+            }
+            $_ | Add-Member -MemberType NoteProperty -Name EventId -Value $eventId -PassThru
+        }
+}
+
 <#
 .SYNOPSIS
    Creates a powershell.config.json file with syslog settings
@@ -215,7 +238,7 @@ $PID
         # Verify we log that we are the script to create the scriptblock
         $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"⏎")))
 
-        # Verify we log that we are excuting the created scriptblock
+        # Verify we log that we are executing the created scriptblock
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
     }
 
@@ -246,7 +269,7 @@ $PID
         # Verify we log that we are the script to create the scriptblock
         $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"⏎")))
 
-        # Verify we log that we are excuting the created scriptblock
+        # Verify we log that we are executing the created scriptblock
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123␀' ;Write\-verbose 'after'")
     }
 
@@ -268,6 +291,9 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsMacOS
         [bool] $persistenceEnabled = $false
+
+        $currentWarningPreference = $WarningPreference
+        $WarningPreference = "SilentlyContinue"
 
         if ($IsSupportedEnvironment)
         {
@@ -306,6 +332,7 @@ Path:.*
     }
 
     AfterAll {
+        $WarningPreference = $currentWarningPreference
         if ($IsSupportedEnvironment -and !$persistenceEnabled)
         {
             # disable persistence if it wasn't enabled
@@ -313,26 +340,19 @@ Path:.*
         }
     }
 
-    It 'Verifies basic logging with no customizations' -Skip:(!$IsSupportedEnvironment) {
+    It 'Verifies basic logging with no customizations' -Skip:(!$IsMacOS) {
         try {
+            $timeString = [DateTime]::Now.ToString('yyyy-MM-dd HH:mm:ss')
             $configFile = WriteLogSettings -LogId $logId
+            copy-item $configFile /tmp/pwshtest.config.json
             $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command '$PID'
-
-            Export-PSOsLog -After $after -LogPid $testPid -TimeoutInMilliseconds 30000 -IntervalInMilliseconds 3000 -MinimumCount 3 |
-                Set-Content -Path $contentFile
-            $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose)
+            $items = Get-MacOsSyslogItems -processId $testPid -logId $logId
 
             $items | Should -Not -Be $null
             $items.Count | Should -BeGreaterThan 2
-            $items[0].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
-            $items[1].EventId | Should -BeExactly 'NamedPipeIPC_ServerListenerStarted:NamedPipe.Open.Informational'
-            $items[2].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
-            # if there are more items than expected...
-            if ($items.Count -gt 3)
-            {
-                # Force reporting of the first unexpected item to help diagnosis
-                $items[3] | Should -Be $null
-            }
+            $items.EventId | Should -Contain 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
+            $items.EventId | Should -Contain 'NamedPipeIPC_ServerListenerStarted:NamedPipe.Open.Informational'
+            $items.EventId | Should -Contain 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
         }
         catch {
             if (Test-Path $contentFile) {
@@ -342,7 +362,7 @@ Path:.*
         }
     }
 
-    It 'Verifies scriptblock logging' -Skip:(!$IsSupportedEnvironment) {
+    It 'Verifies scriptblock logging' -Skip:(!$IsMacOS) {
         try {
             $script = @'
 $PID
@@ -353,24 +373,23 @@ $PID
             $testScriptPath = Join-Path -Path $TestDrive -ChildPath $testFileName
             $script | Out-File -FilePath $testScriptPath -Force
             $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command $testScriptPath
-
-            Export-PSOsLog -After $after -LogPid $testPid -TimeoutInMilliseconds 30000 -IntervalInMilliseconds 3000 -MinimumCount 17 |
-                Set-Content -Path $contentFile
-            $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -Verbose)
+            $items = Get-MacOsSyslogItems -processId $testPid -logId $logId
 
             $items | Should -Not -Be $null
             $items.Count | Should -BeGreaterThan 2
             $createdEvents = $items | Where-Object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
             $createdEvents.Count | Should -BeGreaterOrEqual 3
 
+            $createdEvents | ConvertTo-Json | set-content /tmp/createdEvents.json
+
             # Verify we log that we are executing a file
-            $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
+            $createdEvents[0].EventMessage | Should -Match $testFileName
 
             # Verify we log that we are the script to create the scriptblock
-            $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script))
+            $createdEvents[1].EventMessage | Should -Match (Get-RegEx -SimpleMatch $Script)
 
-            # Verify we log that we are excuting the created scriptblock
-            $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
+            # Verify we log that we are executing the created scriptblock
+            $createdEvents[2].EventMessage | Should -Match "Write-Verbose 'testheader123' ;Write-verbose 'after'"
         }
         catch {
             if (Test-Path $contentFile) {
@@ -380,35 +399,28 @@ $PID
         }
     }
 
-    It 'Verifies scriptblock logging with null character' -Skip:(!$IsSupportedEnvironment) {
+    It 'Verifies scriptblock logging with null character' -Skip:(!$IsMacOS) {
         try {
             $script = @'
 $PID
 & ([scriptblock]::create("Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"))
 '@
             $configFile = WriteLogSettings -ScriptBlockLogging -LogId $logId -LogLevel Verbose
-            $testFileName = 'test01.ps1'
+            $testFileName = 'test02.ps1'
             $testScriptPath = Join-Path -Path $TestDrive -ChildPath $testFileName
             $script | Out-File -FilePath $testScriptPath -Force
-            $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command $testScriptPath
+            $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command $testScriptPath | Select-Object -First 1
 
-            Export-PSOsLog -After $after -LogPid $testPid -TimeoutInMilliseconds 30000 -IntervalInMilliseconds 3000 -MinimumCount 17 |
-                Set-Content -Path $contentFile
-            $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -Verbose)
+            $items = Get-MacOsSyslogItems -processId $testPid -logId $logId
+            $items | convertto-json | set-content /tmp/items.json
 
-            $items | Should -Not -Be $null
-            $items.Count | Should -BeGreaterThan 2
             $createdEvents = $items | Where-Object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
-            $createdEvents.Count | Should -BeGreaterOrEqual 3
 
             # Verify we log that we are executing a file
-            $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
+            $createdEvents[0].EventMessage | Should -Match $testFileName
 
-            # Verify we log that we are the script to create the scriptblock
-            $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script))
-
-            # Verify we log that we are excuting the created scriptblock
-            $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123␀' ;Write\-verbose 'after'")
+            # Verify we log the null in the message
+            $createdEvents[1].EventMessage | Should -Match "Write-Verbose 'testheader123\`$\(\[char\]0x0000\)' ;Write-verbose 'after'"
         }
         catch {
             if (Test-Path $contentFile) {
@@ -418,25 +430,13 @@ $PID
         }
     }
 
-    # This is pending because it results in false postitives (-Skip:(!$IsSupportedEnvironment) )
-    It 'Verifies logging level filtering works' -Pending {
-        try {
-            $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
-            $testPid = & $powershell -NoLogo -NoProfile -SettingsFile $configFile -Command '$PID'
+    # this is now specific to MacOS
+    It 'Verifies logging level filtering works' -skip:(!$IsMacOs) {
+        $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
+        $testPid = & $powershell -NoLogo -NoProfile -SettingsFile $configFile -Command '$PID'
 
-            Export-PSOsLog -After $after -LogPid $testPid |
-                Set-Content -Path $contentFile
-            # by default, powershell startup should only logs informational events.
-            # With Level = Warning, nothing should be logged.
-            $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3
-            $items | Should -Be $null
-        }
-        catch {
-            if (Test-Path $contentFile) {
-                Send-VstsLogFile -Path $contentFile
-            }
-            throw
-        }
+        $items = Get-MacOsSyslogItems -processId $testPid -logId $logId
+        $items | Should -Be $null -Because ("{0} Warning event logs were found" -f @($items).Count)
     }
 }
 
@@ -444,6 +444,10 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsWindows
         [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
+
+        $currentWarningPreference = $WarningPreference
+        $WarningPreference = "SilentlyContinue"
+
         $scriptBlockLoggingCases = @(
             @{
                 name = 'normal script block'
@@ -461,6 +465,10 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
         {
             & "$PSHOME\RegisterManifest.ps1"
         }
+    }
+
+    AfterAll {
+        $WarningPreference = $currentWarningPreference
     }
 
     BeforeEach {

@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel; // Win32Exception
 using System.Diagnostics; // Process class
@@ -11,6 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -822,6 +824,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the Wait-process command.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Wait, "Process", DefaultParameterSetName = "Name", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097146")]
+    [OutputType(typeof(Process))]
     public sealed class WaitProcessCommand : ProcessBaseCommand
     {
         #region Parameters
@@ -895,6 +898,18 @@ namespace Microsoft.PowerShell.Commands
                 _timeOutSpecified = true;
             }
         }
+        
+        /// <summary>
+        /// Gets or sets a value indicating whether to return after any one process exits.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Any { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to return the Process objects after waiting.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter PassThru { get; set; }
 
         private int _timeout = 0;
         private bool _timeOutSpecified;
@@ -927,7 +942,7 @@ namespace Microsoft.PowerShell.Commands
         // Handle Exited event and display process information.
         private void myProcess_Exited(object sender, System.EventArgs e)
         {
-            if (System.Threading.Interlocked.Decrement(ref _numberOfProcessesToWaitFor) == 0)
+            if (Any || (Interlocked.Decrement(ref _numberOfProcessesToWaitFor) == 0))
             {
                 _waitHandle?.Set();
             }
@@ -979,7 +994,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    if (!process.HasExited)
+                    // Check for processes that exit too soon for us to add an event.
+                    if (Any && process.HasExited)
+                    {
+                        _waitHandle.Set();
+                    }
+                    else if (!process.HasExited)
                     {
                         process.EnableRaisingEvents = true;
                         process.Exited += myProcess_Exited;
@@ -995,11 +1015,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            bool hasTimedOut = false;
             if (_numberOfProcessesToWaitFor > 0)
             {
                 if (_timeOutSpecified)
                 {
-                    _waitHandle.WaitOne(_timeout * 1000);
+                    hasTimedOut = !_waitHandle.WaitOne(_timeout * 1000);
                 }
                 else
                 {
@@ -1007,21 +1028,29 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            foreach (Process process in _processList)
+            if (hasTimedOut || (!Any && _numberOfProcessesToWaitFor > 0))
             {
-                try
+                foreach (Process process in _processList)
                 {
-                    if (!process.HasExited)
+                    try
                     {
-                        string message = StringUtil.Format(ProcessResources.ProcessNotTerminated, new object[] { process.ProcessName, process.Id });
-                        ErrorRecord errorRecord = new(new TimeoutException(message), "ProcessNotTerminated", ErrorCategory.CloseError, process);
-                        WriteError(errorRecord);
+                        if (!process.HasExited)
+                        {
+                            string message = StringUtil.Format(ProcessResources.ProcessNotTerminated, new object[] { process.ProcessName, process.Id });
+                            ErrorRecord errorRecord = new(new TimeoutException(message), "ProcessNotTerminated", ErrorCategory.CloseError, process);
+                            WriteError(errorRecord);
+                        }
+                    }
+                    catch (Win32Exception exception)
+                    {
+                        WriteNonTerminatingError(process, exception, ProcessResources.ProcessIsNotTerminated, "ProcessNotTerminated", ErrorCategory.CloseError);
                     }
                 }
-                catch (Win32Exception exception)
-                {
-                    WriteNonTerminatingError(process, exception, ProcessResources.ProcessIsNotTerminated, "ProcessNotTerminated", ErrorCategory.CloseError);
-                }
+            }
+            
+            if (PassThru)
+            {
+                WriteObject(_processList, enumerateCollection: true);
             }
         }
 
@@ -1773,6 +1802,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = "UseShellExecute")]
         [ValidateNotNullOrEmpty]
+        [ArgumentCompleter(typeof(VerbArgumentCompleter))]
         public string Verb { get; set; }
 
         /// <summary>
@@ -2099,6 +2129,13 @@ namespace Microsoft.PowerShell.Commands
                     jobAssigned = jobObject.AssignProcessToJobObject(processInfo.Process);
                 }
 
+                // Since the process wasn't spawned by .NET, we need to trigger .NET to get a lock on the handle of the process.
+                // Otherwise, accessing properties like `ExitCode` will throw the following exception:
+                //   "Process was not started by this object, so requested information cannot be determined."
+                // Fetching the process handle will trigger the `Process` object to update its internal state by calling `SetProcessHandle`,
+                // the result is discarded as it's not used later in this code.
+                _ = process.Handle;
+
                 // Resume the process now that is has been set up.
                 processInfo.Resume();
 #endif
@@ -2387,44 +2424,39 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetStartupInfo(ProcessStartInfo startinfo, ref ProcessNativeMethods.STARTUPINFO lpStartupInfo, ref int creationFlags)
         {
+            bool hasRedirection = false;
             // RedirectionStandardInput
             if (_redirectstandardinput != null)
             {
+                hasRedirection = true;
                 startinfo.RedirectStandardInput = true;
                 _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
                 lpStartupInfo.hStdInput = GetSafeFileHandleForRedirection(_redirectstandardinput, FileMode.Open);
-            }
-            else
-            {
-                lpStartupInfo.hStdInput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-10), false);
             }
 
             // RedirectionStandardOutput
             if (_redirectstandardoutput != null)
             {
+                hasRedirection = true;
                 startinfo.RedirectStandardOutput = true;
                 _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
                 lpStartupInfo.hStdOutput = GetSafeFileHandleForRedirection(_redirectstandardoutput, FileMode.Create);
-            }
-            else
-            {
-                lpStartupInfo.hStdOutput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-11), false);
             }
 
             // RedirectionStandardError
             if (_redirectstandarderror != null)
             {
+                hasRedirection = true;
                 startinfo.RedirectStandardError = true;
                 _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
                 lpStartupInfo.hStdError = GetSafeFileHandleForRedirection(_redirectstandarderror, FileMode.Create);
             }
-            else
-            {
-                lpStartupInfo.hStdError = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-12), false);
-            }
 
-            // STARTF_USESTDHANDLES
-            lpStartupInfo.dwFlags = 0x100;
+            if (hasRedirection)
+            {
+                // Set STARTF_USESTDHANDLES only if there is redirection.
+                lpStartupInfo.dwFlags = 0x100;
+            }
 
             if (startinfo.CreateNoWindow)
             {
@@ -2627,6 +2659,95 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     }
 
+    /// <summary>
+    /// Provides argument completion for Verb parameter.
+    /// </summary>
+    public class VerbArgumentCompleter : IArgumentCompleter
+    {
+        /// <summary>
+        /// Returns completion results for verb parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of Completion Results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+        {
+            // -Verb is not supported on non-Windows platforms as well as Windows headless SKUs
+            if (!Platform.IsWindowsDesktop)
+            {
+                yield break;
+            }
+
+            // Completion: Start-Process -FilePath <path> -Verb <wordToComplete>
+            if (commandName.Equals("Start-Process", StringComparison.OrdinalIgnoreCase)
+                && fakeBoundParameters.Contains("FilePath"))
+            {
+                string filePath = fakeBoundParameters["FilePath"].ToString();
+
+                // Complete file verbs if extension exists
+                if (Path.HasExtension(filePath))
+                {
+                    foreach (string verb in CompleteFileVerbs(filePath, wordToComplete))
+                    {
+                        yield return new CompletionResult(verb);
+                    }
+
+                    yield break;
+                }
+
+                // Otherwise check if command is an Application to resolve executable full path with extension
+                // e.g if powershell was given, resolve to powershell.exe to get verbs
+                using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+
+                var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
+
+                ps.AddCommand(commandInfo);
+                ps.AddParameter("Name", filePath);
+                ps.AddParameter("CommandType", CommandTypes.Application);
+
+                Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
+
+                // Start-Process & Get-Command select first found application based on PATHEXT environment variable
+                if (commands.Count >= 1)
+                {
+                    foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
+                    {
+                        yield return new CompletionResult(verb);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Completes file verbs.
+        /// </summary>
+        /// <param name="filePath">The file path to get verbs.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <returns>List of file verbs to complete.</returns>
+        private static IEnumerable<string> CompleteFileVerbs(string filePath, string wordToComplete)
+        {
+            var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            string[] verbs = new ProcessStartInfo(filePath).Verbs;
+
+            foreach (string verb in verbs)
+            {
+                if (verbPattern.IsMatch(verb))
+                {
+                    yield return verb;
+                }
+            }
+        }
+    }
+
 #if !UNIX
     /// <summary>
     /// ProcessCollection is a helper class used by Start-Process -Wait cmdlet to monitor the
@@ -2771,9 +2892,6 @@ namespace Microsoft.PowerShell.Commands
 
     internal static class ProcessNativeMethods
     {
-        [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true)]
-        public static extern IntPtr GetStdHandle(int whichHandle);
-
         [DllImport(PinvokeDllNames.CreateProcessWithLogonWDllName, CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CreateProcessWithLogonW(string userName,
@@ -2952,7 +3070,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Non-terminating errors occurring in the process noun commands.
     /// </summary>
-    [Serializable]
     public class ProcessCommandException : SystemException
     {
         #region ctors
@@ -2992,28 +3109,14 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info"></param>
         /// <param name="context"></param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ProcessCommandException(
             SerializationInfo info,
             StreamingContext context)
-            : base(info, context)
         {
-            _processName = info.GetString("ProcessName");
+            throw new NotSupportedException();
         }
-        /// <summary>
-        /// Serializer.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        public override void GetObjectData(
-            SerializationInfo info,
-            StreamingContext context)
-        {
-            base.GetObjectData(info, context);
 
-            ArgumentNullException.ThrowIfNull(info);
-
-            info.AddValue("ProcessName", _processName);
-        }
         #endregion Serialization
 
         #region Properties

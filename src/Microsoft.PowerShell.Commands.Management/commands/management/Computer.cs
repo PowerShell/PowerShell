@@ -35,7 +35,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This exception is thrown when the timeout expires before a computer finishes restarting.
     /// </summary>
-    [Serializable]
     public sealed class RestartComputerTimeoutException : RuntimeException
     {
         /// <summary>
@@ -87,50 +86,6 @@ namespace Microsoft.PowerShell.Commands
         /// An exception that led to this exception.
         /// </param>
         public RestartComputerTimeoutException(string message, Exception innerException) : base(message, innerException) { }
-
-        #region Serialization
-        /// <summary>
-        /// Serialization constructor for class RestartComputerTimeoutException.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        private RestartComputerTimeoutException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            ComputerName = info.GetString("ComputerName");
-            Timeout = info.GetInt32("Timeout");
-        }
-
-        /// <summary>
-        /// Serializes the RestartComputerTimeoutException.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("ComputerName", ComputerName);
-            info.AddValue("Timeout", Timeout);
-        }
-        #endregion Serialization
     }
 
     /// <summary>
@@ -797,7 +752,7 @@ $result
 
             if (Wait)
             {
-                _activityId = (new Random()).Next();
+                _activityId = Random.Shared.Next();
                 if (_timeout == -1 || _timeout >= int.MaxValue / 1000)
                 {
                     _timeoutInMilliseconds = int.MaxValue;
