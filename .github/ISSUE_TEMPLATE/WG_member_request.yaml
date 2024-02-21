@@ -30,7 +30,7 @@ body:
   validations:
     required: true
   attributes:
-    label: Can you provide at least 1 hour per week to the Working Group?
+    label: Can you provide at least 1 hour per week to the Working Group? Note that time commitments will vary per Working Group and decided by its members.
     description: >-
       Please select Yes or No.     
     options:
