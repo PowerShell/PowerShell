@@ -25,12 +25,12 @@ Write-Output "Hello"
     }
 }
 
-describe "ArgumentTransformAttribute Tests" {
+describe "PSTransform Tests" {
 
     it "Can transform a parameter value using a ScriptBlock" {
         function TestFunc {
             param(
-            [ArgumentTransform({
+            [PSTransform({
                 if ($_ -is [datetime]) {
                     $_.ToFileTimeUTC()
                 } elseif ($_ -as [datetime]) {
@@ -61,7 +61,7 @@ describe "ArgumentTransformAttribute Tests" {
         $testFunc = Get-Command TestFunc
         # Find the attribute
         $attr = $testFunc.Parameters["TimeStamp"].Attributes |
-            Where-Object { $_ -is [ArgumentTransform]}
+            Where-Object { $_ -is [PSTransform]}
         # disable it.
         $attr.Disabled = $true
 
