@@ -4,16 +4,17 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Security;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Reflection;
 
 namespace System.Management.Automation.Internal
 {
@@ -2360,46 +2361,30 @@ namespace System.Management.Automation
         /// </summary>
         public virtual bool TransformNullOptionalParameters { get => true; }
     }
-
-    /// <summary>
-    /// Transforms an argument.
+    
+    /// <summary>    
+    /// Transforms objects with PowerShell.
     /// </summary>
-    public class ArgumentTransform : ArgumentTransformationAttribute
+    public class PSTransformAttribute : ArgumentTransformationAttribute
     {
+        /// <summary>
+        /// Creates a Argument Transform from an expression.
+        /// </summary>
+        /// <param name="transformExpression">
+        /// An expression to use for the transform.
+        /// This will be converted into a ScriptBlock.</param>
+        public PSTransformAttribute(string transformExpression) {
+            // Author note: This constructor is much more useful for Compiled Languages, as C# attributes cannot be ScriptBlocks.
+            this.TransformScript = ScriptBlock.Create(transformExpression);
+        }
 
         /// <summary>
-        /// Creates a Argument Transform
+        /// Creates a Argument Transform from a ScriptBlock
         /// </summary>
-        /// <param name="propertyName">The name of the property</param>        
         /// <param name="transformScript">A ScriptBlock to transform the value</param>
-        public ArgumentTransform(string propertyName, ScriptBlock transformScript) {
-            this.PropertyName = propertyName;
+        public PSTransformAttribute(ScriptBlock transformScript) {
+            // Author note: This constructor is much more useful PowerShell, as it creates a debuggable transform.
             this.TransformScript = transformScript;
-        }
-
-        /// <summary>
-        /// Creates a Argument Transform
-        /// </summary>
-        /// <param name="propertyName">The name of the property</param>        
-        public ArgumentTransform(string propertyName) {
-            this.PropertyName = propertyName;
-        }
-
-        /// <summary>
-        /// Creates a Argument Transform
-        /// </summary>
-        /// <param name="transform">A ScriptBlock to transform the value</param>
-        public ArgumentTransform(ScriptBlock transform) {
-            this.TransformScript = transform;            
-        }
-
-        /// <summary>
-        /// The Name of the Property that will be transformed.
-        /// If this is empty, the original value will be transformed.
-        /// </summary>
-        public string PropertyName {
-            get;
-            set;
         }
 
         /// <summary>
@@ -2411,45 +2396,77 @@ namespace System.Management.Automation
             set;
         }        
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// If a transform is disabled, nothing will happen.
+        /// </summary>
+        public bool Disabled {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The name of the transform.
+        /// This is not required. It is present in order to disambiguate multiple transforms.
+        /// </summary>
+        public string TransformName {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Determines if the script uses a new scope to execute.
+        /// </summary>
+        public bool UseNewScope {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Transforms arguments.        
+        /// If the attribute is disabled, no transformation will take place.        
+        /// If the attribute has a .TransformScript, this argument will be transformed by invoking the script. 
+        /// </summary>
+        /// <param name="engineIntrinsics"></param>
+        /// <param name="inputData"></param>
+        /// <returns></returns>
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData) {
-            object valueToConvert = inputData;
-            if (!String.IsNullOrEmpty(this.PropertyName))
-            {
-                if (inputData != null)
-                {                    
-                    if (inputData is PSObject) 
-                    {
-                        var psProperty = ((PSObject)inputData).Properties[this.PropertyName];
-                        if (psProperty != null) {
-                            valueToConvert = psProperty.Value;
-                        }
-                    }
-                    else
-                    {
-                        PropertyInfo propertyExists = inputData.GetType().GetProperty(this.PropertyName, (
-                            BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase
-                        ));                        
-                        if (propertyExists != null)
-                        {                            
-                            valueToConvert = propertyExists.GetValue(inputData);
-                        }
-                    }                    
-                }
+            // If disabled, do nothing
+            if (this.Disabled) {
+                return inputData;
             }
-                    
-            if (this.TransformScript != null)
+            // If there is no transform script, return the input data.
+            if (this.TransformScript == null)
             {
-                valueToConvert = this.TransformScript.DoInvokeReturnAsIs(
-                    useLocalScope: true,
-                    errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
-                    dollarUnder: LanguagePrimitives.AsPSObjectOrNull(valueToConvert),
-                    input: AutomationNull.Value,
-                    scriptThis: this,
-                    args: new object[] { inputData });
+                return inputData;
             }
 
-            return valueToConvert;
+            // By getting the value of InvocationInfo now, we know what command is trying to perform the transform.
+            InvocationInfo myInvocation = engineIntrinsics.SessionState.PSVariable.Get("MyInvocation").Value as InvocationInfo;
+
+            engineIntrinsics.SessionState.PSVariable.Set("thisTransform", this);
+            engineIntrinsics.SessionState.PSVariable.Set("_", inputData);    
+
+            // The transform script will be passed the following arguments:
+            // The input data, invocation info,  command, and this attribute.
+            object[] arguments        = new object[] { inputData, myInvocation, myInvocation.MyCommand, this };
+            object[] transformInput   = new object[] { inputData }; 
+
+            // Invoke it in place.
+            // ($_ will be the current transformed value)            
+            Collection<PSObject> invokeResults = engineIntrinsics.SessionState.InvokeCommand.InvokeScript(this.UseNewScope, this.TransformScript, transformInput, arguments);
+            
+            if (invokeResults != null && invokeResults.Count == 1)
+            {
+                return invokeResults[0];
+            }
+            else if (invokeResults != null)
+            {
+                return invokeResults;
+            }
+            else
+            {
+                return inputData;
+            }
         }
     }
 

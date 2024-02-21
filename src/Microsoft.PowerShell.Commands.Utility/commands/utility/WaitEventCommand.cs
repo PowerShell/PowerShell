@@ -43,7 +43,21 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Alias("TimeoutSec", "TimeSpan")]
         [ValidateRangeAttribute(-1, double.MaxValue)]
-        [ArgumentTransform("TotalSeconds")]
+        [PSTransform(@"
+            # If it is a double or int, pass it thru.
+            if (($_ -is [double]) -or ($_ -is [int])) { return $_ }
+
+            # If it is timespan, return total seconds
+            if ($_ -is [TimeSpan]) { return $_.TotalSeconds }
+            # If it is a [DateTime], return seconds until then
+            if ($_ -is [DateTime]) { return ($_ - [DateTime]::Now).TotalSeconds }
+            
+            # Try casting to a Timespan
+            $asTimeSpan = $_ -as [Timespan]
+            if ($asTimeSpan) {                
+                return $asTimeSpan.TotalSeconds
+            }
+        ")]
         public double Timeout
         {
             get

@@ -23,6 +23,17 @@ Describe "Wait-Event" -Tags "CI" {
 			$stopwatch.ElapsedMilliseconds | Should -BeGreaterThan 200
 			$stopwatch.ElapsedMilliseconds | Should -BeLessThan 300
 		}
+
+		It "Should be able transform a TimeSpan string into a -Timeout" {
+			# Don't depend on Measure-Command
+			$stopwatch = [System.Diagnostics.Stopwatch]::startNew()
+			# Testing the timeout, so wait for an event that will never be
+			# raised because it is fake
+			Wait-Event -TimeSpan '00:00:00.23456' -SourceIdentifier "FakeEvent"
+			$stopwatch.Stop()
+			$stopwatch.ElapsedMilliseconds | Should -BeGreaterThan 200
+			$stopwatch.ElapsedMilliseconds | Should -BeLessThan 300
+		}
 	}
 
 
