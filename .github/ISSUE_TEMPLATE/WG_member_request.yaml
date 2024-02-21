@@ -21,10 +21,10 @@ body:
     description: >-
       Please select the name of the working group you are requesting to join. (Select one)
     options:
-      - "Engine"
-      - "Remoting"
       - "Cmdlets and Modules"
+      - "Engine"
       - "Interactive UX"
+      - "Remoting"
 - type: dropdown  
   id: time
   validations:
