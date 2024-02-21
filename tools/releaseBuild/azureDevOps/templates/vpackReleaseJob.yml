@@ -39,15 +39,13 @@ jobs:
       $azcopy = Find-AzCopy
       Write-Verbose -Verbose "Found AzCopy: $azcopy"
 
-      & $azcopy login --service-principal --application-id $(PowerShellReleaseSPN)
-
       Write-Host "running: $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)"
 
       & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)
     displayName: 'Download Azure Artifacts'
     retryCountOnTaskFailure: 2
     env:
-      AZCOPY_SPA_CLIENT_SECRET: $(PowerShellReleaseSPNSecret)
+      AZCOPY_AUTO_LOGIN_TYPE: MSI
 
   - pwsh: 'Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name'
     displayName: 'Capture Artifact Listing'
@@ -109,7 +107,7 @@ jobs:
       platforms: x64
       target: '$(System.ArtifactsDirectory)'
       owner: tplunk
-      provData: false
+      provData: true
       version: '$(vpackVersion)'
       vpackToken: $(vPackPat)
     condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))

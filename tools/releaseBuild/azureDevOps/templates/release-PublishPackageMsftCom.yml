@@ -1,3 +1,8 @@
+parameters:
+  - name: skipPublish
+    default: false
+    type: boolean
+
 steps:
 - template: release-SetReleaseTagAndContainerName.yml
 
@@ -9,19 +14,44 @@ steps:
   displayName: Set Package version
 
 - pwsh: |
-   git clone https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
+    $branch = 'main-mirror'
+    $gitArgs = "clone",
+    "--verbose", 
+    "--branch",
+    "$branch",
+    "https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools", 
+    '$(Pipeline.Workspace)/tools'
+    $gitArgs | Write-Verbose -Verbose
+    git $gitArgs
   displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
 
+- task: PipAuthenticate@1
+  inputs:
+    artifactFeeds: 'pmc'
+    pythonDownloadServiceConnections: pmcDownload
+
+- pwsh: |
+    pip install pmc-cli
+
+    $newPath = (resolve-path '~/.local/bin').providerpath
+    $vstsCommandString = "vso[task.setvariable variable=PATH]${env:PATH}:$newPath"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+  displayName: Install pmc cli
+  
 - pwsh: |
     $metadata = Get-Content -Path "$(Build.SourcesDirectory)/tools/metadata.json" -Raw | ConvertFrom-Json
-    Write-Verbose -Verbose "$(ReleaseTag) $(RepoClientCliClientID) $(RepoClientCliSecret) $(AzureVersion) $($metadata.LTSRelease.Latest)"
     $params = @{
         ReleaseTag = "$(ReleaseTag)"
-        AadClientId = "$(RepoClientCliClientID)"
-        AadClientSecret = "$(RepoClientCliSecret)"
+        AadClientId = "$(PmcCliClientID)"
         BlobFolderName = "$(AzureVersion)"
         LTS = $metadata.LTSRelease.Latest
         ForProduction = $true
+        SkipPublish = $${{ parameters.skipPublish }}
+        MappingFilePath = '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'
     }
-    & '$(Pipeline.Workspace)/tools/packages.microsoft.com/releaseLinuxPackages.ps1' -MappingFilePath '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'  @params
+    
+    $params | Out-String -width 9999 -Stream | write-Verbose -Verbose
+
+    & '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/releaseLinuxPackages.ps1' @params
   displayName: Run release script

@@ -100,7 +100,7 @@ function Start-PSPackage {
         } elseif ($MacOSRuntime) {
            $MacOSRuntime, "Release"
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine") {
-            New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+            New-PSOptions -Configuration "Release" -Runtime "linux-musl-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm") {
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm64") {
@@ -115,7 +115,7 @@ function Start-PSPackage {
             New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-arm64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
         elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine-fxdependent") {
-            New-PSOptions -Configuration "Release" -Runtime 'fxdependent-alpine-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+            New-PSOptions -Configuration "Release" -Runtime 'fxdependent-noopt-linux-musl-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
         else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -456,11 +456,11 @@ function Start-PSPackage {
                     $Arguments = @{
                         PackageSourcePath = $Source
                         Name = $Name
-                        PackageNameSuffix = 'alpine-fxdependent'
+                        PackageNameSuffix = 'musl-noopt-fxdependent'
                         Version = $Version
                         Force = $Force
                         R2RVerification = [R2RVerification]@{
-                            R2RState = 'R2R'
+                            R2RState = 'NoR2R'
                             OperatingSystem = "Linux"
                         }
                     }
@@ -477,6 +477,12 @@ function Start-PSPackage {
                     $TargetArchitecture = "x86"
                     $r2rArchitecture = "i386"
                 }
+                elseif ($Runtime -match "-arm64")
+                {
+                    $TargetArchitecture = "arm64"
+                    $r2rArchitecture = "arm64"
+                }
+
                 Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
 
                 $Arguments = @{
@@ -594,7 +600,7 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
-                    Architecture = "alpine-x64"
+                    Architecture = "musl-x64"
                     ExcludeSymbolicLinks = $true
                     R2RVerification = [R2RVerification]@{
                         R2RState = 'R2R'
@@ -3206,12 +3212,23 @@ function Get-NugetSemanticVersion
 # Get the paths to various WiX tools
 function Get-WixPath
 {
-    $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
+    [CmdletBinding()]
+    param (
+        [bool] $IsProductArchitectureArm = $false
+    )
 
-    Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
+    $wixToolsetBinPath = $IsProductArchitectureArm ? "${env:ProgramFiles(x86)}\Arm Support WiX Toolset *\bin" : "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
+
+    Write-Verbose -Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
     if (-not (Test-Path $wixToolsetBinPath))
     {
-        throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
+        if (!$IsProductArchitectureArm)
+        {
+            throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
+        }
+        else {
+            throw "The latest version of Wix Toolset 3.14 is required to create MSI package for arm. Please install it from https://aka.ms/ps-wix-3-14-zip"
+        }
     }
 
     ## Get the latest if multiple versions exist.
@@ -3235,7 +3252,6 @@ function Get-WixPath
         WixLightExePath    = $wixLightExePath
         WixInsigniaExePath = $wixInsigniaExePath
     }
-
 }
 
 <#
@@ -3287,7 +3303,7 @@ function New-MSIPackage
 
         # Architecture to use when creating the MSI
         [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64")]
+        [ValidateSet("x86", "x64", "arm64")]
         [ValidateNotNullOrEmpty()]
         [string] $ProductTargetArchitecture,
 
@@ -3297,7 +3313,7 @@ function New-MSIPackage
         [string] $CurrentLocation = (Get-Location)
     )
 
-    $wixPaths = Get-WixPath
+    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
 
     $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $ProductNameSuffix -ProductVersion $ProductVersion
     $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
@@ -3334,6 +3350,11 @@ function New-MSIPackage
     {
         $fileArchitecture = 'x86'
         $ProductProgFilesDir = "ProgramFilesFolder"
+    }
+    elseif ($ProductTargetArchitecture -eq "arm64")
+    {
+        $fileArchitecture = 'arm64'
+        $ProductProgFilesDir = "ProgramFiles64Folder"
     }
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
@@ -3449,7 +3470,7 @@ function New-ExePackage {
 
         # Architecture to use when creating the MSI
         [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64")]
+        [ValidateSet("x86", "x64", "arm64")]
         [ValidateNotNullOrEmpty()]
         [string] $ProductTargetArchitecture,
 
@@ -3571,7 +3592,7 @@ function Start-MsiBuild {
 
     $outDir = $env:Temp
 
-    $wixPaths = Get-WixPath
+    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
 
     $extensionArgs = @()
     foreach ($extensionName in $Extension) {
@@ -4513,7 +4534,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
                 $buildParams.Add("Runtime", "fxdependent")
             }
             'alpine' {
-                $buildParams.Add("Runtime", 'alpine-x64')
+                $buildParams.Add("Runtime", 'linux-musl-x64')
             }
         }
 
@@ -4606,7 +4627,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
                 Remove-Item -Path $binDir -Recurse -Force
             }
 
-            $buildParams['Runtime'] = 'fxdependent-alpine-x64'
+            $buildParams['Runtime'] = 'fxdependent-noopt-linux-musl-x64'
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64AlpineFxdBuildFolder}"
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files, xml document files.

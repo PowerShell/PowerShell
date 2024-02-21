@@ -943,6 +943,12 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $out | Should -Be $expected
         }
     }
+
+    It 'Errors for invalid ExecutionPolicy string' {
+        $out = pwsh -nologo -noprofile -executionpolicy NonExistingExecutionPolicy -c 'exit 0' 2>&1
+        $out | Should -Not -BeNullOrEmpty
+        $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
+    }
 }
 
 Describe "WindowStyle argument" -Tag Feature {

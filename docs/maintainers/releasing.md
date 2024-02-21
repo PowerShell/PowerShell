@@ -21,20 +21,15 @@ This is to help track the release preparation work.
    - Sign the MSI packages and DEB/RPM packages.
    - Install and verify the packages.
 1. Update documentation, scripts and Dockerfiles
-   - Summarize the change log for the release. It should be reviewed by PM(s) to make it more user-friendly.
-   - Update [CHANGELOG.md](../../CHANGELOG.md) with the finalized change log draft.
+   - Summarize the changelog for the release. It should be reviewed by PM(s) to make it more user-friendly.
+   - Update [CHANGELOG.md](../../CHANGELOG.md) with the finalized changelog draft.
    - Update other documents and scripts to use the new package names and links.
 1. Verify the release Dockerfiles.
 1. [Create NuGet packages](#nuget-packages) and publish them to [powershell-core feed][ps-core-feed].
 1. [Create the release tag](#release-tag) and push the tag to `PowerShell/PowerShell` repository.
-1. Create the draft and publish the release in Github.
+1. Create the draft and publish the release in GitHub.
 1. Merge the `release-<Release Tag>` branch to `master` in `powershell/powershell` and delete the `release-<Release Tag>` branch.
 1. Publish Linux packages to Microsoft YUM/APT repositories.
-1. Trigger the release docker builds for Linux and Windows container images.
-   - Linux: push a branch named `docker` to `powershell/powershell` repository to trigger the build at [powershell docker hub](https://hub.docker.com/r/microsoft/powershell/builds/).
-     Delete the `docker` branch once the builds succeed.
-   - Windows: queue a new build in `PowerShell Windows Docker Build` on VSTS.
-1. Verify the generated docker container images.
 1. [Update the homebrew formula](#homebrew) for the macOS package.
    This task usually will be taken care of by the community,
    so we can wait for one day or two and see if the homebrew formula has already been updated,
@@ -104,7 +99,7 @@ this package will contain actual PowerShell bits
 (i.e. it is not a meta-package).
 These bits are installed to `/opt/microsoft/powershell/6.0.0-alpha.8/`,
 where the version will change with each update
-(and is the pre-release version).
+(and is the prerelease version).
 On macOS, the prefix is `/usr/local`,
 instead of `/opt/microsoft` because it is derived from BSD.
 
@@ -173,7 +168,7 @@ Start-PSPackage -Type zip -ReleaseTag v6.0.0-beta.1 -WindowsRuntime 'win7-x64'
 
 ## NuGet Packages
 
-The NuGet packages for hosting PowerShell for Windows and non-Windows are being built in our release build pipeline.
+The NuGet packages for hosting PowerShell for Windows and non-Windows are being built-in our release build pipeline.
 The assemblies from the individual Windows and Linux builds are consumed and packed into NuGet packages.
 These are then released to [powershell-core feed][ps-core-feed].
 
@@ -190,7 +185,7 @@ we create an [annotated tag][tag] that names the release.
 An annotated tag has a message (like a commit),
 and is *not* the same as a lightweight tag.
 Create one with `git tag -a v6.0.0-alpha.7 -m <message-here>`,
-and use the release change logs as the message.
+and use the release changelogs as the message.
 Our convention is to prepend the `v` to the semantic version.
 The summary (first line) of the annotated tag message should be the full release title,
 e.g. 'v6.0.0-alpha.7 release of PowerShellCore'.

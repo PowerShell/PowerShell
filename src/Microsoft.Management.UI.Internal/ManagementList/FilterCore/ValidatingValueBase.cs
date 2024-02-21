@@ -16,6 +16,7 @@ namespace Microsoft.Management.UI.Internal
     /// classes to support validation via the IDataErrorInfo interface.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public abstract class ValidatingValueBase : IDataErrorInfo, INotifyPropertyChanged
     {
         #region Properties

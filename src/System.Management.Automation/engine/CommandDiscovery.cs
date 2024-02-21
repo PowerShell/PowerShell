@@ -306,7 +306,7 @@ namespace System.Management.Automation
                         ScriptRequiresException scriptRequiresException =
                             new ScriptRequiresException(
                                 scriptInfo.Name,
-                                new Collection<string> { requiredModule.Name },
+                                new Collection<string> { requiredModule.GetRequiredModuleNotFoundVersionMessage() },
                                 "ScriptRequiresMissingModules",
                                 false,
                                 error);

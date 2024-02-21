@@ -112,6 +112,15 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
             $help.Description | Out-String | Should -Match $cmdletName
             $help.Examples | Out-String | Should -Match $cmdletName
         }
+
+        It "Validate 'Aliases' is present in help content formatting" {
+            ## The parameter help content should be formatted with the following section:
+            ##   Accept pipeline input?       xxxx
+            ##   Aliases                      NoOverwrite
+            ##   Accept wildcard characters?  xxxx
+            $output = Get-Help Import-Module -Parameter NoClobber | Out-String
+            $output | Should -Match "Accept pipeline input\?.*\n\s+Aliases\s+NoOverwrite.*\n\s+Accept wildcard characters\?.*"
+        }
     }
 }
 

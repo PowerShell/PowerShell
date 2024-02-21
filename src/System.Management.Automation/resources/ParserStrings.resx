@@ -1229,6 +1229,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="UsingStatementNotSupported" xml:space="preserve">
     <value>This syntax of the 'using' statement is not supported.</value>
   </data>
+  <data name="InvalidNamespaceValue" xml:space="preserve">
+    <value>The specified namespace in the 'using' statement contains invalid characters.</value>
+  </data>
   <data name="InformationStream" xml:space="preserve">
     <value>information stream</value>
   </data>
@@ -1304,6 +1307,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
     <value>Conflict in using PsDscRunAsCredential for Resource {0} because it already specifies PsDscRunAsCredential value. We can only use one PsDscRunAsCredential for the composite resource. </value>
   </data>
+  <data name="PsDscMissingSchemaStore" xml:space="preserve">
+    <value>Unable to find DSC schema store at "{0}". Please ensure PSDesiredStateConfiguration v3 module is installed.</value>
+  </data>
   <data name="ParserError" xml:space="preserve">
     <value>{0}</value>
   </data>
@@ -1357,5 +1363,11 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="WDACParserForEachOperatorLogMessage" xml:space="preserve">
     <value>The ForEach keyword will fail '{0}' iteration item method invocation when run in Constrained Language mode.</value>
+  </data>
+  <data name="WDACGetSteppablePipelineLogTitle" xml:space="preserve">
+    <value>Expression Evaluation May Fail</value>
+  </data>
+  <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
+    <value>Creating a steppable pipeline from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in Constrained Language mode, unless the expression represents a constant value.</value>
   </data>
 </root>

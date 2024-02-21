@@ -259,8 +259,7 @@ jobs:
       $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -BuildZip $signedPkg -location '$(PowerShellRoot)' -destination '$(System.ArtifactsDirectory)\pkgSigned' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' @params
     displayName: 'Build Windows Universal - $(Architecture) Package'
     env:
-      __DONET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
-      __DONET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
       Get-ChildItem '$(System.ArtifactsDirectory)\pkgSigned' | ForEach-Object {
@@ -271,7 +270,7 @@ jobs:
     displayName: Upload unsigned packages
     retryCountOnTaskFailure: 2
 
-  - ${{ if and(ne(variables['BuildConfiguration'],'minSize'), in(variables['Architecture'], 'x64', 'x86')) }}:
+  - ${{ if and(ne(variables['BuildConfiguration'],'minSize'), in(variables['Architecture'], 'x64', 'x86', 'arm64')) }}:
     - template: EsrpSign.yml@ComplianceRepo
       parameters:
           buildOutputPath: $(System.ArtifactsDirectory)\pkgSigned

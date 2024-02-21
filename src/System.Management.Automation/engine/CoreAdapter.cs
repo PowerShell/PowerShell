@@ -4365,7 +4365,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a flavor of MethodInvokeDotNet to deal with a peculiarity of property setters:
-        /// Tthe setValue is always the last parameter. This enables a parameter after a varargs or optional
+        /// The setValue is always the last parameter. This enables a parameter after a varargs or optional
         /// parameters and GetBestMethodAndArguments is not prepared for that.
         /// This method disregards the last parameter in its call to GetBestMethodAndArguments used in this case
         /// more for its "Arguments" side than for its "BestMethod" side, since there is only one method.
@@ -5440,7 +5440,7 @@ namespace System.Management.Automation
             }
 
             XmlNodeList nodeChildren = node.ChildNodes;
-            // nodeChildren will not be null as we already verified iff the node has children.
+            // nodeChildren will not be null as we already verified that the node has children.
             if ((nodeChildren.Count == 1) && (nodeChildren[0].NodeType == XmlNodeType.Text))
             {
                 return node.InnerText;

@@ -14,6 +14,7 @@ namespace Microsoft.Management.UI.Internal
     /// evaluating string operations.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public abstract class TextFilterRule : SingleValueComparableValueFilterRule<string>
     {
         /// <summary>
@@ -58,17 +59,6 @@ namespace Microsoft.Management.UI.Internal
 
                 this.NotifyEvaluationResultInvalidated();
             }
-        }
-
-        /// <summary>
-        /// Creates a clone of the FilterRule.
-        /// </summary>
-        /// <returns>
-        /// Returns a clone of the FilterRule.
-        /// </returns>
-        public override FilterRule Clone()
-        {
-            return base.Clone();
         }
 
         /// <summary>
