@@ -1569,7 +1569,7 @@ function Get-PackageDependencies
             )
             if($Script:Options.Runtime -like 'fx*') {
                 $Dependencies += @(
-                    "dotnet-runtime-8.0"
+                    "dotnet-runtime-9.0"
                 )
             }
         } elseif ($Distribution -eq 'macOS') {
