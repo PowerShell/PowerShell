@@ -1,11 +1,85 @@
 # Preview Changelog
 
+## [7.5.0-preview.2] - 2024-02-22
+
+### Engine Updates and Fixes
+
+- Fix `using assembly` to use `Path.Combine` when constructing assembly paths (#21169)
+- Validate the value for `using namespace` during semantic checks to prevent declaring invalid namespaces (#21162)
+
+### General Cmdlet Updates and Fixes
+
+- Add `WinGetCommandNotFound` and `CompletionPredictor` modules to track usage (#21040)
+- `ConvertFrom-Json`: Add `-DateKind` parameter (#20925) (Thanks @jborean93!)
+- Add tilde expansion for windows native executables (#20402) (Thanks @domsleee!)
+- Add `DirectoryInfo` to the `OutputType` for `New-Item` (#21126) (Thanks @MartinGC94!)
+- Fix `Get-Error` serialization of array values (#21085) (Thanks @jborean93!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@eltociear</p>
+
+</summary>
+
+<ul>
+<li>Fix a typo in <code>CoreAdapter.cs</code> (#21179) (Thanks @eltociear!)</li>
+<li>Remove <code>PSScheduledJob</code> module source code (#21189)</li>
+</ul>
+
+</details>
+
+### Tests
+
+- Rewrite the mac syslog tests to make them less flaky (#21174)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+<p>Bump to .NET 9 Preview 1</p>
+<p>We thank the following contributors!</p>
+<p>@gregsdennis</p>
+
+</summary>
+
+<ul>
+<li>Bump to .NET 9 Preview 1 (#21229)</li>
+<li>Add dotnet-runtime-9.0 as a dependency for the Mariner package</li>
+<li>Add dotenv install as latest version does not work with current Ruby version (#21239)</li>
+<li>Remove <code>surrogateFile</code> setting of APIScan (#21238)</li>
+<li>Update experimental-feature json files (#21213)</li>
+<li>Update to the latest NOTICES file (#21236)(#21177)</li>
+<li>Update the cgmanifest (#21237)(#21093)</li>
+<li>Update the cgmanifest (#21178)</li>
+<li>Bump XunitXml.TestLogger from 3.1.17 to 3.1.20 (#21207)</li>
+<li>Update versions of PSResourceGet (#21190)</li>
+<li>Generate MSI for <code>win-arm64</code> installer (#20516)</li>
+<li>Bump JsonSchema.Net to v5.5.1 (#21120) (Thanks @gregsdennis!)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update `README.md` and `metadata.json` for v7.5.0-preview.1 release (#21094)
+- Fix incorrect examples in XML docs in `PowerShell.cs` (#21173)
+- Update WG members (#21091)
+- Update changelog for v7.4.1 (#21098)
+
+[7.5.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.5.0-preview.1...v7.5.0-preview.2
+
 ## [7.5.0-preview.1] - 2024-01-18
 
 ### Breaking Changes
 
 - Fix `-OlderThan` and `-NewerThan` parameters for `Test-Path` when using `PathType` and date range (#20942) (Thanks @ArmaanMcleod!)
-  - Previously `-OlderThan` would be ignored if specified together
+- Previously `-OlderThan` would be ignored if specified together
 - Change `New-FileCatalog -CatalogVersion` default to 2 (#20428) (Thanks @ThomasNieto!)
 
 ### General Cmdlet Updates and Fixes
