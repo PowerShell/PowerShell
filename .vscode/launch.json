@@ -1,6 +1,9 @@
 {
     "version": "0.2.0",
     "configurations": [
+      
+
+      
         {
             "name": ".NET Core Launch",
             "type": "coreclr",
