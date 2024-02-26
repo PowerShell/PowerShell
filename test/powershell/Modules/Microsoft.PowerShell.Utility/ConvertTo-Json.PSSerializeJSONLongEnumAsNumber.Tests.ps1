@@ -3,7 +3,12 @@
 Describe 'ConvertTo-Json with PSSerializeJSONLongEnumAsNumber' -tags "CI" {
 
     BeforeAll {
-        $EnabledExperimentalFeatures.Contains('PSSerializeJSONLongEnumAsNumber') | Should -BeTrue
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues['It:Skip'] = -not [ExperimentalFeature]::IsEnabled('PSSerializeJSONLongEnumAsNumber')
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     It 'Should treat enums as integers' {
