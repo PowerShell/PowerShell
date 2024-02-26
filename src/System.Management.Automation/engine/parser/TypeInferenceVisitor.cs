@@ -1983,8 +1983,19 @@ namespace System.Management.Automation
                     {
                         if (switchErrorStatement.Conditions?.Count > 0)
                         {
-                            parent = switchErrorStatement.Conditions[0];
+                            if (switchErrorStatement.Conditions[0].Extent.EndOffset < variableExpressionAst.Extent.StartOffset)
+                            {
+                                parent = switchErrorStatement.Conditions[0];
+                                break;
+                            }
+                            else
+                            {
+                                // $_ is inside the condition that is being declared, eg: Get-Process | Sort-Object -Property {switch ($_.Proc<Tab>
+                                parent = switchErrorStatement.Parent;
+                                continue;
+                            }
                         }
+
                         break;
                     }
                     else if (parent is ScriptBlockExpressionAst)
