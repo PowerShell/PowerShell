@@ -291,7 +291,6 @@ namespace System.Management.Automation
 
                             // need to escape all trailing backslashes so the native command receives it correctly
                             // according to http://www.daviddeley.com/autohotkey/parameters/parameters.htm#WINCRULESDOC
-                            _arguments.Append(arg);
                             for (int i = arg.Length - 1; i >= 0 && arg[i] == '\\'; i--)
                             {
                                 _arguments.Append('\\');
