@@ -36,6 +36,6 @@
   "powershell.codeFormatting.whitespaceAfterSeparator": true,
 
   // Omnisharp : Enable EditorConfig support
-  "omnisharp.enableEditorConfigSupport": true,
+
   "vscode-corda.isCordaProject": false
 }
