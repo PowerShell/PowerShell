@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Language;
+using System.Numerics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -563,7 +564,8 @@ namespace Microsoft.PowerShell.Commands
                     || obj is Uri
                     || obj is double
                     || obj is float
-                    || obj is decimal)
+                    || obj is decimal
+                    || obj is BigInteger)
             {
                 rv = obj;
             }
