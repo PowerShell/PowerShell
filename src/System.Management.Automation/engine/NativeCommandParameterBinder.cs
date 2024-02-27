@@ -287,7 +287,7 @@ namespace System.Management.Automation
                         if (NeedQuotes(arg))
                         {
                             _arguments.Append('"');
-                            AddToArgumentList(parameter, arg);
+                            PossiblyGlobArg(arg, parameter, usedQuotes: false);
 
                             // need to escape all trailing backslashes so the native command receives it correctly
                             // according to http://www.daviddeley.com/autohotkey/parameters/parameters.htm#WINCRULESDOC
@@ -500,7 +500,7 @@ namespace System.Management.Automation
             afterPrev -= arrayExtent.StartOffset;
             beforeNext -= arrayExtent.StartOffset;
 
-            if (arrayText[afterPrev] == ',') 
+            if (arrayText[afterPrev] == ',')
             {
                 return ", ";
             }
@@ -509,7 +509,7 @@ namespace System.Management.Automation
             {
                 return " ,";
             }
-            
+
             return " , ";
         }
 
