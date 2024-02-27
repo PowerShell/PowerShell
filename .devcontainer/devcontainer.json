@@ -1,6 +1,10 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-	"name": ".NET Core 6.0, including pwsh (Ubuntu 18.04)",
-	"dockerFile": "Dockerfile"
-	// Uncomment the next line to run commands after the container is c
+	"name": "Fedora 30",
+	"dockerFile": "Dockerfile",
+
+	// Uncomment the next line to run commands after the container is created.
+	"postCreateCommand": "pwsh -c 'import-module ./build.psm1;start-psbootstrap'"
+
+	
 }
