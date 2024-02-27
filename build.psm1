@@ -2214,9 +2214,9 @@ function Start-PSBootstrap {
                 }
             } elseif ($environment.IsMacOS) {
                 if ($environment.UsingHomebrew) {
-                    $PackageManager = "brew"
+                    $baseCommand = "brew install --quiet"
                 } elseif ($environment.UsingMacports) {
-                    $PackageManager = "$sudo port"
+                    $baseCommand = "$sudo port -q install"
                 }
 
                 # wget for downloading dotnet
@@ -2227,7 +2227,7 @@ function Start-PSBootstrap {
 
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
-                Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
+                Start-NativeExecution ([ScriptBlock]::Create("$baseCommand $Deps")) -IgnoreExitcode
             } elseif ($environment.IsLinux -and $environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'build-base', 'git', 'curl', 'wget'
 
