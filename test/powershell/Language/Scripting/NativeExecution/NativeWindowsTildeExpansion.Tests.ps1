@@ -30,6 +30,6 @@ Describe 'Native Windows tilde expansion tests' -tags "CI" {
 		cmd /c echo "~\foo" | Should -BeExactly '~\foo'
 	}
     It '~ should be expanded with implicit quotes' {
-        cmd /c echo ~\a` b | Should -BeExactly "$($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)\a b"
+        cmd /c echo ~\a` b | Should -BeExactly "`"$($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)\a `""
     }
 }
