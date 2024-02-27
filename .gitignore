@@ -100,6 +100,6 @@ test/tools/Modules/Microsoft.PowerShell.NamedPipeConnection/
 StartupProfileData-NonInteractive
 
 # Ignore logfiles
-logfile/*
+
 
 .fake
