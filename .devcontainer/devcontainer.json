@@ -5,12 +5,13 @@
 
 	// Uncomment the next line to run commands after the container is created.
 	"postCreateCommand": "cd src/powershell-unix && dotnet restore",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"Ainity.SmartAICoder"
+			]
+		}
+	}
 
-	"extensions": [
-		"ms-azure-devops.azure-pipelines",
-		"ms-dotnettools.csharp",
-		"ms-vscode.powershell",
-		"DavidAnson.vscode-markdownlint",
-		"vitaliymaz.vscode-svg-previewer"
-	]
+
 }
