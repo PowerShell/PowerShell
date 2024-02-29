@@ -1569,13 +1569,9 @@ namespace System.Management.Automation.Runspaces
                 string assembly = ss.Assemblies[i].FileName;
                 if (!string.IsNullOrEmpty(assembly))
                 {
-                    if (assemblyList.Contains(assembly))
+                    if (!assemblyList.Add(assembly))
                     {
                         ss.Assemblies.RemoveItem(i);
-                    }
-                    else
-                    {
-                        assemblyList.Add(assembly);
                     }
                 }
             }
