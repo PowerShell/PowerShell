@@ -416,7 +416,7 @@ Describe "Type accelerators" -Tags "CI" {
                 }
                 @{
                     Accelerator = 'ArgumentTransform'
-                    Type        = [System.Management.Automation.ArgumentTransformAttribute]
+                    Type        = [System.Management.Automation.PSTransformAttribute]
                 }
             )
 
