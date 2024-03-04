@@ -1034,7 +1034,8 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("ErrorInstance",
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
-                        .AddScriptBlockExpressionBinding(@"
+                        .AddScriptBlockExpressionBinding(
+                            """
                                     $errorColor = ''
                                     $commandPrefix = ''
                                     if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView','DetailedView') -notcontains $ErrorView)
@@ -1091,8 +1092,9 @@ namespace System.Management.Automation.Runspaces
                                     }
 
                                     $errorColor + $commandPrefix
-                                ")
-                        .AddScriptBlockExpressionBinding(@"
+                                """)
+                        .AddScriptBlockExpressionBinding(
+                            """
                                     Set-StrictMode -Off
                                     $ErrorActionPreference = 'Stop'
                                     trap { 'Error found in error view definition: ' + $_.Exception.Message }
@@ -1126,34 +1128,47 @@ namespace System.Management.Automation.Runspaces
                                         $message = ''
                                         $prefix = ''
 
+                                        # Handle case where there is a TargetObject from a Pester `Should` assertion failure and we can show the error at the target rather than the script source
+                                        # Note that in some versions, this is a Dictionary<,> and in others it's a hashtable. So we explicitly cast to a shared interface in the method invocation
+                                        # to force using `IDictionary.Contains`. Hashtable does have it's own `ContainKeys` as well, but if they ever opt to use a custom `IDictionary`, that may not.
+                                        $useTargetObject = $null -ne $err.TargetObject -and
+                                            $err.TargetObject -is [System.Collections.IDictionary] -and
+                                            ([System.Collections.IDictionary]$err.TargetObject).Contains('Line') -and
+                                            ([System.Collections.IDictionary]$err.TargetObject).Contains('LineText')
+
                                         # The checks here determine if we show line detailed error information:
                                         # - check if `ParserError` and comes from PowerShell which eventually results in a ParseException, but during this execution it's an ErrorRecord
-                                        # - check if invocation is a script or multiple lines in the console
-                                        # - check that it's not a script module as expectation is that users don't want to see the line of error within a module
-                                        if ((($err.CategoryInfo.Category -eq 'ParserError' -and $err.Exception -is 'System.Management.Automation.ParentContainsErrorRecordException') -or $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1) -and $myinv.ScriptName -notmatch '\.psm1$') {
-                                            $useTargetObject = $false
+                                        $isParseError = $err.CategoryInfo.Category -eq 'ParserError' -and
+                                            $err.Exception -is [System.Management.Automation.ParentContainsErrorRecordException]
 
-                                            # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
-                                            if ($_.TargetObject.Line -and $_.TargetObject.LineText) {
-                                                $posmsg = ""${resetcolor}$($_.TargetObject.File)${newline}""
-                                                $useTargetObject = $true
+                                        # - check if invocation is a script or multiple lines in the console
+                                        $isMultiLineOrExternal = $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1
+
+                                        # - check that it's not a script module as expectation is that users don't want to see the line of error within a module
+                                        $shouldShowLineDetail = ($isParseError -or $isMultiLineOrExternal) -and
+                                            $myinv.ScriptName -notmatch '\.psm1$'
+
+                                        if ($useTargetObject -or $shouldShowLineDetail) {
+
+                                            if ($useTargetObject) {
+                                                $posmsg = "${resetcolor}$($err.TargetObject.File)${newline}"
                                             }
                                             elseif ($myinv.ScriptName) {
                                                 if ($env:TERM_PROGRAM -eq 'vscode') {
                                                     # If we are running in vscode, we know the file:line:col links are clickable so we use this format
-                                                    $posmsg = ""${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber):$($myinv.OffsetInLine)${newline}""
+                                                    $posmsg = "${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber):$($myinv.OffsetInLine)${newline}"
                                                 }
                                                 else {
-                                                    $posmsg = ""${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber)${newline}""
+                                                    $posmsg = "${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber)${newline}"
                                                 }
                                             }
                                             else {
-                                                $posmsg = ""${newline}""
+                                                $posmsg = "${newline}"
                                             }
 
                                             if ($useTargetObject) {
-                                                $scriptLineNumber = $_.TargetObject.Line
-                                                $scriptLineNumberLength = $_.TargetObject.Line.ToString().Length
+                                                $scriptLineNumber = $err.TargetObject.Line
+                                                $scriptLineNumberLength = $err.TargetObject.Line.ToString().Length
                                             }
                                             else {
                                                 $scriptLineNumber = $myinv.ScriptLineNumber
@@ -1170,7 +1185,7 @@ namespace System.Management.Automation.Runspaces
                                             }
 
                                             $verticalBar = '|'
-                                            $posmsg += ""${accentColor}${headerWhitespace}Line ${verticalBar}${newline}""
+                                            $posmsg += "${accentColor}${headerWhitespace}Line ${verticalBar}${newline}"
 
                                             $highlightLine = ''
                                             if ($useTargetObject) {
@@ -1195,19 +1210,19 @@ namespace System.Management.Automation.Runspaces
                                                 $line = $line.Insert($offsetInLine + $offsetLength, $resetColor).Insert($offsetInLine, $accentColor)
                                             }
 
-                                            $posmsg += ""${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}""
+                                            $posmsg += "${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}"
                                             $offsetWhitespace = ' ' * $offsetInLine
-                                            $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
+                                            $prefix = "${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}"
                                             if ($highlightLine -ne '') {
-                                                $posMsg += ""${prefix}${highlightLine}${newline}""
+                                                $posMsg += "${prefix}${highlightLine}${newline}"
                                             }
-                                            $message = ""${prefix}""
+                                            $message = "${prefix}"
                                         }
 
                                         if (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
-                                            if ($err.CategoryInfo.Category -eq 'ParserError' -and $err.Exception.Message.Contains(""~$newline"")) {
+                                            if ($err.CategoryInfo.Category -eq 'ParserError' -and $err.Exception.Message.Contains("~$newline")) {
                                                 # need to parse out the relevant part of the pre-rendered positionmessage
-                                                $message += $err.Exception.Message.split(""~$newline"")[1].split(""${newline}${newline}"")[0]
+                                                $message += $err.Exception.Message.split("~$newline")[1].split("${newline}${newline}")[0]
                                             }
                                             elseif ($err.Exception) {
                                                 $message += $err.Exception.Message
@@ -1229,7 +1244,7 @@ namespace System.Management.Automation.Runspaces
                                             $prefixVtLength = $prefix.Length - $prefixLength
 
                                             # replace newlines in message so it lines up correct
-                                            $message = $message.Replace($newline, ' ').Replace(""`n"", ' ').Replace(""`t"", ' ')
+                                            $message = $message.Replace($newline, ' ').Replace("`n", ' ').Replace("`t", ' ')
 
                                             $windowWidth = 120
                                             if ($Host.UI.RawUI -ne $null) {
@@ -1264,7 +1279,7 @@ namespace System.Management.Automation.Runspaces
                                             $message += $newline
                                         }
 
-                                        $posmsg += ""${errorColor}"" + $message
+                                        $posmsg += "${errorColor}" + $message
 
                                         $reason = 'Error'
                                         if ($err.Exception -and $err.Exception.WasThrownFromThrowStatement) {
@@ -1276,8 +1291,8 @@ namespace System.Management.Automation.Runspaces
                                             $reason = $myinv.MyCommand
                                         }
                                         # If it's a scriptblock, better to show the command in the scriptblock that had the error
-                                        elseif ($_.CategoryInfo.Activity) {
-                                            $reason = $_.CategoryInfo.Activity
+                                        elseif ($err.CategoryInfo.Activity) {
+                                            $reason = $err.CategoryInfo.Activity
                                         }
                                         elseif ($myinv.MyCommand) {
                                             $reason = $myinv.MyCommand
@@ -1294,7 +1309,7 @@ namespace System.Management.Automation.Runspaces
 
                                         $errorMsg = 'Error'
 
-                                        ""${errorColor}${reason}: ${posmsg}${resetcolor}""
+                                        "${errorColor}${reason}: ${posmsg}${resetcolor}"
                                     }
 
                                     $myinv = $_.InvocationInfo
@@ -1305,17 +1320,17 @@ namespace System.Management.Automation.Runspaces
                                     }
 
                                     if ($err.FullyQualifiedErrorId -eq 'NativeCommandErrorMessage' -or $err.FullyQualifiedErrorId -eq 'NativeCommandError') {
-                                        return ""${errorColor}$($err.Exception.Message)${resetcolor}""
+                                        return "${errorColor}$($err.Exception.Message)${resetcolor}"
                                     }
 
                                     if ($ErrorView -eq 'DetailedView') {
                                         $message = Get-Error | Out-String
-                                        return ""${errorColor}${message}${resetcolor}""
+                                        return "${errorColor}${message}${resetcolor}"
                                     }
 
                                     if ($ErrorView -eq 'CategoryView') {
                                         $message = $err.CategoryInfo.GetMessage()
-                                        return ""${errorColor}${message}${resetcolor}""
+                                        return "${errorColor}${message}${resetcolor}"
                                     }
 
                                     $posmsg = ''
@@ -1335,7 +1350,7 @@ namespace System.Management.Automation.Runspaces
 
                                     if ($ErrorView -eq 'ConciseView') {
                                         if ($err.PSMessageDetails) {
-                                            $posmsg = ""${errorColor}${posmsg}""
+                                            $posmsg = "${errorColor}${posmsg}"
                                         }
                                         return $posmsg
                                     }
@@ -1355,14 +1370,14 @@ namespace System.Management.Automation.Runspaces
 
                                     $posmsg += $newline + $indentString
 
-                                    $indentString = ""+ FullyQualifiedErrorId : "" + $err.FullyQualifiedErrorId
+                                    $indentString = "+ FullyQualifiedErrorId : " + $err.FullyQualifiedErrorId
                                     $posmsg += $newline + $indentString
 
                                     $originInfo = $err.OriginInfo
 
                                     if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
                                     {
-                                        $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
+                                        $indentString = "+ PSComputerName        : " + $originInfo.PSComputerName
                                         $posmsg += $newline + $indentString
                                     }
 
@@ -1372,8 +1387,8 @@ namespace System.Management.Automation.Runspaces
                                         $err.Exception.Message + $posmsg
                                     }
 
-                                    ""${errorColor}${finalMsg}${resetcolor}""
-                                ")
+                                    "${errorColor}${finalMsg}${resetcolor}"
+                                """)
                     .EndEntry()
                 .EndControl());
         }
