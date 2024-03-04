@@ -545,20 +545,6 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Check the elevation mode if IncludeUserName is specified.
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            // The parameter 'IncludeUserName' requires administrator privilege
-            if (IncludeUserName.IsPresent && !Utils.IsAdministrator())
-            {
-                var ex = new InvalidOperationException(ProcessResources.IncludeUserNameRequiresElevation);
-                var er = new ErrorRecord(ex, "IncludeUserNameRequiresElevation", ErrorCategory.InvalidOperation, null);
-                ThrowTerminatingError(er);
-            }
-        }
-
-        /// <summary>
         /// Write the process objects.
         /// </summary>
         protected override void ProcessRecord()
@@ -685,7 +671,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    WriteObject(IncludeUserName.IsPresent ? AddUserNameToProcess(process) : (object)process);
+                    WriteObject(IncludeUserName.IsPresent ? AddUserNameToProcess(process) : process);
                 }
             }
         }
@@ -765,23 +751,15 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
-
-                // Max username is defined as UNLEN = 256 in lmcons.h
-                // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
-                // The buffer length must be +1, last position is for a null string terminator.
-                int userNameLength = 257;
-                int domainNameLength = 16;
-                Span<char> userNameStr = stackalloc char[userNameLength];
-                Span<char> domainNameStr = stackalloc char[domainNameLength];
-                Win32Native.SID_NAME_USE accountType;
-
-                // userNameLength and domainNameLength will be set to actual lengths.
-                if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
+                SecurityIdentifier sid = new SecurityIdentifier(tokenUser.User.Sid);
+                try
                 {
-                    return null;
+                    return sid.Translate(typeof(System.Security.Principal.NTAccount)).Value;
                 }
-
-                userName = string.Concat(domainNameStr.Slice(0, domainNameLength), "\\", userNameStr.Slice(0, userNameLength));
+                catch (IdentityNotMappedException)
+                {
+                    return sid.Value;
+                }
             }
             catch (NotSupportedException)
             {
@@ -898,7 +876,7 @@ namespace Microsoft.PowerShell.Commands
                 _timeOutSpecified = true;
             }
         }
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether to return after any one process exits.
         /// </summary>
@@ -1047,7 +1025,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            
+
             if (PassThru)
             {
                 WriteObject(_processList, enumerateCollection: true);
