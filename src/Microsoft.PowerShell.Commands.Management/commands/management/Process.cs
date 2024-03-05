@@ -752,18 +752,15 @@ namespace Microsoft.PowerShell.Commands
 
                 var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
                 SecurityIdentifier sid = new SecurityIdentifier(tokenUser.User.Sid);
-                try
-                {
-                    return sid.Translate(typeof(System.Security.Principal.NTAccount)).Value;
-                }
-                catch (IdentityNotMappedException)
-                {
-                    return null;
-                }
+                return sid.Translate(typeof(System.Security.Principal.NTAccount)).Value;
             }
             catch (NotSupportedException)
             {
                 // The Process not started yet, or it's a process from a remote machine.
+            }
+            catch (IdentityNotMappedException)
+            {
+                // SID cannot be mapped to a user
             }
             catch (InvalidOperationException)
             {
