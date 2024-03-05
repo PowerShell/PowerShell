@@ -752,7 +752,7 @@ namespace Microsoft.PowerShell.Commands
 
                 var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
                 SecurityIdentifier sid = new SecurityIdentifier(tokenUser.User.Sid);
-                return sid.Translate(typeof(System.Security.Principal.NTAccount)).Value;
+                userName = sid.Translate(typeof(System.Security.Principal.NTAccount)).Value;
             }
             catch (NotSupportedException)
             {
