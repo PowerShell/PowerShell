@@ -758,7 +758,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (IdentityNotMappedException)
                 {
-                    return sid.Value;
+                    return null;
                 }
             }
             catch (NotSupportedException)
