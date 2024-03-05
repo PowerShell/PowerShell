@@ -250,12 +250,12 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
         $results.Count | Should -Be 1
         $results[0] | Should -BeExactly "2"
     }
-    
+
     It "Select-Object with Skip and SkipLast should work with Skip overlapping SkipLast" {
         $results = "1", "2" | Select-Object -Skip 2 -SkipLast 1
         $results. Count | Should -Be 0
     }
-    
+
     It "Select-Object with Skip and SkipLast should work with skiplast overlapping skip" {
         $results = "1", "2" | Select-Object -Skip 1 -SkipLast 2
         $results. Count | Should -Be 0
@@ -383,7 +383,58 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
     }
 }
 
-Describe 'Select-Object behaviour with hashtable entries and actual members' -Tags CI {
+Describe "Select-Object with ExpandProperty and Property" -Tags "CI" {
+
+    Context "Preserves ETS instance members" {
+        BeforeAll {
+            # Use a .NET reference type, because the copy semantics of value types could hide some behaviors.
+            $obj = [regex] 'foo'
+            # Add a property via the resurrection tables.
+            $obj | Add-Member resurrectTableProp 1
+            # Now embed the object inside another object and expand it via -ExpandProperty, while also decorating it via another property using -Property.
+            $results = [PSCustomObject] @{ psobjectWrapperProp = 2; prop = $obj } |
+                Select-Object -Property psobjectWrapperProp -ExpandProperty prop
+        }
+
+        #* Ideally the ETS members of a property that has been expanded would be surfaced, but that is not currently the case.
+        # Issue #7937
+        # It "Resurection Table member is present" {
+        #     $results.resurrectTableProp | Should -BeExactly 1
+        # }
+        It "PSObject-attached member is present" {
+            $results.psobjectWrapperProp | Should -BeExactly 2
+        }
+        It "Resurrection-table member has not become a PSObject-attached member" {
+            $results.PSObject.BaseObject.resurrectTableProp | Should -BeExactly 1
+        }
+        It "PSObject-attached member has not become a resurection-table member" {
+            $results.PSObject.BaseObject.psobjectWrapperProp | Should -BeNullOrEmpty
+        }
+        # Issue #21308
+        It "Original object remains unchanged" {
+            $obj.psobjectWrapperProp | Should -BeNullOrEmpty
+        }
+    }
+
+    # Issue #21308
+    Context "Does not modify source object" {
+        BeforeAll {
+            $obj = [PSCustomObject]@{name1="admin1";children=[PSCustomObject]@{name2="admin2"}}
+            $obj | Select-Object -Property name1, @{N="country";E={$_.name1}} -ExpandProperty children | Out-Null
+        }
+        # Issue #21308
+        It "Doing a simple select" {
+            $obj.children.name1 | Should -BeNullOrEmpty
+        }
+        # Issue #21308
+        It "Doing a expression select" {
+            $obj.children.country | Should -BeNullOrEmpty
+        }
+    }
+
+}
+
+Describe 'Select-Object behaviour with hashtable entries and actual members' -Tags "CI" {
 
     It 'can retrieve a hashtable entry as a property' {
         $hashtable = @{ Entry = 100 }
