@@ -363,13 +363,6 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
         $results.Thing | Should -BeExactly "thing1"
     }
 
-    # Issue #21308
-    It "Select-Object with ExpandProperty and Property does not modify source object" {
-        $obj = [PSCustomObject]@{"name"="admin1";"children"=[PSCustomObject]@{"name"="admin2"}}
-        $obj | Select-Object @{N="country";E={$_.name}} -ExpandProperty children | Out-Null
-        $obj.children.country | Should -BeNullOrEmpty
-    }
-
     It "Select-Object with ExpandProperty and Property don't skip processing ExcludeProperty" {
         $p = Get-Process -Id $PID | Select-Object -Property Process* -ExcludeProperty ProcessorAffinity -ExpandProperty Modules
         $p[0].psobject.Properties.Item("ProcessorAffinity") | Should -BeNullOrEmpty
@@ -390,7 +383,25 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
     }
 }
 
-Describe 'Select-Object behaviour with hashtable entries and actual members' -Tags CI {
+Describe "Select-Object with ExpandProperty" -Tags "CI" {
+
+    # Issue #7937
+    It "Select-Object with ExpandProperty preserves ETS instance members" {
+        $obj = [DateTime]::Now
+        $obj | Add-Member myProp myPropValue
+        $results =  [PSCustomObject] @{ prop = $obj } | Select-Object -ExpandProperty prop
+        $results.myProp | Should -BeExactly "myPropValue"
+    }
+
+    # Issue #21308
+    It "Select-Object with ExpandProperty and Calculated Property does not modify source object" {
+        $obj = [PSCustomObject]@{"name"="admin1";"children"=[PSCustomObject]@{"name"="admin2"}}
+        $obj | Select-Object -Property @{N="country";E={$_.name}} -ExpandProperty children | Out-Null
+        $obj.children.country | Should -BeNullOrEmpty
+    }
+}
+
+Describe 'Select-Object behaviour with hashtable entries and actual members' -Tags "CI" {
 
     It 'can retrieve a hashtable entry as a property' {
         $hashtable = @{ Entry = 100 }
