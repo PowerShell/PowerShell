@@ -250,12 +250,12 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
         $results.Count | Should -Be 1
         $results[0] | Should -BeExactly "2"
     }
-    
+
     It "Select-Object with Skip and SkipLast should work with Skip overlapping SkipLast" {
         $results = "1", "2" | Select-Object -Skip 2 -SkipLast 1
         $results. Count | Should -Be 0
     }
-    
+
     It "Select-Object with Skip and SkipLast should work with skiplast overlapping skip" {
         $results = "1", "2" | Select-Object -Skip 1 -SkipLast 2
         $results. Count | Should -Be 0
@@ -361,6 +361,13 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
         $results = [pscustomobject]@{Thing = "thing1"; Param2 = "param2" } | Select-Object -Property * -ExcludeProperty Param2
         $results.Param2 | Should -BeNullOrEmpty
         $results.Thing | Should -BeExactly "thing1"
+    }
+
+    # Issue #21308
+    It "Select-Object with ExpandProperty and Property does not modify source object" {
+        $obj = [PSCustomObject]@{"name"="admin1";"children"=[PSCustomObject]@{"name"="admin2"}}
+        $obj | Select-Object @{N="country";E={$_.name}} -ExpandProperty children | Out-Null
+        $obj.children.country | Should -BeNullOrEmpty
     }
 
     It "Select-Object with ExpandProperty and Property don't skip processing ExcludeProperty" {
