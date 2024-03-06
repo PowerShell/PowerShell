@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -44,19 +45,9 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentOutOfRangeException(nameof(activityId), activityId, ProgressRecordStrings.ArgMayNotBeNegative, "activityId");
             }
 
-            if (string.IsNullOrEmpty(activity))
-            {
-                throw PSTraceSource.NewArgumentException(nameof(activity), ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "activity");
-            }
-
-            if (string.IsNullOrEmpty(statusDescription))
-            {
-                throw PSTraceSource.NewArgumentException(nameof(activity), ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "statusDescription");
-            }
-
             this.id = activityId;
-            this.activity = activity;
-            this.status = statusDescription;
+            this.Activity = activity;
+            this.StatusDescription = statusDescription;
         }
 
         /// <summary>
@@ -166,6 +157,11 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
                 }
 
+                if (new ValueStringDecorated(value).IsDecorated)
+                {
+                    throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.StringMayNotBeDecorated);
+                }
+
                 activity = value;
             }
         }
@@ -187,6 +183,11 @@ namespace System.Management.Automation
                 if (string.IsNullOrEmpty(value))
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
+                }
+
+                if (new ValueStringDecorated(value).IsDecorated)
+                {
+                    throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.StringMayNotBeDecorated);
                 }
 
                 status = value;

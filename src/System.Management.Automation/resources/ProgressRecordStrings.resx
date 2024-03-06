@@ -129,4 +129,7 @@
   <data name="ParentActivityIdCantBeActivityId" xml:space="preserve">
     <value>ParentActivityId cannot be the same as the ActivityId.</value>
   </data>
+  <data name="StringMayNotBeDecorated" xml:space="preserve">
+    <value>String may not contain VT escape sequences.</value>
+  </data>
 </root>
