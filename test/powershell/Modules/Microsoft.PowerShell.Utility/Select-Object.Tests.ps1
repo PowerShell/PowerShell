@@ -383,14 +383,38 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
     }
 }
 
-Describe "Select-Object with ExpandProperty" -Tags "CI" {
+Describe "Select-Object with ExpandProperty and Property" -Tags "CI" {
 
     # Issue #7937
-    It "Select-Object with ExpandProperty preserves ETS instance members" {
-        $obj = [DateTime]::Now
-        $obj | Add-Member myProp myPropValue
-        $results =  [PSCustomObject] @{ prop = $obj } | Select-Object -ExpandProperty prop
-        $results.myProp | Should -BeExactly "myPropValue"
+    Context "Select-Object with ExpandProperty preserves ETS instance members" {
+        BeforeAll {
+            # Use a .NET reference type, because the copy semantics of value types
+            # could hide some behaviors.
+            $obj = [regex] 'foo'
+            # Add a property via the resurrection tables.
+            $obj | Add-Member resurrectTableProp 1
+            # Now embed the object inside another object and it via -ExpandProperty,
+            # while also decorating it via another property using -Property.
+            $results = [PSCustomObject] @{ psobjectWrapperProp = 2; prop = $obj } |
+                Select-Object -ExpandProperty prop -Property psobjectWrapperProp
+        }
+
+        It "Resurection Table member is present" {
+            $results.resurrectTableProp | Should -BeExactly 1
+        }
+        It "PSObject-attached member is present" {
+            $results.psobjectWrapperProp | Should -BeExactly 2
+        }
+        It "Resurrection-table member has not become a PSObject-attached member" {
+            $results.psobject.BaseObject.resurrectTableProp | Should -BeExactly 1
+        }
+        It "PSObject-attached member has not become a resurection-table member" {
+            $results.PSObject.BaseObject.psobjectWrapperProp | Should -BeNullOrEmpty
+        }
+        # Issue #21308
+        It "Original object remains unchanged" {
+            $obj.psobjectWrapperProp | Should -BeNullOrEmpty
+        }
     }
 
     # Issue #21308
