@@ -639,9 +639,7 @@ namespace Microsoft.PowerShell.Commands
                         foreach (PSPropertyExpressionResult mshExpRes in tempExprResults)
                         {
                             // filter the exclusions, if any
-                            if (_exclusionFilter.IsMatch(mshExpRes.ResolvedExpression))
-                                continue;
-                            else
+                            if (!exclusionFilter.IsMatch(mshExpRes.ResolvedExpression))
                             {
                                 PSNoteProperty mshProp = new PSNoteProperty(name, mshExpRes.Result);
                                 expandedObject.Properties.Add(mshProp);
