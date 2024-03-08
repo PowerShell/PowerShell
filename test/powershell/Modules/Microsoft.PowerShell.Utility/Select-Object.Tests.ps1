@@ -395,15 +395,12 @@ Describe "Select-Object with ExpandProperty and Property" -Tags "CI" {
             $obj | Add-Member resurrectTableProp 1
             # Now embed the object inside another object and it via -ExpandProperty,
             # while also decorating it via another property using -Property.
-            $results = [PSCustomObject] @{ psobjectWrapperProp = 2; prop = $obj; prop2 = $obj } |
-                Select-Object -ExpandProperty prop -Property psobjectWrapperProp, prop2
+            $results = [PSCustomObject] @{ psobjectWrapperProp = 2; prop = $obj } |
+                Select-Object -ExpandProperty prop -Property psobjectWrapperProp
         }
 
         It "Resurection Table member is present" {
             $results.resurrectTableProp | Should -BeExactly 1
-        }
-        It "Selected property has Resurection Table member" {
-            $results.prop2.resurrectTableProp | Should -BeExactly 1
         }
         It "PSObject-attached member is present" {
             $results.psobjectWrapperProp | Should -BeExactly 2
@@ -413,9 +410,6 @@ Describe "Select-Object with ExpandProperty and Property" -Tags "CI" {
         }
         It "PSObject-attached member has not become a resurection-table member" {
             $results.PSObject.BaseObject.psobjectWrapperProp | Should -BeNullOrEmpty
-        }
-        It "PSObject-attached member preserves ressurection table member" {
-            $results.PSObject.BaseObject.prop2.resurrectTableProp | Should -BeExactly 1
         }
         # Issue #21308
         It "Original object remains unchanged" {

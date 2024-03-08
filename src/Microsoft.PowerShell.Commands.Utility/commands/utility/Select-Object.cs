@@ -552,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
                     // its members remain the same as before the Select-Object command run.
                     PSObject expandedObject = PSObject.AsPSObject(r.Result, true).Copy();
                     AddNoteProperties(expandedObject, inputObject, matchedProperties);
-
+                    AddResurrectionProperties(expandedObject);
                     FilteredWriteObject(expandedObject, matchedProperties);
                     return;
                 }
@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
                     // its members remain the same as before the Select-Object command run.
                     PSObject expandedObject = PSObject.AsPSObject(expandedValue, true).Copy();
                     AddNoteProperties(expandedObject, inputObject, matchedProperties);
-
+                    AddResurrectionProperties(expandedObject);
                     FilteredWriteObject(expandedObject, matchedProperties);
                 }
             }
@@ -605,6 +605,17 @@ namespace Microsoft.PowerShell.Commands
                 catch (ExtendedTypeSystemException)
                 {
                     WriteAlreadyExistingPropertyError(noteProperty.Name, inputObject, "AlreadyExistingUserSpecifiedPropertyExpand");
+                }
+            }
+        }
+
+        private void AddResurrectionProperties(PSObject expandedObject)
+        {
+            foreach(PSNoteProperty noteProperty in (expandedObject.PSObject.BaseObject.Properties))
+            {
+                if (expandedObject.Properties[noteProperty.Name] == null)
+                {
+                    expandedObject.Properties.Add(noteProperty);
                 }
             }
         }
