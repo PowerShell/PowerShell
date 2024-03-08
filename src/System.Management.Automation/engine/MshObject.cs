@@ -1081,6 +1081,7 @@ namespace System.Management.Automation
             {
                 return psObjectAboveBase;
             }
+
             return psObjectAboveBase.ImmediateBaseObject;
         }
 

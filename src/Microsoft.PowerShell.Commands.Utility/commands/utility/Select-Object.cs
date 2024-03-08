@@ -552,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
                     // its members remain the same as before the Select-Object command run.
                     PSObject expandedObject = PSObject.AsPSObject(r.Result, true).Copy();
                     AddNoteProperties(expandedObject, inputObject, matchedProperties);
-                    AddResurrectionProperties(expandedObject, inputObject);
+
                     FilteredWriteObject(expandedObject, matchedProperties);
                     return;
                 }
@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
                     // its members remain the same as before the Select-Object command run.
                     PSObject expandedObject = PSObject.AsPSObject(expandedValue, true).Copy();
                     AddNoteProperties(expandedObject, inputObject, matchedProperties);
-                    AddResurrectionProperties(expandedObject, inputObject);
+
                     FilteredWriteObject(expandedObject, matchedProperties);
                 }
             }
@@ -605,55 +605,6 @@ namespace Microsoft.PowerShell.Commands
                 catch (ExtendedTypeSystemException)
                 {
                     WriteAlreadyExistingPropertyError(noteProperty.Name, inputObject, "AlreadyExistingUserSpecifiedPropertyExpand");
-                }
-            }
-        }
-
-        private void AddResurrectionProperties(PSObject expandedObject, PSObject inputObject)
-        {
-            // Populate an exclusion filter with the names of all ExcludeProperty and properties that currently exist in expandedObject.
-            HashSet<string> fullExclude = new(StringComparer.OrdinalIgnoreCase);
-            foreach (string ep in ExcludeProperty)
-            {
-                fullExclude.Add(ep);
-            }
-
-            foreach (PSPropertyInfo pi in expandedObject.Properties)
-            {
-                fullExclude.Add(pi.Name);
-            }
-
-            var exclusionFilter = new PSPropertyExpressionFilter(System.Linq.Enumerable.ToArray(fullExclude));
-
-            TerminatingErrorContext invocationContext = new(this);
-            ParameterProcessor processor = new(new SelectObjectExpressionParameterDefinition());
-            List<MshParameter> propertyList = processor.ProcessParameters(new object[] { "*" }, invocationContext);
-
-            foreach (MshParameter p in propertyList)
-            {
-                string name = p.GetEntry(NameEntryDefinition.NameEntryKey) as string;
-
-                PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
-                foreach (PSPropertyExpression resolvedName in ex.ResolveNames(inputObject))
-                {
-                    if (!exclusionFilter.IsMatch(resolvedName))
-                    {
-                        List<PSPropertyExpressionResult> tempExprResults = resolvedName.GetValues(inputObject);
-                        if (tempExprResults == null)
-                        {
-                            continue;
-                        }
-
-                        foreach (PSPropertyExpressionResult mshExpRes in tempExprResults)
-                        {
-                            // filter the exclusions, if any
-                            if (!exclusionFilter.IsMatch(mshExpRes.ResolvedExpression))
-                            {
-                                PSNoteProperty mshProp = new PSNoteProperty(name, mshExpRes.Result);
-                                expandedObject.Properties.Add(mshProp);
-                            }
-                        }
-                    }
                 }
             }
         }
