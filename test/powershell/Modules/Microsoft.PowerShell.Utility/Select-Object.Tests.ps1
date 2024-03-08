@@ -406,7 +406,7 @@ Describe "Select-Object with ExpandProperty and Property" -Tags "CI" {
             $results.psobjectWrapperProp | Should -BeExactly 2
         }
         It "Resurrection-table member has not become a PSObject-attached member" {
-            $results.psobject.BaseObject.resurrectTableProp | Should -BeExactly 1
+            $results.PSObject.BaseObject.resurrectTableProp | Should -BeExactly 1
         }
         It "PSObject-attached member has not become a resurection-table member" {
             $results.PSObject.BaseObject.psobjectWrapperProp | Should -BeNullOrEmpty
