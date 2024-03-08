@@ -899,7 +899,7 @@ namespace System.Management.Automation
         #endregion properties
 
         #region static methods
-        public static bool HasInstanceMembers(object obj, out PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers)
+        internal static bool HasInstanceMembers(object obj, out PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers)
         {
             if (obj is PSObject psobj)
             {
