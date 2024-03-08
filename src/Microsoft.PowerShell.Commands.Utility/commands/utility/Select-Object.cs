@@ -644,7 +644,7 @@ namespace Microsoft.PowerShell.Commands
                             else
                             {
                                 PSNoteProperty mshProp = new PSNoteProperty(name, mshExpRes.Result);
-                                expandedObject.Properties.Add(mshProp)
+                                expandedObject.Properties.Add(mshProp);
                             }
                         }
                     }
