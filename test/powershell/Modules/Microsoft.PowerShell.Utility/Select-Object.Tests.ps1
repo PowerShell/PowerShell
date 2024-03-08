@@ -386,7 +386,7 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
 Describe "Select-Object with ExpandProperty and Property" -Tags "CI" {
 
     # Issue #7937
-    Context "Select-Object with ExpandProperty preserves ETS instance members" {
+    Context "Preserves ETS instance members" {
         BeforeAll {
             # Use a .NET reference type, because the copy semantics of value types
             # could hide some behaviors.
@@ -418,7 +418,7 @@ Describe "Select-Object with ExpandProperty and Property" -Tags "CI" {
     }
 
     # Issue #21308
-    It "Select-Object with ExpandProperty and Calculated Property does not modify source object" {
+    It "Does not modify source object" {
         $obj = [PSCustomObject]@{"name"="admin1";"children"=[PSCustomObject]@{"name"="admin2"}}
         $obj | Select-Object -Property @{N="country";E={$_.name}} -ExpandProperty children | Out-Null
         $obj.children.country | Should -BeNullOrEmpty
