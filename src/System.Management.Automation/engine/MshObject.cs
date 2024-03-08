@@ -1080,9 +1080,9 @@ namespace System.Management.Automation
             {
                 return psObjectAboveBase;
             }
-            // Do a deeper copy.
             else if (pso.StoreTypeNameAndInstanceMembersLocally)
             {
+                // Do a deeper copy.
                 return psObjectAboveBase.Copy();
             }
             else
