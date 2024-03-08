@@ -1076,13 +1076,19 @@ namespace System.Management.Automation
             }
 
             if (psObjectAboveBase.ImmediateBaseObject is PSCustomObject
-                || psObjectAboveBase.ImmediateBaseObject is string
-                || pso.StoreTypeNameAndInstanceMembersLocally)
+                || psObjectAboveBase.ImmediateBaseObject is string)
             {
                 return psObjectAboveBase;
             }
-
-            return psObjectAboveBase.ImmediateBaseObject;
+            // Do a deeper copy.
+            else if (pso.StoreTypeNameAndInstanceMembersLocally)
+            {
+                return psObjectAboveBase.Copy();
+            }
+            else
+            {
+                return psObjectAboveBase.ImmediateBaseObject;
+            }
         }
 
         #endregion static methods
