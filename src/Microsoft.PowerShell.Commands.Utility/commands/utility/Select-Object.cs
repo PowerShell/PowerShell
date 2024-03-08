@@ -613,15 +613,15 @@ namespace Microsoft.PowerShell.Commands
         {
             // Populate an exclusion filter with the names of all ExcludeProperty and properties that currently exist in expandedObject.
             HashSet<string> fullExclude = new(StringComparer.OrdinalIgnoreCase);
-            foreach (string ep in ExcludeProperty) { fullExclude.Add(ep); }
-            foreach (string pn in expandedObject.Properties.Name) { fullExclude.Add(pn); }
-            exclusionFilter = new PSPropertyExpressionFilter(fullExclude.ToArray());
+            foreach (string ep in ExcludeProperty) fullExclude.Add(ep);
+            foreach (string pn in expandedObject.Properties.Name) fullExclude.Add(pn);
+            var exclusionFilter = new PSPropertyExpressionFilter(System.Linq.Enumerable.ToArray(fullExclude));
 
-            TerminatingErrorContext invocationContext = new(this);
-            ParameterProcessor processor = new(new SelectObjectExpressionParameterDefinition());
-            List<MshParameter> propertyList = processor.ProcessParameters(new object[] {"*"}, invocationContext);
+            TerminatingErrorContext invocationContext = new (this);
+            ParameterProcessor processor = new (new SelectObjectExpressionParameterDefinition());
+            List<MshParameter> propertyList = processor.ProcessParameters(new object[] { "*" }, invocationContext);
 
-            foreach (MshParameter prop in propertyList)
+            foreach (MshParameter p in propertyList)
             {
                 string name = p.GetEntry(NameEntryDefinition.NameEntryKey) as string;
 
