@@ -1037,10 +1037,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="storeTypeNameAndInstanceMembersLocally"></param>
-        /// <param name="asNew"></param>
         /// <returns></returns>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "AsPSObject is shipped as part of V1. This is a new overload method.")]
-        internal static PSObject AsPSObject(object obj, bool storeTypeNameAndInstanceMembersLocally, bool asNew = false)
+        internal static PSObject AsPSObject(object obj, bool storeTypeNameAndInstanceMembersLocally)
         {
             if (obj == null)
             {
@@ -1049,14 +1048,7 @@ namespace System.Management.Automation
 
             if (obj is PSObject so)
             {
-                if (asNew)
-                {
-                    return so.Copy();
-                }
-                else
-                {
-                    return so;
-                }
+                return so;
             }
 
             return new PSObject(obj) { StoreTypeNameAndInstanceMembersLocally = storeTypeNameAndInstanceMembersLocally };

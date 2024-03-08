@@ -550,7 +550,7 @@ namespace Microsoft.PowerShell.Commands
                     // directly with it. We want the NoteProperty to be associated only with this
                     // particular PSObject, so that when the user uses the base object else where,
                     // its members remain the same as before the Select-Object command run.
-                    PSObject expandedObject = PSObject.AsPSObject(r.Result, true, true);
+                    PSObject expandedObject = PSObject.AsPSObject(r.Result, true).Copy();
                     AddNoteProperties(expandedObject, inputObject, matchedProperties);
 
                     FilteredWriteObject(expandedObject, matchedProperties);
@@ -570,7 +570,7 @@ namespace Microsoft.PowerShell.Commands
                     // directly with it. We want the NoteProperty to be associated only with this
                     // particular PSObject, so that when the user uses the base object else where,
                     // its members remain the same as before the Select-Object command run.
-                    PSObject expandedObject = PSObject.AsPSObject(expandedValue, true, true);
+                    PSObject expandedObject = PSObject.AsPSObject(expandedValue, false).Copy();
                     AddNoteProperties(expandedObject, inputObject, matchedProperties);
 
                     FilteredWriteObject(expandedObject, matchedProperties);
