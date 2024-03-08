@@ -612,13 +612,19 @@ namespace Microsoft.PowerShell.Commands
         private void AddResurrectionProperties(PSObject expandedObject, PSObject inputObject)
         {
             // Populate an exclusion filter with the names of all ExcludeProperty and properties that currently exist in expandedObject.
-            HashSet<string> fullExclude = new(StringComparer.OrdinalIgnoreCase);
-            foreach (string ep in ExcludeProperty) fullExclude.Add(ep);
-            foreach (string pn in expandedObject.Properties.Name) fullExclude.Add(pn);
+            HashSet<string> fullExclude = new (StringComparer.OrdinalIgnoreCase);
+            foreach (string ep in ExcludeProperty)
+            {
+                fullExclude.Add(ep);
+            }
+            foreach (PSPropertyInfo pi in expandedObject.Properties)
+            {
+                fullExclude.Add(pi.Name);
+            }
             var exclusionFilter = new PSPropertyExpressionFilter(System.Linq.Enumerable.ToArray(fullExclude));
 
             TerminatingErrorContext invocationContext = new (this);
-            ParameterProcessor processor = new (new SelectObjectExpressionParameterDefinition());
+            ParameterProcessor processor = new(new SelectObjectExpressionParameterDefinition());
             List<MshParameter> propertyList = processor.ProcessParameters(new object[] { "*" }, invocationContext);
 
             foreach (MshParameter p in propertyList)
