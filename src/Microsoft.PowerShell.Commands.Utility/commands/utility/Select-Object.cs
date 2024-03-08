@@ -611,11 +611,14 @@ namespace Microsoft.PowerShell.Commands
 
         private void AddResurrectionProperties(PSObject expandedObject)
         {
-            foreach(PSNoteProperty noteProperty in (expandedObject.PSObject.BaseObject.Properties))
+            if (PSObject.HasInstanceMembers(expandedObject, out PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers))
             {
-                if (expandedObject.Properties[noteProperty.Name] == null)
+                foreach (PSMemberInfo memberInfo in instanceMembers)
                 {
-                    expandedObject.Properties.Add(noteProperty);
+                    if (expandedObject.Members[memberInfo.Name] == null)
+                    {
+                        expandedObject.Members.Add(memberInfo);
+                    }
                 }
             }
         }
