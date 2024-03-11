@@ -127,4 +127,19 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
             Pop-Location
         }
     }
+
+    It 'does not return path containing both current and parent directory' {
+        $testDir = Join-Path $TestDrive "testDir"
+        $null = New-Item -Path $testDir -ItemType Directory -Force
+        $testFile = Join-Path $testDrive "testfile"
+        $null = New-Item -Path $testFile -ItemType File -Force
+        try {
+            Push-Location $testDir
+            $result = Resolve-Path -Path "..\testfile" -Relative
+            $result | Should -BeExactly (Join-Path '..' 'testfile')
+        }
+        finally {
+            Pop-Location
+        }
+    }
 }
