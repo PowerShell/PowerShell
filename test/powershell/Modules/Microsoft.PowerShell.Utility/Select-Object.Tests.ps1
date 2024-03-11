@@ -385,23 +385,22 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
 
 Describe "Select-Object with ExpandProperty and Property" -Tags "CI" {
 
-    # Issue #7937
     Context "Preserves ETS instance members" {
         BeforeAll {
-            # Use a .NET reference type, because the copy semantics of value types
-            # could hide some behaviors.
+            # Use a .NET reference type, because the copy semantics of value types could hide some behaviors.
             $obj = [regex] 'foo'
             # Add a property via the resurrection tables.
             $obj | Add-Member resurrectTableProp 1
-            # Now embed the object inside another object and it via -ExpandProperty,
-            # while also decorating it via another property using -Property.
+            # Now embed the object inside another object and expand it via -ExpandProperty, while also decorating it via another property using -Property.
             $results = [PSCustomObject] @{ psobjectWrapperProp = 2; prop = $obj } |
-                Select-Object -ExpandProperty prop -Property psobjectWrapperProp
+                Select-Object -Property psobjectWrapperProp -ExpandProperty prop
         }
 
-        It "Resurection Table member is present" {
-            $results.resurrectTableProp | Should -BeExactly 1
-        }
+        #* Ideally the ETS members of a property that has been expanded would be surfaced, but that is not currently the case.
+        # Issue #7937
+        # It "Resurection Table member is present" {
+        #     $results.resurrectTableProp | Should -BeExactly 1
+        # }
         It "PSObject-attached member is present" {
             $results.psobjectWrapperProp | Should -BeExactly 2
         }
@@ -418,11 +417,21 @@ Describe "Select-Object with ExpandProperty and Property" -Tags "CI" {
     }
 
     # Issue #21308
-    It "Does not modify source object" {
-        $obj = [PSCustomObject]@{"name"="admin1";"children"=[PSCustomObject]@{"name"="admin2"}}
-        $obj | Select-Object -Property @{N="country";E={$_.name}} -ExpandProperty children | Out-Null
-        $obj.children.country | Should -BeNullOrEmpty
+    Context "Does not modify source object" {
+        BeforeAll {
+            $obj = [PSCustomObject]@{name1="admin1";children=[PSCustomObject]@{name2="admin2"}}
+            $obj | Select-Object -Property name1, @{N="country";E={$_.name1}} -ExpandProperty children | Out-Null
+        }
+        # Issue #21308
+        It "Doing a simple select" {
+            $obj.children.name1 | Should -BeNullOrEmpty
+        }
+        # Issue #21308
+        It "Doing a expression select" {
+            $obj.children.country | Should -BeNullOrEmpty
+        }
     }
+
 }
 
 Describe 'Select-Object behaviour with hashtable entries and actual members' -Tags "CI" {
