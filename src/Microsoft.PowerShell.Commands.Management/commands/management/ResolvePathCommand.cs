@@ -221,8 +221,7 @@ namespace Microsoft.PowerShell.Commands
                             string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path, _relativeBasePath);
 
                             // Do not insert './' if result path is not relative
-                            if (!adjustedPath.StartsWith(
-                                    currentPath.Drive?.Root ?? currentPath.Path, StringComparison.OrdinalIgnoreCase) &&
+                            if (!adjustedPath.StartsWith(currentPath.Drive?.Root ?? currentPath.Path, StringComparison.OrdinalIgnoreCase) &&
                                 !adjustedPath.StartsWith("." + currentPath.Provider.ItemSeparator, StringComparison.OrdinalIgnoreCase) &&
                                 !adjustedPath.StartsWith(".." + currentPath.Provider.ItemSeparator, StringComparison.OrdinalIgnoreCase))
                             {
