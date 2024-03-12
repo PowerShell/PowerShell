@@ -32,6 +32,7 @@ parameters:
   displayName: URL to the blob having internal .NET SDK
   type: string
   default: ' '
+
 resources:
   repositories:
   - repository: ComplianceRepo
@@ -80,18 +81,6 @@ variables:
   value: $[counter('', 0)]
 - name: system.debug
   value: ${{ parameters.debug }}
-
-resources:
-  repositories:
-  - repository: ComplianceRepo
-    type: github
-    endpoint: ComplianceGHRepo
-    name: PowerShell/compliance
-    ref: master
-  - repository: onebranchTemplates
-    type: git
-    name: OneBranch.Pipelines/GovernedTemplates
-    ref: refs/heads/main
 
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
