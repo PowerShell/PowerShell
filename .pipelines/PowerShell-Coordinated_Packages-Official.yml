@@ -258,83 +258,83 @@ extends:
               signedArtifactContainer: results
         steps:
         - template: /.pipelines/templates/sign-build-file.yml@self
-    - stage: mac_packaging
-      displayName: macOS packaging
-      dependsOn: ['SignFiles']
-      jobs:
-      - template: /.pipelines/templates/mac-package-build.yml@self
-        parameters:
-          buildArchitecture: x64
-      - template: /.pipelines/templates/mac-package-build.yml@self
-        parameters:
-          buildArchitecture: arm64
-    - stage: linux_packaging
-      displayName: Linux Packaging
-      dependsOn: ['SignFiles']
-      jobs:
-      - template: /.pipelines/templates/linux-packaging.yml@self
-        parameters:
-          buildName: deb
-      - template: /.pipelines/templates/linux-packaging.yml@self
-        parameters:
-          buildName: rpm
-          uploadDisplayName: Upload and Sign
-      - template: /.pipelines/templates/linux-packaging.yml@self
-        parameters:
-          buildName: alpine
-      - template: /.pipelines/templates/linux-packaging.yml@self
-        parameters:
-          buildName: fxdependent
-    - stage: win_packaging
-      displayName: Windows Packaging
-      dependsOn: ['SignFiles']
-      jobs:
-      - template: /.pipelines/templates/windows-packaging.yml@self
-        parameters:
-          Architecture: x64
-          parentJob: build_windows_x64_release
-      - template: /.pipelines/templates/windows-packaging.yml@self
-        parameters:
-          Architecture: x64
-          BuildConfiguration: minSize
-          parentJob: build_windows_x64_minSize
-      - template: /.pipelines/templates/windows-packaging.yml@self
-        parameters:
-          Architecture: x86
-          parentJob: build_windows_x86_release
-      - template: /.pipelines/templates/windows-packaging.yml@self
-        parameters:
-          Architecture: arm64
-          parentJob: build_windows_arm64_release
-      - template: /.pipelines/templates/windows-packaging.yml@self
-        parameters:
-          Architecture: fxdependent
-          parentJob: build_windows_fxdependent_release
-      - template: /.pipelines/templates/windows-packaging.yml@self
-        parameters:
-          Architecture: fxdependentWinDesktop
-          parentJob: build_windows_fxdependentWinDesktop_release
-    - stage: package_signing
-      displayName: Package Signing
-      dependsOn: ['mac_packaging', 'linux_packaging', 'win_packaging']
-      jobs:
-      - template: /.pipelines/templates/windows-package-signing.yml@self
-      - template: /.pipelines/templates/mac-package-signing.yml@self
-        parameters:
-          buildArchitecture: x64
-      - template: /.pipelines/templates/mac-package-signing.yml@self
-        parameters:
-          buildArchitecture: arm64
-    - stage: nuget_and_json
-      displayName: NuGet Packaging and Build Json
-      dependsOn: ['package_signing']
-      jobs:
-      - template: /.pipelines/templates/nuget.yml@self
-      - template: /.pipelines/templates/json.yml@self
-    - stage: compliance
-      dependsOn: ['package_signing']
-      jobs:
-      - template: /.pipelines/templates/compliance.yml@self
+    # - stage: mac_packaging
+    #   displayName: macOS packaging
+    #   dependsOn: ['SignFiles']
+    #   jobs:
+    #   - template: /.pipelines/templates/mac-package-build.yml@self
+    #     parameters:
+    #       buildArchitecture: x64
+    #   - template: /.pipelines/templates/mac-package-build.yml@self
+    #     parameters:
+    #       buildArchitecture: arm64
+    # - stage: linux_packaging
+    #   displayName: Linux Packaging
+    #   dependsOn: ['SignFiles']
+    #   jobs:
+    #   - template: /.pipelines/templates/linux-packaging.yml@self
+    #     parameters:
+    #       buildName: deb
+    #   - template: /.pipelines/templates/linux-packaging.yml@self
+    #     parameters:
+    #       buildName: rpm
+    #       uploadDisplayName: Upload and Sign
+    #   - template: /.pipelines/templates/linux-packaging.yml@self
+    #     parameters:
+    #       buildName: alpine
+    #   - template: /.pipelines/templates/linux-packaging.yml@self
+    #     parameters:
+    #       buildName: fxdependent
+    # - stage: win_packaging
+    #   displayName: Windows Packaging
+    #   dependsOn: ['SignFiles']
+    #   jobs:
+    #   - template: /.pipelines/templates/windows-packaging.yml@self
+    #     parameters:
+    #       Architecture: x64
+    #       parentJob: build_windows_x64_release
+    #   - template: /.pipelines/templates/windows-packaging.yml@self
+    #     parameters:
+    #       Architecture: x64
+    #       BuildConfiguration: minSize
+    #       parentJob: build_windows_x64_minSize
+    #   - template: /.pipelines/templates/windows-packaging.yml@self
+    #     parameters:
+    #       Architecture: x86
+    #       parentJob: build_windows_x86_release
+    #   - template: /.pipelines/templates/windows-packaging.yml@self
+    #     parameters:
+    #       Architecture: arm64
+    #       parentJob: build_windows_arm64_release
+    #   - template: /.pipelines/templates/windows-packaging.yml@self
+    #     parameters:
+    #       Architecture: fxdependent
+    #       parentJob: build_windows_fxdependent_release
+    #   - template: /.pipelines/templates/windows-packaging.yml@self
+    #     parameters:
+    #       Architecture: fxdependentWinDesktop
+    #       parentJob: build_windows_fxdependentWinDesktop_release
+    # - stage: package_signing
+    #   displayName: Package Signing
+    #   dependsOn: ['mac_packaging', 'linux_packaging', 'win_packaging']
+    #   jobs:
+    #   - template: /.pipelines/templates/windows-package-signing.yml@self
+    #   - template: /.pipelines/templates/mac-package-signing.yml@self
+    #     parameters:
+    #       buildArchitecture: x64
+    #   - template: /.pipelines/templates/mac-package-signing.yml@self
+    #     parameters:
+    #       buildArchitecture: arm64
+    # - stage: nuget_and_json
+    #   displayName: NuGet Packaging and Build Json
+    #   dependsOn: ['package_signing']
+    #   jobs:
+    #   - template: /.pipelines/templates/nuget.yml@self
+    #   - template: /.pipelines/templates/json.yml@self
+    # - stage: compliance
+    #   dependsOn: ['package_signing']
+    #   jobs:
+    #   - template: /.pipelines/templates/compliance.yml@self
     - stage: test_and_release_artifacts
       displayName: Test and Release Artifacts
       dependsOn: ['prep']
