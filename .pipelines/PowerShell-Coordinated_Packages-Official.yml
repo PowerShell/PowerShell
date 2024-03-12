@@ -79,8 +79,6 @@ variables:
   value: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
 - name: CDP_DEFINITION_BUILD_COUNT
   value: $[counter('', 0)]
-- name: system.debug
-  value: ${{ parameters.debug }}
 
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
