@@ -87,7 +87,7 @@ extends:
     stages:
     - stage: prep
       jobs:
-      - template: /.pipelines//.pipelines/templatescheckAzureContainer.yml@self
+      - template: /.pipelines/templatescheckAzureContainer.yml@self
     - stage: macos
       dependsOn: ['prep']
       jobs:
