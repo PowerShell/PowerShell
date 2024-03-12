@@ -8,6 +8,7 @@ jobs:
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - group: Azure Blob variable group
+  - group: AzureBlobServiceConnection
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   displayName: Delete blob is exists
@@ -24,7 +25,7 @@ jobs:
   - task: AzurePowerShell@4
     displayName: Check if blob exists and delete if specified
     inputs:
-      azureSubscription: '$(AzureFileCopySubscription)'
+      azureSubscription: '$(AzureBlobServiceConnection)'
       scriptType: inlineScript
       azurePowerShellVersion: latestVersion
       inline: |
