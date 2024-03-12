@@ -8,163 +8,370 @@
 # Support:        https://aka.ms/onebranchsup                                   #
 #################################################################################
 
-trigger: none # https://aka.ms/obpipelines/triggers
+name: UnifiedPackageBuild-$(Build.BuildId)
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+pr:
+  branches:
+    include:
+    - master
+    - release*
 
-parameters: # parameters are shown up in ADO UI in a build queue time
-- name: 'debug'
-  displayName: 'Enable debug output'
-  type: boolean
+parameters:
+- name: ForceAzureBlobDelete
+  displayName: Delete Azure Blob
+  type: string
+  values:
+  - true
+  - false
   default: false
+- name: InternalSDKBlobURL
+  displayName: URL to the blob having internal .NET SDK
+  type: string
+  default: ' '
+resources:
+  repositories:
+  - repository: ComplianceRepo
+    type: github
+    endpoint: ComplianceGHRepo
+    name: PowerShell/compliance
+    ref: master
+  - repository: onebranchTemplates
+    type: git
+    name: OneBranch.Pipelines/GovernedTemplates
+    ref: refs/heads/main
 
 variables:
-  CDP_DEFINITION_BUILD_COUNT: $[counter('', 0)] # needed for onebranch.pipeline.version task https://aka.ms/obpipelines/versioning
-  system.debug: ${{ parameters.debug }}
-
-  BuildSolution: $(Build.SourcesDirectory)\dirs.proj
-  BuildConfiguration: Release
-
-  WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project https://aka.ms/obpipelines/containers
+- name: PS_RELEASE_BUILD
+  value: 1
+- name: DOTNET_CLI_TELEMETRY_OPTOUT
+  value: 1
+- name: POWERSHELL_TELEMETRY_OPTOUT
+  value: 1
+- name: nugetMultiFeedWarnLevel
+  value: none
+- name: NugetSecurityAnalysisWarningLevel
+  value: none
+- name: skipNugetSecurityAnalysis
+  value: true
+- name: branchCounterKey
+  value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
+- name: branchCounter
+  value: $[counter(variables['branchCounterKey'], 1)]
+- name: ForceAzureBlobDelete
+  value: ${{ parameters.ForceAzureBlobDelete }}
+- name: Github_Build_Repository_Uri
+  value: https://github.com/powershell/powershell
+- name: SBOMGenerator_Formats
+  value: spdx:2.2
+- name: BUILDSECMON_OPT_IN
+  value: true
+- group: PoolNames
+- name: __DOTNET_RUNTIME_FEED
+  value: ${{ parameters.InternalSDKBlobURL }}
+- name: LinuxContainerImage
+  value: onebranch.azurecr.io/linux/ubuntu-2004:latest
+- name: WindowsContainerImage
+  value: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
+- name: CDP_DEFINITION_BUILD_COUNT
+  value: $[counter('', 0)]
+- name: system.debug
+  value: ${{ parameters.debug }}
 
 resources:
-  repositories: 
-    - repository: templates
-      type: git
-      name: OneBranch.Pipelines/GovernedTemplates
-      ref: refs/heads/main
+  repositories:
+  - repository: ComplianceRepo
+    type: github
+    endpoint: ComplianceGHRepo
+    name: PowerShell/compliance
+    ref: master
+  - repository: onebranchTemplates
+    type: git
+    name: OneBranch.Pipelines/GovernedTemplates
+    ref: refs/heads/main
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@templates # https://aka.ms/obpipelines/templates
+  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
   parameters:
-    cloudvault: # https://aka.ms/obpipelines/cloudvault
-      enabled: false
-    globalSdl: # https://aka.ms/obpipelines/sdl
-      asyncSdl:
-        enabled: true
-        tsaOptionsFile: .config/tsaoptions.json
-      # tsa:
-      #  enabled: false # onebranch publish all sdl results to TSA. If TSA is disabled all SDL tools will forced into 'break' build mode.
-      # credscan:
-      #   suppressionsFile: $(Build.SourcesDirectory)\.config\CredScanSuppressions.json
-      policheck:
-        break: true # always break the build on policheck issues. You can disable it by setting to 'false'
-      # suppression:
-      #   suppressionFile: $(Build.SourcesDirectory)\.gdn\global.gdnsuppress
-
+    customTags: 'ES365AIMigrationTooling'
     stages:
-    - stage: build
+    - stage: prep
       jobs:
-      - job: main
+      - template: /tools/releaseBuild/azureDevOps/templates/checkAzureContainer.yml@self
+    - stage: macos
+      dependsOn: ['prep']
+      jobs:
+      - template: /tools/releaseBuild/azureDevOps/templates/mac.yml@self
+        parameters:
+          buildArchitecture: x64
+      - template: /tools/releaseBuild/azureDevOps/templates/mac.yml@self
+        parameters:
+          buildArchitecture: arm64
+    - stage: linux
+      dependsOn: ['prep']
+      jobs:
+      - template: /tools/releaseBuild/azureDevOps/templates/linux.yml@self
+        parameters:
+          buildName: deb
+      - template: /tools/releaseBuild/azureDevOps/templates/linux.yml@self
+        parameters:
+          buildName: rpm
+          parentJob: build_deb
+      - template: /tools/releaseBuild/azureDevOps/templates/linux.yml@self
+        parameters:
+          buildName: fxdependent
+          parentJob: build_deb
+      - template: /tools/releaseBuild/azureDevOps/templates/linux.yml@self
+        parameters:
+          buildName: alpine
+    - stage: windows
+      dependsOn: ['prep']
+      jobs:
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-hosted-build.yml@self
+        parameters:
+          Architecture: x64
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-hosted-build.yml@self
+        parameters:
+          Architecture: x64
+          BuildConfiguration: minSize
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-hosted-build.yml@self
+        parameters:
+          Architecture: x86
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-hosted-build.yml@self
+        parameters:
+          Architecture: arm64
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-hosted-build.yml@self
+        parameters:
+          Architecture: fxdependent
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-hosted-build.yml@self
+        parameters:
+          Architecture: fxdependentWinDesktop
+    - stage: SignFiles
+      displayName: Sign files
+      dependsOn: ['windows', 'linux', 'macos']
+      jobs:
+      - template: /tools/releaseBuild/azureDevOps/templates/mac-file-signing.yml@self
+        parameters:
+          buildArchitecture: x64
+      - template: /tools/releaseBuild/azureDevOps/templates/mac-file-signing.yml@self
+        parameters:
+          buildArchitecture: arm64
+      - job: SignFilesWinLinux
         pool:
-          type: windows  # read more about custom job pool types at https://aka.ms/obpipelines/yaml/jobs
-        
-        variables: # More settings at https://aka.ms/obpipelines/yaml/jobs
-          ob_outputDirectory: '$(Build.SourcesDirectory)\out' # this directory is uploaded to pipeline artifacts, reddog and cloudvault. More info at https://aka.ms/obpipelines/artifacts
-          # https://aka.ms/obpipelines/sdl
-          ob_sdl_binskim_break: true # always break the build on binskim issues, even if TSA enabled. You can disable it by setting to 'false'
-          ob_sdl_roslyn_break: true
-          ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}: # conditionally enable symbolsPublishing for main branch only
-            ob_symbolsPublishing_enabled: true # https://aka.ms/obpipelines/symbols
-          # ob_sdl_suppression_suppressionFile: $(Build.SourcesDirectory)\.gdn\job.gdnsuppress
-
+          type: windows
+        displayName: Sign files
+        variables:
+        - group: ESRP
+        - name: runCodesignValidationInjection
+          value: false
+        - name: NugetSecurityAnalysisWarningLevel
+          value: none
+        - name: repoFolder
+          value: PowerShell
+        - name: repoRoot
+          value: $(Agent.BuildDirectory)\$(repoFolder)
+        - name: complianceRepoFolder
+          value: compliance
+        - name: ob_outputDirectory
+          value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+        strategy:
+          matrix:
+            linux-x64:
+              runtime: linux-x64
+              unsignedBuildArtifactContainer: pwshLinuxBuild.tar.gz
+              unsignedBuildArtifactName: pwshLinuxBuild.tar.gz
+              signedBuildArtifactName: pwshLinuxBuild.tar.gz
+              signedArtifactContainer: authenticode-signed
+            linux-x64-Alpine:
+              runtime: linux-x64-Alpine
+              unsignedBuildArtifactContainer: pwshLinuxBuildAlpine.tar.gz
+              unsignedBuildArtifactName: pwshLinuxBuild.tar.gz
+              signedBuildArtifactName: pwshLinuxBuildAlpine.tar.gz
+              signedArtifactContainer: authenticode-signed
+            linux-x64-Alpine-Fxdependent:
+              runtime: linux-x64-Alpine-Fxdependent
+              unsignedBuildArtifactContainer: pwshAlpineFxdBuildAmd64.tar.gz
+              unsignedBuildArtifactName: pwshAlpineFxdBuildAmd64.tar.gz
+              signedBuildArtifactName: pwshAlpineFxdBuildAmd64.tar.gz
+              signedArtifactContainer: authenticode-signed
+            linux-arm32:
+              runtime: linux-arm32
+              unsignedBuildArtifactContainer: pwshLinuxBuildArm32.tar.gz
+              unsignedBuildArtifactName: pwshLinuxBuildArm32.tar.gz
+              signedBuildArtifactName: pwshLinuxBuildArm32.tar.gz
+              signedArtifactContainer: authenticode-signed
+            linux-arm64:
+              runtime: linux-arm64
+              unsignedBuildArtifactContainer: pwshLinuxBuildArm64.tar.gz
+              unsignedBuildArtifactName: pwshLinuxBuildArm64.tar.gz
+              signedBuildArtifactName: pwshLinuxBuildArm64.tar.gz
+              signedArtifactContainer: authenticode-signed
+            linux-fxd:
+              runtime: linux-fxd
+              unsignedBuildArtifactContainer: pwshLinuxBuildFxdependent.tar.gz
+              unsignedBuildArtifactName: pwshLinuxBuild.tar.gz
+              signedBuildArtifactName: pwshLinuxBuildFxdependent.tar.gz
+              signedArtifactContainer: authenticode-signed
+            linux-mariner:
+              runtime: linux-mariner
+              unsignedBuildArtifactContainer: pwshMarinerBuildAmd64.tar.gz
+              unsignedBuildArtifactName: pwshMarinerBuildAmd64.tar.gz
+              signedBuildArtifactName: pwshMarinerBuildAmd64.tar.gz
+              signedArtifactContainer: authenticode-signed
+            linux-arm64-mariner:
+              runtime: linux-arm64-mariner
+              unsignedBuildArtifactContainer: pwshMarinerBuildArm64.tar.gz
+              unsignedBuildArtifactName: pwshMarinerBuildArm64.tar.gz
+              signedBuildArtifactName: pwshMarinerBuildArm64.tar.gz
+              signedArtifactContainer: authenticode-signed
+            linux-minsize:
+              runtime: linux-minsize
+              unsignedBuildArtifactContainer: pwshLinuxBuildMinSize.tar.gz
+              unsignedBuildArtifactName: pwshLinuxBuildMinSize.tar.gz
+              signedBuildArtifactName: pwshLinuxBuildMinSize.tar.gz
+              signedArtifactContainer: authenticode-signed
+            win-x64:
+              runtime: win-x64
+              unsignedBuildArtifactContainer: results
+              unsignedBuildArtifactName: '**/*-symbols-win-x64.zip'
+              signedBuildArtifactName: '-symbols-win-x64-signed.zip'
+              signedArtifactContainer: results
+            win-x86:
+              runtime: win-x86
+              unsignedBuildArtifactContainer: results
+              unsignedBuildArtifactName: '**/*-symbols-win-x86.zip'
+              signedBuildArtifactName: '-symbols-win-x86-signed.zip'
+              signedArtifactContainer: results
+            win-arm64:
+              runtime: win-arm64
+              unsignedBuildArtifactContainer: results
+              unsignedBuildArtifactName: '**/*-symbols-win-arm64.zip'
+              signedBuildArtifactName: '-symbols-win-arm64-signed.zip'
+              signedArtifactContainer: results
+            win-x64-gc:
+              runtime: win-x64-gc
+              unsignedBuildArtifactContainer: results
+              unsignedBuildArtifactName: '**/*-symbols-win-x64-gc.zip'
+              signedBuildArtifactName: '-symbols-win-x64-gc-signed.zip'
+              signedArtifactContainer: results
+            win-fxdependent:
+              runtime: win-fxdependent
+              unsignedBuildArtifactContainer: results
+              unsignedBuildArtifactName: '**/*-symbols-win-fxdependent.zip'
+              signedBuildArtifactName: '-symbols-win-fxdependent-signed.zip'
+              signedArtifactContainer: results
+            win-fxdependentWinDesktop:
+              runtime: win-fxdependentWinDesktop
+              unsignedBuildArtifactContainer: results
+              unsignedBuildArtifactName: '**/*-symbols-win-fxdependentWinDesktop.zip'
+              signedBuildArtifactName: '-symbols-win-fxdependentWinDesktop-signed.zip'
+              signedArtifactContainer: results
         steps:
-          - task: UseDotNet@2
-            continueOnError: true
-            inputs:
-              packageType: 'sdk'
-              useGlobalJson: true
-              performMultiLevelLookup: true
-
-          - task: onebranch.pipeline.version@1 # generates automatic version. For other versioning options check https://aka.ms/obpipelines/versioning
-            displayName: 'Setup BuildNumber'
-            inputs:
-              system: 'RevisionCounter'
-              major: '1'
-              minor: '0'
-              exclude_commit: true
-
-          - task: DotNetCoreCLI@2
-            displayName: 'DotNetCore restore'
-            inputs:
-              command: 'custom'
-              projects: $(BuildSolution)
-              custom: 'restore'
-
-          # roslynanalyzers task wraps around dotnet build to enable static analysis
-          - task: RoslynAnalyzers@3
-            displayName: 'DotNetCore build with RoslynAnalyzers'
-            inputs:
-              userProvideBuildInfo: 'msBuildInfo'
-              msBuildCommandline: 'dotnet.exe build $(BuildSolution) --no-restore --configuration $(BuildConfiguration)'
-
-          - task: DotNetCoreCLI@2
-            displayName: 'DotNetCore test'
-            inputs:
-              command: 'test'
-              projects: $(BuildSolution)
-              arguments: '--no-build --no-restore --configuration $(BuildConfiguration) --logger trx --blame --collect "Code coverage" --results-directory $(Build.SourcesDirectory)\TestResults\'
-              publishTestResults: false
-
-          - task: PublishTestResults@2
-            displayName: 'Publish test results'
-            inputs:
-              testResultsFormat: VSTest
-              testResultsFiles: '$(Build.SourcesDirectory)\TestResults\**\*.trx'
-              failTaskOnFailedTests: true
-
-          - task: DotNetCoreCLI@2
-            displayName: 'DotNetCore publish'
-            inputs:
-              command: 'publish'
-              publishWebProjects: false
-              projects: $(BuildSolution)
-              arguments: '--no-build --no-restore --configuration $(BuildConfiguration) --output $(Build.SourcesDirectory)\out'
-              zipAfterPublish: false
-
-          - task: onebranch.pipeline.signing@1
-            displayName: 'Sign output'
-            inputs:
-              command: 'sign'
-              signing_environment: 'azure-ado'
-              files_to_sign: '**/*.exe;**/*.dll;**/*.ps1;**/*.psm1'
-              search_root: '$(Build.SourcesDirectory)\out'
-# uncomment this section and edit parameters to enable VSTest instead of dotnet tests. When you enable this you dont need publish test results and codecoverage steps
-         # - task: VSTest@3
-         #   inputs:
-          #    testSelector: 'testAssemblies'
-           #   testAssemblyVer2: |
-            #    **\*test*.dll
-             #   !**\*TestAdapter.dll
-              #  !**\obj\**
-             # searchFolder: '$(Build.SourcesDirectory)\out' ## or use '$(Agent.BuildDirectory)'
-              ##testFiltercriteria: 'TestCategory=UnitTests'   ## update
-              #resultsFolder: '$(Build.SourcesDirectory)\out\logs\TestResults'
-              #runInParallel: true ## this setting helps to speed up test case execution but if youhave depdencies between tests you change or remove this but having it enabled is always recommended
-              #codeCoverageEnabled: true
-              #testRunTitle: 'release_x64' ## Update this for a custom readable way of taggin your test run when you query in ADO test runs view
-              #platform: 'x64' ## you can modify this as needed
-              #configuration: 'release'
-              #publishRunAttachments: false
-              #failOnMinTestsNotRun: true
-              #rerunFailedTests: true
-              #rerunFailedThreshold: '70' 
-# https://aka.ms/obpipelines/cloudtest
-# uncomment this section and edit parameters to enable CloudTest
-    # - stage: cloudtest
-    #   dependsOn: build_stage
-    #   jobs:
-    #   - job: cloudtestjob
-    #     pool:
-    #       type: cloudtestagentless
-    #     continueOnError: true
-    #     steps:
-    #     - task: CloudTestServerBuildTask@1
-    #       displayName: 'CloudTest'
-    #       inputs:
-    #         connectedServiceName: 'CloudTest-prod'
-    #         cloudTestTenant: 'onebranchtest'
-    #         testMapLocation: '[BuildRoot]\ClassLibrary.UnitTest\TestMapCdp.xml'
-    #         pipelineArtifactName: 'drop_build_main'
-    #         pipelineArtifactBuildUrl: '$(System.TaskDefinitionsUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)'
-    #         parserProperties: 'worker:VsTestVersion=V150;CodeCoverageType=Dynamic;worker:TestVar=$(RUN_PIPELINE_VARIABLE)'
-    #         cacheEnabled: false
-    #         scheduleBuildRequesterAlias: 'azbldrun'
+        - template: /tools/releaseBuild/azureDevOps/templates/sign-build-file.yml@self
+    - stage: mac_packaging
+      displayName: macOS packaging
+      dependsOn: ['SignFiles']
+      jobs:
+      - template: /tools/releaseBuild/azureDevOps/templates/mac-package-build.yml@self
+        parameters:
+          buildArchitecture: x64
+      - template: /tools/releaseBuild/azureDevOps/templates/mac-package-build.yml@self
+        parameters:
+          buildArchitecture: arm64
+    - stage: linux_packaging
+      displayName: Linux Packaging
+      dependsOn: ['SignFiles']
+      jobs:
+      - template: /tools/releaseBuild/azureDevOps/templates/linux-packaging.yml@self
+        parameters:
+          buildName: deb
+      - template: /tools/releaseBuild/azureDevOps/templates/linux-packaging.yml@self
+        parameters:
+          buildName: rpm
+          uploadDisplayName: Upload and Sign
+      - template: /tools/releaseBuild/azureDevOps/templates/linux-packaging.yml@self
+        parameters:
+          buildName: alpine
+      - template: /tools/releaseBuild/azureDevOps/templates/linux-packaging.yml@self
+        parameters:
+          buildName: fxdependent
+    - stage: win_packaging
+      displayName: Windows Packaging
+      dependsOn: ['SignFiles']
+      jobs:
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-packaging.yml@self
+        parameters:
+          Architecture: x64
+          parentJob: build_windows_x64_release
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-packaging.yml@self
+        parameters:
+          Architecture: x64
+          BuildConfiguration: minSize
+          parentJob: build_windows_x64_minSize
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-packaging.yml@self
+        parameters:
+          Architecture: x86
+          parentJob: build_windows_x86_release
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-packaging.yml@self
+        parameters:
+          Architecture: arm64
+          parentJob: build_windows_arm64_release
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-packaging.yml@self
+        parameters:
+          Architecture: fxdependent
+          parentJob: build_windows_fxdependent_release
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-packaging.yml@self
+        parameters:
+          Architecture: fxdependentWinDesktop
+          parentJob: build_windows_fxdependentWinDesktop_release
+    - stage: package_signing
+      displayName: Package Signing
+      dependsOn: ['mac_packaging', 'linux_packaging', 'win_packaging']
+      jobs:
+      - template: /tools/releaseBuild/azureDevOps/templates/windows-package-signing.yml@self
+      - template: /tools/releaseBuild/azureDevOps/templates/mac-package-signing.yml@self
+        parameters:
+          buildArchitecture: x64
+      - template: /tools/releaseBuild/azureDevOps/templates/mac-package-signing.yml@self
+        parameters:
+          buildArchitecture: arm64
+    - stage: nuget_and_json
+      displayName: NuGet Packaging and Build Json
+      dependsOn: ['package_signing']
+      jobs:
+      - template: /tools/releaseBuild/azureDevOps/templates/nuget.yml@self
+      - template: /tools/releaseBuild/azureDevOps/templates/json.yml@self
+    - stage: compliance
+      dependsOn: ['package_signing']
+      jobs:
+      - template: /tools/releaseBuild/azureDevOps/templates/compliance.yml@self
+    - stage: test_and_release_artifacts
+      displayName: Test and Release Artifacts
+      dependsOn: ['prep']
+      jobs:
+      - template: /tools/releaseBuild/azureDevOps/templates/testartifacts.yml@self
+      - job: release_json
+        displayName: Create and Upload release.json
+        pool:
+          type: windows
+        variables:
+        - name: ob_outputDirectory
+          value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+        steps:
+        - checkout: self
+          clean: true
+        - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+          parameters:
+            ReleaseTagVar: $(ReleaseTagVar)
+        - powershell: |
+            $metadata = Get-Content '$(Build.SourcesDirectory)/tools/metadata.json' -Raw | ConvertFrom-Json
+            $LTS = $metadata.LTSRelease.Package
+            @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
+            Get-Content "$(Build.StagingDirectory)\release.json"
+            Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"
+          displayName: Create and upload release.json file to build artifact
+          retryCountOnTaskFailure: 2
+        - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self

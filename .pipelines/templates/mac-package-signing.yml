@@ -1,0 +1,112 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
+parameters:
+  buildArchitecture: x64
+jobs:
+- job: MacPackageSigningJob_${{ parameters.buildArchitecture }}
+  displayName: macOS Package signing ${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  pool:
+    type: windows
+  variables:
+  - group: ESRP
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: repoFolder
+    value: PowerShell
+  - name: repoRoot
+    value: $(Agent.BuildDirectory)\$(repoFolder)
+  - name: complianceRepoFolder
+    value: compliance
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  steps:
+  - checkout: self
+    clean: true
+    path: $(repoFolder)
+  - checkout: ComplianceRepo
+    clean: true
+    path: $(complianceRepoFolder)
+  - template: /tools/releaseBuild/azureDevOps/templates/shouldSign.yml@self
+  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      artifactName: 'macosPkgResults'
+      itemPattern: '**/*'
+      downloadPath: '$(System.ArtifactsDirectory)'
+  - pwsh: |
+      dir "$(System.ArtifactsDirectory)\*" -Recurse
+    displayName: 'Capture Downloaded Artifacts'
+    continueOnError: true
+  - pwsh: |
+      $null = new-item -type directory -path "$(Build.StagingDirectory)\macos"
+      $zipFile = "$(Build.StagingDirectory)\macos\powershell-$(Version)-osx-${{ parameters.buildArchitecture }}.zip"
+      Compress-Archive -Path "$(System.ArtifactsDirectory)\macosPkgResults\powershell-$(Version)-osx-${{ parameters.buildArchitecture }}.pkg" -Destination $zipFile
+      Write-Host $zipFile
+      $ltsPkgPath = "$(System.ArtifactsDirectory)\macosPkgResults\powershell-lts-$(Version)-osx-${{ parameters.buildArchitecture }}.pkg"
+      if(Test-Path $ltsPkgPath)
+      {
+         $ltsZipFile = "$(Build.StagingDirectory)\macos\powershell-lts-$(Version)-osx-${{ parameters.buildArchitecture }}.zip"
+         Compress-Archive -Path $ltsPkgPath -Destination $ltsZipFile
+         Write-Host $ltsZipFile
+      }
+    displayName: 'Compress macOS Package'
+  - template: EsrpSign.yml@ComplianceRepo
+    parameters:
+      buildOutputPath: $(Build.StagingDirectory)\macos
+      signOutputPath: $(Build.StagingDirectory)\signedMacOSPackages
+      certificateId: "CP-401337-Apple"
+      pattern: |
+        **\*.zip
+      useMinimatch: true
+      shouldSign: $(SHOULD_SIGN)
+      displayName: Sign pkg
+  - template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+    parameters:
+      artifactPath: $(System.ArtifactsDirectory)\macosPkgResults
+      artifactFilter: "*${{ parameters.buildArchitecture }}.tar.gz"
+  - pwsh: |
+      $destination = "$(System.ArtifactsDirectory)\azureMacOs"
+      New-Item -Path $destination -Type Directory
+      $zipPath = dir "$(Build.StagingDirectory)\signedMacOSPackages\powershell-*.zip" -Recurse | select-object -expandproperty fullname
+      foreach ($z in $zipPath) { Expand-Archive -Path $z -DestinationPath $destination }
+      $targzPath = dir "$(System.ArtifactsDirectory)\*osx*.tar.gz" -Recurse | select-object -expandproperty fullname
+      Copy-Item -Path $targzPath -Destination $destination
+    displayName: 'Extract and copy macOS artifacts for upload'
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+  - template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+    parameters:
+      artifactPath: $(System.ArtifactsDirectory)\azureMacOs
+      artifactFilter: "*.pkg"
+      condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+  - pwsh: |
+      $null = new-item -type directory -path "$(Build.StagingDirectory)\macos-unsigned"
+      Copy-Item -Path "$(System.ArtifactsDirectory)\macosPkgResults\powershell-$(Version)-osx-x64.pkg" -Destination "$(Build.StagingDirectory)\macos-unsigned"
+      Copy-Item -Path "$(System.ArtifactsDirectory)\macosPkgResults\powershell-$(Version)-osx-x64.tar.gz" -Destination "$(Build.StagingDirectory)\macos-unsigned"
+    displayName: 'Create unsigned folder to upload'
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
+  - task: AzureFileCopy@4
+    displayName: 'AzureBlob File Copy - unsigned'
+    inputs:
+      SourcePath: '$(Build.StagingDirectory)\macos-unsigned\*'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
+    retryCountOnTaskFailure: 2
+  - task: AzureFileCopy@4
+    displayName: 'AzureBlob File Copy - signed'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\azureMacOs\*'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+    retryCountOnTaskFailure: 2
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self

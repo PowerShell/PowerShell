@@ -1,0 +1,68 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
+parameters:
+- name: BuildConfiguration
+  default: release
+- name: BuildPlatform
+  default: any cpu
+- name: Architecture
+  default: x64
+- name: parentJob
+  default: ''
+jobs:
+- job: build_windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
+  displayName: Build Windows - ${{ parameters.Architecture }} ${{ parameters.BuildConfiguration }}
+  condition: succeeded()
+  dependsOn: ${{ parameters.parentJob }}
+  pool:
+    type: windows
+  variables:
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: BuildConfiguration
+    value: ${{ parameters.BuildConfiguration }}
+  - name: BuildPlatform
+    value: ${{ parameters.BuildPlatform }}
+  - name: Architecture
+    value: ${{ parameters.Architecture }}
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  steps:
+  - checkout: self
+    clean: true
+  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+  - template: /tools/releaseBuild/azureDevOps/templates/cloneToOfficialPath.yml@self
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+  - pwsh: |
+      $runtime = switch ($env:Architecture)
+        {
+          "x64" { "win7-x64" }
+          "x86" { "win7-x86" }
+          "arm64" { "win-arm64" }
+          "fxdependent" { "fxdependent" }
+          "fxdependentWinDesktop" { "fxdependent-win-desktop" }
+        }
+      $params = @{}
+      if ($env:BuildConfiguration -eq 'minSize') {
+        $params['ForMinimalSize'] = $true
+      }
+      tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols @params
+    displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols zip'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+  - pwsh: |
+      $packageName = (Get-ChildItem '$(Build.ArtifactStagingDirectory)\Symbols_$(Architecture)').FullName
+      $vstsCommandString = "vso[artifact.upload containerfolder=results;artifactname=results]$packageName"
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
+    displayName: Upload symbols package
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self

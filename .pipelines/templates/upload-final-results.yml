@@ -1,0 +1,17 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
+parameters:
+  artifactPath: ''
+  artifactFilter: '*'
+  condition: succeeded()
+  artifactName: finalResults
+steps:
+- powershell: |
+    Get-ChildItem -Path '${{ parameters.artifactPath }}' -Recurse -File -filter '${{ parameters.artifactFilter }}' -ErrorAction SilentlyContinue |
+        Select-Object -ExpandProperty FullName |
+            ForEach-Object {
+                Write-Host "##vso[artifact.upload containerfolder=${{ parameters.artifactName }};artifactname=${{ parameters.artifactName }}]$_"
+            }
+  displayName: Upload ${{ parameters.artifactName }} Artifacts ${{ parameters.artifactFilter }} from ${{ parameters.artifactPath }}
+  condition: ${{ parameters.condition }}
+  retryCountOnTaskFailure: 2

@@ -1,0 +1,133 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
+parameters:
+- name: PackageVersion
+- name: PackagePath
+- name: WinFxdPath
+- name: LinuxFxdPath
+- name: ListOfFiles
+  type: object
+  default:
+  - Microsoft.Management.Infrastructure.CimCmdlets.dll
+  - Microsoft.PowerShell.Commands.Diagnostics.dll
+  - Microsoft.PowerShell.Commands.Management.dll
+  - Microsoft.PowerShell.Commands.Utility.dll
+  - Microsoft.PowerShell.ConsoleHost.dll
+  - Microsoft.PowerShell.CoreCLR.Eventing.dll
+  - Microsoft.PowerShell.Security.dll
+  - Microsoft.PowerShell.SDK.dll
+  - Microsoft.WSMan.Management.dll
+  - Microsoft.WSMan.Runtime.dll
+  - System.Management.Automation.dll
+steps:
+- pwsh: |
+    $configPath = "$(REPOROOT)/nuget.config"
+    Import-Module '$(REPOROOT)/build.psm1' -Force
+    New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "$(REPOROOT)"
+    if(-not (Test-Path $configPath))
+    {
+        throw "nuget.config is not created"
+    }
+    Get-Content $configPath | Write-Verbose -Verbose
+  displayName: 'Add nuget.config for Azure DevOps feed for packages'
+  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
+- pwsh: |
+    Import-Module "$env:REPOROOT/build.psm1" -Force
+    Start-PSBootstrap
+    $sharedModules = @('Microsoft.PowerShell.Commands.Management',
+                       'Microsoft.PowerShell.Commands.Utility',
+                       'Microsoft.PowerShell.ConsoleHost',
+                       'Microsoft.PowerShell.Security',
+                       'System.Management.Automation'
+                      )
+    $winOnlyModules = @('Microsoft.Management.Infrastructure.CimCmdlets',
+                        'Microsoft.PowerShell.Commands.Diagnostics',
+                        'Microsoft.PowerShell.CoreCLR.Eventing',
+                        'Microsoft.WSMan.Management',
+                        'Microsoft.WSMan.Runtime'
+                        )
+    $refAssemblyFolder = Join-Path '$(System.ArtifactsDirectory)' 'RefAssembly'
+    $null = New-Item -Path $refAssemblyFolder -Force -Verbose -Type Directory
+    Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release
+    $sharedModules | Foreach-Object {
+      $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net9.0\refint\$_.dll"
+      Write-Verbose -Verbose "RefAssembly: $refFile"
+      Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
+      $refDoc = "$env:REPOROOT\src\$_\bin\Release\net9.0\$_.xml"
+      if (-not (Test-Path $refDoc)) {
+        Write-Warning "$refDoc not found"
+        Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net9.0\" | Out-String | Write-Verbose -Verbose
+      }
+      else {
+        Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
+      }
+    }
+    Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
+    $winOnlyModules | Foreach-Object {
+      $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net9.0\refint\*.dll"
+      Write-Verbose -Verbose 'RefAssembly: $refFile'
+      Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
+      $refDoc = "$env:REPOROOT\src\$_\bin\Release\net9.0\$_.xml"
+      if (-not (Test-Path $refDoc)) {
+        Write-Warning "$refDoc not found"
+        Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net9.0" | Out-String | Write-Verbose -Verbose
+      }
+      else {
+        Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
+      }
+    }
+    Get-ChildItem $refAssemblyFolder -Recurse | Out-String | Write-Verbose -Verbose
+    # Set RefAssemblyPath path variable
+    $vstsCommandString = "vso[task.setvariable variable=RefAssemblyPath]${refAssemblyFolder}"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+  displayName: Build reference assemblies
+  env:
+    __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+    __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+- ${{ each value in parameters.ListOfFiles }}:
+  - pwsh: |
+      $FileName = '${{ value }}'
+      $FileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($FileName)
+      $FilePackagePath = Join-Path -Path '${{ parameters.PackagePath }}' -ChildPath $FileBaseName
+      $CGManifestPath = Join-Path -Path '${{ parameters.PackagePath }}' -ChildPath 'CGManifest'
+      Write-Verbose -Verbose "FileName to package: $FileName"
+      Write-Verbose -Verbose "FilePackage path: $FilePackagePath"
+      Write-Verbose -Verbose "CGManifest path: $CGManifestPath"
+      # Set SBOM package name
+      $vstsCommandString = "vso[task.setvariable variable=SbomFilePackageName]${FileBaseName}"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+      # Set SBOM package path variable
+      $vstsCommandString = "vso[task.setvariable variable=SbomFilePackagePath]${FilePackagePath}"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+      # Set CGManifest path variable
+      $vstsCommandString = "vso[task.setvariable variable=CGManifestPath]${CGManifestPath}"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+      # Create Nuget package sources
+      Import-Module -Name $env:REPOROOT\build.psm1
+      Import-Module -Name $env:REPOROOT\tools\packaging
+      Find-DotNet
+      New-ILNugetPackageSource -File $FileName -PackagePath '${{ parameters.PackagePath }}' -PackageVersion '${{ parameters.PackageVersion }}' -WinFxdBinPath '${{ parameters.WinFxdPath }}' -LinuxFxdBinPath '${{ parameters.LinuxFxdPath }}' -CGManifestPath $CGManifestPath -RefAssemblyPath $(RefAssemblyPath)
+    displayName: 'Create NuGet Package source for single file'
+  - template: Sbom.yml@ComplianceRepo
+    parameters:
+      BuildDropPath: $(SbomFilePackagePath)
+      Build_Repository_Uri: 'https://github.com/powershell/powershell'
+      PackageName: $(SbomFilePackageName)
+      PackageVersion: ${{ parameters.PackageVersion }}
+      sourceScanPath: $(CGManifestPath)
+      displayName: SBOM for NuGetPkg
+  - pwsh: |
+      $FileName = '${{ value }}'
+      $FileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($FileName)
+      $FilePackagePath = Join-Path -Path '${{ parameters.PackagePath }}' -ChildPath $FileBaseName
+      Write-Verbose -Verbose "FileName to package: $FileName"
+      Write-Verbose -Verbose "FilePackage path: $FilePackagePath"
+      Import-Module -Name $env:REPOROOT\build.psm1
+      Import-Module -Name $env:REPOROOT\tools\packaging
+      Find-DotNet
+      New-ILNugetPackageFromSource -FileName $FileName -PackageVersion '${{ parameters.PackageVersion }}' -PackagePath '${{ parameters.PackagePath }}'
+    displayName: 'Create NuGet Package for single file'

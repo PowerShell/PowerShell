@@ -1,0 +1,297 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
+parameters:
+  buildName: ''
+  uploadDisplayName: 'Upload'
+  parentJob: ''
+jobs:
+- job: build_${{ parameters.buildName }}
+  displayName: Build ${{ parameters.buildName }}
+  condition: succeeded()
+  pool:
+    type: windows
+  dependsOn: ${{ parameters.parentJob }}
+  variables:
+  - name: runCodesignValidationInjection
+    value: false
+  - name: build
+    value: ${{ parameters.buildName }}
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: ESRP
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  steps:
+  - checkout: self
+    clean: true
+  - checkout: ComplianceRepo
+    clean: true
+  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+  - pwsh: |
+      # create folder
+      sudo mkdir /PowerShell
+      # make the current user the owner
+      sudo chown $env:USER /PowerShell
+    displayName: 'Create /PowerShell'
+  - template: /tools/releaseBuild/azureDevOps/templates/cloneToOfficialPath.yml@self
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+  - powershell: |
+      import-module "$env:POWERSHELLROOT/build.psm1"
+      Sync-PSTags -AddRemoteIfMissing
+    displayName: SyncTags
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+    workingDirectory: $(PowerShellRoot)
+  - powershell: |
+      Import-Module "$env:POWERSHELLROOT/build.psm1"
+      Start-PSBootstrap -Package
+    displayName: 'Bootstrap'
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+    workingDirectory: $(PowerShellRoot)
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+  - pwsh: |
+      try {
+        Import-Module "$env:POWERSHELLROOT/build.psm1"
+        Import-Module "$env:POWERSHELLROOT/tools/packaging"
+        Invoke-AzDevOpsLinuxPackageBuild -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+        Write-Verbose -Verbose "File permisions after building"
+        Get-ChildItem -Path $(System.ArtifactsDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
+      } catch {
+        Get-Error
+        throw
+      }
+    displayName: 'Build'
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+    workingDirectory: $(PowerShellRoot)
+  - template: Sbom.yml@ComplianceRepo
+    parameters:
+      BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+      Build_Repository_Uri: $(Github_Build_Repository_Uri)
+      displayName: ${{ parameters.buildName }} SBOM
+      PackageName: PowerShell Linux
+      PackageVersion: $(Version)
+      sourceScanPath: '$(PowerShellRoot)/tools'
+  - ${{ if eq(variables.build,'rpm') }}:
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Mariner x64 SBOM
+        PackageName: PowerShell Linux Framework Dependent
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
+  - ${{ if eq(variables.build,'rpm') }}:
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Mariner arm64 SBOM
+        PackageName: PowerShell Linux Framework Dependent
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
+  - ${{ if eq(variables.build,'deb') }}:
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: MinSize SBOM
+        PackageName: PowerShell Linux Minimum Size
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
+  - ${{ if eq(variables.build,'deb') }}:
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Arm32 SBOM
+        PackageName: PowerShell Linux Arm32
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
+  - ${{ if eq(variables.build,'deb') }}:
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Arm64 SBOM
+        PackageName: PowerShell Linux Arm64
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
+  - ${{ if eq(variables.build,'alpine') }}:
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Alpine FXD SBOM
+        PackageName: PowerShell Alpine Framework Dependent AMD64
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
+  - pwsh: |
+      Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+      Write-Verbose -Verbose "File permisions before compressing"
+      Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
+      tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz *
+    displayName: Compress pwshLinuxBuild
+  - ${{ if eq(variables.build,'deb') }}:
+    - pwsh: |
+        Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz *
+        Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz *
+        Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz *
+      displayName: Compress deb
+  - ${{ if eq(variables.build,'rpm') }}:
+    - pwsh: |
+        Set-Location '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz *
+      displayName: Compress pwshMarinerBuildAmd64
+  - ${{ if eq(variables.build,'alpine') }}:
+    - pwsh: |
+        Set-Location '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz *
+      displayName: Compress pwshAlpineFxdBuildAmd64
+  - ${{ if eq(variables.build,'rpm') }}:
+    - pwsh: |
+        Set-Location '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz *
+      displayName: Compress pwshMarinerBuildArm64
+  - ${{ if eq(variables.build,'deb') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild.tar.gz
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'deb') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        SourceFolder: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
+        Contents: '**'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild-meta
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'deb') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize.tar.gz
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'deb') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        SourceFolder: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize-meta'
+        Contents: '**'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize-meta
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'deb') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32.tar.gz
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'deb') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        SourceFolder: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32-meta'
+        Contents: '**'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32-meta
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'deb') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64.tar.gz
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'deb') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        SourceFolder: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64-meta'
+        Contents: '**'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64-meta
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'rpm') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        Contents: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64.tar.gz
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'rpm') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        SourceFolder: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64-meta'
+        Contents: '**'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64-meta
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'rpm') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        Contents: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64.tar.gz
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'rpm') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        SourceFolder: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64-meta'
+        Contents: '**'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64-meta
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'alpine') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine.tar.gz
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'alpine') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        SourceFolder: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
+        Contents: '**'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine-meta
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'alpine') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        Contents: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64.tar.gz
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'alpine') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        SourceFolder: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64-meta'
+        Contents: '**'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64-meta
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'fxdependent') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent.tar.gz
+      retryCountOnTaskFailure: 2
+  - ${{ if eq(variables.build,'fxdependent') }}:
+    - task: CopyFiles@2
+      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+      inputs:
+        SourceFolder: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
+        Contents: '**'
+        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent-meta
+      retryCountOnTaskFailure: 2

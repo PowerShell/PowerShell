@@ -1,0 +1,25 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
+steps:
+- powershell: |
+    $shouldSign = $true
+    $authenticodeCert = 'CP-230012'
+    $msixCert = 'CP-230012'
+    if($env:IS_DAILY -eq 'true')
+    {
+      $authenticodeCert = 'CP-460906'
+    }
+    if($env:SKIP_SIGNING -eq 'Yes')
+    {
+      $shouldSign = $false
+    }
+    $vstsCommandString = "vso[task.setvariable variable=SHOULD_SIGN]$($shouldSign.ToString().ToLowerInvariant())"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+    $vstsCommandString = "vso[task.setvariable variable=MSIX_CERT]$($msixCert)"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+    $vstsCommandString = "vso[task.setvariable variable=AUTHENTICODE_CERT]$($authenticodeCert)"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+  displayName: 'Set SHOULD_SIGN Variable'

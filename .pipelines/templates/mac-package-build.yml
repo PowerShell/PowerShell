@@ -1,0 +1,114 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
+parameters:
+  parentJob: ''
+  buildArchitecture: x64
+jobs:
+- job: package_macOS_${{ parameters.buildArchitecture }}
+  displayName: Package macOS ${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  pool:
+    type: windows
+  variables:
+  - name: HOMEBREW_NO_ANALYTICS
+    value: 1
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  steps:
+  - checkout: self
+    clean: true
+  - pwsh: |
+      # create folder
+      sudo mkdir "$(Agent.TempDirectory)/PowerShell"
+      # make the current user the owner
+      sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
+    displayName: 'Create $(Agent.TempDirectory)/PowerShell'
+  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+  - template: /tools/releaseBuild/azureDevOps/templates/shouldSign.yml@self
+  - template: /tools/releaseBuild/azureDevOps/templates/cloneToOfficialPath.yml@self
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
+  - task: DownloadBuildArtifacts@0
+    displayName: Download macosBinResults
+    inputs:
+      artifactName: 'macosBinResults'
+      itemPattern: '**/*${{ parameters.buildArchitecture }}.zip'
+      downloadPath: '$(System.ArtifactsDirectory)/Symbols'
+  - task: DownloadBuildArtifacts@0
+    displayName: Download signedMacOsBins
+    inputs:
+      artifactName: 'signedMacOsBins_${{ parameters.buildArchitecture }}'
+      itemPattern: '**/*'
+      downloadPath: '$(System.ArtifactsDirectory)/macOsBins'
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+  - pwsh: |
+      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+    displayName: 'Capture Downloaded Artifacts'
+    continueOnError: true
+  - pwsh: |
+      $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*${{ parameters.buildArchitecture }}.zip'
+      Write-Verbose -Verbose "Zip Path: $zipPath"
+      $expandedFolder = $zipPath.BaseName
+      Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
+      Write-Host "##vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
+      Expand-Archive -Path $zipPath -Destination "$(System.ArtifactsDirectory)\$expandedFolder" -Force
+    displayName: Expand symbols zip
+  - pwsh: |
+      Import-Module $(PowerShellRoot)/build.psm1 -Force
+      Import-Module $(PowerShellRoot)/tools/packaging -Force
+      $signedFilesPath = '$(System.ArtifactsDirectory)/macOsBins/signedMacOsBins_${{ parameters.buildArchitecture }}/'
+      $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+      Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
+    displayName: Merge signed files with Build
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+  - template: Sbom.yml@ComplianceRepo
+    parameters:
+      BuildDropPath: '$(System.ArtifactsDirectory)/$(SymbolsFolder)'
+      Build_Repository_Uri: $(Github_Build_Repository_Uri)
+      PackageName: PowerShell macOS ${{ parameters.buildArchitecture }}
+      PackageVersion: $(Version)
+      sourceScanPath: '$(PowerShellRoot)/tools'
+  - pwsh: |
+      Import-Module $(PowerShellRoot)/build.psm1 -Force
+      Import-Module $(PowerShellRoot)/tools/packaging -Force
+      $destFolder = '$(System.ArtifactsDirectory)\signedZip'
+      $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+      $null = New-Item -ItemType Directory -Path $destFolder -Force
+      $BuildPackagePath = New-PSBuildZip -BuildPath $BuildPath -DestinationFolder $destFolder
+      Write-Verbose -Verbose "New-PSSignedBuildZip returned `$BuildPackagePath as: $BuildPackagePath"
+      Write-Host "##vso[artifact.upload containerfolder=results;artifactname=results]$BuildPackagePath"
+      $vstsCommandString = "vso[task.setvariable variable=BuildPackagePath]$BuildPackagePath"
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
+    displayName: Compress signed files
+    retryCountOnTaskFailure: 2
+  - pwsh: |
+      try {
+        tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
+      } catch {
+        Get-Error
+        throw
+      }
+    displayName: 'Bootstrap VM'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+  - pwsh: |
+      # Add -SkipReleaseChecks as a mitigation to unblock release.
+      # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
+      try {
+        $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar" -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
+      } catch {
+        Get-Error
+        throw
+      }
+    displayName: 'Package'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self

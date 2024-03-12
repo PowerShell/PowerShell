@@ -1,0 +1,53 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
+parameters:
+  buildArchitecture: 'x64'
+jobs:
+- job: build_macOS_${{ parameters.buildArchitecture }}
+  displayName: Build macOS ${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  pool:
+    type: windows
+  variables:
+  - name: HOMEBREW_NO_ANALYTICS
+    value: 1
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  steps:
+  - checkout: self
+    clean: true
+  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+  - pwsh: |
+      # create folder
+      sudo mkdir "$(Agent.TempDirectory)/PowerShell"
+      # make the current user the owner
+      sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
+    displayName: 'Create $(Agent.TempDirectory)/PowerShell'
+  - template: /tools/releaseBuild/azureDevOps/templates/cloneToOfficialPath.yml@self
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
+  - pwsh: |
+      tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
+    displayName: 'Bootstrap VM'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+  - pwsh: |
+      $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
+      # Add -SkipReleaseChecks as a mitigation to unblock release.
+      # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
+      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
+      $env:AzDevOpsFeedPAT2 = $null
+    displayName: 'Build'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self

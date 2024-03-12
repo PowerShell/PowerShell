@@ -1,0 +1,58 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
+parameters:
+  ReleaseTagVar: v6.2.0
+  ReleaseTagVarName: ReleaseTagVar
+  CreateJson: 'no'
+  UseJson: 'yes'
+steps:
+- ${{ if eq(parameters['UseJson'],'yes') }}:
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      artifactName: 'BuildInfoJson'
+      itemPattern: '**/*.json'
+      downloadPath: '$(System.ArtifactsDirectory)'
+    displayName: Download Build Info Json
+- powershell: |
+    $path = "./build.psm1"
+    if($env:REPOROOT){
+      Write-Verbose "reporoot already set to ${env:REPOROOT}" -Verbose
+      exit 0
+    }
+    if(Test-Path -Path $path)
+    {
+      Write-Verbose "reporoot detect at: ." -Verbose
+      $repoRoot = '.'
+    }
+    else{
+      $path = "./PowerShell/build.psm1"
+      if(Test-Path -Path $path)
+      {
+        Write-Verbose "reporoot detect at: ./PowerShell" -Verbose
+        $repoRoot = './PowerShell'
+      }
+    }
+    if($repoRoot) {
+      $vstsCommandString = "vso[task.setvariable variable=repoRoot]$repoRoot"
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
+    } else {
+      Write-Verbose -Verbose "repo not found"
+    }
+  displayName: 'Set repo Root'
+- powershell: |
+    $createJson = ("${{ parameters.CreateJson }}" -ne "no")
+    $releaseTag = & "$env:REPOROOT/tools/releaseBuild/setReleaseTag.ps1" -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
+    $version = $releaseTag.Substring(1)
+    $vstsCommandString = "vso[task.setvariable variable=Version]$version"
+    Write-Host ("sending " + $vstsCommandString)
+    Write-Host "##$vstsCommandString"
+    $azureVersion = $releaseTag.ToLowerInvariant() -replace '\.', '-'
+    $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
+    Write-Host ("sending " + $vstsCommandString)
+    Write-Host "##$vstsCommandString"
+  displayName: 'Set ${{ parameters.ReleaseTagVarName }} and other version Variables'
+- powershell: |
+    Get-ChildItem -Path env:
+  displayName: Capture environment
+  condition: succeededOrFailed()
