@@ -1,0 +1,170 @@
+#################################################################################
+#                               OneBranch Pipelines                             #
+# This pipeline was created by EasyStart from a sample located at:              #
+#   https://aka.ms/obpipelines/easystart/samples                                #
+# Documentation:  https://aka.ms/obpipelines                                    #
+# Yaml Schema:    https://aka.ms/obpipelines/yaml/schema                        #
+# Retail Tasks:   https://aka.ms/obpipelines/tasks                              #
+# Support:        https://aka.ms/onebranchsup                                   #
+#################################################################################
+
+trigger: none # https://aka.ms/obpipelines/triggers
+
+parameters: # parameters are shown up in ADO UI in a build queue time
+- name: 'debug'
+  displayName: 'Enable debug output'
+  type: boolean
+  default: false
+
+variables:
+  CDP_DEFINITION_BUILD_COUNT: $[counter('', 0)] # needed for onebranch.pipeline.version task https://aka.ms/obpipelines/versioning
+  system.debug: ${{ parameters.debug }}
+
+  BuildSolution: $(Build.SourcesDirectory)\dirs.proj
+  BuildConfiguration: Release
+
+  WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project https://aka.ms/obpipelines/containers
+
+resources:
+  repositories: 
+    - repository: templates
+      type: git
+      name: OneBranch.Pipelines/GovernedTemplates
+      ref: refs/heads/main
+
+extends:
+  template: v2/OneBranch.Official.CrossPlat.yml@templates # https://aka.ms/obpipelines/templates
+  parameters:
+    cloudvault: # https://aka.ms/obpipelines/cloudvault
+      enabled: false
+    globalSdl: # https://aka.ms/obpipelines/sdl
+      asyncSdl:
+        enabled: true
+        tsaOptionsFile: .config/tsaoptions.json
+      # tsa:
+      #  enabled: false # onebranch publish all sdl results to TSA. If TSA is disabled all SDL tools will forced into 'break' build mode.
+      # credscan:
+      #   suppressionsFile: $(Build.SourcesDirectory)\.config\CredScanSuppressions.json
+      policheck:
+        break: true # always break the build on policheck issues. You can disable it by setting to 'false'
+      # suppression:
+      #   suppressionFile: $(Build.SourcesDirectory)\.gdn\global.gdnsuppress
+
+    stages:
+    - stage: build
+      jobs:
+      - job: main
+        pool:
+          type: windows  # read more about custom job pool types at https://aka.ms/obpipelines/yaml/jobs
+        
+        variables: # More settings at https://aka.ms/obpipelines/yaml/jobs
+          ob_outputDirectory: '$(Build.SourcesDirectory)\out' # this directory is uploaded to pipeline artifacts, reddog and cloudvault. More info at https://aka.ms/obpipelines/artifacts
+          # https://aka.ms/obpipelines/sdl
+          ob_sdl_binskim_break: true # always break the build on binskim issues, even if TSA enabled. You can disable it by setting to 'false'
+          ob_sdl_roslyn_break: true
+          ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}: # conditionally enable symbolsPublishing for main branch only
+            ob_symbolsPublishing_enabled: true # https://aka.ms/obpipelines/symbols
+          # ob_sdl_suppression_suppressionFile: $(Build.SourcesDirectory)\.gdn\job.gdnsuppress
+
+        steps:
+          - task: UseDotNet@2
+            continueOnError: true
+            inputs:
+              packageType: 'sdk'
+              useGlobalJson: true
+              performMultiLevelLookup: true
+
+          - task: onebranch.pipeline.version@1 # generates automatic version. For other versioning options check https://aka.ms/obpipelines/versioning
+            displayName: 'Setup BuildNumber'
+            inputs:
+              system: 'RevisionCounter'
+              major: '1'
+              minor: '0'
+              exclude_commit: true
+
+          - task: DotNetCoreCLI@2
+            displayName: 'DotNetCore restore'
+            inputs:
+              command: 'custom'
+              projects: $(BuildSolution)
+              custom: 'restore'
+
+          # roslynanalyzers task wraps around dotnet build to enable static analysis
+          - task: RoslynAnalyzers@3
+            displayName: 'DotNetCore build with RoslynAnalyzers'
+            inputs:
+              userProvideBuildInfo: 'msBuildInfo'
+              msBuildCommandline: 'dotnet.exe build $(BuildSolution) --no-restore --configuration $(BuildConfiguration)'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'DotNetCore test'
+            inputs:
+              command: 'test'
+              projects: $(BuildSolution)
+              arguments: '--no-build --no-restore --configuration $(BuildConfiguration) --logger trx --blame --collect "Code coverage" --results-directory $(Build.SourcesDirectory)\TestResults\'
+              publishTestResults: false
+
+          - task: PublishTestResults@2
+            displayName: 'Publish test results'
+            inputs:
+              testResultsFormat: VSTest
+              testResultsFiles: '$(Build.SourcesDirectory)\TestResults\**\*.trx'
+              failTaskOnFailedTests: true
+
+          - task: DotNetCoreCLI@2
+            displayName: 'DotNetCore publish'
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: $(BuildSolution)
+              arguments: '--no-build --no-restore --configuration $(BuildConfiguration) --output $(Build.SourcesDirectory)\out'
+              zipAfterPublish: false
+
+          - task: onebranch.pipeline.signing@1
+            displayName: 'Sign output'
+            inputs:
+              command: 'sign'
+              signing_environment: 'azure-ado'
+              files_to_sign: '**/*.exe;**/*.dll;**/*.ps1;**/*.psm1'
+              search_root: '$(Build.SourcesDirectory)\out'
+# uncomment this section and edit parameters to enable VSTest instead of dotnet tests. When you enable this you dont need publish test results and codecoverage steps
+         # - task: VSTest@3
+         #   inputs:
+          #    testSelector: 'testAssemblies'
+           #   testAssemblyVer2: |
+            #    **\*test*.dll
+             #   !**\*TestAdapter.dll
+              #  !**\obj\**
+             # searchFolder: '$(Build.SourcesDirectory)\out' ## or use '$(Agent.BuildDirectory)'
+              ##testFiltercriteria: 'TestCategory=UnitTests'   ## update
+              #resultsFolder: '$(Build.SourcesDirectory)\out\logs\TestResults'
+              #runInParallel: true ## this setting helps to speed up test case execution but if youhave depdencies between tests you change or remove this but having it enabled is always recommended
+              #codeCoverageEnabled: true
+              #testRunTitle: 'release_x64' ## Update this for a custom readable way of taggin your test run when you query in ADO test runs view
+              #platform: 'x64' ## you can modify this as needed
+              #configuration: 'release'
+              #publishRunAttachments: false
+              #failOnMinTestsNotRun: true
+              #rerunFailedTests: true
+              #rerunFailedThreshold: '70' 
+# https://aka.ms/obpipelines/cloudtest
+# uncomment this section and edit parameters to enable CloudTest
+    # - stage: cloudtest
+    #   dependsOn: build_stage
+    #   jobs:
+    #   - job: cloudtestjob
+    #     pool:
+    #       type: cloudtestagentless
+    #     continueOnError: true
+    #     steps:
+    #     - task: CloudTestServerBuildTask@1
+    #       displayName: 'CloudTest'
+    #       inputs:
+    #         connectedServiceName: 'CloudTest-prod'
+    #         cloudTestTenant: 'onebranchtest'
+    #         testMapLocation: '[BuildRoot]\ClassLibrary.UnitTest\TestMapCdp.xml'
+    #         pipelineArtifactName: 'drop_build_main'
+    #         pipelineArtifactBuildUrl: '$(System.TaskDefinitionsUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)'
+    #         parserProperties: 'worker:VsTestVersion=V150;CodeCoverageType=Dynamic;worker:TestVar=$(RUN_PIPELINE_VARIABLE)'
+    #         cacheEnabled: false
+    #         scheduleBuildRequesterAlias: 'azbldrun'
