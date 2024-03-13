@@ -9,16 +9,15 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             if ($IsCoreCLR -and ($PSHOME -notlike "*Windows\System32\WindowsPowerShell\v1.0")) {
                 $ProductName = "PowerShell"
             }
-            $expectedUserPath = Join-Path -Path $HOME -ChildPath "Documents\$ProductName\Modules"
             $expectedSharedPath = Join-Path -Path $env:ProgramFiles -ChildPath "$ProductName\Modules"
         } else {
             $powershell = "$PSHOME/pwsh"
-            $expectedUserPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES")
             $expectedSharedPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES")
         }
         $pwshUserDir = Split-Path $PROFILE.CurrentUserCurrentHost
         if (!(Test-Path $pwshUserDir)) { New-Item -ItemType Directory -Path $pwshUserDir }
         $userConfigPath = Join-Path $pwshUserDir powershell.config.json
+        $expectedUserPath = Join-Path -Path $pwshUserDir -ChildPath "Modules"
 
         $userConfigExists = $false
         if (Test-Path $userConfigPath) {
@@ -70,26 +69,14 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $pathSeparator = [System.IO.Path]::PathSeparator
 
         $paths = $defaultModulePath.Replace("$pathSeparator$pathSeparator", "$pathSeparator") -split $pathSeparator
-
-        if ($IsWindows)
-        {
-            $expectedPaths = 3 # user, shared, pshome
-            $userPaths = [System.Environment]::GetEnvironmentVariable("PSModulePath", [System.EnvironmentVariableTarget]::User)
-            $expectedPaths += $userPaths ? $userPaths.Split($pathSeparator).Count : 0
-            $machinePaths = [System.Environment]::GetEnvironmentVariable("PSModulePath", [System.EnvironmentVariableTarget]::Machine)
-            $expectedPaths += $machinePaths ? $machinePaths.Split($pathSeparator).Count : 0
-
-            $paths.Count | Should -Be $expectedPaths
-        }
-        else
-        {
-            $paths.Count | Should -Be 3
-        }
+        $paths.Count | Should -Be 3
 
         $paths[0].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedUserPath
         $paths[1].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedSharedPath
         $paths[2].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedSystemPath
-        $defaultModulePath | Should -BeLike "*$expectedWindowsPowerShellPSHomePath*"
+        if ($IsWindows -and !$IsCoreCLR) {
+            $defaultModulePath | Should -BeLike "*$expectedWindowsPowerShellPSHomePath*"
+        }
     }
 
     It "Works with pshome module path derived from a different PowerShell instance" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
@@ -203,7 +190,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         try {
             $userConfig = '{ "PSModulePath": "' + "a$([System.IO.Path]::PathSeparator)b" + '"}'
             Set-Content -Path $userConfigPath -Value $userConfig -Force
-            $out = & $powershell -noprofile -command 'powershell.exe -noprofile -command `$env:PSModulePath'
+            $out = & $powershell -noprofile -command '$env:PSModulePath'
             $psModulePaths = $out.Split([System.IO.Path]::PathSeparator, [System.StringSplitOptions]::RemoveEmptyEntries)
             $psModulePaths | Should -Contain a
             $psModulePaths | Should -Contain b
