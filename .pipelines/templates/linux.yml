@@ -169,140 +169,320 @@ jobs:
         }
         else {
           Write-Host "pwshLinuxBuild.tar.gz found"
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild.tar.gz'
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild.tar.gz' -Verbose
         }
-      displayName: Copy pwshLinuxBuild.txt.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-    # - task: CopyFiles@2
-    #   displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-    #   inputs:
-    #     Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
-    #     TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild.tar.gz
-    #   retryCountOnTaskFailure: 2
+      displayName: Copy pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'deb') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        SourceFolder: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
-        Contents: '**'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild-meta
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta')) {
+          throw "pwshLinuxBuild-meta not found"
+        }
+        else {
+          Write-Host "pwshLinuxBuild-meta found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild-meta')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild-meta'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild-meta already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild-meta' -Recurse -Verbose
+        }
+      displayName: Copy pwshLinuxBuild-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'deb') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize.tar.gz
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz')) {
+          throw "pwshLinuxBuildMinSize.tar.gz not found"
+        }
+        else {
+          Write-Host "pwshLinuxBuildMinSize.tar.gz found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize.tar.gz' -Verbose
+        }
+      displayName: Copy pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'deb') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        SourceFolder: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize-meta'
-        Contents: '**'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize-meta
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize-meta')) {
+          throw "pwshLinuxBuildMinSize-meta not found"
+        }
+        else {
+          Write-Host "pwshLinuxBuildMinSize-meta found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize-meta')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize-meta'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize-meta already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize-meta' -Recurse -Verbose
+        }
+      displayName: Copy pwshLinuxBuild-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'deb') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32.tar.gz
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz')) {
+          throw "pwshLinuxBuildArm32.tar.gz not found"
+        }
+        else {
+          Write-Host "pwshLinuxBuildArm32.tar.gz found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32.tar.gz' -Verbose
+        }
+      displayName: Copy pwshLinuxBuildArm32.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'deb') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        SourceFolder: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32-meta'
-        Contents: '**'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32-meta
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32-meta')) {
+          throw "pwshLinuxBuildArm32-meta not found"
+        }
+        else {
+          Write-Host "pwshLinuxBuildArm32-meta found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32-meta')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32-meta'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32-meta already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32-meta' -Recurse -Verbose
+        }
+      displayName: Copy pwshLinuxBuild-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'deb') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64.tar.gz
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz')) {
+          throw "pwshLinuxBuildArm64.tar.gz not found"
+        }
+        else {
+          Write-Host "pwshLinuxBuildArm64.tar.gz found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64.tar.gz' -Verbose
+        }
+      displayName: Copy pwshLinuxBuildArm64.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'deb') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        SourceFolder: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64-meta'
-        Contents: '**'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64-meta
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64-meta')) {
+          throw "pwshLinuxBuildArm64-meta not found"
+        }
+        else {
+          Write-Host "pwshLinuxBuildArm64-meta found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64-meta')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64-meta'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64-meta already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64-meta' -Recurse -Verbose
+        }
+      displayName: Copy pwshLinuxBuildArm64-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'rpm') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        Contents: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64.tar.gz
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz')) {
+          throw "pwshMarinerBuildAmd64.tar.gz not found"
+        }
+        else {
+          Write-Host "pwshMarinerBuildAmd64.tar.gz found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64.tar.gz' -Verbose
+        }
+      displayName: Copy pwshMarinerBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'rpm') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        SourceFolder: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64-meta'
-        Contents: '**'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64-meta
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64-meta')) {
+          throw "pwshMarinerBuildAmd64-meta not found"
+        }
+        else {
+          Write-Host "pwshMarinerBuildAmd64-meta found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64-meta')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64-meta'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64-meta already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64-meta' -Recurse -Verbose
+        }
+      displayName: Copy pwshMarinerBuildAmd64-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'rpm') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        Contents: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64.tar.gz
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz')) {
+          throw "pwshMarinerBuildArm64.tar.gz not found"
+        }
+        else {
+          Write-Host "pwshMarinerBuildArm64.tar.gz found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64.tar.gz' -Verbose
+        }
+      displayName: Copy pwshMarinerBuildArm64.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'rpm') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        SourceFolder: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64-meta'
-        Contents: '**'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64-meta
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64-meta')) {
+          throw "pwshMarinerBuildArm64-meta not found"
+        }
+        else {
+          Write-Host "pwshMarinerBuildArm64-meta found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64-meta')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64-meta'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64-meta already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64-meta' -Recurse -Verbose
+        }
+      displayName: Copy pwshMarinerBuildArm64-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'alpine') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine.tar.gz
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz')) {
+          throw "pwshLinuxBuild.tar.gz not found"
+        }
+        else {
+          Write-Host "pwshLinuxBuild.tar.gz found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine.tar.gz' -Verbose
+        }
+      displayName: Copy pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'alpine') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        SourceFolder: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
-        Contents: '**'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine-meta
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta')) {
+          throw "pwshLinuxBuild-meta not found"
+        }
+        else {
+          Write-Host "pwshLinuxBuild-meta found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine-meta')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine-meta'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine-meta already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine-meta' -Recurse -Verbose
+        }
+      displayName: Copy pwshMarinerBuildArm64-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'alpine') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        Contents: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64.tar.gz
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz')) {
+          throw "pwshAlpineFxdBuildAmd64.tar.gz not found"
+        }
+        else {
+          Write-Host "pwshAlpineFxdBuildAmd64.tar.gz found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64.tar.gz' -Verbose
+        }
+      displayName: Copy pwshAlpineFxdBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'alpine') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        SourceFolder: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64-meta'
-        Contents: '**'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64-meta
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64-meta')) {
+          throw "pwshAlpineFxdBuildAmd64-meta not found"
+        }
+        else {
+          Write-Host "pwshAlpineFxdBuildAmd64-meta found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64-meta')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64-meta'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64-meta already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64-meta' -Recurse -Verbose
+        }
+      displayName: Copy pwshAlpineFxdBuildAmd64-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'fxdependent') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent.tar.gz
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz')) {
+          throw "pwshLinuxBuild.tar.gz not found"
+        }
+        else {
+          Write-Host "pwshLinuxBuild.tar.gz found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent.tar.gz' -Verbose
+        }
+      displayName: Copy pwshAlpineFxdBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
   - ${{ if eq(variables.build,'fxdependent') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        SourceFolder: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
-        Contents: '**'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent-meta
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta')) {
+          throw "pwshLinuxBuild-meta not found"
+        }
+        else {
+          Write-Host "pwshLinuxBuild-meta found"
+
+          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent-meta')) {
+            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent-meta'
+          }
+          else {
+            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent-meta already exists"
+          }
+
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent-meta' -Recurse -Verbose
+        }
+      displayName: Copy pwshAlpineFxdBuildAmd64-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT

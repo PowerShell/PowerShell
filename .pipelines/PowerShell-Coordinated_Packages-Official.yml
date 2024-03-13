@@ -366,11 +366,16 @@ extends:
           parameters:
             ReleaseTagVar: $(ReleaseTagVar)
         - powershell: |
-            $metadata = Get-Content '$(Build.SourcesDirectory)/tools/metadata.json' -Raw | ConvertFrom-Json
+            $metadata = Get-Content '$(Build.SourcesDirectory)/PowerShell/tools/metadata.json' -Raw | ConvertFrom-Json
             $LTS = $metadata.LTSRelease.Package
             @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
             Get-Content "$(Build.StagingDirectory)\release.json"
-            Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"
+
+            if (-not (Test-Path "$(ob_outputDirectory)\metadata")) {
+              New-Item -ItemType Directory -Path "$(ob_outputDirectory)\metadata"
+            }
+
+            Copy-Item -Path "$(Build.StagingDirectory)\release.json" -Destination "$(ob_outputDirectory)\metadata" -Force
           displayName: Create and upload release.json file to build artifact
           retryCountOnTaskFailure: 2
         - template: /.pipelines/templates/step/finalize.yml@self

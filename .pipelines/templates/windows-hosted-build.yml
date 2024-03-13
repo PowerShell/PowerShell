@@ -32,6 +32,8 @@ jobs:
   - group: DotNetPrivateBuildAccess
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
   steps:
   - checkout: self
     clean: true
