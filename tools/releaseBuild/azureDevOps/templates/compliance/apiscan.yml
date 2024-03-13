@@ -178,7 +178,6 @@ jobs:
         verbosityLevel: standard
         # write a status update every 5 minutes.  Default is 1 minute
         statusUpdateInterval: '00:05:00'
-        surrogateConfigurationFolder : $(surrogateFilePath)
       env:
         AzureServicesAuthConnectionString: RunAs=App;AppId=$(APIScanClient);TenantId=$(APIScanTenant);AppKey=$(APIScanSecret)
 
