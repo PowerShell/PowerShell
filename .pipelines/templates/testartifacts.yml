@@ -76,7 +76,7 @@ jobs:
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
   - pwsh: |
-      Import-Module $(PowerShellRoot)/build.psm1
+      Import-Module ${{ parameters.repoRoot }}/build.psm1
       function BuildTestPackage([string] $runtime)
       {
         Write-Verbose -Verbose "Starting to build package for $runtime"
