@@ -62,7 +62,7 @@ jobs:
   displayName: Build non-windows test artifacts
   condition: succeeded()
   pool:
-    type: windows
+    type: linux
   steps:
   - checkout: self
     clean: true
