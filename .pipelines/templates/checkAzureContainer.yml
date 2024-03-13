@@ -22,7 +22,18 @@ jobs:
       ReleaseTagVar: $(ReleaseTagVar)
       CreateJson: yes
       UseJson: no
-  - task: AzurePowerShell@4
+
+  # Needed as per FAQ here: https://eng.ms/docs/products/onebranch/build/troubleshootingfaqs
+  - task: PowerShell@2
+    displayName: 'Update Az.Accounts Module'
+    inputs:
+      targetType: 'inline'
+      script: |
+        Get-PackageProvider -Name NuGet -ForceBootstrap
+        Install-Module -Name Az.Accounts -Verbose -Force -AllowClobber
+        Uninstall-AzureRm -Verbose
+
+  - task: AzurePowerShell@5
     displayName: Check if blob exists and delete if specified
     inputs:
       azureSubscription: az-blob-cicd-infra
