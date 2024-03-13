@@ -32,6 +32,14 @@ parameters:
   displayName: URL to the blob having internal .NET SDK
   type: string
   default: ' '
+- name: ReleaseTagVar
+  displayName: Release Tag
+  type: string
+  default: 'fromBranch'
+- name: SKIP_SIGNING
+  displayName: Skip Signing
+  type: string
+  default: 'NO'
 
 resources:
   repositories:
@@ -79,6 +87,10 @@ variables:
   value: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
 - name: CDP_DEFINITION_BUILD_COUNT
   value: $[counter('', 0)]
+- name: ReleaseTagVar
+  value: ${{ parameters.ReleaseTagVar }}
+- name: SKIP_SIGNING
+  value: ${{ parameters.SKIP_SIGNING }}
 
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
