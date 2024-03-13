@@ -15,6 +15,7 @@ jobs:
     value: false
   - name: ob_sdl_codeSignValidation_enabled
     value: false
+
   displayName: Delete blob is exists
   pool:
     type: windows

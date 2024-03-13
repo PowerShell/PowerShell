@@ -8,7 +8,7 @@ jobs:
   displayName: Package ${{ parameters.buildName }}
   condition: succeeded()
   pool:
-    type: windows
+    type: linux
   variables:
   - name: runCodesignValidationInjection
     value: false

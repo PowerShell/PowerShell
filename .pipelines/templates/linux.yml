@@ -9,7 +9,7 @@ jobs:
   displayName: Build ${{ parameters.buildName }}
   condition: succeeded()
   pool:
-    type: windows
+    type: linux
   dependsOn: ${{ parameters.parentJob }}
   variables:
   - name: runCodesignValidationInjection

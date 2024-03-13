@@ -55,7 +55,8 @@ jobs:
       if ($env:BuildConfiguration -eq 'minSize') {
         $params['ForMinimalSize'] = $true
       }
-      tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols @params
+
+      $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols @params
     displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols zip'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
