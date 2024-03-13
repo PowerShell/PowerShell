@@ -3,25 +3,22 @@
 Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     BeforeAll {
-        if ($IsWindows)
-        {
+        if ($IsWindows) {
             $powershell = "$PSHOME\pwsh.exe"
             $ProductName = "WindowsPowerShell"
-            if ($IsCoreCLR -and ($PSHOME -notlike "*Windows\System32\WindowsPowerShell\v1.0"))
-            {
-                $ProductName =  "PowerShell"
+            if ($IsCoreCLR -and ($PSHOME -notlike "*Windows\System32\WindowsPowerShell\v1.0")) {
+                $ProductName = "PowerShell"
             }
             $expectedUserPath = Join-Path -Path $HOME -ChildPath "Documents\$ProductName\Modules"
             $expectedSharedPath = Join-Path -Path $env:ProgramFiles -ChildPath "$ProductName\Modules"
-            $userConfigPath = "~/Documents/powershell/powershell.config.json"
-        }
-        else
-        {
+        } else {
             $powershell = "$PSHOME/pwsh"
             $expectedUserPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES")
             $expectedSharedPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES")
-            $userConfigPath = "~/.config/powershell/powershell.config.json"
         }
+        $pwshUserDir = Split-Path $PROFILE.CurrentUserCurrentHost
+        if (!(Test-Path $pwshUserDir)) { New-Item -ItemType Directory -Path $pwshUserDir }
+        $userConfigPath = Join-Path $pwshUserDir powershell.config.json
 
         $userConfigExists = $false
         if (Test-Path $userConfigPath) {
@@ -200,6 +197,19 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $env:PSModulePath = $env:PSModulePath.Replace($expectedUserPath, $newUserPath).Replace($expectedSharedPath,"")
         $out = & $powershell -noprofile -command '$env:PSModulePath'
         $out.Split([System.IO.Path]::PathSeparator, [System.StringSplitOptions]::RemoveEmptyEntries) | Should -Not -BeLike $validation
+    }
+
+    It 'PSModulePath set in powershell.config.json allows for multiple values' -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
+        try {
+            $userConfig = '{ "PSModulePath": "' + "a$([System.IO.Path]::PathSeparator)b" + '"}'
+            Set-Content -Path $userConfigPath -Value $userConfig -Force
+            $out = & $powershell -noprofile -command 'powershell.exe -noprofile -command `$env:PSModulePath'
+            $psModulePaths = $out.Split([System.IO.Path]::PathSeparator, [System.StringSplitOptions]::RemoveEmptyEntries)
+            $psModulePaths | Should -Contain a
+            $psModulePaths | Should -Contain b
+        } finally {
+            Remove-Item -Path $userConfigPath -Force
+        }
     }
 }
 
