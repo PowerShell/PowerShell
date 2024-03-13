@@ -21,13 +21,13 @@ jobs:
     parameters:
       repoRoot: $(Build.SourcesDirectory)
   - pwsh: |
-      Import-Module ${{ parameters.repoRoot }}/build.psm1
+      Import-Module $(Build.SourcesDirectory)/build.psm1
       Start-PSBootstrap
     displayName: Bootstrap
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
   - pwsh: |
-      Import-Module ${{ parameters.repoRoot }}/build.psm1
+      Import-Module $(Build.SourcesDirectory)/build.psm1
       function BuildTestPackage([string] $runtime)
       {
         Write-Verbose -Verbose "Starting to build package for $runtime"
@@ -70,13 +70,13 @@ jobs:
     parameters:
       repoRoot: $(Build.SourcesDirectory)
   - pwsh: |
-      Import-Module ${{ parameters.repoRoot }}/build.psm1
+      Import-Module $(Build.SourcesDirectory)/build.psm1
       Start-PSBootstrap
     displayName: Bootstrap
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
   - pwsh: |
-      Import-Module ${{ parameters.repoRoot }}/build.psm1
+      Import-Module $(Build.SourcesDirectory)/build.psm1
       function BuildTestPackage([string] $runtime)
       {
         Write-Verbose -Verbose "Starting to build package for $runtime"
