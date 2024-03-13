@@ -50,6 +50,10 @@ function New-BuildInfoJson {
 
     Write-Host "##vso[artifact.upload containerfolder=BuildInfoJson;artifactname=BuildInfoJson]$resolvedPath"
 
+    if (-not (Test-Path $env:ob_outputDirectory)) {
+        $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory -Force -Verbose
+    }
+
     Copy-Item $resolvedPath -Destination $env:ob_outputDirectory -Force -Verbose
 }
 
