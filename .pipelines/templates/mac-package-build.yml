@@ -8,7 +8,10 @@ jobs:
   displayName: Package macOS ${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
-    type: windows
+    type: linux
+    isCustom: true
+    name: Azure Pipelines
+    vmImage: 'macOS-latest'
   variables:
   - name: HOMEBREW_NO_ANALYTICS
     value: 1
