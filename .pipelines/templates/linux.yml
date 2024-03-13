@@ -34,7 +34,9 @@ jobs:
       # create folder
       sudo mkdir /PowerShell
       # make the current user the owner
-      sudo chown $env:USER /PowerShell
+      $userName = whoami
+      Write-Verbose -Verbose "Current user: $userName"
+      sudo chown $userName /PowerShell
     displayName: 'Create /PowerShell'
   - template: /.pipelines/templates/cloneToOfficialPath.yml@self
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
