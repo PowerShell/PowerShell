@@ -70,70 +70,70 @@ jobs:
     displayName: 'Build'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
-  - template: Sbom.yml@ComplianceRepo
-    parameters:
-      BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
-      Build_Repository_Uri: $(Github_Build_Repository_Uri)
-      displayName: ${{ parameters.buildName }} SBOM
-      PackageName: PowerShell Linux
-      PackageVersion: $(Version)
-      sourceScanPath: '$(PowerShellRoot)/tools'
-  - ${{ if eq(variables.build,'rpm') }}:
-    - template: Sbom.yml@ComplianceRepo
-      parameters:
-        BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
-        Build_Repository_Uri: $(Github_Build_Repository_Uri)
-        displayName: Mariner x64 SBOM
-        PackageName: PowerShell Linux Framework Dependent
-        PackageVersion: $(Version)
-        sourceScanPath: '$(PowerShellRoot)/tools'
-  - ${{ if eq(variables.build,'rpm') }}:
-    - template: Sbom.yml@ComplianceRepo
-      parameters:
-        BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64'
-        Build_Repository_Uri: $(Github_Build_Repository_Uri)
-        displayName: Mariner arm64 SBOM
-        PackageName: PowerShell Linux Framework Dependent
-        PackageVersion: $(Version)
-        sourceScanPath: '$(PowerShellRoot)/tools'
-  - ${{ if eq(variables.build,'deb') }}:
-    - template: Sbom.yml@ComplianceRepo
-      parameters:
-        BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
-        Build_Repository_Uri: $(Github_Build_Repository_Uri)
-        displayName: MinSize SBOM
-        PackageName: PowerShell Linux Minimum Size
-        PackageVersion: $(Version)
-        sourceScanPath: '$(PowerShellRoot)/tools'
-  - ${{ if eq(variables.build,'deb') }}:
-    - template: Sbom.yml@ComplianceRepo
-      parameters:
-        BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
-        Build_Repository_Uri: $(Github_Build_Repository_Uri)
-        displayName: Arm32 SBOM
-        PackageName: PowerShell Linux Arm32
-        PackageVersion: $(Version)
-        sourceScanPath: '$(PowerShellRoot)/tools'
-  - ${{ if eq(variables.build,'deb') }}:
-    - template: Sbom.yml@ComplianceRepo
-      parameters:
-        BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
-        Build_Repository_Uri: $(Github_Build_Repository_Uri)
-        displayName: Arm64 SBOM
-        PackageName: PowerShell Linux Arm64
-        PackageVersion: $(Version)
-        sourceScanPath: '$(PowerShellRoot)/tools'
-  - ${{ if eq(variables.build,'alpine') }}:
-    - template: Sbom.yml@ComplianceRepo
-      parameters:
-        BuildDropPath: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64'
-        Build_Repository_Uri: $(Github_Build_Repository_Uri)
-        displayName: Alpine FXD SBOM
-        PackageName: PowerShell Alpine Framework Dependent AMD64
-        PackageVersion: $(Version)
-        sourceScanPath: '$(PowerShellRoot)/tools'
+  # - template: Sbom.yml@ComplianceRepo
+  #   parameters:
+  #     BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+  #     Build_Repository_Uri: $(Github_Build_Repository_Uri)
+  #     displayName: ${{ parameters.buildName }} SBOM
+  #     PackageName: PowerShell Linux
+  #     PackageVersion: $(Version)
+  #     sourceScanPath: '$(PowerShellRoot)/tools'
+  # - ${{ if eq(variables.build,'rpm') }}:
+  #   - template: Sbom.yml@ComplianceRepo
+  #     parameters:
+  #       BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+  #       Build_Repository_Uri: $(Github_Build_Repository_Uri)
+  #       displayName: Mariner x64 SBOM
+  #       PackageName: PowerShell Linux Framework Dependent
+  #       PackageVersion: $(Version)
+  #       sourceScanPath: '$(PowerShellRoot)/tools'
+  # - ${{ if eq(variables.build,'rpm') }}:
+  #   - template: Sbom.yml@ComplianceRepo
+  #     parameters:
+  #       BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64'
+  #       Build_Repository_Uri: $(Github_Build_Repository_Uri)
+  #       displayName: Mariner arm64 SBOM
+  #       PackageName: PowerShell Linux Framework Dependent
+  #       PackageVersion: $(Version)
+  #       sourceScanPath: '$(PowerShellRoot)/tools'
+  # - ${{ if eq(variables.build,'deb') }}:
+  #   - template: Sbom.yml@ComplianceRepo
+  #     parameters:
+  #       BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+  #       Build_Repository_Uri: $(Github_Build_Repository_Uri)
+  #       displayName: MinSize SBOM
+  #       PackageName: PowerShell Linux Minimum Size
+  #       PackageVersion: $(Version)
+  #       sourceScanPath: '$(PowerShellRoot)/tools'
+  # - ${{ if eq(variables.build,'deb') }}:
+  #   - template: Sbom.yml@ComplianceRepo
+  #     parameters:
+  #       BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+  #       Build_Repository_Uri: $(Github_Build_Repository_Uri)
+  #       displayName: Arm32 SBOM
+  #       PackageName: PowerShell Linux Arm32
+  #       PackageVersion: $(Version)
+  #       sourceScanPath: '$(PowerShellRoot)/tools'
+  # - ${{ if eq(variables.build,'deb') }}:
+  #   - template: Sbom.yml@ComplianceRepo
+  #     parameters:
+  #       BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+  #       Build_Repository_Uri: $(Github_Build_Repository_Uri)
+  #       displayName: Arm64 SBOM
+  #       PackageName: PowerShell Linux Arm64
+  #       PackageVersion: $(Version)
+  #       sourceScanPath: '$(PowerShellRoot)/tools'
+  # - ${{ if eq(variables.build,'alpine') }}:
+  #   - template: Sbom.yml@ComplianceRepo
+  #     parameters:
+  #       BuildDropPath: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64'
+  #       Build_Repository_Uri: $(Github_Build_Repository_Uri)
+  #       displayName: Alpine FXD SBOM
+  #       PackageName: PowerShell Alpine Framework Dependent AMD64
+  #       PackageVersion: $(Version)
+  #       sourceScanPath: '$(PowerShellRoot)/tools'
   - pwsh: |
-      Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+      Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuild' -Verbose
       Write-Verbose -Verbose "File permisions before compressing"
       Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
       tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz *
@@ -163,12 +163,21 @@ jobs:
         tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz *
       displayName: Compress pwshMarinerBuildArm64
   - ${{ if eq(variables.build,'deb') }}:
-    - task: CopyFiles@2
-      displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
-      inputs:
-        Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
-        TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild.tar.gz
-      retryCountOnTaskFailure: 2
+    - pwsh: |
+        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz')) {
+          throw "pwshLinuxBuild.tar.gz not found"
+        }
+        else {
+          Write-Host "pwshLinuxBuild.tar.gz found"
+          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild.tar.gz'
+        }
+      displayName: Copy pwshLinuxBuild.txt.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
+    # - task: CopyFiles@2
+    #   displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
+    #   inputs:
+    #     Contents: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
+    #     TargetFolder: $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild.tar.gz
+    #   retryCountOnTaskFailure: 2
   - ${{ if eq(variables.build,'deb') }}:
     - task: CopyFiles@2
       displayName: "Copy Files for 'PublishPipelineArtifact@1' publish task"
