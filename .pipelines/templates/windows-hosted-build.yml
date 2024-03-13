@@ -65,5 +65,10 @@ jobs:
       $vstsCommandString = "vso[artifact.upload containerfolder=results;artifactname=results]$packageName"
       Write-Host ("sending " + $vstsCommandString)
       Write-Host "##$vstsCommandString"
+
+      $packagePath = $env:ob_outputDirectory + "/results"
+      $null = New-Item -ItemType Directory -Path $packagePath -Force
+      Copy-Item -Path $packageName -Destination $packagePath -Force -Verbose
+
     displayName: Upload symbols package
   - template: /.pipelines/templates/step/finalize.yml@self
