@@ -30,7 +30,7 @@ jobs:
       targetType: 'inline'
       script: |
         Get-PackageProvider -Name NuGet -ForceBootstrap
-        Install-Module -Name Az.Accounts -Verbose -Force -AllowClobber
+        Install-Module -Name Az.Storage -Verbose -Force -AllowClobber
         Uninstall-AzureRm -Verbose
 
   - task: AzurePowerShell@5
