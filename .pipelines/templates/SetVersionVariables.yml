@@ -9,8 +9,8 @@ steps:
 - ${{ if eq(parameters['UseJson'],'yes') }}:
   - task: DownloadBuildArtifacts@0
     inputs:
-      artifactName: 'BuildInfoJson'
-      itemPattern: '**/*.json'
+      artifactName: 'drop_prep_DeleteBlob'
+      itemPattern: '*.json'
       downloadPath: '$(System.ArtifactsDirectory)'
     displayName: Download Build Info Json
 - powershell: |
