@@ -49,6 +49,8 @@ function New-BuildInfoJson {
     Write-Host -Object "##$vstsCommandString"
 
     Write-Host "##vso[artifact.upload containerfolder=BuildInfoJson;artifactname=BuildInfoJson]$resolvedPath"
+
+    Copy-Item $resolvedPath -Destination $env:ob_outputDirectory -Force -Verbose
 }
 
 # Script to set the release tag based on the branch name if it is not set or it is "fromBranch"

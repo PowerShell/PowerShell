@@ -10,13 +10,14 @@ jobs:
   - group: Azure Blob variable group
   - group: AzureBlobServiceConnection
   - name: ob_outputDirectory
-    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/BuildJson'
   displayName: Delete blob is exists
   pool:
     type: windows
   steps:
   - checkout: self
     clean: true
+
   - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
