@@ -657,4 +657,18 @@ Describe 'Base type has abstract properties' -Tags "CI" {
         $myFile.Name | Should -Be 'Hello'
         $myFile.Exists | Should -BeTrue
     }
+
+    It 'deriving from `FileSystemInfo` will fail when the abstract property `Exists` is not implemented' {
+        $script = [scriptblock]::Create('class WillFail : System.IO.FileSystemInfo { [string] $Name }')
+        $failure = $null
+        try {
+            & $script
+        } catch {
+            $failure = $_
+        }
+
+        $failure | Should -Not -BeNullOrEmpty
+        $failure.FullyQualifiedErrorId | Should -BeExactly "TypeCreationError"
+        $failure.Exception.Message | Should -BeLike "*'get_Exists'*"
+    }
 }
