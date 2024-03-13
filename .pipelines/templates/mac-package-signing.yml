@@ -22,6 +22,7 @@ jobs:
     value: compliance
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - group: AzureBlobServiceConnection
   steps:
   - checkout: self
     clean: true
@@ -29,8 +30,8 @@ jobs:
   - checkout: ComplianceRepo
     clean: true
     path: $(complianceRepoFolder)
-  - template: /tools/releaseBuild/azureDevOps/templates/shouldSign.yml@self
-  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+  - template: /.pipelines/templates/shouldSign.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
   - task: DownloadBuildArtifacts@0
@@ -65,7 +66,7 @@ jobs:
       useMinimatch: true
       shouldSign: $(SHOULD_SIGN)
       displayName: Sign pkg
-  - template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+  - template: /.pipelines/templates/upload-final-results.yml@self
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\macosPkgResults
       artifactFilter: "*${{ parameters.buildArchitecture }}.tar.gz"
@@ -78,7 +79,7 @@ jobs:
       Copy-Item -Path $targzPath -Destination $destination
     displayName: 'Extract and copy macOS artifacts for upload'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
-  - template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+  - template: /.pipelines/templates/upload-final-results.yml@self
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\azureMacOs
       artifactFilter: "*.pkg"
@@ -93,7 +94,7 @@ jobs:
     displayName: 'AzureBlob File Copy - unsigned'
     inputs:
       SourcePath: '$(Build.StagingDirectory)\macos-unsigned\*'
-      azureSubscription: '$(AzureFileCopySubscription)'
+      azureSubscription: az-blob-cicd-infra
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
@@ -103,10 +104,10 @@ jobs:
     displayName: 'AzureBlob File Copy - signed'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\azureMacOs\*'
-      azureSubscription: '$(AzureFileCopySubscription)'
+      azureSubscription: az-blob-cicd-infra
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
     retryCountOnTaskFailure: 2
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self
+  - template: /.pipelines/templates/step/finalize.yml@self

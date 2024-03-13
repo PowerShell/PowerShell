@@ -21,7 +21,7 @@ jobs:
   steps:
   - checkout: self
     clean: true
-  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
   - pwsh: |
@@ -30,7 +30,7 @@ jobs:
       # make the current user the owner
       sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
     displayName: 'Create $(Agent.TempDirectory)/PowerShell'
-  - template: /tools/releaseBuild/azureDevOps/templates/cloneToOfficialPath.yml@self
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
     parameters:
       nativePathRoot: '$(Agent.TempDirectory)'
   - pwsh: |
@@ -38,7 +38,7 @@ jobs:
     displayName: 'Bootstrap VM'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml@self
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(PowerShellRoot)
   - pwsh: |
@@ -50,4 +50,4 @@ jobs:
     displayName: 'Build'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self
+  - template: /.pipelines/templates/step/finalize.yml@self

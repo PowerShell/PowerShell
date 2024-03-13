@@ -6,8 +6,10 @@ parameters:
   msi: yes
   msix: yes
   pdb: no
+variables:
+- group: AzureBlobServiceConnection
 steps:
-- template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+- template: /.pipelines/templates/upload-final-results.yml@self
   parameters:
     artifactPath: $(System.ArtifactsDirectory)\signed
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}*.zip
@@ -15,7 +17,7 @@ steps:
   displayName: 'upload signed zip to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip'
-    azureSubscription: '$(AzureFileCopySubscription)'
+    azureSubscription: az-blob-cicd-infra
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
@@ -26,14 +28,14 @@ steps:
   displayName: 'upload signed min-size package (for Guest Config) to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}-gc.zip'
-    azureSubscription: '$(AzureFileCopySubscription)'
+    azureSubscription: az-blob-cicd-infra
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)-gc'
     resourceGroup: '$(StorageResourceGroup)'
   condition: and(eq('${{ parameters.architecture }}', 'x64'), succeeded())
   retryCountOnTaskFailure: 2
-- template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+- template: /.pipelines/templates/upload-final-results.yml@self
   parameters:
     artifactPath: $(System.ArtifactsDirectory)\signedPackages
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.exe
@@ -42,14 +44,14 @@ steps:
   displayName: 'upload signed exe to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(System.ArtifactsDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.exe'
-    azureSubscription: '$(AzureFileCopySubscription)'
+    azureSubscription: az-blob-cicd-infra
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)-private'
     resourceGroup: '$(StorageResourceGroup)'
   condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
   retryCountOnTaskFailure: 2
-- template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+- template: /.pipelines/templates/upload-final-results.yml@self
   parameters:
     artifactPath: $(Build.StagingDirectory)\signedPackages
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msix
@@ -58,7 +60,7 @@ steps:
   displayName: 'upload signed msix to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msix'
-    azureSubscription: '$(AzureFileCopySubscription)'
+    azureSubscription: az-blob-cicd-infra
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)-private'

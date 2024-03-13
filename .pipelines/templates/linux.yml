@@ -27,7 +27,7 @@ jobs:
     clean: true
   - checkout: ComplianceRepo
     clean: true
-  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
   - pwsh: |
@@ -36,8 +36,8 @@ jobs:
       # make the current user the owner
       sudo chown $env:USER /PowerShell
     displayName: 'Create /PowerShell'
-  - template: /tools/releaseBuild/azureDevOps/templates/cloneToOfficialPath.yml@self
-  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml@self
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(PowerShellRoot)
   - powershell: |

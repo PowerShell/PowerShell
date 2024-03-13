@@ -29,10 +29,10 @@ jobs:
   - checkout: ComplianceRepo
     clean: true
     path: $(complianceRepoFolder)
-  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-  - template: /tools/releaseBuild/azureDevOps/templates/shouldSign.yml@self
+  - template: /.pipelines/templates/shouldSign.yml@self
   - task: DownloadBuildArtifacts@0
     inputs:
       artifactName: 'macosBinResults'
@@ -81,7 +81,7 @@ jobs:
       foreach ($z in $zipPath) { Expand-Archive -Path $z -DestinationPath $destination }
     displayName: 'Extract and copy macOS artifacts for upload'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
-  - template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+  - template: /.pipelines/templates/upload-final-results.yml@self
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\azureMacOs_${{ parameters.buildArchitecture }}
       artifactFilter: "*"
@@ -93,4 +93,4 @@ jobs:
         scanPath: $(System.ArtifactsDirectory)\azureMacOs_${{ parameters.buildArchitecture }}
         pattern: |
           **\*
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self
+  - template: /.pipelines/templates/step/finalize.yml@self

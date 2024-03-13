@@ -35,11 +35,11 @@ jobs:
   steps:
   - checkout: self
     clean: true
-  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-  - template: /tools/releaseBuild/azureDevOps/templates/cloneToOfficialPath.yml@self
-  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml@self
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(PowerShellRoot)
   - pwsh: |
@@ -65,4 +65,4 @@ jobs:
       Write-Host ("sending " + $vstsCommandString)
       Write-Host "##$vstsCommandString"
     displayName: Upload symbols package
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self
+  - template: /.pipelines/templates/step/finalize.yml@self

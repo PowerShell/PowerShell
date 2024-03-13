@@ -33,12 +33,13 @@ jobs:
   - group: DotNetPrivateBuildAccess
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - group: AzureBlobServiceConnection
   steps:
   - checkout: self
     clean: true
   - checkout: ComplianceRepo
     clean: true
-  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
   - powershell: |
@@ -97,13 +98,13 @@ jobs:
     inputs:
       archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-musl-noopt-fxdependent.tar.gz'
       destinationFolder: '$(alpineFxdPath)'
-  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-  - template: /tools/releaseBuild/azureDevOps/templates/shouldSign.yml@self
+  - template: /.pipelines/templates/shouldSign.yml@self
   - task: NuGetToolInstaller@1
     displayName: 'Install NuGet.exe'
-  - template: /tools/releaseBuild/azureDevOps/templates/nuget-pkg-sbom.yml@self
+  - template: /.pipelines/templates/nuget-pkg-sbom.yml@self
     parameters:
       PackageVersion: $(Version)
       PackagePath: $(PackagePath)
@@ -115,7 +116,7 @@ jobs:
       Get-ChildItem $(winFxdWinDesktopPath)
       Get-ChildItem $(alpineFxdPath)
     displayName: Capture fxd folders
-  - template: /tools/releaseBuild/azureDevOps/templates/global-tool-pkg-sbom.yml@self
+  - template: /.pipelines/templates/global-tool-pkg-sbom.yml@self
     parameters:
       PackageVersion: $(Version)
       LinuxBinPath: $(linuxFxdPath)
@@ -147,7 +148,7 @@ jobs:
       Get-ChildItem -Recurse "$(System.ArtifactsDirectory)\signed\*.nupkg" -Verbose | ForEach-Object {  Start-NativeExecution -sb { nuget.exe verify -All $_.FullName } }
     displayName: Verify all packages are signed
     condition: eq(variables['SHOULD_SIGN'], 'true')
-  - template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+  - template: /.pipelines/templates/upload-final-results.yml@self
     parameters:
       artifactPath: '$(System.ArtifactsDirectory)\signed'
   - pwsh: |
@@ -200,7 +201,7 @@ jobs:
       Write-Verbose -Verbose -Message $fileContent
       Copy-Item -Path "$packagePath\SHA512SUMS" -Destination '$(System.ArtifactsDirectory)\signed\globaltool\' -verbose
     displayName: Generate checksum for global tools
-  - template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+  - template: /.pipelines/templates/upload-final-results.yml@self
     parameters:
       artifactPath: '$(System.ArtifactsDirectory)\checksum'
       artifactFilter: SHA512SUMS
@@ -208,7 +209,7 @@ jobs:
     displayName: 'Upload NuGet packages to Azure'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\signed\*'
-      azureSubscription: '$(AzureFileCopySubscription)'
+      azureSubscription: az-blob-cicd-infra
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)-nuget'

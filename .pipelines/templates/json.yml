@@ -11,6 +11,7 @@ jobs:
     value: none
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - group: AzureBlobServiceConnection
   displayName: Create Json for Blob
   dependsOn: ${{ parameters.parentJobs }}
   condition: succeeded()
@@ -19,7 +20,7 @@ jobs:
   steps:
   - checkout: self
     clean: true
-  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
       CreateJson: yes
@@ -27,7 +28,7 @@ jobs:
     displayName: 'upload daily-build-info JSON file to Azure - ${{ parameters.architecture }}'
     inputs:
       SourcePath: '$(BuildInfoPath)'
-      azureSubscription: '$(AzureFileCopySubscription)'
+      azureSubscription: az-blob-cicd-infra
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: 'BuildInfo'
@@ -35,8 +36,8 @@ jobs:
   - task: AzureCLI@1
     displayName: 'Make blob public'
     inputs:
-      azureSubscription: '$(AzureFileCopySubscription)'
+      azureSubscription: az-blob-cicd-infra
       scriptLocation: inlineScript
       inlineScript: 'az storage container set-permission --account-name $(StorageAccount) --name $(azureVersion) --public-access blob'
     condition: and(succeeded(), eq(variables['IS_DAILY'], 'true'))
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self
+  - template: /.pipelines/templates/step/finalize.yml@self

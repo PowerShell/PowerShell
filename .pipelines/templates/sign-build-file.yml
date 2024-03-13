@@ -18,10 +18,10 @@ steps:
 - checkout: self
   clean: true
   path: $(repoFolder)
-- template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+- template: /.pipelines/templates/SetVersionVariables.yml@self
   parameters:
     ReleaseTagVar: $(ReleaseTagVar)
-- template: /tools/releaseBuild/azureDevOps/templates/cloneToOfficialPath.yml@self
+- template: /.pipelines/templates/cloneToOfficialPath.yml@self
 - pwsh: |
     $zipFileFilter = '$(unsignedBuildArtifactName)'
     $zipFileFilter = $zipFileFilter.Replace('**/', '')
@@ -78,7 +78,7 @@ steps:
     Get-ChildItem -Path "$expandedFolderPath/pwsh" | Select-Object -Property 'unixmode', 'size', 'name'
   displayName: Expand tar.gz packages
   condition: eq(variables['ArtifactPlatform'], 'linux')
-- template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml@self
+- template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
   parameters:
     repoRoot: $(PowerShellRoot)
 - pwsh: |
@@ -90,7 +90,7 @@ steps:
 - checkout: ComplianceRepo
   clean: true
   path: $(complianceRepoFolder)
-- template: /tools/releaseBuild/azureDevOps/templates/shouldSign.yml@self
+- template: /.pipelines/templates/shouldSign.yml@self
 - pwsh: |
     $fullSymbolsFolder = '$(BinPath)'
     Write-Verbose -Verbose "fullSymbolsFolder == $fullSymbolsFolder"
@@ -254,4 +254,4 @@ steps:
   displayName: Upload signed zip files to artifacts
   condition: eq(variables['ArtifactPlatform'], 'windows')
   retryCountOnTaskFailure: 2
-- template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self
+- template: /.pipelines/templates/step/finalize.yml@self

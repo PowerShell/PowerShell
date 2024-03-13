@@ -17,7 +17,7 @@ jobs:
   steps:
   - checkout: self
     clean: true
-  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml@self
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(Build.SourcesDirectory)
   - pwsh: |
@@ -66,7 +66,7 @@ jobs:
   steps:
   - checkout: self
     clean: true
-  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml@self
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(Build.SourcesDirectory)
   - pwsh: |
@@ -103,4 +103,4 @@ jobs:
       BuildTestPackage -runtime linux-musl-x64
     displayName: Build test package and upload
     retryCountOnTaskFailure: 1
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self
+  - template: /.pipelines/templates/step/finalize.yml@self

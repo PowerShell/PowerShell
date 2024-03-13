@@ -28,15 +28,16 @@ jobs:
   - group: DotNetPrivateBuildAccess
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - group: AzureBlobServiceConnection
   steps:
   - checkout: self
     clean: true
   - checkout: ComplianceRepo
     clean: true
-  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-  - template: /tools/releaseBuild/azureDevOps/templates/shouldSign.yml@self
+  - template: /.pipelines/templates/shouldSign.yml@self
   - pwsh: |
       $pkgFilter = '$(Architecture)'
       if ($env:BuildConfiguration -eq 'minSize') { $pkgFilter += '-gc' }
@@ -49,7 +50,7 @@ jobs:
       artifactName: 'results'
       itemPattern: '**/*$(PkgFilter).zip'
       downloadPath: '$(System.ArtifactsDirectory)\Symbols'
-  - template: /tools/releaseBuild/azureDevOps/templates/cloneToOfficialPath.yml@self
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
   - pwsh: |
       $zipPathString = '$(System.ArtifactsDirectory)\Symbols\results\*$(PkgFilter).zip'
       Write-Verbose -Verbose "Zip Path: $zipPathString"
@@ -249,7 +250,7 @@ jobs:
       displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
       inputs:
         SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-$(version)-win-${{ parameters.architecture }}.msi'
-        azureSubscription: '$(AzureFileCopySubscription)'
+        azureSubscription: az-blob-cicd-infra
         Destination: AzureBlob
         storage: '$(StorageAccount)'
         ContainerName: '$(AzureVersion)'
@@ -304,4 +305,4 @@ jobs:
       }
     displayName: Clean up local Clone
     condition: always()
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self
+  - template: /.pipelines/templates/step/finalize.yml@self

@@ -18,7 +18,7 @@ jobs:
   steps:
   - checkout: self
     clean: true
-  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
   - task: DownloadBuildArtifacts@0
@@ -32,15 +32,15 @@ jobs:
       dir "$(System.ArtifactsDirectory)\*" -Recurse
     displayName: 'Capture artifacts directory'
     continueOnError: true
-  - template: /tools/releaseBuild/azureDevOps/templates/expand-compliance.yml@self
+  - template: /.pipelines/templates/expand-compliance.yml@self
     parameters:
       architecture: fxdependent
       version: $(version)
-  - template: /tools/releaseBuild/azureDevOps/templates/expand-compliance.yml@self
+  - template: /.pipelines/templates/expand-compliance.yml@self
     parameters:
       architecture: x86
       version: $(version)
-  - template: /tools/releaseBuild/azureDevOps/templates/expand-compliance.yml@self
+  - template: /.pipelines/templates/expand-compliance.yml@self
     parameters:
       architecture: x64
       version: $(version)

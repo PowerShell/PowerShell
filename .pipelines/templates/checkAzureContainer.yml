@@ -25,7 +25,7 @@ jobs:
 
   # Needed as per FAQ here: https://eng.ms/docs/products/onebranch/build/troubleshootingfaqs
   - task: PowerShell@2
-    displayName: 'Update Az.Accounts Module'
+    displayName: 'Update Az.Storage Module'
     inputs:
       targetType: 'inline'
       script: |

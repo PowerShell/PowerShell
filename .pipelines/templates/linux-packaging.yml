@@ -189,7 +189,7 @@ jobs:
     clean: true
   - checkout: ComplianceRepo
     clean: true
-  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
   - pwsh: |
@@ -198,8 +198,8 @@ jobs:
       # make the current user the owner
       sudo chown $env:USER /PowerShell
     displayName: 'Create /PowerShell'
-  - template: /tools/releaseBuild/azureDevOps/templates/cloneToOfficialPath.yml@self
-  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml@self
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(PowerShellRoot)
   - powershell: |
@@ -249,7 +249,7 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
     retryCountOnTaskFailure: 2
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self
+  - template: /.pipelines/templates/step/finalize.yml@self
 - job: upload_${{ parameters.buildName }}
   displayName: ${{ parameters.uploadDisplayName }} ${{ parameters.buildName }}
   dependsOn: pkg_${{ parameters.buildName }}
@@ -268,15 +268,16 @@ jobs:
     value: true
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - group: AzureBlobServiceConnection
   steps:
   - checkout: self
     clean: true
   - checkout: ComplianceRepo
     clean: true
-  - template: /tools/releaseBuild/azureDevOps/templates/SetVersionVariables.yml@self
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
-  - template: /tools/releaseBuild/azureDevOps/templates/shouldSign.yml@self
+  - template: /.pipelines/templates/shouldSign.yml@self
   - task: DownloadBuildArtifacts@0
     displayName: 'Download Deb Artifacts'
     inputs:
@@ -362,25 +363,25 @@ jobs:
       displayName: 'Upload to Azure - DEB and tar.gz'
       inputs:
         SourcePath: '$(System.ArtifactsDirectory)\finished\release\*'
-        azureSubscription: '$(AzureFileCopySubscription)'
+        azureSubscription: az-blob-cicd-infra
         Destination: AzureBlob
         storage: '$(StorageAccount)'
         ContainerName: '$(AzureVersion)'
       retryCountOnTaskFailure: 2
-  - template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+  - template: /.pipelines/templates/upload-final-results.yml@self
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\finished\release
   - task: AzureFileCopy@4
     displayName: 'Upload to Azure - min-size package for Guest Config'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\finished\minSize\*'
-      azureSubscription: '$(AzureFileCopySubscription)'
+      azureSubscription: az-blob-cicd-infra
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)-gc'
     condition: and(eq(variables['buildName'], 'DEB'), succeeded())
     retryCountOnTaskFailure: 2
-  - template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+  - template: /.pipelines/templates/upload-final-results.yml@self
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\finished\minSize
       condition: and(eq(variables['buildName'], 'DEB'), succeeded())
@@ -388,7 +389,7 @@ jobs:
     displayName: 'Upload to Azure - RPM - Unsigned'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\rpm\release\*'
-      azureSubscription: '$(AzureFileCopySubscription)'
+      azureSubscription: az-blob-cicd-infra
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
@@ -398,18 +399,18 @@ jobs:
     displayName: 'Upload to Azure - RPM - Signed'
     inputs:
       SourcePath: '$(Build.StagingDirectory)\signedPackages\release\*'
-      azureSubscription: '$(AzureFileCopySubscription)'
+      azureSubscription: az-blob-cicd-infra
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
     condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
     retryCountOnTaskFailure: 2
-  - template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+  - template: /.pipelines/templates/upload-final-results.yml@self
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\rpm\release
       condition: and(and(succeeded(), ne(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
-  - template: /tools/releaseBuild/azureDevOps/templates/upload-final-results.yml@self
+  - template: /.pipelines/templates/upload-final-results.yml@self
     parameters:
       artifactPath: '$(Build.StagingDirectory)\signedPackages\release'
       condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml@self
+  - template: /.pipelines/templates/step/finalize.yml@self
