@@ -11,6 +11,10 @@ jobs:
   - group: AzureBlobServiceConnection
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/BuildJson'
+  - name: ob_sdl_sbom_enabled
+    value: false
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
   displayName: Delete blob is exists
   pool:
     type: windows
