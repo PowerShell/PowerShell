@@ -104,9 +104,9 @@ extends:
         compiled:
           enabled: false
       credscan:
-          enabled: true
-          scanFolder:  $(Build.SourcesDirectory)
-          suppressionsFile: $(Build.SourcesDirectory)\PowerShell\tools\credScan\suppress.json
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\PowerShell\tools\credScan\suppress.json
       asyncSdl: # https://aka.ms/obpipelines/asyncsdl
         enabled: true
         forStages: [prep, macos, linux, windows, SignFiles, test_and_release_artifacts]
