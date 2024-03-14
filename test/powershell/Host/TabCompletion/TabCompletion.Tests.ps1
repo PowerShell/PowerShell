@@ -663,6 +663,16 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyDataVar'
     }
 
+    It 'Should complete global variable without scope' {
+        $res = TabExpansion2 -inputScript '$Global:MyTestVar = "Hello";$MyTestV'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$MyTestVar'
+    }
+
+    It 'Should complete previously assigned variable in using: scope' {
+        $res = TabExpansion2 -inputScript '$MyTestVar = "Hello";$Using:MyTestv'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '$Using:MyTestVar'
+    }
+
     it 'Should complete "Value" parameter value in "Where-Object" for Enum property with no input' {
         $res = TabExpansion2 -inputScript 'Get-Command | where-Object CommandType -eq '
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Alias
