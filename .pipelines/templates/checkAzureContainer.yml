@@ -3,10 +3,6 @@
 jobs:
 - job: DeleteBlob
   variables:
-  - name: runCodesignValidationInjection
-    value: false
-  - name: NugetSecurityAnalysisWarningLevel
-    value: none
   - group: Azure Blob variable group
   - group: AzureBlobServiceConnection
   - name: ob_outputDirectory
@@ -32,6 +28,17 @@ jobs:
       ReleaseTagVar: $(ReleaseTagVar)
       CreateJson: yes
       UseJson: no
+
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+
+  - pwsh: |
+      if (-not (Test-Path -Path $(Build.SourcesDirectory)\.pipelines\tsaoptions.json)) {
+        Get-ChildItem -Path $(Build.SourcesDirectory)\.pipelines -Recurse
+        throw 'tsaoptions.json not found'
+      }
+    displayName: 'Check tsaoptions.json'
 
   # Needed as per FAQ here: https://eng.ms/docs/products/onebranch/build/troubleshootingfaqs
   - task: PowerShell@2
