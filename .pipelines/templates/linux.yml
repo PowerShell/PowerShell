@@ -25,7 +25,7 @@ jobs:
     - name: ob_sdl_tsa_configFile
       value: $(Build.SourcesDirectory)\.pipelines\tsaoptions.json
     - name: ob_sdl_binskim_enabled
-    value: true
+      value: true
   steps:
   - checkout: self
     clean: true
