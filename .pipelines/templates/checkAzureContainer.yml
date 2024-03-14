@@ -35,7 +35,7 @@ jobs:
 
   - pwsh: |
       if (-not (Test-Path -Path $(Build.SourcesDirectory)\.pipelines\tsaoptions.json)) {
-        Get-ChildItem -Path $(Build.SourcesDirectory)\.pipelines -Recurse
+        Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse
         throw 'tsaoptions.json not found'
       }
     displayName: 'Check tsaoptions.json'
