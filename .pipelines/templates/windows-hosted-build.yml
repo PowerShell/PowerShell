@@ -36,8 +36,6 @@ jobs:
     value: false
   - name: ob_sdl_tsa_configFile
     value: $(Build.SourcesDirectory)\PowerShell\.pipelines\tsaoptions.json
-  - name: ob_sdl_apiscan_enabled
-    value: true
   - name: ob_sdl_binskim_enabled
     value: true
   steps:
