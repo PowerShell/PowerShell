@@ -118,6 +118,7 @@ extends:
           enabled: false
         apiscan:
           enabled: false
+        tsaOptionsFile: $(Build.SourcesDirectory)\PowerShell\.pipelines\tsaoptions.json
 
     stages:
     - stage: prep
