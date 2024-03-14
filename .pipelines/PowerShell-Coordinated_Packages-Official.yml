@@ -21,25 +21,25 @@ pr:
     - release*
 
 parameters:
-- name: ForceAzureBlobDelete
-  displayName: Delete Azure Blob
-  type: string
-  values:
-  - true
-  - false
-  default: false
-- name: InternalSDKBlobURL
-  displayName: URL to the blob having internal .NET SDK
-  type: string
-  default: ' '
-- name: ReleaseTagVar
-  displayName: Release Tag
-  type: string
-  default: 'fromBranch'
-- name: SKIP_SIGNING
-  displayName: Skip Signing
-  type: string
-  default: 'NO'
+  - name: ForceAzureBlobDelete
+    displayName: Delete Azure Blob
+    type: string
+    values:
+    - true
+    - false
+    default: false
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    displayName: Release Tag
+    type: string
+    default: 'fromBranch'
+  - name: SKIP_SIGNING
+    displayName: Skip Signing
+    type: string
+    default: 'NO'
 
 resources:
   repositories:
@@ -54,48 +54,67 @@ resources:
     ref: refs/heads/main
 
 variables:
-- name: PS_RELEASE_BUILD
-  value: 1
-- name: DOTNET_CLI_TELEMETRY_OPTOUT
-  value: 1
-- name: POWERSHELL_TELEMETRY_OPTOUT
-  value: 1
-- name: nugetMultiFeedWarnLevel
-  value: none
-- name: NugetSecurityAnalysisWarningLevel
-  value: none
-- name: skipNugetSecurityAnalysis
-  value: true
-- name: branchCounterKey
-  value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
-- name: branchCounter
-  value: $[counter(variables['branchCounterKey'], 1)]
-- name: ForceAzureBlobDelete
-  value: ${{ parameters.ForceAzureBlobDelete }}
-- name: Github_Build_Repository_Uri
-  value: https://github.com/powershell/powershell
-- name: SBOMGenerator_Formats
-  value: spdx:2.2
-- name: BUILDSECMON_OPT_IN
-  value: true
-- group: PoolNames
-- name: __DOTNET_RUNTIME_FEED
-  value: ${{ parameters.InternalSDKBlobURL }}
-- name: LinuxContainerImage
-  value: onebranch.azurecr.io/linux/ubuntu-2004:latest
-- name: WindowsContainerImage
-  value: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
-- name: CDP_DEFINITION_BUILD_COUNT
-  value: $[counter('', 0)]
-- name: ReleaseTagVar
-  value: ${{ parameters.ReleaseTagVar }}
-- name: SKIP_SIGNING
-  value: ${{ parameters.SKIP_SIGNING }}
+  - name: PS_RELEASE_BUILD
+    value: 1
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+  - name: nugetMultiFeedWarnLevel
+    value: none
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: skipNugetSecurityAnalysis
+    value: true
+  - name: branchCounterKey
+    value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
+  - name: branchCounter
+    value: $[counter(variables['branchCounterKey'], 1)]
+  - name: ForceAzureBlobDelete
+    value: ${{ parameters.ForceAzureBlobDelete }}
+  - name: Github_Build_Repository_Uri
+    value: https://github.com/powershell/powershell
+  - name: SBOMGenerator_Formats
+    value: spdx:2.2
+  - name: BUILDSECMON_OPT_IN
+    value: true
+  - group: PoolNames
+  - name: __DOTNET_RUNTIME_FEED
+    value: ${{ parameters.InternalSDKBlobURL }}
+  - name: LinuxContainerImage
+    value: onebranch.azurecr.io/linux/ubuntu-2004:latest
+  - name: WindowsContainerImage
+    value: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)]
+  - name: ReleaseTagVar
+    value: ${{ parameters.ReleaseTagVar }}
+  - name: SKIP_SIGNING
+    value: ${{ parameters.SKIP_SIGNING }}
 
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
   parameters:
     customTags: 'ES365AIMigrationTooling'
+    globalSdl:
+      disableLegacyManifest: true
+      sbom:
+        enabled: false
+      codeql:
+        compiled:
+          enabled: false
+      asyncSdl: # https://aka.ms/obpipelines/asyncsdl
+        enabled: true
+        forStages: [prep, macos, linux, windows, SignFiles, test_and_release_artifacts]
+        credscan:
+          enabled: true
+          scanFolder:  $(Build.SourcesDirectory)
+          suppressionsFile: $(Build.SourcesDirectory)\tools\credScan\suppress.json
+        binskim:
+          enabled: false
+        apiscan:
+          enabled: false
+
     stages:
     - stage: prep
       jobs:

@@ -22,9 +22,14 @@ jobs:
   - group: DotNetPrivateBuildAccess
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_binskim_enabled
+    value: true
   steps:
   - checkout: self
     clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)

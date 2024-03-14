@@ -15,9 +15,13 @@ steps:
     Get-ChildItem "$(Pipeline.Workspace)\*" -Recurse
   displayName: 'Capture Downloaded Artifacts'
   continueOnError: true
+
 - checkout: self
   clean: true
   path: $(repoFolder)
+  env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
 - template: /.pipelines/templates/SetVersionVariables.yml@self
   parameters:
     ReleaseTagVar: $(ReleaseTagVar)

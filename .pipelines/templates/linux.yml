@@ -12,26 +12,37 @@ jobs:
     type: linux
   dependsOn: ${{ parameters.parentJob }}
   variables:
-  - name: runCodesignValidationInjection
-    value: false
-  - name: build
-    value: ${{ parameters.buildName }}
-  - name: NugetSecurityAnalysisWarningLevel
-    value: none
-  - group: ESRP
-  - group: DotNetPrivateBuildAccess
-  - name: ob_outputDirectory
-    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-  - name: ob_sdl_tsa_configFile
-    value: $(Build.SourcesDirectory)\.pipelines\tsaoptions.json
+    - name: runCodesignValidationInjection
+      value: false
+    - name: build
+      value: ${{ parameters.buildName }}
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - group: ESRP
+    - group: DotNetPrivateBuildAccess
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\.pipelines\tsaoptions.json
+    - name: ob_sdl_binskim_enabled
+    value: true
   steps:
   - checkout: self
     clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - checkout: ComplianceRepo
     clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - pwsh: |
       # create folder
       sudo mkdir /PowerShell
@@ -40,16 +51,28 @@ jobs:
       Write-Verbose -Verbose "Current user: $userName"
       sudo chown $userName /PowerShell
     displayName: 'Create /PowerShell'
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(PowerShellRoot)
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - powershell: |
       import-module "$env:POWERSHELLROOT/build.psm1"
       Sync-PSTags -AddRemoteIfMissing
     displayName: SyncTags
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - powershell: |
       Import-Module "$env:POWERSHELLROOT/build.psm1"
       Start-PSBootstrap -Package
@@ -58,6 +81,8 @@ jobs:
     workingDirectory: $(PowerShellRoot)
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - pwsh: |
       try {
         Import-Module "$env:POWERSHELLROOT/build.psm1"

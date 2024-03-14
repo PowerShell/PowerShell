@@ -36,16 +36,32 @@ jobs:
     value: false
   - name: ob_sdl_tsa_configFile
     value: $(Build.SourcesDirectory)\.pipelines\tsaoptions.json
+  - name: ob_sdl_apiscan_enabled
+    value: true
+  - name: ob_sdl_binskim_enabled
+    value: true
   steps:
   - checkout: self
     clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(PowerShellRoot)
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - pwsh: |
       $runtime = switch ($env:Architecture)
         {
