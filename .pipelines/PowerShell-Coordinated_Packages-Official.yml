@@ -155,7 +155,7 @@ extends:
       dependsOn: ['prep']
       jobs:
       - job: build_windows
-        displayName: Build Windows - ${{ parameters.Architecture }} ${{ parameters.BuildConfiguration }}
+        displayName: Build Windows - $(Architecture)-$(BuildConfiguration)
         condition: succeeded()
         dependsOn: ${{ parameters.parentJob }}
         pool:
