@@ -103,6 +103,10 @@ extends:
       codeql:
         compiled:
           enabled: false
+      credscan:
+          enabled: true
+          scanFolder:  $(Build.SourcesDirectory)
+          suppressionsFile: $(Build.SourcesDirectory)\tools\credScan\suppress.json
       asyncSdl: # https://aka.ms/obpipelines/asyncsdl
         enabled: true
         forStages: [prep, macos, linux, windows, SignFiles, test_and_release_artifacts]
