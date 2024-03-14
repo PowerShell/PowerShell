@@ -99,7 +99,8 @@ extends:
     globalSdl:
       disableLegacyManifest: true
       sbom:
-        enabled: false
+        enabled: true
+        packageName: Microsoft.PowerShell
       codeql:
         compiled:
           enabled: false
