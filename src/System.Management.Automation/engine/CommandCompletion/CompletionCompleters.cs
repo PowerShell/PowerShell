@@ -346,7 +346,8 @@ namespace System.Management.Automation
                         }
 
                         _ = modulesWithCommand.Add(commandInfo.ModuleName);
-                        if (commandInfo.CommandMetadata.CommandType is not null)
+                        if ((commandInfo.CommandType != CommandTypes.Alias && commandInfo.CommandMetadata.CommandType is not null)
+                            || (commandInfo.CommandType == CommandTypes.Alias && commandInfo.Definition is not null))
                         {
                             _ = importedModules.Add(commandInfo.ModuleName);
                         }

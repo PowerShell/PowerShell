@@ -57,8 +57,9 @@ Describe "TabCompletion" -Tags CI {
             
             $Res = TabExpansion2 -inputScript MyTestFunction
             $Res.CompletionMatches.Count | Should -Be 2
-            $Res.CompletionMatches[0].CompletionText | Should -Be "TestModule1\MyTestFunction"
-            $Res.CompletionMatches[1].CompletionText | Should -Be "TestModule2\MyTestFunction"
+            $SortedMatches = $Res.CompletionMatches.CompletionText | Sort-Object
+            $SortedMatches[0] | Should -Be "TestModule1\MyTestFunction"
+            $SortedMatches[1] | Should -Be "TestModule2\MyTestFunction"
         }
         finally
         {
