@@ -176,95 +176,97 @@ extends:
           value: compliance
         - name: ob_outputDirectory
           value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+        - name: ob_sdl_tsa_configFile
+          value: $(Build.SourcesDirectory)\PowerShell\.pipelines\tsaoptions.json
         strategy:
           matrix:
             linux-x64:
               runtime: linux-x64
-              unsignedBuildArtifactContainer: pwshLinuxBuild.tar.gz
+              unsignedBuildArtifactContainer: drop_linux_build_deb
               unsignedBuildArtifactName: pwshLinuxBuild.tar.gz
               signedBuildArtifactName: pwshLinuxBuild.tar.gz
               signedArtifactContainer: authenticode-signed
             linux-x64-Alpine:
               runtime: linux-x64-Alpine
-              unsignedBuildArtifactContainer: pwshLinuxBuildAlpine.tar.gz
+              unsignedBuildArtifactContainer: drop_linux_build_alpine
               unsignedBuildArtifactName: pwshLinuxBuild.tar.gz
               signedBuildArtifactName: pwshLinuxBuildAlpine.tar.gz
               signedArtifactContainer: authenticode-signed
             linux-x64-Alpine-Fxdependent:
               runtime: linux-x64-Alpine-Fxdependent
-              unsignedBuildArtifactContainer: pwshAlpineFxdBuildAmd64.tar.gz
+              unsignedBuildArtifactContainer: drop_linux_build_alpine
               unsignedBuildArtifactName: pwshAlpineFxdBuildAmd64.tar.gz
               signedBuildArtifactName: pwshAlpineFxdBuildAmd64.tar.gz
               signedArtifactContainer: authenticode-signed
             linux-arm32:
               runtime: linux-arm32
-              unsignedBuildArtifactContainer: pwshLinuxBuildArm32.tar.gz
+              unsignedBuildArtifactContainer: drop_linux_build_deb
               unsignedBuildArtifactName: pwshLinuxBuildArm32.tar.gz
               signedBuildArtifactName: pwshLinuxBuildArm32.tar.gz
               signedArtifactContainer: authenticode-signed
             linux-arm64:
               runtime: linux-arm64
-              unsignedBuildArtifactContainer: pwshLinuxBuildArm64.tar.gz
+              unsignedBuildArtifactContainer: drop_linux_build_deb
               unsignedBuildArtifactName: pwshLinuxBuildArm64.tar.gz
               signedBuildArtifactName: pwshLinuxBuildArm64.tar.gz
               signedArtifactContainer: authenticode-signed
             linux-fxd:
               runtime: linux-fxd
-              unsignedBuildArtifactContainer: pwshLinuxBuildFxdependent.tar.gz
+              unsignedBuildArtifactContainer: drop_linux_build_fxdependent
               unsignedBuildArtifactName: pwshLinuxBuild.tar.gz
               signedBuildArtifactName: pwshLinuxBuildFxdependent.tar.gz
               signedArtifactContainer: authenticode-signed
             linux-mariner:
               runtime: linux-mariner
-              unsignedBuildArtifactContainer: pwshMarinerBuildAmd64.tar.gz
+              unsignedBuildArtifactContainer: drop_linux_build_rpm
               unsignedBuildArtifactName: pwshMarinerBuildAmd64.tar.gz
               signedBuildArtifactName: pwshMarinerBuildAmd64.tar.gz
               signedArtifactContainer: authenticode-signed
             linux-arm64-mariner:
               runtime: linux-arm64-mariner
-              unsignedBuildArtifactContainer: pwshMarinerBuildArm64.tar.gz
+              unsignedBuildArtifactContainer: drop_linux_build_rpm
               unsignedBuildArtifactName: pwshMarinerBuildArm64.tar.gz
               signedBuildArtifactName: pwshMarinerBuildArm64.tar.gz
               signedArtifactContainer: authenticode-signed
             linux-minsize:
               runtime: linux-minsize
-              unsignedBuildArtifactContainer: pwshLinuxBuildMinSize.tar.gz
+              unsignedBuildArtifactContainer: drop_linux_build_deb
               unsignedBuildArtifactName: pwshLinuxBuildMinSize.tar.gz
               signedBuildArtifactName: pwshLinuxBuildMinSize.tar.gz
               signedArtifactContainer: authenticode-signed
             win-x64:
               runtime: win-x64
-              unsignedBuildArtifactContainer: results
+              unsignedBuildArtifactContainer: drop_windows_build_windows_x64
               unsignedBuildArtifactName: '**/*-symbols-win-x64.zip'
               signedBuildArtifactName: '-symbols-win-x64-signed.zip'
               signedArtifactContainer: results
             win-x86:
               runtime: win-x86
-              unsignedBuildArtifactContainer: results
+              unsignedBuildArtifactContainer: drop_windows_build_windows_x86
               unsignedBuildArtifactName: '**/*-symbols-win-x86.zip'
               signedBuildArtifactName: '-symbols-win-x86-signed.zip'
               signedArtifactContainer: results
             win-arm64:
               runtime: win-arm64
-              unsignedBuildArtifactContainer: results
+              unsignedBuildArtifactContainer: drop_windows_build_windows_arm64
               unsignedBuildArtifactName: '**/*-symbols-win-arm64.zip'
               signedBuildArtifactName: '-symbols-win-arm64-signed.zip'
               signedArtifactContainer: results
             win-x64-gc:
               runtime: win-x64-gc
-              unsignedBuildArtifactContainer: results
+              unsignedBuildArtifactContainer: drop_windows_build_windows_minSize
               unsignedBuildArtifactName: '**/*-symbols-win-x64-gc.zip'
               signedBuildArtifactName: '-symbols-win-x64-gc-signed.zip'
               signedArtifactContainer: results
             win-fxdependent:
               runtime: win-fxdependent
-              unsignedBuildArtifactContainer: results
+              unsignedBuildArtifactContainer: drop_windows_build_windows_fxdepedent
               unsignedBuildArtifactName: '**/*-symbols-win-fxdependent.zip'
               signedBuildArtifactName: '-symbols-win-fxdependent-signed.zip'
               signedArtifactContainer: results
             win-fxdependentWinDesktop:
               runtime: win-fxdependentWinDesktop
-              unsignedBuildArtifactContainer: results
+              unsignedBuildArtifactContainer: drop_windows_build_windows_fxdependentWinDesktop
               unsignedBuildArtifactName: '**/*-symbols-win-fxdependentWinDesktop.zip'
               signedBuildArtifactName: '-symbols-win-fxdependentWinDesktop-signed.zip'
               signedArtifactContainer: results

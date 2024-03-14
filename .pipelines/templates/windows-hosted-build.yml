@@ -34,6 +34,8 @@ jobs:
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_codeSignValidation_enabled
     value: false
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.pipelines\tsaoptions.json
   steps:
   - checkout: self
     clean: true
