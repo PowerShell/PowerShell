@@ -157,7 +157,6 @@ extends:
       - job: build_windows
         displayName: Build Windows - $(Architecture)-$(BuildConfiguration)
         condition: succeeded()
-        dependsOn: ${{ parameters.parentJob }}
         pool:
           type: windows
         variables:
