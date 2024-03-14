@@ -5233,11 +5233,19 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    var varInfo = findVariablesVisitor.VariableInfoTable[varName];
-                    var varType = varInfo.LastDeclaredConstraint ?? varInfo.LastAssignedType;
-                    var toolTip = varType is null
-                        ? varName
-                        : StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(varType, dropNamespaces: true), varName);
+                    VariableInfo varInfo = findVariablesVisitor.VariableInfoTable[varName];
+                    PSTypeName varType = varInfo.LastDeclaredConstraint ?? varInfo.LastAssignedType;
+                    string toolTip;
+                    if (varType is null)
+                    {
+                        toolTip = varName;
+                    }
+                    else
+                    {
+                        toolTip = varType.Type is not null
+                            ? StringUtil.Format("[{0}]${1}", ToStringCodeMethods.Type(varType.Type, dropNamespaces: true), varName)
+                            : varType.Name;
+                    }
 
                     var completionText = !tokenAtCursorUsedBraces && varName.IndexOfAny(s_charactersRequiringQuotes) == -1
                         ? prefix + varName
@@ -5450,8 +5458,8 @@ namespace System.Management.Automation
 
         private sealed class VariableInfo
         {
-            internal Type LastDeclaredConstraint;
-            internal Type LastAssignedType;
+            internal PSTypeName LastDeclaredConstraint;
+            internal PSTypeName LastAssignedType;
         }
 
         private sealed class FindVariablesVisitor : AstVisitor
@@ -5463,34 +5471,34 @@ namespace System.Management.Automation
             internal int StopSearchOffset;
             internal TypeInferenceContext Context;
 
-            private static Type GetInferredVarTypeFromAst(Ast ast)
+            private static PSTypeName GetInferredVarTypeFromAst(Ast ast)
             {
-                Type type;
+                PSTypeName type;
                 switch (ast)
                 {
                     case ConstantExpressionAst constant:
-                        type = constant.StaticType;
+                        type = new PSTypeName(constant.StaticType);
                         break;
 
                     case ExpandableStringExpressionAst:
-                        type = typeof(string);
+                        type = new PSTypeName(typeof(string));
                         break;
 
                     case ConvertExpressionAst convertExpression:
-                        type = convertExpression.StaticType;
+                        type = new PSTypeName(convertExpression.Type.TypeName);
                         break;
 
                     case HashtableAst:
-                        type = typeof(Hashtable);
+                        type = new PSTypeName(typeof(Hashtable));
                         break;
 
                     case ArrayExpressionAst:
                     case ArrayLiteralAst:
-                        type = typeof(object[]);
+                        type = new PSTypeName(typeof(object[]));
                         break;
 
                     case ScriptBlockExpressionAst:
-                        type = typeof(ScriptBlock);
+                        type = new PSTypeName(typeof(ScriptBlock));
                         break;
 
                     default:
@@ -5501,10 +5509,9 @@ namespace System.Management.Automation
                 return type;
             }
 
-            private void SaveVariableInfo(string variableName, Type variableType, bool isConstraint)
+            private void SaveVariableInfo(string variableName, PSTypeName variableType, bool isConstraint)
             {
-                VariableInfo varInfo;
-                if (VariableInfoTable.TryGetValue(variableName, out varInfo))
+                if (VariableInfoTable.TryGetValue(variableName, out VariableInfo varInfo))
                 {
                     if (isConstraint)
                     {
@@ -5551,7 +5558,7 @@ namespace System.Management.Automation
                             return AstVisitAction.Continue;
                         }
 
-                        SaveVariableInfo(variableExpression.VariablePath.UserPath, convertExpression.StaticType, isConstraint: true);
+                        SaveVariableInfo(variableExpression.VariablePath.UserPath, new PSTypeName(convertExpression.Type.TypeName), isConstraint: true);
                     }
                 }
                 else if (assignmentStatementAst.Left is VariableExpressionAst variableExpression)
@@ -5561,7 +5568,7 @@ namespace System.Management.Automation
                         return AstVisitAction.Continue;
                     }
 
-                    Type lastAssignedType;
+                    PSTypeName lastAssignedType;
                     if (assignmentStatementAst.Right is CommandExpressionAst commandExpression)
                     {
                         lastAssignedType = GetInferredVarTypeFromAst(commandExpression.Expression);
@@ -5594,7 +5601,7 @@ namespace System.Management.Automation
                         var nameValue = variableName.ConstantValue as string;
                         if (nameValue is not null)
                         {
-                            Type variableType;
+                            PSTypeName variableType;
                             if (bindingResult.BoundParameters.TryGetValue("Value", out ParameterBindingResult variableValue))
                             {
                                 variableType = GetInferredVarTypeFromAst(variableValue.Value);
@@ -5619,7 +5626,7 @@ namespace System.Management.Automation
                             var varName = outVarBind.ConstantValue as string;
                             if (varName is not null)
                             {
-                                SaveVariableInfo(varName, typeof(ArrayList), isConstraint: false);
+                                SaveVariableInfo(varName, new PSTypeName(typeof(ArrayList)), isConstraint: false);
                             }
                         }
                     }
@@ -5634,9 +5641,9 @@ namespace System.Management.Automation
                                 if (varName is not null)
                                 {
                                     var inferredTypes = AstTypeInference.InferTypeOf(commandAst, Context, TypeInferenceRuntimePermissions.AllowSafeEval);
-                                    Type varType = inferredTypes.Count == 0
+                                    PSTypeName varType = inferredTypes.Count == 0
                                         ? null
-                                        : inferredTypes[0].Type;
+                                        : inferredTypes[0];
                                     SaveVariableInfo(varName, varType, isConstraint: false);
                                 }
                             }
@@ -5660,7 +5667,7 @@ namespace System.Management.Automation
                     return AstVisitAction.Continue;
                 }
 
-                SaveVariableInfo(variableExpression.VariablePath.UserPath, parameterAst.StaticType, isConstraint: true);
+                SaveVariableInfo(variableExpression.VariablePath.UserPath, new PSTypeName(parameterAst.StaticType), isConstraint: true);
 
                 return AstVisitAction.Continue;
             }
@@ -5746,6 +5753,35 @@ namespace System.Management.Automation
             }
 
             return result;
+        }
+
+        internal static PSTypeName GetLastDeclaredTypeConstraint(VariableExpressionAst variableAst, TypeInferenceContext typeInferenceContext)
+        {
+            Ast parent = variableAst.Parent;
+            var findVariablesVisitor = new FindVariablesVisitor()
+            {
+                CompletionVariableAst = variableAst,
+                StopSearchOffset = variableAst.Extent.StartOffset,
+                Context = typeInferenceContext
+            };
+            while (parent != null)
+            {
+                if (parent is IParameterMetadataProvider)
+                {
+                    findVariablesVisitor.Top = parent;
+                    parent.Visit(findVariablesVisitor);
+                }
+
+                if (findVariablesVisitor.VariableInfoTable.TryGetValue(variableAst.VariablePath.UserPath, out VariableInfo varInfo)
+                    && varInfo.LastDeclaredConstraint is not null)
+                {
+                    return varInfo.LastDeclaredConstraint;
+                }
+
+                parent = parent.Parent;
+            }
+
+            return null;
         }
 
         #endregion Variables
