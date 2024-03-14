@@ -6,9 +6,6 @@ parameters:
   CreateJson: 'no'
   UseJson: 'yes'
 
-env:
-  ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
-
 steps:
 - ${{ if eq(parameters['UseJson'],'yes') }}:
   - task: DownloadBuildArtifacts@0
@@ -17,6 +14,9 @@ steps:
       itemPattern: '*.json'
       downloadPath: '$(System.ArtifactsDirectory)'
     displayName: Download Build Info Json
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
 - powershell: |
     $path = "./build.psm1"
     if($env:REPOROOT){
@@ -44,6 +44,9 @@ steps:
       Write-Verbose -Verbose "repo not found"
     }
   displayName: 'Set repo Root'
+  env:
+    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
 - powershell: |
     $createJson = ("${{ parameters.CreateJson }}" -ne "no")
     $releaseTag = & "$env:REPOROOT/tools/releaseBuild/setReleaseTag.ps1" -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
@@ -56,7 +59,12 @@ steps:
     Write-Host ("sending " + $vstsCommandString)
     Write-Host "##$vstsCommandString"
   displayName: 'Set ${{ parameters.ReleaseTagVarName }} and other version Variables'
+  env:
+    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
 - powershell: |
     Get-ChildItem -Path env:
   displayName: Capture environment
   condition: succeededOrFailed()
+  env:
+    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
