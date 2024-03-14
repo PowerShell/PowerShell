@@ -52,9 +52,7 @@ jobs:
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - template: /.pipelines/templates/cploneToOfficialPath.yml@self
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
 
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
