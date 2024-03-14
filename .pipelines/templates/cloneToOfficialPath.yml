@@ -2,6 +2,7 @@
 # Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
 parameters:
   nativePathRoot: ''
+
 steps:
 - powershell: |
     $dirSeparatorChar = [system.io.path]::DirectorySeparatorChar
@@ -16,3 +17,5 @@ steps:
     git clone --quiet $env:REPOROOT $nativePath
   displayName: Clone PowerShell Repo to /PowerShell
   errorActionPreference: silentlycontinue
+  env:
+    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase

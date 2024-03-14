@@ -5,6 +5,10 @@ parameters:
   ReleaseTagVarName: ReleaseTagVar
   CreateJson: 'no'
   UseJson: 'yes'
+
+env:
+  ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
 steps:
 - ${{ if eq(parameters['UseJson'],'yes') }}:
   - task: DownloadBuildArtifacts@0

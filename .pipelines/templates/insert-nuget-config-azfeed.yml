@@ -17,6 +17,8 @@ steps:
   condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
   env:
     NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
+    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
 - pwsh: |
     $configPath = "${env:NugetConfigDir}/nuget.config"
     Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
@@ -30,6 +32,4 @@ steps:
   condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
   env:
     NugetConfigDir: ${{ parameters.repoRoot }}
-- task: nuget-security-analysis@0
-  displayName: 'Run Secure Supply Chain analysis'
-  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''), ne(variables['AzDevOpsFeed'], ''))
+    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
