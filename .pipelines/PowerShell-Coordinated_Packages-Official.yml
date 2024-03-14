@@ -177,7 +177,7 @@ extends:
         - name: ob_outputDirectory
           value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
         - name: ob_sdl_tsa_configFile
-          value: $(Build.SourcesDirectory)\PowerShell\.pipelines\tsaoptions.json
+          value: $(Build.SourcesDirectory)\.pipelines\tsaoptions.json
         strategy:
           matrix:
             linux-x64:
