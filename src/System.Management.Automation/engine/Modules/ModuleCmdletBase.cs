@@ -1047,9 +1047,8 @@ namespace Microsoft.PowerShell.Commands
                             PSModuleInfo module = CreateModuleInfoForGetModule(resolvedModulePath, refresh);
                             if (module != null)
                             {
-                                if (!modules.Contains(resolvedModulePath))
+                                if (modules.Add(resolvedModulePath))
                                 {
-                                    modules.Add(resolvedModulePath);
                                     yield return module;
                                 }
                             }
@@ -1078,9 +1077,8 @@ namespace Microsoft.PowerShell.Commands
                                         foundModule = true;
                                         // We need to list all versions of the module.
                                         string subModulePath = Path.GetDirectoryName(file);
-                                        if (!modules.Contains(subModulePath))
+                                        if (modules.Add(subModulePath))
                                         {
-                                            modules.Add(subModulePath);
                                             yield return module;
                                         }
                                     }

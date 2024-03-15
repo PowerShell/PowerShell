@@ -510,6 +510,10 @@ dotnet_diagnostic.CA1846.severity = warning
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847
 dotnet_diagnostic.CA1847.severity = warning
 
+# CA1868: Unnecessary call to 'Contains' for sets
+# https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1868
+dotnet_diagnostic.CA1868.severity = warning
+
 # CA2000: Dispose objects before losing scope
 # https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000
 dotnet_diagnostic.CA2000.severity = none

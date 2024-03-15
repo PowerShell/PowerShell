@@ -49,6 +49,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter NoEnumerate { get; set; }
 
+        /// <summary>
+        /// Gets or sets the switch to control how DateTime values are to be parsed as a dotnet object.
+        /// </summary>
+        [Parameter]
+        public JsonDateKind DateKind { get; set; } = JsonDateKind.Default;
+
         #endregion parameters
 
         #region overrides
@@ -113,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
         private bool ConvertFromJsonHelper(string input)
         {
             ErrorRecord error = null;
-            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, Depth, out error);
+            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, Depth, DateKind, out error);
 
             if (error != null)
             {

@@ -110,6 +110,12 @@ string2=string2
         ) {
             param ( $UICulture, $ExpectedString )
 
+            if ($UICulture -eq 'no-NL' -and (Test-IsWinServer2012R2))
+            {
+                Set-ItResult -Skipped -Because 'no-NL culture is not available on Windows Server 2012 R2'
+                return
+            }
+
             [System.Globalization.CultureInfo]::CurrentUICulture = $UICulture
 
             $data = Import-LocalizedData -UICulture $UICulture
@@ -122,6 +128,12 @@ string2=string2
             @{ UICulture = 'no-NL'; ExpectedString = 'en-US' }
         ) {
             param ( $UICulture, $ExpectedString )
+
+            if ($UICulture -eq 'no-NL' -and (Test-IsWinServer2012R2))
+            {
+                Set-ItResult -Skipped -Because 'no-NL culture is not available on Windows Server 2012 R2'
+                return
+            }
 
             [System.Globalization.CultureInfo]::CurrentUICulture = $UICulture
 

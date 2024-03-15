@@ -8,6 +8,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Runtime.InteropServices;
 
@@ -91,9 +92,8 @@ namespace System.Management.Automation.Security
             string messageToWrite = message;
 
             // Augment the log message with current script information from the script debugger, if available.
-            context ??= System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
             bool debuggerAvailable = context is not null &&
-                                     context._debugger is not null &&
                                      context._debugger is ScriptDebugger;
 
             if (debuggerAvailable)
@@ -108,10 +108,9 @@ namespace System.Management.Automation.Security
             PSEtwLog.LogWDACAuditEvent(title, messageToWrite, fqid);
 
             // We drop into the debugger only if requested and we are running in the interactive host session runspace (Id == 1).
-            if (debuggerAvailable &&
-                dropIntoDebugger is true && 
+            if (debuggerAvailable && dropIntoDebugger &&
                 context._debugger.DebugMode.HasFlag(DebugModes.LocalScript) &&
-                System.Management.Automation.Runspaces.Runspace.DefaultRunspace.Id == 1 &&
+                Runspace.DefaultRunspace?.Id == 1 &&
                 context.DebugPreferenceVariable.HasFlag(ActionPreference.Break) &&
                 context.InternalHost?.UI is not null)
             {

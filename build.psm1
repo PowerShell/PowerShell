@@ -893,8 +893,8 @@ function New-PSOptions {
         [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis', '')]
         [string]$Configuration,
 
-        [ValidateSet("net8.0")]
-        [string]$Framework = "net8.0",
+        [ValidateSet("net9.0")]
+        [string]$Framework = "net9.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -2214,9 +2214,9 @@ function Start-PSBootstrap {
                 }
             } elseif ($environment.IsMacOS) {
                 if ($environment.UsingHomebrew) {
-                    $PackageManager = "brew"
+                    $baseCommand = "brew install --quiet"
                 } elseif ($environment.UsingMacports) {
-                    $PackageManager = "$sudo port"
+                    $baseCommand = "$sudo port -q install"
                 }
 
                 # wget for downloading dotnet
@@ -2227,7 +2227,7 @@ function Start-PSBootstrap {
 
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
-                Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
+                Start-NativeExecution ([ScriptBlock]::Create("$baseCommand $Deps")) -IgnoreExitcode
             } elseif ($environment.IsLinux -and $environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'build-base', 'git', 'curl', 'wget'
 
@@ -2238,6 +2238,7 @@ function Start-PSBootstrap {
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
             if ($Package) {
+                Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
                 Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.12.0"
                 Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.11.0"
                 Install-GlobalGem -Sudo $sudo -GemName "ronn" -GemVersion "0.7.3"
@@ -3503,7 +3504,7 @@ function Clear-NativeDependencies
     $filesToDeleteWinDesktop = @()
 
     $deps = Get-Content "$PublishFolder/pwsh.deps.json" -Raw | ConvertFrom-Json -Depth 20
-    $targetRuntime = ".NETCoreApp,Version=v8.0/$($script:Options.Runtime)"
+    $targetRuntime = ".NETCoreApp,Version=v9.0/$($script:Options.Runtime)"
 
     $runtimePackNetCore = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.NETCore.App.Runtime*'
     $runtimePackWinDesktop = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.WindowsDesktop.App.Runtime*'

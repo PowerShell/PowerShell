@@ -177,8 +177,8 @@ function Get-CGRegistrations {
 
     $registrationChanged = $false
 
-    $dotnetTargetName = 'net8.0'
-    $dotnetTargetNameWin7 = 'net8.0-windows8.0'
+    $dotnetTargetName = 'net9.0'
+    $dotnetTargetNameWin7 = 'net9.0-windows8.0'
     $unixProjectName = 'powershell-unix'
     $windowsProjectName = 'powershell-win-core'
     $actualRuntime = $Runtime
