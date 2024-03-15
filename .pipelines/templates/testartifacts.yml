@@ -10,6 +10,8 @@ jobs:
   - group: DotNetPrivateBuildAccess
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.pipelines\tsaoptions.json
   displayName: Build windows test artifacts
   condition: succeeded()
   pool:

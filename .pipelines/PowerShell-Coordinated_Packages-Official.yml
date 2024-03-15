@@ -155,7 +155,7 @@ extends:
       dependsOn: ['prep']
       jobs:
       - job: build_windows
-        displayName: Build Windows - $(Architecture)-$(BuildConfiguration)
+        displayName: Build Windows -
         condition: succeeded()
         pool:
           type: windows
