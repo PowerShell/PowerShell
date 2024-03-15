@@ -171,8 +171,6 @@ extends:
           value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
         - name: ob_sdl_codeSignValidation_enabled
           value: false
-        - name: ob_sdl_tsa_configFile
-          value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
         - name: ob_sdl_binskim_enabled
           value: true
 
