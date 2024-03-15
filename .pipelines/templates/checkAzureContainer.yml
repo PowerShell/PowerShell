@@ -12,7 +12,7 @@ jobs:
   - name: ob_sdl_codeSignValidation_enabled
     value: false
   - name: ob_sdl_tsa_configFile
-    value: $(Build.SourcesDirectory)\PowerShell\.pipelines\tsaoptions.json
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
 
   displayName: Delete blob is exists
   pool:
@@ -34,7 +34,7 @@ jobs:
       repoRoot: $(PowerShellRoot)
 
   - pwsh: |
-      if (-not (Test-Path -Path $(Build.SourcesDirectory)\PowerShell\.pipelines\tsaoptions.json)) {
+      if (-not (Test-Path -Path $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json)) {
         Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse
         throw 'tsaoptions.json not found'
       }

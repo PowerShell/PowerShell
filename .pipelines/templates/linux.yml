@@ -23,7 +23,7 @@ jobs:
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
     - name: ob_sdl_tsa_configFile
-      value: $(Build.SourcesDirectory)\PowerShell\.pipelines\tsaoptions.json
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
     - name: ob_sdl_binskim_enabled
       value: true
   steps:

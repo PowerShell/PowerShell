@@ -119,7 +119,7 @@ extends:
           enabled: false
         apiscan:
           enabled: false
-        tsaOptionsFile: $(Build.SourcesDirectory)\PowerShell\.pipelines\tsaoptions.json
+        tsaOptionsFile: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
 
     stages:
     - stage: prep
@@ -172,7 +172,7 @@ extends:
         - name: ob_sdl_codeSignValidation_enabled
           value: false
         - name: ob_sdl_tsa_configFile
-          value: $(Build.SourcesDirectory)\PowerShell\.pipelines\tsaoptions.json
+          value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
         - name: ob_sdl_binskim_enabled
           value: true
 
@@ -247,7 +247,7 @@ extends:
     #     - name: ob_outputDirectory
     #       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
     #     - name: ob_sdl_tsa_configFile
-    #       value: $(Build.SourcesDirectory)\PowerShell\.pipelines\tsaoptions.json
+    #       value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
     #     strategy:
     #       matrix:
     #         linux-x64:
