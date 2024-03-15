@@ -42,6 +42,13 @@ jobs:
       }
     displayName: 'Check tsaoptions.json'
 
+  - pwsh: |
+      if (-not (Test-Path -Path $(Build.SourcesDirectory)\PowerShell\tools\credScan\suppress.json)) {
+        Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse
+        throw 'suppress.json not found'
+      }
+    displayName: 'Check suppress.json'
+
   # Needed as per FAQ here: https://eng.ms/docs/products/onebranch/build/troubleshootingfaqs
   - task: PowerShell@2
     displayName: 'Update Az.Storage Module'
