@@ -48,7 +48,7 @@ steps:
     $buildWithSymbolsPath = New-Item -ItemType Directory -Path $(ob_outputDirectory)/Symbols_$(Architecture) -Force
 
     Start-PSBootstrap -Package
-    $null = New-Item -ItemType Directory -Path $outputBuildPath -Force -Verbose
+    $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
     Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath @params
 
     Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
