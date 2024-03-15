@@ -25,6 +25,14 @@ steps:
   parameters:
     repoRoot: $(PowerShellRoot)
 
+- task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
+  env:
+    ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+  inputs:
+    Enabled: true
+    AnalyzeInPipeline: true
+    Language: csharp
+
 - pwsh: |
     $runtime = switch ($env:Architecture)
       {
@@ -55,6 +63,12 @@ steps:
   displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols folder'
   env:
     __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+    ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+
+- task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
+  condition: always()
+  env:
+    ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
 - template: /.pipelines/templates/prepare-obp-signing.yml@self
 

@@ -96,7 +96,6 @@ steps:
     }
     $null = New-Item -ItemType Directory -Path $filesToSignDirectory -Force -Verbose
 
-    $null = New-Item -ItemType Directory -Path $signedFilesDirectory -Force -Verbose
     $missingSignatures | ForEach-Object {
       $pathWithoutLeaf = Split-Path $_
       $relativePath = $pathWithoutLeaf.replace($BuildPath,'')
