@@ -417,7 +417,7 @@ namespace Microsoft.PowerShell
             else
             {
                 sb.Append(StatusDescription);
-            }   
+            }
 
             int emptyPadLength = barWidth - rawUI.LengthInBufferCells(sb.ToString()) - secRemainLength;
             if (emptyPadLength > 0)
@@ -437,7 +437,7 @@ namespace Microsoft.PowerShell
 
                 if (barLength < rawUI.LengthInBufferCells(sb.ToString()))
                 {
-                    sb.Insert(barLength + PSStyle.Instance.Reverse.Length, PSStyle.Instance.ReverseOff);
+                    sb.Insert(barLength, PSStyle.Instance.ReverseOff);
                 }
             }
             else
