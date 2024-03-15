@@ -1451,7 +1451,8 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It 'Should infer output from function without OutputType attribute' {
-        $res = [AstTypeInference]::InferTypeOf( { function MyHello{"Hello"};MyHello }.Ast)
+        function MyHello{"Hello"}
+        $res = [AstTypeInference]::InferTypeOf( { MyHello }.Ast)
         $res.Name | Should -Be 'System.String'
     }
 }
