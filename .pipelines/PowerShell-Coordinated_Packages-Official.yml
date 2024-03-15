@@ -431,6 +431,8 @@ extends:
         variables:
         - name: ob_outputDirectory
           value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+        - name: ob_sdl_tsa_configFile
+          value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
         steps:
         - checkout: self
           clean: true
