@@ -39,31 +39,31 @@ steps:
       $params['ForMinimalSize'] = $true
     }
 
-    ##$(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols @params
-
-    Write-Verbose -Message "Building PowerShell with Runtime: $runtime for '$env:BuildConfiguration' configuration"
-    Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
-    $null = New-Item -ItemType Directory -Path $(Build.ArtifactStagingDirectory)/Symbols_$(Architecture) -Force
-    Start-PSBootstrap -Package
-    $outputBuildPath = Join-Path -Path $(ob_outputDirectory) -ChildPath "Symbols_$(Architecture)"
-    $null = New-Item -ItemType Directory -Path $outputBuildPath -Force -Verbose
-    Start-PSBuild -Runtime $runtime -Configuration Release -Output $outputBuildPath @params
-    Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
-  displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols zip'
-  env:
-    __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-
-### Call signing here
-
-- pwsh: |
-    $packageName = (Get-ChildItem '$(Build.ArtifactStagingDirectory)\Symbols_$(Architecture)').FullName
-    $vstsCommandString = "vso[artifact.upload containerfolder=results;artifactname=results]$packageName"
+    $vstsCommandString = "vso[task.setvariable variable=Runtime]windows"
     Write-Host ("sending " + $vstsCommandString)
     Write-Host "##$vstsCommandString"
 
-    $packagePath = $env:ob_outputDirectory + "/results"
-    $null = New-Item -ItemType Directory -Path $packagePath -Force
-    Copy-Item -Path $packageName -Destination $packagePath -Force -Verbose
+    Write-Verbose -Message "Building PowerShell with Runtime: $runtime for '$env:BuildConfiguration' configuration"
+    Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+    $buildWithSymbolsPath = New-Item -ItemType Directory -Path $(ob_outputDirectory)/Symbols_$(Architecture) -Force
 
-  displayName: Upload symbols package
+    Start-PSBootstrap -Package
+    $null = New-Item -ItemType Directory -Path $outputBuildPath -Force -Verbose
+    Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath @params
+
+    Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
+  displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols folder'
+  env:
+    __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+- template: /.pipelines/templates/prepare-obp-signing.yml@self
+
+- pwsh: |
+    Write-Verbose -Verbose "Create build folder with no symbols"
+    $buildNoSymbolsPath = Join-Path -Path $(ob_outputDirectory) -ChildPath "$(Architecture)"
+    $null = New-Item -ItemType Directory -Path $buildNoSymbolsPath -Force -Verbose
+
+    Copy-Item -Path $buildWithSymbolsPath -Destination $buildNoSymbolsPath -Recurse -Force -Exclude '*.pdb' -Verbose
+  displayName: 'Create no symbols folder'
+
 - template: /.pipelines/templates/step/finalize.yml@self

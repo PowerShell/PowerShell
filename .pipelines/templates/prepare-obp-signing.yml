@@ -1,0 +1,165 @@
+steps:
+- pwsh: |
+    $platform = '$(runtime)' -match '^linux' ? 'linux' : 'windows'
+    $vstsCommandString = "vso[task.setvariable variable=ArtifactPlatform]$platform"
+    Write-Host ("sending " + $vstsCommandString)
+    Write-Host "##$vstsCommandString"
+  displayName: Set artifact platform
+
+- pwsh: |
+    $fullSymbolsFolder = Join-Path -Path $(ob_outputDirectory) -ChildPath "Symbols_$(Architecture)"
+    Write-Verbose -Verbose "fullSymbolsFolder == $fullSymbolsFolder"
+    Get-ChildItem -Recurse $fullSymbolsFolder | out-string | Write-Verbose -Verbose
+    $filesToSignDirectory = "$(System.ArtifactsDirectory)\toBeSigned"
+    if ((Test-Path -Path $filesToSignDirectory))  {
+      Remove-Item -Path $filesToSignDirectory -Recurse -Force
+    }
+    $null = New-Item -ItemType Directory -Path $filesToSignDirectory -Force
+    $signedFilesDirectory = "$(System.ArtifactsDirectory)\signed"
+    if ((Test-Path -Path $signedFilesDirectory))  {
+      Remove-Item -Path $signedFilesDirectory -Recurse -Force
+    }
+
+    $itemsToCopyWithRecurse = @(
+      "$($fullSymbolsFolder)\*.ps1"
+      "$($fullSymbolsFolder)\Microsoft.PowerShell*.dll"
+    )
+    $itemsToCopy = @{
+      "$($fullSymbolsFolder)\*.ps1" = ""
+      "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Host\Microsoft.PowerShell.Host.psd1" = "Modules\Microsoft.PowerShell.Host"
+      "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Management\Microsoft.PowerShell.Management.psd1" = "Modules\Microsoft.PowerShell.Management"
+      "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1" = "Modules\Microsoft.PowerShell.Security"
+      "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1" = "Modules\Microsoft.PowerShell.Utility"
+      "$($fullSymbolsFolder)\pwsh.dll" = ""
+      "$($fullSymbolsFolder)\System.Management.Automation.dll" = ""
+    }
+    ## Windows only modules
+    if('$(ArtifactPlatform)' -eq 'windows') {
+      $itemsToCopy += @{
+        "$($fullSymbolsFolder)\pwsh.exe" = ""
+        "$($fullSymbolsFolder)\Microsoft.Management.Infrastructure.CimCmdlets.dll" = ""
+        "$($fullSymbolsFolder)\Microsoft.WSMan.*.dll" = ""
+        "$($fullSymbolsFolder)\Modules\CimCmdlets\CimCmdlets.psd1" = "Modules\CimCmdlets"
+        "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Diagnostics\Diagnostics.format.ps1xml" = "Modules\Microsoft.PowerShell.Diagnostics"
+        "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Diagnostics\Event.format.ps1xml" = "Modules\Microsoft.PowerShell.Diagnostics"
+        "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Diagnostics\GetEvent.types.ps1xml" = "Modules\Microsoft.PowerShell.Diagnostics"
+        "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Security\Security.types.ps1xml" = "Modules\Microsoft.PowerShell.Security"
+        "$($fullSymbolsFolder)\Modules\Microsoft.PowerShell.Diagnostics\Microsoft.PowerShell.Diagnostics.psd1" = "Modules\Microsoft.PowerShell.Diagnostics"
+        "$($fullSymbolsFolder)\Modules\Microsoft.WSMan.Management\Microsoft.WSMan.Management.psd1" = "Modules\Microsoft.WSMan.Management"
+        "$($fullSymbolsFolder)\Modules\Microsoft.WSMan.Management\WSMan.format.ps1xml" = "Modules\Microsoft.WSMan.Management"
+        "$($fullSymbolsFolder)\Modules\PSDiagnostics\PSDiagnostics.ps?1" = "Modules\PSDiagnostics"
+      }
+    }
+    else {
+      $itemsToCopy += @{
+        "$($fullSymbolsFolder)\pwsh" = ""
+      }
+    }
+    $itemsToExclude = @(
+      # This package is retrieved from https://www.github.com/powershell/MarkdownRender
+      "$($fullSymbolsFolder)\Microsoft.PowerShell.MarkdownRender.dll"
+    )
+    Write-Verbose -verbose "recusively copying $($itemsToCopyWithRecurse | out-string) to $filesToSignDirectory"
+    Copy-Item -Path $itemsToCopyWithRecurse -Destination $filesToSignDirectory -Recurse -verbose -exclude $itemsToExclude
+    foreach($pattern in $itemsToCopy.Keys) {
+      $destinationFolder = Join-Path $filesToSignDirectory -ChildPath $itemsToCopy.$pattern
+      $null = New-Item -ItemType Directory -Path $destinationFolder -Force
+      Write-Verbose -verbose "copying $pattern to $destinationFolder"
+      Copy-Item -Path $pattern -Destination $destinationFolder -Recurse -verbose
+    }
+  displayName: 'Prepare files to be signed'
+
+- task: onebranch.pipeline.signing@1
+  displayName: Sign 1st party files
+  inputs:
+    command: 'sign'
+    signing_profile: external_distribution
+    files_to_sign: '**\*.psd1;**\*.psm1;**\*.ps1xml;**\*.dll;**\*.exe'
+    search_root: $(System.ArtifactsDirectory)\toBeSigned
+
+- pwsh: |
+    Import-Module $(PowerShellRoot)/build.psm1 -Force
+    Import-Module $(PowerShellRoot)/tools/packaging -Force
+    $signedFilesPath = '$(System.ArtifactsDirectory)\signed\'
+    $BuildPath = Join-Path -Path $(ob_outputDirectory) -ChildPath "Symbols_$(Architecture)"
+    Write-Verbose -Verbose -Message "BuildPath: $BuildPath"
+
+    $dlls = Get-ChildItem $BuildPath\*.dll, $BuildPath\*.exe -Recurse
+    $signatures = $dlls | Get-AuthenticodeSignature
+    $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned' -or $_.SignerCertificate.Issuer -notmatch '^CN=Microsoft.*'}| select-object -ExpandProperty Path
+
+    Write-Verbose -verbose "to be signed:`r`n $($missingSignatures | Out-String)"
+
+    $filesToSignDirectory = "$(System.ArtifactsDirectory)\thirdPartyToBeSigned"
+    if (Test-Path $filesToSignDirectory) {
+      Remove-Item -Path $filesToSignDirectory -Recurse -Force
+    }
+    $null = New-Item -ItemType Directory -Path $filesToSignDirectory -Force -Verbose
+
+    $null = New-Item -ItemType Directory -Path $signedFilesDirectory -Force -Verbose
+    $missingSignatures | ForEach-Object {
+      $pathWithoutLeaf = Split-Path $_
+      $relativePath = $pathWithoutLeaf.replace($BuildPath,'')
+      Write-Verbose -Verbose -Message "relativePath: $relativePath"
+      $targetDirectory = Join-Path -Path $filesToSignDirectory -ChildPath $relativePath
+      Write-Verbose -Verbose -Message "targetDirectory: $targetDirectory"
+      if(!(Test-Path $targetDirectory))
+      {
+        $null = New-Item -ItemType Directory -Path $targetDirectory -Force -Verbose
+      }
+      Copy-Item -Path $_ -Destination $targetDirectory
+    }
+  displayName: Create ThirdParty Signing Folder
+
+- task: onebranch.pipeline.signing@1
+  displayName: Sign 3rd Party files
+  inputs:
+    command: 'sign'
+    signing_profile: 135020002
+    files_to_sign: '**\*.dll;**\*.exe'
+    search_root: $(System.ArtifactsDirectory)\thirdPartyToBeSigned
+
+- pwsh: |
+    Get-ChildItem '$(System.ArtifactsDirectory)\thirdPartyToBeSigned\*'
+  displayName: Capture ThirdParty Signed files
+
+- pwsh: |
+    Import-Module '$(PowerShellRoot)/build.psm1' -Force
+    Import-Module '$(PowerShellRoot)/tools/packaging' -Force
+    $signedFilesPath = '$(System.ArtifactsDirectory)\thirdPartyToBeSigned'
+    $BuildPath = Join-Path -Path $(ob_outputDirectory) -ChildPath "Symbols_$(Architecture)"
+    Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
+    if ($env:BuildConfiguration -eq 'minSize') {
+      ## Remove XML files when making a min-size package.
+      Remove-Item "$BuildPath/*.xml" -Force
+    }
+  displayName: Merge ThirdParty signed files with Build
+
+# - pwsh: |
+#     $uploadFolder = '$(BinPath)'
+#     $containerName = '$(signedArtifactContainer)'
+#     Write-Verbose -Verbose "File permissions after signing"
+#     Get-ChildItem $uploadFolder\pwsh | Select-Object -Property 'unixmode', 'size', 'name'
+#     $uploadTarFilePath = Join-Path '$(System.ArtifactsDirectory)' '$(signedBuildArtifactName)'
+#     Write-Verbose -Verbose -Message "Creating tar.gz - $uploadTarFilePath"
+#     tar -czvf $uploadTarFilePath -C $uploadFolder *
+#     Get-ChildItem '$(System.ArtifactsDirectory)' | Out-String | Write-Verbose -Verbose
+#     Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadTarFilePath"
+#   displayName: Upload signed tar.gz files to artifacts
+#   condition: eq(variables['ArtifactPlatform'], 'linux')
+#   retryCountOnTaskFailure: 2
+# - pwsh: |
+#     $uploadFolder = '$(BinPath)'
+#     $containerName = '$(signedArtifactContainer)'
+#     Get-ChildItem $uploadFolder -Recurse | Out-String | Write-Verbose -Verbose
+#     $uploadZipFilePath = Join-Path '$(System.ArtifactsDirectory)' 'PowerShell-$(Version)$(signedBuildArtifactName)'
+#     Write-Verbose -Verbose -Message "Creating zip - $uploadZipFilePath"
+#     Compress-Archive -Path $uploadFolder/* -DestinationPath $uploadZipFilePath -Verbose
+#     Get-ChildItem '$(System.ArtifactsDirectory)' | Out-String | Write-Verbose -Verbose
+#     Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadZipFilePath"
+#   displayName: Upload signed zip files to artifacts
+#   condition: eq(variables['ArtifactPlatform'], 'windows')
+#   retryCountOnTaskFailure: 2
+
+
+- template: /.pipelines/templates/step/finalize.yml@self
