@@ -107,14 +107,14 @@ extends:
       credscan:
         enabled: true
         scanFolder:  $(Build.SourcesDirectory)
-        suppressionsFile: $(Build.SourcesDirectory)\tools\credScan\suppress.json
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
       asyncSdl: # https://aka.ms/obpipelines/asyncsdl
         enabled: true
         forStages: [prep, macos, linux, windows, SignFiles, test_and_release_artifacts]
         credscan:
           enabled: true
           scanFolder:  $(Build.SourcesDirectory)
-          suppressionsFile: $(Build.SourcesDirectory)\PowerShell\tools\credScan\suppress.json
+          suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
         binskim:
           enabled: false
         apiscan:
@@ -174,7 +174,7 @@ extends:
         - name: ob_sdl_binskim_enabled
           value: true
         - name: ob_sdl_credscan_suppressionsfile
-          value: $(Build.SourcesDirectory)\PowerShell\tools\credScan\suppress.json
+          value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
 
         strategy:
           matrix:

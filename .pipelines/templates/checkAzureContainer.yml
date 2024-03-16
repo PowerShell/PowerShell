@@ -41,7 +41,7 @@ jobs:
     displayName: 'Check tsaoptions.json'
 
   - pwsh: |
-      if (-not (Test-Path -Path $(Build.SourcesDirectory)\PowerShell\tools\credScan\suppress.json)) {
+      if (-not (Test-Path -Path $(Build.SourcesDirectory)\PowerShell\.config\suppress.json)) {
         Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse
         throw 'suppress.json not found'
       }
