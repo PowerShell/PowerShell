@@ -175,7 +175,7 @@ extends:
           value: false
         - name: ob_sdl_binskim_enabled
           value: true
-        - name: ob_sdl_credscan_suppressionsfile
+        - name: ob_sdl_credscan_suppressionsFile
           value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
 
         strategy:
