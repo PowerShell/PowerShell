@@ -120,6 +120,8 @@ extends:
         apiscan:
           enabled: false
         tsaOptionsFile: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+        armory:
+          enabled: false
 
     stages:
     - stage: prep
