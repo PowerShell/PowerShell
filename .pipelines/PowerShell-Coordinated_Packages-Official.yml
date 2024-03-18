@@ -156,8 +156,8 @@ extends:
     - stage: windows
       dependsOn: ['prep']
       jobs:
-      - job: build_windows_$(Architecture)_$(BuildConfiguration)
-        displayName: Build Windows -
+      - job: build_windows
+        displayName: Build_Windows_
         condition: succeeded()
         pool:
           type: windows
