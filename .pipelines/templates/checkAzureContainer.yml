@@ -13,6 +13,8 @@ jobs:
     value: false
   - name: ob_sdl_tsa_configFile
     value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_enabled
+    value: false
 
   displayName: Delete blob is exists
   pool:
