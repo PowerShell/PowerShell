@@ -77,6 +77,8 @@ steps:
     $buildNoSymbolsPath = Join-Path -Path $(ob_outputDirectory) -ChildPath "$(Architecture)"
     $null = New-Item -ItemType Directory -Path $buildNoSymbolsPath -Force -Verbose
 
+    $buildWithSymbolsPath = Join-Path -Path $(ob_outputDirectory) -ChildPath Symbols_$(Architecture)
+
     Copy-Item -Path $buildWithSymbolsPath -Destination $buildNoSymbolsPath -Recurse -Force -Exclude '*.pdb' -Verbose
   displayName: 'Create no symbols folder'
 

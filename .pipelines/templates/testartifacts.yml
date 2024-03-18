@@ -12,6 +12,8 @@ jobs:
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_tsa_configFile
     value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
   displayName: Build windows test artifacts
   condition: succeeded()
   pool:
