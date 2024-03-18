@@ -17,6 +17,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
@@ -559,7 +560,9 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.PopLocation)]
     [OutputType(typeof(Microsoft.PowerShell.Commands.X509StoreLocation), typeof(X509Certificate2), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(X509Store), typeof(X509Certificate2), ProviderCmdlet = ProviderCmdlet.GetChildItem)]
-    public sealed class CertificateProvider : NavigationCmdletProvider, ICmdletProviderSupportsHelp
+    [OutputType(typeof(CertificateKeySecurity), ProviderCmdlet = ProviderCmdlet.GetAcl)]
+    [OutputType(typeof(CertificateKeySecurity), ProviderCmdlet = ProviderCmdlet.SetAcl)]
+    public sealed partial class CertificateProvider : NavigationCmdletProvider, ICmdletProviderSupportsHelp, ISecurityDescriptorCmdletProvider
     {
         #region tracer
 
