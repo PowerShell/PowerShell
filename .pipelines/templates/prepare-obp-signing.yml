@@ -133,6 +133,8 @@ steps:
       ## Remove XML files when making a min-size package.
       Remove-Item "$BuildPath/*.xml" -Force
     }
+
+    Get-ChildItem -Recurse -File $BuildPath | Get-AuthenticodeSignature | Format-Table -Property Path, Status, SignerCertificate, TimeStamperCertificate
   displayName: Merge ThirdParty signed files with Build
 
 # - pwsh: |
