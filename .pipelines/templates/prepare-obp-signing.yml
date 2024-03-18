@@ -127,6 +127,7 @@ steps:
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
     $signedFilesPath = '$(System.ArtifactsDirectory)\thirdPartyToBeSigned'
     $BuildPath = Join-Path -Path $(ob_outputDirectory) -ChildPath "Symbols_$(Architecture)"
+    Copy-Item -Path $(System.ArtifactsDirectory)\toBeSigned\* -Destination $BuildPath -Recurse -Force
     Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
     if ($env:BuildConfiguration -eq 'minSize') {
       ## Remove XML files when making a min-size package.
