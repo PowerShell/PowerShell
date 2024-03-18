@@ -1,85 +1,126 @@
 # This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
-# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
-# parameters:
-# - name: BuildConfiguration
-#   default: release
-# - name: BuildPlatform
-#   default: any cpu
-# - name: Architecture
-#   default: x64
-# - name: parentJob
-#   default: ''
-steps:
-- checkout: self
-  clean: true
-  env:
-    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+parameters:
+  Architecture: 'x64'
+  BuildConfiguration: 'release'
+  jobName: 'build_windows'
 
-- template: /.pipelines/templates/SetVersionVariables.yml@self
-  parameters:
-    ReleaseTagVar: $(ReleaseTagVar)
+jobs:
+- job: build_windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
+  displayName: Build_Windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
+  condition: succeeded()
+  pool:
+    type: windows
+  variables:
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
+  - name: ob_sdl_binskim_enabled
+    value: true
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
 
-- template: /.pipelines/templates/cloneToOfficialPath.yml@self
+  # strategy:
+  #   matrix:
+  #     x64:
+  #       Architecture: x64
+  #       BuildConfiguration: release
+  #     minSize:
+  #       Architecture: x64
+  #       BuildConfiguration: minSize
+  #     x86:
+  #       Architecture: x86
+  #       BuildConfiguration: release
+  #     arm64:
+  #       Architecture: arm64
+  #       BuildConfiguration: release
+  #     fxdependent:
+  #       Architecture: fxdependent
+  #       BuildConfiguration: release
+  #     fxdependentWinDesktop:
+  #       Architecture: fxdependentWinDesktop
+  #       BuildConfiguration: release
 
-- template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
-  parameters:
-    repoRoot: $(PowerShellRoot)
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-- task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
-  env:
-    ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
-  inputs:
-    Enabled: true
-    AnalyzeInPipeline: true
-    Language: csharp
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
 
-- pwsh: |
-    $runtime = switch ($env:Architecture)
-      {
-        "x64" { "win7-x64" }
-        "x86" { "win7-x86" }
-        "arm64" { "win-arm64" }
-        "fxdependent" { "fxdependent" }
-        "fxdependentWinDesktop" { "fxdependent-win-desktop" }
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+
+  - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
+    env:
+      ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+    inputs:
+      Enabled: true
+      AnalyzeInPipeline: true
+      Language: csharp
+
+  - pwsh: |
+      $runtime = switch ($env:Architecture)
+        {
+          "x64" { "win7-x64" }
+          "x86" { "win7-x86" }
+          "arm64" { "win-arm64" }
+          "fxdependent" { "fxdependent" }
+          "fxdependentWinDesktop" { "fxdependent-win-desktop" }
+        }
+      $params = @{}
+      if ($env:BuildConfiguration -eq 'minSize') {
+        $params['ForMinimalSize'] = $true
       }
-    $params = @{}
-    if ($env:BuildConfiguration -eq 'minSize') {
-      $params['ForMinimalSize'] = $true
-    }
 
-    $vstsCommandString = "vso[task.setvariable variable=Runtime]windows"
-    Write-Host ("sending " + $vstsCommandString)
-    Write-Host "##$vstsCommandString"
+      $vstsCommandString = "vso[task.setvariable variable=Runtime]windows"
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
 
-    Write-Verbose -Message "Building PowerShell with Runtime: $runtime for '$env:BuildConfiguration' configuration"
-    Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
-    $buildWithSymbolsPath = New-Item -ItemType Directory -Path $(ob_outputDirectory)/Symbols_$(Architecture) -Force
+      Write-Verbose -Message "Building PowerShell with Runtime: $runtime for '$env:BuildConfiguration' configuration"
+      Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+      $buildWithSymbolsPath = New-Item -ItemType Directory -Path $(ob_outputDirectory)/Symbols_$(Architecture) -Force
 
-    Start-PSBootstrap -Package
-    $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
-    Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath @params
+      Start-PSBootstrap -Package
+      $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
+      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath @params
 
-    Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
-  displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols folder'
-  env:
-    __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-    ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+      Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
+    displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols folder'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
-- task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
-  condition: always()
-  env:
-    ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+  - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
+    condition: always()
+    env:
+      ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
-- template: /.pipelines/templates/prepare-obp-signing.yml@self
+  - template: /.pipelines/templates/prepare-obp-signing.yml@self
 
-- pwsh: |
-    Write-Verbose -Verbose "Create build folder with no symbols"
-    $buildNoSymbolsPath = Join-Path -Path $(ob_outputDirectory) -ChildPath "$(Architecture)"
-    $null = New-Item -ItemType Directory -Path $buildNoSymbolsPath -Force -Verbose
+  - pwsh: |
+      Write-Verbose -Verbose "Create build folder with no symbols"
+      $buildNoSymbolsPath = Join-Path -Path $(ob_outputDirectory) -ChildPath "$(Architecture)"
+      $null = New-Item -ItemType Directory -Path $buildNoSymbolsPath -Force -Verbose
 
-    $buildWithSymbolsPath = Join-Path -Path $(ob_outputDirectory) -ChildPath Symbols_$(Architecture)
+      $buildWithSymbolsPath = Join-Path -Path $(ob_outputDirectory) -ChildPath Symbols_$(Architecture)
 
-    Copy-Item -Path $buildWithSymbolsPath -Destination $buildNoSymbolsPath -Recurse -Force -Exclude '*.pdb' -Verbose
-  displayName: 'Create no symbols folder'
+      Copy-Item -Path $buildWithSymbolsPath -Destination $buildNoSymbolsPath -Recurse -Force -Exclude '*.pdb' -Verbose
+    displayName: 'Create no symbols folder'
 
-- template: /.pipelines/templates/step/finalize.yml@self
+  - template: /.pipelines/templates/step/finalize.yml@self

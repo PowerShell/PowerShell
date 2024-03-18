@@ -34,11 +34,6 @@ jobs:
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - checkout: ComplianceRepo
-    clean: true
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
-
   - template: /.pipelines/templates/SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -79,6 +74,14 @@ jobs:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
+  - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
+    env:
+      ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+    inputs:
+      Enabled: true
+      AnalyzeInPipeline: true
+      Language: csharp
+
   - pwsh: |
       try {
         Import-Module "$env:POWERSHELLROOT/build.psm1"
@@ -91,76 +94,22 @@ jobs:
         throw
       }
     displayName: 'Build'
-    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
-  # - template: Sbom.yml@ComplianceRepo
-  #   parameters:
-  #     BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
-  #     Build_Repository_Uri: $(Github_Build_Repository_Uri)
-  #     displayName: ${{ parameters.buildName }} SBOM
-  #     PackageName: PowerShell Linux
-  #     PackageVersion: $(Version)
-  #     sourceScanPath: '$(PowerShellRoot)/tools'
-  # - ${{ if eq(variables.build,'rpm') }}:
-  #   - template: Sbom.yml@ComplianceRepo
-  #     parameters:
-  #       BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
-  #       Build_Repository_Uri: $(Github_Build_Repository_Uri)
-  #       displayName: Mariner x64 SBOM
-  #       PackageName: PowerShell Linux Framework Dependent
-  #       PackageVersion: $(Version)
-  #       sourceScanPath: '$(PowerShellRoot)/tools'
-  # - ${{ if eq(variables.build,'rpm') }}:
-  #   - template: Sbom.yml@ComplianceRepo
-  #     parameters:
-  #       BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64'
-  #       Build_Repository_Uri: $(Github_Build_Repository_Uri)
-  #       displayName: Mariner arm64 SBOM
-  #       PackageName: PowerShell Linux Framework Dependent
-  #       PackageVersion: $(Version)
-  #       sourceScanPath: '$(PowerShellRoot)/tools'
-  # - ${{ if eq(variables.build,'deb') }}:
-  #   - template: Sbom.yml@ComplianceRepo
-  #     parameters:
-  #       BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
-  #       Build_Repository_Uri: $(Github_Build_Repository_Uri)
-  #       displayName: MinSize SBOM
-  #       PackageName: PowerShell Linux Minimum Size
-  #       PackageVersion: $(Version)
-  #       sourceScanPath: '$(PowerShellRoot)/tools'
-  # - ${{ if eq(variables.build,'deb') }}:
-  #   - template: Sbom.yml@ComplianceRepo
-  #     parameters:
-  #       BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
-  #       Build_Repository_Uri: $(Github_Build_Repository_Uri)
-  #       displayName: Arm32 SBOM
-  #       PackageName: PowerShell Linux Arm32
-  #       PackageVersion: $(Version)
-  #       sourceScanPath: '$(PowerShellRoot)/tools'
-  # - ${{ if eq(variables.build,'deb') }}:
-  #   - template: Sbom.yml@ComplianceRepo
-  #     parameters:
-  #       BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
-  #       Build_Repository_Uri: $(Github_Build_Repository_Uri)
-  #       displayName: Arm64 SBOM
-  #       PackageName: PowerShell Linux Arm64
-  #       PackageVersion: $(Version)
-  #       sourceScanPath: '$(PowerShellRoot)/tools'
-  # - ${{ if eq(variables.build,'alpine') }}:
-  #   - template: Sbom.yml@ComplianceRepo
-  #     parameters:
-  #       BuildDropPath: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64'
-  #       Build_Repository_Uri: $(Github_Build_Repository_Uri)
-  #       displayName: Alpine FXD SBOM
-  #       PackageName: PowerShell Alpine Framework Dependent AMD64
-  #       PackageVersion: $(Version)
-  #       sourceScanPath: '$(PowerShellRoot)/tools'
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
+    condition: always()
+    env:
+      ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+
   - pwsh: |
       Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuild' -Verbose
       Write-Verbose -Verbose "File permisions before compressing"
       Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
       tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz *
     displayName: Compress pwshLinuxBuild
+
   - ${{ if eq(variables.build,'deb') }}:
     - pwsh: |
         Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
