@@ -1660,14 +1660,15 @@ namespace System.Management.Automation.Language
             {
                 var argValue = namedArg.Argument.Accept(s_cvv);
                 var argumentName = namedArg.ArgumentName;
-                if (argumentName.Equals("IgnoreCase", StringComparison.OrdinalIgnoreCase))
-                {
-                    result.IgnoreCase = s_attrArgToBoolConverter.Target(s_attrArgToBoolConverter, argValue);
-                }
-                else if (argumentName.Equals("ErrorMessage", StringComparison.OrdinalIgnoreCase))
-                {
-                    result.ErrorMessage = argValue.ToString();
-                }
+                var reflectedProperty = result.GetType().GetProperty(argumentName, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
+
+                if (reflectedProperty != null) {                
+                    if (reflectedProperty.PropertyType == typeof(bool)) {
+                        reflectedProperty.SetValue(result, s_attrArgToBoolConverter.Target(s_attrArgToBoolConverter, argValue));
+                    } else {
+                        reflectedProperty.SetValue(result, argValue.ToString());                        
+                    }
+                }                                    
                 else
                 {
                     throw InterpreterError.NewInterpreterException(
