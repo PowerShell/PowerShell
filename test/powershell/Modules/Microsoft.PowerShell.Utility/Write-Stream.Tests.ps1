@@ -84,7 +84,7 @@ Describe "Stream writer tests" -Tags "CI" {
             $result | Should -BeOfType System.Management.Automation.InformationRecord
 
             # Use Match instead of Be so we can avoid dealing with a potential domain name
-            $result.Computer | Should -Match "^($([environment]::MachineName)){1}(\.[a-zA-Z0-9]+)*$|^localhost$"
+            $result.Computer | Should -Match "^($([environment]::MachineName)){1}(\.[a-zA-Z0-9-]+)*$|^localhost$"
             if ($IsWindows)
             {
                 $result.User | Should -Match ".*${env:USERNAME}"
