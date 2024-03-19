@@ -1,3 +1,6 @@
+parameters:
+  binPath: '$(ob_outputDirectory)'
+
 steps:
 - pwsh: |
     $platform = '$(runtime)' -match '^linux' ? 'linux' : 'windows'
@@ -7,7 +10,7 @@ steps:
   displayName: Set artifact platform
 
 - pwsh: |
-    $fullSymbolsFolder = Join-Path -Path $(ob_outputDirectory) -ChildPath "Symbols_$(Architecture)"
+    $fullSymbolsFolder = '$(binPath)'
     Write-Verbose -Verbose "fullSymbolsFolder == $fullSymbolsFolder"
     Get-ChildItem -Recurse $fullSymbolsFolder | out-string | Write-Verbose -Verbose
     $filesToSignDirectory = "$(System.ArtifactsDirectory)\toBeSigned"
@@ -81,7 +84,7 @@ steps:
     Import-Module $(PowerShellRoot)/build.psm1 -Force
     Import-Module $(PowerShellRoot)/tools/packaging -Force
     $signedFilesPath = '$(System.ArtifactsDirectory)\signed\'
-    $BuildPath = Join-Path -Path $(ob_outputDirectory) -ChildPath "Symbols_$(Architecture)"
+    $BuildPath = '$(binPath)'
     Write-Verbose -Verbose -Message "BuildPath: $BuildPath"
 
     $dlls = Get-ChildItem $BuildPath\*.dll, $BuildPath\*.exe -Recurse
@@ -126,7 +129,7 @@ steps:
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
     $signedFilesPath = '$(System.ArtifactsDirectory)\thirdPartyToBeSigned'
-    $BuildPath = Join-Path -Path $(ob_outputDirectory) -ChildPath "Symbols_$(Architecture)"
+    $BuildPath = '$(binPath)'
     Copy-Item -Path $(System.ArtifactsDirectory)\toBeSigned\* -Destination $BuildPath -Recurse -Force
     Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
     if ($env:BuildConfiguration -eq 'minSize') {

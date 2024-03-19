@@ -66,6 +66,7 @@ jobs:
           "fxdependent" { "fxdependent" }
           "fxdependentWinDesktop" { "fxdependent-win-desktop" }
         }
+
       $params = @{}
       if ($env:BuildConfiguration -eq 'minSize') {
         $params['ForMinimalSize'] = $true
@@ -88,6 +89,12 @@ jobs:
       if ($pdbs.Count -eq 0) {
         Write-Error -Message "No pdbs found in build folder"
       }
+      else {
+        Write-Verbose -Verbose "Found $($pdbs.Count) pdbs in build folder"
+        $pdbs | ForEach-Object {
+          Write-Verbose -Verbose "Pdb: $($_.FullName)"
+        }
+      }
 
       Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
     displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols folder'
@@ -101,6 +108,8 @@ jobs:
       ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
   - template: /.pipelines/templates/prepare-obp-signing.yml@self
+    parameters:
+      binPath: '$(ob_outputDirectory)/Symbols_$(Architecture)'
 
   - pwsh: |
       Write-Verbose -Verbose "Create build folder with no symbols"
@@ -109,7 +118,7 @@ jobs:
 
       $buildWithSymbolsPath = Join-Path -Path $(ob_outputDirectory) -ChildPath Symbols_$(Architecture)
 
-      Copy-Item -Path $buildWithSymbolsPath -Destination $buildNoSymbolsPath -Recurse -Force -Exclude '*.pdb' -Verbose
+      Copy-Item -Path $buildWithSymbolsPath\* -Destination $buildNoSymbolsPath -Recurse -Force -Exclude '*.pdb' -Verbose
     displayName: 'Create no symbols folder'
 
   - template: /.pipelines/templates/step/finalize.yml@self
