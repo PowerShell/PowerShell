@@ -32,7 +32,7 @@ Function New-RSACryptoAPICertificate {
         Subject = 'ACL Test RSA - CryptoAPI'
 
     }
-    New-SelfSignedCertificate @rsaParams
+    PKI\New-SelfSignedCertificate @rsaParams
 }
 
 Function New-RSACNGertificate {
@@ -49,7 +49,7 @@ Function New-RSACNGertificate {
         Subject = 'ACL Test RSA - CNG'
 
     }
-    New-SelfSignedCertificate @rsaParams
+    PKI\New-SelfSignedCertificate @rsaParams
 }
 
 Function New-ECDSACNGCertificate {
@@ -66,7 +66,7 @@ Function New-ECDSACNGCertificate {
         Type = 'Custom'
 
     }
-    New-SelfSignedCertificate @ecdsaParams
+    PKI\New-SelfSignedCertificate @ecdsaParams
 }
 
 Function New-CertificateWithoutKey {
