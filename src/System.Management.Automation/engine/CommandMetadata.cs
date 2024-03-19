@@ -274,6 +274,7 @@ namespace System.Management.Automation
 
             Obsolete = scriptBlock.ObsoleteAttribute;
             _scriptBlock = scriptBlock;
+            _implementsDynamicParameters = scriptBlock.HasDynamicParameters;
             _wrappedCommand = Name = name;
             _shouldGenerateCommonParameters = shouldGenerateCommonParameters;
         }
