@@ -2,7 +2,7 @@
 parameters:
   Architecture: 'x64'
   BuildConfiguration: 'release'
-  jobName: 'build_windows'
+  JobName: 'build_windows'
 
 jobs:
 - job: build_windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
@@ -32,27 +32,6 @@ jobs:
     value: ${{ parameters.Architecture }}
   - name: BuildConfiguration
     value: ${{ parameters.BuildConfiguration }}
-
-  # strategy:
-  #   matrix:
-  #     x64:
-  #       Architecture: x64
-  #       BuildConfiguration: release
-  #     minSize:
-  #       Architecture: x64
-  #       BuildConfiguration: minSize
-  #     x86:
-  #       Architecture: x86
-  #       BuildConfiguration: release
-  #     arm64:
-  #       Architecture: arm64
-  #       BuildConfiguration: release
-  #     fxdependent:
-  #       Architecture: fxdependent
-  #       BuildConfiguration: release
-  #     fxdependentWinDesktop:
-  #       Architecture: fxdependentWinDesktop
-  #       BuildConfiguration: release
 
   steps:
   - checkout: self
@@ -103,6 +82,12 @@ jobs:
       Start-PSBootstrap -Package
       $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
       Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath @params
+
+      Write-Verbose -Verbose "Verifying pdbs exist in build folder"
+      $pdbs = Get-ChildItem -Path $buildWithSymbolsPath -Recurse -Filter *.pdb
+      if ($pdbs.Count -eq 0) {
+        Write-Error -Message "No pdbs found in build folder"
+      }
 
       Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
     displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols folder'
