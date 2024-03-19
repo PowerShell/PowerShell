@@ -423,16 +423,34 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteModuleName(CompletionContext context, bool loadedModulesOnly, bool skipEditionCheck = false)
         {
-            var moduleName = context.WordToComplete ?? string.Empty;
+            var wordToComplete = context.WordToComplete ?? string.Empty;
             var result = new List<CompletionResult>();
-            var quote = HandleDoubleAndSingleQuote(ref moduleName);
+            var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
-            if (!moduleName.EndsWith('*'))
+            // Indicates if we should search for modules where the last part of the name matches the input text
+            // eg: Host<Tab> finds Microsoft.PowerShell.Host
+            // If the user has entered a manual wildcard, or a module name that contains a "." we assume they only want results that matches the input exactly.
+            bool shortNameSearch = wordToComplete.Length > 0 && !WildcardPattern.ContainsWildcardCharacters(wordToComplete) && !wordToComplete.Contains('.');
+            
+            if (!wordToComplete.EndsWith('*'))
             {
-                moduleName += "*";
+                wordToComplete += "*";
+            }
+            
+            string[] moduleNames;
+            WildcardPattern shortNamePattern;
+            if (shortNameSearch)
+            {
+                moduleNames = new string[] { wordToComplete, "*." + wordToComplete };
+                shortNamePattern = new WildcardPattern(wordToComplete, WildcardOptions.IgnoreCase);
+            }
+            else
+            {
+                moduleNames = new string[] { wordToComplete };
+                shortNamePattern = null;
             }
 
-            var powershell = context.Helper.AddCommandWithPreferenceSetting("Get-Module", typeof(GetModuleCommand)).AddParameter("Name", moduleName);
+            var powershell = context.Helper.AddCommandWithPreferenceSetting("Get-Module", typeof(GetModuleCommand)).AddParameter("Name", moduleNames);
             if (!loadedModulesOnly)
             {
                 powershell.AddParameter("ListAvailable", true);
@@ -444,18 +462,26 @@ namespace System.Management.Automation
                 }
             }
 
-            Exception exceptionThrown;
-            var psObjects = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
+            var psObjects = context.Helper.ExecuteCurrentPowerShell(out _);
 
             if (psObjects != null)
             {
-                foreach (dynamic moduleInfo in psObjects)
+                foreach (PSObject item in psObjects)
                 {
-                    var completionText = moduleInfo.Name.ToString();
+                    var moduleInfo = (PSModuleInfo)item.BaseObject;
+                    var completionText = moduleInfo.Name;
                     var listItemText = completionText;
-                    var toolTip = "Description: " + moduleInfo.Description.ToString() + "\r\nModuleType: "
+                    if (shortNameSearch
+                        && completionText.Contains('.')
+                        && !shortNamePattern.IsMatch(completionText.Substring(completionText.LastIndexOf('.') + 1))
+                        && !shortNamePattern.IsMatch(completionText))
+                    {
+                        continue;
+                    }
+
+                    var toolTip = "Description: " + moduleInfo.Description + "\r\nModuleType: "
                                   + moduleInfo.ModuleType.ToString() + "\r\nPath: "
-                                  + moduleInfo.Path.ToString();
+                                  + moduleInfo.Path;
 
                     if (CompletionRequiresQuotes(completionText, false))
                     {
