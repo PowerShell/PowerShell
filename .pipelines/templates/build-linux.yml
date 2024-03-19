@@ -4,7 +4,7 @@ parameters:
   JobName: 'build_linux'
 
 jobs:
-- job: build_linux_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
+- job: ${{ parameters.JobName }}
   displayName: Build_Windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
   condition: succeeded()
   pool:
