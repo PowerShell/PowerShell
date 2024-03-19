@@ -159,22 +159,29 @@ extends:
       - template: /.pipelines/templates/windows-hosted-build.yml@self
         parameters:
           Architecture: x64
+          BuildConfiguration: release
+          JobName: build_windows_x64_release
       - template: /.pipelines/templates/windows-hosted-build.yml@self
         parameters:
           Architecture: x64
           BuildConfiguration: minSize
+          JobName: build_windows_x64_minSize
       - template: /.pipelines/templates/windows-hosted-build.yml@self
         parameters:
           Architecture: x86
+          JobName: build_windows_x86_release
       - template: /.pipelines/templates/windows-hosted-build.yml@self
         parameters:
           Architecture: arm64
+          JobName: build_windows_arm64_release
       - template: /.pipelines/templates/windows-hosted-build.yml@self
         parameters:
           Architecture: fxdependent
+          JobName: build_windows_fxdependent_release
       - template: /.pipelines/templates/windows-hosted-build.yml@self
         parameters:
           Architecture: fxdependentWinDesktop
+          JobName: build_windows_fxdependentWinDesktop_release
 
     - stage: test_and_release_artifacts
       displayName: Test and Release Artifacts

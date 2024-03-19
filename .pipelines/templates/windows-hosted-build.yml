@@ -28,6 +28,10 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
   - name: ob_sdl_credscan_suppressionsFile
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - name: Architecture
+    value: ${{ parameters.Architecture }}
+  - name: BuildConfiguration
+    value: ${{ parameters.BuildConfiguration }}
 
   # strategy:
   #   matrix:
