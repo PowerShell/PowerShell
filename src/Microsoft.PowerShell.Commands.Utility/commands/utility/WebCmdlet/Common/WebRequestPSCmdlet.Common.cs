@@ -8,9 +8,12 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Language;
+using System.Management.Automation.Runspaces;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Security;
 using System.Security.Authentication;
@@ -89,8 +92,11 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
     /// </summary>
-    public abstract class WebRequestPSCmdlet : PSCmdlet, IDisposable
+    public abstract class WebRequestPSCmdlet : PSCmdlet
     {
+
+        private const string DefaultWebSessionName = "PSDefaultWebSession";
+
         #region Fields
 
         /// <summary>
@@ -132,11 +138,6 @@ namespace Microsoft.PowerShell.Commands
         /// The remote endpoint returned a 206 status code indicating successful resume.
         /// </summary>
         private bool _resumeSuccess = false;
-
-        /// <summary>
-        /// True if the Dispose() method has already been called to cleanup Disposable fields.
-        /// </summary>
-        private bool _disposed = false;
 
         #endregion Fields
 
@@ -732,33 +733,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing() => _cancelToken?.Cancel();
 
-        /// <summary>
-        /// Disposes the associated WebSession if it is not being used as part of a persistent session.
-        /// </summary>
-        /// <param name="disposing">True when called from Dispose() and false when called from finalizer.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing && !IsPersistentSession())
-                {
-                    WebSession?.Dispose();
-                    WebSession = null;
-                }
-
-                _disposed = true;
-            }
-        }
-
-        /// <summary>
-        /// Disposes the associated WebSession if it is not being used as part of a persistent session.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
         #endregion Overrides
 
         #region Virtual Methods
@@ -921,18 +895,66 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void PrepareSession()
         {
-            // Make sure we have a valid WebRequestSession object to work with
-            WebSession ??= new WebRequestSession();
+            bool supplyingCredential = Credential is not null && Authentication == WebAuthenticationType.None;
 
-            if (SessionVariable is not null)
+            // Make sure we have a valid WebRequestSession object to work with
+            if (WebSession is null)
             {
-                // Save the session back to the PS environment if requested
                 PSVariableIntrinsics vi = SessionState.PSVariable;
-                vi.Set(SessionVariable, WebSession);
+
+                if (SessionVariable is null)
+                {
+                    // When no web session is provided and no request is made to save the session to a variable
+                    // use a default web session that we reset between requests. This facilitates connection
+                    // persistence through re-use of the HTTPClientHandler.
+                    PSVariable variable = vi.GetAtScope(DefaultWebSessionName, StringLiterals.Global);
+                    WebSession = variable?.Value as WebRequestSession;
+                    if (WebSession is null)
+                    {
+                        WebSession = new();
+                        try
+                        {
+                            if (variable is not null)
+                            {
+                                // Ensure we can overwrite the variable value, even if someone has made it constant
+                                SessionState.Internal.GlobalScope.Variables.Remove(DefaultWebSessionName);
+                            }
+                            vi.Set(new PSVariable(DefaultWebSessionName, WebSession, ScopedItemOptions.Constant));
+                        }
+                        catch (SessionStateException ex)
+                        {
+                            // In case we can't persist the default web session, we log a warning but continue
+                            // e.g. A user can store another object in the session state as a constant
+                            WriteWarning(ex.Message);
+                        }
+                    }
+                    else
+                    {
+                        // Simulate no web session by resetting state used between requests
+                        WebSession.ResetSessionValues(
+                            UseDefaultCredentials && !supplyingCredential,
+                            MaximumRedirection,
+                            SkipCertificateCheck.IsPresent,
+                            SslProtocol,
+                            ConvertTimeoutSecondsToTimeSpan(ConnectionTimeoutSeconds),
+                            UnixSocket,
+                            NoProxy.IsPresent,
+                            MaximumRetryCount,
+                            RetryIntervalSec,
+                            supplyingCredential ? Credential.GetNetworkCredential() : null
+                        );
+                    }
+                }
+                else
+                {
+                    WebSession = new();
+                    vi.Set(SessionVariable, WebSession);
+                }
+
             }
 
             // Handle credentials
-            if (Credential is not null && Authentication == WebAuthenticationType.None)
+            if (supplyingCredential)
             {
                 // Get the relevant NetworkCredential
                 NetworkCredential netCred = Credential.GetNetworkCredential();
@@ -1540,8 +1562,6 @@ namespace Microsoft.PowerShell.Commands
                 Diagnostics.Assert(false, string.Create(CultureInfo.InvariantCulture, $"Unrecognized Authentication value: {Authentication}"));
             }
         }
-
-        private bool IsPersistentSession() => MyInvocation.BoundParameters.ContainsKey(nameof(WebSession)) || MyInvocation.BoundParameters.ContainsKey(nameof(SessionVariable));
 
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
