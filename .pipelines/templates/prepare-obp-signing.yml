@@ -123,6 +123,7 @@ steps:
       Copy-Item -Path $_ -Destination $targetDirectory
     }
   displayName: Create ThirdParty Signing Folder
+  condition: eq($(ArtifactPlatform), 'windows')
 
 - task: onebranch.pipeline.signing@1
   displayName: Sign 3rd Party files
@@ -131,24 +132,43 @@ steps:
     signing_profile: 135020002
     files_to_sign: '**\*.dll;**\*.exe'
     search_root: $(Pipeline.Workspace)/thirdPartyToBeSigned
+  condition: eq($(ArtifactPlatform), 'windows')
 
 - pwsh: |
     Get-ChildItem '$(Pipeline.Workspace)/thirdPartyToBeSigned/*'
   displayName: Capture ThirdParty Signed files
+  condition: eq($(ArtifactPlatform), 'windows')
+
+# - pwsh: |
+#     Import-Module '$(PowerShellRoot)/build.psm1' -Force
+#     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
+#     $signedFilesPath = '$(Pipeline.Workspace)/thirdPartyToBeSigned'
+#     $BuildPath = '${{ parameters.binPath }}'
+#     Copy-Item -Path $(Pipeline.Workspace)/toBeSigned/* -Destination $BuildPath -Recurse -Force -Verbose
+#     Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
+#     if ($env:BuildConfiguration -eq 'minSize') {
+#       ## Remove XML files when making a min-size package.
+#       Remove-Item "$BuildPath/*.xml" -Force
+#     }
+
+#     Get-ChildItem -Recurse -File $BuildPath | Get-AuthenticodeSignature | Format-Table -Property Path, Status, SignerCertificate, TimeStamperCertificate
+#   displayName: Merge ThirdParty signed files with Build
+#   condition: eq($(ArtifactPlatform), 'windows')
 
 - pwsh: |
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
-    $signedFilesPath = '$(Pipeline.Workspace)/thirdPartyToBeSigned'
-    $BuildPath = '${{ parameters.binPath }}'
-    Copy-Item -Path $(Pipeline.Workspace)/toBeSigned/* -Destination $BuildPath -Recurse -Force
-    Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
-    if ($env:BuildConfiguration -eq 'minSize') {
-      ## Remove XML files when making a min-size package.
-      Remove-Item "$BuildPath/*.xml" -Force
+    $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Signed-$(Runtime)' -Force
+    Copy-Item -Path '${{ parameters.binPath }}' -Destination $pathForUpload -Recurse -Force
+    Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath '$(Pipeline.Workspace)/toBeSigned'
+
+    ## We cannot sign third party files on Linux, we have a separate job for that
+    if ($env:ArtifactPlatform -eq 'windows') {
+      Write-Verbose "Copying third party signed files to the build folder"
+      $thirdPartySignedFilesPath = '$(Pipeline.Workspace)/thirdPartyToBeSigned'
+      Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath $thirdPartySignedFilesPath
     }
 
-    Get-ChildItem -Recurse -File $BuildPath | Get-AuthenticodeSignature | Format-Table -Property Path, Status, SignerCertificate, TimeStamperCertificate
-  displayName: Merge ThirdParty signed files with Build
+  displayName: 'Copy signed files for upload'
 
 - template: /.pipelines/templates/step/finalize.yml@self

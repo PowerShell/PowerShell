@@ -72,7 +72,7 @@ jobs:
         $params['ForMinimalSize'] = $true
       }
 
-      $vstsCommandString = "vso[task.setvariable variable=Runtime]windows"
+      $vstsCommandString = "vso[task.setvariable variable=Runtime]$runtime"
       Write-Host ("sending " + $vstsCommandString)
       Write-Host "##$vstsCommandString"
 
