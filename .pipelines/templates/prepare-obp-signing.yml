@@ -159,8 +159,13 @@ steps:
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
     $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Signed-$(Runtime)' -Force
-    Copy-Item -Path '${{ parameters.binPath }}' -Destination $pathForUpload -Recurse -Force
+    Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
+    Copy-Item -Path '${{ parameters.binPath }}' -Destination $pathForUpload -Recurse -Force -Verbose
+    Write-Verbose -Verbose -Message "Files copied to $pathForUpload"
+
     Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath '$(Pipeline.Workspace)/toBeSigned'
+
+    Write-Verbose -Verbose -Message "Files signed and copied to $pathForUpload"
 
     ## We cannot sign third party files on Linux, we have a separate job for that
     if ($env:ArtifactPlatform -eq 'windows') {

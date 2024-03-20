@@ -901,6 +901,13 @@ function Update-PSSignedBuildFolder
         $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPath.ToLowerInvariant(),'')
         $destination = Join-Path -Path $BuildPath -ChildPath $relativePath
         Write-Log "replacing $destination with $_"
+
+        if (-not (Test-Path $destination)) {
+            $parent = Split-Path -Path $destination -Parent
+            $exists = Test-Path -Path $parent
+            Write-Error "File not found: $destination, parent - $parent exists: $exists"
+        }
+
         Copy-Item -Path $_ -Destination $destination -Force
     }
 
