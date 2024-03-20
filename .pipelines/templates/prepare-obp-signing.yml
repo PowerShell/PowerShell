@@ -13,15 +13,11 @@ steps:
     $fullSymbolsFolder = '${{ parameters.binPath }}'
     Write-Verbose -Verbose "fullSymbolsFolder == $fullSymbolsFolder"
     Get-ChildItem -Recurse $fullSymbolsFolder | out-string | Write-Verbose -Verbose
-    $filesToSignDirectory = "$(System.ArtifactsDirectory)\toBeSigned"
+    $filesToSignDirectory = "$(Pipeline.Workspace)\toBeSigned"
     if ((Test-Path -Path $filesToSignDirectory))  {
       Remove-Item -Path $filesToSignDirectory -Recurse -Force
     }
     $null = New-Item -ItemType Directory -Path $filesToSignDirectory -Force
-    $signedFilesDirectory = "$(System.ArtifactsDirectory)\signed"
-    if ((Test-Path -Path $signedFilesDirectory))  {
-      Remove-Item -Path $signedFilesDirectory -Recurse -Force
-    }
 
     $itemsToCopyWithRecurse = @(
       "$($fullSymbolsFolder)\*.ps1"
@@ -62,8 +58,10 @@ steps:
       # This package is retrieved from https://www.github.com/powershell/MarkdownRender
       "$($fullSymbolsFolder)\Microsoft.PowerShell.MarkdownRender.dll"
     )
+
     Write-Verbose -verbose "recusively copying $($itemsToCopyWithRecurse | out-string) to $filesToSignDirectory"
     Copy-Item -Path $itemsToCopyWithRecurse -Destination $filesToSignDirectory -Recurse -verbose -exclude $itemsToExclude
+
     foreach($pattern in $itemsToCopy.Keys) {
       $destinationFolder = Join-Path $filesToSignDirectory -ChildPath $itemsToCopy.$pattern
       $null = New-Item -ItemType Directory -Path $destinationFolder -Force
@@ -78,12 +76,12 @@ steps:
     command: 'sign'
     signing_profile: external_distribution
     files_to_sign: '**\*.psd1;**\*.psm1;**\*.ps1xml;**\*.ps1;**\*.dll;**\*.exe'
-    search_root: $(System.ArtifactsDirectory)\toBeSigned
+    search_root: $(Pipeline.Workspace)\toBeSigned
 
 - pwsh: |
     Import-Module $(PowerShellRoot)/build.psm1 -Force
     Import-Module $(PowerShellRoot)/tools/packaging -Force
-    $signedFilesPath = '$(System.ArtifactsDirectory)\signed\'
+    $signedFilesPath = '$(PipelineWorkspace)\signed\'
     $BuildPath = '${{ parameters.binPath }}'
     Write-Verbose -Verbose -Message "BuildPath: $BuildPath"
 
@@ -93,7 +91,7 @@ steps:
 
     Write-Verbose -verbose "to be signed:`r`n $($missingSignatures | Out-String)"
 
-    $filesToSignDirectory = "$(System.ArtifactsDirectory)\thirdPartyToBeSigned"
+    $filesToSignDirectory = "$(PipelineWorkspace)\thirdPartyToBeSigned"
     if (Test-Path $filesToSignDirectory) {
       Remove-Item -Path $filesToSignDirectory -Recurse -Force
     }
@@ -119,18 +117,18 @@ steps:
     command: 'sign'
     signing_profile: 135020002
     files_to_sign: '**\*.dll;**\*.exe'
-    search_root: $(System.ArtifactsDirectory)\thirdPartyToBeSigned
+    search_root: $(PipelineWorkspace)\thirdPartyToBeSigned
 
 - pwsh: |
-    Get-ChildItem '$(System.ArtifactsDirectory)\thirdPartyToBeSigned\*'
+    Get-ChildItem '$(PipelineWorkspace)\thirdPartyToBeSigned\*'
   displayName: Capture ThirdParty Signed files
 
 - pwsh: |
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
-    $signedFilesPath = '$(System.ArtifactsDirectory)\thirdPartyToBeSigned'
+    $signedFilesPath = '$(PipelineWorkspace)\thirdPartyToBeSigned'
     $BuildPath = '${{ parameters.binPath }}'
-    Copy-Item -Path $(System.ArtifactsDirectory)\toBeSigned\* -Destination $BuildPath -Recurse -Force
+    Copy-Item -Path $(PipelineWorkspace)\toBeSigned\* -Destination $BuildPath -Recurse -Force
     Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
     if ($env:BuildConfiguration -eq 'minSize') {
       ## Remove XML files when making a min-size package.
