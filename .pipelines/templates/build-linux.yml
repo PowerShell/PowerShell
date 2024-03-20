@@ -70,7 +70,7 @@ jobs:
 
       Start-PSBootstrap -Package
       $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
-      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath @params
+      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath @params -Clean -PSModuleRestore
 
       Write-Verbose -Verbose "Verifying pdbs exist in build folder"
       $pdbs = Get-ChildItem -Path $buildWithSymbolsPath -Recurse -Filter *.pdb

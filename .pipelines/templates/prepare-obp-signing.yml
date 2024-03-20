@@ -12,7 +12,7 @@ steps:
 - pwsh: |
     $fullSymbolsFolder = '${{ parameters.binPath }}'
     Write-Verbose -Verbose "fullSymbolsFolder == $fullSymbolsFolder"
-    Get-ChildItem -Recurse $fullSymbolsFolder | out-string | Write-Verbose -Verbose
+    Get-ChildItem -Recurse $fullSymbolsFolder | Select-Object -ExpandProperty FullName | Write-Verbose -Verbose
     $filesToSignDirectory = "$(Pipeline.Workspace)/toBeSigned"
     if ((Test-Path -Path $filesToSignDirectory))  {
       Remove-Item -Path $filesToSignDirectory -Recurse -Force
@@ -70,13 +70,17 @@ steps:
 
       if (-not (Test-Path -Path $pattern)) {
         Write-Verbose -verbose "No files found for pattern $pattern"
-        $parent = Split-Path -Path $pattern -Parent
-        Get-ChildItem -Path $parent -Recurse | out-string | Write-Verbose -verbose
         continue
       }
 
       Copy-Item -Path $pattern -Destination $destinationFolder -Recurse -verbose
     }
+
+    Write-Verbose -verbose "copying done."
+    Write-Verbose -verbose "Files to be signed at: $filesToSignDirectory"
+
+    Get-ChildItem -Recurse -File $filesToSignDirectory | Select-Object -Property FullName
+
   displayName: 'Prepare files to be signed'
 
 - task: onebranch.pipeline.signing@1
