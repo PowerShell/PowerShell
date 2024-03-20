@@ -91,7 +91,7 @@ steps:
     Import-Module $(PowerShellRoot)/build.psm1 -Force
     Import-Module $(PowerShellRoot)/tools/packaging -Force
 
-    $BuildPath = (Get-Item'${{ parameters.binPath }}').FullName
+    $BuildPath = (Get-Item '${{ parameters.binPath }}').FullName
     Write-Verbose -Verbose -Message "BuildPath: $BuildPath"
 
     $dlls = Get-ChildItem $BuildPath/*.dll, $BuildPath/*.exe -Recurse
