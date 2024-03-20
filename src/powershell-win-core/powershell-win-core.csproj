@@ -4,7 +4,6 @@
   <PropertyGroup>
     <Description>PowerShell on Windows top-level project</Description>
     <AssemblyName>pwsh</AssemblyName>
-    <AssemblyTitle>PowerShell 7</AssemblyTitle>
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>
     <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
