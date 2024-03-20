@@ -10,7 +10,7 @@ steps:
   displayName: Set artifact platform
 
 - pwsh: |
-    $fullSymbolsFolder = '$(binPath)'
+    $fullSymbolsFolder = '${{ parameters.binPath }}'
     Write-Verbose -Verbose "fullSymbolsFolder == $fullSymbolsFolder"
     Get-ChildItem -Recurse $fullSymbolsFolder | out-string | Write-Verbose -Verbose
     $filesToSignDirectory = "$(System.ArtifactsDirectory)\toBeSigned"
@@ -84,7 +84,7 @@ steps:
     Import-Module $(PowerShellRoot)/build.psm1 -Force
     Import-Module $(PowerShellRoot)/tools/packaging -Force
     $signedFilesPath = '$(System.ArtifactsDirectory)\signed\'
-    $BuildPath = '$(binPath)'
+    $BuildPath = '${{ parameters.binPath }}'
     Write-Verbose -Verbose -Message "BuildPath: $BuildPath"
 
     $dlls = Get-ChildItem $BuildPath\*.dll, $BuildPath\*.exe -Recurse
@@ -129,7 +129,7 @@ steps:
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
     $signedFilesPath = '$(System.ArtifactsDirectory)\thirdPartyToBeSigned'
-    $BuildPath = '$(binPath)'
+    $BuildPath = '${{ parameters.binPath }}'
     Copy-Item -Path $(System.ArtifactsDirectory)\toBeSigned\* -Destination $BuildPath -Recurse -Force
     Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
     if ($env:BuildConfiguration -eq 'minSize') {
@@ -139,32 +139,5 @@ steps:
 
     Get-ChildItem -Recurse -File $BuildPath | Get-AuthenticodeSignature | Format-Table -Property Path, Status, SignerCertificate, TimeStamperCertificate
   displayName: Merge ThirdParty signed files with Build
-
-# - pwsh: |
-#     $uploadFolder = '$(BinPath)'
-#     $containerName = '$(signedArtifactContainer)'
-#     Write-Verbose -Verbose "File permissions after signing"
-#     Get-ChildItem $uploadFolder\pwsh | Select-Object -Property 'unixmode', 'size', 'name'
-#     $uploadTarFilePath = Join-Path '$(System.ArtifactsDirectory)' '$(signedBuildArtifactName)'
-#     Write-Verbose -Verbose -Message "Creating tar.gz - $uploadTarFilePath"
-#     tar -czvf $uploadTarFilePath -C $uploadFolder *
-#     Get-ChildItem '$(System.ArtifactsDirectory)' | Out-String | Write-Verbose -Verbose
-#     Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadTarFilePath"
-#   displayName: Upload signed tar.gz files to artifacts
-#   condition: eq(variables['ArtifactPlatform'], 'linux')
-#   retryCountOnTaskFailure: 2
-# - pwsh: |
-#     $uploadFolder = '$(BinPath)'
-#     $containerName = '$(signedArtifactContainer)'
-#     Get-ChildItem $uploadFolder -Recurse | Out-String | Write-Verbose -Verbose
-#     $uploadZipFilePath = Join-Path '$(System.ArtifactsDirectory)' 'PowerShell-$(Version)$(signedBuildArtifactName)'
-#     Write-Verbose -Verbose -Message "Creating zip - $uploadZipFilePath"
-#     Compress-Archive -Path $uploadFolder/* -DestinationPath $uploadZipFilePath -Verbose
-#     Get-ChildItem '$(System.ArtifactsDirectory)' | Out-String | Write-Verbose -Verbose
-#     Write-Host "##vso[artifact.upload containerfolder=$containerName;artifactname=$containerName]$uploadZipFilePath"
-#   displayName: Upload signed zip files to artifacts
-#   condition: eq(variables['ArtifactPlatform'], 'windows')
-#   retryCountOnTaskFailure: 2
-
 
 - template: /.pipelines/templates/step/finalize.yml@self

@@ -57,7 +57,7 @@ jobs:
       Language: csharp
 
   - pwsh: |
-      $runtime = $env:Runtime
+      $runtime = $env:RUNTIME
 
       $params = @{}
       if ($env:BuildConfiguration -eq 'minSize') {
@@ -96,6 +96,8 @@ jobs:
       ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
   - template: /.pipelines/templates/prepare-obp-signing.yml@self
+    parameters:
+      ob_outputDirectory: $(ob_outputDirectory)/Symbols_$(Runtime)
 
   - pwsh: |
       Write-Verbose -Verbose "Create build folder with no symbols"
