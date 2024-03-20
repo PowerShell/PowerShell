@@ -97,7 +97,7 @@ jobs:
 
   - template: /.pipelines/templates/prepare-obp-signing.yml@self
     parameters:
-      ob_outputDirectory: $(ob_outputDirectory)/Symbols_$(Runtime)
+      binPath: $(ob_outputDirectory)/Symbols_$(Runtime)
 
   - pwsh: |
       Write-Verbose -Verbose "Create build folder with no symbols"
