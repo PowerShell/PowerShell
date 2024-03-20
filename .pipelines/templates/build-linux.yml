@@ -5,7 +5,7 @@ parameters:
 
 jobs:
 - job: ${{ parameters.JobName }}
-  displayName: Build_Windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
+  displayName: Build_Linux_${{ parameters.Runtime }}_${{ parameters.BuildConfiguration }}
   condition: succeeded()
   pool:
     type: linux
@@ -27,10 +27,10 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
   - name: ob_sdl_credscan_suppressionsFile
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-  - name: Architecture
-    value: ${{ parameters.Architecture }}
   - name: BuildConfiguration
     value: ${{ parameters.BuildConfiguration }}
+  - name: Runtime
+    value: ${{ parameters.Runtime }}
 
   steps:
   - checkout: self
