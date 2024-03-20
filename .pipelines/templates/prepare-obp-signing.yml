@@ -160,7 +160,7 @@ steps:
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
     $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Signed-$(Runtime)' -Force
     Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
-    Copy-Item -Path '${{ parameters.binPath }}' -Destination $pathForUpload -Recurse -Force -Verbose
+    Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
     Write-Verbose -Verbose -Message "Files copied to $pathForUpload"
 
     Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath '$(Pipeline.Workspace)/toBeSigned'
