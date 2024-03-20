@@ -123,7 +123,7 @@ steps:
       Copy-Item -Path $_ -Destination $targetDirectory
     }
   displayName: Create ThirdParty Signing Folder
-  condition: eq($(ArtifactPlatform), 'windows')
+  condition: eq('$(ArtifactPlatform)', 'windows')
 
 - task: onebranch.pipeline.signing@1
   displayName: Sign 3rd Party files
@@ -132,12 +132,12 @@ steps:
     signing_profile: 135020002
     files_to_sign: '**\*.dll;**\*.exe'
     search_root: $(Pipeline.Workspace)/thirdPartyToBeSigned
-  condition: eq($(ArtifactPlatform), 'windows')
+  condition: eq('$(ArtifactPlatform)', 'windows')
 
 - pwsh: |
     Get-ChildItem '$(Pipeline.Workspace)/thirdPartyToBeSigned/*'
   displayName: Capture ThirdParty Signed files
-  condition: eq($(ArtifactPlatform), 'windows')
+  condition: eq('$(ArtifactPlatform)', 'windows')
 
 # - pwsh: |
 #     Import-Module '$(PowerShellRoot)/build.psm1' -Force
@@ -153,7 +153,7 @@ steps:
 
 #     Get-ChildItem -Recurse -File $BuildPath | Get-AuthenticodeSignature | Format-Table -Property Path, Status, SignerCertificate, TimeStamperCertificate
 #   displayName: Merge ThirdParty signed files with Build
-#   condition: eq($(ArtifactPlatform), 'windows')
+#   condition: eq('$(ArtifactPlatform)', 'windows')
 
 - pwsh: |
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
