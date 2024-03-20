@@ -128,6 +128,14 @@ Describe "Test-Path" -Tags "CI" {
         Test-Path -Path $badPath -IsValid | Should -BeFalse
     }
 
+    It "Should return appropriate result for wildcard" {
+        if ($IsWindows) {
+            Test-Path -Path "C:\Program Files\*" -IsValid | Should -BeFalse
+        } else {
+            Test-Path -Path "/usr/*" | Should -BeTrue
+        }
+    }
+
     It "Should return true on paths containing spaces when the path is surrounded in quotes" {
         Test-Path -Path "/totally a valid/path" -IsValid | Should -BeTrue
     }
