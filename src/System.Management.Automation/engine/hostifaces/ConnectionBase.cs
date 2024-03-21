@@ -27,13 +27,13 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Initialize powershell AssemblyLoadContext and register the 'Resolving' event, if it's not done already.
-        /// If powershell is hosted by a native host such as DSC, then PS ALC will be initialized via 'SetPowerShellAssemblyLoadContext' before loading S.M.A.
+        /// If powershell is hosted by a native host such as DSC, then PS ALC may be initialized via 'SetPowerShellAssemblyLoadContext' before loading S.M.A.
         /// </summary>
         static RunspaceBase()
         {
             if (PowerShellAssemblyLoadContext.Instance is null)
             {
-                PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty);
+                PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty, throwOnReentry: false);
             }
         }
 
