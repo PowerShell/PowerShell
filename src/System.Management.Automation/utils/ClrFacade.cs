@@ -20,18 +20,6 @@ namespace System.Management.Automation
     /// </summary>
     internal static class ClrFacade
     {
-        /// <summary>
-        /// Initialize powershell AssemblyLoadContext and register the 'Resolving' event, if it's not done already.
-        /// If powershell is hosted by a native host such as DSC, then PS ALC might be initialized via 'SetPowerShellAssemblyLoadContext' before loading S.M.A.
-        /// </summary>
-        static ClrFacade()
-        {
-            if (PowerShellAssemblyLoadContext.Instance == null)
-            {
-                PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty);
-            }
-        }
-
         #region Assembly
 
         internal static IEnumerable<Assembly> GetAssemblies(TypeResolutionState typeResolutionState, TypeName typeName)

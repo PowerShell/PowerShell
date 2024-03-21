@@ -26,6 +26,18 @@ namespace System.Management.Automation.Runspaces
         #region constructors
 
         /// <summary>
+        /// Initialize powershell AssemblyLoadContext and register the 'Resolving' event, if it's not done already.
+        /// If powershell is hosted by a native host such as DSC, then PS ALC will be initialized via 'SetPowerShellAssemblyLoadContext' before loading S.M.A.
+        /// </summary>
+        static RunspaceBase()
+        {
+            if (PowerShellAssemblyLoadContext.Instance is null)
+            {
+                PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty);
+            }
+        }
+
+        /// <summary>
         /// Construct an instance of an Runspace using a custom
         /// implementation of PSHost.
         /// </summary>
