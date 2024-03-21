@@ -914,6 +914,12 @@ function Update-PSSignedBuildFolder
         if (-not (Test-Path $destination)) {
             $parent = Split-Path -Path $destination -Parent
             $exists = Test-Path -Path $parent
+
+            if ($exists) {
+                Write-Verbose -Verbose "Parent:"
+                Get-ChildItem -Path $parent | Select-Object -ExpandProperty FullName | Write-Verbose -Verbose
+            }
+
             Write-Error "File not found: $destination, parent - $parent exists: $exists"
         }
 

@@ -91,6 +91,10 @@ steps:
     files_to_sign: '**\*.psd1;**\*.psm1;**\*.ps1xml;**\*.ps1;**\*.dll;**\*.exe'
     search_root: $(Pipeline.Workspace)/toBeSigned
 
+- pwsh : |
+    Get-ChildItem -Path env:
+  displayName: Capture environment
+
 - pwsh: |
     Import-Module $(PowerShellRoot)/build.psm1 -Force
     Import-Module $(PowerShellRoot)/tools/packaging -Force
@@ -170,7 +174,7 @@ steps:
     ## We cannot sign third party files on Linux, we have a separate job for that
     if ($env:ArtifactPlatform -eq 'windows') {
       Write-Verbose "Copying third party signed files to the build folder"
-      $thirdPartySignedFilesPath = '$(Pipeline.Workspace)/thirdPartyToBeSigned'
+      $thirdPartySignedFilesPath = (Get-Item '$(Pipeline.Workspace)/thirdPartyToBeSigned').FullName
       Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath $thirdPartySignedFilesPath
     }
 
