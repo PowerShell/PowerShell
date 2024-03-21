@@ -3,13 +3,6 @@ parameters:
 
 steps:
 - pwsh: |
-    $platform = '$(runtime)' -match '^linux' ? 'linux' : 'windows'
-    $vstsCommandString = "vso[task.setvariable variable=ArtifactPlatform]$platform"
-    Write-Host ("sending " + $vstsCommandString)
-    Write-Host "##$vstsCommandString"
-  displayName: Set artifact platform
-
-- pwsh: |
     $fullSymbolsFolder = '${{ parameters.binPath }}'
     Write-Verbose -Verbose "fullSymbolsFolder == $fullSymbolsFolder"
     Get-ChildItem -Recurse $fullSymbolsFolder | Select-Object -ExpandProperty FullName | Write-Verbose -Verbose
