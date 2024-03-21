@@ -895,11 +895,11 @@ function Update-PSSignedBuildFolder
         [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap')
     )
 
-    Write-Verbose -Verbose "BuildPath = $BuildPathNormalized"
-    Write-Verbose -Verbose "SignedFilesPath = $signedFilesPath"
-
     $BuildPathNormalized = (Get-Item $BuildPath).FullName
     $SignedFilesPathNormalized = (Get-Item $SignedFilesPath).FullName
+
+    Write-Verbose -Verbose "BuildPath = $BuildPathNormalized"
+    Write-Verbose -Verbose "SignedFilesPath = $signedFilesPath"
 
     # Replace unsigned binaries with signed
     $signedFilesFilter = Join-Path -Path $SignedFilesPathNormalized -ChildPath '*'
@@ -913,7 +913,6 @@ function Update-PSSignedBuildFolder
             $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPathNormalized.ToLowerInvariant(), '')
         }
 
-        $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPathNormalized.ToLowerInvariant(),'')
         Write-Verbose -Verbose "relativePath = $relativePath"
         $destination = Get-Item (Join-Path -Path $BuildPathNormalized -ChildPath $relativePath).FullName
         Write-Verbose -Verbose "destination = $destination"
