@@ -69,7 +69,7 @@ jobs:
 
       Write-Verbose -Message "Building PowerShell with Runtime: $runtime"
       Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
-      $buildWithSymbolsPath = New-Item -ItemType Directory -Path $(ob_outputDirectory)/Symbols_$(Runtime) -Force
+      $buildWithSymbolsPath = New-Item -ItemType Directory -Path $(Pipeline.Workspace)/Symbols_$(Runtime) -Force
 
       Start-PSBootstrap
       $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
@@ -107,16 +107,14 @@ jobs:
 
   - template: /.pipelines/templates/prepare-obp-signing.yml@self
     parameters:
-      binPath: $(ob_outputDirectory)/Symbols_$(Runtime)
+      binPath: $(Pipeline.Workspace)/Symbols_$(Runtime)
 
   - pwsh: |
       Write-Verbose -Verbose "Create build folder with no symbols"
       $buildNoSymbolsPath = Join-Path -Path $(ob_outputDirectory) -ChildPath "$(Runtime)"
       $null = New-Item -ItemType Directory -Path $buildNoSymbolsPath -Force -Verbose
-
-      $buildWithSymbolsPath = Join-Path -Path $(ob_outputDirectory) -ChildPath Symbols_$(Runtime)
-
-      Copy-Item -Path $buildWithSymbolsPath -Destination $buildNoSymbolsPath -Recurse -Force -Exclude '*.pdb' -Verbose
+      $buildWithSymbolsPath = Join-Path -Path $(Pipeline.Workspace) -ChildPath Symbols_$(Runtime)
+      Copy-Item -Path $buildWithSymbolsPath\* -Destination $buildNoSymbolsPath -Recurse -Force -Exclude '*.pdb' -Verbose
     displayName: 'Create no symbols folder'
 
   - template: /.pipelines/templates/step/finalize.yml@self
