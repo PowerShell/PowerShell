@@ -98,6 +98,9 @@ steps:
     $BuildPath = (Get-Item '${{ parameters.binPath }}').FullName
     Write-Verbose -Verbose -Message "BuildPath: $BuildPath"
 
+    ## copy all files to be signed to build folder
+    Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath '$(Pipeline.Workspace)/toBeSigned'
+
     $dlls = Get-ChildItem $BuildPath/*.dll, $BuildPath/*.exe -Recurse
     $signatures = $dlls | Get-AuthenticodeSignature
     $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned' -or $_.SignerCertificate.Issuer -notmatch '^CN=Microsoft.*'}| select-object -ExpandProperty Path
@@ -139,22 +142,6 @@ steps:
   displayName: Capture ThirdParty Signed files
   condition: eq(variables['ArtifactPlatform'], 'windows')
 
-# - pwsh: |
-#     Import-Module '$(PowerShellRoot)/build.psm1' -Force
-#     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
-#     $signedFilesPath = '$(Pipeline.Workspace)/thirdPartyToBeSigned'
-#     $BuildPath = '${{ parameters.binPath }}'
-#     Copy-Item -Path $(Pipeline.Workspace)/toBeSigned/* -Destination $BuildPath -Recurse -Force -Verbose
-#     Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
-#     if ($env:BuildConfiguration -eq 'minSize') {
-#       ## Remove XML files when making a min-size package.
-#       Remove-Item "$BuildPath/*.xml" -Force
-#     }
-
-#     Get-ChildItem -Recurse -File $BuildPath | Get-AuthenticodeSignature | Format-Table -Property Path, Status, SignerCertificate, TimeStamperCertificate
-#   displayName: Merge ThirdParty signed files with Build
-#   condition: eq('$(ArtifactPlatform)', 'windows')
-
 - pwsh: |
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
@@ -162,10 +149,6 @@ steps:
     Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
     Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
     Write-Verbose -Verbose -Message "Files copied to $pathForUpload"
-
-    Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath '$(Pipeline.Workspace)/toBeSigned'
-
-    Write-Verbose -Verbose -Message "Files signed and copied to $pathForUpload"
 
     ## We cannot sign third party files on Linux, we have a separate job for that
     if ($env:ArtifactPlatform -eq 'windows') {
