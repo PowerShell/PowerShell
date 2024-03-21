@@ -916,7 +916,7 @@ function Update-PSSignedBuildFolder
         }
 
         Write-Verbose -Verbose "relativePath = $relativePath"
-        $destination = (Get-Item Join-Path -Path $BuildPathNormalized -ChildPath $relativePath).FullName
+        $destination = (Get-Item (Join-Path -Path $BuildPathNormalized -ChildPath $relativePath)).FullName
         Write-Verbose -Verbose "destination = $destination"
         Write-Log "replacing $destination with $_"
 
