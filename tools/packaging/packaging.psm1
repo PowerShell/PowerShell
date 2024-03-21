@@ -905,9 +905,17 @@ function Update-PSSignedBuildFolder
     $signedFilesFilter = Join-Path -Path $SignedFilesPathNormalized -ChildPath '*'
     Get-ChildItem -Path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | ForEach-Object -Process {
         Write-Verbose -Verbose "Processing $_"
+
+        # Agents seems to be on a case sensitive file system
+        if ($IsLinux -or $IsMacOS) {
+            $relativePath = $_.Replace($SignedFilesPathNormalized, '')
+        } else {
+            $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPathNormalized.ToLowerInvariant(), '')
+        }
+
         $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPathNormalized.ToLowerInvariant(),'')
         Write-Verbose -Verbose "relativePath = $relativePath"
-        $destination = Join-Path -Path $BuildPathNormalized -ChildPath $relativePath
+        $destination = Get-Item (Join-Path -Path $BuildPathNormalized -ChildPath $relativePath).FullName
         Write-Verbose -Verbose "destination = $destination"
         Write-Log "replacing $destination with $_"
 
