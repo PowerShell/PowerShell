@@ -32,6 +32,9 @@ jobs:
     value: ${{ parameters.Architecture }}
   - name: BuildConfiguration
     value: ${{ parameters.BuildConfiguration }}
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+    - name: ob_sdl_codeql_compiled_enabled
+      value: true
 
   steps:
   - checkout: self

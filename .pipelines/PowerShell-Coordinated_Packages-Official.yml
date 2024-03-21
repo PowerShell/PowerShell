@@ -103,8 +103,10 @@ extends:
       sbom:
         enabled: true
         packageName: Microsoft.PowerShell
-      codeql:
-        compiled:
+      compiled:
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+          enabled: true
+        ${{ else }}:
           enabled: false
       credscan:
         enabled: true
