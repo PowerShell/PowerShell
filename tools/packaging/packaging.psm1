@@ -932,6 +932,12 @@ function Update-PSSignedBuildFolder
             Write-Error "File not found: $destination, parent - $parent exists: $exists"
         }
 
+        $signature = Get-AuthenticodeSignature -FilePath $_
+
+        if ($signature.Status -ne 'Valid') {
+            Write-Error "Invalid signature for $_"
+        }
+
         Copy-Item -Path $_ -Destination $destination -Force
     }
 

@@ -75,9 +75,11 @@ steps:
     Get-ChildItem -Recurse -File $filesToSignDirectory | Select-Object -Property FullName
 
   displayName: 'Prepare files to be signed'
+  condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - task: onebranch.pipeline.signing@1
   displayName: Sign 1st party files
+  condition: eq(variables['ArtifactPlatform'], 'windows')
   inputs:
     command: 'sign'
     signing_profile: external_distribution
@@ -87,6 +89,7 @@ steps:
 - pwsh : |
     Get-ChildItem -Path env:
   displayName: Capture environment
+  condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - pwsh: |
     Import-Module $(PowerShellRoot)/build.psm1 -Force
@@ -171,6 +174,14 @@ steps:
       Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath $thirdPartySignedFilesPath
     }
 
-  displayName: 'Copy signed files for upload'
+  displayName: 'Copy signed files for upload - Windows'
+  condition: eq(variables['ArtifactPlatform'], 'windows')
+
+- pwsh: |
+    $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Unsigned-$(Runtime)' -Force
+    Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
+    Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
+  displayName: Copy signed files for upload - Linux
+  condition: eq(variables['ArtifactPlatform'], 'linux')
 
 - template: /.pipelines/templates/step/finalize.yml@self
