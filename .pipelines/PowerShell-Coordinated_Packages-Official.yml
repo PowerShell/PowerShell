@@ -149,43 +149,43 @@ extends:
       - template: /.pipelines/templates/build-linux.yml@self
         parameters:
           Runtime: 'linux-x64'
-          JobName: 'build_linux_x64_minSize'
+          JobName: '_linux_x64_minSize'
           BuildConfiguration: 'minSize'
 
       - template: /.pipelines/templates/build-linux.yml@self
         parameters:
           Runtime: 'linux-arm'
-          JobName: 'build_linux_arm'
+          JobName: '_linux_arm'
 
       - template: /.pipelines/templates/build-linux.yml@self
         parameters:
           Runtime: 'linux-arm64'
-          JobName: 'build_linux_arm64'
+          JobName: '_linux_arm64'
 
       - template: /.pipelines/templates/build-linux.yml@self
         parameters:
           Runtime: 'fxdependent-linux-x64'
-          JobName: 'build_linux_fxd_x64_mariner'
+          JobName: '_linux_fxd_x64_mariner'
 
       - template: /.pipelines/templates/build-linux.yml@self
         parameters:
           Runtime: 'fxdependent-linux-arm64'
-          JobName: 'build_linux_fxd_arm64_mariner'
+          JobName: '_linux_fxd_arm64_mariner'
 
       - template: /.pipelines/templates/build-linux.yml@self
         parameters:
           Runtime: 'fxdependent-noopt-linux-musl-x64'
-          JobName: 'build_linux_fxd_x64_alpine'
+          JobName: '_linux_fxd_x64_alpine'
 
       - template: /.pipelines/templates/build-linux.yml@self
         parameters:
           Runtime: 'fxdependent'
-          JobName: 'build_linux_fxd'
+          JobName: '_linux_fxd'
 
       - template: /.pipelines/templates/build-linux.yml@self
         parameters:
           Runtime: 'linux-musl-x64'
-          JobName: 'build_linux_x64_alpine'
+          JobName: '_linux_x64_alpine'
 
       # - template: /.pipelines/templates/linux.yml@self
       #   parameters:

@@ -118,7 +118,7 @@ jobs:
       Write-Host "##$vstsCommandString"
     displayName: Set artifact platform
 
-  - template: /.pipelines/templates/prepare-obp-signing.yml@self
+  - template: /.pipelines/templates/obp-file-signing.yml@self
     parameters:
       binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
 

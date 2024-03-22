@@ -73,13 +73,10 @@ steps:
     Write-Verbose -verbose "Files to be signed at: $filesToSignDirectory"
 
     Get-ChildItem -Recurse -File $filesToSignDirectory | Select-Object -Property FullName
-
   displayName: 'Prepare files to be signed'
-  condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - task: onebranch.pipeline.signing@1
   displayName: Sign 1st party files
-  condition: eq(variables['ArtifactPlatform'], 'windows')
   inputs:
     command: 'sign'
     signing_profile: external_distribution
@@ -89,7 +86,6 @@ steps:
 - pwsh : |
     Get-ChildItem -Path env:
   displayName: Capture environment
-  condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - pwsh: |
     Import-Module $(PowerShellRoot)/build.psm1 -Force
@@ -126,7 +122,6 @@ steps:
       Copy-Item -Path $_ -Destination $targetDirectory
     }
   displayName: Create ThirdParty Signing Folder
-  condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - task: onebranch.pipeline.signing@1
   displayName: Sign 3rd Party files
@@ -135,12 +130,10 @@ steps:
     signing_profile: 135020002
     files_to_sign: '**\*.dll;**\*.exe'
     search_root: $(Pipeline.Workspace)/thirdPartyToBeSigned
-  condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - pwsh: |
     Get-ChildItem '$(Pipeline.Workspace)/thirdPartyToBeSigned/*'
   displayName: Capture ThirdParty Signed files
-  condition: eq(variables['ArtifactPlatform'], 'windows')
 
 - pwsh: |
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
@@ -150,21 +143,17 @@ steps:
     Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
     Write-Verbose -Verbose -Message "Files copied to $pathForUpload"
 
-    ## We cannot sign third party files on Linux, we have a separate job for that
-    if ($env:ArtifactPlatform -eq 'windows') {
-      Write-Verbose "Copying third party signed files to the build folder"
-      $thirdPartySignedFilesPath = (Get-Item '$(Pipeline.Workspace)/thirdPartyToBeSigned').FullName
-      Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath $thirdPartySignedFilesPath
-    }
+    Write-Verbose "Copying third party signed files to the build folder"
+    $thirdPartySignedFilesPath = (Get-Item '$(Pipeline.Workspace)/thirdPartyToBeSigned').FullName
+    Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath $thirdPartySignedFilesPath
 
-  displayName: 'Copy signed files for upload - Windows'
-  condition: eq(variables['ArtifactPlatform'], 'windows')
+  displayName: 'Copy signed files for upload'
 
-- pwsh: |
-    $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Unsigned-$(Runtime)' -Force
-    Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
-    Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
-  displayName: Copy signed files for upload - Linux
-  condition: eq(variables['ArtifactPlatform'], 'linux')
+# - pwsh: |
+#     $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Unsigned-$(Runtime)' -Force
+#     Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
+#     Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
+#   displayName: Copy signed files for upload - Linux
+#   condition: eq(variables['ArtifactPlatform'], 'linux')
 
 - template: /.pipelines/templates/step/finalize.yml@self

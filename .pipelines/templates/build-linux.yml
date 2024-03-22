@@ -4,7 +4,7 @@ parameters:
   JobName: 'build_linux'
 
 jobs:
-- job: ${{ parameters.JobName }}
+- job: build_${{ parameters.JobName }}
   displayName: Build_Linux_${{ parameters.Runtime }}_${{ parameters.BuildConfiguration }}
   condition: succeeded()
   pool:
@@ -106,8 +106,60 @@ jobs:
       Write-Host "##$vstsCommandString"
     displayName: Set artifact platform
 
-  - template: /.pipelines/templates/prepare-obp-signing.yml@self
-    parameters:
-      binPath: $(Pipeline.Workspace)/Symbols_$(Runtime)
-
   - template: /.pipelines/templates/step/finalize.yml@self
+
+- job: sign_${{ parameter.JobName }}
+  displayName: Sign_Linux_${{ parameters.Runtime }}_${{ parameters.BuildConfiguration }}
+  condition: succeeded()
+  dependsOn: build_${{ parameters.JobName }}
+  pool:
+    type: windows
+  variables:
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
+  - name: ob_sdl_binskim_enabled
+    value: false
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - name: BuildConfiguration
+    value: ${{ parameters.BuildConfiguration }}
+  - name: Runtime
+    value: ${{ parameters.Runtime }}
+  - name: ob_sdl_codeql_compiled_enabled
+    value: false
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: drop_linux_build_${{ parameters.JobName }}
+      path: $(Pipeline.Workspace)/drop_linux_build
+    displayName: Download min-size build
+
+  - pwsh: |
+      $pwshPath = Get-ChildItem -Path $(Pipeline.Workspace)/drop_linux_build -File -Recurse | Where-Object { $_.Name -eq 'pwsh' }
+      $rootPath = Split-Path -Path $pwshPath.FullName -Parent
+      Write-Verbose -Verbose "Setting vso[task.setvariable variable=DropRootPath]$rootPath"
+      Write-Host "##vso[task.setvariable variable=DropRootPath]$rootPath"
+    displayName: Set drop root path
+
+  - template: /.pipelines/templates/obp-file-signing.yml@self
+    parameters:
+      binPath: $(DropRootPath)
+
+  -
