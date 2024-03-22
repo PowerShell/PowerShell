@@ -122,18 +122,4 @@ jobs:
     parameters:
       binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
 
-  # - pwsh: |
-  #     Write-Verbose -Verbose "Create build folder with no symbols"
-  #     $signedBuildPath = Join-Path -Path $(Pipeline.Workspace) -ChildPath "Symbols_$(Architecture)"
-
-  #     $buildWithSymbolsPath = Join-Path -Path $(ob_outputDirectory) -ChildPath Symbols_$(Architecture)
-  #     $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
-  #     Copy-Item -Path $signedBuildPath\* -Destination $buildWithSymbolsPath -Recurse -Force -Verbose
-
-  #     $buildNoSymbolsPath = Join-Path -Path $(ob_outputDirectory) -ChildPath "Release_$(Architecture)"
-  #     $null = New-Item -ItemType Directory -Path $buildNoSymbolsPath -Force -Verbose
-  #     Copy-Item -Path $buildWithSymbolsPath\* -Destination $buildNoSymbolsPath -Recurse -Force -Exclude '*.pdb' -Verbose
-
-  #   displayName: 'Create no symbols folder'
-
   - template: /.pipelines/templates/step/finalize.yml@self

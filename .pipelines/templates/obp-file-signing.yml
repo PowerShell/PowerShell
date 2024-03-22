@@ -153,11 +153,4 @@ steps:
 
   displayName: 'Copy signed files for upload'
 
-# - pwsh: |
-#     $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Unsigned-$(Runtime)' -Force
-#     Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
-#     Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
-#   displayName: Copy signed files for upload - Linux
-#   condition: eq(variables['ArtifactPlatform'], 'linux')
-
 - template: /.pipelines/templates/step/finalize.yml@self
