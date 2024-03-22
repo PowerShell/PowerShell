@@ -1,13 +1,3 @@
-#################################################################################
-#                               OneBranch Pipelines                             #
-# This pipeline was created by EasyStart from a sample located at:              #
-#   https://aka.ms/obpipelines/easystart/samples                                #
-# Documentation:  https://aka.ms/obpipelines                                    #
-# Yaml Schema:    https://aka.ms/obpipelines/yaml/schema                        #
-# Retail Tasks:   https://aka.ms/obpipelines/tasks                              #
-# Support:        https://aka.ms/onebranchsup                                   #
-#################################################################################
-
 name: UnifiedPackageBuild-$(Build.BuildId)
 trigger:
   branches:
@@ -74,8 +64,6 @@ variables:
     value: ${{ parameters.ForceAzureBlobDelete }}
   - name: Github_Build_Repository_Uri
     value: https://github.com/powershell/powershell
-  - name: SBOMGenerator_Formats
-    value: spdx:2.2
   - name: BUILDSECMON_OPT_IN
     value: true
   - group: PoolNames
@@ -99,6 +87,7 @@ extends:
     customTags: 'ES365AIMigrationTooling'
     globalSdl:
       disableLegacyManifest: true
+      # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
       armory:
         enabled: false
       sbom:
@@ -122,6 +111,7 @@ extends:
           suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
         binskim:
           enabled: false
+        # APIScan requires a non-Ready-To-Run build
         apiscan:
           enabled: false
         tsaOptionsFile: .config\tsaoptions.json
@@ -188,20 +178,6 @@ extends:
           Runtime: 'linux-musl-x64'
           JobName: 'linux_x64_alpine'
 
-      # - template: /.pipelines/templates/linux.yml@self
-      #   parameters:
-      #     buildName: deb
-      # - template: /.pipelines/templates/linux.yml@self
-      #   parameters:
-      #     buildName: rpm
-      #     parentJob: build_deb
-      # - template: /.pipelines/templates/linux.yml@self
-      #   parameters:
-      #     buildName: fxdependent
-      #     parentJob: build_deb
-      # - template: /.pipelines/templates/linux.yml@self
-      #   parameters:
-      #     buildName: alpine
     - stage: windows
       dependsOn: ['prep']
       jobs:
@@ -237,6 +213,7 @@ extends:
       dependsOn: ['prep']
       jobs:
       - template: /.pipelines/templates/testartifacts.yml@self
+
       - job: release_json
         displayName: Create and Upload release.json
         pool:
