@@ -162,4 +162,4 @@ jobs:
     parameters:
       binPath: $(DropRootPath)
 
-  -
+  - template: /.pipelines/templates/step/finalize.yml@self
