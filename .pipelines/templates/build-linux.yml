@@ -106,6 +106,12 @@ jobs:
       Write-Host "##$vstsCommandString"
     displayName: Set artifact platform
 
+  - pwsh: |
+      $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Unsigned-$(Runtime)' -Force
+      Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
+      Copy-Item -Path '$(Pipeline.Workspace)/Symbols_$(Runtime)/*' -Destination $pathForUpload -Recurse -Force -Verbose
+    displayName: Copy unsigned files for upload
+
   - template: /.pipelines/templates/step/finalize.yml@self
 
 - job: sign_${{ parameters.JobName }}
