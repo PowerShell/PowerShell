@@ -149,7 +149,11 @@ jobs:
     inputs:
       artifact: drop_linux_build_${{ parameters.JobName }}
       path: $(Pipeline.Workspace)/drop_linux_build
-    displayName: Download min-size build
+    displayName: Download build
+
+  - pwsh: |
+      Get-ChildItem -Path $(Pipeline.Workspace)/drop_linux_build -Recurse
+    displayName: Capture downloaded files
 
   - pwsh: |
       $pwshPath = Get-ChildItem -Path $(Pipeline.Workspace)/drop_linux_build -File -Recurse | Where-Object { $_.Name -eq 'pwsh' }
