@@ -91,6 +91,8 @@ These topics include (but are not limited to):
 * @SeeminglyScience
 * @sdwheeler
 * @kilasuit
+* @FriedrichWeinmann
+* @StevenBucher98
 
 ## Language
 
