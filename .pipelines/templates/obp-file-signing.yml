@@ -42,15 +42,19 @@ steps:
         "$($fullSymbolsFolder)/Modules/PSDiagnostics/PSDiagnostics.ps?1" = "Modules/PSDiagnostics"
       }
     }
-    else {
-      $itemsToCopy += @{
-        "$($fullSymbolsFolder)/pwsh" = ""
-      }
-    }
+    #else {
+    #  $itemsToCopy += @{
+    #    "$($fullSymbolsFolder)/pwsh" = ""
+    #  }
+    #}
     $itemsToExclude = @(
       # This package is retrieved from https://www.github.com/powershell/MarkdownRender
       "$($fullSymbolsFolder)/Microsoft.PowerShell.MarkdownRender.dll"
     )
+
+    if('$(ArtifactPlatform)' -eq 'linux') {
+      $itemsToExclude += "$($fullSymbolsFolder)/pwsh"
+    }
 
     Write-Verbose -verbose "recursively copying $($itemsToCopyWithRecurse | out-string) to $filesToSignDirectory"
     Copy-Item -Path $itemsToCopyWithRecurse -Destination $filesToSignDirectory -Recurse -verbose -exclude $itemsToExclude
@@ -80,7 +84,7 @@ steps:
   inputs:
     command: 'sign'
     signing_profile: external_distribution
-    files_to_sign: '**\*.psd1;**\*.psm1;**\*.ps1xml;**\*.ps1;**\*.dll;**\*.exe'
+    files_to_sign: '**\*.psd1;**\*.psm1;**\*.ps1xml;**\*.ps1;**\*.dll;**\*.exe;**\pwsh'
     search_root: $(Pipeline.Workspace)/toBeSigned
 
 - pwsh : |
