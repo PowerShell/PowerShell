@@ -59,6 +59,12 @@ Import-Module ./build.psm1
 Start-PSBuild
 ```
 
+In case `Start-PSBuild` reports issues with missing PowerShell modules, add the following arguments:
+
+```powershell
+Start-PSBuild -PSModuleRestore -Restore -Clean
+```
+
 Congratulations! If everything went right, PowerShell is now built and executable as `./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe`.
 
 This location is of the form `./[project]/bin/[configuration]/[framework]/[rid]/publish/[binary name]`,
