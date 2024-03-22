@@ -91,6 +91,7 @@ variables:
     value: ${{ parameters.ReleaseTagVar }}
   - name: SKIP_SIGNING
     value: ${{ parameters.SKIP_SIGNING }}
+  - group: 'AzDevOpsArtifacts'
 
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
