@@ -108,7 +108,7 @@ jobs:
 
   - template: /.pipelines/templates/step/finalize.yml@self
 
-- job: sign_${{ parameter.JobName }}
+- job: sign_${{ parameters.JobName }}
   displayName: Sign_Linux_${{ parameters.Runtime }}_${{ parameters.BuildConfiguration }}
   condition: succeeded()
   dependsOn: build_${{ parameters.JobName }}
