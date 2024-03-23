@@ -42,17 +42,13 @@ steps:
         "$($fullSymbolsFolder)/Modules/PSDiagnostics/PSDiagnostics.ps?1" = "Modules/PSDiagnostics"
       }
     }
-    #else {
-    #  $itemsToCopy += @{
-    #    "$($fullSymbolsFolder)/pwsh" = ""
-    #  }
-    #}
+
     $itemsToExclude = @(
       # This package is retrieved from https://www.github.com/powershell/MarkdownRender
       "$($fullSymbolsFolder)/Microsoft.PowerShell.MarkdownRender.dll"
     )
 
-    if('$(ArtifactPlatform)' -eq 'linux') {
+    if('$(ArtifactPlatform)' -eq 'linux' -or '$(ArtifactPlatform)' -eq 'macos'{
       $itemsToExclude += "$($fullSymbolsFolder)/pwsh"
     }
 

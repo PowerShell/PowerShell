@@ -62,3 +62,70 @@ jobs:
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
   - template: /.pipelines/templates/step/finalize.yml@self
+
+- job: sign_${{ parameters.buildArchitecture }}
+  displayName: Sign_macOS_${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  dependsOn: build_macOS_${{ parameters.buildArchitecture }}
+  pool:
+    type: windows
+  variables:
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: true
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - name: BuildArchitecture
+    value: ${{ parameters.buildArchitecture }}
+  - name: ob_sdl_codeql_compiled_enabled
+    value: false
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: 'macosBinResults'
+      path: '$(Pipeline.Workspace)\Symbols'
+    displayName: Download build
+
+  - pwsh: |
+        Get-ChildItem "$(Pipeline.Workspace)\*" -Recurse
+    displayName: 'Capture Downloaded Artifacts'
+    # Diagnostics is not critical it passes every time it runs
+    continueOnError: true
+
+  - pwsh: |
+      $zipPath = Get-Item '$(Pipeline.Workspace)\Symbols\macosBinResults\*symbol*${{ parameters.buildArchitecture }}*.zip'
+      Write-Verbose -Verbose "Zip Path: $zipPath"
+
+      $expandedFolder = $zipPath.BaseName
+      Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
+      Write-Host "##vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
+
+      Expand-Archive -Path $zipPath -Destination "$(Pipeline.Workspace)\$expandedFolder" -Force
+      $rootPath = "$(Pipeline.Workspace)\$expandedFolder"
+      Write-Verbose -Verbose "Setting vso[task.setvariable variable=DropRootPath]$rootPath"
+      Write-Host "##vso[task.setvariable variable=DropRootPath]$rootPath"
+    displayName: Expand symbols zip
+
+  - template: /.pipelines/templates/obp-file-signing.yml@self
+    parameters:
+      binPath: $(DropRootPath)
+
+  - template: /.pipelines/templates/step/finalize.yml@self

@@ -120,7 +120,9 @@ extends:
     - stage: prep
       jobs:
       - template: /.pipelines/templates/checkAzureContainer.yml@self
+
     - stage: macos
+      displayName: macOS - build and sign
       dependsOn: ['prep']
       jobs:
       - template: /.pipelines/templates/mac.yml@self
@@ -129,7 +131,12 @@ extends:
       - template: /.pipelines/templates/mac.yml@self
         parameters:
           buildArchitecture: arm64
+      - template: /.pipelines/templates/.yml@self
+        parameters:
+          buildArchitecture: minSize
+
     - stage: linux
+      displayName: linux - build and sign
       dependsOn: ['prep']
       jobs:
       - template: /.pipelines/templates/build-linux.yml@self
@@ -179,6 +186,7 @@ extends:
           JobName: 'linux_x64_alpine'
 
     - stage: windows
+      displayName: windows - build and sign
       dependsOn: ['prep']
       jobs:
       - template: /.pipelines/templates/windows-hosted-build.yml@self
