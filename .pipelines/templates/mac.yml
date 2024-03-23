@@ -111,7 +111,7 @@ jobs:
     continueOnError: true
 
   - pwsh: |
-      $zipPath = Get-Item '$(Pipeline.Workspace)\Symbols\macosBinResults\*symbol*${{ parameters.buildArchitecture }}*.zip'
+      $zipPath = Get-Item '$(Pipeline.Workspace)\Symbols\*symbol*${{ parameters.buildArchitecture }}*.zip' -Verbose
       Write-Verbose -Verbose "Zip Path: $zipPath"
 
       $expandedFolder = $zipPath.BaseName
