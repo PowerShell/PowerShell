@@ -131,9 +131,6 @@ extends:
       - template: /.pipelines/templates/mac.yml@self
         parameters:
           buildArchitecture: arm64
-      - template: /.pipelines/templates/.yml@self
-        parameters:
-          buildArchitecture: minSize
 
     - stage: linux
       displayName: linux - build and sign
