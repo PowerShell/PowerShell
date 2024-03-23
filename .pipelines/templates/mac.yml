@@ -111,13 +111,14 @@ jobs:
     continueOnError: true
 
   - pwsh: |
+      $runtime = '$(BuildArchitecture)'
+      Write-Host "sending.. vso[task.setvariable variable=Runtime]$runtime"
+      Write-Host "##vso[task.setvariable variable=Runtime]$runtime"
+
       $zipPath = Get-Item '$(Pipeline.Workspace)\Symbols\*symbol*${{ parameters.buildArchitecture }}*.zip' -Verbose
       Write-Verbose -Verbose "Zip Path: $zipPath"
 
       $expandedFolder = $zipPath.BaseName
-      Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
-      Write-Host "##vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
-
       Expand-Archive -Path $zipPath -Destination "$(Pipeline.Workspace)\$expandedFolder" -Force
       $rootPath = "$(Pipeline.Workspace)\$expandedFolder"
       Write-Verbose -Verbose "Setting vso[task.setvariable variable=DropRootPath]$rootPath"
