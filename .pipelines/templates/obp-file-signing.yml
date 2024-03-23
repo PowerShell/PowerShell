@@ -48,7 +48,7 @@ steps:
       "$($fullSymbolsFolder)/Microsoft.PowerShell.MarkdownRender.dll"
     )
 
-    if('$(ArtifactPlatform)' -eq 'linux' -or '$(ArtifactPlatform)' -eq 'macos'{
+    if('$(ArtifactPlatform)' -eq 'linux' -or '$(ArtifactPlatform)' -eq 'macos') {
       $itemsToExclude += "$($fullSymbolsFolder)/pwsh"
     }
 
