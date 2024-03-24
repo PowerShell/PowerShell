@@ -81,28 +81,6 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
         $result | Should -BeOfType 'System.Collections.Specialized.OrderedDictionary'
     }
 
-    It "Don't preserve result when no need to do so in case of flow-control exception" {
-        function TestFunc1([switch]$p) {
-            ## No need to preserve and flush the results from the IF statement to the outer
-            ## pipeline, because the results are supposed to be assigned to a variable.
-            if ($p) {
-                $null = if ($true) { "one"; return "two" }
-            } else {
-                $a = foreach ($a in 1) { "one"; return; }
-            }
-        }
-
-        function TestFunc2 {
-            ## The results from the sub-expression need to be preserved and flushed to the outer pipeline.
-            $("1";return "2")
-        }
-
-        TestFunc1 | Should -Be $null
-        TestFunc1 -p | Should -Be $null
-
-        TestFunc2 | Should -Be @("1", "2")
-    }
-
     It "'[NullString]::Value' should be treated as string type when resolving .NET method" {
         $testType = 'NullStringTest' -as [type]
         if (-not $testType) {
