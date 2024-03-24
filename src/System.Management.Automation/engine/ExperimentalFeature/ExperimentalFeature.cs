@@ -25,6 +25,7 @@ namespace System.Management.Automation
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
         internal const string PSCommandWithArgs = "PSCommandWithArgs";
         internal const string PSNativeWindowsTildeExpansion = nameof(PSNativeWindowsTildeExpansion);
+        internal const string PSSerializeJSONLongEnumAsNumber = nameof(PSSerializeJSONLongEnumAsNumber);
 
         #endregion
 
@@ -127,7 +128,10 @@ namespace System.Management.Automation
                     description: "Enable `-CommandWithArgs` parameter for pwsh"),
                 new ExperimentalFeature(
                     name: PSNativeWindowsTildeExpansion,
-                    description: "On windows, expand unquoted tilde (`~`) with the user's current home folder."
+                    description: "On windows, expand unquoted tilde (`~`) with the user's current home folder."),
+                new ExperimentalFeature(
+                    name: PSSerializeJSONLongEnumAsNumber,
+                    description: "Serialize enums based on long or ulong as an numeric value rather than the string representation when using ConvertTo-Json."
                 )
             };
 
