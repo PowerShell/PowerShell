@@ -62,11 +62,8 @@ variables:
     value: $[counter(variables['branchCounterKey'], 1)]
   - name: ForceAzureBlobDelete
     value: ${{ parameters.ForceAzureBlobDelete }}
-  - name: Github_Build_Repository_Uri
-    value: https://github.com/powershell/powershell
   - name: BUILDSECMON_OPT_IN
     value: true
-  - group: PoolNames
   - name: __DOTNET_RUNTIME_FEED
     value: ${{ parameters.InternalSDKBlobURL }}
   - name: LinuxContainerImage
@@ -92,7 +89,6 @@ extends:
         enabled: false
       sbom:
         enabled: true
-        packageName: Microsoft.PowerShell
       compiled:
         ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
           enabled: true

@@ -1,5 +1,3 @@
-# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
-# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
 parameters:
   buildArchitecture: 'x64'
 jobs:

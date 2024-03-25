@@ -1,4 +1,3 @@
-# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
 parameters:
   Architecture: 'x64'
   BuildConfiguration: 'release'
@@ -32,6 +31,8 @@ jobs:
     value: ${{ parameters.Architecture }}
   - name: BuildConfiguration
     value: ${{ parameters.BuildConfiguration }}
+  - name: ob_sdl_sbom_packageName
+    value: 'Microsoft.Powershell.Windows.${{ parameters.Architecture }}'
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
     - name: ob_sdl_codeql_compiled_enabled
       value: true

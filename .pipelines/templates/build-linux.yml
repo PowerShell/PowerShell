@@ -31,6 +31,8 @@ jobs:
     value: ${{ parameters.BuildConfiguration }}
   - name: Runtime
     value: ${{ parameters.Runtime }}
+  - name: ob_sdl_sbom_packageName
+    value: 'Microsoft.Powershell.Linux.${{ parameters.Runtime }}'
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
     - name: ob_sdl_codeql_compiled_enabled
       value: true
