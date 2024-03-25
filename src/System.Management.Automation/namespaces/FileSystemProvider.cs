@@ -1082,9 +1082,20 @@ namespace Microsoft.PowerShell.Commands
 
             // .NET introduced a change where invalid characters are accepted https://learn.microsoft.com/en-us/dotnet/core/compatibility/2.1#path-apis-dont-throw-an-exception-for-invalid-characters
             // We need to check for invalid characters ourselves
-            if (Path.GetDirectoryName(path).IndexOfAny(Path.GetInvalidPathChars()) != -1 || Path.GetFileName(path).IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+
+            // validate the filename portion first
+            if (Path.GetFileName(path).IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
             {
                 return false;
+            }
+
+            // now validate each segment of the path
+            foreach (string segment in Path.GetDirectoryName(path).Split(Path.DirectorySeparatorChar))
+            {
+                if (segment.IndexOfAny(Path.GetInvalidPathChars()) != -1)
+                {
+                    return false;
+                }
             }
 
             return true;

@@ -128,12 +128,46 @@ Describe "Test-Path" -Tags "CI" {
         Test-Path -Path $badPath -IsValid | Should -BeFalse
     }
 
-    It "Should return appropriate result for wildcard" {
-        if ($IsWindows) {
-            Test-Path -Path "C:\Program Files\*" -IsValid | Should -BeFalse
-        } else {
-            Test-Path -Path "/usr/*" | Should -BeTrue
-        }
+    It 'Windows paths should be valid: <path>' -skip:(!$IsWindows) -TestCases @(
+        @{ path = "C:\Program Files" }
+        @{ path = "C:\Program Files (x86)\" }
+        @{ path = "filesystem::z:\foo" }
+        @{ path = "filesystem::z:\foo\" }
+        @{ path = "variable::psversiontable" }
+        @{ path = "c:\windows\cmd.exe:test" }
+    ) {
+        param($path)
+        Test-Path -Path $path -IsValid | Should -BeTrue
+    }
+
+    It 'Windows paths should be inavlid: <path>' -Skip:(!$IsWindows) -TestCases @(
+        @{ path = "C:\Program Files\foo*" }
+        @{ path = "C:\Program Files|p\foo" }
+        @{ path = "C:\Win`u{0000}dows\System32" }
+    ) {
+        param($path)
+        Test-Path -Path $path -IsValid | Should -BeFalse
+    }
+
+    It 'Unix paths should be valid: <path>' -Skip:($IsWindows) -TestCases @(
+        @{ path = "/usr/bin" }
+        @{ path = "/usr/bin/" }
+        @{ path = "filesystem::/usr/bin" }
+        @{ path = "filesystem::/usr/bin/" }
+        @{ path = "variable::psversiontable" }
+        @{ path = "/usr/bi*n/test" }
+        @{ path = "/usr/bin/tes*t" }
+    ) {
+        param($path)
+        Test-Path -Path $path -IsValid | Should -BeTrue
+    }
+
+    It 'Unix paths should be invalid: <path>' -Skip:($IsWindows) -TestCases @(
+        @{ path = "/usr/bi`u{0000}n/test" }
+        @{ path = "/usr/bin/t`u{0000}est" }
+    ) {
+        param($path)
+        Test-Path -Path $path -IsValid | Should -BeFalse
     }
 
     It "Should return true on paths containing spaces when the path is surrounded in quotes" {
