@@ -124,4 +124,27 @@ public class NullStringTest {
         $result = & $powershell -noprofile -c '[System.Text.Encoding]::GetEncoding("IBM437").WebName'
         $result | Should -BeExactly "ibm437"
     }
+
+    It 'Return statement on the right side of an assignment should write the retrun value to outter pipe' {
+        function TestFunc1 {
+            ## The return value are not assigned to the variable but should be written to the outter pipe.
+            $Global:mylhsvar = if ($true) { return "one" }
+        }
+
+        function TestFunc2 {
+            ## The results from the sub-expression need to be preserved and flushed to the outer pipeline.
+            $("1";return "2")
+        }
+
+        try {
+            $Global:mylhsvar = $null
+            TestFunc1 | Should -BeExactly "one"
+            TestFunc2 | Should -Be @("1", "2")
+
+            $Global:mylhsvar | Should -Be $null
+        }
+        finally {
+            Remove-Variable -Name mylhsvar -Scope Global
+        }
+    }
 }
