@@ -316,10 +316,9 @@ function __cmdletization_BindCommonParameters
 
             foreach (ParameterMetadata parameter in commonParameters.Values)
             {
-                if ((parameter.ParameterSets.Count == 1) && (parameter.ParameterSets.ContainsKey(ParameterAttribute.AllParameterSets)))
+                if ((parameter.ParameterSets.Count == 1)
+                    && parameter.ParameterSets.TryGetValue(ParameterAttribute.AllParameterSets, out ParameterSetMetadata oldParameterSetMetadata))
                 {
-                    ParameterSetMetadata oldParameterSetMetadata = parameter.ParameterSets[ParameterAttribute.AllParameterSets];
-
                     parameter.ParameterSets.Clear();
                     foreach (string parameterSetName in commonParameterSets)
                     {

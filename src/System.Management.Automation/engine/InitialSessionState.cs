@@ -2736,9 +2736,10 @@ namespace System.Management.Automation.Runspaces
         private static void ProcessCommandModification(Hashtable commandModification, CommandMetadata metadata, string parameterName)
         {
             // If the metadata doesn't actually contain the parameter, then we need to create one.
-            if (!metadata.Parameters.ContainsKey(parameterName))
+            if (!metadata.Parameters.TryGetValue(parameterName, out ParameterMetadata value))
             {
-                metadata.Parameters[parameterName] = new ParameterMetadata(parameterName);
+                value = new ParameterMetadata(parameterName);
+                metadata.Parameters[parameterName] = value;
             }
 
             // Add validation attributes
@@ -2752,13 +2753,13 @@ namespace System.Management.Automation.Runspaces
                 {
                     case "ValidateSet":
                         ValidateSetAttribute validateSet = new ValidateSetAttribute(parameterValidationValues);
-                        metadata.Parameters[parameterName].Attributes.Add(validateSet);
+                        value.Attributes.Add(validateSet);
                         break;
 
                     case "ValidatePattern":
                         string pattern = "^(" + string.Join('|', parameterValidationValues) + ")$";
                         ValidatePatternAttribute validatePattern = new ValidatePatternAttribute(pattern);
-                        metadata.Parameters[parameterName].Attributes.Add(validatePattern);
+                        value.Attributes.Add(validatePattern);
                         break;
                 }
             }

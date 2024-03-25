@@ -729,13 +729,14 @@ namespace System.Management.Automation
 
                 if (matches.Count == 1)
                 {
-                    if (!availablePairs.ContainsKey(matches[0]))
+                    if (!availablePairs.TryGetValue(matches[0], out object value))
                     {
-                        availablePairs.Add(matches[0], wildcard.Value);
+                        value = wildcard.Value;
+                        availablePairs.Add(matches[0], value);
                         continue;
                     }
 
-                    if (!wildcard.Value.Equals(availablePairs[matches[0]]))
+                    if (!wildcard.Value.Equals(value))
                     {
                         if (!_warningSet.Contains(cmdletName + Separator + parameterName))
                         {

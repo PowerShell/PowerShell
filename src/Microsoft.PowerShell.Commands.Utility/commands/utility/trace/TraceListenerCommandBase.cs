@@ -552,12 +552,9 @@ namespace Microsoft.PowerShell.Commands
                     listener.Flush();
                 }
 
-                if (_storedTraceSourceState.ContainsKey(source))
+                if (_storedTraceSourceState.TryGetValue(source, out KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>> storedState))
                 {
                     // Restore the TraceSource to its original state
-
-                    KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>> storedState =
-                        _storedTraceSourceState[source];
 
                     source.Listeners.Clear();
                     foreach (TraceListener listener in storedState.Value)

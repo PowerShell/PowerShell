@@ -108,9 +108,9 @@ namespace Microsoft.PowerShell.Commands
             Debug.Assert(runspaceInstanceIdProperty.TypeNameOfValue.Equals("System.Guid", StringComparison.OrdinalIgnoreCase), "Instance ids must be GUIDs.");
 
             var runspaceInstanceId = (Guid)runspaceInstanceIdProperty.Value;
-            if (runspaces.ContainsKey(runspaceInstanceId))
+            if (runspaces.TryGetValue(runspaceInstanceId, out Runspace runspace))
             {
-                Runspace = runspaces[runspaceInstanceId];
+                Runspace = runspace;
                 return true;
             }
 

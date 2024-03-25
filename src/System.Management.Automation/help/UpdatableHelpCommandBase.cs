@@ -882,16 +882,17 @@ namespace Microsoft.PowerShell.Commands
                     e.Message, ErrorCategory.InvalidOperation, null, e);
             }
 
-            if (!_exceptions.ContainsKey(except.FullyQualifiedErrorId))
+            if (!_exceptions.TryGetValue(except.FullyQualifiedErrorId, out UpdatableHelpExceptionContext exceptionContext))
             {
-                _exceptions.Add(except.FullyQualifiedErrorId, new UpdatableHelpExceptionContext(except));
+                exceptionContext = new UpdatableHelpExceptionContext(except);
+                _exceptions.Add(except.FullyQualifiedErrorId, exceptionContext);
             }
 
-            _exceptions[except.FullyQualifiedErrorId].Modules.Add(moduleName);
+            exceptionContext.Modules.Add(moduleName);
 
             if (culture != null)
             {
-                _exceptions[except.FullyQualifiedErrorId].Cultures.Add(culture);
+                exceptionContext.Cultures.Add(culture);
             }
         }
 
