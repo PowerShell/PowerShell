@@ -140,10 +140,10 @@ Describe "Test-Path" -Tags "CI" {
         Test-Path -Path $path -IsValid | Should -BeTrue
     }
 
-    It 'Windows paths should be inavlid: <path>' -Skip:(!$IsWindows) -TestCases @(
-        @{ path = "C:\Program Files\foo*" }
-        @{ path = "C:\Program Files|p\foo" }
-        @{ path = "C:\Win`u{0000}dows\System32" }
+    It 'Windows paths should be inavlid: <variant>' -Skip:(!$IsWindows) -TestCases @(
+        @{ variant = "wildcard"; path = "C:\Program Files\foo*" }
+        @{ variant = "pipe symbol"; path = "C:\Program Files|p\foo" }
+        @{ variant = "null char"; path = "C:\Win`u{0000}dows\System32" }
     ) {
         param($path)
         Test-Path -Path $path -IsValid | Should -BeFalse
@@ -162,9 +162,9 @@ Describe "Test-Path" -Tags "CI" {
         Test-Path -Path $path -IsValid | Should -BeTrue
     }
 
-    It 'Unix paths should be invalid: <path>' -Skip:($IsWindows) -TestCases @(
-        @{ path = "/usr/bi`u{0000}n/test" }
-        @{ path = "/usr/bin/t`u{0000}est" }
+    It 'Unix paths should be invalid: <variant>' -Skip:($IsWindows) -TestCases @(
+        @{ variant = "null in path"; path = "/usr/bi`u{0000}n/test" }
+        @{ variant = "null in filename"; path = "/usr/bin/t`u{0000}est" }
     ) {
         param($path)
         Test-Path -Path $path -IsValid | Should -BeFalse
