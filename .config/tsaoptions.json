@@ -1,11 +1,5 @@
 {
     "instanceUrl": "https://msazure.visualstudio.com",
     "projectName": "One",
-    "areaPath": "One\\MGMT\\Compute\\Powershell\\Powershell\\PowerShell Core",
-    "notificationAliases": [
-        "adityap@microsoft.com",
-        "tplunk@microsoft.com",
-        "dongbow@microsoft.com",
-        "pmeinecke@microsoft.com"
-    ]
+    "areaPath": "One\\MGMT\\Compute\\Powershell\\Powershell\\PowerShell Core"    
 }
