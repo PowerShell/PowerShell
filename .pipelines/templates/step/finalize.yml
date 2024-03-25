@@ -1,3 +1,4 @@
+# This was used before migrating to OneBranch to deal with one of the SDL taks from failing with a warning instead of an error.
 steps:
 - pwsh: |
     throw "Jobs with an Issue will not work for release. Please fix the issue and try again."

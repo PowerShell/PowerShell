@@ -98,6 +98,9 @@ extends:
         enabled: true
         scanFolder:  $(Build.SourcesDirectory)
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
       asyncSdl: # https://aka.ms/obpipelines/asyncsdl
         enabled: true
         forStages: [prep, macos, linux, windows, SignFiles, test_and_release_artifacts]
@@ -132,48 +135,48 @@ extends:
       displayName: linux - build and sign
       dependsOn: ['prep']
       jobs:
-      - template: /.pipelines/templates/build-linux.yml@self
+      - template: /.pipelines/templates/linux.yml@self
         parameters:
           Runtime: 'linux-x64'
           JobName: 'linux_x64'
 
-      - template: /.pipelines/templates/build-linux.yml@self
+      - template: /.pipelines/templates/linux.yml@self
         parameters:
           Runtime: 'linux-x64'
           JobName: 'linux_x64_minSize'
           BuildConfiguration: 'minSize'
 
-      - template: /.pipelines/templates/build-linux.yml@self
+      - template: /.pipelines/templates/linux.yml@self
         parameters:
           Runtime: 'linux-arm'
           JobName: 'linux_arm'
 
-      - template: /.pipelines/templates/build-linux.yml@self
+      - template: /.pipelines/templates/linux.yml@self
         parameters:
           Runtime: 'linux-arm64'
           JobName: 'linux_arm64'
 
-      - template: /.pipelines/templates/build-linux.yml@self
+      - template: /.pipelines/templates/linux.yml@self
         parameters:
           Runtime: 'fxdependent-linux-x64'
           JobName: 'linux_fxd_x64_mariner'
 
-      - template: /.pipelines/templates/build-linux.yml@self
+      - template: /.pipelines/templates/linux.yml@self
         parameters:
           Runtime: 'fxdependent-linux-arm64'
           JobName: 'linux_fxd_arm64_mariner'
 
-      - template: /.pipelines/templates/build-linux.yml@self
+      - template: /.pipelines/templates/linux.yml@self
         parameters:
           Runtime: 'fxdependent-noopt-linux-musl-x64'
           JobName: 'linux_fxd_x64_alpine'
 
-      - template: /.pipelines/templates/build-linux.yml@self
+      - template: /.pipelines/templates/linux.yml@self
         parameters:
           Runtime: 'fxdependent'
           JobName: 'linux_fxd'
 
-      - template: /.pipelines/templates/build-linux.yml@self
+      - template: /.pipelines/templates/linux.yml@self
         parameters:
           Runtime: 'linux-musl-x64'
           JobName: 'linux_x64_alpine'

@@ -1,31 +1,42 @@
 parameters:
-  buildName: ''
-  uploadDisplayName: 'Upload'
-  parentJob: ''
+  Runtime: 'linux-x64'
+  BuildConfiguration: 'release'
+  JobName: 'build_linux'
+
 jobs:
-- job: build_${{ parameters.buildName }}
-  displayName: Build ${{ parameters.buildName }}
+- job: build_${{ parameters.JobName }}
+  displayName: Build_Linux_${{ parameters.Runtime }}_${{ parameters.BuildConfiguration }}
   condition: succeeded()
   pool:
     type: linux
-  dependsOn: ${{ parameters.parentJob }}
   variables:
-    - name: runCodesignValidationInjection
-      value: false
-    - name: build
-      value: ${{ parameters.buildName }}
-    - name: NugetSecurityAnalysisWarningLevel
-      value: none
-    - group: ESRP
-    - group: DotNetPrivateBuildAccess
-    - name: ob_outputDirectory
-      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-    - name: ob_sdl_tsa_configFile
-      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
-    - name: ob_sdl_binskim_enabled
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
+  - name: ob_sdl_binskim_enabled
+    value: true
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - name: BuildConfiguration
+    value: ${{ parameters.BuildConfiguration }}
+  - name: Runtime
+    value: ${{ parameters.Runtime }}
+  - name: ob_sdl_sbom_packageName
+    value: 'Microsoft.Powershell.Linux.${{ parameters.Runtime }}'
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+    - name: ob_sdl_codeql_compiled_enabled
       value: true
-    - name: ob_sdl_credscan_suppressionsfileforartifacts
-      value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
+
   steps:
   - checkout: self
     clean: true
@@ -36,43 +47,14 @@ jobs:
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
 
-  - pwsh: |
-      # create folder
-      sudo mkdir /PowerShell
-      # make the current user the owner
-      $userName = whoami
-      Write-Verbose -Verbose "Current user: $userName"
-      sudo chown $userName /PowerShell
-    displayName: 'Create /PowerShell'
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
-
   - template: /.pipelines/templates/cloneToOfficialPath.yml@self
 
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(PowerShellRoot)
 
-  - powershell: |
-      import-module "$env:POWERSHELLROOT/build.psm1"
-      Sync-PSTags -AddRemoteIfMissing
-    displayName: SyncTags
-    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
-    workingDirectory: $(PowerShellRoot)
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
-
-  - powershell: |
-      Import-Module "$env:POWERSHELLROOT/build.psm1"
-      Start-PSBootstrap -Package
-    displayName: 'Bootstrap'
-    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
-    workingDirectory: $(PowerShellRoot)
-    env:
-      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
-
   - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     env:
       ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
     inputs:
@@ -81,378 +63,121 @@ jobs:
       Language: csharp
 
   - pwsh: |
-      try {
-        Import-Module "$env:POWERSHELLROOT/build.psm1"
-        Import-Module "$env:POWERSHELLROOT/tools/packaging"
-        Invoke-AzDevOpsLinuxPackageBuild -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
-        Write-Verbose -Verbose "File permisions after building"
-        Get-ChildItem -Path $(System.ArtifactsDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
-      } catch {
-        Get-Error
-        throw
+      $runtime = $env:RUNTIME
+
+      $params = @{}
+      if ($env:BuildConfiguration -eq 'minSize') {
+        $params['ForMinimalSize'] = $true
       }
-    displayName: 'Build'
-    workingDirectory: $(PowerShellRoot)
+
+      Write-Verbose -Message "Building PowerShell with Runtime: $runtime"
+      Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+      $buildWithSymbolsPath = New-Item -ItemType Directory -Path $(Pipeline.Workspace)/Symbols_$(Runtime) -Force
+
+      Start-PSBootstrap
+      $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
+      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath @params -Clean -PSModuleRestore
+
+      Write-Verbose -Verbose "Verifying pdbs exist in build folder"
+      $pdbs = Get-ChildItem -Path $buildWithSymbolsPath -Recurse -Filter *.pdb
+      if ($pdbs.Count -eq 0) {
+        Write-Error -Message "No pdbs found in build folder"
+      }
+      else {
+        Write-Verbose -Verbose "Found $($pdbs.Count) pdbs in build folder"
+        $pdbs | ForEach-Object {
+          Write-Verbose -Verbose "Pdb: $($_.FullName)"
+        }
+      }
+
+      Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
+    displayName: 'Build Linux - $(Runtime)'
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
   - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
-    condition: always()
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     env:
       ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
   - pwsh: |
-      Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuild' -Verbose
-      Write-Verbose -Verbose "File permisions before compressing"
-      Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
-      tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz *
-    displayName: Compress pwshLinuxBuild
+      $platform = 'linux'
+      $vstsCommandString = "vso[task.setvariable variable=ArtifactPlatform]$platform"
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
+    displayName: Set artifact platform
 
-  - ${{ if eq(variables.build,'deb') }}:
-    - pwsh: |
-        Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
-        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz *
-        Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
-        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz *
-        Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
-        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz *
-      displayName: Compress deb
-  - ${{ if eq(variables.build,'rpm') }}:
-    - pwsh: |
-        Set-Location '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
-        tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz *
-      displayName: Compress pwshMarinerBuildAmd64
-  - ${{ if eq(variables.build,'alpine') }}:
-    - pwsh: |
-        Set-Location '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64'
-        tar -czvf $(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz *
-      displayName: Compress pwshAlpineFxdBuildAmd64
-  - ${{ if eq(variables.build,'rpm') }}:
-    - pwsh: |
-        Set-Location '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64'
-        tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz *
-      displayName: Compress pwshMarinerBuildArm64
-  - ${{ if eq(variables.build,'deb') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz')) {
-          throw "pwshLinuxBuild.tar.gz not found"
-        }
-        else {
-          Write-Host "pwshLinuxBuild.tar.gz found"
+  - pwsh: |
+      $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Unsigned-$(Runtime)' -Force
+      Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
+      Copy-Item -Path '$(Pipeline.Workspace)/Symbols_$(Runtime)/*' -Destination $pathForUpload -Recurse -Force -Verbose
+    displayName: Copy unsigned files for upload
 
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
-          }
+  - template: /.pipelines/templates/step/finalize.yml@self
 
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild.tar.gz' -Verbose
-        }
-      displayName: Copy pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'deb') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta')) {
-          throw "pwshLinuxBuild-meta not found"
-        }
-        else {
-          Write-Host "pwshLinuxBuild-meta found"
+- job: sign_${{ parameters.JobName }}
+  displayName: Sign_Linux_${{ parameters.Runtime }}_${{ parameters.BuildConfiguration }}
+  condition: succeeded()
+  dependsOn: build_${{ parameters.JobName }}
+  pool:
+    type: windows
+  variables:
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
+  - name: ob_sdl_binskim_enabled
+    value: false
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - name: BuildConfiguration
+    value: ${{ parameters.BuildConfiguration }}
+  - name: Runtime
+    value: ${{ parameters.Runtime }}
+  - name: ob_sdl_codeql_compiled_enabled
+    value: false
 
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild-meta')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild-meta'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild-meta already exists"
-          }
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuild-meta' -Recurse -Verbose
-        }
-      displayName: Copy pwshLinuxBuild-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'deb') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz')) {
-          throw "pwshLinuxBuildMinSize.tar.gz not found"
-        }
-        else {
-          Write-Host "pwshLinuxBuildMinSize.tar.gz found"
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
 
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
-          }
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
 
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize.tar.gz' -Verbose
-        }
-      displayName: Copy pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'deb') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize-meta')) {
-          throw "pwshLinuxBuildMinSize-meta not found"
-        }
-        else {
-          Write-Host "pwshLinuxBuildMinSize-meta found"
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: drop_linux_build_${{ parameters.JobName }}
+      path: $(Pipeline.Workspace)/drop_linux_build
+    displayName: Download build
 
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize-meta')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize-meta'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize-meta already exists"
-          }
+  - pwsh: |
+      Get-ChildItem -Path $(Pipeline.Workspace)/drop_linux_build -Recurse
+    displayName: Capture downloaded files
 
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildMinSize-meta' -Recurse -Verbose
-        }
-      displayName: Copy pwshLinuxBuild-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'deb') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz')) {
-          throw "pwshLinuxBuildArm32.tar.gz not found"
-        }
-        else {
-          Write-Host "pwshLinuxBuildArm32.tar.gz found"
+  - pwsh: |
+      $pwshPath = Get-ChildItem -Path $(Pipeline.Workspace)/drop_linux_build -File -Recurse | Where-Object { $_.Name -eq 'pwsh' }
+      $rootPath = Split-Path -Path $pwshPath.FullName -Parent
+      Write-Verbose -Verbose "Setting vso[task.setvariable variable=DropRootPath]$rootPath"
+      Write-Host "##vso[task.setvariable variable=DropRootPath]$rootPath"
+    displayName: Set drop root path
 
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
-          }
+  - template: /.pipelines/templates/obp-file-signing.yml@self
+    parameters:
+      binPath: $(DropRootPath)
 
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32.tar.gz' -Verbose
-        }
-      displayName: Copy pwshLinuxBuildArm32.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'deb') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32-meta')) {
-          throw "pwshLinuxBuildArm32-meta not found"
-        }
-        else {
-          Write-Host "pwshLinuxBuildArm32-meta found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32-meta')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32-meta'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32-meta already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm32-meta' -Recurse -Verbose
-        }
-      displayName: Copy pwshLinuxBuild-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'deb') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz')) {
-          throw "pwshLinuxBuildArm64.tar.gz not found"
-        }
-        else {
-          Write-Host "pwshLinuxBuildArm64.tar.gz found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64.tar.gz' -Verbose
-        }
-      displayName: Copy pwshLinuxBuildArm64.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'deb') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64-meta')) {
-          throw "pwshLinuxBuildArm64-meta not found"
-        }
-        else {
-          Write-Host "pwshLinuxBuildArm64-meta found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64-meta')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64-meta'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64-meta already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildArm64-meta' -Recurse -Verbose
-        }
-      displayName: Copy pwshLinuxBuildArm64-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'rpm') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz')) {
-          throw "pwshMarinerBuildAmd64.tar.gz not found"
-        }
-        else {
-          Write-Host "pwshMarinerBuildAmd64.tar.gz found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64.tar.gz' -Verbose
-        }
-      displayName: Copy pwshMarinerBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'rpm') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64-meta')) {
-          throw "pwshMarinerBuildAmd64-meta not found"
-        }
-        else {
-          Write-Host "pwshMarinerBuildAmd64-meta found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64-meta')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64-meta'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64-meta already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildAmd64-meta' -Recurse -Verbose
-        }
-      displayName: Copy pwshMarinerBuildAmd64-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'rpm') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz')) {
-          throw "pwshMarinerBuildArm64.tar.gz not found"
-        }
-        else {
-          Write-Host "pwshMarinerBuildArm64.tar.gz found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64.tar.gz' -Verbose
-        }
-      displayName: Copy pwshMarinerBuildArm64.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'rpm') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64-meta')) {
-          throw "pwshMarinerBuildArm64-meta not found"
-        }
-        else {
-          Write-Host "pwshMarinerBuildArm64-meta found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64-meta')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64-meta'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64-meta already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshMarinerBuildArm64-meta' -Recurse -Verbose
-        }
-      displayName: Copy pwshMarinerBuildArm64-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'alpine') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz')) {
-          throw "pwshLinuxBuild.tar.gz not found"
-        }
-        else {
-          Write-Host "pwshLinuxBuild.tar.gz found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine.tar.gz' -Verbose
-        }
-      displayName: Copy pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'alpine') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta')) {
-          throw "pwshLinuxBuild-meta not found"
-        }
-        else {
-          Write-Host "pwshLinuxBuild-meta found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine-meta')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine-meta'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine-meta already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildAlpine-meta' -Recurse -Verbose
-        }
-      displayName: Copy pwshMarinerBuildArm64-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'alpine') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz')) {
-          throw "pwshAlpineFxdBuildAmd64.tar.gz not found"
-        }
-        else {
-          Write-Host "pwshAlpineFxdBuildAmd64.tar.gz found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64.tar.gz' -Verbose
-        }
-      displayName: Copy pwshAlpineFxdBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'alpine') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64-meta')) {
-          throw "pwshAlpineFxdBuildAmd64-meta not found"
-        }
-        else {
-          Write-Host "pwshAlpineFxdBuildAmd64-meta found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64-meta')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64-meta'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64-meta already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshAlpineFxdBuildAmd64-meta' -Recurse -Verbose
-        }
-      displayName: Copy pwshAlpineFxdBuildAmd64-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'fxdependent') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz')) {
-          throw "pwshLinuxBuild.tar.gz not found"
-        }
-        else {
-          Write-Host "pwshLinuxBuild.tar.gz found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent.tar.gz' -Verbose
-        }
-      displayName: Copy pwshAlpineFxdBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
-  - ${{ if eq(variables.build,'fxdependent') }}:
-    - pwsh: |
-        if (-not (Test-Path '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta')) {
-          throw "pwshLinuxBuild-meta not found"
-        }
-        else {
-          Write-Host "pwshLinuxBuild-meta found"
-
-          if (-not (Test-Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent-meta')) {
-            New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent-meta'
-          }
-          else {
-            Write-Host "$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent-meta already exists"
-          }
-
-          Copy-Item '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta' -Destination '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/pwshLinuxBuildFxdependent-meta' -Recurse -Verbose
-        }
-      displayName: Copy pwshAlpineFxdBuildAmd64-meta to $(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT
+  - template: /.pipelines/templates/step/finalize.yml@self
