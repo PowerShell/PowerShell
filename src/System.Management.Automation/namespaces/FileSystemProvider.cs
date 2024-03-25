@@ -1090,11 +1090,15 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // now validate each segment of the path
-            foreach (string segment in Path.GetDirectoryName(path).Split(Path.DirectorySeparatorChar))
+            var directory = Path.GetDirectoryName(path);
+            if (directory is not null)
             {
-                if (segment.IndexOfAny(Path.GetInvalidPathChars()) != -1)
+                foreach (string segment in directory.Split(Path.DirectorySeparatorChar))
                 {
-                    return false;
+                    if (segment.IndexOfAny(Path.GetInvalidPathChars()) != -1)
+                    {
+                        return false;
+                    }
                 }
             }
 
