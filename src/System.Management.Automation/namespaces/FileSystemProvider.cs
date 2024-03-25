@@ -1095,7 +1095,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string segment in directory.Split(Path.DirectorySeparatorChar))
                 {
-                    if (segment.IndexOfAny(Path.GetInvalidPathChars()) != -1)
+                    if (segment.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
                     {
                         return false;
                     }
