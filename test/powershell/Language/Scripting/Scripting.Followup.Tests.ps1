@@ -125,9 +125,9 @@ public class NullStringTest {
         $result | Should -BeExactly "ibm437"
     }
 
-    It 'Return statement on the right side of an assignment should write the retrun value to outter pipe' {
+    It 'Return statement on the right side of an assignment should write the retrun value to outer pipe' {
         function TestFunc1 {
-            ## The return value are not assigned to the variable but should be written to the outter pipe.
+            ## The return value are not assigned to the variable but should be written to the outer pipe.
             $Global:mylhsvar = if ($true) { return "one" }
         }
 
