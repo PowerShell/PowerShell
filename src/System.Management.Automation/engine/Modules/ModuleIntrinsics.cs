@@ -1275,11 +1275,13 @@ namespace System.Management.Automation
             if (!string.IsNullOrEmpty(pathToAdd))
             {
                 path = AddToPath(path, pathToAdd, insertIndex);
-                insertIndex = path.IndexOf(Path.PathSeparator, PathContainsSubstring(path, pathToAdd));
-                if (insertIndex != -1)
+                foreach (string addedSubPath in pathToAdd.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    // advance past the path separator
-                    insertIndex++;
+                    int newInsertIndex = PathContainsSubstring(path, addedSubPath) + addedSubPath.Length + 1;
+                    if (newInsertIndex > insertIndex)
+                    {
+                        insertIndex = newInsertIndex;
+                    }
                 }
             }
             return path;
