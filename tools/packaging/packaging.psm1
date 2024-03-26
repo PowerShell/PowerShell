@@ -895,17 +895,54 @@ function Update-PSSignedBuildFolder
         [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap')
     )
 
+    $BuildPathNormalized = (Get-Item $BuildPath).FullName
+    $SignedFilesPathNormalized = (Get-Item $SignedFilesPath).FullName
+
+    Write-Verbose -Verbose "BuildPath = $BuildPathNormalized"
+    Write-Verbose -Verbose "SignedFilesPath = $signedFilesPath"
+
     # Replace unsigned binaries with signed
-    $signedFilesFilter = Join-Path -Path $SignedFilesPath -ChildPath '*'
+    $signedFilesFilter = Join-Path -Path $SignedFilesPathNormalized -ChildPath '*'
+    Write-Verbose -Verbose "signedFilesFilter = $signedFilesFilter"
+
     Get-ChildItem -Path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | ForEach-Object -Process {
-        $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPath.ToLowerInvariant(),'')
-        $destination = Join-Path -Path $BuildPath -ChildPath $relativePath
+        Write-Verbose -Verbose "Processing $_"
+
+        # Agents seems to be on a case sensitive file system
+        if ($IsLinux) {
+            $relativePath = $_.Replace($SignedFilesPathNormalized, '')
+        } else {
+            $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPathNormalized.ToLowerInvariant(), '')
+        }
+
+        Write-Verbose -Verbose "relativePath = $relativePath"
+        $destination = (Get-Item (Join-Path -Path $BuildPathNormalized -ChildPath $relativePath)).FullName
+        Write-Verbose -Verbose "destination = $destination"
         Write-Log "replacing $destination with $_"
+
+        if (-not (Test-Path $destination)) {
+            $parent = Split-Path -Path $destination -Parent
+            $exists = Test-Path -Path $parent
+
+            if ($exists) {
+                Write-Verbose -Verbose "Parent:"
+                Get-ChildItem -Path $parent | Select-Object -ExpandProperty FullName | Write-Verbose -Verbose
+            }
+
+            Write-Error "File not found: $destination, parent - $parent exists: $exists"
+        }
+
+        $signature = Get-AuthenticodeSignature -FilePath $_
+
+        if ($signature.Status -ne 'Valid') {
+            Write-Error "Invalid signature for $_"
+        }
+
         Copy-Item -Path $_ -Destination $destination -Force
     }
 
     foreach($filter in $RemoveFilter) {
-        $removePath = Join-Path -Path $BuildPath -ChildPath $filter
+        $removePath = Join-Path -Path $BuildPathNormalized -ChildPath $filter
         Remove-Item -Path $removePath -Recurse -Force
     }
 }

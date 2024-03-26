@@ -1,0 +1,132 @@
+parameters:
+  buildArchitecture: 'x64'
+jobs:
+- job: build_macOS_${{ parameters.buildArchitecture }}
+  displayName: Build macOS ${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  pool:
+    type: linux
+    isCustom: true
+    name: Azure Pipelines
+    vmImage: 'macOS-latest'
+
+  variables:
+  - name: HOMEBREW_NO_ANALYTICS
+    value: 1
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_binskim_enabled
+    value: true
+  - name: ob_sdl_credscan_suppressionsfileforartifacts
+    value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+  - pwsh: |
+      # create folder
+      sudo mkdir "$(Agent.TempDirectory)/PowerShell"
+      # make the current user the owner
+      sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
+    displayName: 'Create $(Agent.TempDirectory)/PowerShell'
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
+  - pwsh: |
+      tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
+    displayName: 'Bootstrap VM'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+  - pwsh: |
+      $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
+      # Add -SkipReleaseChecks as a mitigation to unblock release.
+      # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
+      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
+      $env:AzDevOpsFeedPAT2 = $null
+    displayName: 'Build'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+  - template: /.pipelines/templates/step/finalize.yml@self
+
+- job: sign_${{ parameters.buildArchitecture }}
+  displayName: Sign_macOS_${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  dependsOn: build_macOS_${{ parameters.buildArchitecture }}
+  pool:
+    type: windows
+  variables:
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: true
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - name: BuildArchitecture
+    value: ${{ parameters.buildArchitecture }}
+  - name: ob_sdl_codeql_compiled_enabled
+    value: false
+  - name: ob_sdl_sbom_packageName
+    value: 'Microsoft.Powershell.Windows.${{parameters.buildArchitecture}}'
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: 'macosBinResults'
+      path: '$(Pipeline.Workspace)\Symbols'
+    displayName: Download build
+
+  - pwsh: |
+        Get-ChildItem "$(Pipeline.Workspace)\*" -Recurse
+    displayName: 'Capture Downloaded Artifacts'
+    # Diagnostics is not critical it passes every time it runs
+    continueOnError: true
+
+  - pwsh: |
+      $runtime = '$(BuildArchitecture)'
+      Write-Host "sending.. vso[task.setvariable variable=Runtime]$runtime"
+      Write-Host "##vso[task.setvariable variable=Runtime]$runtime"
+
+      $zipPath = Get-Item '$(Pipeline.Workspace)\Symbols\*symbol*${{ parameters.buildArchitecture }}*.zip' -Verbose
+      Write-Verbose -Verbose "Zip Path: $zipPath"
+
+      $expandedFolder = $zipPath.BaseName
+      Expand-Archive -Path $zipPath -Destination "$(Pipeline.Workspace)\$expandedFolder" -Force
+      $rootPath = "$(Pipeline.Workspace)\$expandedFolder"
+      Write-Verbose -Verbose "Setting vso[task.setvariable variable=DropRootPath]$rootPath"
+      Write-Host "##vso[task.setvariable variable=DropRootPath]$rootPath"
+    displayName: Expand symbols zip
+
+  - template: /.pipelines/templates/obp-file-signing.yml@self
+    parameters:
+      binPath: $(DropRootPath)
+
+  - template: /.pipelines/templates/step/finalize.yml@self
