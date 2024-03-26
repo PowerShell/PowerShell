@@ -41,22 +41,37 @@ namespace Microsoft.PowerShell.Commands
         /// Value of -1 means never timeout.
         /// </summary>
         [Parameter]
-        [Alias("TimeoutSec")]
-        [ValidateRangeAttribute(-1, int.MaxValue)]
-        public int Timeout
+        [Alias("TimeoutSec", "TimeSpan")]
+        [ValidateRangeAttribute(-1, double.MaxValue)]
+        [PSTransform(@"
+            # If it is a double or int, pass it thru.
+            if (($_ -is [double]) -or ($_ -is [int])) { return $_ }
+
+            # If it is timespan, return total seconds
+            if ($_ -is [TimeSpan]) { return $_.TotalSeconds }
+            # If it is a [DateTime], return seconds until then
+            if ($_ -is [DateTime]) { return ($_ - [DateTime]::Now).TotalSeconds }
+            
+            # Try casting to a Timespan
+            $asTimeSpan = $_ -as [Timespan]
+            if ($asTimeSpan) {                
+                return $asTimeSpan.TotalSeconds
+            }
+        ")]
+        public double Timeout
         {
             get
             {
-                return _timeoutInSeconds;
+                return _timeoutTimespan.TotalSeconds;
             }
 
             set
             {
-                _timeoutInSeconds = value;
+                _timeoutTimespan = TimeSpan.FromSeconds(value);
             }
-        }
+        }    
 
-        private int _timeoutInSeconds = -1; // -1: infinite, this default is to wait for as long as it takes.
+        private TimeSpan _timeoutTimespan = TimeSpan.FromSeconds(-1); // -1: infinite, this default is to wait for as long as it takes.
 
         #endregion parameters
 
@@ -84,13 +99,17 @@ namespace Microsoft.PowerShell.Commands
 
             while (!received)
             {
-                if (_timeoutInSeconds >= 0)
+                if (_timeoutTimespan.TotalMilliseconds >= 0)
                 {
-                    if ((DateTime.UtcNow - startTime).TotalSeconds > _timeoutInSeconds)
+                    if ((DateTime.UtcNow - startTime) > _timeoutTimespan)
                         break;
-                }
 
-                received = _eventArrived.WaitOne(200);
+                    received = _eventArrived.WaitOne((int)(Math.Abs(_timeoutTimespan.TotalMilliseconds) / 100));
+                }
+                else
+                {
+                    received = _eventArrived.WaitOne();
+                }                
 
                 eventManager.ProcessPendingActions();
             }
