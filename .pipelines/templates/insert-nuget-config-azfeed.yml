@@ -1,0 +1,33 @@
+parameters:
+- name: "repoRoot"
+  default: $(REPOROOT)
+steps:
+- pwsh: |
+    $configPath = "${env:NugetConfigDir}/nuget.config"
+    Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
+    New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
+    if(-not (Test-Path $configPath))
+    {
+        throw "nuget.config is not created"
+    }
+    Get-Content $configPath | Write-Verbose -Verbose
+  displayName: 'Add nuget.config for Azure DevOps feed for PSGallery modules'
+  condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
+  env:
+    NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
+    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+- pwsh: |
+    $configPath = "${env:NugetConfigDir}/nuget.config"
+    Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
+    New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
+    if(-not (Test-Path $configPath))
+    {
+        throw "nuget.config is not created"
+    }
+    Get-Content $configPath | Write-Verbose -Verbose
+  displayName: 'Add nuget.config for Azure DevOps feed for packages'
+  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
+  env:
+    NugetConfigDir: ${{ parameters.repoRoot }}
+    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
