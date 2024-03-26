@@ -271,7 +271,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
                 return
             }
 
-            $result = Test-Connection $testAddress -MtuSize
+            $result = Test-Connection $testAddress -MtuSize -Debug
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
             $result.Destination | Should -BeExactly $testAddress
