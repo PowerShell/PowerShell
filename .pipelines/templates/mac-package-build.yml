@@ -39,7 +39,7 @@ jobs:
     parameters:
       nativePathRoot: '$(Agent.TempDirectory)'
 
-  - task: DownloadBuildArtifacts@0
+  - task: DownloadPipelineArtifact@2
     displayName: Download macosBinResults
     inputs:
       artifactName: 'macosBinResults'
@@ -71,43 +71,35 @@ jobs:
       Expand-Archive -Path $zipPath -Destination "$(System.ArtifactsDirectory)\$expandedFolder" -Force
     displayName: Expand symbols zip
 
-  - pwsh: |
-      Import-Module $(PowerShellRoot)/build.psm1 -Force
-      Import-Module $(PowerShellRoot)/tools/packaging -Force
-      $signedFilesPath = '$(System.ArtifactsDirectory)/macOsBins/signedMacOsBins_${{ parameters.buildArchitecture }}/'
-      $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+  # - pwsh: |
+  #     Import-Module $(PowerShellRoot)/build.psm1 -Force
+  #     Import-Module $(PowerShellRoot)/tools/packaging -Force
+  #     $signedFilesPath = '$(System.ArtifactsDirectory)/macOsBins/signedMacOsBins_${{ parameters.buildArchitecture }}/'
+  #     $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
 
-      Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
-    displayName: Merge signed files with Build
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+  #     Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
+  #   displayName: Merge signed files with Build
+  #   condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
-  - template: Sbom.yml@ComplianceRepo
-    parameters:
-      BuildDropPath: '$(System.ArtifactsDirectory)/$(SymbolsFolder)'
-      Build_Repository_Uri: $(Github_Build_Repository_Uri)
-      PackageName: PowerShell macOS ${{ parameters.buildArchitecture }}
-      PackageVersion: $(Version)
-      sourceScanPath: '$(PowerShellRoot)/tools'
+  # - pwsh: |
+  #     Import-Module $(PowerShellRoot)/build.psm1 -Force
+  #     Import-Module $(PowerShellRoot)/tools/packaging -Force
 
-  - pwsh: |
-      Import-Module $(PowerShellRoot)/build.psm1 -Force
-      Import-Module $(PowerShellRoot)/tools/packaging -Force
+  #     $destFolder = '$(System.ArtifactsDirectory)\signedZip'
+  #     $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
 
-      $destFolder = '$(System.ArtifactsDirectory)\signedZip'
-      $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+  #     $null = New-Item -ItemType Directory -Path $destFolder -Force
 
-      $null = New-Item -ItemType Directory -Path $destFolder -Force
+  #     $BuildPackagePath = New-PSBuildZip -BuildPath $BuildPath -DestinationFolder $destFolder
 
-      $BuildPackagePath = New-PSBuildZip -BuildPath $BuildPath -DestinationFolder $destFolder
+  #     Write-Verbose -Verbose "New-PSSignedBuildZip returned `$BuildPackagePath as: $BuildPackagePath"
+  #     Write-Host "##vso[artifact.upload containerfolder=results;artifactname=results]$BuildPackagePath"
 
-      Write-Verbose -Verbose "New-PSSignedBuildZip returned `$BuildPackagePath as: $BuildPackagePath"
-      Write-Host "##vso[artifact.upload containerfolder=results;artifactname=results]$BuildPackagePath"
-
-      $vstsCommandString = "vso[task.setvariable variable=BuildPackagePath]$BuildPackagePath"
-      Write-Host ("sending " + $vstsCommandString)
-      Write-Host "##$vstsCommandString"
-    displayName: Compress signed files
-    retryCountOnTaskFailure: 2
+  #     $vstsCommandString = "vso[task.setvariable variable=BuildPackagePath]$BuildPackagePath"
+  #     Write-Host ("sending " + $vstsCommandString)
+  #     Write-Host "##$vstsCommandString"
+  #   displayName: Compress signed files
+  #   retryCountOnTaskFailure: 2
 
 
   - pwsh: |
@@ -124,20 +116,36 @@ jobs:
   - pwsh: |
       # Add -SkipReleaseChecks as a mitigation to unblock release.
       # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
-      try {
-        $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar" -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
-      } catch {
-        Get-Error
-        throw
-      }
-    displayName: 'Package'
+
+      Write-Verbose -Message "Init..." -Verbose
+      $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
+      Set-Location $repoRoot
+      Import-Module "$repoRoot/build.psm1"
+      Import-Module "$repoRoot/tools/packaging"
+
+      $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
+      $LTS = $metadata.LTSRelease.Package
+
+      Start-PSBootstrap -Package
+
+      Start-PSPackage -SkipReleaseChecks -MacOSRuntime 'osx-x64' -ReleaseTag $(ReleaseTagVar)
+      Start-PSPackage -Type tar -SkipReleaseChecks -MacOSRuntime 'osx-x64' -ReleaseTag $(ReleaseTagVar)
+    displayName: 'Package osx-x64'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
-  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-    displayName: 'Component Detection'
-    inputs:
-      sourceScanPath: '$(PowerShellRoot)/tools'
-      snapshotForceEnabled: true
+
+  # - pwsh: |
+  #     # Add -SkipReleaseChecks as a mitigation to unblock release.
+  #     # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
+  #     try {
+  #       $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar" -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
+  #     } catch {
+  #       Get-Error
+  #       throw
+  #     }
+  #   displayName: 'Package'
+  #   env:
+  #     __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
