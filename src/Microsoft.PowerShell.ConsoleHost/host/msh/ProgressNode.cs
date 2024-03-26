@@ -422,7 +422,7 @@ namespace Microsoft.PowerShell
             int emptyPadLength = barWidth - rawUI.LengthInBufferCells(sb.ToString()) - secRemainLength;
             if (emptyPadLength > 0)
             {
-                sb.Append(string.Empty.PadRight(emptyPadLength));
+                sb.Append(' ', emptyPadLength);
             }
 
             sb.Append(secRemain);
