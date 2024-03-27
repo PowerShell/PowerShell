@@ -54,7 +54,11 @@ jobs:
       $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
       # Add -SkipReleaseChecks as a mitigation to unblock release.
       # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
-      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
+      #$(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -Build -ArtifactName macosBinResults -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
+
+      Import-Module ./build.psm1 -Force
+      Start-PSBuild -Build -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -OutputDirectory $(OB_OUTPUTDIRECTORY)
+
       $env:AzDevOpsFeedPAT2 = $null
     displayName: 'Build'
     env:
@@ -100,7 +104,7 @@ jobs:
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: 'macosBinResults'
+      artifact: 'drop_macos_build_macos_${{ parameters.buildArchitecture }}'
       path: '$(Pipeline.Workspace)\Symbols'
     displayName: Download build
 
