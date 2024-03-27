@@ -81,13 +81,13 @@ jobs:
   #   condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - pwsh: |
-      Get-ChildItem "$(Pipeline.Workspace)\*" -Recurse
+      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/macosBinResults" -Recurse
     displayName: 'Capture Downloaded Artifacts'
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
 
   - pwsh: |
-      $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*${{ parameters.buildArchitecture }}.zip'
+      $zipPath = Get-Item '$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/macosBinResults/*symbol*${{ parameters.buildArchitecture }}.zip'
       Write-Verbose -Verbose "Zip Path: $zipPath"
 
       $expandedFolder = $zipPath.BaseName
