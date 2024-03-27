@@ -33,4 +33,12 @@ Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
     It 'Should be able to complete a progress record with no activity specified' {
         { Write-Progress -Completed } | Should -Not -Throw
     }
+
+    It 'Activity cannot contain VT' {
+        { Write-Progress -Activity "`e[1m" } | Should -Throw -ErrorId 'Argument,Microsoft.PowerShell.Commands.WriteProgressCommand'
+    }
+
+    It 'Status cannot contain VT' {
+        { Write-Progress -Activity 1 -Status "`e[1m" } | Should -Throw -ErrorId 'Argument,Microsoft.PowerShell.Commands.WriteProgressCommand'
+    }
 }

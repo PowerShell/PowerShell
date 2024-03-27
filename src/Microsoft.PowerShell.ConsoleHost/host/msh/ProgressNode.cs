@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell
                     RenderMinimal(strCollection, indentation, maxWidth, rawUI);
                     break;
                 case RenderStyle.Ansi:
-                    RenderAnsi(strCollection, indentation, maxWidth);
+                    RenderAnsi(strCollection, indentation, maxWidth, rawUI);
                     break;
                 case RenderStyle.Invisible:
                     // do nothing
@@ -368,9 +368,12 @@ namespace Microsoft.PowerShell
         /// <param name="maxWidth">
         /// The maximum number of chars that the rendering is allowed to consume.
         /// </param>
+        /// <param name="rawUI">
+        /// The PSHostRawUserInterface used to gauge string widths in the rendering.
+        /// </param>
         private
         void
-        RenderAnsi(ArrayList strCollection, int indentation, int maxWidth)
+        RenderAnsi(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
         {
             string indent = StringUtil.Padding(indentation);
             string secRemain = string.Empty;
@@ -389,9 +392,9 @@ namespace Microsoft.PowerShell
 
             // if the activity is really long, only use up to half the width
             string activity;
-            if (Activity.Length > maxWidth / 2)
+            if (rawUI.LengthInBufferCells(Activity) > maxWidth / 2)
             {
-                activity = Activity.Substring(0, maxWidth / 2) + PSObjectHelper.Ellipsis;
+                activity = StringUtil.TruncateToBufferCellWidth(rawUI, Activity, maxWidth / 2) + PSObjectHelper.Ellipsis;
             }
             else
             {
@@ -399,16 +402,16 @@ namespace Microsoft.PowerShell
             }
 
             // 4 is for the extra space and square brackets below and one extra space
-            int barWidth = maxWidth - activity.Length - indentation - 4;
+            int barWidth = maxWidth - rawUI.LengthInBufferCells(activity) - indentation - 4;
 
             var sb = new StringBuilder();
             int padding = maxWidth + PSStyle.Instance.Progress.Style.Length + PSStyle.Instance.Reverse.Length + PSStyle.Instance.ReverseOff.Length;
             sb.Append(PSStyle.Instance.Reverse);
 
             int maxStatusLength = barWidth - secRemainLength - 1;
-            if (maxStatusLength > 0 && StatusDescription.Length > barWidth - secRemainLength)
+            if (maxStatusLength > 0 && rawUI.LengthInBufferCells(StatusDescription) > barWidth - secRemainLength)
             {
-                sb.Append(StatusDescription.AsSpan(0, barWidth - secRemainLength - 1));
+                sb.Append(StringUtil.TruncateToBufferCellWidth(rawUI, StatusDescription, maxStatusLength));
                 sb.Append(PSObjectHelper.Ellipsis);
             }
             else
@@ -416,15 +419,15 @@ namespace Microsoft.PowerShell
                 sb.Append(StatusDescription);
             }
 
-            int emptyPadLength = barWidth + PSStyle.Instance.Reverse.Length - sb.Length - secRemainLength;
+            int emptyPadLength = barWidth - rawUI.LengthInBufferCells(sb.ToString()) - secRemainLength;
             if (emptyPadLength > 0)
             {
-                sb.Append(string.Empty.PadRight(emptyPadLength));
+                sb.Append(' ', emptyPadLength);
             }
 
             sb.Append(secRemain);
 
-            if (PercentComplete >= 0 && PercentComplete < 100 && barWidth > 0)
+            if (PercentComplete >= 0 && barWidth > 0)
             {
                 int barLength = PercentComplete * barWidth / 100;
                 if (barLength >= barWidth)
@@ -432,9 +435,9 @@ namespace Microsoft.PowerShell
                     barLength = barWidth - 1;
                 }
 
-                if (barLength < sb.Length)
+                if (barLength < rawUI.LengthInBufferCells(sb.ToString()))
                 {
-                    sb.Insert(barLength + PSStyle.Instance.Reverse.Length, PSStyle.Instance.ReverseOff);
+                    sb.Insert(barLength, PSStyle.Instance.ReverseOff);
                 }
             }
             else
