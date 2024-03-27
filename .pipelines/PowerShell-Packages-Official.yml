@@ -95,7 +95,7 @@ extends:
     stages:
     - stage: mac_package
       jobs:
-      - template: /.pipelines/templates/mac-package-build.yml@templates
+      - template: /.pipelines/templates/mac-package-build.yml@self
         parameters:
           buildArchitecture: x64
           parentJob: 'build_macOS_x64'
