@@ -57,7 +57,7 @@ jobs:
       #$(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -Build -ArtifactName macosBinResults -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
 
       Import-Module ./build.psm1 -Force
-      Start-PSBuild -Build -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -OutputDirectory $(OB_OUTPUTDIRECTORY)
+      Start-PSBuild -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -OutputDirectory $(OB_OUTPUTDIRECTORY)
 
       $env:AzDevOpsFeedPAT2 = $null
     displayName: 'Build'
