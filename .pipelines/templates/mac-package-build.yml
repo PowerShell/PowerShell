@@ -17,8 +17,12 @@ jobs:
       value: 1
     - name: runCodesignValidationInjection
       value: false
+    - name: nugetMultiFeedWarnLevel
+      value: none
     - name: NugetSecurityAnalysisWarningLevel
       value: none
+    - name: skipNugetSecurityAnalysis
+      value: true
     - group: DotNetPrivateBuildAccess
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'

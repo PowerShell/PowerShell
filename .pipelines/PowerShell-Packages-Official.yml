@@ -19,20 +19,33 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     default: 'NO'
 
 variables:
-  CDP_DEFINITION_BUILD_COUNT: $[counter('', 0)] # needed for onebranch.pipeline.version task https://aka.ms/obpipelines/versioning
-  system.debug: ${{ parameters.debug }}
-  ENABLE_PRS_DELAYSIGN: 1
-  ROOT: $(Build.SourcesDirectory)
-  REPOROOT: $(Build.SourcesDirectory)
-  OUTPUTROOT: $(REPOROOT)\out
-  NUGET_XMLDOC_MODE: none
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)] # needed for onebranch.pipeline.version task https://aka.ms/obpipelines/versioning
+  - name: system.debug
+    value: ${{ parameters.debug }}
+  - name: ENABLE_PRS_DELAYSIGN
+    value: 1
+  - name: ROOT
+    value: $(Build.SourcesDirectory)
+  - name: REPOROOT
+    value: $(Build.SourcesDirectory)
+  - name: OUTPUTROOT
+    value: $(REPOROOT)\out
+  - name: NUGET_XMLDOC_MODE
+    value: none
+  - name: nugetMultiFeedWarnLevel
+    value: none
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: skipNugetSecurityAnalysis
+    value: true
 
   WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project https://aka.ms/obpipelines/containers
 
 resources:
   pipelines:
     - pipeline: CoOrdinatedBuildPipeline
-      source: 'OneBranch.Pipelines/PowerShell-Coordinated Packages-Official'
+      source: 'PowerShell-Coordinated Packages-Official'
       trigger:
         branches:
           include:
