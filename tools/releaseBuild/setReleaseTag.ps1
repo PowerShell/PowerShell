@@ -48,14 +48,14 @@ function New-BuildInfoJson {
     Write-Verbose -Message "$vstsCommandString" -Verbose
     Write-Host -Object "##$vstsCommandString"
 
-    if (-not (Test-Path $env:ob_outputDirectory)) {
-        $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory -Force -Verbose
+    if (-not (Test-Path $env:OB_OUTPUTDIRECTORY)) {
+        $null = New-Item -Path $env:OB_OUTPUTDIRECTORY -ItemType Directory -Force -Verbose
     }
 
     # Upload for ADO pipelines
     Write-Host "##vso[artifact.upload containerfolder=BuildInfoJson;artifactname=BuildInfoJson]$resolvedPath"
     # Copy to location where OneBranch Pipelines uploads from
-    Copy-Item $resolvedPath -Destination $env:ob_outputDirectory -Force -Verbose
+    Copy-Item $resolvedPath -Destination $env:OB_OUTPUTDIRECTORY -Force -Verbose
 }
 
 # Script to set the release tag based on the branch name if it is not set or it is "fromBranch"
