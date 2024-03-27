@@ -7,9 +7,12 @@ jobs:
   displayName: Package macOS ${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
-    vmImage: macos-latest
+    type: linux
+    isCustom: true
+    name: Azure Pipelines
+    vmImage: 'macOS-latest'
+
   variables:
-    # Turn off Homebrew analytics
     - name: HOMEBREW_NO_ANALYTICS
       value: 1
     - name: runCodesignValidationInjection
@@ -17,6 +20,15 @@ jobs:
     - name: NugetSecurityAnalysisWarningLevel
       value: none
     - group: DotNetPrivateBuildAccess
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_binskim_enabled
+      value: true
+    - name: ob_sdl_credscan_suppressionsfileforartifacts
+      value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
+    - name: BuildArch
+      value: ${{ parameters.buildArchitecture }}
+
   steps:
   - checkout: self
     clean: true
@@ -43,16 +55,16 @@ jobs:
     displayName: Download macosBinResults
     inputs:
       artifactName: 'macosBinResults'
-      itemPattern: '**/*${{ parameters.buildArchitecture }}.zip'
+      itemPattern: '**/*$(BuildArch).zip'
       downloadPath: '$(System.ArtifactsDirectory)/Symbols'
 
-  - task: DownloadBuildArtifacts@0
-    displayName: Download signedMacOsBins
-    inputs:
-      artifactName: 'signedMacOsBins_${{ parameters.buildArchitecture }}'
-      itemPattern: '**/*'
-      downloadPath: '$(System.ArtifactsDirectory)/macOsBins'
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+  # - task: DownloadBuildArtifacts@0
+  #   displayName: Download signedMacOsBins
+  #   inputs:
+  #     artifactName: 'signedMacOsBins_${{ parameters.buildArchitecture }}'
+  #     itemPattern: '**/*'
+  #     downloadPath: '$(System.ArtifactsDirectory)/macOsBins'
+  #   condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - pwsh: |
       Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
@@ -102,16 +114,16 @@ jobs:
   #   retryCountOnTaskFailure: 2
 
 
-  - pwsh: |
-      try {
-        tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
-      } catch {
-        Get-Error
-        throw
-      }
-    displayName: 'Bootstrap VM'
-    env:
-      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+  # - pwsh: |
+  #     try {
+  #       tools/releaseBuild/macOS/pPowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
+  #     } catch {
+  #       Get-Error
+  #       throw
+  #     }
+  #   displayName: 'Bootstrap VM'
+  #   env:
+  #     __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
       # Add -SkipReleaseChecks as a mitigation to unblock release.
