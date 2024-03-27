@@ -38,6 +38,10 @@ jobs:
     clean: true
 
   - pwsh: |
+      Get-ChildItem -Path env:
+    displayName: Capture environment
+
+  - pwsh: |
       # create folder
       sudo mkdir "$(Agent.TempDirectory)/PowerShell"
 
