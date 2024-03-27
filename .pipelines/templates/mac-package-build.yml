@@ -65,6 +65,10 @@ jobs:
     artifact: macosBinResults
     patterns: '**/*$(BuildArch).zip'
 
+  - download: CoOrdinatedBuildPipeline
+    artifact: macosBinResults
+    patterns: '**/*$(BuildArch).zip'
+
   # - task: DownloadPipelineArtifact@2
   #   displayName: Download macosBinResults
   #   inputs:
@@ -148,6 +152,12 @@ jobs:
       Set-Location $repoRoot
       Import-Module "$repoRoot/build.psm1"
       Import-Module "$repoRoot/tools/packaging"
+
+      $psoptionsPath = '$(System.ArtifactsDirectory)/$(SymbolsFolder)/psoptions.json'
+
+      Write-Verbose -Message "Restoring PSOptions from $psoptionsPath" -Verbose
+
+      Restore-PSOptions -PSOptionsPath "$psoptionsPath"
 
       $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
       $LTS = $metadata.LTSRelease.Package
