@@ -45,9 +45,11 @@ jobs:
       sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
     displayName: 'Create $(Agent.TempDirectory)/PowerShell'
 
-  - template: SetVersionVariables.yml
+  - template: SetVersionVariables.yml@self
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: yes
+      UseJson: no
 
   - template: shouldSign.yml
 
