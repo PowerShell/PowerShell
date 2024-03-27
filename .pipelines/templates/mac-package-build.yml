@@ -144,7 +144,7 @@ jobs:
       # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
 
       Write-Verbose -Message "Init..." -Verbose
-      $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
+      $repoRoot = $env:REPOROOT
       Set-Location $repoRoot
       Import-Module "$repoRoot/build.psm1"
       Import-Module "$repoRoot/tools/packaging"
