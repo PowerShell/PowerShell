@@ -55,12 +55,16 @@ jobs:
     parameters:
       nativePathRoot: '$(Agent.TempDirectory)'
 
-  - task: DownloadPipelineArtifact@2
-    displayName: Download macosBinResults
-    inputs:
-      artifactName: 'macosBinResults'
-      itemPattern: '**/*$(BuildArch).zip'
-      downloadPath: '$(System.ArtifactsDirectory)/Symbols'
+  - download: CoOrdinatedBuildPipeline
+    artifact: macosBinResults
+    patterns: '**/*$(BuildArch).zip'
+
+  # - task: DownloadPipelineArtifact@2
+  #   displayName: Download macosBinResults
+  #   inputs:
+  #     artifactName: 'macosBinResults'
+  #     itemPattern: '**/*$(BuildArch).zip'
+  #     downloadPath: '$(System.ArtifactsDirectory)/Symbols'
 
   # - task: DownloadBuildArtifacts@0
   #   displayName: Download signedMacOsBins
@@ -71,7 +75,7 @@ jobs:
   #   condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - pwsh: |
-      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+      Get-ChildItem "$(Pipeline.Workspace)\*" -Recurse
     displayName: 'Capture Downloaded Artifacts'
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
