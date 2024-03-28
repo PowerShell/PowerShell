@@ -83,7 +83,11 @@ jobs:
   #   condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - pwsh: |
-      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/macosBinResults" -Recurse
+      Write-Verbose -Verbose "unsigned artifacts"
+      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/macosBinResults-${{ parameters.buildArchitecture }}" -Recurse
+
+      Write-Verbose -Verbose "unsigned artifacts"
+      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_${{ parameters.buildArchitecture }}" -Recurse
     displayName: 'Capture Downloaded Artifacts'
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
@@ -148,10 +152,10 @@ jobs:
       Import-Module "$repoRoot/build.psm1"
       Import-Module "$repoRoot/tools/packaging"
 
-      $unsignedFilesPath = '$(System.ArtifactsDirectory)/macosBinResults-${{ parameters.buildArchitecture }}/'
-      $signedFilesPath = '$(System.ArtifactsDirectory)/drop_macos_sign_${{ parameters.buildArchitecture }}/'
+      $unsignedFilesPath = '$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/macosBinResults-${{ parameters.buildArchitecture }}'
+      $signedFilesPath = '$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_${{ parameters.buildArchitecture }}'
 
-      $psoptionsPath = "$unsignedFilesPath/psoptions.json"
+      $psoptionsPath = Get-ChildItem -Path $unsignedFilesPath -Filter 'psoptions.json' -Recurse -File | Select-Object -ExpandProperty FullName
       Write-Verbose -Message "Restoring PSOptions from $psoptionsPath" -Verbose
 
       Restore-PSOptions -PSOptionsPath "$psoptionsPath"
