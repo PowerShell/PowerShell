@@ -60,7 +60,7 @@ jobs:
       Start-PSBuild -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -Output $(OB_OUTPUTDIRECTORY)
       $artifactName = "macosBinResults-${{ parameters.buildArchitecture }}"
 
-      Write-Host "##vso[artifact.upload containerfolder=testArtifacts;artifactname=$artifactName]$(OB_OUTPUTDIRECTORY)"
+      Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName]$(OB_OUTPUTDIRECTORY)"
 
       $env:AzDevOpsFeedPAT2 = $null
     displayName: 'Build'
@@ -121,13 +121,6 @@ jobs:
       $runtime = '$(BuildArchitecture)'
       Write-Host "sending.. vso[task.setvariable variable=Runtime]$runtime"
       Write-Host "##vso[task.setvariable variable=Runtime]$runtime"
-
-      # $zipPath = Get-Item '$(Pipeline.Workspace)\Symbols\*symbol*${{ parameters.buildArchitecture }}*.zip' -Verbose
-      # Write-Verbose -Verbose "Zip Path: $zipPath"
-
-      # $expandedFolder = $zipPath.BaseName
-      # Expand-Archive -Path $zipPath -Destination "$(Pipeline.Workspace)\$expandedFolder" -Force
-      # $rootPath = "$(Pipeline.Workspace)\$expandedFolder"
 
       $rootPath = "$(Pipeline.Workspace)\Symbols"
       Write-Verbose -Verbose "Setting vso[task.setvariable variable=DropRootPath]$rootPath"
