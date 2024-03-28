@@ -1353,7 +1353,7 @@ foo``u{2195}abc
         }
     }
 
-    Context "Method invocation argument labels" -Tag Jordan {
+    Context "Method invocation argument labels" {
         It "Parses single argument with label <Label.Trim()>" -TestCases @(
             @{ Label = "simple" }
             @{ Label = "_underscore" }
@@ -1361,6 +1361,7 @@ foo``u{2195}abc
             @{ Label = "a1" }
             @{ Label = "_1" }
             @{ Label = "`nabc" }
+            @{ Label = "non_ascii_é"}
         ) {
             param ($Label)
 
@@ -1468,40 +1469,159 @@ $c.Method(
             $err = { ExecuteCommand "`$c.Method(label:`n'value')" } | Should -Throw -ErrorId ParseException -PassThru
             $pe = $err.Exception.InnerException
             $pe | Should -BeOfType ([System.Management.Automation.ParseException])
-            # $pe.Errors.Count | Should -Be 1  # FIXME
 
             $pe.Errors[0].ErrorId | Should -Be MissingArgumentAfterLabel
-            # FIXME: newline not )
-            # $pe.Errors[0].Message | Should -Be "Expected argument value after name identifier 'label' but found '``n'."
-            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be @'
-At line:1 char:16
-+ $c.Method(label:
-+                ~
-'@
+            $pe.Errors[0].Message | Should -Be "Expected argument value after name identifier 'label' but found '\u000a'."
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:16'
+                    '+ $c.Method(label:'
+                    '+                ~'
+                ) -join [Environment]::NewLine)
         }
 
-        <#
-# Failures to test
-# Newline after label
-Method(label:`n'value')
+        It "Fails to parse label without : separator with value" {
+            $err = { ExecuteCommand "`$c.Method(label 'value')" } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
 
-# Non simple name
-Method('label': $value)
-Method("label": $value)
-Method(1abc: $value)
-Method(abc def: $value)
-Method(café: $value)  # non-ASCII char
-Method($label: $value)
-Method($label : $value)
+            $pe.Errors[0].ErrorId | Should -Be MissingColonAfterArgumentLabel
+            $pe.Errors[0].Message | Should -Be "Expected colon after argument name identifier 'label' but found ''value''."
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:16'
+                    "+ `$c.Method(label 'value')"
+                    '+                ~'
+                ) -join [Environment]::NewLine)
+        }
 
-# Failure on 2nd arg
-Method(label: $value, fail 'value')
-Method($value, fail 'value')
+        It "Fails to parse label without : separator with no value" {
+            $err = { ExecuteCommand "`$c.Method(label)" } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
 
-# No : separator
-Method(label $value)
-Method(label)
-Method(label, $value)
-        #>
+            $pe.Errors[0].ErrorId | Should -Be MissingColonAfterArgumentLabel
+            $pe.Errors[0].Message | Should -Be "Expected colon after argument name identifier 'label' but found ')'."
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:16'
+                    '+ $c.Method(label)'
+                    '+                ~'
+                ) -join [Environment]::NewLine)
+        }
+
+        It "Fails to parse label without : separator with no value but extra arg" {
+            $err = { ExecuteCommand "`$c.Method(label, 'arg')" } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
+
+            $pe.Errors[0].ErrorId | Should -Be MissingColonAfterArgumentLabel
+            $pe.Errors[0].Message | Should -Be "Expected colon after argument name identifier 'label' but found ','."
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:16'
+                    "+ `$c.Method(label, 'arg')"
+                    '+                ~'
+                ) -join [Environment]::NewLine)
+        }
+
+        It "Fails to parse label on second argument" {
+            $err = { ExecuteCommand "`$c.Method(label: `$value, fail 'value')" } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
+
+            $pe.Errors[0].ErrorId | Should -Be MissingColonAfterArgumentLabel
+            $pe.Errors[0].Message | Should -Be "Expected colon after argument name identifier 'fail' but found ''value''."
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:30'
+                    "+ `$c.Method(label: `$value, fail 'value')"
+                    '+                              ~'
+                ) -join [Environment]::NewLine)
+        }
+
+        It "Fails to parse label on second argument with normal first argument" {
+            $err = { ExecuteCommand "`$c.Method(`$value, fail 'value')" } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
+
+            $pe.Errors[0].ErrorId | Should -Be MissingColonAfterArgumentLabel
+            $pe.Errors[0].Message | Should -Be "Expected colon after argument name identifier 'fail' but found ''value''."
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:23'
+                    "+ `$c.Method(`$value, fail 'value')"
+                    '+                       ~'
+                ) -join [Environment]::NewLine)
+        }
+
+        It "Fails to parse quoted label <Label>" -TestCases @(
+            @{ Label = "'label'" }
+            @{ Label = '"label"' }
+        ) {
+            param ($Label)
+
+            $err = { ExecuteCommand "`$c.Method(${Label}: 'value')" } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
+
+            $pe.Errors[0].ErrorId | Should -Be MissingEndParenthesisInMethodCall
+            $pe.Errors[0].Message | Should -Be "Missing ')' in method call."
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:18'
+                    "+ `$c.Method(${Label}: 'value')"
+                    '+                  ~'
+                ) -join [Environment]::NewLine)
+        }
+
+        It "Fails to parse label with invalid short name at start" {
+            $err = { ExecuteCommand '$c.Method(1abc: $value)' } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
+
+            $pe.Errors[0].ErrorId | Should -Be MissingEndParenthesisInMethodCall
+            $pe.Errors[0].Message | Should -Be "Missing ')' in method call."
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:11'
+                    '+ $c.Method(1abc: $value)'
+                    '+           ~'
+                ) -join [Environment]::NewLine)
+        }
+
+        It "Fails to parse label with invalid short name at end" {
+            $err = { ExecuteCommand '$c.Method(emoji_♪: $value)' } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
+
+            $pe.Errors[0].ErrorId | Should -Be MissingColonAfterArgumentLabel
+            $pe.Errors[0].Message | Should -Be "Expected colon after argument name identifier 'emoji_' but found '♪:'."
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:17'
+                    '+ $c.Method(emoji_♪: $value)'
+                    '+                 ~'
+                ) -join [Environment]::NewLine)
+        }
+
+        It "Fails to parse label with invalid short name as variable" {
+            $err = { ExecuteCommand '$c.Method($var: $value)' } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
+
+            $pe.Errors[0].ErrorId | Should -Be InvalidVariableReferenceWithDrive
+            $pe.Errors[0].Message | Should -BeLike "Variable reference is not valid. ':' was not followed by a valid variable name character. *"
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:11'
+                    '+ $c.Method($var: $value)'
+                    '+           ~~~~~'
+                ) -join [Environment]::NewLine)
+        }
+
+        It "Fails to parse label with invalid short name variable with space before colon" {
+            $err = { ExecuteCommand '$c.Method($var : $value)' } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
+
+            $pe.Errors[0].ErrorId | Should -Be MissingEndParenthesisInMethodCall
+            $pe.Errors[0].Message | Should -Be "Missing ')' in method call."
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:15'
+                    '+ $c.Method($var : $value)'
+                    '+               ~'
+                ) -join [Environment]::NewLine)
+        }
     }
 }

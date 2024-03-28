@@ -7940,11 +7940,23 @@ namespace System.Management.Automation.Language
 
                         if (argumentName is not null)
                         {
+                            if (comma is null)
+                            {
+                                comma = NextToken();
+                                UngetToken(comma);
+                            }
+
+                            string nextTokenText = comma.Text;
+                            if (nextTokenText.Length == 1 && char.IsControl(nextTokenText[0]))
+                            {
+                                nextTokenText = string.Format("\\u{0:x4}", (short)nextTokenText[0]);
+                            }
+
                             ReportIncompleteInput(After(argumentName.Extent),
                                 nameof(ParserStrings.MissingArgumentAfterLabel),
                                 ParserStrings.MissingArgumentAfterLabel,
                                 argumentName.Value,
-                                comma is null ? TokenKind.RParen.Text() : TokenKind.Comma.Text());
+                                nextTokenText);
                             reportedError = true;
                         }
                         else if (comma != null)
