@@ -153,7 +153,7 @@ jobs:
       Import-Module "$repoRoot/tools/packaging"
 
       $unsignedFilesPath = '$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/macosBinResults-${{ parameters.buildArchitecture }}'
-      $signedFilesPath = '$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_${{ parameters.buildArchitecture }}/Signed-${{ parameters.buildArchitecture }'
+      $signedFilesPath = '$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_${{ parameters.buildArchitecture }}/Signed-${{ parameters.buildArchitecture }}'
 
       $psoptionsPath = Get-ChildItem -Path $unsignedFilesPath -Filter 'psoptions.json' -Recurse -File | Select-Object -ExpandProperty FullName
       Write-Verbose -Message "Restoring PSOptions from $psoptionsPath" -Verbose
