@@ -151,7 +151,7 @@ jobs:
       $unsignedFilesPath = '$(System.ArtifactsDirectory)/macosBinResults-${{ parameters.buildArchitecture }}/'
       $signedFilesPath = '$(System.ArtifactsDirectory)/drop_macos_sign_${{ parameters.buildArchitecture }}/'
 
-      $psoptionsPath = '$unsignedFilesPath/psoptions.json'
+      $psoptionsPath = "$unsignedFilesPath/psoptions.json"
       Write-Verbose -Message "Restoring PSOptions from $psoptionsPath" -Verbose
 
       Restore-PSOptions -PSOptionsPath "$psoptionsPath"
