@@ -1,0 +1,90 @@
+jobs:
+- job: DeleteBlob
+  variables:
+  - group: Azure Blob variable group
+  - group: AzureBlobServiceConnection
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/BuildJson'
+  - name: ob_sdl_sbom_enabled
+    value: false
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+    - name: ob_sdl_codeql_compiled_enabled
+      value: true
+
+  displayName: Delete blob is exists
+  pool:
+    type: windows
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: yes
+      UseJson: no
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(PowerShellRoot)
+
+  - pwsh: |
+      if (-not (Test-Path -Path $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json)) {
+        Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse
+        throw 'tsaoptions.json not found'
+      }
+    displayName: 'Check tsaoptions.json'
+
+  - pwsh: |
+      if (-not (Test-Path -Path $(Build.SourcesDirectory)\PowerShell\.config\suppress.json)) {
+        Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse
+        throw 'suppress.json not found'
+      }
+    displayName: 'Check suppress.json'
+
+  # Needed as per FAQ here: https://eng.ms/docs/products/onebranch/build/troubleshootingfaqs
+  - task: PowerShell@2
+    displayName: 'Update Az.Storage Module'
+    inputs:
+      targetType: 'inline'
+      script: |
+        Get-PackageProvider -Name NuGet -ForceBootstrap
+        Install-Module -Name Az.Storage -Verbose -Force -AllowClobber
+        Uninstall-AzureRm -Verbose
+
+  - task: AzurePowerShell@5
+    displayName: Check if blob exists and delete if specified
+    inputs:
+      azureSubscription: az-blob-cicd-infra
+      scriptType: inlineScript
+      azurePowerShellVersion: latestVersion
+      inline: |
+        try {
+            $container = Get-AzStorageContainer -Container '$(AzureVersion)' -Context (New-AzStorageContext -StorageAccountName '$(StorageAccount)') -ErrorAction Stop
+            if ($container -ne $null -and '$(ForceAzureBlobDelete)' -eq 'false') {
+                throw 'Azure blob container $(AzureVersion) already exists. To overwrite, use ForceAzureBlobDelete parameter'
+            }
+            elseif ($container -ne $null -and '$(ForceAzureBlobDelete)' -eq 'true') {
+                Write-Verbose -Verbose 'Removing container $(AzureVersion) due to ForceAzureBlobDelete parameter'
+                Remove-AzStorageContainer -Name '$(AzureVersion)' -Context (New-AzStorageContext -StorageAccountName '$(StorageAccount)') -Force
+            }
+        }
+        catch {
+            if ($_.FullyQualifiedErrorId -eq 'ResourceNotFoundException,Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet.GetAzureStorageContainerCommand') {
+                Write-Verbose -Verbose 'Container "$(AzureVersion)" does not exists.'
+            }
+            else {
+                throw $_
+            }
+        }
+  - template: /.pipelines/templates/step/finalize.yml@self

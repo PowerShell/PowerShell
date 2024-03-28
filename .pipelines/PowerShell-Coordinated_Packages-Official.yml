@@ -1,0 +1,251 @@
+name: UnifiedPackageBuild-$(Build.BuildId)
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+pr:
+  branches:
+    include:
+    - master
+    - release*
+
+parameters:
+  - name: ForceAzureBlobDelete
+    displayName: Delete Azure Blob
+    type: string
+    values:
+    - true
+    - false
+    default: false
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    displayName: Release Tag
+    type: string
+    default: 'fromBranch'
+  - name: SKIP_SIGNING
+    displayName: Skip Signing
+    type: string
+    default: 'NO'
+
+resources:
+  repositories:
+  - repository: ComplianceRepo
+    type: github
+    endpoint: ComplianceGHRepo
+    name: PowerShell/compliance
+    ref: master
+  - repository: onebranchTemplates
+    type: git
+    name: OneBranch.Pipelines/GovernedTemplates
+    ref: refs/heads/main
+
+variables:
+  - name: PS_RELEASE_BUILD
+    value: 1
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+  - name: nugetMultiFeedWarnLevel
+    value: none
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: skipNugetSecurityAnalysis
+    value: true
+  - name: branchCounterKey
+    value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
+  - name: branchCounter
+    value: $[counter(variables['branchCounterKey'], 1)]
+  - name: ForceAzureBlobDelete
+    value: ${{ parameters.ForceAzureBlobDelete }}
+  - name: BUILDSECMON_OPT_IN
+    value: true
+  - name: __DOTNET_RUNTIME_FEED
+    value: ${{ parameters.InternalSDKBlobURL }}
+  - name: LinuxContainerImage
+    value: onebranch.azurecr.io/linux/ubuntu-2004:latest
+  - name: WindowsContainerImage
+    value: onebranch.azurecr.io/windows/ltsc2019/vse2022:latest
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)]
+  - name: ReleaseTagVar
+    value: ${{ parameters.ReleaseTagVar }}
+  - name: SKIP_SIGNING
+    value: ${{ parameters.SKIP_SIGNING }}
+  - group: 'AzDevOpsArtifacts'
+
+extends:
+  template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
+  parameters:
+    customTags: 'ES365AIMigrationTooling'
+    globalSdl:
+      disableLegacyManifest: true
+      # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
+      armory:
+        enabled: false
+      sbom:
+        enabled: true
+      compiled:
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+          enabled: true
+        ${{ else }}:
+          enabled: false
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+      asyncSdl: # https://aka.ms/obpipelines/asyncsdl
+        enabled: true
+        forStages: [prep, macos, linux, windows, SignFiles, test_and_release_artifacts]
+        credscan:
+          enabled: true
+          scanFolder:  $(Build.SourcesDirectory)
+          suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+        binskim:
+          enabled: false
+        # APIScan requires a non-Ready-To-Run build
+        apiscan:
+          enabled: false
+        tsaOptionsFile: .config\tsaoptions.json
+
+    stages:
+    - stage: prep
+      jobs:
+      - template: /.pipelines/templates/checkAzureContainer.yml@self
+
+    - stage: macos
+      displayName: macOS - build and sign
+      dependsOn: ['prep']
+      jobs:
+      - template: /.pipelines/templates/mac.yml@self
+        parameters:
+          buildArchitecture: x64
+      - template: /.pipelines/templates/mac.yml@self
+        parameters:
+          buildArchitecture: arm64
+
+    - stage: linux
+      displayName: linux - build and sign
+      dependsOn: ['prep']
+      jobs:
+      - template: /.pipelines/templates/linux.yml@self
+        parameters:
+          Runtime: 'linux-x64'
+          JobName: 'linux_x64'
+
+      - template: /.pipelines/templates/linux.yml@self
+        parameters:
+          Runtime: 'linux-x64'
+          JobName: 'linux_x64_minSize'
+          BuildConfiguration: 'minSize'
+
+      - template: /.pipelines/templates/linux.yml@self
+        parameters:
+          Runtime: 'linux-arm'
+          JobName: 'linux_arm'
+
+      - template: /.pipelines/templates/linux.yml@self
+        parameters:
+          Runtime: 'linux-arm64'
+          JobName: 'linux_arm64'
+
+      - template: /.pipelines/templates/linux.yml@self
+        parameters:
+          Runtime: 'fxdependent-linux-x64'
+          JobName: 'linux_fxd_x64_mariner'
+
+      - template: /.pipelines/templates/linux.yml@self
+        parameters:
+          Runtime: 'fxdependent-linux-arm64'
+          JobName: 'linux_fxd_arm64_mariner'
+
+      - template: /.pipelines/templates/linux.yml@self
+        parameters:
+          Runtime: 'fxdependent-noopt-linux-musl-x64'
+          JobName: 'linux_fxd_x64_alpine'
+
+      - template: /.pipelines/templates/linux.yml@self
+        parameters:
+          Runtime: 'fxdependent'
+          JobName: 'linux_fxd'
+
+      - template: /.pipelines/templates/linux.yml@self
+        parameters:
+          Runtime: 'linux-musl-x64'
+          JobName: 'linux_x64_alpine'
+
+    - stage: windows
+      displayName: windows - build and sign
+      dependsOn: ['prep']
+      jobs:
+      - template: /.pipelines/templates/windows-hosted-build.yml@self
+        parameters:
+          Architecture: x64
+          BuildConfiguration: release
+          JobName: build_windows_x64_release
+      - template: /.pipelines/templates/windows-hosted-build.yml@self
+        parameters:
+          Architecture: x64
+          BuildConfiguration: minSize
+          JobName: build_windows_x64_minSize
+      - template: /.pipelines/templates/windows-hosted-build.yml@self
+        parameters:
+          Architecture: x86
+          JobName: build_windows_x86_release
+      - template: /.pipelines/templates/windows-hosted-build.yml@self
+        parameters:
+          Architecture: arm64
+          JobName: build_windows_arm64_release
+      - template: /.pipelines/templates/windows-hosted-build.yml@self
+        parameters:
+          Architecture: fxdependent
+          JobName: build_windows_fxdependent_release
+      - template: /.pipelines/templates/windows-hosted-build.yml@self
+        parameters:
+          Architecture: fxdependentWinDesktop
+          JobName: build_windows_fxdependentWinDesktop_release
+
+    - stage: test_and_release_artifacts
+      displayName: Test and Release Artifacts
+      dependsOn: ['prep']
+      jobs:
+      - template: /.pipelines/templates/testartifacts.yml@self
+
+      - job: release_json
+        displayName: Create and Upload release.json
+        pool:
+          type: windows
+        variables:
+        - name: ob_outputDirectory
+          value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+        - name: ob_sdl_tsa_configFile
+          value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+        - name: ob_sdl_credscan_suppressionsFile
+          value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+        steps:
+        - checkout: self
+          clean: true
+        - template: /.pipelines/templates/SetVersionVariables.yml@self
+          parameters:
+            ReleaseTagVar: $(ReleaseTagVar)
+        - powershell: |
+            $metadata = Get-Content '$(Build.SourcesDirectory)/PowerShell/tools/metadata.json' -Raw | ConvertFrom-Json
+            $LTS = $metadata.LTSRelease.Package
+            @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
+            Get-Content "$(Build.StagingDirectory)\release.json"
+
+            if (-not (Test-Path "$(ob_outputDirectory)\metadata")) {
+              New-Item -ItemType Directory -Path "$(ob_outputDirectory)\metadata"
+            }
+
+            Copy-Item -Path "$(Build.StagingDirectory)\release.json" -Destination "$(ob_outputDirectory)\metadata" -Force
+          displayName: Create and upload release.json file to build artifact
+          retryCountOnTaskFailure: 2
+        - template: /.pipelines/templates/step/finalize.yml@self

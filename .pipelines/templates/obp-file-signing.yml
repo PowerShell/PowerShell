@@ -1,0 +1,152 @@
+parameters:
+  binPath: '$(ob_outputDirectory)'
+
+steps:
+- pwsh: |
+    $fullSymbolsFolder = '${{ parameters.binPath }}'
+    Write-Verbose -Verbose "fullSymbolsFolder == $fullSymbolsFolder"
+    Get-ChildItem -Recurse $fullSymbolsFolder | Select-Object -ExpandProperty FullName | Write-Verbose -Verbose
+    $filesToSignDirectory = "$(Pipeline.Workspace)/toBeSigned"
+    if ((Test-Path -Path $filesToSignDirectory))  {
+      Remove-Item -Path $filesToSignDirectory -Recurse -Force
+    }
+    $null = New-Item -ItemType Directory -Path $filesToSignDirectory -Force
+
+    $itemsToCopyWithRecurse = @(
+      "$($fullSymbolsFolder)/*.ps1"
+      "$($fullSymbolsFolder)/Microsoft.PowerShell*.dll"
+    )
+    $itemsToCopy = @{
+      "$($fullSymbolsFolder)/*.ps1" = ""
+      "$($fullSymbolsFolder)/Modules/Microsoft.PowerShell.Host/Microsoft.PowerShell.Host.psd1" = "Modules/Microsoft.PowerShell.Host"
+      "$($fullSymbolsFolder)/Modules/Microsoft.PowerShell.Management/Microsoft.PowerShell.Management.psd1" = "Modules/Microsoft.PowerShell.Management"
+      "$($fullSymbolsFolder)/Modules/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.psd1" = "Modules/Microsoft.PowerShell.Security"
+      "$($fullSymbolsFolder)/Modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1" = "Modules/Microsoft.PowerShell.Utility"
+      "$($fullSymbolsFolder)/pwsh.dll" = ""
+      "$($fullSymbolsFolder)/System.Management.Automation.dll" = ""
+    }
+    ## Windows only modules
+    if('$(ArtifactPlatform)' -eq 'windows') {
+      $itemsToCopy += @{
+        "$($fullSymbolsFolder)/pwsh.exe" = ""
+        "$($fullSymbolsFolder)/Microsoft.Management.Infrastructure.CimCmdlets.dll" = ""
+        "$($fullSymbolsFolder)/Microsoft.WSMan.*.dll" = ""
+        "$($fullSymbolsFolder)/Modules/CimCmdlets/CimCmdlets.psd1" = "Modules/CimCmdlets"
+        "$($fullSymbolsFolder)/Modules/Microsoft.PowerShell.Diagnostics/Diagnostics.format.ps1xml" = "Modules/Microsoft.PowerShell.Diagnostics"
+        "$($fullSymbolsFolder)/Modules/Microsoft.PowerShell.Diagnostics/Event.format.ps1xml" = "Modules/Microsoft.PowerShell.Diagnostics"
+        "$($fullSymbolsFolder)/Modules/Microsoft.PowerShell.Diagnostics/GetEvent.types.ps1xml" = "Modules/Microsoft.PowerShell.Diagnostics"
+        "$($fullSymbolsFolder)/Modules/Microsoft.PowerShell.Security/Security.types.ps1xml" = "Modules/Microsoft.PowerShell.Security"
+        "$($fullSymbolsFolder)/Modules/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1" = "Modules/Microsoft.PowerShell.Diagnostics"
+        "$($fullSymbolsFolder)/Modules/Microsoft.WSMan.Management/Microsoft.WSMan.Management.psd1" = "Modules/Microsoft.WSMan.Management"
+        "$($fullSymbolsFolder)/Modules/Microsoft.WSMan.Management/WSMan.format.ps1xml" = "Modules/Microsoft.WSMan.Management"
+        "$($fullSymbolsFolder)/Modules/PSDiagnostics/PSDiagnostics.ps?1" = "Modules/PSDiagnostics"
+      }
+    }
+
+    $itemsToExclude = @(
+      # This package is retrieved from https://www.github.com/powershell/MarkdownRender
+      "$($fullSymbolsFolder)/Microsoft.PowerShell.MarkdownRender.dll"
+    )
+
+    if('$(ArtifactPlatform)' -eq 'linux' -or '$(ArtifactPlatform)' -eq 'macos') {
+      $itemsToExclude += "$($fullSymbolsFolder)/pwsh"
+    }
+
+    Write-Verbose -verbose "recursively copying $($itemsToCopyWithRecurse | out-string) to $filesToSignDirectory"
+    Copy-Item -Path $itemsToCopyWithRecurse -Destination $filesToSignDirectory -Recurse -verbose -exclude $itemsToExclude
+    Write-Verbose -verbose "recursive copy done."
+
+    foreach($pattern in $itemsToCopy.Keys) {
+      $destinationFolder = Join-Path $filesToSignDirectory -ChildPath $itemsToCopy.$pattern
+      $null = New-Item -ItemType Directory -Path $destinationFolder -Force
+      Write-Verbose -verbose "copying $pattern to $destinationFolder"
+
+      if (-not (Test-Path -Path $pattern)) {
+        Write-Verbose -verbose "No files found for pattern $pattern"
+        continue
+      }
+
+      Copy-Item -Path $pattern -Destination $destinationFolder -Recurse -verbose
+    }
+
+    Write-Verbose -verbose "copying done."
+    Write-Verbose -verbose "Files to be signed at: $filesToSignDirectory"
+
+    Get-ChildItem -Recurse -File $filesToSignDirectory | Select-Object -Property FullName
+  displayName: 'Prepare files to be signed'
+
+- task: onebranch.pipeline.signing@1
+  displayName: Sign 1st party files
+  inputs:
+    command: 'sign'
+    signing_profile: external_distribution
+    files_to_sign: '**\*.psd1;**\*.psm1;**\*.ps1xml;**\*.ps1;**\*.dll;**\*.exe;**\pwsh'
+    search_root: $(Pipeline.Workspace)/toBeSigned
+
+- pwsh : |
+    Get-ChildItem -Path env:
+  displayName: Capture environment
+
+- pwsh: |
+    Import-Module $(PowerShellRoot)/build.psm1 -Force
+    Import-Module $(PowerShellRoot)/tools/packaging -Force
+
+    $BuildPath = (Get-Item '${{ parameters.binPath }}').FullName
+    Write-Verbose -Verbose -Message "BuildPath: $BuildPath"
+
+    ## copy all files to be signed to build folder
+    Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath '$(Pipeline.Workspace)/toBeSigned'
+
+    $dlls = Get-ChildItem $BuildPath/*.dll, $BuildPath/*.exe -Recurse
+    $signatures = $dlls | Get-AuthenticodeSignature
+    $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned' -or $_.SignerCertificate.Issuer -notmatch '^CN=Microsoft.*'}| select-object -ExpandProperty Path
+
+    Write-Verbose -verbose "to be signed:`r`n $($missingSignatures | Out-String)"
+
+    $filesToSignDirectory = "$(Pipeline.Workspace)/thirdPartyToBeSigned"
+    if (Test-Path $filesToSignDirectory) {
+      Remove-Item -Path $filesToSignDirectory -Recurse -Force
+    }
+    $null = New-Item -ItemType Directory -Path $filesToSignDirectory -Force -Verbose
+
+    $missingSignatures | ForEach-Object {
+      $pathWithoutLeaf = Split-Path $_
+      $relativePath = $pathWithoutLeaf.replace($BuildPath,'')
+      Write-Verbose -Verbose -Message "relativePath: $relativePath"
+      $targetDirectory = Join-Path -Path $filesToSignDirectory -ChildPath $relativePath
+      Write-Verbose -Verbose -Message "targetDirectory: $targetDirectory"
+      if(!(Test-Path $targetDirectory))
+      {
+        $null = New-Item -ItemType Directory -Path $targetDirectory -Force -Verbose
+      }
+      Copy-Item -Path $_ -Destination $targetDirectory
+    }
+  displayName: Create ThirdParty Signing Folder
+
+- task: onebranch.pipeline.signing@1
+  displayName: Sign 3rd Party files
+  inputs:
+    command: 'sign'
+    signing_profile: 135020002
+    files_to_sign: '**\*.dll;**\*.exe'
+    search_root: $(Pipeline.Workspace)/thirdPartyToBeSigned
+
+- pwsh: |
+    Get-ChildItem '$(Pipeline.Workspace)/thirdPartyToBeSigned/*'
+  displayName: Capture ThirdParty Signed files
+
+- pwsh: |
+    Import-Module '$(PowerShellRoot)/build.psm1' -Force
+    Import-Module '$(PowerShellRoot)/tools/packaging' -Force
+    $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Signed-$(Runtime)' -Force
+    Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
+    Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
+    Write-Verbose -Verbose -Message "Files copied to $pathForUpload"
+
+    Write-Verbose "Copying third party signed files to the build folder"
+    $thirdPartySignedFilesPath = (Get-Item '$(Pipeline.Workspace)/thirdPartyToBeSigned').FullName
+    Update-PSSignedBuildFolder -BuildPath $pathForUpload -SignedFilesPath $thirdPartySignedFilesPath
+
+  displayName: 'Copy signed files for upload'
+
+- template: /.pipelines/templates/step/finalize.yml@self

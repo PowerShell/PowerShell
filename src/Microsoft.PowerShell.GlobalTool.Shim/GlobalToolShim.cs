@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -31,9 +32,10 @@ namespace Microsoft.PowerShell.GlobalTool.Shim
 
             string platformFolder = isWindows ? WinFolderName : UnixFolderName;
 
-            string argsString = args.Length > 0 ? string.Join(" ", args) : null;
+            var arguments = new List<string>(args.Length + 1);
             var pwshPath = Path.Combine(currentPath, platformFolder, PwshDllName);
-            string processArgs = string.IsNullOrEmpty(argsString) ? $"\"{pwshPath}\"" : $"\"{pwshPath}\" {argsString}";
+            arguments.Add(pwshPath);
+            arguments.AddRange(args);
 
             if (File.Exists(pwshPath))
             {
@@ -42,7 +44,7 @@ namespace Microsoft.PowerShell.GlobalTool.Shim
                     e.Cancel = true;
                 };
 
-                var process = System.Diagnostics.Process.Start("dotnet", processArgs);
+                var process = System.Diagnostics.Process.Start("dotnet", arguments);
                 process.WaitForExit();
                 return process.ExitCode;
             }
