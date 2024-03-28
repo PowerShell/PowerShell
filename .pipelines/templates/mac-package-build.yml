@@ -146,14 +146,16 @@ jobs:
       # Add -SkipReleaseChecks as a mitigation to unblock release.
       # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
 
+      $buildArch = '${{ parameters.buildArchitecture }}'
+
       Write-Verbose -Message "Init..." -Verbose
       $repoRoot = $env:REPOROOT
       Set-Location $repoRoot
       Import-Module "$repoRoot/build.psm1"
       Import-Module "$repoRoot/tools/packaging"
 
-      $unsignedFilesPath = '$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/macosBinResults-${{ parameters.buildArchitecture }}'
-      $signedFilesPath = '$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_${{ parameters.buildArchitecture }}/Signed-${{ parameters.buildArchitecture }}'
+      $unsignedFilesPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/macosBinResults-$buildArch"
+      $signedFilesPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_$buildArch/Signed-$buildArch"
 
       Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
       if (-not (Test-Path $signedFilesPath/pwsh)) {
@@ -175,8 +177,18 @@ jobs:
 
       Start-PSBootstrap -Package
 
-      Start-PSPackage -SkipReleaseChecks -MacOSRuntime 'osx-x64' -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
-      Start-PSPackage -Type tar -SkipReleaseChecks -MacOSRuntime 'osx-x64' -ReleaseTag $(ReleaseTagVar)
+      $macosRuntime = "osx-$buildArch"
+
+      Start-PSPackage -Type ospkg -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+      $pkgNameFilter = "powershell-*$macosRuntime.pkg"
+      $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+      Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$pkgPath"
+
+      Start-PSPackage -Type tar -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+      $tarPkgNameFilter = "powershell-*$macosRuntime.tar.gz"
+      $tarPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $tarPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+      Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$tarPkgPath"
+
     displayName: 'Package osx-x64'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
