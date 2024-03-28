@@ -58,6 +58,9 @@ jobs:
 
       Import-Module ./build.psm1 -Force
       Start-PSBuild -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -Output $(OB_OUTPUTDIRECTORY)
+      $artifactName = "macosBinResults-${{ parameters.buildArchitecture }}"
+
+      Write-Host "##vso[artifact.upload containerfolder=testArtifacts;artifactname=$artifactName]$(OB_OUTPUTDIRECTORY)"
 
       $env:AzDevOpsFeedPAT2 = $null
     displayName: 'Build'
@@ -104,7 +107,7 @@ jobs:
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: 'drop_macos_build_macos_${{ parameters.buildArchitecture }}'
+      artifact: 'macosBinResults'
       path: '$(Pipeline.Workspace)\Symbols'
     displayName: Download build
 
