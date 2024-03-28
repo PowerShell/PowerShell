@@ -761,7 +761,8 @@ namespace System.Management.Automation.Language
         private static IEnumerator ArrayRule(CallSite site, object obj)
         {
             var array = obj as Array;
-            if (array != null) return array.GetEnumerator();
+            if (array != null)
+                return array.GetEnumerator();
             return ((CallSite<Func<CallSite, object, IEnumerator>>)site).Update(site, obj);
         }
 
@@ -773,7 +774,8 @@ namespace System.Management.Automation.Language
         private static IEnumerator PSObjectStringRule(CallSite site, object obj)
         {
             var psobj = obj as PSObject;
-            if (psobj != null && PSObject.Base(psobj) is string) return null;
+            if (psobj != null && PSObject.Base(psobj) is string)
+                return null;
             return ((CallSite<Func<CallSite, object, IEnumerator>>)site).Update(site, obj);
         }
     }
@@ -902,25 +904,32 @@ namespace System.Management.Automation.Language
 
         private static void BoolRule(CallSite site, object obj, Pipe pipe, ExecutionContext context)
         {
-            if (obj is bool) { pipe.Add(obj); }
-            else { ((CallSite<Action<CallSite, object, Pipe, ExecutionContext>>)site).Update(site, obj, pipe, context); }
+            if (obj is bool)
+            { pipe.Add(obj); }
+            else
+            { ((CallSite<Action<CallSite, object, Pipe, ExecutionContext>>)site).Update(site, obj, pipe, context); }
         }
 
         private static void IntRule(CallSite site, object obj, Pipe pipe, ExecutionContext context)
         {
-            if (obj is int) { pipe.Add(obj); }
-            else { ((CallSite<Action<CallSite, object, Pipe, ExecutionContext>>)site).Update(site, obj, pipe, context); }
+            if (obj is int)
+            { pipe.Add(obj); }
+            else
+            { ((CallSite<Action<CallSite, object, Pipe, ExecutionContext>>)site).Update(site, obj, pipe, context); }
         }
 
         private static void StringRule(CallSite site, object obj, Pipe pipe, ExecutionContext context)
         {
-            if (obj is string) { pipe.Add(obj); }
-            else { ((CallSite<Action<CallSite, object, Pipe, ExecutionContext>>)site).Update(site, obj, pipe, context); }
+            if (obj is string)
+            { pipe.Add(obj); }
+            else
+            { ((CallSite<Action<CallSite, object, Pipe, ExecutionContext>>)site).Update(site, obj, pipe, context); }
         }
 
         private static void AutomationNullRule(CallSite site, object obj, Pipe pipe, ExecutionContext context)
         {
-            if (obj != AutomationNull.Value) { ((CallSite<Action<CallSite, object, Pipe, ExecutionContext>>)site).Update(site, obj, pipe, context); }
+            if (obj != AutomationNull.Value)
+            { ((CallSite<Action<CallSite, object, Pipe, ExecutionContext>>)site).Update(site, obj, pipe, context); }
         }
     }
 
@@ -1996,28 +2005,32 @@ namespace System.Management.Automation.Language
 
         private static object EnumRule(CallSite site, object obj)
         {
-            if (obj is Enum) { return obj; }
+            if (obj is Enum)
+            { return obj; }
 
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
 
         private static object BoolRule(CallSite site, object obj)
         {
-            if (obj is bool) { return obj; }
+            if (obj is bool)
+            { return obj; }
 
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
 
         private static object IntRule(CallSite site, object obj)
         {
-            if (obj is int) { return obj; }
+            if (obj is int)
+            { return obj; }
 
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
 
         private static object ObjectRule(CallSite site, object obj)
         {
-            if (obj is not ValueType && obj is not PSObject) { return obj; }
+            if (obj is not ValueType && obj is not PSObject)
+            { return obj; }
 
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
@@ -2025,7 +2038,8 @@ namespace System.Management.Automation.Language
         private static object PSObjectStringRule(CallSite site, object obj)
         {
             var psobj = obj as PSObject;
-            if (psobj != null && psobj.BaseObject is string) return obj;
+            if (psobj != null && psobj.BaseObject is string)
+                return obj;
             return ((CallSite<Func<CallSite, object, object>>)site).Update(site, obj);
         }
 
@@ -2264,22 +2278,38 @@ namespace System.Management.Automation.Language
         {
             switch (Operation)
             {
-                case ExpressionType.Add: return TokenKind.Plus.Text();
-                case ExpressionType.Subtract: return TokenKind.Minus.Text();
-                case ExpressionType.Multiply: return TokenKind.Multiply.Text();
-                case ExpressionType.Divide: return TokenKind.Divide.Text();
-                case ExpressionType.Modulo: return TokenKind.Rem.Text();
-                case ExpressionType.And: return TokenKind.Band.Text();
-                case ExpressionType.Or: return TokenKind.Bor.Text();
-                case ExpressionType.ExclusiveOr: return TokenKind.Bxor.Text();
-                case ExpressionType.Equal: return _ignoreCase ? TokenKind.Ieq.Text() : TokenKind.Ceq.Text();
-                case ExpressionType.NotEqual: return _ignoreCase ? TokenKind.Ine.Text() : TokenKind.Cne.Text();
-                case ExpressionType.GreaterThan: return _ignoreCase ? TokenKind.Igt.Text() : TokenKind.Cgt.Text();
-                case ExpressionType.GreaterThanOrEqual: return _ignoreCase ? TokenKind.Ige.Text() : TokenKind.Cge.Text();
-                case ExpressionType.LessThan: return _ignoreCase ? TokenKind.Ilt.Text() : TokenKind.Clt.Text();
-                case ExpressionType.LessThanOrEqual: return _ignoreCase ? TokenKind.Ile.Text() : TokenKind.Cle.Text();
-                case ExpressionType.LeftShift: return TokenKind.Shl.Text();
-                case ExpressionType.RightShift: return TokenKind.Shr.Text();
+                case ExpressionType.Add:
+                    return TokenKind.Plus.Text();
+                case ExpressionType.Subtract:
+                    return TokenKind.Minus.Text();
+                case ExpressionType.Multiply:
+                    return TokenKind.Multiply.Text();
+                case ExpressionType.Divide:
+                    return TokenKind.Divide.Text();
+                case ExpressionType.Modulo:
+                    return TokenKind.Rem.Text();
+                case ExpressionType.And:
+                    return TokenKind.Band.Text();
+                case ExpressionType.Or:
+                    return TokenKind.Bor.Text();
+                case ExpressionType.ExclusiveOr:
+                    return TokenKind.Bxor.Text();
+                case ExpressionType.Equal:
+                    return _ignoreCase ? TokenKind.Ieq.Text() : TokenKind.Ceq.Text();
+                case ExpressionType.NotEqual:
+                    return _ignoreCase ? TokenKind.Ine.Text() : TokenKind.Cne.Text();
+                case ExpressionType.GreaterThan:
+                    return _ignoreCase ? TokenKind.Igt.Text() : TokenKind.Cgt.Text();
+                case ExpressionType.GreaterThanOrEqual:
+                    return _ignoreCase ? TokenKind.Ige.Text() : TokenKind.Cge.Text();
+                case ExpressionType.LessThan:
+                    return _ignoreCase ? TokenKind.Ilt.Text() : TokenKind.Clt.Text();
+                case ExpressionType.LessThanOrEqual:
+                    return _ignoreCase ? TokenKind.Ile.Text() : TokenKind.Cle.Text();
+                case ExpressionType.LeftShift:
+                    return TokenKind.Shl.Text();
+                case ExpressionType.RightShift:
+                    return TokenKind.Shr.Text();
             }
 
             Diagnostics.Assert(false, "Unexpected operator");
@@ -2313,10 +2343,14 @@ namespace System.Management.Automation.Language
         {
             switch (typeCode)
             {
-                case TypeCode.SByte: return (sbyte)value < 0;
-                case TypeCode.Int16: return (short)value < 0;
-                case TypeCode.Int32: return (int)value < 0;
-                case TypeCode.Int64: return (long)value < 0;
+                case TypeCode.SByte:
+                    return (sbyte)value < 0;
+                case TypeCode.Int16:
+                    return (short)value < 0;
+                case TypeCode.Int32:
+                    return (int)value < 0;
+                case TypeCode.Int64:
+                    return (long)value < 0;
             }
 
             Diagnostics.Assert(false, "Invalid type code for testing negative value");
@@ -2327,10 +2361,14 @@ namespace System.Management.Automation.Language
         {
             switch (typeCode)
             {
-                case TypeCode.SByte: return Expression.Constant((sbyte)0);
-                case TypeCode.Int16: return Expression.Constant((short)0);
-                case TypeCode.Int32: return ExpressionCache.Constant(0);
-                case TypeCode.Int64: return Expression.Constant((long)0);
+                case TypeCode.SByte:
+                    return Expression.Constant((sbyte)0);
+                case TypeCode.Int16:
+                    return Expression.Constant((short)0);
+                case TypeCode.Int32:
+                    return ExpressionCache.Constant(0);
+                case TypeCode.Int64:
+                    return Expression.Constant((long)0);
             }
 
             Diagnostics.Assert(false, "Invalid type code for testing negative value");
@@ -2643,11 +2681,15 @@ namespace System.Management.Automation.Language
         private static Type GetBitwiseOpType(TypeCode opTypeCode)
         {
             Type opType;
-            if ((int)opTypeCode <= (int)TypeCode.Int32) { opType = typeof(int); }
-            else if ((int)opTypeCode <= (int)TypeCode.UInt32) { opType = typeof(uint); }
-            else if ((int)opTypeCode <= (int)TypeCode.Int64) { opType = typeof(long); }
+            if ((int)opTypeCode <= (int)TypeCode.Int32)
+            { opType = typeof(int); }
+            else if ((int)opTypeCode <= (int)TypeCode.UInt32)
+            { opType = typeof(uint); }
+            else if ((int)opTypeCode <= (int)TypeCode.Int64)
+            { opType = typeof(long); }
             // Because we use unsigned for -bnot, to be consistent, we promote to unsigned here too (-band,-bor,-xor)
-            else { opType = typeof(ulong); }
+            else
+            { opType = typeof(ulong); }
 
             return opType;
         }
@@ -3389,12 +3431,24 @@ namespace System.Management.Automation.Language
                     string numericMethod = null;
                     switch (Operation)
                     {
-                        case ExpressionType.Equal: numericMethod = "CompareEq"; break;
-                        case ExpressionType.NotEqual: numericMethod = "CompareNe"; break;
-                        case ExpressionType.GreaterThan: numericMethod = "CompareGt"; break;
-                        case ExpressionType.GreaterThanOrEqual: numericMethod = "CompareGe"; break;
-                        case ExpressionType.LessThan: numericMethod = "CompareLt"; break;
-                        case ExpressionType.LessThanOrEqual: numericMethod = "CompareLe"; break;
+                        case ExpressionType.Equal:
+                            numericMethod = "CompareEq";
+                            break;
+                        case ExpressionType.NotEqual:
+                            numericMethod = "CompareNe";
+                            break;
+                        case ExpressionType.GreaterThan:
+                            numericMethod = "CompareGt";
+                            break;
+                        case ExpressionType.GreaterThanOrEqual:
+                            numericMethod = "CompareGe";
+                            break;
+                        case ExpressionType.LessThan:
+                            numericMethod = "CompareLt";
+                            break;
+                        case ExpressionType.LessThanOrEqual:
+                            numericMethod = "CompareLe";
+                            break;
                     }
 
                     return BinaryNumericOp(numericMethod, target, numericArg);
@@ -7167,6 +7221,13 @@ namespace System.Management.Automation.Language
                     {
                         argExprs[i] = Expression.Default(parameterType);
                     }
+                    else if (!parameters[i].HasDefaultValue && parameterType != typeof(object) && argValue == Type.Missing)
+                    {
+                        // ParameterInfo.DefaultValue for an argument with only [Optional] is System.Reflection.Missing
+                        // but this value cannot be passed as an argument unless the type is Object. This is because it
+                        // cannot be casted to the parameter type. Use default for that type instead.
+                        argExprs[i] = Expression.Default(parameterType);
+                    }
                     else
                     {
                         // We don't specify the parameter type in the constant expression. Normally the default
@@ -7718,7 +7779,8 @@ namespace System.Management.Automation.Language
         internal static bool IsTargetTypeByRefLike(object target)
         {
             var targetValue = PSObject.Base(target);
-            if (targetValue == null) { return false; }
+            if (targetValue == null)
+            { return false; }
 
             var instanceType = targetValue as Type ?? targetValue.GetType();
             return instanceType.IsByRefLike;
@@ -7730,7 +7792,8 @@ namespace System.Management.Automation.Language
         internal static bool IsTargetTypeNonPublic(object target)
         {
             var targetValue = PSObject.Base(target);
-            if (targetValue == null) { return false; }
+            if (targetValue == null)
+            { return false; }
 
             var instanceType = targetValue as Type ?? targetValue.GetType();
             return !TypeResolver.IsPublic(instanceType);
