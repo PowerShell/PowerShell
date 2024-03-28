@@ -60,6 +60,9 @@ jobs:
       Start-PSBuild -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -Output $(OB_OUTPUTDIRECTORY)
       $artifactName = "macosBinResults-${{ parameters.buildArchitecture }}"
 
+      $psOptPath = "$(OB_OUTPUTDIRECTORY)/psoptions.json"
+      Save-PSOptions -PSOptionsPath $psOptPath
+
       Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName]$(OB_OUTPUTDIRECTORY)"
 
       $env:AzDevOpsFeedPAT2 = $null
