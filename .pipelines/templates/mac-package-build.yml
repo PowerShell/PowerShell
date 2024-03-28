@@ -62,12 +62,10 @@ jobs:
       nativePathRoot: '$(Agent.TempDirectory)'
 
   - download: CoOrdinatedBuildPipeline
-    artifact: macosBinResults
-    patterns: '**/*$(BuildArch).zip'
+    artifact: macosBinResults-${{ parameters.buildArchitecture }}
 
   - download: CoOrdinatedBuildPipeline
-    artifact: macosBinResults
-    patterns: '**/*$(BuildArch).zip'
+    artifact: drop_macos_sign_${{ parameters.buildArchitecture }}
 
   # - task: DownloadPipelineArtifact@2
   #   displayName: Download macosBinResults
@@ -91,8 +89,6 @@ jobs:
     continueOnError: true
 
   - pwsh: |
-      $zipPath = Get-Item '$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/macosBinResults/*symbol*${{ parameters.buildArchitecture }}.zip'
-      Write-Verbose -Verbose "Zip Path: $zipPath"
 
       $expandedFolder = $zipPath.BaseName
       Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
@@ -153,14 +149,21 @@ jobs:
       Import-Module "$repoRoot/build.psm1"
       Import-Module "$repoRoot/tools/packaging"
 
-      $psoptionsPath = '$(System.ArtifactsDirectory)/$(SymbolsFolder)/psoptions.json'
+      $unsignedFilesPath = '$(System.ArtifactsDirectory)/macosBinResults-${{ parameters.buildArchitecture }}/'
+      $signedFilesPath = '$(System.ArtifactsDirectory)/drop_macos_sign_${{ parameters.buildArchitecture }}/'
 
+      $psoptionsPath = '$unsignedFilesPath/psoptions.json'
       Write-Verbose -Message "Restoring PSOptions from $psoptionsPath" -Verbose
 
       Restore-PSOptions -PSOptionsPath "$psoptionsPath"
+      Get-PSOptions | Write-Verbose -Verbose
 
       $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
       $LTS = $metadata.LTSRelease.Package
+
+      if ($LTS) {
+        Write-Verbose -Message "LTS Release: $LTS"
+      }
 
       Start-PSBootstrap -Package
 
