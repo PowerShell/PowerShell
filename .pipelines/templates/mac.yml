@@ -91,7 +91,7 @@ jobs:
   - name: ob_sdl_codeql_compiled_enabled
     value: false
   - name: ob_sdl_sbom_packageName
-    value: 'Microsoft.Powershell.Windows.${{parameters.buildArchitecture}}'
+    value: 'Microsoft.Powershell.MacOS.${{parameters.buildArchitecture}}'
 
   steps:
   - checkout: self
@@ -107,7 +107,7 @@ jobs:
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: 'macosBinResults'
+      artifact: 'macosBinResults-$(BuildArchitecture)'
       path: '$(Pipeline.Workspace)\Symbols'
     displayName: Download build
 
@@ -122,12 +122,14 @@ jobs:
       Write-Host "sending.. vso[task.setvariable variable=Runtime]$runtime"
       Write-Host "##vso[task.setvariable variable=Runtime]$runtime"
 
-      $zipPath = Get-Item '$(Pipeline.Workspace)\Symbols\*symbol*${{ parameters.buildArchitecture }}*.zip' -Verbose
-      Write-Verbose -Verbose "Zip Path: $zipPath"
+      # $zipPath = Get-Item '$(Pipeline.Workspace)\Symbols\*symbol*${{ parameters.buildArchitecture }}*.zip' -Verbose
+      # Write-Verbose -Verbose "Zip Path: $zipPath"
 
-      $expandedFolder = $zipPath.BaseName
-      Expand-Archive -Path $zipPath -Destination "$(Pipeline.Workspace)\$expandedFolder" -Force
-      $rootPath = "$(Pipeline.Workspace)\$expandedFolder"
+      # $expandedFolder = $zipPath.BaseName
+      # Expand-Archive -Path $zipPath -Destination "$(Pipeline.Workspace)\$expandedFolder" -Force
+      # $rootPath = "$(Pipeline.Workspace)\$expandedFolder"
+
+      $rootPath = "$(Pipeline.Workspace)\Symbols"
       Write-Verbose -Verbose "Setting vso[task.setvariable variable=DropRootPath]$rootPath"
       Write-Host "##vso[task.setvariable variable=DropRootPath]$rootPath"
     displayName: Expand symbols zip
