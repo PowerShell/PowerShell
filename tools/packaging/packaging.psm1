@@ -61,6 +61,8 @@ function Start-PSPackage {
         [ValidateScript({$Environment.IsMacOS})]
         [string] $MacOSRuntime,
 
+        [string] $PackageBinPath,
+
         [switch] $Private,
 
         [Switch] $Force,
@@ -245,7 +247,12 @@ function Start-PSPackage {
             $Version = (git --git-dir="$RepoRoot/.git" describe) -Replace '^v'
         }
 
-        $Source = Split-Path -Path $Script:Options.Output -Parent
+        $Source = if ($PackageBinPath) {
+            $Source = $PackageBinPath
+        }
+        else {
+            Split-Path -Path $Script:Options.Output -Parent
+        }
 
         # Copy the ThirdPartyNotices.txt so it's part of the package
         Copy-Item "$RepoRoot/ThirdPartyNotices.txt" -Destination $Source -Force

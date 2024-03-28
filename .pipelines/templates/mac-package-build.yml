@@ -155,6 +155,11 @@ jobs:
       $unsignedFilesPath = '$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/macosBinResults-${{ parameters.buildArchitecture }}'
       $signedFilesPath = '$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_macos_sign_${{ parameters.buildArchitecture }}/Signed-${{ parameters.buildArchitecture }}'
 
+      Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
+      if (-not (Test-Path $signedFilesPath/pwsh)) {
+        throw "pwsh not found in $signedFilesPath"
+      }
+
       $psoptionsPath = Get-ChildItem -Path $unsignedFilesPath -Filter 'psoptions.json' -Recurse -File | Select-Object -ExpandProperty FullName
       Write-Verbose -Message "Restoring PSOptions from $psoptionsPath" -Verbose
 
@@ -168,18 +173,9 @@ jobs:
         Write-Verbose -Message "LTS Release: $LTS"
       }
 
-      # Copy signed files to staging
-      $stagingPath = Join-Path $repoRoot "tools/packaging/staging"
-
-      if (-not (Test-Path $stagingPath)) {
-        New-Item -ItemType Directory -Path $stagingPath
-      }
-
-      Copy-Item -Path $signedFilesPath/* -Destination $stagingPath -Recurse -Force -Verbose
-
       Start-PSBootstrap -Package
 
-      Start-PSPackage -SkipReleaseChecks -MacOSRuntime 'osx-x64' -ReleaseTag $(ReleaseTagVar)
+      Start-PSPackage -SkipReleaseChecks -MacOSRuntime 'osx-x64' -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
       Start-PSPackage -Type tar -SkipReleaseChecks -MacOSRuntime 'osx-x64' -ReleaseTag $(ReleaseTagVar)
     displayName: 'Package osx-x64'
     env:
