@@ -179,7 +179,7 @@ jobs:
 
       $macosRuntime = "osx-$buildArch"
 
-      Start-PSPackage -Type ospkg -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+      Start-PSPackage -Type osxpkg -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
       $pkgNameFilter = "powershell-*$macosRuntime.pkg"
       $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
       Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$pkgPath"
