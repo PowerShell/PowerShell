@@ -1352,4 +1352,156 @@ foo``u{2195}abc
             $tokens[1] | Should -BeExactly $lastToken
         }
     }
+
+    Context "Method invocation argument labels" -Tag Jordan {
+        It "Parses single argument with label <Label.Trim()>" -TestCases @(
+            @{ Label = "simple" }
+            @{ Label = "_underscore" }
+            @{ Label = "underscore_" }
+            @{ Label = "a1" }
+            @{ Label = "_1" }
+            @{ Label = "`nabc" }
+        ) {
+            param ($Label)
+
+            $script = "`$c.Method(${Label}: 'value')"
+
+            $errors = @()
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$errors)
+            $errors | Should -BeNullOrEmpty
+
+            $actual = $ast.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments
+            $actual.Count | Should -Be 1
+            $actual | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual.Label | Should -Be $Label.Trim()
+            $actual.Expression | Should -Be '''value'''
+        }
+
+        It "Parses single argument with label separated by multiple spaces" {
+            $script = "`$c.Method(label:  'value')"
+
+            $errors = @()
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$errors)
+            $errors | Should -BeNullOrEmpty
+
+            $actual = $ast.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments
+            $actual.Count | Should -Be 1
+            $actual | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual.Label | Should -Be label
+            $actual.Expression | Should -BeOfType ([System.Management.Automation.Language.StringConstantExpressionAst])
+            $actual.Expression.StringConstantType | Should -Be SingleQuoted
+            $actual.Expression.Value | Should -Be value
+        }
+
+        It "Parses multiple arguments with labels" {
+            $script = @'
+$c.Method(
+    $arg1,
+    label: $arg2,
+    other: 'string value',
+    final: "test",
+    "end")
+'@
+
+            $errors = @()
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$errors)
+            $errors | Should -BeNullOrEmpty
+
+            $actual = $ast.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments
+            $actual.Count | Should -Be 5
+
+            $actual[0] | Should -BeOfType ([System.Management.Automation.Language.VariableExpressionAst])
+            $actual[0].VariablePath | Should -Be arg1
+
+            $actual[1] | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual[1].Label | Should -Be label
+            $actual[1].Expression | Should -BeOfType ([System.Management.Automation.Language.VariableExpressionAst])
+            $actual[1].Expression.VariablePath | Should -Be arg2
+
+            $actual[2] | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual[2].Label | Should -Be other
+            $actual[2].Expression | Should -BeOfType ([System.Management.Automation.Language.StringConstantExpressionAst])
+            $actual[2].Expression.StringConstantType | Should -Be SingleQuoted
+            $actual[2].Expression.Value | Should -Be 'string value'
+
+            $actual[3] | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual[3].Label | Should -Be final
+            $actual[3].Expression | Should -BeOfType ([System.Management.Automation.Language.StringConstantExpressionAst])
+            $actual[3].Expression.StringConstantType | Should -Be DoubleQuoted
+            $actual[3].Expression.Value | Should -Be test
+
+            $actual[4] | Should -BeOfType ([System.Management.Automation.Language.StringConstantExpressionAst])
+            $actual[4].Value | Should -Be end
+        }
+
+        It "Parses method invocation without label with string value" {
+            $script = '$c.Method(''value'')'
+
+            $errors = @()
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$errors)
+            $errors | Should -BeNullOrEmpty
+
+            $actual = $ast.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments
+            $actual.Count | Should -Be 1
+
+            $actual | Should -BeOfType ([System.Management.Automation.Language.StringConstantExpressionAst])
+            $actual.StringConstantType | Should -Be SingleQuoted
+            $actual.value | Should -Be value
+        }
+
+        It "Parses method invocation without label with provider var" {
+            $script = '$c.Method($provider:var)'
+
+            $errors = @()
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$errors)
+            $errors | Should -BeNullOrEmpty
+
+            $actual = $ast.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments
+            $actual.Count | Should -Be 1
+
+            $actual | Should -BeOfType ([System.Management.Automation.Language.VariableExpressionAst])
+            $actual.VariablePath.DriveName | Should -Be provider
+            $actual.VariablePath.UserPath | Should -Be 'provider:var'
+        }
+
+        It "Fails to parse label with newline after separator" {
+            $err = { ExecuteCommand "`$c.Method(label:`n'value')" } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
+            # $pe.Errors.Count | Should -Be 1  # FIXME
+
+            $pe.Errors[0].ErrorId | Should -Be MissingArgumentAfterLabel
+            # FIXME: newline not )
+            # $pe.Errors[0].Message | Should -Be "Expected argument value after name identifier 'label' but found '``n'."
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be @'
+At line:1 char:16
++ $c.Method(label:
++                ~
+'@
+        }
+
+        <#
+# Failures to test
+# Newline after label
+Method(label:`n'value')
+
+# Non simple name
+Method('label': $value)
+Method("label": $value)
+Method(1abc: $value)
+Method(abc def: $value)
+Method(café: $value)  # non-ASCII char
+Method($label: $value)
+Method($label : $value)
+
+# Failure on 2nd arg
+Method(label: $value, fail 'value')
+Method($value, fail 'value')
+
+# No : separator
+Method(label $value)
+Method(label)
+Method(label, $value)
+        #>
+    }
 }

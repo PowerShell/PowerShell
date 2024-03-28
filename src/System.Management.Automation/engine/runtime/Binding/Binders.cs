@@ -6560,6 +6560,8 @@ namespace System.Management.Automation.Language
             NonVirtual,
         }
 
+        internal sealed record ArgumentWithName(string Name, object Value);
+
         private sealed class KeyComparer : IEqualityComparer<PSInvokeMemberBinderKeyType>
         {
             public bool Equals(PSInvokeMemberBinderKeyType x, PSInvokeMemberBinderKeyType y)
@@ -6677,13 +6679,6 @@ namespace System.Management.Automation.Language
                     // doesn't get unwrapped.
                     return this.DeferForPSObject(args.Prepend(target).ToArray(), targetIsComObject: true).WriteToDebugLog(this);
                 }
-            }
-
-            // Check if this is a COM Object
-            DynamicMetaObject result;
-            if (ComInterop.ComBinder.TryBindInvokeMember(this, _propertySetter, target, args, out result))
-            {
-                return result.UpdateComRestrictionsForPsObject(args).WriteToDebugLog(this);
             }
 
             var targetValue = PSObject.Base(target.Value);
