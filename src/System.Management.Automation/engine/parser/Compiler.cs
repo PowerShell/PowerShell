@@ -3713,6 +3713,14 @@ namespace System.Management.Automation.Language
             return fullyExpandedBlock;
         }
 
+        public object VisitLabeledExpression(LabeledExpressionAst argumentWithLabelAst)
+        {
+            string labelExpression = ((ConstantExpression)argumentWithLabelAst.Label.Visit(this)).Value.ToString() ?? string.Empty;
+            var valueExpression = argumentWithLabelAst.Expression.Visit(this);
+            // return Expression.Constant(new PSInvokeMemberBinder.ArgumentWithName(labelExpression, valueExpression));
+            return valueExpression;
+        }
+
         /// <summary>
         /// Compile a pipeline as an element in a pipeline chain.
         /// Needed since pure expressions won't set $? after them.

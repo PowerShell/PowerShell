@@ -7891,12 +7891,14 @@ namespace System.Management.Automation.Language
             // G  argument-list: '(' is passed in lParen
             // G      argument-expression-list:opt   new-lines:opt   ')'
             // G  argument-expression-list:
-            // G      argument-expression
-            // G      argument-expression   new-lines:opt   ','   argument-expression-list
+            // G      argument-label-expression:opt    argument-expression
+            // G      argument-label-expression:opt    argument-expression   new-lines:opt    ','    argument-expression-list
             // G  argument-expression:
             // G      See grammar for expression - the only difference is that an
             // G      array-literal-expression is not allowed - the comma is used
             // G      to separate argument-expressions.
+            // G  argument-label-expression:
+            // G      simple-name    ':'
 
             List<ExpressionAst> arguments = new List<ExpressionAst>();
             Token comma = null;
@@ -7912,13 +7914,41 @@ namespace System.Management.Automation.Language
                 while (true)
                 {
                     SkipNewlines();
+
+                    StringConstantExpressionAst argumentName = SimpleNameRule(out Token argNameToken);
+                    if (argumentName is not null)
+                    {
+                        Token colon = NextToken();
+                        if (colon.Kind != TokenKind.Colon)
+                        {
+                            UngetToken(colon);
+
+                            ReportIncompleteInput(After(argNameToken),
+                                nameof(ParserStrings.MissingColonAfterArgumentLabel),
+                                ParserStrings.MissingColonAfterArgumentLabel,
+                                argumentName.Extent.ToString(),
+                                colon.Text);
+                            reportedError = true;
+                            break;
+                        }
+                    }
+
                     ExpressionAst argument = ExpressionRule();
                     if (argument == null)
                     {
-                        if (comma != null)
-                        {
-                            // ErrorRecovery: sync at closing paren or newline.
+                        // ErrorRecovery: sync at closing paren or newline.
 
+                        if (argumentName is not null)
+                        {
+                            ReportIncompleteInput(After(argumentName.Extent),
+                                nameof(ParserStrings.MissingArgumentAfterLabel),
+                                ParserStrings.MissingArgumentAfterLabel,
+                                argumentName.Value,
+                                comma is null ? TokenKind.RParen.Text() : TokenKind.Comma.Text());
+                            reportedError = true;
+                        }
+                        else if (comma != null)
+                        {
                             ReportIncompleteInput(After(comma),
                                 nameof(ParserStrings.MissingExpressionAfterToken),
                                 ParserStrings.MissingExpressionAfterToken,
@@ -7929,7 +7959,14 @@ namespace System.Management.Automation.Language
                         break;
                     }
 
-                    arguments.Add(argument);
+                    if (argumentName is null)
+                    {
+                        arguments.Add(argument);
+                    }
+                    else
+                    {
+                        arguments.Add(new LabeledExpressionAst(ExtentOf(argumentName, argument), argumentName, argument));
+                    }
 
                     SkipNewlines();
                     comma = NextToken();
@@ -8124,6 +8161,15 @@ namespace System.Management.Automation.Language
             bool incompleteInput = _tokenizer.IsAtEndOfScript(extent, checkCommentsAndWhitespace: true);
             arrayOfOneArg[0] = arg;
             SaveError(extent, errorId, errorMsg, incompleteInput, arrayOfOneArg);
+            return incompleteInput;
+        }
+
+        internal bool ReportIncompleteInput(IScriptExtent extent, string errorId, string errorMsg, params object[] args)
+        {
+            // If the error position isn't at the end of the input, then we don't want to mark the error
+            // as incomplete input.
+            bool incompleteInput = _tokenizer.IsAtEndOfScript(extent, checkCommentsAndWhitespace: true);
+            SaveError(extent, errorId, errorMsg, incompleteInput, args);
             return incompleteInput;
         }
 
