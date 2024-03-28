@@ -88,14 +88,13 @@ jobs:
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
 
-  - pwsh: |
+  # - pwsh: |
+  #     $expandedFolder = $zipPath.BaseName
+  #     Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
+  #     Write-Host "##vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
 
-      $expandedFolder = $zipPath.BaseName
-      Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
-      Write-Host "##vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
-
-      Expand-Archive -Path $zipPath -Destination "$(System.ArtifactsDirectory)\$expandedFolder" -Force
-    displayName: Expand symbols zip
+  #     Expand-Archive -Path $zipPath -Destination "$(System.ArtifactsDirectory)\$expandedFolder" -Force
+  #   displayName: Expand symbols zip
 
   # - pwsh: |
   #     Import-Module $(PowerShellRoot)/build.psm1 -Force
