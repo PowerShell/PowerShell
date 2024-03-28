@@ -248,11 +248,13 @@ function Start-PSPackage {
         }
 
         $Source = if ($PackageBinPath) {
-            $Source = $PackageBinPath
+            $PackageBinPath
         }
         else {
             Split-Path -Path $Script:Options.Output -Parent
         }
+
+        Write-Verbose -Verbose "Source: $Source"
 
         # Copy the ThirdPartyNotices.txt so it's part of the package
         Copy-Item "$RepoRoot/ThirdPartyNotices.txt" -Destination $Source -Force
