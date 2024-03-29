@@ -108,3 +108,15 @@ extends:
         parameters:
           buildArchitecture: arm64
           parentJob: 'build_macOS_arm64'
+
+    - stage: windows_package
+      jobs:
+      - template: /.pipelines/templates/mac-package-build.yml@self
+        parameters:
+          buildArchitecture: x64
+          parentJob: 'build_macOS_x64'
+
+      - template: /.pipelines/templates/mac-package-build.yml@self
+        parameters:
+          buildArchitecture: arm64
+          parentJob: 'build_macOS_arm64'
