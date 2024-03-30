@@ -76,10 +76,10 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      $signedFilesPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_$runtime_release\$signedFolder"
+      $signedFilesPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\$signedFolder"
       Write-Verbose -Verbose "signedFilesPath: $signedFilesPath"
 
-      $psoptionsFilePath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_$runtime_release\psoptions\psoptions.json"
+      $psoptionsFilePath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\psoptions\psoptions.json"
       Write-Verbose -Verbose "psoptionsFilePath: $psoptionsFilePath"
 
       Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
@@ -119,7 +119,7 @@ jobs:
         New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
       }
 
-      Start-PSPackage -Type $packageTypes -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+      Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
       $msiPkgNameFilter = "powershell-*.msi"
       $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
       Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force
