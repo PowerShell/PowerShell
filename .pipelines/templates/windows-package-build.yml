@@ -58,6 +58,22 @@ jobs:
     continueOnError: true
 
   - pwsh: |
+      # cleanup previous install
+      if((Test-Path "${env:ProgramFiles(x86)}\WiX Toolset xcopy")) {
+        Remove-Item "${env:ProgramFiles(x86)}\WiX Toolset xcopy" -Recurse -Force
+      }
+      $toolsDir = New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)\tools'
+      $wixUri = 'https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip'
+      Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -MaximumRetryCount 5 -RetryIntervalSec 10
+      Import-Module '$(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/wix.psm1'
+      Install-WixZip -zipPath '$(Build.ArtifactStagingDirectory)\tools\wix.zip'
+
+      #$msixUrl = '$(makeappUrl)'
+      #Invoke-RestMethod -Uri $msixUrl -OutFile '\makeappx.zip'
+      #Expand-Archive '\makeappx.zip' -destination '\' -Force
+    displayName: Install packaging tools
+
+  - pwsh: |
       $runtime = '$(Runtime)'
       Write-Verbose -Verbose "$runtime = '$(Runtime)'"
 
@@ -75,6 +91,8 @@ jobs:
       Set-Location $repoRoot
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
+
+      Start-PSBootstrap -Package
 
       $signedFilesPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\$signedFolder"
       Write-Verbose -Verbose "signedFilesPath: $signedFilesPath"
@@ -111,9 +129,9 @@ jobs:
 
       ## msi disabled till Wix can be installed
       $packageTypes = switch ($runtime) {
-        'x64' { @('zip') }
-        'x86' { @('zip') }
-        'arm64' { @('zip') }
+        'x64' { @('msi', 'zip') }
+        'x86' { @('msi', 'zip') }
+        'arm64' { @('msi', 'zip') }
         'fxdependent' { 'fxdependent' }
         'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
       }
@@ -123,8 +141,9 @@ jobs:
       }
 
       Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+
       $msiPkgNameFilter = "powershell-*.msi"
-      $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+      $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msiPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
       Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force
 
       $zipPkgNameFilter = "powershell-*.zip"
