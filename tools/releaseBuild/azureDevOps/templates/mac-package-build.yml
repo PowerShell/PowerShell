@@ -1,5 +1,4 @@
 parameters:
-  parentJob: ''
   buildArchitecture: x64
 
 jobs:

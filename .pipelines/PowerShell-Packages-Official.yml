@@ -102,41 +102,33 @@ extends:
       - template: /.pipelines/templates/mac-package-build.yml@self
         parameters:
           buildArchitecture: x64
-          parentJob: 'build_macOS_x64'
 
       - template: /.pipelines/templates/mac-package-build.yml@self
         parameters:
           buildArchitecture: arm64
-          parentJob: 'build_macOS_arm64'
 
     - stage: windows_package
       jobs:
       - template: /.pipelines/templates/windows-package-build.yml@self
         parameters:
-          buildArchitecture: x64
-          parentJob: 'build_win_x64'
+          runtime: x64
 
       - template: /.pipelines/templates/windows-package-build.yml@self
         parameters:
-          buildArchitecture: arm64
-          parentJob: 'build_win_arm64'
+          runtime: arm64
 
       - template: /.pipelines/templates/windows-package-build.yml@self
         parameters:
-          buildArchitecture: x86
-          parentJob: 'build_win_x86'
+          runtime: x86
 
       - template: /.pipelines/templates/windows-package-build.yml@self
         parameters:
-          buildArchitecture: fxdependent
-          parentJob: 'build_win_fxdependent'
+          runtime: fxdependent
 
       - template: /.pipelines/templates/windows-package-build.yml@self
         parameters:
-          buildArchitecture: fxdependentWinDesktop
-          parentJob: 'build_win_fxdependentWinDesktop'
+          runtime: fxdependentWinDesktop
 
       - template: /.pipelines/templates/windows-package-build.yml@self
         parameters:
-          buildArchitecture: minsize
-          parentJob: 'build_win_minsize'
+          runtime: minsize

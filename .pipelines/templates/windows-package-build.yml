@@ -1,5 +1,4 @@
 parameters:
-  parentJob: ''
   runtime: x64
 
 jobs:
