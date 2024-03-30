@@ -2109,7 +2109,21 @@ namespace Microsoft.PowerShell.Commands
                 //   "Process was not started by this object, so requested information cannot be determined."
                 // Fetching the process handle will trigger the `Process` object to update its internal state by calling `SetProcessHandle`,
                 // the result is discarded as it's not used later in this code.
-                _ = process.Handle;
+                try
+                {
+                    _ = process.Handle;
+                }
+                catch (Win32Exception e)
+                {
+                    // If the caller was not an admin and the process was started with another user's credentials .NET
+                    // won't be able to retrieve the process handle. As this is not a critical failure we treat this as
+                    // a warning.
+                    if (PassThru)
+                    {
+                        string msg = StringUtil.Format(ProcessResources.FailedToCreateProcessObject, e.Message);
+                        WriteWarning(msg);
+                    }
+                }
 
                 // Resume the process now that is has been set up.
                 processInfo.Resume();
