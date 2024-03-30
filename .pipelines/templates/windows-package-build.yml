@@ -58,7 +58,9 @@ jobs:
     continueOnError: true
 
   - pwsh: |
-      $runtime = '${{ parameters.runtime }}'
+      $runtime = '$(Runtime)'
+      Write-Verbose -Verbose "$runtime = '$(Runtime)'"
+
       $signedFolder = switch ($runtime) {
         'x64' { 'Signed-win7-x64' }
         'x86' { 'Signed-win7-x86' }
@@ -75,7 +77,10 @@ jobs:
       Import-Module "$repoRoot\tools\packaging"
 
       $signedFilesPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_$runtime_release\$signedFolder"
+      Write-Verbose -Verbose "signedFilesPath: $signedFilesPath"
+
       $psoptionsFilePath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_$runtime_release\psoptions\psoptions.json"
+      Write-Verbose -Verbose "psoptionsFilePath: $psoptionsFilePath"
 
       Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
       if (-not (Test-Path $signedFilesPath\pwsh.exe)) {
