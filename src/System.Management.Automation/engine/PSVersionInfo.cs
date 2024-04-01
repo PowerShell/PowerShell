@@ -336,7 +336,7 @@ namespace System.Management.Automation
     {
         private const string VersionSansRegEx = @"^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$";
         private const string LabelRegEx = @"^((?<preLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?(\+(?<buildLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?$";
-        private const string LabelUnitRegEx = @"^[0-9A-Za-z][0-9A-Za-z\-\.]*$";
+        private const string LabelUnitRegEx = @"^[0-9A-Za-z-][0-9A-Za-z\-\.]*$";
         private const string PreLabelPropertyName = "PSSemVerPreReleaseLabel";
         private const string BuildLabelPropertyName = "PSSemVerBuildLabel";
         private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
@@ -410,7 +410,7 @@ namespace System.Management.Automation
         public SemanticVersion(int major, int minor, int patch, string label)
             : this(major, minor, patch)
         {
-            // We presume the SymVer :
+            // We presume the SemVer :
             // 1) major.minor.patch-label
             // 2) 'label' starts with letter or digit.
             if (!string.IsNullOrEmpty(label))
@@ -447,7 +447,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException(nameof(minor));
             }
 
-            if (patch < 0) 
+            if (patch < 0)
             {
                 throw PSTraceSource.NewArgumentException(nameof(patch));
             }
@@ -568,12 +568,12 @@ namespace System.Management.Automation
         public int Patch { get; }
 
         /// <summary>
-        /// PreReleaseLabel position in the SymVer string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
+        /// PreReleaseLabel position in the SemVer string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
         /// </summary>
         public string PreReleaseLabel { get; }
 
         /// <summary>
-        /// BuildLabel position in the SymVer string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
+        /// BuildLabel position in the SemVer string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
         /// </summary>
         public string BuildLabel { get; }
 
@@ -643,7 +643,7 @@ namespace System.Management.Automation
             string preLabel = null;
             string buildLabel = null;
 
-            // We parse the SymVer 'version' string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
+            // We parse the SemVer 'version' string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
             var dashIndex = version.IndexOf('-');
             var plusIndex = version.IndexOf('+');
 
@@ -804,7 +804,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Implement <see cref="IComparable{T}.CompareTo"/>.
-        /// Meets SymVer 2.0 p.11 https://semver.org/
+        /// Meets SemVer 2.0 p.11 https://semver.org/
         /// </summary>
         public int CompareTo(SemanticVersion value)
         {
@@ -820,7 +820,7 @@ namespace System.Management.Automation
             if (Patch != value.Patch)
                 return Patch > value.Patch ? 1 : -1;
 
-            // SymVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
+            // SemVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
             return ComparePreLabel(this.PreReleaseLabel, value.PreReleaseLabel);
         }
 
@@ -837,7 +837,7 @@ namespace System.Management.Automation
         /// </summary>
         public bool Equals(SemanticVersion other)
         {
-            // SymVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
+            // SemVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
             return other != null &&
                    (Major == other.Major) && (Minor == other.Minor) && (Patch == other.Patch) &&
                    string.Equals(PreReleaseLabel, other.PreReleaseLabel, StringComparison.Ordinal);
@@ -906,7 +906,7 @@ namespace System.Management.Automation
 
         private static int ComparePreLabel(string preLabel1, string preLabel2)
         {
-            // Symver 2.0 standard p.9
+            // SemVer 2.0 standard p.9
             // Pre-release versions have a lower precedence than the associated normal version.
             // Comparing each dot separated identifier from left to right
             // until a difference is found as follows:
