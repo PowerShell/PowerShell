@@ -19,11 +19,13 @@ jobs:
       value: true
     - group: DotNetPrivateBuildAccess
     - name: ob_outputDirectory
-      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+      value: '$(Build.ArtifactStagingDirectory)\ONEBRANCH_ARTIFACT'
     - name: ob_sdl_binskim_enabled
       value: true
-    - name: ob_sdl_credscan_suppressionsfileforartifacts
-      value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
     - name: Runtime
       value: ${{ parameters.runtime }}
 
@@ -52,7 +54,7 @@ jobs:
 
   - pwsh: |
       Write-Verbose -Verbose "signed artifacts"
-      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_windows_build_windows_${{ parameters.runtime }}_release" -Recurse
+      Get-ChildItem "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${{ parameters.runtime }}_release" -Recurse
     displayName: 'Capture Downloaded Artifacts'
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
@@ -65,7 +67,7 @@ jobs:
       $toolsDir = New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)\tools'
       $wixUri = 'https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip'
       Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -MaximumRetryCount 5 -RetryIntervalSec 10
-      Import-Module '$(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/wix.psm1'
+      Import-Module '$(PowerShellRoot)\tools\releaseBuild\Images\microsoft_powershell_windowsservercore/wix.psm1'
       Install-WixZip -zipPath '$(Build.ArtifactStagingDirectory)\tools\wix.zip'
 
       #$msixUrl = '$(makeappUrl)'
@@ -144,11 +146,13 @@ jobs:
 
       $msiPkgNameFilter = "powershell-*.msi"
       $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msiPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-      Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force
+      Write-Verbose -Verbose "msiPkgPath: $msiPkgPath"
+      Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
 
       $zipPkgNameFilter = "powershell-*.zip"
       $zipPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $zipPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-      Copy-Item -Path $zipPkgPath -Destination '$(ob_outputDirectory)' -Force
+      Write-Verbose -Verbose "zipPkgPath: $zipPkgPath"
+      Copy-Item -Path $zipPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
 
     displayName: 'Package ${{ parameters.buildArchitecture}}'
     env:
