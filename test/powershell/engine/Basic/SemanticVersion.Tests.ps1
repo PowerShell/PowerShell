@@ -304,7 +304,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
 '@
 
             $validVersions = @()
-            foreach ($version in $valid.Split("`n", [System.StringSplitOptions]::RemoveEmptyEntries)) {
+            foreach ($version in $valid.Split([Environment]::NewLine, [System.StringSplitOptions]::RemoveEmptyEntries)) {
                 $validVersions += @{version = $version}
             }
 
@@ -352,7 +352,7 @@ beta
 '@
 
             $invalidVersions = @()
-            foreach ($version in $invalid.Split("`n", [System.StringSplitOptions]::RemoveEmptyEntries)) {
+            foreach ($version in $invalid.Split([Environment]::NewLine, [System.StringSplitOptions]::RemoveEmptyEntries)) {
                 $invalidVersions += @{version = $version}
             }
         }
