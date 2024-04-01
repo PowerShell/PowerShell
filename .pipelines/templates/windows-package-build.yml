@@ -144,15 +144,19 @@ jobs:
 
       Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
 
-      $msiPkgNameFilter = "powershell-*.msi"
-      $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msiPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-      Write-Verbose -Verbose "msiPkgPath: $msiPkgPath"
-      Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      if ($packageTypes -contains 'msi') {
+        $msiPkgNameFilter = "powershell-*.msi"
+        $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msiPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+        Write-Verbose -Verbose "msiPkgPath: $msiPkgPath"
+        Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      }
 
-      $zipPkgNameFilter = "powershell-*.zip"
-      $zipPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $zipPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-      Write-Verbose -Verbose "zipPkgPath: $zipPkgPath"
-      Copy-Item -Path $zipPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      if ($packageTypes -contains 'zip') {
+        $zipPkgNameFilter = "powershell-*.zip"
+        $zipPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $zipPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+        Write-Verbose -Verbose "zipPkgPath: $zipPkgPath"
+        Copy-Item -Path $zipPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      }
 
     displayName: 'Package ${{ parameters.buildArchitecture}}'
     env:
