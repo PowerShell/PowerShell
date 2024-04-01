@@ -1085,10 +1085,11 @@ namespace Microsoft.PowerShell.Commands
 
             // Remove drive root first
             string pathWithoutDriveRoot = path.Substring(Path.GetPathRoot(path).Length);
+            char[] invalidFileChars = Path.GetInvalidFileNameChars();
 
             foreach (string segment in pathWithoutDriveRoot.Split(Path.DirectorySeparatorChar))
             {
-                if (segment.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+                if (segment.IndexOfAny(invalidFileChars) != -1)
                 {
                     return false;
                 }
