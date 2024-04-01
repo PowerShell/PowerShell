@@ -74,9 +74,10 @@ jobs:
         'https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip'
       }
 
-      Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -MaximumRetryCount 5 -RetryIntervalSec 10
+
       Import-Module '$(PowerShellRoot)\tools\releaseBuild\Images\microsoft_powershell_windowsservercore\wix.psm1'
-      Install-WixZip -zipPath '$(Build.ArtifactStagingDirectory)\tools\wix.zip'
+      $isArm64 = '$(Runtime)' -eq 'arm64'
+      Install-WixZip -zipPath '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -arm64:$isArm64
 
       $msixUrl = '$(makeappUrl)'
       Invoke-RestMethod -Uri $msixUrl -OutFile '$(Pipeline.Workspace)\makeappx.zip'
