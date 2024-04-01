@@ -1322,6 +1322,7 @@ namespace System.Management.Automation
         /// <param name="invocationConstraints">Invocation constraints.</param>
         /// <param name="allowCastingToByRefLikeType">True if we accept implicit/explicit casting conversion to a ByRef-like parameter type for method resolution.</param>
         /// <param name="arguments">Arguments to check against the overloads.</param>
+        /// <param name="argumentNames">Names of each argument, or an empty array if no argument names were provided.</param>
         /// <param name="errorId">If no best method, the error id to use in the error message.</param>
         /// <param name="errorMsg">If no best method, the error message (format string) to use in the error message.</param>
         /// <param name="expandParamsOnBest">True if the best method's last parameter is a params method.</param>
@@ -1331,13 +1332,14 @@ namespace System.Management.Automation
             PSMethodInvocationConstraints invocationConstraints,
             bool allowCastingToByRefLikeType,
             object[] arguments,
+            string[] argumentNames,
             ref string errorId,
             ref string errorMsg,
             out bool expandParamsOnBest,
             out bool callNonVirtually)
         {
             callNonVirtually = false;
-            var methodInfo = FindBestMethodImpl(methods, invocationConstraints, allowCastingToByRefLikeType, arguments, ref errorId, ref errorMsg, out expandParamsOnBest);
+            var methodInfo = FindBestMethodImpl(methods, invocationConstraints, allowCastingToByRefLikeType, arguments, argumentNames, ref errorId, ref errorMsg, out expandParamsOnBest);
             if (methodInfo == null)
             {
                 return null;
@@ -1403,6 +1405,7 @@ namespace System.Management.Automation
             PSMethodInvocationConstraints invocationConstraints,
             bool allowCastingToByRefLikeType,
             object[] arguments,
+            string[] argumentNames,
             ref string errorId,
             ref string errorMsg,
             out bool expandParamsOnBest)
@@ -1774,6 +1777,7 @@ namespace System.Management.Automation
                 invocationConstraints,
                 allowCastingToByRefLikeType: false,
                 arguments,
+                Array.Empty<string>(),
                 ref errorId,
                 ref errorMsg,
                 out expandParamsOnBest,
