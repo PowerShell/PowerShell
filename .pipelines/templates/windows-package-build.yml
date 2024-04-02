@@ -55,7 +55,7 @@ jobs:
     condition: ne(variables['Runtime'], 'minSize')
 
   - download: CoOrdinatedBuildPipeline
-    artifact: drop_windows_build_windows_${{ parameters.runtime }}
+    artifact: drop_windows_build_windows_x64_${{ parameters.runtime }}
     condition: eq(variables['Runtime'], 'minSize')
 
   - pwsh: |
