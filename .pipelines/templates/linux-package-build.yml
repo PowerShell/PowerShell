@@ -120,7 +120,7 @@ jobs:
         'rpm-fxdependent' { 'Signed-fxdependent-linux-x64', 'powershell*.rpm' }
         'rpm-fxdependent-arm64' { 'Signed-fxdependent-linux-arm64', 'powershell*.rpm' }
         'rpm' { 'Signed-linux-x64', 'powershell*.rpm' }
-        'minsize' { 'Signed-linux-x64', 'powershell*.tar.gz' }
+        'min-size' { 'Signed-linux-x64', 'powershell*.tar.gz' }
       }
 
       $signedFilesPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${signedDrop}/${signedFolder}"

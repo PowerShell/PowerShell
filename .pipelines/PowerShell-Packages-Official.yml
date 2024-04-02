@@ -188,8 +188,8 @@ extends:
 
       - template: /.pipelines/templates/linux-package-build.yml@self
         parameters:
-          unsignedDrop: 'drop_linux_build_linux_x64'
-          signedDrop: 'drop_linux_sign_linux_x64'
+          unsignedDrop: 'drop_linux_build_linux_fxd'
+          signedDrop: 'drop_linux_sign_linux_fxd'
           packageType: fxdependent
           jobName: fxdependent
 
@@ -202,8 +202,8 @@ extends:
 
       - template: /.pipelines/templates/linux-package-build.yml@self
         parameters:
-          unsignedDrop: 'drop_linux_build_linux_x64_alpine'
-          signedDrop: 'drop_linux_sign_linux_x64_alpine'
+          unsignedDrop: 'drop_linux_build_linux_fxd_x64_alpine'
+          signedDrop: 'drop_linux_sign_linux_fxd_x64_alpine'
           packageType: tar-alpine-fxdependent
           jobName: tar_alpine_fxd
 
@@ -211,5 +211,5 @@ extends:
         parameters:
           unsignedDrop: 'drop_linux_build_linux_x64_minSize'
           signedDrop: 'drop_linux_sign_linux_x64_minSize'
-          packageType: minSize
+          packageType: min-size
           jobName: minSize
