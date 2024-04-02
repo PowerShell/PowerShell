@@ -7900,6 +7900,7 @@ namespace System.Management.Automation.Language
             // G  argument-label-expression:
             // G      simple-name    ':'
 
+            HashSet<string> existingArguments = new HashSet<string>();
             List<ExpressionAst> arguments = new List<ExpressionAst>();
             Token comma = null;
             Token rParen = null;
@@ -7977,7 +7978,17 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        arguments.Add(new LabeledExpressionAst(ExtentOf(argumentName, argument), argumentName, argument));
+                        IScriptExtent entryExtent = ExtentOf(argumentName, argument);
+                        if (!existingArguments.Add(argumentName.Value))
+                        {
+                            ReportError(entryExtent,
+                                nameof(ParserStrings.DuplicateArgumentLabel),
+                                ParserStrings.DuplicateArgumentLabel,
+                                argumentName.Value);
+                            reportedError = true;
+                            break;
+                        }
+                        arguments.Add(new LabeledExpressionAst(entryExtent, argumentName, argument));
                     }
 
                     SkipNewlines();

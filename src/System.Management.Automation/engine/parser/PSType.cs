@@ -83,7 +83,6 @@ namespace System.Management.Automation.Language
                 invocationConstraints: null,
                 allowCastingToByRefLikeType: false,
                 positionalArgs,
-                Array.Empty<string>(),
                 ref errorId,
                 ref errorMsg,
                 out expandParamsOnBest,

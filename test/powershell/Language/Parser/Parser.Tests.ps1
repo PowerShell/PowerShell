@@ -1435,6 +1435,31 @@ $c.Method(
             $actual[4].Value | Should -Be end
         }
 
+        It "Parses method invocation with label differing in case" {
+            $script = @'
+$c.Method(
+    label: $arg1,
+    Label: $arg2)
+'@
+
+            $errors = @()
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$errors)
+            $errors | Should -BeNullOrEmpty
+
+            $actual = $ast.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments
+            $actual.Count | Should -Be 2
+
+            $actual[0] | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual[0].Label | Should -BeExactly label
+            $actual[0].Expression | Should -BeOfType ([System.Management.Automation.Language.VariableExpressionAst])
+            $actual[0].Expression.VariablePath | Should -Be arg1
+
+            $actual[1] | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual[1].Label | Should -BeExactly Label
+            $actual[1].Expression | Should -BeOfType ([System.Management.Automation.Language.VariableExpressionAst])
+            $actual[1].Expression.VariablePath | Should -Be arg2
+        }
+
         It "Parses method invocation without label with string value" {
             $script = '$c.Method(''value'')'
 
@@ -1471,7 +1496,7 @@ $c.Method(
             $pe | Should -BeOfType ([System.Management.Automation.ParseException])
 
             $pe.Errors[0].ErrorId | Should -Be MissingArgumentAfterLabel
-            $pe.Errors[0].Message | Should -Be "Expected argument value after name identifier 'label' but found '\u000a'."
+            $pe.Errors[0].Message | Should -Be 'Expected argument value after name identifier "label" but found "\u000a".'
             $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
                     'At line:1 char:16'
                     '+ $c.Method(label:'
@@ -1485,7 +1510,7 @@ $c.Method(
             $pe | Should -BeOfType ([System.Management.Automation.ParseException])
 
             $pe.Errors[0].ErrorId | Should -Be MissingColonAfterArgumentLabel
-            $pe.Errors[0].Message | Should -Be "Expected colon after argument name identifier 'label' but found ''value''."
+            $pe.Errors[0].Message | Should -Be 'Expected colon after argument name identifier "label" but found "''value''".'
             $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
                     'At line:1 char:16'
                     "+ `$c.Method(label 'value')"
@@ -1499,7 +1524,7 @@ $c.Method(
             $pe | Should -BeOfType ([System.Management.Automation.ParseException])
 
             $pe.Errors[0].ErrorId | Should -Be MissingColonAfterArgumentLabel
-            $pe.Errors[0].Message | Should -Be "Expected colon after argument name identifier 'label' but found ')'."
+            $pe.Errors[0].Message | Should -Be 'Expected colon after argument name identifier "label" but found ")".'
             $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
                     'At line:1 char:16'
                     '+ $c.Method(label)'
@@ -1513,7 +1538,7 @@ $c.Method(
             $pe | Should -BeOfType ([System.Management.Automation.ParseException])
 
             $pe.Errors[0].ErrorId | Should -Be MissingColonAfterArgumentLabel
-            $pe.Errors[0].Message | Should -Be "Expected colon after argument name identifier 'label' but found ','."
+            $pe.Errors[0].Message | Should -Be 'Expected colon after argument name identifier "label" but found ",".'
             $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
                     'At line:1 char:16'
                     "+ `$c.Method(label, 'arg')"
@@ -1527,7 +1552,7 @@ $c.Method(
             $pe | Should -BeOfType ([System.Management.Automation.ParseException])
 
             $pe.Errors[0].ErrorId | Should -Be MissingColonAfterArgumentLabel
-            $pe.Errors[0].Message | Should -Be "Expected colon after argument name identifier 'fail' but found ''value''."
+            $pe.Errors[0].Message | Should -Be 'Expected colon after argument name identifier "fail" but found "''value''".'
             $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
                     'At line:1 char:30'
                     "+ `$c.Method(label: `$value, fail 'value')"
@@ -1541,7 +1566,7 @@ $c.Method(
             $pe | Should -BeOfType ([System.Management.Automation.ParseException])
 
             $pe.Errors[0].ErrorId | Should -Be MissingColonAfterArgumentLabel
-            $pe.Errors[0].Message | Should -Be "Expected colon after argument name identifier 'fail' but found ''value''."
+            $pe.Errors[0].Message | Should -Be 'Expected colon after argument name identifier "fail" but found "''value''".'
             $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
                     'At line:1 char:23'
                     "+ `$c.Method(`$value, fail 'value')"
@@ -1588,7 +1613,7 @@ $c.Method(
             $pe | Should -BeOfType ([System.Management.Automation.ParseException])
 
             $pe.Errors[0].ErrorId | Should -Be MissingColonAfterArgumentLabel
-            $pe.Errors[0].Message | Should -Be "Expected colon after argument name identifier 'emoji_' but found '♪:'."
+            $pe.Errors[0].Message | Should -Be 'Expected colon after argument name identifier "emoji_" but found "♪:".'
             $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
                     'At line:1 char:17'
                     '+ $c.Method(emoji_♪: $value)'
@@ -1621,6 +1646,20 @@ $c.Method(
                     'At line:1 char:15'
                     '+ $c.Method($var : $value)'
                     '+               ~'
+                ) -join [Environment]::NewLine)
+        }
+
+        It "Fails to parse label with duplicate entry" {
+            $err = { ExecuteCommand '$c.Method(arg: $value, arg: $value)' } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
+
+            $pe.Errors[0].ErrorId | Should -Be DuplicateArgumentLabel
+            $pe.Errors[0].Message | Should -Be 'Found duplicate argument name label "arg"'
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:24'
+                    '+ $c.Method(arg: $value, arg: $value)'
+                    '+                        ~~~~~~~~~~~'
                 ) -join [Environment]::NewLine)
         }
     }
