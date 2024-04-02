@@ -27,7 +27,7 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
   - name: ob_sdl_credscan_suppressionsFile
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-  - name: BuildConfiguration
+  - name: BUILDCONFIGURATION
     value: ${{ parameters.BuildConfiguration }}
   - name: Runtime
     value: ${{ parameters.Runtime }}
@@ -66,7 +66,8 @@ jobs:
       $runtime = $env:RUNTIME
 
       $params = @{}
-      if ($env:BuildConfiguration -eq 'minSize') {
+      if ($env:BUILDCONFIGURATION -eq 'minSize') {
+        Write-Verbose -Message "Building for minimal size"
         $params['ForMinimalSize'] = $true
       }
 
@@ -95,7 +96,7 @@ jobs:
         }
       }
 
-      Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
+      Write-Verbose -Verbose "Completed building PowerShell for '$env:BUILDCONFIGURATION' configuration"
     displayName: 'Build Linux - $(Runtime)'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
