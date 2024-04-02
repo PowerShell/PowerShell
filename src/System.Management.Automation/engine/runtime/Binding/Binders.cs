@@ -6925,11 +6925,16 @@ namespace System.Management.Automation.Language
                 numArgs -= 1;
             }
 
-            object[] argValues = new object[numArgs];
+            (string, object)[] argValues = new (string, object)[numArgs];
             for (int i = 0; i < numArgs; ++i)
             {
                 object arg = args[i].Value;
-                argValues[i] = arg == AutomationNull.Value ? null : arg;
+                string argName = string.Empty;
+                if (callInfo.ArgumentNames.Count >= i)
+                {
+                    argName = callInfo.ArgumentNames[i];
+                }
+                argValues[i] = (argName, arg == AutomationNull.Value ? null : arg);
             }
 
             var result = Adapter.FindBestMethod(
