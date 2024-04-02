@@ -7974,6 +7974,17 @@ namespace System.Management.Automation.Language
 
                     if (argumentName is null)
                     {
+                        if (existingArguments.Count > 0)
+                        {
+                            // ErrorRecovery: sync at closing paren or newline.
+
+                            ReportError(argument.Extent,
+                                nameof(ParserStrings.UnnamedArgumentAfterNamed),
+                                ParserStrings.UnnamedArgumentAfterNamed);
+                            reportedError = true;
+                            break;
+                        }
+
                         arguments.Add(argument);
                     }
                     else

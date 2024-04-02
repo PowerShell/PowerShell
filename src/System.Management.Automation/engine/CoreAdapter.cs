@@ -868,7 +868,7 @@ namespace System.Management.Automation
             return rank;
         }
 
-        private static ParameterInformation[] ExpandParameters(int argCount, ParameterInformation[] parameters, Type elementType)
+        private static ParameterInformation[] ExpandParameters(string name, int argCount, ParameterInformation[] parameters, Type elementType)
         {
             Diagnostics.Assert(parameters[parameters.Length - 1].isParamArray, "ExpandParameters shouldn't be called on non-param method");
 
@@ -876,7 +876,7 @@ namespace System.Management.Automation
             Array.Copy(parameters, newParameters, parameters.Length - 1);
             for (int i = parameters.Length - 1; i < argCount; ++i)
             {
-                newParameters[i] = new ParameterInformation(elementType, false, null, false);
+                newParameters[i] = new ParameterInformation(name, elementType, false, null, false);
             }
 
             return newParameters;
@@ -1336,8 +1336,48 @@ namespace System.Management.Automation
             out bool expandParamsOnBest,
             out bool callNonVirtually)
         {
+            return FindBestMethod(
+                methods,
+                invocationConstraints,
+                allowCastingToByRefLikeType,
+                arguments.Select(a => (string.Empty, a)).ToArray(),
+                ref errorId,
+                ref errorMsg,
+                out expandParamsOnBest,
+                out callNonVirtually);
+        }
+
+        /// <summary>
+        /// Return the best method out of overloaded methods with explicit argument names.
+        /// The best has the smallest type distance between the method's parameters and the given arguments.
+        /// </summary>
+        /// <param name="methods">Different overloads for a method.</param>
+        /// <param name="invocationConstraints">Invocation constraints.</param>
+        /// <param name="allowCastingToByRefLikeType">True if we accept implicit/explicit casting conversion to a ByRef-like parameter type for method resolution.</param>
+        /// <param name="arguments">Arguments to check against the overloads. Each entry is a tuple of the argument name and value.</param>
+        /// <param name="errorId">If no best method, the error id to use in the error message.</param>
+        /// <param name="errorMsg">If no best method, the error message (format string) to use in the error message.</param>
+        /// <param name="expandParamsOnBest">True if the best method's last parameter is a params method.</param>
+        /// <param name="callNonVirtually">True if best method should be called as non-virtual.</param>
+        internal static MethodInformation FindBestMethod(
+            MethodInformation[] methods,
+            PSMethodInvocationConstraints invocationConstraints,
+            bool allowCastingToByRefLikeType,
+            (string, object)[] arguments,
+            ref string errorId,
+            ref string errorMsg,
+            out bool expandParamsOnBest,
+            out bool callNonVirtually)
+        {
             callNonVirtually = false;
-            var methodInfo = FindBestMethodImpl(methods, invocationConstraints, allowCastingToByRefLikeType, arguments, ref errorId, ref errorMsg, out expandParamsOnBest);
+            var methodInfo = FindBestMethodImpl(
+                methods,
+                invocationConstraints,
+                allowCastingToByRefLikeType,
+                arguments,
+                ref errorId,
+                ref errorMsg,
+                out expandParamsOnBest);
             if (methodInfo == null)
             {
                 return null;
@@ -1402,7 +1442,7 @@ namespace System.Management.Automation
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
             bool allowCastingToByRefLikeType,
-            object[] arguments,
+            (string, object)[] arguments,
             ref string errorId,
             ref string errorMsg,
             out bool expandParamsOnBest)
@@ -1464,7 +1504,7 @@ namespace System.Management.Automation
                     else
                     {
                         // Infer the generic method when generic parameter types are not specified.
-                        Type[] argumentTypes = arguments.Select(EffectiveArgumentType).ToArray();
+                        Type[] argumentTypes = arguments.Select(a => EffectiveArgumentType(a.Item2)).ToArray();
                         Type[] paramConstraintTypes = invocationConstraints?.ParameterTypes;
 
                         if (paramConstraintTypes is not null)
@@ -1515,19 +1555,8 @@ namespace System.Management.Automation
 
                         if (methodInfo.hasOptional)
                         {
-                            // Count optionals.  This code is rarely hit, mainly when calling code in the
-                            // assembly Microsoft.VisualBasic.  If it were more frequent, the optional count
-                            // should be stored in MethodInformation.
-                            int optionals = 0;
-                            for (int j = 0; j < parameters.Length; j++)
-                            {
-                                if (parameters[j].isOptional)
-                                {
-                                    optionals += 1;
-                                }
-                            }
-
-                            if (arguments.Length + optionals < parameters.Length)
+                            // Count optionals.
+                            if (arguments.Length + methodInfo.optionalCount < parameters.Length)
                             {
                                 // Even with optionals, there are too few.
                                 continue;
@@ -1550,20 +1579,20 @@ namespace System.Management.Automation
                         if (parameters.Length == arguments.Length)
                         {
                             ConversionRank arrayConv = GetArgumentConversionRank(
-                                arguments[j],
+                                arguments[j].Item2,
                                 parameter.parameterType,
                                 isByRef: false,
                                 allowCastingToByRefLikeType: false);
 
                             ConversionRank elemConv = GetArgumentConversionRank(
-                                arguments[j],
+                                arguments[j].Item2,
                                 elementType,
                                 isByRef: false,
                                 allowCastingToByRefLikeType: false);
 
                             if (elemConv > arrayConv)
                             {
-                                candidate.expandedParameters = ExpandParameters(arguments.Length, parameters, elementType);
+                                candidate.expandedParameters = ExpandParameters(parameter.name, arguments.Length, parameters, elementType);
                                 candidate.conversionRanks[j] = elemConv;
                             }
                             else
@@ -1584,7 +1613,7 @@ namespace System.Management.Automation
                             for (int k = j; k < arguments.Length; k++)
                             {
                                 candidate.conversionRanks[k] = GetArgumentConversionRank(
-                                    arguments[k],
+                                    arguments[k].Item2,
                                     elementType,
                                     isByRef: false,
                                     allowCastingToByRefLikeType: false);
@@ -1599,14 +1628,14 @@ namespace System.Management.Automation
 
                             if (candidate != null)
                             {
-                                candidate.expandedParameters = ExpandParameters(arguments.Length, parameters, elementType);
+                                candidate.expandedParameters = ExpandParameters(parameter.name, arguments.Length, parameters, elementType);
                             }
                         }
                     }
                     else
                     {
                         candidate.conversionRanks[j] = GetArgumentConversionRank(
-                            arguments[j],
+                            arguments[j].Item2,
                             parameter.parameterType,
                             parameter.isByRef,
                             allowCastingToByRefLikeType);
@@ -1656,7 +1685,7 @@ namespace System.Management.Automation
 
             OverloadCandidate bestCandidate = candidates.Count == 1
                 ? candidates[0]
-                : FindBestCandidate(candidates, arguments, invocationConstraints);
+                : FindBestCandidate(candidates, arguments.Select(a => a.Item2).ToArray(), invocationConstraints);
             if (bestCandidate != null)
             {
                 expandParamsOnBest = bestCandidate.expandedParameters != null;
@@ -2163,6 +2192,7 @@ namespace System.Management.Automation
         internal ParameterInformation[] parameters;
         internal bool hasVarArgs;
         internal bool hasOptional;
+        internal int optionalCount;
         internal bool isGeneric;
 
         private bool _useReflection;
@@ -2188,6 +2218,7 @@ namespace System.Management.Automation
                 if (methodParameters[i].IsOptional)
                 {
                     hasOptional = true;
+                    optionalCount++;
                 }
             }
 
@@ -2578,6 +2609,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class ParameterInformation
     {
+        internal string name;
         internal Type parameterType;
         internal object defaultValue;
         internal bool isOptional;
@@ -2586,6 +2618,7 @@ namespace System.Management.Automation
 
         internal ParameterInformation(System.Reflection.ParameterInfo parameter)
         {
+            this.name = parameter.Name;
             this.isOptional = parameter.IsOptional;
             this.defaultValue = parameter.DefaultValue;
             this.parameterType = parameter.ParameterType;
@@ -2600,8 +2633,9 @@ namespace System.Management.Automation
             }
         }
 
-        internal ParameterInformation(Type parameterType, bool isOptional, object defaultValue, bool isByRef)
+        internal ParameterInformation(string name, Type parameterType, bool isOptional, object defaultValue, bool isByRef)
         {
+            this.name = name;
             this.parameterType = parameterType;
             this.isOptional = isOptional;
             this.defaultValue = defaultValue;

@@ -1353,7 +1353,7 @@ foo``u{2195}abc
         }
     }
 
-    Context "Method invocation argument labels" {
+    Context "Method invocation argument labels" -Tag Jordan {
         It "Parses single argument with label <Label.Trim()>" -TestCases @(
             @{ Label = "simple" }
             @{ Label = "_underscore" }
@@ -1400,8 +1400,7 @@ $c.Method(
     $arg1,
     label: $arg2,
     other: 'string value',
-    final: "test",
-    "end")
+    final: "test")
 '@
 
             $errors = @()
@@ -1409,7 +1408,7 @@ $c.Method(
             $errors | Should -BeNullOrEmpty
 
             $actual = $ast.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments
-            $actual.Count | Should -Be 5
+            $actual.Count | Should -Be 4
 
             $actual[0] | Should -BeOfType ([System.Management.Automation.Language.VariableExpressionAst])
             $actual[0].VariablePath | Should -Be arg1
@@ -1430,9 +1429,6 @@ $c.Method(
             $actual[3].Expression | Should -BeOfType ([System.Management.Automation.Language.StringConstantExpressionAst])
             $actual[3].Expression.StringConstantType | Should -Be DoubleQuoted
             $actual[3].Expression.Value | Should -Be test
-
-            $actual[4] | Should -BeOfType ([System.Management.Automation.Language.StringConstantExpressionAst])
-            $actual[4].Value | Should -Be end
         }
 
         It "Parses method invocation with label differing in case" {
@@ -1660,6 +1656,20 @@ $c.Method(
                     'At line:1 char:24'
                     '+ $c.Method(arg: $value, arg: $value)'
                     '+                        ~~~~~~~~~~~'
+                ) -join [Environment]::NewLine)
+        }
+
+        It "Fails to parse label with unnamed argument after named" {
+            $err = { ExecuteCommand '$c.Method(arg: $value, $value2)' } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
+
+            $pe.Errors[0].ErrorId | Should -Be UnnamedArgumentAfterNamed
+            $pe.Errors[0].Message | Should -Be 'Unnamed argument found after named argument.'
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:24'
+                    '+ $c.Method(arg: $value, $value2)'
+                    '+                        ~~~~~~~'
                 ) -join [Environment]::NewLine)
         }
     }
