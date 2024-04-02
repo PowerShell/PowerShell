@@ -128,6 +128,48 @@ Describe "Test-Path" -Tags "CI" {
         Test-Path -Path $badPath -IsValid | Should -BeFalse
     }
 
+    It 'Windows paths should be valid: <path>' -skip:(!$IsWindows) -TestCases @(
+        @{ path = "C:\Program Files" }
+        @{ path = "C:\Program Files (x86)\" }
+        @{ path = "filesystem::z:\foo" }
+        @{ path = "filesystem::z:\foo\" }
+        @{ path = "variable::psversiontable" }
+        @{ path = "c:\windows\cmd.exe:test" }
+    ) {
+        param($path)
+        Test-Path -Path $path -IsValid | Should -BeTrue
+    }
+
+    It 'Windows paths should be inavlid: <variant>' -Skip:(!$IsWindows) -TestCases @(
+        @{ variant = "wildcard"; path = "C:\Program Files\foo*" }
+        @{ variant = "pipe symbol"; path = "C:\Program Files|p\foo" }
+        @{ variant = "null char"; path = "C:\Win`u{0000}dows\System32" }
+    ) {
+        param($path)
+        Test-Path -Path $path -IsValid | Should -BeFalse
+    }
+
+    It 'Unix paths should be valid: <path>' -Skip:($IsWindows) -TestCases @(
+        @{ path = "/usr/bin" }
+        @{ path = "/usr/bin/" }
+        @{ path = "filesystem::/usr/bin" }
+        @{ path = "filesystem::/usr/bin/" }
+        @{ path = "variable::psversiontable" }
+        @{ path = "/usr/bi*n/test" }
+        @{ path = "/usr/bin/tes*t" }
+    ) {
+        param($path)
+        Test-Path -Path $path -IsValid | Should -BeTrue
+    }
+
+    It 'Unix paths should be invalid: <variant>' -Skip:($IsWindows) -TestCases @(
+        @{ variant = "null in path"; path = "/usr/bi`u{0000}n/test" }
+        @{ variant = "null in filename"; path = "/usr/bin/t`u{0000}est" }
+    ) {
+        param($path)
+        Test-Path -Path $path -IsValid | Should -BeFalse
+    }
+
     It "Should return true on paths containing spaces when the path is surrounded in quotes" {
         Test-Path -Path "/totally a valid/path" -IsValid | Should -BeTrue
     }

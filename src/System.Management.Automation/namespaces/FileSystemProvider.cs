@@ -1080,6 +1080,21 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            // .NET introduced a change where invalid characters are accepted https://learn.microsoft.com/en-us/dotnet/core/compatibility/2.1#path-apis-dont-throw-an-exception-for-invalid-characters
+            // We need to check for invalid characters ourselves.  `Path.GetInvalidFileNameChars()` is a supserset of `Path.GetInvalidPathChars()`
+
+            // Remove drive root first
+            string pathWithoutDriveRoot = path.Substring(Path.GetPathRoot(path).Length);
+            char[] invalidFileChars = Path.GetInvalidFileNameChars();
+
+            foreach (string segment in pathWithoutDriveRoot.Split(Path.DirectorySeparatorChar))
+            {
+                if (segment.IndexOfAny(invalidFileChars) != -1)
+                {
+                    return false;
+                }
+            }
+
             return true;
         }
 
