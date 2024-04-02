@@ -132,3 +132,55 @@ extends:
       - template: /.pipelines/templates/windows-package-build.yml@self
         parameters:
           runtime: minsize
+
+    - stage: linux_package
+      jobs:
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          sourceDrop: 'drop_linux_sign_linux_x64'
+          packageType: deb
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          sourceDrop: 'drop_linux_sign_linux_fxd_x64_mariner'
+          packageType: rpm-fxdependent  #mariner-x64
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          sourceDrop: 'drop_linux_sign_linux_fxd_arm54_mariner'
+          packageType: rpm-fxdependent-arm64 #mariner-arm64
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          sourceDrop: 'drop_linux_sign_linux_x64'
+          packageType: rpm
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          sourceDrop: 'drop_linux_sign_linux_arm'
+          packageType: tar-arm
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          sourceDrop: 'drop_linux_sign_linux_arm64'
+          packageType: tar-arm64
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          sourceDrop: 'drop_linux_sign_linux_x64_alpine'
+          packageType: tar-alpine
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          sourceDrop: 'drop_linux_sign_linux_x64'
+          packageType: fxdependent
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          sourceDrop: 'drop_linux_sign_linux_x64'
+          packageType: tar
+
+      - template: /.pipelines/templates/linux-package-build.yml@self
+        parameters:
+          sourceDrop: 'drop_linux_sign_linux_x64_alpine'
+          packageType: tar-alpine-fxdependent

@@ -1,12 +1,13 @@
 parameters:
-  runtime: x64
+  sourceDrop: 'drop_linux_sign_linux_x64'
+  packageType: deb
 
 jobs:
-- job: package_win_${{ parameters.runtime }}
-  displayName: Package Windows ${{ parameters.runtime }}
+- job: package_linux_${{ parameters.buildArchitecture }}
+  displayName: Package macOS ${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
-    type: windows
+    type: linux
 
   variables:
     - name: runCodesignValidationInjection
@@ -19,16 +20,17 @@ jobs:
       value: true
     - group: DotNetPrivateBuildAccess
     - name: ob_outputDirectory
-      value: '$(Build.ArtifactStagingDirectory)\ONEBRANCH_ARTIFACT'
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
     - name: ob_sdl_binskim_enabled
       value: true
+    - name: PackageType
+      value: ${{ parameters.packageType }}
+    - name: SourceDrop
+      value: ${{ parameters.sourceDrop }}
     - name: ob_sdl_tsa_configFile
-      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+      value: $(Build.SourcesDirectory)/PowerShell/.config/tsaoptions.json
     - name: ob_sdl_credscan_suppressionsFile
-      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-    - name: Runtime
-      value: ${{ parameters.runtime }}
-    - group: msixTools
+      value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
 
   steps:
   - checkout: self
@@ -37,6 +39,14 @@ jobs:
   - pwsh: |
       Get-ChildItem -Path env:
     displayName: Capture environment
+
+  - pwsh: |
+      # create folder
+      sudo mkdir "$(Agent.TempDirectory)/PowerShell"
+
+      # make the current user the owner
+      sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
+    displayName: 'Create $(Agent.TempDirectory)/PowerShell'
 
   - template: SetVersionVariables.yml@self
     parameters:
@@ -51,75 +61,40 @@ jobs:
       nativePathRoot: '$(Agent.TempDirectory)'
 
   - download: CoOrdinatedBuildPipeline
-    artifact: drop_windows_build_windows_${{ parameters.runtime }}_release
-    condition: ne(variables['Runtime'], 'minSize')
-
-  - download: CoOrdinatedBuildPipeline
-    artifact: drop_windows_build_windows_${{ parameters.runtime }}
-    condition: eq(variables['Runtime'], 'minSize')
+    artifact: ${{ parameters.sourceDrop }}
 
   - pwsh: |
-      Write-Verbose -Verbose "signed artifacts"
-      Get-ChildItem "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${{ parameters.runtime }}_release" -Recurse
+      Write-Verbose -Verbose "Downloaded artifacts"
+      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${{ parameters.sourceDrop }}" -Recurse
     displayName: 'Capture Downloaded Artifacts'
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
 
   - pwsh: |
-      # cleanup previous install
-      if((Test-Path "${env:ProgramFiles(x86)}\WiX Toolset xcopy")) {
-        Remove-Item "${env:ProgramFiles(x86)}\WiX Toolset xcopy" -Recurse -Force
-      }
-      $toolsDir = New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)\tools'
+      $packageType = '$(PackageType)'
+      Write-Verbose -Verbose "packageType = $packageType"
 
-      $wixUri = if ('$(Runtime)' -eq 'arm64') {
-        'https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip'
-      }
-      else {
-        'https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip'
-      }
-
-      Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -MaximumRetryCount 5 -RetryIntervalSec 10
-      Import-Module '$(PowerShellRoot)\tools\releaseBuild\Images\microsoft_powershell_windowsservercore\wix.psm1'
-      $isArm64 = '$(Runtime)' -eq 'arm64'
-
-      Install-WixZip -zipPath '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -arm64:$isArm64
-
-      $msixUrl = '$(makeappUrl)'
-      Invoke-RestMethod -Uri $msixUrl -OutFile '$(Pipeline.Workspace)\makeappx.zip'
-      Expand-Archive '$(Pipeline.Workspace)\makeappx.zip' -destination '\' -Force
-    displayName: Install packaging tools
-
-  - pwsh: |
-      $runtime = '$(Runtime)'
-      Write-Verbose -Verbose "$runtime = '$(Runtime)'"
-
-      $signedFolder = switch ($runtime) {
-        'x64' { 'Signed-win7-x64' }
-        'x86' { 'Signed-win7-x86' }
-        'arm64' { 'Signed-win-arm64' }
-        'fxdependent' { 'Signed-fxdependent' }
-        'fxdependentWinDesktop' { 'Signed-fxdependent-win-desktop' }
-      }
+      $sourceDrop = '$(SourceDrop)'
+      Write-Verbose -Verbose "sourceDrop = $sourceDrop"
 
       Write-Verbose -Message "Init..." -Verbose
 
-      $repoRoot = "$env:REPOROOT\PowerShell"
+      $repoRoot = "$env:REPOROOT/PowerShell"
       Set-Location $repoRoot
-      Import-Module "$repoRoot\build.psm1"
-      Import-Module "$repoRoot\tools\packaging"
+      Import-Module "$repoRoot/build.psm1"
+      Import-Module "$repoRoot/tools/packaging"
 
       Start-PSBootstrap -Package
 
-      $signedFilesPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\$signedFolder"
+      $signedFilesPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_windows_build_windows_${runtime}_release/$signedFolder"
       Write-Verbose -Verbose "signedFilesPath: $signedFilesPath"
 
-      $psoptionsFilePath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\psoptions\psoptions.json"
+      $psoptionsFilePath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_windows_build_windows_${runtime}_release/psoptions/psoptions.json"
       Write-Verbose -Verbose "psoptionsFilePath: $psoptionsFilePath"
 
       Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
-      if (-not (Test-Path $signedFilesPath\pwsh.exe)) {
-        throw "pwsh.exe not found in $signedFilesPath"
+      if (-not (Test-Path $signedFilesPath/pwsh)) {
+        throw "pwsh not found in $signedFilesPath"
       }
 
       Write-Verbose -Message "Restoring PSOptions from $psoptionsFilePath" -Verbose
