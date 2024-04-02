@@ -4,7 +4,7 @@ parameters:
   packageType: deb
 
 jobs:
-- job: package_linux_${{ parameters.packageType }}
+- job: package_linux_${{ parameters.signedDrop }}
   displayName: Package linux ${{ parameters.packageType }}
   condition: succeeded()
   pool:
