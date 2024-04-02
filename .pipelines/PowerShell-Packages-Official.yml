@@ -45,6 +45,8 @@ variables:
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: WindowsContainerImage
     value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project https://aka.ms/obpipelines/containers
+  - name: LinuxContainerImage
+    value: onebranch.azurecr.io/linux/ubuntu-2004:latest
 
 resources:
   pipelines:
