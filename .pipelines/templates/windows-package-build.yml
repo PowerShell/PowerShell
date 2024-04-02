@@ -144,7 +144,6 @@ jobs:
         'fxdependentWinDesktop' { 'win7-x64' }
       }
 
-      ## msi disabled till Wix can be installed
       $packageTypes = switch ($runtime) {
         'x64' { @('msi', 'zip', 'msix') }
         'x86' { @('msi', 'zip', 'msix') }
@@ -157,7 +156,7 @@ jobs:
         New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
       }
 
-      Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+      Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
 
       if ($packageTypes -contains 'msi') {
         $msiPkgNameFilter = "powershell-*.msi"

@@ -1,10 +1,11 @@
 parameters:
-  sourceDrop: 'drop_linux_sign_linux_x64'
+  unsignedDrop: 'drop_linux_build_linux_x64'
+  signedeDrop: 'drop_linux_sign_linux_x64'
   packageType: deb
 
 jobs:
-- job: package_linux_${{ parameters.buildArchitecture }}
-  displayName: Package macOS ${{ parameters.buildArchitecture }}
+- job: package_linux_${{ parameters.packageType }}
+  displayName: Package linux ${{ parameters.packageType }}
   condition: succeeded()
   pool:
     type: linux
@@ -25,8 +26,10 @@ jobs:
       value: true
     - name: PackageType
       value: ${{ parameters.packageType }}
-    - name: SourceDrop
-      value: ${{ parameters.sourceDrop }}
+    - name: signedDrop
+      value: ${{ parameters.signedDrop }}
+    - name: unsignedDrop
+      value: ${{ parameters.unsignedDrop }}
     - name: ob_sdl_tsa_configFile
       value: $(Build.SourcesDirectory)/PowerShell/.config/tsaoptions.json
     - name: ob_sdl_credscan_suppressionsFile
@@ -61,11 +64,17 @@ jobs:
       nativePathRoot: '$(Agent.TempDirectory)'
 
   - download: CoOrdinatedBuildPipeline
-    artifact: ${{ parameters.sourceDrop }}
+    artifact: ${{ parameters.unsignedDrop }}
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: ${{ parameters.signedDrop }}
 
   - pwsh: |
-      Write-Verbose -Verbose "Downloaded artifacts"
-      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${{ parameters.sourceDrop }}" -Recurse
+      Write-Verbose -Verbose "Unsigned artifacts"
+      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${{ parameters.unsignedDrop }}" -Recurse
+
+      Write-Verbose -Verbose "Signed artifacts"
+      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${{ parameters.signedDrop }}" -Recurse
     displayName: 'Capture Downloaded Artifacts'
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
@@ -74,8 +83,8 @@ jobs:
       $packageType = '$(PackageType)'
       Write-Verbose -Verbose "packageType = $packageType"
 
-      $sourceDrop = '$(SourceDrop)'
-      Write-Verbose -Verbose "sourceDrop = $sourceDrop"
+      $signedDrop = '$(signedDrop)'
+      Write-Verbose -Verbose "signedDrop = $signedDrop"
 
       Write-Verbose -Message "Init..." -Verbose
 
@@ -86,21 +95,39 @@ jobs:
 
       Start-PSBootstrap -Package
 
-      $signedFilesPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_windows_build_windows_${runtime}_release/$signedFolder"
-      Write-Verbose -Verbose "signedFilesPath: $signedFilesPath"
+      $psOptionsPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${unsignedDrop}/psoptions/psoptions.json"
 
-      $psoptionsFilePath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/drop_windows_build_windows_${runtime}_release/psoptions/psoptions.json"
-      Write-Verbose -Verbose "psoptionsFilePath: $psoptionsFilePath"
-
-      Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
-      if (-not (Test-Path $signedFilesPath/pwsh)) {
-        throw "pwsh not found in $signedFilesPath"
+      if (-not (Test-Path $psOptionsPath)) {
+        throw "PSoptopns file not found at $psOptionsPath"
       }
 
+      Restore-PSOptions $psOptionsPath
       Write-Verbose -Message "Restoring PSOptions from $psoptionsFilePath" -Verbose
 
       Restore-PSOptions -PSOptionsPath "$psoptionsFilePath"
       Get-PSOptions | Write-Verbose -Verbose
+
+      $signedFolder, $pkgFilter = switch ($packageType) {
+        'tar-arm' { 'Signed-linux-arm', 'powershell*.tar.gz' }
+        'tar-arm64' { 'Signed-linux-arm64', 'powershell*.tar.gz' }
+        'tar-alpine' { 'Signed-linux-musl-x64', 'powershell*.tar.gz' }
+        'fxdependent' { 'Signed-fxdependent', 'powershell*.tar.gz' }
+        'tar' { 'Signed-linux-x64', 'powershell*.tar.gz' }
+        'tar-alpine-fxdependent' { 'Signed-fxdependent-noopt-linux-musl-x64', 'powershell*.tar.gz' }
+        'deb' { 'Signed-linux-x64', 'powershell*.deb' }
+        'rpm-fxdependent' { 'Signed-fxdependent-linux-x64', 'powershell*.rpm' }
+        'rpm-fxdependent-arm64' { 'Signed-fxdependent-linux-arm64', 'powershell*.rpm' }
+        'rpm' { 'Signed-linux-x64', 'powershell*.rpm' }
+        'minsize' { 'Signed-linux-x64', 'powershell*.tar.gz' }
+      }
+
+      $signedFilesPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${signedDrop}/${signedFolder}"
+      Write-Verbose -Verbose "signedFilesPath: $signedFilesPath"
+
+      Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
+      if (-not (Test-Path "$signedFilesPath/pwsh")) {
+        throw "pwsh not found in $signedFilesPath"
+      }
 
       $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
       $LTS = $metadata.LTSRelease.Package
@@ -109,53 +136,19 @@ jobs:
         Write-Verbose -Message "LTS Release: $LTS"
       }
 
-      Start-PSBootstrap -Package
-
-      $WindowsRuntime = switch ($runtime) {
-        'x64' { 'win7-x64' }
-        'x86' { 'win7-x86' }
-        'arm64' { 'win-arm64' }
-        'fxdependent' { 'win7-x64' }
-        'fxdependentWinDesktop' { 'win7-x64' }
-      }
-
-      ## msi disabled till Wix can be installed
-      $packageTypes = switch ($runtime) {
-        'x64' { @('msi', 'zip', 'msix') }
-        'x86' { @('msi', 'zip', 'msix') }
-        'arm64' { @('msi', 'zip', 'msix') }
-        'fxdependent' { 'fxdependent' }
-        'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
-      }
-
       if (-not (Test-Path $(ob_outputDirectory))) {
         New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
       }
 
-      Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+      $packageType = '$(PackageType)'
+      Write-Verbose -Verbose "packageType = $packageType"
 
-      if ($packageTypes -contains 'msi') {
-        $msiPkgNameFilter = "powershell-*.msi"
-        $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msiPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-        Write-Verbose -Verbose "msiPkgPath: $msiPkgPath"
-        Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
-      }
+      Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
 
-      if ($packageTypes -contains 'zip') {
-        $zipPkgNameFilter = "powershell-*.zip"
-        $zipPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $zipPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-        Write-Verbose -Verbose "zipPkgPath: $zipPkgPath"
-        Copy-Item -Path $zipPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
-      }
-
-      if ($packageTypes -contains 'msix') {
-        $msixPkgNameFilter = "powershell-*.msix"
-        $msixPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msixPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-        Write-Verbose -Verbose "msixPkgPath: $msixPkgPath"
-        Copy-Item -Path $msixPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
-      }
-
-    displayName: 'Package ${{ parameters.buildArchitecture}}'
+      $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgFilter -Recurse -File | Select-Object -ExpandProperty FullName
+      Write-Verbose -Verbose "pkgPath: $pkgPath"
+      Copy-Item -Path $pkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+    displayName: 'Package ${{ parameters.packageType}}'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
