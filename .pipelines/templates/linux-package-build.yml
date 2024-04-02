@@ -44,13 +44,13 @@ jobs:
       Get-ChildItem -Path env:
     displayName: Capture environment
 
-  - pwsh: |
-      # create folder
-      sudo mkdir "$(Agent.TempDirectory)/PowerShell"
+  # - pwsh: |
+  #     # create folder
+  #     sudo mkdir "$(Agent.TempDirectory)/PowerShell"
 
-      # make the current user the owner
-      sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
-    displayName: 'Create $(Agent.TempDirectory)/PowerShell'
+  #     # make the current user the owner
+  #     sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
+  #   displayName: 'Create $(Agent.TempDirectory)/PowerShell'
 
   - template: SetVersionVariables.yml@self
     parameters:
