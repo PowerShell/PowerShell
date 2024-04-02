@@ -286,10 +286,13 @@
     <value>Missing expression after '{0}'.</value>
   </data>
   <data name="MissingColonAfterArgumentLabel" xml:space="preserve">
-    <value>Expected colon after argument name identifier '{0}' but found '{1}'.</value>
+    <value>Expected colon after argument name identifier "{0}" but found "{1}".</value>
   </data>
   <data name="MissingArgumentAfterLabel" xml:space="preserve">
-    <value>Expected argument value after name identifier '{0}' but found '{1}'.</value>
+    <value>Expected argument value after name identifier "{0}" but found "{1}".</value>
+  </data>
+  <data name="DuplicateArgumentLabel" xml:space="preserve">
+    <value>Found duplicate argument name label "{0}"</value>
   </data>
   <data name="IncompleteDollarVariableReference" xml:space="preserve">
     <value>${{variable}} reference starting is missing the closing '}}'.</value>
