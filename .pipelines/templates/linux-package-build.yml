@@ -87,6 +87,9 @@ jobs:
       $signedDrop = '$(signedDrop)'
       Write-Verbose -Verbose "signedDrop = $signedDrop"
 
+      $unsignedDrop = '$(unsignedDrop)'
+      Write-Verbose -Verbose "unsignedDrop = $unsignedDrop"
+
       Write-Verbose -Message "Init..." -Verbose
 
       $repoRoot = "$env:REPOROOT/PowerShell"
@@ -99,7 +102,7 @@ jobs:
       $psOptionsPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${unsignedDrop}/psoptions/psoptions.json"
 
       if (-not (Test-Path $psOptionsPath)) {
-        throw "PSoptopns file not found at $psOptionsPath"
+        throw "psOptionsPath file not found at $psOptionsPath"
       }
 
       Restore-PSOptions $psOptionsPath
