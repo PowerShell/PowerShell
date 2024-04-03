@@ -2398,7 +2398,7 @@ function New-ILNugetPackageSource
         Write-Log "Copied the built-in modules to contentFiles for the SDK package"
     }
 
-    id ($null -eq $CGManifestPath) {
+    if ($null -eq $CGManifestPath) {
         return
     }
 
