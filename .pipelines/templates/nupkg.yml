@@ -205,8 +205,13 @@ jobs:
       }
     displayName: 'Create NuGet Package for single file'
 
+  - pwsh: |
+      $nupkgOutputPath = Join-Path -Path '$(ob_outputDirectory)' -ChildPath 'nupkg'
+      Get-ChildItem -Path $nupkgOutputPath -Recurse | Out-String | Write-Verbose -Verbose
+    displayName: List artifacts
+
   - task: onebranch.pipeline.signing@1
-    displayName: Sign 1st party files
+    displayName: Sign nupkg files
     inputs:
       command: 'sign'
       cp_code: 'CP-401405'

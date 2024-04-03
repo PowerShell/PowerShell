@@ -69,6 +69,8 @@ extends:
   parameters:
     cloudvault: # https://aka.ms/obpipelines/cloudvault
       enabled: false
+    featureFlags:
+      linuxEsrpSigning: true
     globalSdl:
       disableLegacyManifest: true
       # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
