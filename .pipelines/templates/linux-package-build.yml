@@ -146,10 +146,14 @@ jobs:
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
+  - pwsh: |
+      Get-ChildItem -Path $(ob_outputDirectory) -Recurse
+    displayName: 'List artifacts'
+
   - task: onebranch.pipeline.signing@1
     displayName: Sign deb and rpm packages
     inputs:
       command: 'sign'
       signing_profile: CP-459159-pgpdetached
-      files_to_sign: '**/*.rpm;**\*.deb'
+      files_to_sign: '**/*.rpm;**/*.deb'
       search_root: '$(ob_outputDirectory)'
