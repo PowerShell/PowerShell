@@ -1,0 +1,191 @@
+jobs:
+- job: build_nupkg
+  displayName: Package NuPkgs
+  condition: succeeded()
+  pool:
+    type: windows
+
+  variables:
+    - name: runCodesignValidationInjection
+      value: false
+    - name: nugetMultiFeedWarnLevel
+      value: none
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - name: skipNugetSecurityAnalysis
+      value: true
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)\ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_binskim_enabled
+      value: true
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - group: 'AzDevOpsArtifacts'
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - pwsh: |
+      Get-ChildItem -Path env:
+    displayName: Capture environment
+
+  - template: SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: yes
+      UseJson: no
+
+  - template: shouldSign.yml
+
+  - template: cloneToOfficialPath.yml
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_windows_build_windows_fxdependent_release
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_windows_build_windows_fxdependentWinDesktop_release
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_linux_sign_linux_fxd
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: drop_linux_sign_linux_fxd_x64_alpine
+
+  - powershell: |
+      $content = Get-Content "$env:REPOROOT/global.json" -Raw | ConvertFrom-Json
+      $vstsCommandString = "vso[task.setvariable variable=SDKVersion]$($content.sdk.version)"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: 'Find SDK version from global.json'
+
+  - pwsh: |
+      Import-Module "$env:REPOROOT/build.psm1" -Force
+      # We just need .NET but we fixed this in an urgent situation.
+      Start-PSBootStrap -Verbose
+    displayName: Bootstrap
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+  - pwsh: |
+      $configPath = "$(REPOROOT)/nuget.config"
+      Import-Module '$(REPOROOT)/build.psm1' -Force
+      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "$(REPOROOT)"
+
+      if(-not (Test-Path $configPath))
+      {
+          throw "nuget.config is not created"
+      }
+      Get-Content $configPath | Write-Verbose -Verbose
+    displayName: 'Add nuget.config for Azure DevOps feed for packages'
+    condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
+
+  - task: NuGetToolInstaller@1
+    displayName: 'Install NuGet.exe'
+
+  - pwsh: |
+      Import-Module "$env:REPOROOT/build.psm1" -Force
+      Start-PSBootstrap
+
+      $sharedModules = @('Microsoft.PowerShell.Commands.Management',
+                        'Microsoft.PowerShell.Commands.Utility',
+                        'Microsoft.PowerShell.ConsoleHost',
+                        'Microsoft.PowerShell.Security',
+                        'System.Management.Automation'
+                        )
+
+      $winOnlyModules = @('Microsoft.Management.Infrastructure.CimCmdlets',
+                          'Microsoft.PowerShell.Commands.Diagnostics',
+                          'Microsoft.PowerShell.CoreCLR.Eventing',
+                          'Microsoft.WSMan.Management',
+                          'Microsoft.WSMan.Runtime'
+                          )
+
+      $refAssemblyFolder = Join-Path '$(System.ArtifactsDirectory)' 'RefAssembly'
+      $null = New-Item -Path $refAssemblyFolder -Force -Verbose -Type Directory
+
+      Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release
+
+      $sharedModules | Foreach-Object {
+        $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net9.0\refint\$_.dll"
+        Write-Verbose -Verbose "RefAssembly: $refFile"
+        Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
+        $refDoc = "$env:REPOROOT\src\$_\bin\Release\net9.0\$_.xml"
+        if (-not (Test-Path $refDoc)) {
+          Write-Warning "$refDoc not found"
+          Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net9.0\" | Out-String | Write-Verbose -Verbose
+        }
+        else {
+          Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
+        }
+      }
+
+      Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
+
+      $winOnlyModules | Foreach-Object {
+        $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net9.0\refint\*.dll"
+        Write-Verbose -Verbose 'RefAssembly: $refFile'
+        Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
+        $refDoc = "$env:REPOROOT\src\$_\bin\Release\net9.0\$_.xml"
+        if (-not (Test-Path $refDoc)) {
+          Write-Warning "$refDoc not found"
+          Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net9.0" | Out-String | Write-Verbose -Verbose
+        }
+        else {
+          Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
+        }
+      }
+
+      Get-ChildItem $refAssemblyFolder -Recurse | Out-String | Write-Verbose -Verbose
+
+      # Set RefAssemblyPath path variable
+      $vstsCommandString = "vso[task.setvariable variable=RefAssemblyPath]${refAssemblyFolder}"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: Build reference assemblies
+    env:
+        __DOTNET_RUNTIME_FEED: $(RUNTIME_SOURCEFEED)
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+  - pwsh: |
+      $files = @(
+        "Microsoft.Management.Infrastructure.CimCmdlets.dll"
+        "Microsoft.PowerShell.Commands.Diagnostics.dll"
+        "Microsoft.PowerShell.Commands.Management.dll"
+        "Microsoft.PowerShell.Commands.Utility.dll"
+        "Microsoft.PowerShell.ConsoleHost.dll"
+        "Microsoft.PowerShell.CoreCLR.Eventing.dll"
+        "Microsoft.PowerShell.Security.dll"
+        "Microsoft.PowerShell.SDK.dll"
+        "Microsoft.WSMan.Management.dll"
+        "Microsoft.WSMan.Runtime.dll"
+        "System.Management.Automation.dll"
+      )
+
+      Import-Module -Name $env:REPOROOT\build.psm1
+      Import-Module -Name $env:REPOROOT\tools\packaging
+      Find-DotNet
+
+      Write-Verbose -Verbose "Version == $(Version)"
+
+      $winFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release"
+      Write-Verbose -Verbose "winFxdPath == $winFxdPath"
+
+      $linuxFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd"
+      Write-Verbose -Verbose "linuxFxdPath == $linuxFxdPath"
+
+      $nupkgOutputPath = Join-Path -Path '$(ob_outputDirectory)' -ChildPath 'nupkg'
+      New-Item -Path $nupkgOutputPath -ItemType Directory -Force
+
+      $files | Foreach-Object {
+        $FileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($_)
+        $FilePackagePath = Join-Path -Path $nupkgOutputPath -ChildPath $FileBaseName
+        Write-Verbose -Verbose "FileName to package: $FileName"
+        Write-Verbose -Verbose "FilePackage path: $FilePackagePath"
+        New-ILNugetPackageSource -File $FileName -PackagePath '${{ parameters.PackagePath }}' -PackageVersion '$(Version)' -WinFxdBinPath $winFxdPath -LinuxFxdBinPath $linuxFxdPath -RefAssemblyPath $(RefAssemblyPath)
+      }
+    displayName: 'Create NuGet Package for single file'

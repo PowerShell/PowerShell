@@ -214,6 +214,10 @@ extends:
           packageType: min-size
           jobName: minSize
 
+    - stage: nupkg
+      jobs:
+      - template: /.pipelines/templates/nupkg.yml@self
+
     # - stage: sign_pkgs
     #   dependsOn: [mac_package, windows_package, linux_package]
     #   jobs:
