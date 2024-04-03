@@ -27,10 +27,6 @@ variables:
     value: 1
   - name: ROOT
     value: $(Build.SourcesDirectory)
-  - name: REPOROOT
-    value: $(Build.SourcesDirectory)
-  - name: OUTPUTROOT
-    value: $(REPOROOT)\out
   - name: NUGET_XMLDOC_MODE
     value: none
   - name: nugetMultiFeedWarnLevel

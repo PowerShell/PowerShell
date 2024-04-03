@@ -117,7 +117,7 @@ jobs:
 
       Write-Verbose -Message "Init..." -Verbose
 
-      $repoRoot = "$env:REPOROOT\PowerShell"
+      $repoRoot = "$env:REPOROOT"
       Set-Location $repoRoot
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
