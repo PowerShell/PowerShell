@@ -2346,9 +2346,12 @@ function New-ILNugetPackageSource
 
     CreateNugetPlatformFolder -FileName $FileName -Platform 'win' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $WinFxdBinPath
 
+    Write-Verbose -Verbose "Done creating Windows runtime assemblies for $FileName"
+
     if ($linuxExceptionList -notcontains $FileName )
     {
         CreateNugetPlatformFolder -FileName $FileName -Platform 'unix' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxFxdBinPath
+        Write-Verbose -Verbose "Done creating Linux runtime assemblies for $FileName"
     }
 
     if ($FileName -eq "Microsoft.PowerShell.SDK.dll")
@@ -2399,6 +2402,7 @@ function New-ILNugetPackageSource
     }
 
     if ($null -eq $CGManifestPath) {
+        Write-Verbose -Verbose "CGManifestPath is not provided. Skipping CGManifest creation."
         return
     }
 
