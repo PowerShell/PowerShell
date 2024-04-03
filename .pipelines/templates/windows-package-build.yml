@@ -158,7 +158,7 @@ jobs:
         'arm64' { @('msi', 'zip', 'msix') }
         'fxdependent' { 'fxdependent' }
         'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
-        'minsize' { 'zip' }
+        'minsize' { 'min-size' }
       }
 
       if (-not (Test-Path $(ob_outputDirectory))) {
@@ -174,7 +174,7 @@ jobs:
         Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
       }
 
-      if ($packageTypes -contains 'zip') {
+      if ($packageTypes -contains 'zip' -or $packageTypes -contains 'fxdependent' -or $packageTypes -contains 'min-size') {
         $zipPkgNameFilter = "powershell-*.zip"
         $zipPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $zipPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
         Write-Verbose -Verbose "zipPkgPath: $zipPkgPath"
