@@ -149,6 +149,7 @@ jobs:
         'arm64' { 'win-arm64' }
         'fxdependent' { 'win7-x64' }
         'fxdependentWinDesktop' { 'win7-x64' }
+        'minsize' { 'win7-x64' }
       }
 
       $packageTypes = switch ($runtime) {
