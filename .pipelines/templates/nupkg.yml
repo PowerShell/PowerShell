@@ -172,16 +172,25 @@ jobs:
 
       Write-Verbose -Verbose "Version == $(Version)"
 
-      $winFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release"
+      $winFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release\Signed-fxdependent"
       Write-Verbose -Verbose "winFxdPath == $winFxdPath"
 
-      $linuxFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd"
+      $linuxFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd\Signed-fxdependent"
       Write-Verbose -Verbose "linuxFxdPath == $linuxFxdPath"
 
       $nupkgOutputPath = Join-Path -Path '$(ob_outputDirectory)' -ChildPath 'nupkg'
       New-Item -Path $nupkgOutputPath -ItemType Directory -Force
 
       $files | Foreach-Object {
+
+        if(-not (Test-Path $winFxdPath/$_)) {
+          throw "$winFxdPath/$_ not found"
+        }
+
+        if(-not (Test-Path $linuxFxdPath/$_)) {
+          throw "$linuxFxdPath/$_ not found"
+        }
+
         $FileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($_)
         $FilePackagePath = Join-Path -Path $nupkgOutputPath -ChildPath $FileBaseName
         Write-Verbose -Verbose "FileName to package: $_"
