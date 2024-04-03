@@ -54,7 +54,6 @@ jobs:
       $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
       # Add -SkipReleaseChecks as a mitigation to unblock release.
       # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
-      #$(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -Build -ArtifactName macosBinResults -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
 
       Import-Module ./build.psm1 -Force
       Start-PSBuild -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -Output $(OB_OUTPUTDIRECTORY)
@@ -63,6 +62,7 @@ jobs:
       $psOptPath = "$(OB_OUTPUTDIRECTORY)/psoptions.json"
       Save-PSOptions -PSOptionsPath $psOptPath
 
+      # Since we are using custom pool for macOS, we need to use artifact.upload to publish the artifacts
       Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName]$(OB_OUTPUTDIRECTORY)"
 
       $env:AzDevOpsFeedPAT2 = $null
