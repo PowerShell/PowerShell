@@ -1,14 +1,5 @@
 name: UnifiedPackageBuild-$(Build.BuildId)
-trigger:
-  branches:
-    include:
-    - master
-    - release*
-pr:
-  branches:
-    include:
-    - master
-    - release*
+trigger: none
 
 parameters:
   - name: ForceAzureBlobDelete
