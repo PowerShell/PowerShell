@@ -56,6 +56,20 @@ jobs:
   - download: CoOrdinatedBuildPipeline
     artifact: drop_linux_sign_linux_fxd_x64_alpine
 
+  - pwsh: |
+      Write-Verbose -Verbose "drop_windows_build_windows_fxdependent_release"
+      Get-ChildItem -Path $(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release -Recurse | Out-String | Write-Verbose -Verbose
+
+      Write-Verbose -Verbose "drop_windows_build_windows_fxdependentWinDesktop_release"
+      Get-ChildItem -Path $(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependentWinDesktop_release -Recurse | Out-String | Write-Verbose -Verbose
+
+      Write-Verbose -Verbose "drop_linux_sign_linux_fxd"
+      Get-ChildItem -Path $(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd -Recurse | Out-String | Write-Verbose -Verbose
+
+      Write-Verbose -Verbose "drop_linux_sign_linux_fxd_x64_alpine"
+      Get-ChildItem -Path $(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd_x64_alpine -Recurse | Out-String | Write-Verbose -Verbose
+    displayName: 'Capture download artifacts'
+
   - powershell: |
       $content = Get-Content "$env:REPOROOT/PowerShell/global.json" -Raw | ConvertFrom-Json
       $vstsCommandString = "vso[task.setvariable variable=SDKVersion]$($content.sdk.version)"
