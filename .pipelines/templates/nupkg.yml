@@ -187,5 +187,6 @@ jobs:
         Write-Verbose -Verbose "FileName to package: $_"
         Write-Verbose -Verbose "FilePackage path: $FilePackagePath"
         New-ILNugetPackageSource -File $_ -PackagePath $FilePackagePath -PackageVersion '$(Version)' -WinFxdBinPath $winFxdPath -LinuxFxdBinPath $linuxFxdPath -RefAssemblyPath $(RefAssemblyPath)
+        New-ILNugetPackageFromSource -FileName $_ -PackageVersion '$(Version)' -PackagePath $FilePackagePath
       }
     displayName: 'Create NuGet Package for single file'

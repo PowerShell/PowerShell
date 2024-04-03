@@ -2290,7 +2290,6 @@ function New-ILNugetPackageSource
         [Parameter(Mandatory = $true)]
         [string] $RefAssemblyPath,
 
-        [Parameter(Mandatory = $true)]
         [string] $CGManifestPath
 
     )
@@ -2397,6 +2396,10 @@ function New-ILNugetPackageSource
         }
 
         Write-Log "Copied the built-in modules to contentFiles for the SDK package"
+    }
+
+    id ($null -eq $CGManifestPath) {
+        return
     }
 
     # Create a CGManifest file that lists all dependencies for this package, which is used when creating the SBOM.
