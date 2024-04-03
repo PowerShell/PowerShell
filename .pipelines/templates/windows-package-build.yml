@@ -157,6 +157,7 @@ jobs:
         'arm64' { @('msi', 'zip', 'msix') }
         'fxdependent' { 'fxdependent' }
         'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
+        'minsize' { 'zip' }
       }
 
       if (-not (Test-Path $(ob_outputDirectory))) {
