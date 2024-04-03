@@ -92,7 +92,7 @@ jobs:
 
   - pwsh: |
       $runtime = '$(Runtime)'
-      Write-Verbose -Verbose "$runtime = '$(Runtime)'"
+      Write-Verbose -Verbose "runtime = '$(Runtime)'"
 
       $signedFolder = switch ($runtime) {
         'x64' { 'Signed-win7-x64' }
@@ -112,16 +112,16 @@ jobs:
 
       Start-PSBootstrap -Package
 
-      $signedFilesPath = if ($env:RUNTIME -eq 'minsize') {
+      $signedFilesPath, $psoptionsFilePath = if ($env:RUNTIME -eq 'minsize') {
           "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\$signedFolder"
+          "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\psoptions\psoptions.json"
         }
         else {
           "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\$signedFolder"
+          "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\psoptions\psoptions.json"
         }
 
       Write-Verbose -Verbose "signedFilesPath: $signedFilesPath"
-
-      $psoptionsFilePath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\psoptions\psoptions.json"
       Write-Verbose -Verbose "psoptionsFilePath: $psoptionsFilePath"
 
       Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
