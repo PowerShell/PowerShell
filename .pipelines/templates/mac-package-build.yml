@@ -127,5 +127,3 @@ jobs:
     displayName: 'Package ${{ parameters.buildArchitecture}}'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

@@ -192,4 +192,10 @@ jobs:
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
-  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign MSI packages
+    inputs:
+      command: 'sign'
+      signing_profile: external_distribution
+      files_to_sign: '**\*.msi'
+      search_root: '$(ob_outputDirectory)'
