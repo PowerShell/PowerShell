@@ -196,15 +196,6 @@ jobs:
       New-Item -Path $nupkgOutputPath -ItemType Directory -Force
 
       $files | Foreach-Object {
-
-        if(-not (Test-Path $winFxdPath/$_)) {
-          throw "$winFxdPath/$_ not found"
-        }
-
-        if(-not (Test-Path $linuxFxdPath/$_)) {
-          throw "$linuxFxdPath/$_ not found"
-        }
-
         $FileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($_)
         $FilePackagePath = Join-Path -Path $nupkgOutputPath -ChildPath $FileBaseName
         Write-Verbose -Verbose "FileName to package: $_"
