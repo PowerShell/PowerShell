@@ -100,6 +100,7 @@ jobs:
         'arm64' { 'Signed-win-arm64' }
         'fxdependent' { 'Signed-fxdependent' }
         'fxdependentWinDesktop' { 'Signed-fxdependent-win-desktop' }
+        'minsize' { 'Signed-win7-x64' }
       }
 
       Write-Verbose -Message "Init..." -Verbose
@@ -111,7 +112,12 @@ jobs:
 
       Start-PSBootstrap -Package
 
-      $signedFilesPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\$signedFolder"
+      $signedFilesPath = if ($env:RUNTIME -eq 'minsize') {
+        "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\$signedFolder"
+      else {
+        "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\$signedFolder"
+      }
+
       Write-Verbose -Verbose "signedFilesPath: $signedFilesPath"
 
       $psoptionsFilePath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\psoptions\psoptions.json"
