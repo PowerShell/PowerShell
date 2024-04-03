@@ -908,6 +908,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules\\PSReadLine\\.signature.p7s",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "mscordaccore_*.dll",
     "FileType": "NonProduct"
   },
