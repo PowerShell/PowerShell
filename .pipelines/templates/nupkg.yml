@@ -57,14 +57,14 @@ jobs:
     artifact: drop_linux_sign_linux_fxd_x64_alpine
 
   - powershell: |
-      $content = Get-Content "$env:REPOROOT/global.json" -Raw | ConvertFrom-Json
+      $content = Get-Content "$env:REPOROOT/PowerShell/global.json" -Raw | ConvertFrom-Json
       $vstsCommandString = "vso[task.setvariable variable=SDKVersion]$($content.sdk.version)"
       Write-Host "sending " + $vstsCommandString
       Write-Host "##$vstsCommandString"
     displayName: 'Find SDK version from global.json'
 
   - pwsh: |
-      Import-Module "$env:REPOROOT/build.psm1" -Force
+      Import-Module "$env:REPOROOT/PowerShell/build.psm1" -Force
       # We just need .NET but we fixed this in an urgent situation.
       Start-PSBootStrap -Verbose
     displayName: Bootstrap
@@ -72,9 +72,9 @@ jobs:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
   - pwsh: |
-      $configPath = "$(REPOROOT)/nuget.config"
-      Import-Module '$(REPOROOT)/build.psm1' -Force
-      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "$(REPOROOT)"
+      $configPath = "$(REPOROOT)/PowerShell/nuget.config"
+      Import-Module '$(REPOROOT)/PowerShell/build.psm1' -Force
+      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "$(REPOROOT)/PowerShell"
 
       if(-not (Test-Path $configPath))
       {
@@ -88,7 +88,7 @@ jobs:
     displayName: 'Install NuGet.exe'
 
   - pwsh: |
-      Import-Module "$env:REPOROOT/build.psm1" -Force
+      Import-Module "$env:REPOROOT/PowerShell/build.psm1" -Force
       Start-PSBootstrap
 
       $sharedModules = @('Microsoft.PowerShell.Commands.Management',
@@ -111,13 +111,13 @@ jobs:
       Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release
 
       $sharedModules | Foreach-Object {
-        $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net9.0\refint\$_.dll"
+        $refFile = Get-ChildItem -Path "$env:REPOROOT\PowerShell\src\$_\obj\Release\net9.0\refint\$_.dll"
         Write-Verbose -Verbose "RefAssembly: $refFile"
         Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-        $refDoc = "$env:REPOROOT\src\$_\bin\Release\net9.0\$_.xml"
+        $refDoc = "$env:REPOROOT\PowerShell\src\$_\bin\Release\net9.0\$_.xml"
         if (-not (Test-Path $refDoc)) {
           Write-Warning "$refDoc not found"
-          Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net9.0\" | Out-String | Write-Verbose -Verbose
+          Get-ChildItem -Path "$env:REPOROOT\PowerShell\src\$_\bin\Release\net9.0\" | Out-String | Write-Verbose -Verbose
         }
         else {
           Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
@@ -127,13 +127,13 @@ jobs:
       Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
 
       $winOnlyModules | Foreach-Object {
-        $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net9.0\refint\*.dll"
+        $refFile = Get-ChildItem -Path "$env:REPOROOT\PowerShell\src\$_\obj\Release\net9.0\refint\*.dll"
         Write-Verbose -Verbose 'RefAssembly: $refFile'
         Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-        $refDoc = "$env:REPOROOT\src\$_\bin\Release\net9.0\$_.xml"
+        $refDoc = "$env:REPOROOT\PowerShell\src\$_\bin\Release\net9.0\$_.xml"
         if (-not (Test-Path $refDoc)) {
           Write-Warning "$refDoc not found"
-          Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net9.0" | Out-String | Write-Verbose -Verbose
+          Get-ChildItem -Path "$env:REPOROOT\PowerShell\src\$_\bin\Release\net9.0" | Out-String | Write-Verbose -Verbose
         }
         else {
           Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
@@ -166,8 +166,8 @@ jobs:
         "System.Management.Automation.dll"
       )
 
-      Import-Module -Name $env:REPOROOT\build.psm1
-      Import-Module -Name $env:REPOROOT\tools\packaging
+      Import-Module -Name $env:REPOROOT\PowerShell\build.psm1
+      Import-Module -Name $env:REPOROOT\PowerShell\tools\packaging
       Find-DotNet
 
       Write-Verbose -Verbose "Version == $(Version)"
