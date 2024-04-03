@@ -5,7 +5,7 @@ parameters:
   jobName: 'deb'
 
 jobs:
-- job: package_linux_${{ parameters.jobName }}
+- job: ${{ parameters.jobName }}
   displayName: Package linux ${{ parameters.packageType }}
   condition: succeeded()
   pool:
@@ -43,14 +43,6 @@ jobs:
   - pwsh: |
       Get-ChildItem -Path env:
     displayName: Capture environment
-
-  # - pwsh: |
-  #     # create folder
-  #     sudo mkdir "$(Agent.TempDirectory)/PowerShell"
-
-  #     # make the current user the owner
-  #     sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
-  #   displayName: 'Create $(Agent.TempDirectory)/PowerShell'
 
   - template: SetVersionVariables.yml@self
     parameters:

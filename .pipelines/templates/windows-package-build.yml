@@ -52,11 +52,11 @@ jobs:
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_${{ parameters.runtime }}_release
-    condition: ne(variables['Runtime'], 'minSize')
+    condition: ${{ ne(parameters.runtime, 'minSize') }}
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_x64_${{ parameters.runtime }}
-    condition: eq(variables['Runtime'], 'minSize')
+    condition: ${{ eq(parameters.runtime, 'minSize') }}
 
   - pwsh: |
       Write-Verbose -Verbose "signed artifacts"

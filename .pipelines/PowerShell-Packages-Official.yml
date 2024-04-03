@@ -213,3 +213,8 @@ extends:
           signedDrop: 'drop_linux_sign_linux_x64_minSize'
           packageType: min-size
           jobName: minSize
+
+    # - stage: sign_pkgs
+    #   dependsOn: [mac_package, windows_package, linux_package]
+    #   jobs:
+    #   - template: /.pipelines/templates/sign-pkgs.yml@self
