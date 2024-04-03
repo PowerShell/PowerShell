@@ -2353,6 +2353,9 @@ function New-ILNugetPackageSource
         CreateNugetPlatformFolder -FileName $FileName -Platform 'unix' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxFxdBinPath
         Write-Verbose -Verbose "Done creating Linux runtime assemblies for $FileName"
     }
+    else {
+        Write-Verbose -Verbose "Skipping creating Linux runtime assemblies for $FileName"
+    }
 
     if ($FileName -eq "Microsoft.PowerShell.SDK.dll")
     {
@@ -2399,6 +2402,9 @@ function New-ILNugetPackageSource
         }
 
         Write-Log "Copied the built-in modules to contentFiles for the SDK package"
+    }
+    else {
+        Write-Verbose -Verbose "Skipping copying the built-in modules and reference assemblies for $FileName"
     }
 
     if ($null -eq $CGManifestPath) {
