@@ -204,3 +204,11 @@ jobs:
         New-ILNugetPackageFromSource -FileName $_ -PackageVersion '$(Version)' -PackagePath $FilePackagePath
       }
     displayName: 'Create NuGet Package for single file'
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign 1st party files
+    inputs:
+      command: 'sign'
+      cp_code: 'CP-401405'
+      files_to_sign: '**\*.nupkg'
+      search_root: '$(ob_outputDirectory)\nupkg'
