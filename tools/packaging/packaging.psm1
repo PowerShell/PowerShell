@@ -2407,7 +2407,7 @@ function New-ILNugetPackageSource
         Write-Verbose -Verbose "Skipping copying the built-in modules and reference assemblies for $FileName"
     }
 
-    if ($null -eq $CGManifestPath) {
+    if (-not $PSBoundParameters.ContainsKey("CGManifestPath")) {
         Write-Verbose -Verbose "CGManifestPath is not provided. Skipping CGManifest creation."
         return
     }
