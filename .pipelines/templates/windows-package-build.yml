@@ -113,10 +113,11 @@ jobs:
       Start-PSBootstrap -Package
 
       $signedFilesPath = if ($env:RUNTIME -eq 'minsize') {
-        "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\$signedFolder"
-      else {
-        "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\$signedFolder"
-      }
+          "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_x64_${runtime}\$signedFolder"
+        }
+        else {
+          "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_${runtime}_release\$signedFolder"
+        }
 
       Write-Verbose -Verbose "signedFilesPath: $signedFilesPath"
 
