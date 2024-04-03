@@ -21,3 +21,5 @@ steps:
     Write-Host "sending " + $vstsCommandString
     Write-Host "##$vstsCommandString"
   displayName: 'Set SHOULD_SIGN Variable'
+  env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase

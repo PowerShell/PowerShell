@@ -33,10 +33,14 @@ jobs:
   steps:
   - checkout: self
     clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
       Get-ChildItem -Path env:
     displayName: Capture environment
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - template: SetVersionVariables.yml@self
     parameters:
@@ -53,10 +57,14 @@ jobs:
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_${{ parameters.runtime }}_release
     condition: ${{ ne(parameters.runtime, 'minSize') }}
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_x64_${{ parameters.runtime }}
     condition: ${{ eq(parameters.runtime, 'minSize') }}
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
       Write-Verbose -Verbose "signed artifacts"
@@ -64,6 +72,8 @@ jobs:
     displayName: 'Capture Downloaded Artifacts'
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
       # cleanup previous install
@@ -89,6 +99,8 @@ jobs:
       Invoke-RestMethod -Uri $msixUrl -OutFile '$(Pipeline.Workspace)\makeappx.zip'
       Expand-Archive '$(Pipeline.Workspace)\makeappx.zip' -destination '\' -Force
     displayName: Install packaging tools
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
       $runtime = '$(Runtime)'
@@ -191,10 +203,13 @@ jobs:
     displayName: 'Package ${{ parameters.buildArchitecture}}'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
       Get-ChildItem -Path $(ob_outputDirectory) -Recurse
     displayName: 'List artifacts'
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - task: onebranch.pipeline.signing@1
     displayName: Sign MSI packages
