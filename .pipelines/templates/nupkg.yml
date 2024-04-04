@@ -239,7 +239,7 @@ jobs:
       command: 'sign'
       cp_code: 'CP-401405'
       files_to_sign: '**\*.nupkg'
-      search_root: '$(ob_outputDirectory)\nupkg'
+      search_root: '$(Pipeline.Workspace)\nupkg'
 
   - pwsh: |
       if (-not (Test-Path '$(ob_outputDirectory)')) {
