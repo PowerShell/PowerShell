@@ -176,7 +176,60 @@ jobs:
         New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
       }
 
+      Set-Location $repoRoot
+
       Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
+
+      # if ($packageTypes -contains 'msi') {
+      #   $msiPkgNameFilter = "powershell-*.msi"
+      #   $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msiPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+      #   Write-Verbose -Verbose "msiPkgPath: $msiPkgPath"
+      #   Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      # }
+
+      # if ($packageTypes -contains 'zip' -or $packageTypes -contains 'fxdependent' -or $packageTypes -contains 'min-size') {
+      #   $zipPkgNameFilter = "powershell-*.zip"
+      #   $zipPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $zipPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+      #   Write-Verbose -Verbose "zipPkgPath: $zipPkgPath"
+      #   Copy-Item -Path $zipPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      # }
+
+      # if ($packageTypes -contains 'msix') {
+      #   $msixPkgNameFilter = "powershell-*.msix"
+      #   $msixPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msixPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+      #   Write-Verbose -Verbose "msixPkgPath: $msixPkgPath"
+      #   Copy-Item -Path $msixPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      # }
+
+    displayName: 'Package ${{ parameters.buildArchitecture}}'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign MSI packages
+    inputs:
+      command: 'sign'
+      signing_profile: external_distribution
+      files_to_sign: '**\*.msi'
+      search_root: '$(Pipeline.Workspace)'
+
+  - pwsh: |
+      $runtime = '$(Runtime)'
+      Write-Verbose -Verbose "runtime = '$(Runtime)'"
+
+      $packageTypes = switch ($runtime) {
+        'x64' { @('msi', 'zip', 'msix') }
+        'x86' { @('msi', 'zip', 'msix') }
+        'arm64' { @('msi', 'zip', 'msix') }
+        'fxdependent' { 'fxdependent' }
+        'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
+        'minsize' { 'min-size' }
+      }
+
+      if (-not (Test-Path $(ob_outputDirectory))) {
+        New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
+      }
 
       if ($packageTypes -contains 'msi') {
         $msiPkgNameFilter = "powershell-*.msi"
@@ -198,11 +251,7 @@ jobs:
         Write-Verbose -Verbose "msixPkgPath: $msixPkgPath"
         Copy-Item -Path $msixPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
       }
-
-    displayName: 'Package ${{ parameters.buildArchitecture}}'
-    env:
-      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+    displayName: Copy to output directory
 
   - pwsh: |
       Get-ChildItem -Path $(ob_outputDirectory) -Recurse
@@ -210,10 +259,3 @@ jobs:
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - task: onebranch.pipeline.signing@1
-    displayName: Sign MSI packages
-    inputs:
-      command: 'sign'
-      signing_profile: external_distribution
-      files_to_sign: '**\*.msi'
-      search_root: '$(ob_outputDirectory)'
