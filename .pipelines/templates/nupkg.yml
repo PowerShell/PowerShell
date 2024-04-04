@@ -103,7 +103,9 @@ jobs:
   #     ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
-      $repoRoot = "$env:REPOROOT"
+      $repoRoot = "$(PowerShellRoot)"
+      Write-Verbose -Verbose "repoRoot: $repoRoot"
+
       $configPath = "$repoRoot/nuget.config"
       Import-Module '$repoRoot/build.psm1' -Force
       New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination "$(REPOROOT)/PowerShell"
@@ -122,7 +124,7 @@ jobs:
     displayName: 'Install NuGet.exe'
 
   - pwsh: |
-      Import-Module "$env:REPOROOT/build.psm1" -Force
+      Import-Module "$(PowerShellRoot)/build.psm1" -Force
       Start-PSBootstrap
 
       $sharedModules = @('Microsoft.PowerShell.Commands.Management',
@@ -145,13 +147,13 @@ jobs:
       Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release
 
       $sharedModules | Foreach-Object {
-        $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net9.0\refint\$_.dll"
+        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net9.0\refint\$_.dll"
         Write-Verbose -Verbose "RefAssembly: $refFile"
         Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-        $refDoc = "$env:REPOROOT\src\$_\bin\Release\net9.0\$_.xml"
+        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net9.0\$_.xml"
         if (-not (Test-Path $refDoc)) {
           Write-Warning "$refDoc not found"
-          Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net9.0\" | Out-String | Write-Verbose -Verbose
+          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net9.0\" | Out-String | Write-Verbose -Verbose
         }
         else {
           Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
@@ -161,13 +163,13 @@ jobs:
       Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
 
       $winOnlyModules | Foreach-Object {
-        $refFile = Get-ChildItem -Path "$env:REPOROOT\src\$_\obj\Release\net9.0\refint\*.dll"
+        $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net9.0\refint\*.dll"
         Write-Verbose -Verbose 'RefAssembly: $refFile'
         Copy-Item -Path $refFile -Destination "$refAssemblyFolder\$_.dll" -Verbose
-        $refDoc = "$env:REPOROOT\src\$_\bin\Release\net9.0\$_.xml"
+        $refDoc = "$(PowerShellRoot)\src\$_\bin\Release\net9.0\$_.xml"
         if (-not (Test-Path $refDoc)) {
           Write-Warning "$refDoc not found"
-          Get-ChildItem -Path "$env:REPOROOT\src\$_\bin\Release\net9.0" | Out-String | Write-Verbose -Verbose
+          Get-ChildItem -Path "$(PowerShellRoot)\src\$_\bin\Release\net9.0" | Out-String | Write-Verbose -Verbose
         }
         else {
           Copy-Item -Path $refDoc -Destination "$refAssemblyFolder\$_.xml" -Verbose
@@ -200,8 +202,8 @@ jobs:
         "System.Management.Automation.dll"
       )
 
-      Import-Module -Name $env:REPOROOT\build.psm1
-      Import-Module -Name $env:REPOROOT\tools\packaging
+      Import-Module -Name '$(PowerShellRoot)\build.psm1'
+      Import-Module -Name '$(PowerShellRoot)\tools\packaging'
       Find-DotNet
 
       Write-Verbose -Verbose "Version == $(Version)"
