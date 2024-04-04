@@ -131,7 +131,7 @@ jobs:
       Set-Location -Path '$(PowerShellRoot)'
       Import-Module "$(PowerShellRoot)/build.psm1" -Force
 
-      Start-PSBootstrap
+      Start-PSBootstrap -Verbose
 
       $sharedModules = @('Microsoft.PowerShell.Commands.Management',
                         'Microsoft.PowerShell.Commands.Utility',
