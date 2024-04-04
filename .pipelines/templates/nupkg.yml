@@ -23,6 +23,7 @@ jobs:
     - name: ob_sdl_credscan_suppressionsFile
       value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
     - group: 'AzDevOpsArtifacts'
+    - group: DotNetPrivateBuildAccess
 
   steps:
   - checkout: self
