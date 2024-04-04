@@ -2121,7 +2121,7 @@ namespace Microsoft.PowerShell.Commands
                     if (PassThru)
                     {
                         string msg = StringUtil.Format(ProcessResources.FailedToCreateProcessObject, e.Message);
-                        WriteWarning(msg);
+                        WriteDebug(msg);
                     }
                 }
 
