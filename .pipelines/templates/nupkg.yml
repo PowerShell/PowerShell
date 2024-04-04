@@ -50,21 +50,25 @@ jobs:
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_fxdependent_release
+    displayName: 'Download drop_windows_build_windows_fxdependent_release'
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_fxdependentWinDesktop_release
+    displayName: 'Download drop_windows_build_windows_fxdependentWinDesktop_release'
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_linux_sign_linux_fxd
+    displayName: 'Download drop_linux_sign_linux_fxd'
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_linux_sign_linux_fxd_x64_alpine
+    displayName: 'Download drop_linux_sign_linux_fxd_x64_alpine'
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 

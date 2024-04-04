@@ -62,11 +62,13 @@ jobs:
 
   - download: CoOrdinatedBuildPipeline
     artifact: ${{ parameters.unsignedDrop }}
+    displayName: 'Download unsigned artifacts'
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - download: CoOrdinatedBuildPipeline
     artifact: ${{ parameters.signedDrop }}
+    displayName: 'Download signed artifacts'
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 

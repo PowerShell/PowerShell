@@ -56,12 +56,14 @@ jobs:
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_${{ parameters.runtime }}_release
+    displayName: Download signed artifacts
     condition: ${{ ne(parameters.runtime, 'minSize') }}
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_x64_${{ parameters.runtime }}
+    displayName: Download minsize signed artifacts
     condition: ${{ eq(parameters.runtime, 'minSize') }}
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
