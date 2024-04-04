@@ -192,7 +192,7 @@ jobs:
       $linuxFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd\Signed-fxdependent"
       Write-Verbose -Verbose "linuxFxdPath == $linuxFxdPath"
 
-      $nupkgOutputPath = Join-Path -Path '$(ob_outputDirectory)' -ChildPath 'nupkg'
+      $nupkgOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'nupkg'
       New-Item -Path $nupkgOutputPath -ItemType Directory -Force
 
       $files | Foreach-Object {
@@ -205,11 +205,6 @@ jobs:
       }
     displayName: 'Create NuGet Package for single file'
 
-  - pwsh: |
-      $nupkgOutputPath = Join-Path -Path '$(ob_outputDirectory)' -ChildPath 'nupkg'
-      Get-ChildItem -Path $nupkgOutputPath -Recurse | Out-String | Write-Verbose -Verbose
-    displayName: List artifacts
-
   - task: onebranch.pipeline.signing@1
     displayName: Sign nupkg files
     inputs:
@@ -217,3 +212,20 @@ jobs:
       cp_code: 'CP-401405'
       files_to_sign: '**\*.nupkg'
       search_root: '$(ob_outputDirectory)\nupkg'
+
+  - pwsh: |
+      if (-not (Test-Path '$(ob_outputDirectory)') {
+        New-Item -ItemType Directory -Path '$(ob_outputDirectory)' -Force
+      }
+
+      $nupkgOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'nupkg'
+      Get-ChildItem -Path $nupkgOutputPath -Filter *.nupkg | Copy-Item -Destination '$(ob_outputDirectory)' -Force -Verbose
+    displayName: Copy artifacts to output directory
+
+  - pwsh: |
+      $nupkgOutputPath = Join-Path -Path '$(ob_outputDirectory)' -ChildPath 'nupkg'
+      Get-ChildItem -Path $nupkgOutputPath -Recurse | Out-String | Write-Verbose -Verbose
+    displayName: List artifacts
+
+
+

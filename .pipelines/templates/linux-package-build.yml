@@ -160,7 +160,7 @@ jobs:
       $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgFilter -Recurse -File | Select-Object -ExpandProperty FullName
       Write-Verbose -Verbose "pkgPath: $pkgPath"
       Copy-Item -Path $pkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
-    displayName: 'Package ${{ parameters.packageType}}'
+    displayName: 'Copy artifacts to output directory'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
