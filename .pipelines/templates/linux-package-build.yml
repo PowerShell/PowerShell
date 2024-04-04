@@ -39,10 +39,14 @@ jobs:
   steps:
   - checkout: self
     clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
       Get-ChildItem -Path env:
     displayName: Capture environment
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - template: SetVersionVariables.yml@self
     parameters:
@@ -58,9 +62,13 @@ jobs:
 
   - download: CoOrdinatedBuildPipeline
     artifact: ${{ parameters.unsignedDrop }}
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - download: CoOrdinatedBuildPipeline
     artifact: ${{ parameters.signedDrop }}
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
       Write-Verbose -Verbose "Unsigned artifacts"
@@ -71,6 +79,8 @@ jobs:
     displayName: 'Capture Downloaded Artifacts'
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
       $packageType = '$(PackageType)'
@@ -144,6 +154,7 @@ jobs:
     displayName: 'Package ${{ parameters.packageType}}'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - task: onebranch.pipeline.signing@1
     displayName: Sign deb and rpm packages
