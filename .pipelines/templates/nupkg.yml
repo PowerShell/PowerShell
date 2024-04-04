@@ -247,12 +247,12 @@ jobs:
       }
 
       $nupkgOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'nupkg'
-      Get-ChildItem -Path $nupkgOutputPath -Filter *.nupkg | Copy-Item -Destination '$(ob_outputDirectory)' -Force -Verbose
+      Get-ChildItem -Path $nupkgOutputPath -Filter *.nupkg -Recurse | Copy-Item -Destination '$(ob_outputDirectory)' -Force -Verbose
     displayName: Copy artifacts to output directory
 
   - pwsh: |
-      $nupkgOutputPath = Join-Path -Path '$(ob_outputDirectory)' -ChildPath 'nupkg'
-      Get-ChildItem -Path $nupkgOutputPath -Recurse | Out-String | Write-Verbose -Verbose
+      $nupkgOutputPath = '$(ob_outputDirectory)'
+      Get-ChildItem -Path $nupkgOutputPath | Out-String | Write-Verbose -Verbose
     displayName: List artifacts
 
 
