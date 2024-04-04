@@ -276,7 +276,7 @@ namespace System.Management.Automation.Language
             internal readonly TypeBuilder _staticHelpersTypeBuilder;
             private readonly Dictionary<string, PropertyMemberAst> _definedProperties;
             private readonly Dictionary<string, List<Tuple<FunctionMemberAst, Type[]>>> _definedMethods;
-            private HashSet<Tuple<string, Type>> _interfaceProperties;
+            private HashSet<Tuple<string, Type>> _abstractProperties;
             internal readonly List<(string fieldName, IParameterMetadataProvider bodyAst, bool isStatic)> _fieldsToInitForMemberFunctions;
             private bool _baseClassHasDefaultCtor;
 
@@ -446,9 +446,9 @@ namespace System.Management.Automation.Language
 
             private bool ShouldImplementProperty(string name, Type type)
             {
-                if (_interfaceProperties == null)
+                if (_abstractProperties == null)
                 {
-                    _interfaceProperties = new HashSet<Tuple<string, Type>>();
+                    _abstractProperties = new HashSet<Tuple<string, Type>>();
                     var allInterfaces = new HashSet<Type>();
 
                     // TypeBuilder.GetInterfaces() returns only the interfaces that was explicitly passed to its constructor.
@@ -467,12 +467,23 @@ namespace System.Management.Automation.Language
                     {
                         foreach (var property in interfaceType.GetProperties())
                         {
-                            _interfaceProperties.Add(Tuple.Create(property.Name, property.PropertyType));
+                            _abstractProperties.Add(Tuple.Create(property.Name, property.PropertyType));
+                        }
+                    }
+
+                    if (_typeBuilder.BaseType.IsAbstract)
+                    {
+                        foreach (var property in _typeBuilder.BaseType.GetProperties())
+                        {
+                            if (property.GetAccessors().Any(m => m.IsAbstract))
+                            {
+                                _abstractProperties.Add(Tuple.Create(property.Name, property.PropertyType));
+                            }
                         }
                     }
                 }
 
-                return _interfaceProperties.Contains(Tuple.Create(name, type));
+                return _abstractProperties.Contains(Tuple.Create(name, type));
             }
 
             public void DefineMembers()
