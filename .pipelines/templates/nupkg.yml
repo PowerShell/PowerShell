@@ -111,7 +111,7 @@ jobs:
       Write-Verbose -Verbose "repoRoot: $repoRoot"
 
       $configPath = "$repoRoot/nuget.config"
-      Import-Module '$repoRoot/build.psm1' -Force
+      Import-Module "$repoRoot/build.psm1" -Force
       New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination "$(REPOROOT)/PowerShell"
 
       if(-not (Test-Path $configPath))
