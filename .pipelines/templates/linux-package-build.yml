@@ -138,6 +138,25 @@ jobs:
 
       Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
 
+      $vstsCommandString = "vso[task.setvariable variable=PackageFilter]$pkgFilter"
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
+    displayName: 'Package ${{ parameters.packageType}}'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign deb and rpm packages
+    inputs:
+      command: 'sign'
+      signing_profile: CP-459159-pgpdetached
+      files_to_sign: '**/*.rpm;**/*.deb'
+      search_root: '$(Pipeline.Workspace)'
+
+  - pwsh: |
+      $pkgFilter = '$(PackageFilter)'
+      Write-Verbose -Verbose "pkgFilter: $pkgFilter"
+
       $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgFilter -Recurse -File | Select-Object -ExpandProperty FullName
       Write-Verbose -Verbose "pkgPath: $pkgPath"
       Copy-Item -Path $pkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
@@ -148,11 +167,3 @@ jobs:
   - pwsh: |
       Get-ChildItem -Path $(ob_outputDirectory) -Recurse
     displayName: 'List artifacts'
-
-  - task: onebranch.pipeline.signing@1
-    displayName: Sign deb and rpm packages
-    inputs:
-      command: 'sign'
-      signing_profile: CP-459159-pgpdetached
-      files_to_sign: '**/*.rpm;**/*.deb'
-      search_root: '$(ob_outputDirectory)'
