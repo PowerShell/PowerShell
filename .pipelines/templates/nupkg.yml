@@ -112,7 +112,7 @@ jobs:
 
       $configPath = "$repoRoot/nuget.config"
       Import-Module "$repoRoot/build.psm1" -Force
-      New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination "$(REPOROOT)/PowerShell"
+      New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination "$(PowerShellRoot)"
 
       if(-not (Test-Path $configPath))
       {
