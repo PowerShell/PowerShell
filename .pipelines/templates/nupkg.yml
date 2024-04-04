@@ -242,7 +242,7 @@ jobs:
       search_root: '$(ob_outputDirectory)\nupkg'
 
   - pwsh: |
-      if (-not (Test-Path '$(ob_outputDirectory)') {
+      if (-not (Test-Path '$(ob_outputDirectory)')) {
         New-Item -ItemType Directory -Path '$(ob_outputDirectory)' -Force
       }
 
