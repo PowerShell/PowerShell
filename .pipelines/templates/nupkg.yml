@@ -84,27 +84,28 @@ jobs:
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - pwsh: |
-      $content = Get-Content "$env:REPOROOT/global.json" -Raw | ConvertFrom-Json
-      $vstsCommandString = "vso[task.setvariable variable=SDKVersion]$($content.sdk.version)"
-      Write-Host "sending " + $vstsCommandString
-      Write-Host "##$vstsCommandString"
-    displayName: 'Find SDK version from global.json'
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+  # - pwsh: |
+  #     $content = Get-Content "$env:REPOROOT/global.json" -Raw | ConvertFrom-Json
+  #     $vstsCommandString = "vso[task.setvariable variable=SDKVersion]$($content.sdk.version)"
+  #     Write-Host "sending " + $vstsCommandString
+  #     Write-Host "##$vstsCommandString"
+  #   displayName: 'Find SDK version from global.json'
+  #   env:
+  #     ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  # - pwsh: |
+  #     Import-Module "$env:REPOROOT/build.psm1" -Force
+  #     # We just need .NET but we fixed this in an urgent situation.
+  #     Start-PSBootStrap -Verbose
+  #   displayName: Bootstrap
+  #   env:
+  #     __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+  #     ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - pwsh: |
-      Import-Module "$env:REPOROOT/build.psm1" -Force
-      # We just need .NET but we fixed this in an urgent situation.
-      Start-PSBootStrap -Verbose
-    displayName: Bootstrap
-    env:
-      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
-
-  - pwsh: |
-      $configPath = "$(REPOROOT)/nuget.config"
-      Import-Module '$(REPOROOT)/build.psm1' -Force
+      $repoRoot = "$env:REPOROOT"
+      $configPath = "$repoRoot/nuget.config"
+      Import-Module '$repoRoot/build.psm1' -Force
       New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination "$(REPOROOT)/PowerShell"
 
       if(-not (Test-Path $configPath))
@@ -113,7 +114,7 @@ jobs:
       }
       Get-Content $configPath | Write-Verbose -Verbose
     displayName: 'Add nuget.config for Azure DevOps feed for packages'
-    condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
+    condition: and(succeededOrFailed(), ne(variables['PowerShellCore_PublicPackages'], ''))
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
