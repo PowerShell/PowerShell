@@ -266,11 +266,14 @@ jobs:
 
         New-GlobalToolNupkgSource -PackageType $PackageType -PackageVersion '$(Version)' -LinuxBinPath $linuxFxdPath -WindowsBinPath $winFxdPath -WindowsDesktopBinPath $winDesktopFxdPath -AlpineBinPath $alpineFxdPath -SkipCGManifest
 
-        Write-Verbose -Verbose "Capture environment variables after Global Tool package source is created."
-        Get-ChildItem -Path env:\GlobalTool* | Out-String | Write-Verbose -Verbose
+        Write-Verbose -Verbose "GlobalToolNuspecSourcePath = $global:GlobalToolNuSpecSourcePath"
+        Write-Verbose -Verbose "GlobalToolPkgName = $global:GlobalToolPkgName"
 
         Write-Verbose -Verbose "Starting global tool package creation for $PackageType"
-        New-GlobalToolNupkgFromSource -PackageNuSpecPath "$env:GlobalToolNuSpecSourcePath" -PackageName "$env:GlobalToolPkgName" -DestinationPath $gblToolOutputPath
+        New-GlobalToolNupkgFromSource -PackageNuSpecPath "$global:GlobalToolNuSpecSourcePath" -PackageName "$global:GlobalToolPkgName" -DestinationPath $gblToolOutputPath
+        Write-Verbose -Verbose "Global tool package created for $PackageType"
+        $global:GlobalToolNuSpecSourcePath = $null
+        $global:GlobalToolPkgName = $null
       }
     displayName: 'Create global tools'
 

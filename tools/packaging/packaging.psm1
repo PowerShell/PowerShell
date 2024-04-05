@@ -4366,12 +4366,14 @@ function New-GlobalToolNupkgSource
     Write-Log "New-GlobalToolNupkgSource: Creating NuSpec source path VSTS variable: $pkgNuSpecSourcePathVar"
     Write-Verbose -Verbose "sending: [task.setvariable variable=$pkgNuSpecSourcePathVar]$RootFolder"
     Write-Host "##vso[task.setvariable variable=$pkgNuSpecSourcePathVar]$RootFolder"
+    $global:GlobalToolNuSpecSourcePath = $RootFolder
 
     # Set VSTS environment variable for package Name.
     $pkgNameVar = "GlobalToolPkgName"
     Write-Log "New-GlobalToolNupkgSource: Creating current package name variable: $pkgNameVar"
     Write-Verbose -Verbose "sending: vso[task.setvariable variable=$pkgNameVar]$PackageName"
     Write-Host "##vso[task.setvariable variable=$pkgNameVar]$PackageName"
+    $global:GlobalToolPkgName = $PackageName
 
     if ($SkipCGManifest.IsPresent) {
         Write-Verbose -Verbose "New-GlobalToolNupkgSource: Skipping CGManifest creation."
