@@ -54,7 +54,17 @@ jobs:
       $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
       # Add -SkipReleaseChecks as a mitigation to unblock release.
       # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
-      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
+
+      Import-Module ./build.psm1 -Force
+      Start-PSBuild -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -Output $(OB_OUTPUTDIRECTORY)
+      $artifactName = "macosBinResults-${{ parameters.buildArchitecture }}"
+
+      $psOptPath = "$(OB_OUTPUTDIRECTORY)/psoptions.json"
+      Save-PSOptions -PSOptionsPath $psOptPath
+
+      # Since we are using custom pool for macOS, we need to use artifact.upload to publish the artifacts
+      Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName]$(OB_OUTPUTDIRECTORY)"
+
       $env:AzDevOpsFeedPAT2 = $null
     displayName: 'Build'
     env:
@@ -84,7 +94,7 @@ jobs:
   - name: ob_sdl_codeql_compiled_enabled
     value: false
   - name: ob_sdl_sbom_packageName
-    value: 'Microsoft.Powershell.Windows.${{parameters.buildArchitecture}}'
+    value: 'Microsoft.Powershell.MacOS.${{parameters.buildArchitecture}}'
 
   steps:
   - checkout: self
@@ -100,7 +110,7 @@ jobs:
 
   - task: DownloadPipelineArtifact@2
     inputs:
-      artifact: 'macosBinResults'
+      artifact: 'macosBinResults-$(BuildArchitecture)'
       path: '$(Pipeline.Workspace)\Symbols'
     displayName: Download build
 
@@ -115,12 +125,7 @@ jobs:
       Write-Host "sending.. vso[task.setvariable variable=Runtime]$runtime"
       Write-Host "##vso[task.setvariable variable=Runtime]$runtime"
 
-      $zipPath = Get-Item '$(Pipeline.Workspace)\Symbols\*symbol*${{ parameters.buildArchitecture }}*.zip' -Verbose
-      Write-Verbose -Verbose "Zip Path: $zipPath"
-
-      $expandedFolder = $zipPath.BaseName
-      Expand-Archive -Path $zipPath -Destination "$(Pipeline.Workspace)\$expandedFolder" -Force
-      $rootPath = "$(Pipeline.Workspace)\$expandedFolder"
+      $rootPath = "$(Pipeline.Workspace)\Symbols"
       Write-Verbose -Verbose "Setting vso[task.setvariable variable=DropRootPath]$rootPath"
       Write-Host "##vso[task.setvariable variable=DropRootPath]$rootPath"
     displayName: Expand symbols zip

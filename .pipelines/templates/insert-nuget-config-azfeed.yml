@@ -5,7 +5,7 @@ steps:
 - pwsh: |
     $configPath = "${env:NugetConfigDir}/nuget.config"
     Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-    New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
+    New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedUserName) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
     if(-not (Test-Path $configPath))
     {
         throw "nuget.config is not created"
@@ -20,7 +20,7 @@ steps:
 - pwsh: |
     $configPath = "${env:NugetConfigDir}/nuget.config"
     Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-    New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
+    New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedUserName) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
     if(-not (Test-Path $configPath))
     {
         throw "nuget.config is not created"
