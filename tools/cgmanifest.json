@@ -205,7 +205,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "6.0.7"
+          "Version": "6.0.8"
         }
       },
       "DevelopmentDependency": false
