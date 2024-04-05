@@ -193,6 +193,14 @@ jobs:
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign ref assemblies
+    inputs:
+      command: 'sign'
+      signing_profile: external_distribution
+      files_to_sign: '**\*.dll'
+      search_root: '$(System.ArtifactsDirectory)\RefAssembly'
+
   - pwsh: |
       $files = @(
         "Microsoft.Management.Infrastructure.CimCmdlets.dll"
