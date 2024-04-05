@@ -254,9 +254,9 @@ jobs:
       New-Item -Path $gblToolOutputPath -ItemType Directory -Force
 
       $winFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release\Signed-fxdependent"
-      $winDesktopFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependentWinDesktop_release\Signed-fxdependent"
+      $winDesktopFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependentWinDesktop_release\Signed-fxdependent-win-desktop"
       $linuxFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd\Signed-fxdependent"
-      $alpineFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd_x64_alpine\Signed-fxdependent"
+      $alpineFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd_x64_alpine\Signed-fxdependent-noopt-linux-musl-x64"
 
       $packageTypes = @('Unified', 'PowerShell.Linux.Alpine', 'PowerShell.Linux.x64', 'PowerShell.Linux.arm32', 'PowerShell.Linux.arm64', 'PowerShell.Windows.x64')
 
