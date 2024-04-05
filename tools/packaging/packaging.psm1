@@ -4199,7 +4199,8 @@ function New-GlobalToolNupkgSource
         [Parameter(Mandatory)] [string] $WindowsBinPath,
         [Parameter(Mandatory)] [string] $WindowsDesktopBinPath,
         [Parameter(Mandatory)] [string] $AlpineBinPath,
-        [Parameter(Mandatory)] [string] $PackageVersion
+        [Parameter(Mandatory)] [string] $PackageVersion,
+        [Parameter()] [switch] $SkipCGManifest
     )
 
     if ($PackageType -ne "Unified")
@@ -4370,6 +4371,11 @@ function New-GlobalToolNupkgSource
     Write-Log "New-GlobalToolNupkgSource: Creating current package name variable: $pkgNameVar"
     Write-Host "##vso[task.setvariable variable=$pkgNameVar]$PackageName"
 
+    if ($SkipCGManifest.IsPresent) {
+        Write-Verbose -Verbose "New-GlobalToolNupkgSource: Skipping CGManifest creation."
+        return
+    }
+
     # Set VSTS environment variable for CGManifest file path.
     $globalToolCGManifestPFilePath = Join-Path -Path "$env:REPOROOT" -ChildPath "tools\cgmanifest.json"
     $globalToolCGManifestFilePath = Resolve-Path -Path $globalToolCGManifestPFilePath -ErrorAction SilentlyContinue
@@ -4411,7 +4417,7 @@ function New-GlobalToolNupkgFromSource
         [Parameter(Mandatory)] [string] $PackageNuSpecPath,
         [Parameter(Mandatory)] [string] $PackageName,
         [Parameter(Mandatory)] [string] $DestinationPath,
-        [Parameter(Mandatory)] [string] $CGManifestPath
+        [Parameter()] [string] $CGManifestPath
     )
 
     if (! (Test-Path -Path $PackageNuSpecPath))
@@ -4424,6 +4430,12 @@ function New-GlobalToolNupkgFromSource
 
     Write-Log "New-GlobalToolNupkgFromSource: Removing GlobalTool NuSpec source directory: $PackageNuSpecPath"
     Remove-Item -Path $PackageNuSpecPath -Recurse -Force -ErrorAction SilentlyContinue
+
+    if (-not ($PSBoundParameters.ContainsKey('CGManifestPath')))
+    {
+        Write-Verbose -Verbose "New-GlobalToolNupkgFromSource: CGManifest file path not provided."
+        return
+    }
 
     Write-Log "New-GlobalToolNupkgFromSource: Removing GlobalTool CGManifest source directory: $CGManifestPath"
     if (! (Test-Path -Path $CGManifestPath))

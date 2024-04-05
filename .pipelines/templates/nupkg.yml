@@ -89,24 +89,6 @@ jobs:
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  # - pwsh: |
-  #     $content = Get-Content "$env:REPOROOT/global.json" -Raw | ConvertFrom-Json
-  #     $vstsCommandString = "vso[task.setvariable variable=SDKVersion]$($content.sdk.version)"
-  #     Write-Host "sending " + $vstsCommandString
-  #     Write-Host "##$vstsCommandString"
-  #   displayName: 'Find SDK version from global.json'
-  #   env:
-  #     ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
-
-  # - pwsh: |
-  #     Import-Module "$env:REPOROOT/build.psm1" -Force
-  #     # We just need .NET but we fixed this in an urgent situation.
-  #     Start-PSBootStrap -Verbose
-  #   displayName: Bootstrap
-  #   env:
-  #     __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-  #     ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
-
   - pwsh: |
       $repoRoot = "$(PowerShellRoot)"
       Write-Verbose -Verbose "repoRoot: $repoRoot"
@@ -249,19 +231,72 @@ jobs:
       files_to_sign: '**\*.nupkg'
       search_root: '$(Pipeline.Workspace)\nupkg'
 
+  ### Create global tools
+
+  - pwsh: |
+      $winFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release\Signed-fxdependent"
+      $winDesktopFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependentWinDesktop_release\Signed-fxdependent"
+      $linuxFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd\Signed-fxdependent"
+      $alpineFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd_x64_alpine\Signed-fxdependent"
+
+      Import-Module -Name '$(PowerShellRoot)\build.psm1'
+      Import-Module -Name '$(PowerShellRoot)\tools\packaging'
+
+      Start-PrepForGlobalToolNupkg -LinuxBinPath $linuxFxdPath -WindowsBinPath $winFxdPath -WindowsDesktopBinPath $winDesktopFxdPath -AlpineBinPath $alpineFxdPath
+    displayName: 'Prepare fpr global tool packages'
+
+  - pwsh: |
+      Import-Module -Name '$(PowerShellRoot)\build.psm1'
+      Import-Module -Name '$(PowerShellRoot)\tools\packaging'
+      Find-DotNet
+
+      $gblToolOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'globaltools'
+      New-Item -Path $gblToolOutputPath -ItemType Directory -Force
+
+      $winFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependent_release\Signed-fxdependent"
+      $winDesktopFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_windows_build_windows_fxdependentWinDesktop_release\Signed-fxdependent"
+      $linuxFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd\Signed-fxdependent"
+      $alpineFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd_x64_alpine\Signed-fxdependent"
+
+      $packageTypes = @('Unified', 'PowerShell.Linux.Alpine', 'PowerShell.Linux.x64', 'PowerShell.Linux.arm32', 'PowerShell.Linux.arm64', 'PowerShell.Windows.x64')
+
+      $packageTypes | Foreach-Object {
+        $PackageType = $_
+        Write-Verbose -Verbose "PackageType: $PackageType"
+
+        New-GlobalToolNupkgSource -PackageType $PackageType -PackageVersion '$(Version)' -LinuxBinPath $linuxFxdPath -WindowsBinPath $winFxdPath -WindowsDesktopBinPath $winDesktopFxdPath -AlpineBinPath $alpineFxdPath
+        New-GlobalToolNupkgFromSource -PackageNuSpecPath "$env:GlobalToolNuSpecSourcePath" -PackageName "$env:GlobalToolPkgName" -DestinationPath $gblToolOutputPath
+      }
+    displayName: 'Create global tools'
+
+  - pwsh: |
+      $gblToolOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'globaltools'
+      Get-ChildItem -Path $gblToolOutputPath
+    displayName: Capture global tools
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign nupkg files
+    inputs:
+      command: 'sign'
+      cp_code: 'CP-401405'
+      files_to_sign: '**\*.nupkg'
+      search_root: '$(Pipeline.Workspace)\globaltools'
+
   - pwsh: |
       if (-not (Test-Path '$(ob_outputDirectory)')) {
         New-Item -ItemType Directory -Path '$(ob_outputDirectory)' -Force
       }
 
+      Write-Verbose -Verbose "Copying nupkgs to output directory"
       $nupkgOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'nupkg'
       Get-ChildItem -Path $nupkgOutputPath -Filter *.nupkg -Recurse | Copy-Item -Destination '$(ob_outputDirectory)' -Force -Verbose
+
+      Write-Verbose -Verbose "Copying global tools to output directory"
+      $gblToolOutputPath = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'globaltools'
+      Get-ChildItem -Path $gblToolOutputPath -Filter *.nupkg -Recurse | Copy-Item -Destination '$(ob_outputDirectory)' -Force -Verbose
     displayName: Copy artifacts to output directory
 
   - pwsh: |
       $nupkgOutputPath = '$(ob_outputDirectory)'
       Get-ChildItem -Path $nupkgOutputPath | Out-String | Write-Verbose -Verbose
     displayName: List artifacts
-
-
-
