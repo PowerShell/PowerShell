@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/component-detection-manifest.json",
   "Registrations": [
     {
       "Component": {
@@ -86,7 +85,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Bcl.AsyncInterfaces",
-          "Version": "5.0.0"
+          "Version": "8.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -126,7 +125,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "5.0.17"
+          "Version": "8.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -226,7 +225,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "8.0.1"
+          "Version": "8.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -506,7 +505,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "8.0.1"
+          "Version": "8.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -831,5 +830,6 @@
       },
       "DevelopmentDependency": false
     }
-  ]
+  ],
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
 }
