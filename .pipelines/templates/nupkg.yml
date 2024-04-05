@@ -243,7 +243,7 @@ jobs:
       Import-Module -Name '$(PowerShellRoot)\tools\packaging'
 
       Start-PrepForGlobalToolNupkg -LinuxBinPath $linuxFxdPath -WindowsBinPath $winFxdPath -WindowsDesktopBinPath $winDesktopFxdPath -AlpineBinPath $alpineFxdPath
-    displayName: 'Prepare fpr global tool packages'
+    displayName: 'Prepare for global tool packages'
 
   - pwsh: |
       Import-Module -Name '$(PowerShellRoot)\build.psm1'
