@@ -800,10 +800,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/_manifest/spdx_2.2/manifest.cat",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/dependencies/*.dll",
     "FileType": "NonProduct"
   },
