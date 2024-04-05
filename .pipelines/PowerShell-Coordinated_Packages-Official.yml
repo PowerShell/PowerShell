@@ -1,14 +1,5 @@
 name: UnifiedPackageBuild-$(Build.BuildId)
-trigger:
-  branches:
-    include:
-    - master
-    - release*
-pr:
-  branches:
-    include:
-    - master
-    - release*
+trigger: none
 
 parameters:
   - name: ForceAzureBlobDelete
@@ -194,7 +185,7 @@ extends:
         parameters:
           Architecture: x64
           BuildConfiguration: minSize
-          JobName: build_windows_x64_minSize
+          JobName: build_windows_x64_minSize_release
       - template: /.pipelines/templates/windows-hosted-build.yml@self
         parameters:
           Architecture: x86
