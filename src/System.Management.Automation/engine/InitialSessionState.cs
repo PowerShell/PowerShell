@@ -1678,6 +1678,7 @@ namespace System.Management.Automation.Runspaces
             ss.ThreadOptions = this.ThreadOptions;
             ss.ThrowOnRunspaceOpenError = this.ThrowOnRunspaceOpenError;
             ss.ApartmentState = this.ApartmentState;
+            ss.Location = this.Location;
 
             foreach (ModuleSpecification modSpec in this.ModuleSpecificationsToImport)
             {
@@ -1830,6 +1831,12 @@ namespace System.Management.Automation.Runspaces
         /// be in an inconsistent state.
         /// </summary>
         public bool ThrowOnRunspaceOpenError { get; set; } = false;
+
+        /// <summary>
+        /// If not null, the working location of the runspace is set to this path. If null,
+        /// the <see cref="Environment.CurrentDirectory">process working directory</see> is used as a default.
+        /// </summary>
+        public string Location { get; set; } = null;
 
         /// <summary>
         /// This property will be set only if we are refreshing the Type/Format settings by calling UpdateTypes/UpdateFormats directly.
@@ -2231,7 +2238,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            SetSessionStateDrive(context, setLocation: setLocation);
+            SetSessionStateDrive(context, setLocation);
         }
 
         private void Bind_SetVariables(SessionStateInternal ss)
@@ -3412,10 +3419,16 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        internal static void SetSessionStateDrive(ExecutionContext context, bool setLocation)
+        private void SetSessionStateDrive(ExecutionContext context, bool setLocation)
         {
             if (context.EngineSessionState.ProviderCount == 0)
             {
+                // If there are no defined providers, but a custom location was set, the location cannot exist, throw an error.
+                if (setLocation && Location != null)
+                {
+                    throw new ItemNotFoundException(Location, "PathNotFound", SessionStateStrings.PathNotFound);
+                }
+
                 return;
             }
 
@@ -3425,7 +3438,7 @@ namespace System.Management.Automation.Runspaces
             if (context.EngineSessionState.CurrentDrive == null && !TryInitSessionStateCurrentDrive(context))
             {
                 // FIXME: this is a wrong exception to throw, we don't yet know that the path was not found
-                ItemNotFoundException itemNotFound = new(Environment.CurrentDirectory, "PathNotFound", SessionStateStrings.PathNotFound);
+                ItemNotFoundException itemNotFound = new(Location ?? Environment.CurrentDirectory, "PathNotFound", SessionStateStrings.PathNotFound);
                 context.ReportEngineStartupError(itemNotFound);
                 return;
             }
@@ -3437,7 +3450,16 @@ namespace System.Management.Automation.Runspaces
 
             var providerContext = new CmdletProviderContext(context) { SuppressWildcardExpansion = true };
 
-            // Set the starting location to the current process working directory
+            // User set a custom initial working location.
+            if (Location != null)
+            {
+                // If the location is invalid or does not exist, let the exception bubble up; since the user explicitly
+                // configured the working directory, he probably wants to get notified on failure.
+                context.EngineSessionState.SetLocation(Location, providerContext);
+                return;
+            }
+
+            // As a fallback, set the starting location to the current process working directory.
             // Ignore any errors as the file system provider may not be loaded or
             // a drive with the same name as the real file system drive may not have
             // been mounted.
