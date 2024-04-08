@@ -3381,77 +3381,78 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
+        private static bool TryInitSessionStateCurrentDrive(ExecutionContext context)
+        {
+            try
+            {
+                // Set the current drive to the first FileSystem drive if it exists.
+                ProviderInfo fsProvider = context.EngineSessionState.GetSingleProvider(context.ProviderNames.FileSystem);
+
+                Collection<PSDriveInfo> fsDrives = fsProvider.Drives;
+                if (fsDrives != null && fsDrives.Count > 0)
+                {
+                    context.EngineSessionState.CurrentDrive = fsDrives[0];
+                    return true;
+                }
+            }
+            catch (ProviderNotFoundException)
+            {
+            }
+
+            Collection<PSDriveInfo> allDrives = context.EngineSessionState.Drives(null);
+
+            if (allDrives != null && allDrives.Count > 0)
+            {
+                context.EngineSessionState.CurrentDrive = allDrives[0];
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         internal static void SetSessionStateDrive(ExecutionContext context, bool setLocation)
         {
+            if (context.EngineSessionState.ProviderCount == 0)
+            {
+                return;
+            }
+
+            // NTRAID#Windows Out Of Band Releases-908481-2005/07/01-JeffJon
+            // Make sure we have a CurrentDrive set so that we can deal with
+            // UNC paths
+            if (context.EngineSessionState.CurrentDrive == null && !TryInitSessionStateCurrentDrive(context))
+            {
+                // FIXME: this is a wrong exception to throw, we don't yet know that the path was not found
+                ItemNotFoundException itemNotFound = new(Environment.CurrentDirectory, "PathNotFound", SessionStateStrings.PathNotFound);
+                context.ReportEngineStartupError(itemNotFound);
+                return;
+            }
+
+            if (!setLocation)
+            {
+                return;
+            }
+
+            var providerContext = new CmdletProviderContext(context) { SuppressWildcardExpansion = true };
+
             // Set the starting location to the current process working directory
             // Ignore any errors as the file system provider may not be loaded or
             // a drive with the same name as the real file system drive may not have
             // been mounted.
             try
             {
-                bool proceedWithSetLocation = true;
-
-                if (context.EngineSessionState.ProviderCount > 0)
+                try
                 {
-                    // NTRAID#Windows Out Of Band Releases-908481-2005/07/01-JeffJon
-                    // Make sure we have a CurrentDrive set so that we can deal with
-                    // UNC paths
-
-                    if (context.EngineSessionState.CurrentDrive == null)
-                    {
-                        bool fsDriveSet = false;
-                        try
-                        {
-                            // Set the current drive to the first FileSystem drive if it exists.
-                            ProviderInfo fsProvider = context.EngineSessionState.GetSingleProvider(context.ProviderNames.FileSystem);
-
-                            Collection<PSDriveInfo> fsDrives = fsProvider.Drives;
-                            if (fsDrives != null && fsDrives.Count > 0)
-                            {
-                                context.EngineSessionState.CurrentDrive = fsDrives[0];
-                                fsDriveSet = true;
-                            }
-                        }
-                        catch (ProviderNotFoundException)
-                        {
-                        }
-
-                        if (!fsDriveSet)
-                        {
-                            Collection<PSDriveInfo> allDrives = context.EngineSessionState.Drives(null);
-
-                            if (allDrives != null && allDrives.Count > 0)
-                            {
-                                context.EngineSessionState.CurrentDrive = allDrives[0];
-                            }
-                            else
-                            {
-                                ItemNotFoundException itemNotFound =
-                                    new ItemNotFoundException(Directory.GetCurrentDirectory(), "PathNotFound", SessionStateStrings.PathNotFound);
-
-                                context.ReportEngineStartupError(itemNotFound);
-                                proceedWithSetLocation = false;
-                            }
-                        }
-                    }
-
-                    if (proceedWithSetLocation && setLocation)
-                    {
-                        CmdletProviderContext providerContext = new CmdletProviderContext(context);
-
-                        try
-                        {
-                            providerContext.SuppressWildcardExpansion = true;
-                            context.EngineSessionState.SetLocation(Directory.GetCurrentDirectory(), providerContext);
-                        }
-                        catch (ItemNotFoundException)
-                        {
-                            // If we can't access the Environment.CurrentDirectory, we may be in an AppContainer. Set the
-                            // default drive to $pshome
-                            string defaultPath = System.IO.Path.GetDirectoryName(Environment.ProcessPath);
-                            context.EngineSessionState.SetLocation(defaultPath, providerContext);
-                        }
-                    }
+                    context.EngineSessionState.SetLocation(Environment.CurrentDirectory, providerContext);
+                }
+                catch (ItemNotFoundException)
+                {
+                    // If we can't access the Environment.CurrentDirectory, we may be in an AppContainer. Set the
+                    // default drive to $pshome
+                    string defaultPath = Path.GetDirectoryName(Environment.ProcessPath);
+                    context.EngineSessionState.SetLocation(defaultPath, providerContext);
                 }
             }
             catch (Exception)
