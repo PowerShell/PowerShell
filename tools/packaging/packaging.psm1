@@ -941,13 +941,21 @@ function Update-PSSignedBuildFolder
             if ($signature.Status -ne 'Valid') {
                 Write-Error "Invalid signature for $signedFilePath"
             }
+
         }
         else
         {
             Write-Verbose -Verbose "Skipping certificate check of $signedFilePath on non-Windows"
         }
 
+
+        # completely skip replacing pwsh on non-windows systems (there is no .exe extension here)
+        if ($signedFileObject.Name -eq "pwsh") {
+            continue
+        }
+
         Copy-Item -Path $signedFilePath -Destination $destination -Force
+
     }
 
     foreach($filter in $RemoveFilter) {
