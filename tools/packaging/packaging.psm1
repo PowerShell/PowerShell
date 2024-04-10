@@ -907,6 +907,13 @@ function Update-PSSignedBuildFolder
 
     $signedFilesList = Get-ChildItem -Path $signedFilesFilter -Recurse -File
     foreach ($signedFileObject in $signedFilesList) {
+        # completely skip replacing pwsh on non-windows systems (there is no .exe extension here)
+        # and it may not be signed correctly
+        if ($signedFileObject.Name -eq "pwsh") {
+            Write-Verbose -Verbose "Skipping pwsh"
+            continue
+        }
+
         $signedFilePath = $signedFileObject.FullName
         Write-Verbose -Verbose "Processing $signedFilePath"
 
@@ -941,17 +948,10 @@ function Update-PSSignedBuildFolder
             if ($signature.Status -ne 'Valid') {
                 Write-Error "Invalid signature for $signedFilePath"
             }
-
         }
         else
         {
             Write-Verbose -Verbose "Skipping certificate check of $signedFilePath on non-Windows"
-        }
-
-
-        # completely skip replacing pwsh on non-windows systems (there is no .exe extension here)
-        if ($signedFileObject.Name -eq "pwsh") {
-            continue
         }
 
         Copy-Item -Path $signedFilePath -Destination $destination -Force
