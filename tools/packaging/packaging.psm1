@@ -909,8 +909,8 @@ function Update-PSSignedBuildFolder
     foreach ($signedFileObject in $signedFilesList) {
         # completely skip replacing pwsh on non-windows systems (there is no .exe extension here)
         # and it may not be signed correctly
-        if ($signedFileObject.Name -eq "pwsh") {
-            Write-Verbose -Verbose "Skipping pwsh"
+        if ($signedFileObject.Name -eq "pwsh" -or $signedFileObject.Name -eq "Microsoft.PowerShell.GlobalTool.Shim.exe") {
+            Write-Verbose -Verbose "Skipping $signedFileObject"
             continue
         }
 
