@@ -10,6 +10,7 @@ steps:
   inputs:
     artifactName: '$(unsignedBuildArtifactContainer)'
     itemPattern: '$(unsignedBuildArtifactName)'
+    allowPartiallySucceededBuilds: true
 
 - pwsh: |
     Get-ChildItem "$(Pipeline.Workspace)\*" -Recurse

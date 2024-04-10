@@ -12,6 +12,7 @@ steps:
     itemPattern: |
       **/*
       !**/*signed.zip
+    allowPartiallySucceededBuilds: true
 
 - pwsh: |
     Write-Verbose -Verbose "Enumerating $(Pipeline.Workspace)\results"

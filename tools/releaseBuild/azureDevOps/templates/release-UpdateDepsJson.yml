@@ -24,6 +24,7 @@ jobs:
       artifact: finalResults
       patterns: '**/PowerShell*-win-x64.zip'
       path: '$(Pipeline.Workspace)/releasePipeline/finalResults'
+      allowPartiallySucceededBuilds: true
 
   - task: DownloadPipelineArtifact@2
     inputs:
@@ -35,6 +36,7 @@ jobs:
       runBranch: '$(Build.SourceBranch)'
       artifact: BuildInfoJson
       path: '$(Pipeline.Workspace)/releasePipeline/BuildInfoJson'
+      allowPartiallySucceededBuilds: true
 
   - pwsh: |
       $fileName = (Get-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/BuildInfoJson/*.json").BaseName

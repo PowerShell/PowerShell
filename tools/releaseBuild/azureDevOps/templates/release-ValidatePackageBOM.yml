@@ -24,6 +24,7 @@ steps:
     runBranch: '$(Build.SourceBranch)'
     artifact: finalResults
     path: $(System.ArtifactsDirectory)
+    allowPartiallySucceededBuilds: true
 
 
 - pwsh: |

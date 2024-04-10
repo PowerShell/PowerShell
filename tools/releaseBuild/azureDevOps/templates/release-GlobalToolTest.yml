@@ -27,6 +27,7 @@ jobs:
         artifact: finalResults
         patterns: '**/*.nupkg'
         path: '$(Pipeline.Workspace)/releasePipeline/finalResults'
+        allowPartiallySucceededBuilds: true
 
     - pwsh: |
         $dotnetMetadataPath = "$(Build.SourcesDirectory)/DotnetRuntimeMetadata.json"

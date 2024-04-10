@@ -214,6 +214,7 @@ stages:
         runBranch: '$(Build.SourceBranch)'
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+        allowPartiallySucceededBuilds: true
 
     - pwsh: |
         Get-ChildItem -Path $(Build.SourcesDirectory)
@@ -258,6 +259,7 @@ stages:
         runBranch: '$(Build.SourceBranch)'
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+        allowPartiallySucceededBuilds: true
 
     - pwsh: |
         Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
@@ -469,6 +471,7 @@ stages:
         runBranch: '$(Build.SourceBranch)'
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+        allowPartiallySucceededBuilds: true
     - pwsh: |
         Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName PowerShell
@@ -510,6 +513,7 @@ stages:
         runBranch: '$(Build.SourceBranch)'
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+        allowPartiallySucceededBuilds: true
     - pwsh: |
         Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName PowerShell
@@ -613,6 +617,7 @@ stages:
         runBranch: '$(Build.SourceBranch)'
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+        allowPartiallySucceededBuilds: true
 
     - pwsh: |
         Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force

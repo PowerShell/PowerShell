@@ -30,6 +30,7 @@ jobs:
         artifact: finalResults
         patterns: '${{ parameters.packageNamePattern }}'
         path: '$(Pipeline.Workspace)/releasePipeline/finalResults'
+        allowPartiallySucceededBuilds: true
 
     - pwsh: |
         $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1

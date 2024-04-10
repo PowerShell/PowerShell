@@ -22,48 +22,56 @@ jobs:
     inputs:
       artifact: pwshLinuxBuild.tar.gz
       path: $(Build.ArtifactStagingDirectory)/linuxTars
+      allowPartiallySucceededBuilds: true
     displayName: Download deb build
 
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshLinuxBuildMinSize.tar.gz
       path: $(Build.ArtifactStagingDirectory)/linuxTars
+      allowPartiallySucceededBuilds: true
     displayName: Download min-size build
 
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshLinuxBuildArm32.tar.gz
       path: $(Build.ArtifactStagingDirectory)/linuxTars
+      allowPartiallySucceededBuilds: true
     displayName: Download arm32 build
 
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshLinuxBuildArm64.tar.gz
       path: $(Build.ArtifactStagingDirectory)/linuxTars
+      allowPartiallySucceededBuilds: true
     displayName: Download arm64 build
 
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshMarinerBuildAmd64.tar.gz
       path: $(Build.ArtifactStagingDirectory)/linuxTars
+      allowPartiallySucceededBuilds: true
     displayName: Download mariner build
 
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshMarinerBuildArm64.tar.gz
       path: $(Build.ArtifactStagingDirectory)/linuxTars
+      allowPartiallySucceededBuilds: true
     displayName: Download mariner arm64 build
 
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshLinuxBuildAlpine.tar.gz
       path: $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz
+      allowPartiallySucceededBuilds: true
     displayName: Download alpine build
 
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: pwshLinuxBuildFxdependent.tar.gz
       path: $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildFxdependent.tar.gz
+      allowPartiallySucceededBuilds: true
     displayName: Download fxdependent build
 
   - pwsh: |

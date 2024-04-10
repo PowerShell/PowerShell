@@ -26,6 +26,7 @@ jobs:
         artifact: finalResults
         patterns: '**/*.nupkg'
         path: '$(Pipeline.Workspace)/releasePipeline/finalResults'
+        allowPartiallySucceededBuilds: true
 
     - task: DownloadPipelineArtifact@2
       inputs:
@@ -37,6 +38,7 @@ jobs:
         runBranch: '$(Build.SourceBranch)'
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+        allowPartiallySucceededBuilds: true
 
     - pwsh:  |
         Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force

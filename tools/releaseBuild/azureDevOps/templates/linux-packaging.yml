@@ -26,6 +26,7 @@ jobs:
         artifact: authenticode-signed
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-signed
         pattern: '**/pwshLinuxBuild.tar.gz'
+        allowPartiallySucceededBuilds: true
       displayName: Download deb build
 
   - ${{ if eq(variables.build,'deb') }} :
@@ -34,6 +35,7 @@ jobs:
         artifact: authenticode-signed
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize-signed
         pattern: '**/pwshLinuxBuildMinSize.tar.gz'
+        allowPartiallySucceededBuilds: true
       displayName: Download min-size build
 
   - ${{ if eq(variables.build,'deb') }} :
@@ -42,6 +44,7 @@ jobs:
         artifact: authenticode-signed
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32-signed
         pattern: '**/pwshLinuxBuildArm32.tar.gz'
+        allowPartiallySucceededBuilds: true
       displayName: Download arm32 build
 
   - ${{ if eq(variables.build,'deb') }} :
@@ -50,6 +53,7 @@ jobs:
         artifact: authenticode-signed
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64-signed
         pattern: '**/pwshLinuxBuildArm64.tar.gz'
+        allowPartiallySucceededBuilds: true
       displayName: Download arm64 build
 
   - ${{ if eq(variables.build,'rpm') }} :
@@ -58,6 +62,7 @@ jobs:
         artifact: authenticode-signed
         path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64-signed
         pattern: '**/pwshMarinerBuildAmd64.tar.gz'
+        allowPartiallySucceededBuilds: true
       displayName: Download mariner amd64 build
 
   - ${{ if eq(variables.build,'rpm') }} :
@@ -66,6 +71,7 @@ jobs:
         artifact: authenticode-signed
         path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64-signed
         pattern: '**/pwshMarinerBuildArm64.tar.gz'
+        allowPartiallySucceededBuilds: true
       displayName: Download mariner arm64 build
 
   - ${{ if eq(variables.build,'alpine') }} :
@@ -74,6 +80,7 @@ jobs:
         artifact: authenticode-signed
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine-signed
         pattern: '**/pwshLinuxBuildAlpine.tar.gz'
+        allowPartiallySucceededBuilds: true
       displayName: Download alpine build
 
   - ${{ if eq(variables.build,'fxdependent') }} :
@@ -82,6 +89,7 @@ jobs:
         artifact: authenticode-signed
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent-signed
         pattern: '**/pwshLinuxBuildFxdependent.tar.gz'
+        allowPartiallySucceededBuilds: true
       displayName: Download fxdependent build
 
   - ${{ if or(eq(variables.build,'deb'), eq(variables.build,'rpm')) }} :
@@ -89,6 +97,7 @@ jobs:
       inputs:
         artifact: pwshLinuxBuild-meta
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-meta
+        allowPartiallySucceededBuilds: true
       displayName: Download deb build meta
 
   - ${{ if eq(variables.build,'deb') }} :
@@ -96,6 +105,7 @@ jobs:
       inputs:
         artifact: pwshLinuxBuildMinSize-meta
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildMinSize-meta
+        allowPartiallySucceededBuilds: true
       displayName: Download min-size build meta
 
   - ${{ if eq(variables.build,'deb') }} :
@@ -103,6 +113,7 @@ jobs:
       inputs:
         artifact: pwshLinuxBuildArm32-meta
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm32-meta
+        allowPartiallySucceededBuilds: true
       displayName: Download arm32 build meta
 
   - ${{ if eq(variables.build,'deb') }} :
@@ -110,6 +121,7 @@ jobs:
       inputs:
         artifact: pwshLinuxBuildArm64-meta
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuildArm64-meta
+        allowPartiallySucceededBuilds: true
       displayName: Download arm64 build meta
 
   - ${{ if eq(variables.build,'rpm') }} :
@@ -117,6 +129,7 @@ jobs:
       inputs:
         artifact: pwshMarinerBuildAmd64-meta
         path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildAmd64-meta
+        allowPartiallySucceededBuilds: true
       displayName: Download mariner x64 build meta
 
   - ${{ if eq(variables.build,'rpm') }} :
@@ -124,6 +137,7 @@ jobs:
       inputs:
         artifact: pwshMarinerBuildArm64-meta
         path: $(Build.ArtifactStagingDirectory)/pwshMarinerBuildArm64-meta
+        allowPartiallySucceededBuilds: true
       displayName: Download mariner arm64 build meta
 
   - ${{ if eq(variables.build,'alpine') }} :
@@ -131,6 +145,7 @@ jobs:
       inputs:
         artifact: pwshLinuxBuildAlpine-meta
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-meta
+        allowPartiallySucceededBuilds: true
       displayName: Download alpine build meta
 
   - ${{ if eq(variables.build,'fxdependent') }} :
@@ -138,6 +153,7 @@ jobs:
       inputs:
         artifact: pwshLinuxBuildFxdependent-meta
         path: $(Build.ArtifactStagingDirectory)/pwshLinuxBuild-meta
+        allowPartiallySucceededBuilds: true
       displayName: Download fxdependent build meta
 
   - pwsh: |

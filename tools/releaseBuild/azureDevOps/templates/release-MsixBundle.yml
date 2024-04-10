@@ -25,6 +25,7 @@ jobs:
         artifact: finalResults
         patterns: '**/*.msix'
         path: '$(Pipeline.Workspace)\releasePipeline\msix'
+        allowPartiallySucceededBuilds: true
 
     - pwsh: |
         $cmd = Get-Command makeappx.exe -ErrorAction Ignore

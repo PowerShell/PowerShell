@@ -169,6 +169,7 @@ jobs:
     inputs:
       artifact: drop_linux_build_${{ parameters.JobName }}
       path: $(Pipeline.Workspace)/drop_linux_build
+      allowPartiallySucceededBuilds: true
     displayName: Download build
 
   - pwsh: |

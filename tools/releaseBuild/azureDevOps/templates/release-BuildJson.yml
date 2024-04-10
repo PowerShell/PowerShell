@@ -12,6 +12,7 @@ steps:
     runBranch: '$(Build.SourceBranch)'
     artifact: BuildInfoJson
     path: '$(Pipeline.Workspace)/releasePipeline/BuildInfoJson'
+    allowPartiallySucceededBuilds: true
 
 - pwsh: |
     Import-Module '$(Build.SourcesDirectory)/tools/ci.psm1'

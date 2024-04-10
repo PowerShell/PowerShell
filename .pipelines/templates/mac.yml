@@ -112,6 +112,7 @@ jobs:
     inputs:
       artifact: 'macosBinResults-$(BuildArchitecture)'
       path: '$(Pipeline.Workspace)\Symbols'
+      allowPartiallySucceededBuilds: true
     displayName: Download build
 
   - pwsh: |
