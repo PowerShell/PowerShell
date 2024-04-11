@@ -912,7 +912,7 @@ function Update-PSSignedBuildFolder
         
         # The Shim will not be signed in CI.
         
-        if ($signedFileObject.Name -eq "pwsh" -or ($signedFileObject.Name -eq "Microsoft.PowerShell.GlobalTool.Shim.exe" -and $env:TF_BUILD)) {
+        if ($signedFileObject.Name -eq "pwsh" -or ($signedFileObject.Name -eq "Microsoft.PowerShell.GlobalTool.Shim.exe" -and $env:BUILD_REASON -eq 'PullRequest')) {
             Write-Verbose -Verbose "Skipping $signedFileObject"
             continue
         }
