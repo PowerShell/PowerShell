@@ -1532,123 +1532,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                ParameterInformation[] parameters = methodInfo.parameters;
-                if (arguments.Length != parameters.Length)
-                {
-                    // Skip methods w/ an incorrect # of arguments.
-
-                    if (arguments.Length > parameters.Length)
-                    {
-                        // If too many args,it's only OK if the method is varargs.
-                        if (!methodInfo.hasVarArgs)
-                        {
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        // Too few args, OK if there are optionals, or varargs with the param array omitted
-                        if (!methodInfo.hasOptional && (!methodInfo.hasVarArgs || (arguments.Length + 1) != parameters.Length))
-                        {
-                            continue;
-                        }
-
-                        if (methodInfo.hasOptional)
-                        {
-                            // Count optionals.
-                            if (arguments.Length + methodInfo.optionalCount < parameters.Length)
-                            {
-                                // Even with optionals, there are too few.
-                                continue;
-                            }
-                        }
-                    }
-                }
-
-                OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length);
-                for (int j = 0; candidate != null && j < parameters.Length; j++)
-                {
-                    ParameterInformation parameter = parameters[j];
-                    if (parameter.isOptional && arguments.Length <= j)
-                    {
-                        break; // All the other parameters are optional and it is ok not to have more arguments
-                    }
-                    else if (parameter.isParamArray)
-                    {
-                        Type elementType = parameter.parameterType.GetElementType();
-                        if (parameters.Length == arguments.Length)
-                        {
-                            ConversionRank arrayConv = GetArgumentConversionRank(
-                                arguments[j].Item2,
-                                parameter.parameterType,
-                                isByRef: false,
-                                allowCastingToByRefLikeType: false);
-
-                            ConversionRank elemConv = GetArgumentConversionRank(
-                                arguments[j].Item2,
-                                elementType,
-                                isByRef: false,
-                                allowCastingToByRefLikeType: false);
-
-                            if (elemConv > arrayConv)
-                            {
-                                candidate.expandedParameters = ExpandParameters(parameter.name, arguments.Length, parameters, elementType);
-                                candidate.conversionRanks[j] = elemConv;
-                            }
-                            else
-                            {
-                                candidate.conversionRanks[j] = arrayConv;
-                            }
-
-                            if (candidate.conversionRanks[j] == ConversionRank.None)
-                            {
-                                candidate = null;
-                            }
-                        }
-                        else
-                        {
-                            // All remaining arguments will be added to one array to be passed as this params
-                            // argument.
-                            // Note that we go through here when the param array parameter has no argument.
-                            for (int k = j; k < arguments.Length; k++)
-                            {
-                                candidate.conversionRanks[k] = GetArgumentConversionRank(
-                                    arguments[k].Item2,
-                                    elementType,
-                                    isByRef: false,
-                                    allowCastingToByRefLikeType: false);
-
-                                if (candidate.conversionRanks[k] == ConversionRank.None)
-                                {
-                                    // No longer a candidate
-                                    candidate = null;
-                                    break;
-                                }
-                            }
-
-                            if (candidate != null)
-                            {
-                                candidate.expandedParameters = ExpandParameters(parameter.name, arguments.Length, parameters, elementType);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        candidate.conversionRanks[j] = GetArgumentConversionRank(
-                            arguments[j].Item2,
-                            parameter.parameterType,
-                            parameter.isByRef,
-                            allowCastingToByRefLikeType);
-
-                        if (candidate.conversionRanks[j] == ConversionRank.None)
-                        {
-                            // No longer a candidate
-                            candidate = null;
-                        }
-                    }
-                }
-
-                if (candidate != null)
+                if (TryProcessOverload(methodInfo, arguments, allowCastingToByRefLikeType, out OverloadCandidate candidate))
                 {
                     candidates.Add(candidate);
                 }
@@ -1696,6 +1580,145 @@ namespace System.Management.Automation
             errorMsg = ExtendedTypeSystem.MethodAmbiguousException;
             return null;
         }
+
+#nullable enable
+        private static bool TryProcessOverload(
+            MethodInformation methodInfo,
+            (string?, object?)[] arguments,
+            bool allowCastingToByRefLikeType,
+            [NotNullWhen(true)] out OverloadCandidate? selectedCandidate)
+        {
+            selectedCandidate = null;
+
+            ParameterInformation[] parameters = methodInfo.parameters;
+
+            Dictionary<string, int> parameterIndexes = new Dictionary<string, int>(parameters.Length);
+            foreach (ParameterInformation paramInfo in parameters)
+            {
+                parameterIndexes.Add(paramInfo.name, parameterIndexes.Count);
+            }
+
+            OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length);
+            for (int i = 0; i < arguments.Length; i++)
+            {
+                (string? argName, object? argValue) = arguments[i];
+
+                int paramIndex;
+                if (string.IsNullOrEmpty(argName))
+                {
+                    // Argument had no name, get the first parameter.
+                    KeyValuePair<string, int> nextParam = parameterIndexes.First();
+                    argName = nextParam.Key;
+                    paramIndex = nextParam.Value;
+                }
+                else if (!parameterIndexes.TryGetValue(argName, out paramIndex))
+                {
+                    // Had a named but it didn't match any remaining parameters.
+                    return false;
+                }
+
+                parameterIndexes.Remove(argName);
+                ParameterInformation paramInfo = parameters[paramIndex];
+                if (paramInfo.isParamArray)
+                {
+                    Type? elementType = paramInfo.parameterType?.GetElementType();
+
+                    if (i == arguments.Length - 1)
+                    {
+                        // This is our last argument, check to see if it can be
+                        // passed as the array value or a single element of the
+                        // param type.
+                        ConversionRank arrayConv = GetArgumentConversionRank(
+                            argValue,
+                            paramInfo.parameterType,
+                            isByRef: false,
+                            allowCastingToByRefLikeType: false);
+
+                        ConversionRank elemConv = GetArgumentConversionRank(
+                            argValue,
+                            elementType,
+                            isByRef: false,
+                            allowCastingToByRefLikeType: false);
+
+                        if (elemConv > arrayConv)
+                        {
+                            candidate.expandedParameters = ExpandParameters(argName, arguments.Length, parameters, elementType);
+                            candidate.conversionRanks[i] = elemConv;
+                        }
+                        else
+                        {
+                            candidate.conversionRanks[i] = arrayConv;
+                        }
+
+                        if (candidate.conversionRanks[i] == ConversionRank.None)
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        // All remaining arguments will be added to one array to be passed as this params
+                        // argument.
+                        // Note that we go through here when the param array parameter has no argument.
+                        for (int j = i; j < arguments.Length; j++)
+                        {
+                            (string? nextArgName, object? nextArgValue) = arguments[j];
+                            if (!string.IsNullOrEmpty(nextArgName))
+                            {
+                                // Subsequent arguments will also be named.
+                                break;
+                            }
+
+                            candidate.conversionRanks[j] = GetArgumentConversionRank(
+                                nextArgValue,
+                                elementType,
+                                isByRef: false,
+                                allowCastingToByRefLikeType: false);
+
+                            if (candidate.conversionRanks[j] == ConversionRank.None)
+                            {
+                                // No longer a candidate
+                                return false;
+                            }
+
+                            i++;
+                        }
+
+                        if (i == arguments.Length - 1)
+                        {
+                            candidate.expandedParameters = ExpandParameters(paramInfo.name, arguments.Length, parameters, elementType);
+                        }
+                    }
+                }
+                else
+                {
+                    candidate.conversionRanks[paramIndex] = GetArgumentConversionRank(
+                        argValue,
+                        paramInfo.parameterType,
+                        paramInfo.isByRef,
+                        allowCastingToByRefLikeType);
+
+                    if (candidate.conversionRanks[paramIndex] == ConversionRank.None)
+                    {
+                        // No longer a candidate
+                        return false;
+                    }
+                }
+            }
+
+            // Unmapped args only work if they are optional.
+            foreach (int paramIndex in parameterIndexes.Values)
+            {
+                if (!parameters[paramIndex].isOptional)
+                {
+                    return false;
+                }
+            }
+
+            selectedCandidate = candidate;
+            return true;
+        }
+#nullable disable
 
         internal static Type EffectiveArgumentType(object arg)
         {
