@@ -585,6 +585,7 @@ namespace Microsoft.PowerShell.Commands
                     if (reply.Status == IPStatus.PacketTooBig || reply.Status == IPStatus.TimedOut)
                     {
                         HighMTUSize = CurrentMTUSize;
+                        replyResult = reply;
                         retry = 1;
                     }
                     else if (reply.Status == IPStatus.Success)
@@ -614,6 +615,7 @@ namespace Microsoft.PowerShell.Commands
                         else
                         {
                             retry++;
+                            replyResult = reply;
                             continue;
                         }
                     }

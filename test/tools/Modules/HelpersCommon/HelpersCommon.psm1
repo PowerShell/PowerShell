@@ -366,7 +366,7 @@ function Get-PlatformInfo {
         return @{Platform = "windows"; Version = '' }
     }
     if ( $IsMacOS ) {
-        return @{Platform = "macos"; Version = '' }
+        return @{Platform = "macos"; Version = sw_vers --productversion }
     }
     if ( $IsLinux ) {
         $osrelease = Get-Content /etc/os-release | ConvertFrom-StringData
@@ -382,7 +382,7 @@ function Get-PlatformInfo {
 
             return @{Platform = $platform; Version = $versionId }
         }
-        return "unknown"
+        return @{ Platform = "linux"; version = "unknown" }
     }
 }
 
