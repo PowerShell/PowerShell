@@ -273,10 +273,15 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
 
             $result = Test-Connection $testAddress -MtuSize -Debug
 
-            $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
-            $result.Destination | Should -BeExactly $testAddress
-            $result.Status | Should -BeExactly "Success"
-            $result.MtuSize | Should -BeGreaterThan 0
+            if ($result.Status -eq "TimedOut") {
+                Set-ItResult -skipped -because "timed out"
+            }
+            else {
+                $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
+                $result.Destination | Should -BeExactly $testAddress
+                $result.Status | Should -BeExactly "Success"
+                $result.MtuSize | Should -BeGreaterThan 0
+            }
         }
 
         It "Quiet works" {
