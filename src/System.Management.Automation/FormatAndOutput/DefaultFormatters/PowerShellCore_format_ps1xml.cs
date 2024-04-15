@@ -1349,10 +1349,15 @@ namespace System.Management.Automation.Runspaces
                                     }
 
                                     if ($ErrorView -eq 'ConciseView') {
+                                        $recommendedAction = $_.ErrorDetails.RecommendedAction
+                                        if (-not [String]::IsNullOrWhiteSpace($recommendedAction)) {
+                                            $recommendedAction = $newline + '  Recommendation: ' + $recommendedAction
+                                        }
+
                                         if ($err.PSMessageDetails) {
                                             $posmsg = "${errorColor}${posmsg}"
                                         }
-                                        return $posmsg
+                                        return $posmsg + $recommendedAction
                                     }
 
                                     $indent = 4
