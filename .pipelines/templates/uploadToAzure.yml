@@ -1,0 +1,227 @@
+jobs:
+- job: upload_packages
+  displayName: Upload packages
+  condition: succeeded()
+  pool:
+    type: windows
+  variables:
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
+  - name: ob_sdl_binskim_enabled
+    value: false
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+    - name: ob_sdl_codeql_compiled_enabled
+      value: true
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - download: current
+    artifact: drop_linux_package_deb
+    patterns: '**/*.deb'
+    displayName: Download deb package
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_linux_package_fxdependent
+    patterns: '**/*.tar.gz'
+    displayName: Download linux fxd package
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_linux_package_mariner_arm64
+    patterns: '**/*.rpm'
+    displayName: Download linux mariner arm64 package
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_linux_package_mariner_x64
+    patterns: '**/*.rpm'
+    displayName: Download linux mariner x64 package
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_linux_package_minSize
+    patterns: '**/*.tar.gz'
+    displayName: Download linux minSize package
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_linux_package_rpm
+    patterns: '**/*.rpm'
+    displayName: Download linux rpm package
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_linux_package_tar
+    patterns: '**/*.tar.gz'
+    displayName: Download linux tar package
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_linux_package_tar_alpine
+    patterns: '**/*.tar.gz'
+    displayName: Download linux alpine tar package
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_linux_package_tar_alpine_fxd
+    patterns: '**/*.tar.gz'
+    displayName: Download linux alpine fxd tar package
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_linux_package_tar_arm
+    patterns: '**/*.tar.gz'
+    displayName: Download linux arm32 tar package
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_linux_package_tar_arm64
+    patterns: '**/*.tar.gz'
+    displayName: Download linux arm64 tar package
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_linux_build_nupkg
+    patterns: '**/*.nupkg'
+    displayName: Download nupkgs
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_windows_package_package_win_arm64
+    patterns: |
+      '**/*.msi'
+      '**/*.msix'
+      '**/*.zip'
+      '**/*.exe'
+    displayName: Download windows arm64 packages
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_windows_package_package_win_fxdependentWinDesktop
+    patterns: '**/*.zip'
+    displayName: Download windows arm64 packages
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_windows_package_package_win_minsize
+    patterns: '**/*.zip'
+    displayName: Download windows arm64 packages
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_windows_package_package_win_x64
+    patterns: |
+      '**/*.msi'
+      '**/*.msix'
+      '**/*.zip'
+      '**/*.exe'
+    displayName: Download windows x64 packages
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: drop_windows_package_package_win_x86
+    patterns: |
+      '**/*.msi'
+      '**/*.msix'
+      '**/*.zip'
+      '**/*.exe'
+    displayName: Download windows x86 packages
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - download: current
+    artifact: macos-pkgs
+    patterns: |
+      '**/*.pkg'
+      '**/*.tar.gz'
+    displayName: Download macos packages
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - pwsh: |
+      $patterns = @(
+        '**/powershell*.deb'
+        '**/powershell*.tar.gz'
+        '**/powershell*.rpm'
+        '**/powershell*.msi'
+        '**/powershell*.msix'
+        '**/powershell*.zip'
+        '**/powershell*.exe'
+        '**/powershell*.pkg'
+      )
+
+      $packages = Get-ChildItem -Path $(Pipeline.Workspace) -Recurse -Include $patterns
+
+      Write-Verbose -Verbose "Packages found:"
+      $packages | Out-String -Stream | Write-Verbose -Verbose
+
+      if(-not (Test-Path $(ob_outputDirectory))) {
+        New-Item -Path $(ob_outputDirectory) -ItemType Directory -Force
+      }
+
+      $packages | ForEach-Object { Copy-Item -Path $_.FullName -Destination '$(ob_outputDirectory)' -Force -Verbose }
+
+      Write-Verbose -Verbose "Packages copied to $(ob_outputDirectory)"
+      Get-ChildItem -Path $(ob_outputDirectory) | Out-String -Stream | Write-Verbose -Verbose
+    displayName: Collate packages
+
+  - task: AzurePowerShell@5
+    displayName: Upload packages to blob
+    inputs:
+      azureSubscription: az-blob-cicd-infra
+      scriptType: inlineScript
+      azurePowerShellVersion: latestVersion
+      inline: |
+        $storageAccountName = "pscoretestdata"
+        $containerName = $env:AZUREVERSION
+
+        Write-Verbose -Verbose "Uploading packages to blob storage account: $storageAccountName container: $containerName"
+
+        $context = New-AzStorageContext -StorageAccountName $storageAccountName -UseConnectedAccount
+
+        # Create the blob container if it doesn't exist
+        $containerExists = Get-AzStorageContainer -Name $containerName -Context $context -ErrorAction SilentlyContinue
+        if (-not $containerExists) {
+            New-AzStorageContainer -Name $containerName -Context $context
+            Write-Host "Blob container '$containerName' created successfully."
+        }
+
+        $files = Get-ChildItem -Path $(ob_outputDirectory)
+
+        foreach ($file in $files) {
+          $blobName = $file.Name
+          $blobPath = "$containerName/$blobName"
+          Set-AzStorageBlobContent -File $file.FullName -Container $containerName -Blob $blobName -Context $context
+          Write-Host "File '$blobName' uploaded to '$containerName' container."
+        }
