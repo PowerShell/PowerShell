@@ -6993,7 +6993,7 @@ namespace System.Management.Automation.Language
                         Expression.Constant(name),
                         Expression.NewArrayInit(
                             typeof(object),
-                            mappedArgs.Select(static e => e?.Expression?.Cast(typeof(object))))),
+                            mappedArgs.Select(static e => e?.Expression?.Cast(typeof(object)) ?? Expression.Constant(null)))),
                     expr);
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
