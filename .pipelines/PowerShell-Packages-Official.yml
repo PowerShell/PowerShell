@@ -216,7 +216,7 @@ extends:
       jobs:
       - template: /.pipelines/templates/nupkg.yml@self
 
-    # - stage: sign_pkgs
-    #   dependsOn: [mac_package, windows_package, linux_package]
-    #   jobs:
-    #   - template: /.pipelines/templates/sign-pkgs.yml@self
+    - stage: upload
+      dependsOn: [mac_package, windows_package, linux_package, nupkg]
+      jobs:
+      - template: /.pipelines/templates/uploadToAzure.yml@self

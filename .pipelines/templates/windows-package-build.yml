@@ -229,7 +229,6 @@ jobs:
       files_to_sign: '**\*.exe'
       search_root: '$(Pipeline.Workspace)'
 
-
   - pwsh: |
       $runtime = '$(Runtime)'
       Write-Verbose -Verbose "runtime = '$(Runtime)'"
