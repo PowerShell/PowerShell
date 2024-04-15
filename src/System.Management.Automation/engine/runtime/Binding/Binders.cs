@@ -6945,7 +6945,8 @@ namespace System.Management.Automation.Language
                 ref errorId,
                 ref errorMsg,
                 out expandParamsOnBest,
-                out callNonVirtually);
+                out callNonVirtually,
+                out int?[] argumentMap);
 
             if (callNonVirtually && methodInvocationType != MethodInvocationType.BaseCtor)
             {
@@ -6955,7 +6956,17 @@ namespace System.Management.Automation.Language
             if (result != null)
             {
                 var methodInfo = result.method;
-                var expr = InvokeMethod(methodInfo, target, args, expandParamsOnBest, methodInvocationType);
+
+                // FindBestMethod will map the incoming args into the correct
+                // positional order for the method chosen. If not specified the
+                // map index will be null.
+                DynamicMetaObject[] mappedArgs = new DynamicMetaObject[result.parameters.Length];
+                for (int i = 0; i < mappedArgs.Length; ++i)
+                {
+                    int? mappedIndex = argumentMap[i];
+                    mappedArgs[i] = mappedIndex is null ? null : args[(int)mappedIndex];
+                }
+                var expr = InvokeMethod(methodInfo, target, mappedArgs, expandParamsOnBest, methodInvocationType);
                 if (expr.Type == typeof(void))
                 {
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
@@ -6971,6 +6982,19 @@ namespace System.Management.Automation.Language
                             Expression.Constant(result.methodDefinition)),
                         expr);
                 }
+                // Expression block runs two expressions in order:
+                //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
+                //  - Invoke method
+                string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
+                expr = Expression.Block(
+                    Expression.Call(
+                        CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
+                        Expression.Constant(targetName),
+                        Expression.Constant(name),
+                        Expression.NewArrayInit(
+                            typeof(object),
+                            mappedArgs.Select(static e => e?.Expression?.Cast(typeof(object))))),
+                    expr);
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
@@ -7002,7 +7026,7 @@ namespace System.Management.Automation.Language
                                             e,
                                             Expression.Constant(errorExceptionType, typeof(Type)),
                                             Expression.Constant(methodInfo.Name),
-                                            ExpressionCache.Constant(args.Length),
+                                            ExpressionCache.Constant(mappedArgs.Length),
                                             Expression.Constant(methodInfo, typeof(MethodBase))),
                             Expression.Rethrow(expr.Type))));
 
@@ -7189,7 +7213,7 @@ namespace System.Management.Automation.Language
                         argsToLog.Add(arg);
                     }
                 }
-                else if (i >= args.Length)
+                else if (i >= args.Length || args[i] == null)
                 {
                     // We don't log the default value for an optional parameter, as it's not specified by the user.
                     Diagnostics.Assert(

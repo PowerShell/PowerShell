@@ -1183,12 +1183,14 @@ namespace System.Management.Automation
             internal ParameterInformation[] parameters;
             internal ParameterInformation[] expandedParameters;
             internal ConversionRank[] conversionRanks;
+            internal int?[] argumentMap;
 
             internal OverloadCandidate(MethodInformation method, int argCount)
             {
                 this.method = method;
                 this.parameters = method.parameters;
                 conversionRanks = new ConversionRank[argCount];
+                argumentMap = new int?[method.parameters.Length];
             }
         }
 
@@ -1344,7 +1346,8 @@ namespace System.Management.Automation
                 ref errorId,
                 ref errorMsg,
                 out expandParamsOnBest,
-                out callNonVirtually);
+                out callNonVirtually,
+                out int?[] _);
         }
 
         /// <summary>
@@ -1359,6 +1362,7 @@ namespace System.Management.Automation
         /// <param name="errorMsg">If no best method, the error message (format string) to use in the error message.</param>
         /// <param name="expandParamsOnBest">True if the best method's last parameter is a params method.</param>
         /// <param name="callNonVirtually">True if best method should be called as non-virtual.</param>
+        /// <param name="argumentMap">Maps the index of the MethodInformation parameter to the index of the argument to use.</param>
         internal static MethodInformation FindBestMethod(
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
@@ -1367,7 +1371,8 @@ namespace System.Management.Automation
             ref string errorId,
             ref string errorMsg,
             out bool expandParamsOnBest,
-            out bool callNonVirtually)
+            out bool callNonVirtually,
+            out int?[] argumentMap)
         {
             callNonVirtually = false;
             var methodInfo = FindBestMethodImpl(
@@ -1377,7 +1382,8 @@ namespace System.Management.Automation
                 arguments,
                 ref errorId,
                 ref errorMsg,
-                out expandParamsOnBest);
+                out expandParamsOnBest,
+                out argumentMap);
             if (methodInfo == null)
             {
                 return null;
@@ -1445,7 +1451,8 @@ namespace System.Management.Automation
             (string, object)[] arguments,
             ref string errorId,
             ref string errorMsg,
-            out bool expandParamsOnBest)
+            out bool expandParamsOnBest,
+            out int?[] argumentMap)
         {
             expandParamsOnBest = false;
 
@@ -1460,8 +1467,14 @@ namespace System.Management.Automation
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
                 && !methods[0].isGeneric
                 && (methods[0].method is null || !methods[0].method.DeclaringType.IsGenericTypeDefinition)
-                && methods[0].parameters.Length == arguments.Length)
+                && methods[0].parameters.Length == arguments.Length
+                && !HasNamedArgument(arguments))
             {
+                argumentMap = new int?[arguments.Length];
+                for (int i = 0; i < arguments.Length; i++)
+                {
+                    argumentMap[i] = i;
+                }
                 return methods[0];
             }
 
@@ -1547,6 +1560,7 @@ namespace System.Management.Automation
                         CultureInfo.InvariantCulture,
                         ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType,
                         methods[0].method.DeclaringType.FullName);
+                    argumentMap = null;
                     return null;
                 }
                 else if (genericParamTypes is not null)
@@ -1557,12 +1571,14 @@ namespace System.Management.Automation
                         methods[0].method.Name,
                         genericParamTypes.Length,
                         arguments.Length);
+                    argumentMap = null;
                     return null;
                 }
                 else
                 {
                     errorId = "MethodCountCouldNotFindBest";
                     errorMsg = ExtendedTypeSystem.MethodArgumentCountException;
+                    argumentMap = null;
                     return null;
                 }
             }
@@ -1573,15 +1589,30 @@ namespace System.Management.Automation
             if (bestCandidate != null)
             {
                 expandParamsOnBest = bestCandidate.expandedParameters != null;
+                argumentMap = bestCandidate.argumentMap;
                 return bestCandidate.method;
             }
 
             errorId = "MethodCountCouldNotFindBest";
             errorMsg = ExtendedTypeSystem.MethodAmbiguousException;
+            argumentMap = null;
             return null;
         }
 
 #nullable enable
+        private static bool HasNamedArgument((string?, object?)[] arguments)
+        {
+            for (int i = 0; i < arguments.Length; i++)
+            {
+                if (!string.IsNullOrEmpty(arguments[i].Item1))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private static bool TryProcessOverload(
             MethodInformation methodInfo,
             (string?, object?)[] arguments,
@@ -1619,6 +1650,7 @@ namespace System.Management.Automation
 
                 parameterIndexes.Remove(argName);
                 ParameterInformation paramInfo = parameters[paramIndex];
+                candidate.argumentMap[paramIndex] = i;
                 if (paramInfo.isParamArray)
                 {
                     Type? elementType = paramInfo.parameterType?.GetElementType();
