@@ -5203,7 +5203,7 @@ namespace System.Management.Automation
             if (lastAst is PropertyMemberAst ||
                 (lastAst is not null && lastAst.Parent is ParameterAst parameter && (parameter.DefaultValue is null || parameter.DefaultValue != lastAst)))
             {
-                // User is adding a new parameter, variable tab completion is not useful.
+                // User is adding a new parameter or a class member, variable tab completion is not useful.
                 return results;
             }
             var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
