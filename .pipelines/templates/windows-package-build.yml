@@ -221,6 +221,15 @@ jobs:
       Write-Verbose -Verbose "exePath: $exePath"
     displayName: 'Make exe package'
 
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign MSI packages
+    inputs:
+      command: 'sign'
+      signing_profile: external_distribution
+      files_to_sign: '**\*.exe'
+      search_root: '$(Pipeline.Workspace)'
+
+
   - pwsh: |
       $runtime = '$(Runtime)'
       Write-Verbose -Verbose "runtime = '$(Runtime)'"
