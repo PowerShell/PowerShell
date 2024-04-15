@@ -335,8 +335,9 @@ namespace System.Management.Automation
     public sealed class SemanticVersion : IComparable, IComparable<SemanticVersion>, IEquatable<SemanticVersion>
     {
         private const string VersionSansRegEx = @"^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$";
-        private const string LabelRegEx = @"^((?<preLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?(\+(?<buildLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?$";
-        private const string LabelUnitRegEx = @"^[0-9A-Za-z-][0-9A-Za-z\-\.]*$";
+        private const string LabelRegEx = @"^(?<preLabel>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(?:\+(?<buildLabel>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$";
+        private const string LabelUnitRegEx = @"^((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)$";
+        private const string BuildUnitRegEx = @"^([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*)$";
         private const string PreLabelPropertyName = "PSSemVerPreReleaseLabel";
         private const string BuildLabelPropertyName = "PSSemVerBuildLabel";
         private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
@@ -370,7 +371,7 @@ namespace System.Management.Automation
         /// <param name="buildLabel">The build metadata for the version.</param>
         /// <exception cref="FormatException">
         /// If <paramref name="preReleaseLabel"/> don't match 'LabelUnitRegEx'.
-        /// If <paramref name="buildLabel"/> don't match 'LabelUnitRegEx'.
+        /// If <paramref name="buildLabel"/> don't match 'BuildUnitRegEx'.
         /// </exception>
         public SemanticVersion(int major, int minor, int patch, string preReleaseLabel, string buildLabel)
             : this(major, minor, patch)
@@ -387,7 +388,7 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(buildLabel))
             {
-                if (!Regex.IsMatch(buildLabel, LabelUnitRegEx))
+                if (!Regex.IsMatch(buildLabel, BuildUnitRegEx))
                 {
                     throw new FormatException(nameof(buildLabel));
                 }
@@ -729,7 +730,7 @@ namespace System.Management.Automation
             }
 
             if (preLabel != null && !Regex.IsMatch(preLabel, LabelUnitRegEx) ||
-               (buildLabel != null && !Regex.IsMatch(buildLabel, LabelUnitRegEx)))
+               (buildLabel != null && !Regex.IsMatch(buildLabel, BuildUnitRegEx)))
             {
                 result.SetFailure(ParseFailureKind.FormatException);
                 return false;

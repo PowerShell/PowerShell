@@ -359,12 +359,12 @@ beta
 
         It 'Should parse valid versions: <version>' -TestCases $validVersions {
             param($version)
-            $v = [SemanticVersion]::new($version)
+            $v = [semver]"$version"
             $v.ToString() | Should -Be $version
         }
 
         It 'Should not parse invalid versions: <version>' -TestCases $invalidVersions {
-            { [SemanticVersion]::new($version) } | Should -Throw
+            { [semver]"$version" } | Should -Throw
         }
     }
 
