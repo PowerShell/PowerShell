@@ -5201,7 +5201,7 @@ namespace System.Management.Automation
             var lastAst = context.RelatedAsts?[^1];
             var variableAst = lastAst as VariableExpressionAst;
             if (lastAst is PropertyMemberAst ||
-                (lastAst is not null && lastAst.Parent is ParameterAst parameter && (parameter.DefaultValue is null || parameter.DefaultValue != lastAst)))
+                (lastAst is not null && lastAst.Parent is ParameterAst parameter && parameter.DefaultValue != lastAst))
             {
                 // User is adding a new parameter or a class member, variable tab completion is not useful.
                 return results;
