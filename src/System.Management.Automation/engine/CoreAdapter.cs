@@ -1637,8 +1637,14 @@ namespace System.Management.Automation
                 int paramIndex;
                 if (string.IsNullOrEmpty(argName))
                 {
-                    // Argument had no name, get the first parameter.
-                    KeyValuePair<string, int> nextParam = parameterIndexes.First();
+                    // Argument had no name, get the first parameter if avail.
+                    using IEnumerator<KeyValuePair<string, int>> keyEnumerator = parameterIndexes.GetEnumerator();
+                    if (!keyEnumerator.MoveNext())
+                    {
+                        return false;
+                    }
+
+                    KeyValuePair<string, int> nextParam = keyEnumerator.Current;
                     argName = nextParam.Key;
                     paramIndex = nextParam.Value;
                 }
@@ -1724,13 +1730,13 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    candidate.conversionRanks[paramIndex] = GetArgumentConversionRank(
+                    candidate.conversionRanks[i] = GetArgumentConversionRank(
                         argValue,
                         paramInfo.parameterType,
                         paramInfo.isByRef,
                         allowCastingToByRefLikeType);
 
-                    if (candidate.conversionRanks[paramIndex] == ConversionRank.None)
+                    if (candidate.conversionRanks[i] == ConversionRank.None)
                     {
                         // No longer a candidate
                         return false;
