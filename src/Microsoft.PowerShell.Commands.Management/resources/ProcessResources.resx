@@ -189,6 +189,9 @@
   <data name="CannotStarttheProcess" xml:space="preserve">
     <value>This command cannot be run completely because the system cannot find all the information required.</value>
   </data>
+  <data name="FailedToCreateProcessObject" xml:space="preserve">
+    <value>Failed to retrieve the new process handle: "{0}". The Process object outputted may have some properties and methods that do not work properly.</value>
+  </data>
   <data name="InvalidUserError" xml:space="preserve">
     <value>This command cannot be run due to error 1783. The possible cause of this error can be using of a non-existing user "{0}". Please give a valid user and run your command again.</value>
   </data>
