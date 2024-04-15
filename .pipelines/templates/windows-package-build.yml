@@ -215,6 +215,8 @@ jobs:
       $msiLocation = Get-ChildItem -Path $(Pipeline.Workspace) -Recurse -Filter "powershell-*$runtime.msi" | Select-Object -ExpandProperty FullName
       Write-Verbose -Verbose "msiLocation: $msiLocation"
 
+      Set-Location $repoRoot
+
       $exePath = New-ExePackage -ProductVersion $version -ProductTargetArchitecture $runtime -MsiLocationPath $msiLocation
       Write-Verbose -Verbose "exePath: $exePath"
     displayName: 'Make exe package'
