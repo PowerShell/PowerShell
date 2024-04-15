@@ -182,27 +182,6 @@ jobs:
 
       Start-PSPackage -Type $packageTypes -SkipReleaseChecks -WindowsRuntime $WindowsRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
 
-      # if ($packageTypes -contains 'msi') {
-      #   $msiPkgNameFilter = "powershell-*.msi"
-      #   $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msiPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-      #   Write-Verbose -Verbose "msiPkgPath: $msiPkgPath"
-      #   Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
-      # }
-
-      # if ($packageTypes -contains 'zip' -or $packageTypes -contains 'fxdependent' -or $packageTypes -contains 'min-size') {
-      #   $zipPkgNameFilter = "powershell-*.zip"
-      #   $zipPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $zipPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-      #   Write-Verbose -Verbose "zipPkgPath: $zipPkgPath"
-      #   Copy-Item -Path $zipPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
-      # }
-
-      # if ($packageTypes -contains 'msix') {
-      #   $msixPkgNameFilter = "powershell-*.msix"
-      #   $msixPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msixPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
-      #   Write-Verbose -Verbose "msixPkgPath: $msixPkgPath"
-      #   Copy-Item -Path $msixPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
-      # }
-
     displayName: 'Package ${{ parameters.buildArchitecture}}'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
@@ -220,10 +199,34 @@ jobs:
       $runtime = '$(Runtime)'
       Write-Verbose -Verbose "runtime = '$(Runtime)'"
 
+      $repoRoot = "$env:REPOROOT"
+      Import-Module "$repoRoot\build.psm1"
+      Import-Module "$repoRoot\tools\packaging"
+
+      $noExeRuntimes = @('fxdependent', 'fxdependentWinDesktop', 'minsize')
+
+      if ($runtime -in $noExeRuntimes) {
+        Write-Verbose -Verbose "No EXE generated for $runtime"
+        return
+      }
+
+      $version = '$(Version)'
+
+      $msiLocation = Get-ChildItem -Path $(Pipeline.Workspace) -Recurse -Filter "powershell-*$runtime.msi" | Select-Object -ExpandProperty FullName
+      Write-Verbose -Verbose "msiLocation: $msiLocation"
+
+      $exePath = New-ExePackage -ProductVersion $version -ProductTargetArchitecture $runtime -MsiLocationPath $msiLocation
+      Write-Verbose -Verbose "exePath: $exePath"
+    displayName: 'Make exe package'
+
+  - pwsh: |
+      $runtime = '$(Runtime)'
+      Write-Verbose -Verbose "runtime = '$(Runtime)'"
+
       $packageTypes = switch ($runtime) {
-        'x64' { @('msi', 'zip', 'msix') }
-        'x86' { @('msi', 'zip', 'msix') }
-        'arm64' { @('msi', 'zip', 'msix') }
+        'x64' { @('msi', 'zip', 'msix', 'exe') }
+        'x86' { @('msi', 'zip', 'msix', 'exe') }
+        'arm64' { @('msi', 'zip', 'msix', 'exe') }
         'fxdependent' { 'fxdependent' }
         'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
         'minsize' { 'min-size' }
@@ -235,6 +238,13 @@ jobs:
 
       if ($packageTypes -contains 'msi') {
         $msiPkgNameFilter = "powershell-*.msi"
+        $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msiPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+        Write-Verbose -Verbose "msiPkgPath: $msiPkgPath"
+        Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+      }
+
+      if ($packageTypes -contains 'exe') {
+        $msiPkgNameFilter = "powershell-*.exe"
         $msiPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $msiPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
         Write-Verbose -Verbose "msiPkgPath: $msiPkgPath"
         Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
