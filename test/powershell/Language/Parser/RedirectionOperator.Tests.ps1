@@ -228,7 +228,7 @@ Describe "Redirection and Set-Variable -append tests" -tags CI {
 
         It 'Redirection of a native application is correct' {
             $expected = @('Arg 0 is <hi>','Arg 1 is <bye>')
-            TestExe -echoargs hi bye > variable:observed
+            testexe -echoargs hi bye > variable:observed
             $observed | Should -Be $expected
         }
 
@@ -236,7 +236,7 @@ Describe "Redirection and Set-Variable -append tests" -tags CI {
             $expected = @('Arg 0 is <hi>','Arg 1 is <bye>')
             try {
                 Push-Location variable:
-                TestExe -echoargs hi bye > observed
+                testexe -echoargs hi bye > observed
             }
             finally {
                 Pop-Location
