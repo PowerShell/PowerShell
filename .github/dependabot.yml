@@ -60,14 +60,14 @@ updates:
       - "CL-BuildPackaging"
       
   - package-ecosystem: "docker"
-    directory: "test/docker"
+    directory: "/"
     schedule:
       interval: "daily"
     labels:
       - "CL-BuildPackaging"    
       
   - package-ecosystem: "github-actions"
-    directory: ".github/workflows"
+    directory: "/"
     schedule:
       interval: "daily"
     labels:
