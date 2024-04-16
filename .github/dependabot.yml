@@ -65,3 +65,10 @@ updates:
       interval: "daily"
     labels:
       - "CL-BuildPackaging"    
+      
+  - package-ecosystem: "github-actions"
+    directory: ".github/workflows"
+    schedule:
+      interval: "daily"
+    labels:
+      - "CL-BuildPackaging"    
