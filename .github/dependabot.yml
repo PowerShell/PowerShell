@@ -58,3 +58,228 @@ updates:
       interval: "daily"
     labels:
       - "CL-BuildPackaging"
+
+  - package-ecosystem: docker
+    directory: /.devcontainer
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /.devcontainer/fedora30
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /docs/host-powershell/sample/MyApp
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.Management.Infrastructure.CimCmdlets
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.Management.UI.Internal
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.PowerShell.Commands.Diagnostics
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.PowerShell.Commands.Management
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.PowerShell.Commands.Utility
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.PowerShell.ConsoleHost
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.PowerShell.CoreCLR.Eventing
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.PowerShell.GlobalTool.Shim
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.PowerShell.LocalAccounts
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.PowerShell.SDK
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.PowerShell.Security
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.WSMan.Management
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Microsoft.WSMan.Runtime
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/ResGen
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/System.Management.Automation/SourceGenerators/PSVersionInfoGenerator
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/System.Management.Automation
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/TypeCatalogGen
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/powershell-unix
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/powershell-win-core
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /test/docker/networktest
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/hosting
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/perf/benchmarks
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/perf/dotnet-tools/BenchmarkDotNet.Extensions
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/perf/dotnet-tools/Reporting
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/perf/dotnet-tools/ResultsComparer
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/perf
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/tools/NamedPipeConnection
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/tools/NamedPipeConnection/src/code
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/tools/TestAlc/init
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/tools/TestAlc/nested
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/tools/TestAlc/root
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/tools/TestExe
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/tools/TestService
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/tools/UnixSocket
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/tools/WebListener
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /test/xUnit
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /tools/packaging/projects/nuget
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /tools/packaging/projects/reference/Microsoft.PowerShell.ConsoleHost
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /tools/releaseBuild/Images/microsoft_powershell_centos7
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /tools/releaseBuild/Images/microsoft_powershell_ubuntu16.04
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /tools/releaseBuild/Images/microsoft_powershell_ubuntu18.04
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /tools/releaseBuild/Images/microsoft_powershell_windowsservercore
+    schedule:
+      interval: daily

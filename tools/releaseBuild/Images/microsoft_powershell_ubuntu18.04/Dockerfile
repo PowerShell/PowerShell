@@ -1,6 +1,6 @@
 # Docker image file that describes an Ubuntu16.04 image with PowerShell installed from Microsoft APT Repo
 
-FROM mcr.microsoft.com/powershell:ubuntu-18.04
+FROM mcr.microsoft.com/powershell:ubuntu-18.04@sha256:844c8344e869dbfa49c7c4c5c292edc8398a81264ecbae3498238546ae3f2a80
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
 
 # Install dependencies and clean up

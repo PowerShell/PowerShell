@@ -1,6 +1,6 @@
 # escape=`
 #0.3.6 (no powershell 6)
-FROM mcr.microsoft.com/powershell:windowsservercore
+FROM mcr.microsoft.com/powershell:windowsservercore@sha256:ab018a7405eeec8599074245ce5c1dcc2281df1cdeb773a0ef229dde3b316c3c
 LABEL maintainer='PowerShell Team <powershellteam@hotmail.com>'
 LABEL description="This Dockerfile for Windows Server Core with git installed via chocolatey."
 
