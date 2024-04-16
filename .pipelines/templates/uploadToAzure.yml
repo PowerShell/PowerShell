@@ -116,10 +116,10 @@ jobs:
   - download: current
     artifact: drop_windows_package_package_win_arm64
     patterns: |
-      '**/*.msi'
-      '**/*.msix'
-      '**/*.zip'
-      '**/*.exe'
+      **/*.msi
+      **/*.msix
+      **/*.zip
+      **/*.exe
     displayName: Download windows arm64 packages
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
@@ -127,24 +127,24 @@ jobs:
   - download: current
     artifact: drop_windows_package_package_win_fxdependentWinDesktop
     patterns: '**/*.zip'
-    displayName: Download windows arm64 packages
+    displayName: Download windows fxdependentWinDesktop packages
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - download: current
     artifact: drop_windows_package_package_win_minsize
     patterns: '**/*.zip'
-    displayName: Download windows arm64 packages
+    displayName: Download windows minsize packages
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
   - download: current
     artifact: drop_windows_package_package_win_x64
     patterns: |
-      '**/*.msi'
-      '**/*.msix'
-      '**/*.zip'
-      '**/*.exe'
+      **/*.msi
+      **/*.msix
+      **/*.zip
+      **/*.exe
     displayName: Download windows x64 packages
     env:
       ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
