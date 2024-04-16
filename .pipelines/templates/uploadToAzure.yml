@@ -201,7 +201,8 @@ jobs:
     inputs:
       azureSubscription: az-blob-cicd-infra
       scriptType: inlineScript
-      azurePowerShellVersion: latestVersion
+      azurePowerShellVersion: LatestVersion
+      pwsh: true
       inline: |
         $storageAccountName = "pscoretestdata"
         $containerName = $env:AZUREVERSION
