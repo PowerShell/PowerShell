@@ -1183,14 +1183,18 @@ namespace System.Management.Automation
             internal ParameterInformation[] parameters;
             internal ParameterInformation[] expandedParameters;
             internal ConversionRank[] conversionRanks;
-            internal int?[] argumentMap;
+
+            /// <summary>
+            /// Maps the index of the parameter to the user supplied argument.
+            /// </summary>
+            internal int?[] ArgumentMap;
 
             internal OverloadCandidate(MethodInformation method, int argCount)
             {
                 this.method = method;
                 this.parameters = method.parameters;
                 conversionRanks = new ConversionRank[argCount];
-                argumentMap = new int?[method.parameters.Length];
+                ArgumentMap = new int?[method.parameters.Length];
             }
         }
 
@@ -1588,8 +1592,27 @@ namespace System.Management.Automation
                 : FindBestCandidate(candidates, arguments.Select(a => a.Item2).ToArray(), invocationConstraints);
             if (bestCandidate != null)
             {
-                expandParamsOnBest = bestCandidate.expandedParameters != null;
-                argumentMap = bestCandidate.argumentMap;
+                if (bestCandidate.expandedParameters != null)
+                {
+                    // The argumentMap needs to include all the extra params
+                    // arguments that has been expanded so the caller can map
+                    // them correctly.
+                    expandParamsOnBest = true;
+                    int paramCount = bestCandidate.ArgumentMap.Length;
+                    int extraParamsCount = bestCandidate.expandedParameters.Length - bestCandidate.parameters.Length;
+                    argumentMap = new int?[paramCount + extraParamsCount];
+                    Array.Copy(bestCandidate.ArgumentMap, argumentMap, paramCount);
+                    for (int i = paramCount; i < paramCount + extraParamsCount; i++)
+                    {
+                        argumentMap[i] = i;
+                    }
+                }
+                else
+                {
+                    expandParamsOnBest = false;
+                    argumentMap = bestCandidate.ArgumentMap;
+                }
+
                 return bestCandidate.method;
             }
 
@@ -1656,7 +1679,7 @@ namespace System.Management.Automation
 
                 parameterIndexes.Remove(argName);
                 ParameterInformation paramInfo = parameters[paramIndex];
-                candidate.argumentMap[paramIndex] = i;
+                candidate.ArgumentMap[paramIndex] = i;
                 if (paramInfo.isParamArray)
                 {
                     Type? elementType = paramInfo.parameterType?.GetElementType();
@@ -1680,7 +1703,11 @@ namespace System.Management.Automation
 
                         if (elemConv > arrayConv)
                         {
-                            candidate.expandedParameters = ExpandParameters(argName, arguments.Length, parameters, elementType);
+                            candidate.expandedParameters = ExpandParameters(
+                                argName,
+                                candidate.parameters.Length,
+                                candidate.parameters,
+                                elementType);
                             candidate.conversionRanks[i] = elemConv;
                         }
                         else
@@ -1697,7 +1724,6 @@ namespace System.Management.Automation
                     {
                         // All remaining arguments will be added to one array to be passed as this params
                         // argument.
-                        // Note that we go through here when the param array parameter has no argument.
                         for (int j = i; j < arguments.Length; j++)
                         {
                             (string? nextArgName, object? nextArgValue) = arguments[j];
@@ -1722,10 +1748,11 @@ namespace System.Management.Automation
                             i++;
                         }
 
-                        if (i == arguments.Length - 1)
-                        {
-                            candidate.expandedParameters = ExpandParameters(paramInfo.name, arguments.Length, parameters, elementType);
-                        }
+                        candidate.expandedParameters = ExpandParameters(
+                            argName,
+                            arguments.Length,
+                            parameters,
+                            elementType);
                     }
                 }
                 else
@@ -1747,7 +1774,16 @@ namespace System.Management.Automation
             // Unmapped args only work if they are optional.
             foreach (int paramIndex in parameterIndexes.Values)
             {
-                if (!parameters[paramIndex].isOptional)
+                ParameterInformation paramInfo = parameters[paramIndex];
+                if (paramInfo.isParamArray)
+                {
+                    candidate.expandedParameters = ExpandParameters(
+                        paramInfo.name,
+                        parameters.Length,
+                        parameters,
+                        paramInfo.parameterType.GetElementType());
+                }
+                else if (!paramInfo.isOptional)
                 {
                     return false;
                 }
@@ -2288,9 +2324,7 @@ namespace System.Management.Automation
             {
                 ParameterInfo lastParameter = methodParameters[parametersLength - 1];
 
-                // Optional and params together are forbidden in VB and so we only check for params
-                // if !hasOptional
-                if (!hasOptional && lastParameter.ParameterType.IsArray)
+                if (lastParameter.ParameterType.IsArray)
                 {
                     // The extension method 'CustomAttributeExtensions.GetCustomAttributes(ParameterInfo, Type, Boolean)' has inconsistent
                     // behavior on its return value in both FullCLR and CoreCLR. According to MSDN, if the attribute cannot be found, it
