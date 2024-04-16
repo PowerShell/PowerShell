@@ -869,20 +869,6 @@ namespace System.Management.Automation
             return rank;
         }
 
-        private static ParameterInformation[] ExpandParameters(string name, int argCount, ParameterInformation[] parameters, Type elementType)
-        {
-            Diagnostics.Assert(parameters[parameters.Length - 1].isParamArray, "ExpandParameters shouldn't be called on non-param method");
-
-            ParameterInformation[] newParameters = new ParameterInformation[argCount];
-            Array.Copy(parameters, newParameters, parameters.Length - 1);
-            for (int i = parameters.Length - 1; i < argCount; ++i)
-            {
-                newParameters[i] = new ParameterInformation(name, elementType, false, null, false);
-            }
-
-            return newParameters;
-        }
-
         /// <summary>
         /// Compare the 2 methods, determining which method is better.
         /// </summary>
@@ -892,8 +878,8 @@ namespace System.Management.Automation
             Diagnostics.Assert(candidate1.ConversionRanks.Length == candidate2.ConversionRanks.Length,
                                "should have same number of conversions regardless of the number of parameters - default arguments are not included here");
 
-            Type[] params1 = candidate1.ParameterTypes;
-            Type[] params2 = candidate2.ParameterTypes;
+            Type[] params1 = candidate1.ExpandedParameterTypes ?? candidate1.ParameterTypes;
+            Type[] params2 = candidate2.ExpandedParameterTypes ?? candidate2.ParameterTypes;
 
             int betterCount = 0;
             int multiplier = candidate1.ConversionRanks.Length;
@@ -967,10 +953,8 @@ namespace System.Management.Automation
 
                     // With a positive multiplier, we'll choose the "most general" type, and a negative
                     // multiplier will choose the "most specific".
-                    Type params1Type = i <= params1.Length ? params1[i] : candidate1.ExpandedParamsElementType!;
-                    Type params2Type = i <= params2.Length ? params2[i] : candidate2.ExpandedParamsElementType!;
-                    rank1 = LanguagePrimitives.GetConversionRank(params1Type, params2Type);
-                    rank2 = LanguagePrimitives.GetConversionRank(params2Type, params1Type);
+                    rank1 = LanguagePrimitives.GetConversionRank(params1[i], params2[i]);
+                    rank2 = LanguagePrimitives.GetConversionRank(params2[i], params1[i]);
                     if (rank1 < rank2)
                     {
                         betterCount += multiplier;
@@ -994,16 +978,16 @@ namespace System.Management.Automation
                 }
 
                 // Apply tie breaking rules, related to expanded parameters
-                if (candidate1.ExpandedParamsCount != null && candidate2.ExpandedParamsCount != null)
+                if (candidate1.ExpandedParameterTypes != null && candidate2.ExpandedParameterTypes != null)
                 {
                     // Both are using expanded parameters.  The one with more parameters is better
                     return (candidate1.ParameterTypes.Length > candidate2.ParameterTypes.Length) ? 1 : -1;
                 }
-                else if (candidate1.ExpandedParamsCount != null)
+                else if (candidate1.ExpandedParameterTypes != null)
                 {
                     return -1;
                 }
-                else if (candidate2.ExpandedParamsCount != null)
+                else if (candidate2.ExpandedParameterTypes != null)
                 {
                     return 1;
                 }
@@ -1193,15 +1177,10 @@ namespace System.Management.Automation
             public Type[] ParameterTypes { get; }
 
             /// <summary>
-            /// Gets the type of the expanded params if present.
+            /// If set this contains the expanded param arg types based on
+            /// the caller supplied count.
             /// </summary>
-            public Type? ExpandedParamsElementType { get; internal set; }
-
-            /// <summary>
-            /// If set, this is the number of extra arguments for the params
-            /// argument supplied as individual objects.
-            /// </summary>
-            public int? ExpandedParamsCount { get; internal set; }
+            public Type[]? ExpandedParameterTypes { get; internal set; }
 
             /// <summary>
             /// The conversion ranks for the caller supplied arguments.
@@ -1239,18 +1218,27 @@ namespace System.Management.Automation
             /// </param>
             public void SetExtraParamsCount(int count, Type elementType)
             {
-                ExpandedParamsCount = count;
-                ExpandedParamsElementType = elementType;
+                if (count == 0)
+                {
+                    // A count of zero is treated as the literal array type.
+                    ExpandedParameterTypes = ParameterTypes;
+                    return;
+                }
+
+                ExpandedParameterTypes = new Type[ParameterTypes.Length + count - 1];
+                Array.Copy(ParameterTypes, ExpandedParameterTypes, ParameterTypes.Length - 1);
+                ExpandedParameterTypes[ParameterTypes.Length - 1] = elementType;
 
                 if (count > 1)
                 {
-                    // If the count is greater than 1 update the map to include
-                    // the index of all the user supplied arguments.
+                    // A count greater than one needs to extend the type array
+                    // as well as the argument map.
                     int?[] originalMap = ArgumentMap;
-                    ArgumentMap = new int?[originalMap.Length + count];
+                    ArgumentMap = new int?[ExpandedParameterTypes.Length];
                     Array.Copy(originalMap, ArgumentMap, originalMap.Length);
                     for (int i = originalMap.Length; i < ArgumentMap.Length; i++)
                     {
+                        ExpandedParameterTypes[i] = elementType;
                         ArgumentMap[i] = i;
                     }
                 }
@@ -1647,12 +1635,14 @@ namespace System.Management.Automation
                 }
             }
 
+            try{
+
             OverloadCandidate bestCandidate = candidates.Count == 1
                 ? candidates[0]
                 : FindBestCandidate(candidates, arguments.Select(a => a.Item2).ToArray(), invocationConstraints);
             if (bestCandidate != null)
             {
-                expandParamsOnBest = bestCandidate.ExpandedParamsCount != null;
+                expandParamsOnBest = bestCandidate.ExpandedParameterTypes != null;
                 argumentMap = bestCandidate.ArgumentMap;
                 return bestCandidate.Method;
             }
@@ -1661,6 +1651,12 @@ namespace System.Management.Automation
             errorMsg = ExtendedTypeSystem.MethodAmbiguousException;
             argumentMap = null;
             return null;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                throw;
+            }
         }
 
 #nullable enable
@@ -1723,13 +1719,28 @@ namespace System.Management.Automation
                 candidate.ArgumentMap[paramIndex] = i;
                 if (paramInfo.isParamArray)
                 {
-                    Type? elementType = paramInfo.parameterType?.GetElementType();
-
-                    if (i == arguments.Length - 1)
+                    // First determine how many args there are for the param arg.
+                    // This checks up the the end of the arguments or the next
+                    // named argument.
+                    int extraParamsCount = 1;
+                    for (int j = i + 1; j < arguments.Length; j++)
                     {
-                        // This is our last argument, check to see if it can be
-                        // passed as the array value or a single element of the
-                        // param type.
+                        string? nextArgName = arguments[j].Item1;
+                        if (!string.IsNullOrEmpty(nextArgName))
+                        {
+                            // Subsequent arguments will also be named.
+                            break;
+                        }
+
+                        extraParamsCount++;
+                    }
+
+                    Type? elementType = paramInfo.parameterType?.GetElementType();
+                    if (extraParamsCount == 1)
+                    {
+                        // There is only one argument, check to see if it can
+                        // be passed as the array value or a single element of
+                        // the param type.
                         ConversionRank arrayConv = GetArgumentConversionRank(
                             argValue,
                             paramInfo.parameterType,
@@ -1759,19 +1770,12 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        // All remaining arguments will be added to one array to be passed as this params
-                        // argument. Stop when a named argument was encountered.
-                        int extraParamsCount = 0;
-                        for (int j = i; j < arguments.Length; j++)
+                        // There are multiple arguments which are checked by
+                        // the argument element type.
+                        for (int j = i; j < i + extraParamsCount; j++)
                         {
-                            (string? nextArgName, object? nextArgValue) = arguments[j];
-                            if (!string.IsNullOrEmpty(nextArgName))
-                            {
-                                // Subsequent arguments will also be named.
-                                break;
-                            }
+                            object? nextArgValue = arguments[j].Item2;
 
-                            extraParamsCount++;
                             candidate.ConversionRanks[j] = GetArgumentConversionRank(
                                 nextArgValue,
                                 elementType,
@@ -1783,9 +1787,8 @@ namespace System.Management.Automation
                                 // No longer a candidate
                                 return false;
                             }
-
-                            i++;
                         }
+                        i += extraParamsCount;
 
                         candidate.SetExtraParamsCount(extraParamsCount, elementType!);
                     }
