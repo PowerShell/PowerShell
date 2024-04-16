@@ -23,6 +23,7 @@ using System.Xml;
 using System.Management.Automation.Internal;
 using Microsoft.PowerShell;
 using Dbg = System.Management.Automation.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -888,30 +889,30 @@ namespace System.Management.Automation
         /// <returns>1 if method1 is better, -1 if method2 is better, 0 otherwise.</returns>
         private static int CompareOverloadCandidates(OverloadCandidate candidate1, OverloadCandidate candidate2, object[] arguments)
         {
-            Diagnostics.Assert(candidate1.conversionRanks.Length == candidate2.conversionRanks.Length,
+            Diagnostics.Assert(candidate1.ConversionRanks.Length == candidate2.ConversionRanks.Length,
                                "should have same number of conversions regardless of the number of parameters - default arguments are not included here");
 
-            ParameterInformation[] params1 = candidate1.expandedParameters ?? candidate1.parameters;
-            ParameterInformation[] params2 = candidate2.expandedParameters ?? candidate2.parameters;
+            Type[] params1 = candidate1.ParameterTypes;
+            Type[] params2 = candidate2.ParameterTypes;
 
             int betterCount = 0;
-            int multiplier = candidate1.conversionRanks.Length;
-            for (int i = 0; i < candidate1.conversionRanks.Length; ++i, --multiplier)
+            int multiplier = candidate1.ConversionRanks.Length;
+            for (int i = 0; i < candidate1.ConversionRanks.Length; ++i, --multiplier)
             {
-                if (candidate1.conversionRanks[i] < candidate2.conversionRanks[i])
+                if (candidate1.ConversionRanks[i] < candidate2.ConversionRanks[i])
                 {
                     betterCount -= multiplier;
                 }
-                else if (candidate1.conversionRanks[i] > candidate2.conversionRanks[i])
+                else if (candidate1.ConversionRanks[i] > candidate2.ConversionRanks[i])
                 {
                     betterCount += multiplier;
                 }
-                else if (candidate1.conversionRanks[i] == ConversionRank.UnrelatedArrays)
+                else if (candidate1.ConversionRanks[i] == ConversionRank.UnrelatedArrays)
                 {
                     // If both are unrelated arrays, then use the element type conversions instead.
                     Type argElemType = EffectiveArgumentType(arguments[i]).GetElementType();
-                    ConversionRank rank1 = LanguagePrimitives.GetConversionRank(argElemType, params1[i].parameterType.GetElementType());
-                    ConversionRank rank2 = LanguagePrimitives.GetConversionRank(argElemType, params2[i].parameterType.GetElementType());
+                    ConversionRank rank1 = LanguagePrimitives.GetConversionRank(argElemType, params1[i].GetElementType());
+                    ConversionRank rank2 = LanguagePrimitives.GetConversionRank(argElemType, params2[i].GetElementType());
                     if (rank1 < rank2)
                     {
                         betterCount -= multiplier;
@@ -925,8 +926,8 @@ namespace System.Management.Automation
 
             if (betterCount == 0)
             {
-                multiplier = candidate1.conversionRanks.Length;
-                for (int i = 0; i < candidate1.conversionRanks.Length; ++i, multiplier = Math.Abs(multiplier) - 1)
+                multiplier = candidate1.ConversionRanks.Length;
+                for (int i = 0; i < candidate1.ConversionRanks.Length; ++i, multiplier = Math.Abs(multiplier) - 1)
                 {
                     // The following rather tricky logic tries to pick the best method in 2 very different cases -
                     //   - Pick the most specific method when conversions aren't losing information
@@ -939,8 +940,8 @@ namespace System.Management.Automation
                     //        in this case, we want to call f(int16) because it is more general,
                     //        we know we could lose information with either call, but we will lose
                     //        less information calling f(int16).
-                    ConversionRank rank1 = candidate1.conversionRanks[i];
-                    ConversionRank rank2 = candidate2.conversionRanks[i];
+                    ConversionRank rank1 = candidate1.ConversionRanks[i];
+                    ConversionRank rank2 = candidate2.ConversionRanks[i];
                     if (rank1 < ConversionRank.NullToValue || rank2 < ConversionRank.NullToValue)
                     {
                         // The tie breaking rules here do not apply to conversions that are not
@@ -966,8 +967,10 @@ namespace System.Management.Automation
 
                     // With a positive multiplier, we'll choose the "most general" type, and a negative
                     // multiplier will choose the "most specific".
-                    rank1 = LanguagePrimitives.GetConversionRank(params1[i].parameterType, params2[i].parameterType);
-                    rank2 = LanguagePrimitives.GetConversionRank(params2[i].parameterType, params1[i].parameterType);
+                    Type params1Type = i <= params1.Length ? params1[i] : candidate1.ExpandedParamsElementType!;
+                    Type params2Type = i <= params2.Length ? params2[i] : candidate2.ExpandedParamsElementType!;
+                    rank1 = LanguagePrimitives.GetConversionRank(params1Type, params2Type);
+                    rank2 = LanguagePrimitives.GetConversionRank(params2Type, params1Type);
                     if (rank1 < rank2)
                     {
                         betterCount += multiplier;
@@ -982,25 +985,25 @@ namespace System.Management.Automation
             if (betterCount == 0)
             {
                 // Check if parameters are the same.  If so, we have a few tiebreakering rules down below.
-                for (int i = 0; i < candidate1.conversionRanks.Length; ++i)
+                for (int i = 0; i < candidate1.ConversionRanks.Length; ++i)
                 {
-                    if (params1[i].parameterType != params2[i].parameterType)
+                    if (params1[i] != params2[i])
                     {
                         return 0;
                     }
                 }
 
                 // Apply tie breaking rules, related to expanded parameters
-                if (candidate1.expandedParameters != null && candidate2.expandedParameters != null)
+                if (candidate1.ExpandedParamsCount != null && candidate2.ExpandedParamsCount != null)
                 {
                     // Both are using expanded parameters.  The one with more parameters is better
-                    return (candidate1.parameters.Length > candidate2.parameters.Length) ? 1 : -1;
+                    return (candidate1.ParameterTypes.Length > candidate2.ParameterTypes.Length) ? 1 : -1;
                 }
-                else if (candidate1.expandedParameters != null)
+                else if (candidate1.ExpandedParamsCount != null)
                 {
                     return -1;
                 }
-                else if (candidate2.expandedParameters != null)
+                else if (candidate2.ExpandedParamsCount != null)
                 {
                     return 1;
                 }
@@ -1013,11 +1016,11 @@ namespace System.Management.Automation
             // Need to revisit this if we support named arguments
             if (betterCount == 0)
             {
-                if (candidate1.parameters.Length < candidate2.parameters.Length)
+                if (candidate1.ParameterTypes.Length < candidate2.ParameterTypes.Length)
                 {
                     return 1;
                 }
-                else if (candidate1.parameters.Length > candidate2.parameters.Length)
+                else if (candidate1.ParameterTypes.Length > candidate2.ParameterTypes.Length)
                 {
                     return -1;
                 }
@@ -1152,13 +1155,13 @@ namespace System.Management.Automation
         /// </summary>
         private static int CompareTypeSpecificity(OverloadCandidate candidate1, OverloadCandidate candidate2)
         {
-            if (!(candidate1.method.isGeneric || candidate2.method.isGeneric))
+            if (!(candidate1.Method.isGeneric || candidate2.Method.isGeneric))
             {
                 return 0;
             }
 
-            Type[] params1 = GetGenericMethodDefinitionIfPossible(candidate1.method.method).GetParameters().Select(static p => p.ParameterType).ToArray();
-            Type[] params2 = GetGenericMethodDefinitionIfPossible(candidate2.method.method).GetParameters().Select(static p => p.ParameterType).ToArray();
+            Type[] params1 = GetGenericMethodDefinitionIfPossible(candidate1.Method.method).GetParameters().Select(static p => p.ParameterType).ToArray();
+            Type[] params2 = GetGenericMethodDefinitionIfPossible(candidate2.Method.method).GetParameters().Select(static p => p.ParameterType).ToArray();
             return CompareTypeSpecificity(params1, params2);
         }
 
@@ -1176,27 +1179,84 @@ namespace System.Management.Automation
             return method;
         }
 
-        [DebuggerDisplay("OverloadCandidate: {method.methodDefinition}")]
+#nullable enable
         private sealed class OverloadCandidate
         {
-            internal MethodInformation method;
-            internal ParameterInformation[] parameters;
-            internal ParameterInformation[] expandedParameters;
-            internal ConversionRank[] conversionRanks;
+            /// <summary>
+            /// Gets the underlying method information for this overload.
+            /// </summary>
+            public MethodInformation Method { get; }
 
             /// <summary>
-            /// Maps the index of the parameter to the user supplied argument.
+            /// Gets the types for each parameters for the provided method.
             /// </summary>
-            internal int?[] ArgumentMap;
+            public Type[] ParameterTypes { get; }
 
-            internal OverloadCandidate(MethodInformation method, int argCount)
+            /// <summary>
+            /// Gets the type of the expanded params if present.
+            /// </summary>
+            public Type? ExpandedParamsElementType { get; internal set; }
+
+            /// <summary>
+            /// If set, this is the number of extra arguments for the params
+            /// argument supplied as individual objects.
+            /// </summary>
+            public int? ExpandedParamsCount { get; internal set; }
+
+            /// <summary>
+            /// The conversion ranks for the caller supplied arguments.
+            /// </summary>
+            public ConversionRank[] ConversionRanks { get; }
+
+            /// <summary>
+            /// Gets the index map that maps the parameter index to the caller
+            /// supplied argument index. A value of null means no caller
+            /// supplied value was present for the parameter of that index.
+            /// </summary>
+            public int?[] ArgumentMap { get; internal set; }
+
+            public OverloadCandidate(MethodInformation method, int argumentCount)
             {
-                this.method = method;
-                this.parameters = method.parameters;
-                conversionRanks = new ConversionRank[argCount];
-                ArgumentMap = new int?[method.parameters.Length];
+                Method = method;
+                ParameterTypes = new Type[method.parameters.Length];
+                for (int i = 0; i < method.parameters.Length; i++)
+                {
+                    ParameterTypes[i] = method.parameters[i].parameterType;
+                }
+                ConversionRanks = new ConversionRank[argumentCount];
+                ArgumentMap = new int?[ParameterTypes.Length];
+            }
+
+            /// <summary>
+            /// Update the internal state that tracks how many caller supplied
+            /// extra params have been supplied as individual objects rather.
+            /// </summary>
+            /// <param name="count">
+            /// The number of individual arguments supplied for the extra params arg.
+            /// </param>
+            /// <param name="elementType">
+            /// The element type of the params argument.
+            /// </param>
+            public void SetExtraParamsCount(int count, Type elementType)
+            {
+                ExpandedParamsCount = count;
+                ExpandedParamsElementType = elementType;
+
+                if (count > 1)
+                {
+                    // If the count is greater than 1 update the map to include
+                    // the index of all the user supplied arguments.
+                    int?[] originalMap = ArgumentMap;
+                    ArgumentMap = new int?[originalMap.Length + count];
+                    Array.Copy(originalMap, ArgumentMap, originalMap.Length);
+                    for (int i = originalMap.Length; i < ArgumentMap.Length; i++)
+                    {
+                        ArgumentMap[i] = i;
+                    }
+                }
             }
         }
+#nullable disable
 
         private static bool IsInvocationTargetConstraintSatisfied(MethodInformation method, PSMethodInvocationConstraints invocationConstraints)
         {
@@ -1301,12 +1361,12 @@ namespace System.Management.Automation
                 {
                     if (parameterTypeConstraint != null)
                     {
-                        if (parameterIndex >= overloadCandidate.parameters.Length)
+                        if (parameterIndex >= overloadCandidate.ParameterTypes.Length)
                         {
                             return false;
                         }
 
-                        Type parameterType = overloadCandidate.parameters[parameterIndex].parameterType;
+                        Type parameterType = overloadCandidate.ParameterTypes[parameterIndex];
                         if (parameterType != parameterTypeConstraint)
                         {
                             return false;
@@ -1592,28 +1652,9 @@ namespace System.Management.Automation
                 : FindBestCandidate(candidates, arguments.Select(a => a.Item2).ToArray(), invocationConstraints);
             if (bestCandidate != null)
             {
-                if (bestCandidate.expandedParameters != null)
-                {
-                    // The argumentMap needs to include all the extra params
-                    // arguments that has been expanded so the caller can map
-                    // them correctly.
-                    expandParamsOnBest = true;
-                    int paramCount = bestCandidate.ArgumentMap.Length;
-                    int extraParamsCount = bestCandidate.expandedParameters.Length - bestCandidate.parameters.Length;
-                    argumentMap = new int?[paramCount + extraParamsCount];
-                    Array.Copy(bestCandidate.ArgumentMap, argumentMap, paramCount);
-                    for (int i = paramCount; i < paramCount + extraParamsCount; i++)
-                    {
-                        argumentMap[i] = i;
-                    }
-                }
-                else
-                {
-                    expandParamsOnBest = false;
-                    argumentMap = bestCandidate.ArgumentMap;
-                }
-
-                return bestCandidate.method;
+                expandParamsOnBest = bestCandidate.ExpandedParamsCount != null;
+                argumentMap = bestCandidate.ArgumentMap;
+                return bestCandidate.Method;
             }
 
             errorId = "MethodCountCouldNotFindBest";
@@ -1703,19 +1744,15 @@ namespace System.Management.Automation
 
                         if (elemConv > arrayConv)
                         {
-                            candidate.expandedParameters = ExpandParameters(
-                                argName,
-                                candidate.parameters.Length,
-                                candidate.parameters,
-                                elementType);
-                            candidate.conversionRanks[i] = elemConv;
+                            candidate.SetExtraParamsCount(1, elementType!);
+                            candidate.ConversionRanks[i] = elemConv;
                         }
                         else
                         {
-                            candidate.conversionRanks[i] = arrayConv;
+                            candidate.ConversionRanks[i] = arrayConv;
                         }
 
-                        if (candidate.conversionRanks[i] == ConversionRank.None)
+                        if (candidate.ConversionRanks[i] == ConversionRank.None)
                         {
                             return false;
                         }
@@ -1723,7 +1760,8 @@ namespace System.Management.Automation
                     else
                     {
                         // All remaining arguments will be added to one array to be passed as this params
-                        // argument.
+                        // argument. Stop when a named argument was encountered.
+                        int extraParamsCount = 0;
                         for (int j = i; j < arguments.Length; j++)
                         {
                             (string? nextArgName, object? nextArgValue) = arguments[j];
@@ -1733,13 +1771,14 @@ namespace System.Management.Automation
                                 break;
                             }
 
-                            candidate.conversionRanks[j] = GetArgumentConversionRank(
+                            extraParamsCount++;
+                            candidate.ConversionRanks[j] = GetArgumentConversionRank(
                                 nextArgValue,
                                 elementType,
                                 isByRef: false,
                                 allowCastingToByRefLikeType: false);
 
-                            if (candidate.conversionRanks[j] == ConversionRank.None)
+                            if (candidate.ConversionRanks[j] == ConversionRank.None)
                             {
                                 // No longer a candidate
                                 return false;
@@ -1748,22 +1787,18 @@ namespace System.Management.Automation
                             i++;
                         }
 
-                        candidate.expandedParameters = ExpandParameters(
-                            argName,
-                            arguments.Length,
-                            parameters,
-                            elementType);
+                        candidate.SetExtraParamsCount(extraParamsCount, elementType!);
                     }
                 }
                 else
                 {
-                    candidate.conversionRanks[i] = GetArgumentConversionRank(
+                    candidate.ConversionRanks[i] = GetArgumentConversionRank(
                         argValue,
                         paramInfo.parameterType,
                         paramInfo.isByRef,
                         allowCastingToByRefLikeType);
 
-                    if (candidate.conversionRanks[i] == ConversionRank.None)
+                    if (candidate.ConversionRanks[i] == ConversionRank.None)
                     {
                         // No longer a candidate
                         return false;
@@ -1777,11 +1812,7 @@ namespace System.Management.Automation
                 ParameterInformation paramInfo = parameters[paramIndex];
                 if (paramInfo.isParamArray)
                 {
-                    candidate.expandedParameters = ExpandParameters(
-                        paramInfo.name,
-                        parameters.Length,
-                        parameters,
-                        paramInfo.parameterType.GetElementType());
+                    candidate.SetExtraParamsCount(0, paramInfo.parameterType.GetElementType()!);
                 }
                 else if (!paramInfo.isOptional)
                 {
