@@ -297,20 +297,23 @@ public class TestClassCstorWithOptional
         [CLRBindingTests.TestClass]::ParamsWithDefault("first", defaultArg: "bar", remainder: [string[]]@("second", "third")) | Should -Be first-bar-second-third
     }
 
-    It "Calls params with default value through named arg after single params" {
-        [CLRBindingTests.TestClass]::ParamsWithDefault("first", "second", defaultArg: "bar") | Should -Be first-bar-second-third
+    It "Fails with params where default has already been set with single param value" {
+        $err = { [CLRBindingTests.TestClass]::ParamsWithDefault("first", "second", defaultArg: "bar") } | Should -Throw -PassThru
+        [string]$err | Should -Be 'Cannot find an overload for "ParamsWithDefault" and the argument count: "3".'
+    }
+
+    It "Fails with params where default has already been set with array param value" {
+        $err = { [CLRBindingTests.TestClass]::ParamsWithDefault("first", [string[]]@("second", "third"), defaultArg: "bar") } | Should -Throw -PassThru
+        [string]$err | Should -Be 'Cannot find an overload for "ParamsWithDefault" and the argument count: "3".'
+    }
+
+    It "Fails with params where defualt set positionally as well as through named argument" {
+        $err = { [CLRBindingTests.TestClass]::ParamsWithDefault("first", "second", "third", defaultArg: "bar") } | Should -Throw -PassThru
+        [string]$err | Should -Be 'Cannot find an overload for "ParamsWithDefault" and the argument count: "4".'
     }
 
     It "Calls params with default value through named arg after named single params" {
         [CLRBindingTests.TestClass]::ParamsWithDefault("first", remainder: "second", defaultArg: "bar") | Should -Be first-bar-second
-    }
-
-    It "Calls params with default value through named arg after multiple params" {
-        [CLRBindingTests.TestClass]::ParamsWithDefault("first", "second", "third", defaultArg: "bar") | Should -Be first-bar-second-third
-    }
-
-    It "Calls params with default value through named arg after array params" {
-        [CLRBindingTests.TestClass]::ParamsWithDefault("first", [string[]]@("second", "third"), defaultArg: "bar") | Should -Be first-bar-second-third
     }
 
     It "Calls params with default value through named arg after named array params" {
