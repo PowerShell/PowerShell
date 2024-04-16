@@ -171,14 +171,14 @@ jobs:
 
   - pwsh: |
       $patterns = @(
-        '**/powershell*.deb'
-        '**/powershell*.tar.gz'
-        '**/powershell*.rpm'
-        '**/powershell*.msi'
-        '**/powershell*.msix'
-        '**/powershell*.zip'
-        '**/powershell*.exe'
-        '**/powershell*.pkg'
+        'powershell*.deb'
+        'powershell*.tar.gz'
+        'powershell*.rpm'
+        'powershell*.msi'
+        'powershell*.msix'
+        'powershell*.zip'
+        'powershell*.exe'
+        'powershell*.pkg'
       )
 
       $packages = Get-ChildItem -Path $(Pipeline.Workspace) -Recurse -Include $patterns
