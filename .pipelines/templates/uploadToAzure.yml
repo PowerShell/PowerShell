@@ -196,6 +196,18 @@ jobs:
       Get-ChildItem -Path $(ob_outputDirectory) | Out-String -Stream | Write-Verbose -Verbose
     displayName: Collate packages
 
+  - pwsh: |
+      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue
+      if ($azureRmModule) {
+        Write-Host 'AzureRM module exists. Removing it'
+        Uninstall-Module -Name AzureRM -AllVersions
+        Write-Host 'AzureRM module removed'
+      }
+
+      Install-Module -Name Az -Force -AllowClobber -Scope CurrentUser -Verbose
+
+    displayName: Remove AzRM modules
+
   - task: AzurePowerShell@5
     displayName: Upload packages to blob
     inputs:
