@@ -28,6 +28,16 @@ jobs:
   steps:
   - checkout: self
     clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: yes
+      UseJson: no
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
 
   - download: current
     artifact: drop_linux_package_deb
@@ -200,11 +210,11 @@ jobs:
       $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue
       if ($azureRmModule) {
         Write-Host 'AzureRM module exists. Removing it'
-        Uninstall-Module -Name AzureRM -AllVersions
+        Uninstall-AzureRm
         Write-Host 'AzureRM module removed'
       }
 
-      Install-Module -Name Az -Force -AllowClobber -Scope CurrentUser -Verbose
+      Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
 
     displayName: Remove AzRM modules
 
