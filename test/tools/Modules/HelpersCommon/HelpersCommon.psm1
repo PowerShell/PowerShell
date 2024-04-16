@@ -69,6 +69,7 @@ function Get-RandomFileName
 $SCRIPT:TesthookType = [system.management.automation.internal.internaltesthooks]
 function Test-TesthookIsSet
 {
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingEmptyCatchBlock", '')] # , Justification = "an error message is not appropriate for this function")]
     param (
         [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory=$true)]
@@ -196,6 +197,7 @@ public class TestDynamic : DynamicObject
 # Upload an artifact in VSTS
 # On other systems will just log where the file was placed
 function Send-VstsLogFile {
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingWriteHost', '', Justification = "needed for VSO")]
     param (
         [parameter(Mandatory,ParameterSetName='contents')]
         [string[]]
@@ -322,6 +324,8 @@ function New-RandomHexString
 $script:CanWriteToPsHome = $null
 function Test-CanWriteToPsHome
 {
+	[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingEmptyCatchBlock', '', Justification = "an error message is not appropriate for this function")]
+	param ()
     if ($null -ne $script:CanWriteToPsHome) {
         return $script:CanWriteToPsHome
     }
