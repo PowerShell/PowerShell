@@ -39,6 +39,10 @@ jobs:
 
   - template: /.pipelines/templates/cloneToOfficialPath.yml@self
 
+  - pwsh: |
+      Get-ChildItem Env:
+    displayName: 'Capture Environment Variables'
+
   - download: current
     artifact: drop_linux_package_deb
     patterns: '**/*.deb'
