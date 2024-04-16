@@ -1281,9 +1281,15 @@ namespace System.Management.Automation
                 // is more specific tp the redirection operation...
                 if (rte.ErrorRecord.Exception is System.ArgumentException)
                 {
-                    throw InterpreterError.NewInterpreterExceptionWithInnerException(null,
-                        typeof(RuntimeException), null, "RedirectionFailed", ParserStrings.RedirectionFailed,
-                            rte.ErrorRecord.Exception, File, rte.ErrorRecord.Exception.Message);
+                    throw InterpreterError.NewInterpreterExceptionWithInnerException(
+                        null,
+                        typeof(RuntimeException),
+                        null,
+                        "RedirectionFailed",
+                        ParserStrings.RedirectionFailed,
+                        rte.ErrorRecord.Exception,
+                        File,
+                        rte.ErrorRecord.Exception.Message);
                 }
 
                 throw;

@@ -694,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThru;
 
         /// <summary>
-        /// Append to the variable if it exists.
+        /// Gets whether we will append to the variable if it exists.
         /// </summary>
         [Parameter]
         [Experimental("PSRedirectToVariable", ExperimentAction.Show)]
@@ -733,7 +733,8 @@ namespace Microsoft.PowerShell.Commands
 
                 _valueList = new List<object>();
                 var currentValue = Context.SessionState.PSVariable.Get(Name[0]);
-                if (currentValue is not null) {
+                if (currentValue is not null)
+                {
                     if (currentValue.Value is IList<object> ilist)
                     {
                         _valueList.AddRange(ilist);
