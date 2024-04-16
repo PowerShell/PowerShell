@@ -1426,12 +1426,16 @@ namespace System.Management.Automation
                 }
 
                 string scriptBlockText = scriptBlock.Ast.Extent.Text;
+                string word = SuspiciousContentChecker.Match(scriptBlockText);
+
+                string message = @"Detected term: '" + word + @"'; " + scriptBlockText;
+
                 bool written = false;
 
                 // Maximum size of ETW events is 64kb. Split a message if it is larger than 20k (Unicode) characters.
-                if (scriptBlockText.Length < 20000)
+                if (message.Length < 20000)
                 {
-                    written = WriteScriptBlockToLog(scriptBlock, 0, 1, scriptBlock.Ast.Extent.Text);
+                    written = WriteScriptBlockToLog(scriptBlock, 0, 1, message);
                 }
                 else
                 {
@@ -1439,16 +1443,17 @@ namespace System.Management.Automation
                     // so that attackers can't creatively force their scripts to span well-known
                     // segments (making simple rules less reliable).
                     int segmentSize = 10000 + (new Random()).Next(10000);
-                    int segments = (int)Math.Floor((double)(scriptBlockText.Length / segmentSize)) + 1;
+                    int segments = (int)Math.Floor((double)(message.Length / segmentSize)) + 1;
                     int currentLocation = 0;
                     int currentSegmentSize = 0;
 
                     for (int segment = 0; segment < segments; segment++)
                     {
                         currentLocation = segment * segmentSize;
+                        // are we at the end of the string, if so only get the rest of the string
                         currentSegmentSize = Math.Min(segmentSize, scriptBlockText.Length - currentLocation);
 
-                        string textToLog = scriptBlockText.Substring(currentLocation, currentSegmentSize);
+                        string textToLog = message.Substring(currentLocation, currentSegmentSize);
                         written = WriteScriptBlockToLog(scriptBlock, segment, segments, textToLog);
                     }
                 }
