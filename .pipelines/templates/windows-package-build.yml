@@ -260,7 +260,7 @@ jobs:
         Copy-Item -Path $msiPkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
       }
 
-      if ($packageTypes -contains 'zip' -or $packageTypes -contains 'fxdependent' -or $packageTypes -contains 'min-size') {
+      if ($packageTypes -contains 'zip' -or $packageTypes -contains 'fxdependent' -or $packageTypes -contains 'min-size' -or $packageTypes -contains 'fxdependent-win-desktop') {
         $zipPkgNameFilter = "powershell-*.zip"
         $zipPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $zipPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
         Write-Verbose -Verbose "zipPkgPath: $zipPkgPath"
