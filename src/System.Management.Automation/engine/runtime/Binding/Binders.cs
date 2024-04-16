@@ -6960,7 +6960,7 @@ namespace System.Management.Automation.Language
                 // FindBestMethod will map the incoming args into the correct
                 // positional order for the method chosen. If not specified the
                 // map index will be null.
-                DynamicMetaObject[] mappedArgs = new DynamicMetaObject[result.parameters.Length];
+                DynamicMetaObject[] mappedArgs = new DynamicMetaObject[argumentMap.Length];
                 for (int i = 0; i < mappedArgs.Length; ++i)
                 {
                     int? mappedIndex = argumentMap[i];
