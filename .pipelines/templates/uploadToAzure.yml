@@ -231,7 +231,7 @@ jobs:
 
         $gcPackages | ForEach-Object {
             $blobName = "${_.Name}"
-            Write-Vebrose -Verbose "Uploading $($_.FullName) to $gcContainerName/$blobName"
+            Write-Verbose -Verbose "Uploading $($_.FullName) to $gcContainerName/$blobName"
             $blobPath = "$gcContainerName/$blobName"
             Set-AzStorageBlobContent -File $_.FullName -Container $gcContainerName -Blob $blobName -Context $context
             # Move to folder to we wont upload again
@@ -251,6 +251,7 @@ jobs:
         $nupkgFiles | ForEach-Object {
             $blobName = $_.Name
             $blobPath = "$nugetContainerName/$blobName"
+            Write-Verbose -Verbose "Uploading $($_.FullName) to $nugetContainerName/$blobName"
             Set-AzStorageBlobContent -File $_.FullName -Container $nugetContainerName -Blob $blobName -Context $context
             # Move to folder to we wont upload again
             Move-Item -Path $_.FullName -Destination $nugetFolder.FullName -Force
@@ -263,21 +264,13 @@ jobs:
             $blobName = $_.Name
             $globaltoolContainerName = "$containerName-nuget"
             $blobPath = "$globaltoolContainerName/globaltool/$blobName"
+            Write-Verbose -Verbose "Uploading $($_.FullName) to $globaltoolContainerName/$blobName"
             Set-AzStorageBlobContent -File $_.FullName -Container $globaltoolContainerName -Blob $blobName -Context $context
             # Move to folder to we wont upload again
             Move-Item -Path $_.FullName -Destination $globaltoolFolder.FullName -Force
         }
 
-        $globaltoolFiles | ForEach-Object {
-            $blobName = $_.Name
-            $globaltoolContainerName = "$containerName-nuget"
-            $blobPath = "$globaltoolContainerName/$blobName"
-            Set-AzStorageBlobContent -File $_.FullName -Container $globaltoolContainerName -Blob $blobName -Context $context
-            # Move to folder to we wont upload again
-            Move-Item -Path $_.FullName -Destination $globaltoolFolder.FullName -Force
-        }
-
-        $privateFiles = Get-ChildItem -Path $(ob_outputDirectory) -Include @()"*.msix", "*.exe")
+        $privateFiles = Get-ChildItem -Path $(ob_outputDirectory) -Include @("*.msix", "*.exe")
         $privateFolder = New-Item -Path $(ob_outputDirectory) -Name "private" -ItemType Directory -Force
         $privateContainerName = "$containerName-private"
         # Create the blob container if it doesn't exist
@@ -290,6 +283,7 @@ jobs:
         $privateFiles | ForEach-Object {
             $blobName = $_.Name
             $blobPath = "$privateContainerName/$blobName"
+            Write-Verbose -Verbose "Uploading $($_.FullName) to $privateContainerName/$blobName"
             Set-AzStorageBlobContent -File $_.FullName -Container $privateContainerName -Blob $blobName -Context $context
             # Move to folder to we wont upload again
             Move-Item -Path $_.FullName -Destination $privateFolder.FullName -Force
@@ -300,6 +294,7 @@ jobs:
         $files | ForEach-Object {
           $blobName = $_.Name
           $blobPath = "$containerName/$blobName"
+          Write-Verbose -Verbose "Uploading $($_.FullName) to $containerName/$blobName"
           Set-AzStorageBlobContent -File $_.FullName -Container $containerName -Blob $blobName -Context $context
           Write-Host "File $blobName uploaded to $containerName container."
         }
