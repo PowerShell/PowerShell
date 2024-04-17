@@ -272,7 +272,7 @@ public class DynamicClass : DynamicObject
                 $assemblyName,
                 [System.Reflection.Emit.AssemblyBuilderAccess]::RunAndCollect)
             $builder = $assembly.DefineDynamicModule($assemblyName)
-            $typeBuilder = $builder.DefineType('TestClass', [System.Reflection.TypeAttributes]'Sealed, Public')
+            $typeBuilder = $builder.DefineType('BinderTests.Reflection.TestClass', [System.Reflection.TypeAttributes]'Sealed, Public')
             $methBuilder = $typeBuilder.DefineMethod(
                 'Method',
                 [System.Reflection.MethodAttributes]'Public, Static',
