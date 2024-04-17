@@ -3007,10 +3007,11 @@ namespace System.Management.Automation.Language
                 // Configuration is not supported on ARM64
                 if (PsUtils.IsRunningOnProcessorArchitectureARM())
                 {
-                    ReportError(configurationToken.Extent,
-                                nameof(ParserStrings.ConfigurationNotAllowedOnArm64),
-                                ParserStrings.ConfigurationNotAllowedOnArm64,
-                                configurationToken.Kind.Text());
+                    ReportError(
+                        configurationToken.Extent,
+                        nameof(ParserStrings.ConfigurationNotAllowedOnArm64),
+                        ParserStrings.ConfigurationNotAllowedOnArm64,
+                        configurationToken.Kind.Text());
                     return null;
                 }
 
