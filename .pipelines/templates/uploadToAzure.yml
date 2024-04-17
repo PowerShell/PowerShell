@@ -301,7 +301,8 @@ jobs:
             Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force
         }
 
-        $privateFiles = Get-ChildItem -Path $downloadsDirectory -Include @("*.msix", "*.exe")
+        # To use -Include parameter, we need to use \* to get all files
+        $privateFiles = Get-ChildItem -Path $downloadsDirectory\* -Include @("*.msix", "*.exe")
         Write-Verbose -Verbose "private files to upload."
         $privateFiles | Write-Verbose -Verbose
         $privateContainerName = "$containerName-private"
@@ -320,7 +321,8 @@ jobs:
             Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force -Verbose
         }
 
-        $files = Get-ChildItem -Path $downloadsDirectory -Include @("*.deb", "*.tar.gz", "*.rpm", "*.msi", "*.zip", "*.pkg")
+        # To use -Include parameter, we need to use \* to get all files
+        $files = Get-ChildItem -Path $downloadsDirectory\* -Include @("*.deb", "*.tar.gz", "*.rpm", "*.msi", "*.zip", "*.pkg")
         Write-Verbose -Verbose "files to upload."
         $files | Write-Verbose -Verbose
 
