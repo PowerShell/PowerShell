@@ -1679,6 +1679,24 @@ namespace System.Management.Automation
             bool allowCastingToByRefLikeType,
             [NotNullWhen(true)] out OverloadCandidate? selectedCandidate)
         {
+            /*
+            This code checks if an overload can work with the caller provided
+            arguments. It follows these rules:
+
+            + If unnamed, argument is set to the next method parameter.
+            + If named, argument is set to the parameter for that name
+              + If the parameter has already been set positionally the overload
+                is not valid.
+            + If the argument is mapped to a param array
+                + If named, only that argument is set as the param value
+                + If unnamed, the argument and subsequent unnamed arguments are
+                  set as the param value.
+            + For any remaining values
+                + If optional, the overload is still valid
+                + If param, the overload is still valid and param is an empty
+                  array
+                + Otherwise, the overload is not valid.
+            */
             selectedCandidate = null;
 
             ParameterInformation[] parameters = methodInfo.parameters;
@@ -1701,6 +1719,7 @@ namespace System.Management.Automation
                     using IEnumerator<KeyValuePair<string, int>> keyEnumerator = parameterIndexes.GetEnumerator();
                     if (!keyEnumerator.MoveNext())
                     {
+                        // No params left.
                         return false;
                     }
 
@@ -1710,7 +1729,7 @@ namespace System.Management.Automation
                 }
                 else if (!parameterIndexes.TryGetValue(argName, out paramIndex))
                 {
-                    // Had a named but it didn't match any remaining parameters.
+                    // Had a name but it didn't match any remaining parameters.
                     return false;
                 }
 
@@ -1728,7 +1747,7 @@ namespace System.Management.Automation
                         string? nextArgName = arguments[j].Item1;
                         if (!string.IsNullOrEmpty(nextArgName))
                         {
-                            // Subsequent arguments will also be named.
+                            // Next arg was named so not part of the params.
                             break;
                         }
 
@@ -1755,6 +1774,9 @@ namespace System.Management.Automation
 
                         if (elemConv > arrayConv)
                         {
+                            // If the argument is the array element type we
+                            // mark the candidate as having an argument that
+                            // needs to be expanded.
                             candidate.SetExtraParamsCount(1, elementType!);
                             candidate.ConversionRanks[i] = elemConv;
                         }
@@ -1765,6 +1787,7 @@ namespace System.Management.Automation
 
                         if (candidate.ConversionRanks[i] == ConversionRank.None)
                         {
+                            // The array or element cannot be casted.
                             return false;
                         }
                     }
@@ -1784,7 +1807,7 @@ namespace System.Management.Automation
 
                             if (candidate.ConversionRanks[j] == ConversionRank.None)
                             {
-                                // No longer a candidate
+                                // The value cannot be casted.
                                 return false;
                             }
                         }
@@ -1803,13 +1826,13 @@ namespace System.Management.Automation
 
                     if (candidate.ConversionRanks[i] == ConversionRank.None)
                     {
-                        // No longer a candidate
+                        // The value cannot be casted.
                         return false;
                     }
                 }
             }
 
-            // Unmapped args only work if they are optional.
+            // Unmapped args only work if they are optional or param.
             foreach (int paramIndex in parameterIndexes.Values)
             {
                 ParameterInformation paramInfo = parameters[paramIndex];
