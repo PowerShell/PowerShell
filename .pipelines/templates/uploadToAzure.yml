@@ -205,36 +205,8 @@ jobs:
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download macos packages
 
-  #  - pwsh: |
-  #     $patterns = @(
-  #       'powershell*.deb'
-  #       'powershell*.tar.gz'
-  #       'powershell*.rpm'
-  #       'powershell*.msi'
-  #       'powershell*.msix'
-  #       'powershell*.zip'
-  #       'powershell*.exe'
-  #       'powershell*.pkg'
-  #       '*.nupkg'
-  #     )
-
-  #     $packages = Get-ChildItem -Path $(Pipeline.Workspace) -Recurse -Include $patterns
-
-  #     Write-Verbose -Verbose "Packages found:"
-  #     $packages | Out-String -Stream | Write-Verbose -Verbose
-
-  #     if(-not (Test-Path $(ob_outputDirectory))) {
-  #       New-Item -Path $(ob_outputDirectory) -ItemType Directory -Force
-  #     }
-
-  #     $packages | ForEach-Object { Copy-Item -Path $_.FullName -Destination '$(ob_outputDirectory)' -Force -Verbose }
-
-  #     Write-Verbose -Verbose "Packages copied to $(ob_outputDirectory)"
-  #     Get-ChildItem -Path $(ob_outputDirectory) | Out-String -Stream | Write-Verbose -Verbose
-  #   displayName: Collate packages
-
   - pwsh: |
-      Get-ChildItem '$(Build.ArtifactStagingDirectory)/downloads'
+      Get-ChildItem '$(Build.ArtifactStagingDirectory)/downloads' | Select-Object -ExpandProperty FullName
     displayName: 'Capture downloads'
 
   - pwsh: |
@@ -279,7 +251,8 @@ jobs:
         }
 
         $gcPackages = Get-ChildItem -Path $downloadsDirectory -Filter "powershell*gc.*"
-        Write-Verbose -Verbose "Uploading GC packages"
+        Write-Verbose -Verbose "gc files to upload."
+        $gcPackages | Write-Verbose -Verbose
         $gcContainerName = "$containerName-gc"
         # Create the blob container if it doesn't exist
         $containerExists = Get-AzStorageContainer -Name $gcContainerName -Context $context -ErrorAction SilentlyContinue
@@ -296,7 +269,9 @@ jobs:
             Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force -Verbose
         }
 
-        $nupkgFiles = Get-ChildItem -Path $downloadsDirectory -Filter "*.nupkg" -Exclude "powershell*.nupkg"
+        $nupkgFiles = Get-ChildItem -Path $downloadsDirectory -Filter "*.nupkg" | Where-Object { $_.Name -notlike "powershell*.nupkg" }
+        Write-Verbose -Verbose "nupkg files to upload."
+        $nupkgFiles | Write-Verbose -Verbose
         $nugetContainerName = "$containerName-nuget"
         # Create the blob container if it doesn't exist
         $containerExists = Get-AzStorageContainer -Name $nugetContainerName -Context $context -ErrorAction SilentlyContinue
@@ -314,6 +289,8 @@ jobs:
         }
 
         $globaltoolFiles = Get-ChildItem -Path $downloadsDirectory -Filter "powershell*.nupkg"
+        Write-Verbose -Verbose "globaltool files to upload."
+        $globaltoolFiles | Write-Verbose -Verbose
         $globaltoolContainerName = "$containerName-nuget"
         $globaltoolFiles | ForEach-Object {
             $blobName = "globaltool/" + $_.Name
@@ -325,6 +302,8 @@ jobs:
         }
 
         $privateFiles = Get-ChildItem -Path $downloadsDirectory -Include @("*.msix", "*.exe")
+        Write-Verbose -Verbose "private files to upload."
+        $privateFiles | Write-Verbose -Verbose
         $privateContainerName = "$containerName-private"
         # Create the blob container if it doesn't exist
         $containerExists = Get-AzStorageContainer -Name $privateContainerName -Context $context -ErrorAction SilentlyContinue
@@ -342,6 +321,8 @@ jobs:
         }
 
         $files = Get-ChildItem -Path $downloadsDirectory -Include @("*.deb", "*.tar.gz", "*.rpm", "*.msi", "*.zip", "*.pkg")
+        Write-Verbose -Verbose "files to upload."
+        $files | Write-Verbose -Verbose
 
         $files | ForEach-Object {
           $blobName = $_.Name
