@@ -193,6 +193,7 @@ jobs:
         'powershell*.zip'
         'powershell*.exe'
         'powershell*.pkg'
+        '*.nupkg'
       )
 
       $packages = Get-ChildItem -Path $(Pipeline.Workspace) -Recurse -Include $patterns
@@ -240,11 +241,11 @@ jobs:
         # Create the blob container if it doesn't exist
         $containerExists = Get-AzStorageContainer -Name $containerName -Context $context -ErrorAction SilentlyContinue
         if (-not $containerExists) {
-            New-AzStorageContainer -Name $containerName -Context $context
+            $null = New-AzStorageContainer -Name $containerName -Context $context
             Write-Host "Blob container $containerName created successfully."
         }
 
-        $gcPackages = Get-ChildItem -Path $(ob_outputDirectory) -Filter "powershell*gc.*"
+        $gcPackages = Get-ChildItem -Path $(ob_outputDirectory) -Filter "powershell*gc.*" -Recurse
         $mdGCFolder = New-Item -Path $(ob_outputDirectory) -Name "gc" -ItemType Directory -Force
 
         Write-Verbose -Verbose "Uploading GC packages"
@@ -252,7 +253,7 @@ jobs:
         # Create the blob container if it doesn't exist
         $containerExists = Get-AzStorageContainer -Name $gcContainerName -Context $context -ErrorAction SilentlyContinue
         if (-not $containerExists) {
-            New-AzStorageContainer -Name $gcContainerName -Context $context
+            $null = New-AzStorageContainer -Name $gcContainerName -Context $context
             Write-Host "Blob container $gcContainerName created successfully."
         }
 
@@ -260,18 +261,18 @@ jobs:
             $blobName = "${_.Name}"
             Write-Verbose -Verbose "Uploading $($_.FullName) to $gcContainerName/$blobName"
             $blobPath = "$gcContainerName/$blobName"
-            Set-AzStorageBlobContent -File $_.FullName -Container $gcContainerName -Blob $blobName -Context $context
+            $null = Set-AzStorageBlobContent -File $_.FullName -Container $gcContainerName -Blob $blobName -Context $context
             # Move to folder to we wont upload again
-            Move-Item -Path $_.FullName -Destination $mdGCFolder.FullName -Force
+            Move-Item -Path $_.FullName -Destination $mdGCFolder.FullName -Force -Verbose
         }
 
-        $nupkgFiles = Get-ChildItem -Path $(ob_outputDirectory) -Filter "*.nupkg" -Exclude "powershell*.nupkg"
+        $nupkgFiles = Get-ChildItem -Path $(ob_outputDirectory) -Filter "*.nupkg" -Exclude "powershell*.nupkg" -Recurse
         $nugetFolder = New-Item -Path $(ob_outputDirectory) -Name "nuget" -ItemType Directory -Force
         $nugetContainerName = "$containerName-nuget"
         # Create the blob container if it doesn't exist
         $containerExists = Get-AzStorageContainer -Name $nugetContainerName -Context $context -ErrorAction SilentlyContinue
         if (-not $containerExists) {
-            New-AzStorageContainer -Name $nugetContainerName -Context $context
+            $null = New-AzStorageContainer -Name $nugetContainerName -Context $context
             Write-Host "Blob container $nugetContainerName created successfully."
         }
 
@@ -279,12 +280,12 @@ jobs:
             $blobName = $_.Name
             $blobPath = "$nugetContainerName/$blobName"
             Write-Verbose -Verbose "Uploading $($_.FullName) to $nugetContainerName/$blobName"
-            Set-AzStorageBlobContent -File $_.FullName -Container $nugetContainerName -Blob $blobName -Context $context
+            $null = Set-AzStorageBlobContent -File $_.FullName -Container $nugetContainerName -Blob $blobName -Context $context
             # Move to folder to we wont upload again
-            Move-Item -Path $_.FullName -Destination $nugetFolder.FullName -Force
+            Move-Item -Path $_.FullName -Destination $nugetFolder.FullName -Force -Verbose
         }
 
-        $globaltoolFiles = Get-ChildItem -Path $(ob_outputDirectory) -Filter "powershell*.nupkg"
+        $globaltoolFiles = Get-ChildItem -Path $(ob_outputDirectory) -Filter "powershell*.nupkg" -Recurse
         $globaltoolFolder = New-Item -Path $nugetFolder -Name "globaltool" -ItemType Directory -Force
         $globaltoolContainerName = "$containerName-nuget"
         $globaltoolFiles | ForEach-Object {
@@ -292,18 +293,18 @@ jobs:
             $globaltoolContainerName = "$containerName-nuget"
             $blobPath = "$globaltoolContainerName/globaltool/$blobName"
             Write-Verbose -Verbose "Uploading $($_.FullName) to $globaltoolContainerName/$blobName"
-            Set-AzStorageBlobContent -File $_.FullName -Container $globaltoolContainerName -Blob $blobName -Context $context
+            $null = Set-AzStorageBlobContent -File $_.FullName -Container $globaltoolContainerName -Blob $blobName -Context $context
             # Move to folder to we wont upload again
             Move-Item -Path $_.FullName -Destination $globaltoolFolder.FullName -Force
         }
 
-        $privateFiles = Get-ChildItem -Path $(ob_outputDirectory) -Include @("*.msix", "*.exe")
+        $privateFiles = Get-ChildItem -Path $(ob_outputDirectory) -Include @("*.msix", "*.exe") -Recurse
         $privateFolder = New-Item -Path $(ob_outputDirectory) -Name "private" -ItemType Directory -Force
         $privateContainerName = "$containerName-private"
         # Create the blob container if it doesn't exist
         $containerExists = Get-AzStorageContainer -Name $privateContainerName -Context $context -ErrorAction SilentlyContinue
         if (-not $containerExists) {
-            New-AzStorageContainer -Name $privateContainerName -Context $context
+            $null = New-AzStorageContainer -Name $privateContainerName -Context $context
             Write-Host "Blob container $privateContainerName created successfully."
         }
 
@@ -311,17 +312,17 @@ jobs:
             $blobName = $_.Name
             $blobPath = "$privateContainerName/$blobName"
             Write-Verbose -Verbose "Uploading $($_.FullName) to $privateContainerName/$blobName"
-            Set-AzStorageBlobContent -File $_.FullName -Container $privateContainerName -Blob $blobName -Context $context
+            $null = Set-AzStorageBlobContent -File $_.FullName -Container $privateContainerName -Blob $blobName -Context $context
             # Move to folder to we wont upload again
-            Move-Item -Path $_.FullName -Destination $privateFolder.FullName -Force
+            Move-Item -Path $_.FullName -Destination $privateFolder.FullName -Force -Verbose
         }
 
-        $files = Get-ChildItem -Path $(ob_outputDirectory) -Include @("*.deb", "*.tar.gz", "*.rpm", "*.msi", "*.zip", "*.pkg")
+        $files = Get-ChildItem -Path $(ob_outputDirectory) -Include @("*.deb", "*.tar.gz", "*.rpm", "*.msi", "*.zip", "*.pkg") -Recurse
 
         $files | ForEach-Object {
           $blobName = $_.Name
           $blobPath = "$containerName/$blobName"
           Write-Verbose -Verbose "Uploading $($_.FullName) to $containerName/$blobName"
-          Set-AzStorageBlobContent -File $_.FullName -Container $containerName -Blob $blobName -Context $context
+          $null = Set-AzStorageBlobContent -File $_.FullName -Container $containerName -Blob $blobName -Context $context
           Write-Host "File $blobName uploaded to $containerName container."
         }
