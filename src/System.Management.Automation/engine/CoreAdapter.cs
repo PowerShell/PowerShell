@@ -1703,7 +1703,16 @@ namespace System.Management.Automation
             Dictionary<string, int> parameterIndexes = new Dictionary<string, int>(parameters.Length);
             foreach (ParameterInformation paramInfo in parameters)
             {
-                parameterIndexes.Add(paramInfo.name, parameterIndexes.Count);
+                int nextIndex = parameterIndexes.Count;
+                string? argName = paramInfo.name;
+                if (string.IsNullOrEmpty(argName))
+                {
+                    // It is possible for dynamically defined methods to not
+                    // have a name for the argument. Use null char to avoid
+                    // collisions with actual arguments.
+                    argName = $"\0arg{nextIndex}";
+                }
+                parameterIndexes.Add(argName, nextIndex);
             }
 
             OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length);
