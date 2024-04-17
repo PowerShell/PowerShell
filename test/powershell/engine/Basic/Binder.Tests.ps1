@@ -15,6 +15,7 @@ public class TestClass
     public static string SingleOverload(string value) => value;
 
     public static string OverloadWithSameNameDifferentCase(string value, string Value) => $"{value}{Value}";
+    public static string OverloadWithMultipleSameNameDifferentCase(string value, string Value, string vAlue) => $"{value}{Value}{vAlue}";
 
     public static string MultipleArguments(string value1, string value2 = "default1", string value3 = "default2") => $"{value1}{value2}{value3}";
 
@@ -79,13 +80,12 @@ public class DynamicClass : DynamicObject
             [string]$err | Should -Be 'Cannot find an overload for "SingleOverload" and the argument count: "1".'
         }
 
-        It "Fails with single overload with mismatch case sensitive name" {
-            $err = { [BinderTests.TestClass]::SingleOverload(Value: 'foo') } | Should -Throw -PassThru
-            [string]$err | Should -Be 'Cannot find an overload for "SingleOverload" and the argument count: "1".'
-        }
-
         It "Uses single overload with correct name" {
             [BinderTests.TestClass]::SingleOverload(value: 'foo') | Should -Be foo
+        }
+
+        It "Calls verload with case insensitive name Match" {
+            [BinderTests.TestClass]::SingleOverload(Value: 'foo') | Should -Be foo
         }
 
         It "Fails to call method with too little arguments" {
@@ -99,7 +99,11 @@ public class DynamicClass : DynamicObject
         }
 
         It "Uses overload with arg name that differs by case" {
-            [BinderTests.TestClass]::OverloadWithSameNameDifferentCase(value: 'foo', Value: 'bar') | Should -Be foobar
+            [BinderTests.TestClass]::OverloadWithSameNameDifferentCase(value: 'foo', value_: 'bar') | Should -Be foobar
+        }
+
+        It "Uses overload with arg name that differs by case" {
+            [BinderTests.TestClass]::OverloadWithMultipleSameNameDifferentCase(value: 'foo', value_: 'bar', value__: 'test') | Should -Be foobartest
         }
 
         It "Calls method with arguments in different positional order" {
@@ -275,35 +279,76 @@ public class DynamicClass : DynamicObject
                 [System.Reflection.Emit.AssemblyBuilderAccess]::RunAndCollect)
             $builder = $assembly.DefineDynamicModule($assemblyName)
             $typeBuilder = $builder.DefineType('BinderTests.Reflection.TestClass', [System.Reflection.TypeAttributes]'Sealed, Public')
-            $methBuilder = $typeBuilder.DefineMethod(
-                'Method',
+
+            # Tests out argument with no name and a default value.
+            # static string MethodWithDefault(string ..., string defaultArg = "default") => $"{...}-{defaultArg}");
+            $methodWithDefault = $typeBuilder.DefineMethod(
+                'MethodWithDefault',
                 [System.Reflection.MethodAttributes]'Public, Static',
                 [string],
                 [type[]]@([string], [string]))
 
-            $param2 = $methBuilder.DefineParameter(2, [System.Reflection.ParameterAttributes]'HasDefault, Optional', 'arg0')
+            $param2 = $methodWithDefault.DefineParameter(2, [System.Reflection.ParameterAttributes]'HasDefault, Optional', 'defaultArg')
             $param2.SetConstant('default')
 
-            $il = $methBuilder.GetILGenerator()
+            $il = $methodWithDefault.GetILGenerator()
             $il.Emit([System.Reflection.Emit.OpCodes]::Ldarg_0)
             $il.Emit([System.Reflection.Emit.OpCodes]::Ldstr, "-")
             $il.Emit([System.Reflection.Emit.OpCodes]::Ldarg_1)
             $il.Emit([System.Reflection.Emit.OpCodes]::Call, [string].GetMethod('Concat', [type[]]@([string], [string], [string])))
             $il.Emit([System.Reflection.Emit.OpCodes]::Ret)
 
+            # Tests out name conflicts with the parameter having the same name.
+            # First param without a name will be set to arg0 while the
+            # remaining two are explicitly set to that.
+            # static string MethodWithNameConflict(string ..., string ..., string ...) => String.Join('-', new String[] { ..., ..., ... });
+            $methodWithNameConflict = $typeBuilder.DefineMethod(
+                'MethodWithNameConflict',
+                [System.Reflection.MethodAttributes]'Public, Static',
+                [string],
+                [type[]]@([string], [string], [string]))
+            $null = $methodWithNameConflict.DefineParameter(2, [System.Reflection.ParameterAttributes]::None, 'arg0')
+            $null = $methodWithNameConflict.DefineParameter(3, [System.Reflection.ParameterAttributes]::None, 'arg0')
+
+            $il = $methodWithNameConflict.GetILGenerator()
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldc_I4_S, 45)  # '-'
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldc_I4_3)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Newarr, [string])
+            $il.Emit([System.Reflection.Emit.OpCodes]::Dup)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldc_I4_0)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldarg_0)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Stelem_Ref)
+
+            $il.Emit([System.Reflection.Emit.OpCodes]::Dup)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldc_I4_1)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldarg_1)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Stelem_Ref)
+
+            $il.Emit([System.Reflection.Emit.OpCodes]::Dup)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldc_I4_2)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldarg_2)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Stelem_Ref)
+
+            $il.Emit([System.Reflection.Emit.OpCodes]::Call, [string].GetMethod('Join', [type[]]@([char], [string[]])))
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ret)
+
             $TestClass = $typeBuilder.CreateType()
         }
 
         It "Calls method with null argument name with default" {
-            $TestClass::Method('foo') | Should -Be foo-default
+            $TestClass::MethodWithDefault('foo') | Should -Be foo-default
         }
 
         It "Calls method with null argument name and positional default" {
-            $TestClass::Method('foo', 'bar') | Should -Be foo-bar
+            $TestClass::MethodWithDefault('foo', 'bar') | Should -Be foo-bar
         }
 
         It "Calls method with null argument name and named default" {
-            $TestClass::Method('foo', arg0: 'bar') | Should -Be foo-bar
+            $TestClass::MethodWithDefault('foo', defaultArg: 'bar') | Should -Be foo-bar
+        }
+
+        It "Calls method with argumane name conflict" {
+            $TestClass::MethodWithNameConflict(arg0: 'foo', arg0_: 'bar', arg0__: 'test') | Should -Be foo-bar-test
         }
     }
 

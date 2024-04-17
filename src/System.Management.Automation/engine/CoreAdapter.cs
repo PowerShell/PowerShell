@@ -1700,7 +1700,9 @@ namespace System.Management.Automation
 
             ParameterInformation[] parameters = methodInfo.parameters;
 
-            Dictionary<string, int> parameterIndexes = new Dictionary<string, int>(parameters.Length);
+            Dictionary<string, int> parameterIndexes = new Dictionary<string, int>(
+                parameters.Length,
+                StringComparer.OrdinalIgnoreCase);
             foreach (ParameterInformation paramInfo in parameters)
             {
                 int nextIndex = parameterIndexes.Count;
@@ -1708,11 +1710,17 @@ namespace System.Management.Automation
                 if (string.IsNullOrEmpty(argName))
                 {
                     // It is possible for dynamically defined methods to not
-                    // have a name for the argument. Use null char to avoid
-                    // collisions with actual arguments.
-                    argName = $"\0arg{nextIndex}";
+                    // have a name for the argument.
+                    argName = $"arg{nextIndex}";
                 }
-                parameterIndexes.Add(argName, nextIndex);
+
+                // We could have a collision with the name if this was built
+                // with MethodBuilder or there's a case insensitive match. This
+                // adds a '_' suffix until the arg name is unique enough.
+                while (!parameterIndexes.TryAdd(argName, nextIndex))
+                {
+                    argName += "_";
+                }
             }
 
             OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length);
