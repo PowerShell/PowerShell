@@ -6933,13 +6933,16 @@ namespace System.Management.Automation.Language
             }
 
             (string, object)[] argValues = new (string, object)[numArgs];
+            int startNameIndex = callInfo.ArgumentCount - callInfo.ArgumentNames.Count;
             for (int i = 0; i < numArgs; ++i)
             {
                 object arg = args[i].Value;
                 string argName = string.Empty;
-                if (callInfo.ArgumentNames.Count > i)
+
+                int argNameIndex = i - startNameIndex;
+                if (argNameIndex >= 0 && callInfo.ArgumentNames.Count > argNameIndex)
                 {
-                    argName = callInfo.ArgumentNames[i];
+                    argName = callInfo.ArgumentNames[argNameIndex];
                 }
                 argValues[i] = (argName, arg == AutomationNull.Value ? null : arg);
             }
