@@ -23,7 +23,6 @@ using System.Xml;
 using System.Management.Automation.Internal;
 using Microsoft.PowerShell;
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
