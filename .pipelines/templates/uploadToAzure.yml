@@ -243,7 +243,7 @@ jobs:
     displayName: Create output directory for packages
 
   - pwsh: |
-      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue
+      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
       if ($azureRmModule) {
         Write-Host 'AzureRM module exists. Removing it'
         Uninstall-AzureRm
