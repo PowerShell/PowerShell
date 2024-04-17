@@ -158,6 +158,14 @@ jobs:
   - task: DownloadPipelineArtifact@2
     inputs:
       buildType: 'current'
+      artifact: drop_windows_package_package_win_fxdependent
+      itemPattern: '**/*.zip'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download windows fxdependent packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
       artifact: drop_windows_package_package_win_fxdependentWinDesktop
       itemPattern: '**/*.zip'
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
@@ -188,10 +196,10 @@ jobs:
       buildType: 'current'
       artifact: drop_windows_package_package_win_x86
       itemPattern: |
-        '**/*.msi'
-        '**/*.msix'
-        '**/*.zip'
-        '**/*.exe'
+        **/*.msi
+        **/*.msix
+        **/*.zip
+        **/*.exe
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download windows x86 packages
 
@@ -200,8 +208,8 @@ jobs:
       buildType: 'current'
       artifact: macos-pkgs
       itemPattern: |
-        '**/*.pkg'
-        '**/*.tar.gz'
+        **/*.pkg
+        **/*.tar.gz
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download macos packages
 
