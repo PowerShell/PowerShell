@@ -265,6 +265,46 @@ public class DynamicClass : DynamicObject
         }
     }
 
+    Context "Named Arguments - MethodBuilder" {
+        BeforeAll {
+            $assemblyName = [System.Reflection.AssemblyName]::new('BinderTestsBuilder')
+            $assembly = [System.Reflection.Emit.AssemblyBuilder]::DefineDynamicAssembly(
+                $assemblyName,
+                [System.Reflection.Emit.AssemblyBuilderAccess]::RunAndCollect)
+            $builder = $assembly.DefineDynamicModule($assemblyName)
+            $typeBuilder = $builder.DefineType('TestClass', [System.Reflection.TypeAttributes]'Sealed, Public')
+            $methBuilder = $typeBuilder.DefineMethod(
+                'Method',
+                [System.Reflection.MethodAttributes]'Public, Static',
+                [string],
+                [type[]]@([string], [string]))
+
+            $param2 = $methBuilder.DefineParameter(2, [System.Reflection.ParameterAttributes]'HasDefault, Optional', 'arg0')
+            $param2.SetConstant('default')
+
+            $il = $methBuilder.GetILGenerator()
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldarg_0)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldstr, "-")
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ldarg_1)
+            $il.Emit([System.Reflection.Emit.OpCodes]::Call, [string].GetMethod('Concat', [type[]]@([string], [string], [string])))
+            $il.Emit([System.Reflection.Emit.OpCodes]::Ret)
+
+            $TestClass = $typeBuilder.CreateType()
+        }
+
+        It "Calls method with null argument name with default" {
+            $TestClass::Method('foo') | Should -Be foo-default
+        }
+
+        It "Calls method with null argument name and positional default" {
+            $TestClass::Method('foo', 'bar') | Should -Be foo-bar
+        }
+
+        It "Calls method with null argument name and named default" {
+            $TestClass::Method('foo', arg0: 'bar') | Should -Be foo-bar
+        }
+    }
+
     Context "Named Arguments - DynamicObject Binder" {
         It "Calls DynamicObject with named argument" {
             $cls = [BinderTests.DynamicClass]::new()
