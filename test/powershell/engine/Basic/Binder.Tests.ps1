@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe ".NET Method Binding Tests" -tags CI {
+Describe ".NET Method Binding Tests" -Tags CI {
     BeforeAll {
         Add-Type -TypeDefinition @'
 using System;
@@ -337,6 +337,64 @@ public class DynamicClass : DynamicObject
         It "Calls overloaded method with named argument" {
             $c = [SuperClass]::new()
             $c.Method() | Should -Be a-test-foo
+        }
+    }
+
+    Context "Named Arguments - COM" {
+        BeforeAll {
+            $defaultParamValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["It:Skip"] = -not [System.Management.Automation.Platform]::IsWindowsDesktop
+        }
+
+        AfterAll {
+            $global:PSDefaultParameterValues = $defaultParamValues
+        }
+
+        It "Calls COM method with optional argument not set" {
+            $testFile = New-Item -Path TestDrive:/COM-Test.txt -Value data -ItemType File -Force
+
+            $fso = New-Object -ComObject Scripting.FileSystemObject
+            $stream = $fso.OpenTextFile($testFile.FullName)
+            try {
+                $stream.ReadAll() | Should -Be data
+            }
+            finally {
+                $stream.Close()
+            }
+        }
+
+        It "Calls COM method with optional argument set" {
+            $tempPath = (Get-Item TestDrive:/).Fullname
+            $fileName = [Guid]::NewGuid().Guid
+
+            $fso = New-Object -ComObject Scripting.FileSystemObject
+            $stream = $fso.OpenTextFile(
+                "$tempPath\$fileName",
+                create: $true)
+            $stream.Close()
+
+            Test-Path -LiteralPath "$temppath\$fileName" | Should -BeTrue
+        }
+
+        It "Calls COM method with named positional argument" {
+            $testFile = New-Item -Path TestDrive:/COM-Test.txt -Value data -ItemType File -Force
+
+            $fso = New-Object -ComObject Scripting.FileSystemObject
+            $stream = $fso.OpenTextFile(filename: $testFile.FullName)
+            try {
+                $stream.ReadAll() | Should -Be data
+            }
+            finally {
+                $stream.Close()
+            }
+        }
+
+        It "Fails to call COM method with invalid argument name" {
+            $testFile = New-Item -Path TestDrive:/COM-Test.txt -Value data -ItemType File -Force
+
+            $fso = New-Object -ComObject Scripting.FileSystemObject
+            $err = { $fso.OpenTextFile(invalid: $testFile.FullName) } | Should -Throw -PassThru
+            [string]$err | Should -Be 'Unknown name. (0x80020006 (DISP_E_UNKNOWNNAME))'
         }
     }
 }
