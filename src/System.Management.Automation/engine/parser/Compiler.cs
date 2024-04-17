@@ -971,31 +971,31 @@ namespace System.Management.Automation.Language
             return result;
         }
 
-        private (IEnumerable<string>, IEnumerable<Expression>) CompileInvocationArguments(IReadOnlyList<ExpressionAst> arguments)
+        private (string[], IEnumerable<Expression>) CompileInvocationArguments(IReadOnlyList<ExpressionAst> arguments)
         {
             if (arguments is null || arguments.Count == 0)
             {
                 return (Array.Empty<string>(), Array.Empty<Expression>());
             }
 
-            var argNames = new string[arguments.Count];
+            // argNames when provided to the CallInfo in left to right order
+            // with the last name corresponding to the last argument.
+            var argNames = new List<string>(arguments.Count);
             var argExpressions = new Expression[arguments.Count];
             for (int i = 0; i < argExpressions.Length; i++)
             {
-                string name = string.Empty;
                 ExpressionAst value = arguments[i];
 
                 if (value is LabeledExpressionAst labelAst)
                 {
-                    name = labelAst.Label.Value;
+                    argNames.Add(labelAst.Label.Value);
                     value = labelAst.Expression;
                 }
 
-                argNames[i] = name;
                 argExpressions[i] = CompileExpressionOperand(value);
             }
 
-            return (argNames, argExpressions);
+            return (argNames.ToArray(), argExpressions);
         }
 
         internal Expression ReduceAssignment(ISupportsAssignment left, TokenKind tokenKind, Expression right)
@@ -6415,12 +6415,12 @@ namespace System.Management.Automation.Language
             PSMethodInvocationConstraints constraints,
             Expression target,
             IEnumerable<Expression> args,
+            IEnumerable<string> argNames,
             bool @static,
             bool propertySet,
-            bool nullConditional = false,
-            IEnumerable<string> argNames = null)
+            bool nullConditional = false)
         {
-            var callInfo = argNames == null ? new CallInfo(args.Count()) :  new CallInfo(args.Count(), argNames);
+            var callInfo = new CallInfo(args.Count(), argNames);
             var classScope = _memberFunctionType?.Type;
             var binder = name.Equals("new", StringComparison.OrdinalIgnoreCase) && @static
                 ? (CallSiteBinder)PSCreateInstanceBinder.Get(callInfo, constraints, publicTypeOnly: true)
@@ -6472,10 +6472,10 @@ namespace System.Management.Automation.Language
                     constraints,
                     target,
                     args,
+                    argNames,
                     invokeMemberExpressionAst.Static,
                     propertySet: false,
-                    nullConditional: invokeMemberExpressionAst.NullConditional,
-                    argNames: argNames);
+                    nullConditional: invokeMemberExpressionAst.NullConditional);
             }
 
             var memberNameExpr = Compile(invokeMemberExpressionAst.Member);
@@ -6795,7 +6795,14 @@ namespace System.Management.Automation.Language
             var memberNameAst = InvokeMemberExpressionAst.Member as StringConstantExpressionAst;
             if (memberNameAst != null)
             {
-                return compiler.InvokeMember(memberNameAst.Value, constraints, _targetExprTemp, _argExprTemps, @static: false, propertySet: false);
+                return compiler.InvokeMember(
+                    memberNameAst.Value,
+                    constraints,
+                    _targetExprTemp,
+                    _argExprTemps,
+                    Array.Empty<string>(),
+                    @static: false,
+                    propertySet: false);
             }
 
             var memberNameExpr = GetMemberNameExpr(compiler);
@@ -6816,7 +6823,14 @@ namespace System.Management.Automation.Language
             var args = GetArgumentExprs(compiler);
             if (memberNameAst != null)
             {
-                return compiler.InvokeMember(memberNameAst.Value, constraints, target, args.Append(rhs), @static: false, propertySet: true);
+                return compiler.InvokeMember(
+                    memberNameAst.Value,
+                    constraints,
+                    target,
+                    args.Append(rhs),
+                    Array.Empty<string>(),
+                    @static: false,
+                    propertySet: true);
             }
 
             var memberNameExpr = GetMemberNameExpr(compiler);

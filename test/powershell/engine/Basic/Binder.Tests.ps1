@@ -44,15 +44,17 @@ public class DynamicClass : DynamicObject
         object[] args,
         out object result)
     {
+        int startNameIndex = binder.CallInfo.ArgumentCount - binder.CallInfo.ArgumentNames.Count;
+
         StringBuilder sb = new StringBuilder();
         sb.Append(binder.Name);
         sb.Append("(");
         for (int i = 0; i < args.Length; i++)
         {
-            string argName = binder.CallInfo.ArgumentNames[i];
-            if (!string.IsNullOrEmpty(argName))
+            int argNameIndex = i - startNameIndex;
+            if (argNameIndex >= 0 && binder.CallInfo.ArgumentNames.Count > argNameIndex)
             {
-                sb.AppendFormat("{0}: ", argName);
+                sb.AppendFormat("{0}: ", binder.CallInfo.ArgumentNames[argNameIndex]);
             }
             sb.Append(args[i].ToString());
 
