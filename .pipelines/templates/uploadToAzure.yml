@@ -43,173 +43,204 @@ jobs:
       Get-ChildItem Env:
     displayName: 'Capture Environment Variables'
 
-  - download: current
-    artifact: drop_linux_package_deb
-    patterns: '**/*.deb'
+  - pwsh: |
+      New-Item -Path '$(Build.ArtifactStagingDirectory)/downloads' -ItemType Directory -Force
+    displayName: Create downloads directory
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_deb
+      itemPattern: '**/*.deb'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download deb package
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_linux_package_fxdependent
-    patterns: '**/*.tar.gz'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_fxdependent
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download linux fxd package
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_linux_package_mariner_arm64
-    patterns: '**/*.rpm'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_mariner_arm64
+      itemPattern: '**/*.rpm'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download linux mariner arm64 package
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_linux_package_mariner_x64
-    patterns: '**/*.rpm'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_mariner_x64
+      itemPattern: '**/*.rpm'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download linux mariner x64 package
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_linux_package_minSize
-    patterns: '**/*.tar.gz'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_minSize
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download linux minSize package
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_linux_package_rpm
-    patterns: '**/*.rpm'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_rpm
+      itemPattern: '**/*.rpm'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download linux rpm package
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_linux_package_tar
-    patterns: '**/*.tar.gz'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_tar
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download linux tar package
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_linux_package_tar_alpine
-    patterns: '**/*.tar.gz'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_tar_alpine
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download linux alpine tar package
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_linux_package_tar_alpine_fxd
-    patterns: '**/*.tar.gz'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_tar_alpine_fxd
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download linux alpine fxd tar package
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_linux_package_tar_arm
-    patterns: '**/*.tar.gz'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_tar_arm
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download linux arm32 tar package
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_linux_package_tar_arm64
-    patterns: '**/*.tar.gz'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_tar_arm64
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download linux arm64 tar package
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_nupkg_build_nupkg
-    patterns: '**/*.nupkg'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_nupkg_build_nupkg
+      itemPattern: '**/*.nupkg'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download nupkgs
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_windows_package_package_win_arm64
-    patterns: |
-      **/*.msi
-      **/*.msix
-      **/*.zip
-      **/*.exe
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_arm64
+      itemPattern: |
+        **/*.msi
+        **/*.msix
+        **/*.zip
+        **/*.exe
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download windows arm64 packages
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_windows_package_package_win_fxdependentWinDesktop
-    patterns: '**/*.zip'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_fxdependentWinDesktop
+      itemPattern: '**/*.zip'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download windows fxdependentWinDesktop packages
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_windows_package_package_win_minsize
-    patterns: '**/*.zip'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_minsize
+      itemPattern: '**/*.zip'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download windows minsize packages
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_windows_package_package_win_x64
-    patterns: |
-      **/*.msi
-      **/*.msix
-      **/*.zip
-      **/*.exe
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_x64
+      itemPattern: |
+        **/*.msi
+        **/*.msix
+        **/*.zip
+        **/*.exe
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download windows x64 packages
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: drop_windows_package_package_win_x86
-    patterns: |
-      '**/*.msi'
-      '**/*.msix'
-      '**/*.zip'
-      '**/*.exe'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_x86
+      itemPattern: |
+        '**/*.msi'
+        '**/*.msix'
+        '**/*.zip'
+        '**/*.exe'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download windows x86 packages
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
-  - download: current
-    artifact: macos-pkgs
-    patterns: |
-      '**/*.pkg'
-      '**/*.tar.gz'
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: macos-pkgs
+      itemPattern: |
+        '**/*.pkg'
+        '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
     displayName: Download macos packages
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  #  - pwsh: |
+  #     $patterns = @(
+  #       'powershell*.deb'
+  #       'powershell*.tar.gz'
+  #       'powershell*.rpm'
+  #       'powershell*.msi'
+  #       'powershell*.msix'
+  #       'powershell*.zip'
+  #       'powershell*.exe'
+  #       'powershell*.pkg'
+  #       '*.nupkg'
+  #     )
+
+  #     $packages = Get-ChildItem -Path $(Pipeline.Workspace) -Recurse -Include $patterns
+
+  #     Write-Verbose -Verbose "Packages found:"
+  #     $packages | Out-String -Stream | Write-Verbose -Verbose
+
+  #     if(-not (Test-Path $(ob_outputDirectory))) {
+  #       New-Item -Path $(ob_outputDirectory) -ItemType Directory -Force
+  #     }
+
+  #     $packages | ForEach-Object { Copy-Item -Path $_.FullName -Destination '$(ob_outputDirectory)' -Force -Verbose }
+
+  #     Write-Verbose -Verbose "Packages copied to $(ob_outputDirectory)"
+  #     Get-ChildItem -Path $(ob_outputDirectory) | Out-String -Stream | Write-Verbose -Verbose
+  #   displayName: Collate packages
 
   - pwsh: |
-      $patterns = @(
-        'powershell*.deb'
-        'powershell*.tar.gz'
-        'powershell*.rpm'
-        'powershell*.msi'
-        'powershell*.msix'
-        'powershell*.zip'
-        'powershell*.exe'
-        'powershell*.pkg'
-        '*.nupkg'
-      )
+      Get-ChildItem '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: 'Capture downloads'
 
-      $packages = Get-ChildItem -Path $(Pipeline.Workspace) -Recurse -Include $patterns
-
-      Write-Verbose -Verbose "Packages found:"
-      $packages | Out-String -Stream | Write-Verbose -Verbose
-
-      if(-not (Test-Path $(ob_outputDirectory))) {
-        New-Item -Path $(ob_outputDirectory) -ItemType Directory -Force
-      }
-
-      $packages | ForEach-Object { Copy-Item -Path $_.FullName -Destination '$(ob_outputDirectory)' -Force -Verbose }
-
-      Write-Verbose -Verbose "Packages copied to $(ob_outputDirectory)"
-      Get-ChildItem -Path $(ob_outputDirectory) | Out-String -Stream | Write-Verbose -Verbose
-    displayName: Collate packages
+  - pwsh: |
+      # Create output directory for packages which have been uploaded to blob storage
+      New-Item -Path $(Build.ArtifactStagingDirectory)/uploaded -ItemType Directory -Force
+    displayName: Create output directory for packages
 
   - pwsh: |
       $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue
@@ -231,6 +262,8 @@ jobs:
       azurePowerShellVersion: LatestVersion
       pwsh: true
       inline: |
+        $downloadsDirectory = '$(Build.ArtifactStagingDirectory)/downloads'
+        $uploadedDirectory = '$(Build.ArtifactStagingDirectory)/uploaded'
         $storageAccountName = "pscoretestdata"
         $containerName = $env:AZUREVERSION
 
@@ -245,9 +278,7 @@ jobs:
             Write-Host "Blob container $containerName created successfully."
         }
 
-        $gcPackages = Get-ChildItem -Path $(ob_outputDirectory) -Filter "powershell*gc.*" -Recurse
-        $mdGCFolder = New-Item -Path $(ob_outputDirectory) -Name "gc" -ItemType Directory -Force
-
+        $gcPackages = Get-ChildItem -Path $downloadsDirectory -Filter "powershell*gc.*"
         Write-Verbose -Verbose "Uploading GC packages"
         $gcContainerName = "$containerName-gc"
         # Create the blob container if it doesn't exist
@@ -260,14 +291,12 @@ jobs:
         $gcPackages | ForEach-Object {
             $blobName = "${_.Name}"
             Write-Verbose -Verbose "Uploading $($_.FullName) to $gcContainerName/$blobName"
-            $blobPath = "$gcContainerName/$blobName"
             $null = Set-AzStorageBlobContent -File $_.FullName -Container $gcContainerName -Blob $blobName -Context $context
             # Move to folder to we wont upload again
-            Move-Item -Path $_.FullName -Destination $mdGCFolder.FullName -Force -Verbose
+            Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force -Verbose
         }
 
-        $nupkgFiles = Get-ChildItem -Path $(ob_outputDirectory) -Filter "*.nupkg" -Exclude "powershell*.nupkg" -Recurse
-        $nugetFolder = New-Item -Path $(ob_outputDirectory) -Name "nuget" -ItemType Directory -Force
+        $nupkgFiles = Get-ChildItem -Path $downloadsDirectory -Filter "*.nupkg" -Exclude "powershell*.nupkg"
         $nugetContainerName = "$containerName-nuget"
         # Create the blob container if it doesn't exist
         $containerExists = Get-AzStorageContainer -Name $nugetContainerName -Context $context -ErrorAction SilentlyContinue
@@ -278,28 +307,24 @@ jobs:
 
         $nupkgFiles | ForEach-Object {
             $blobName = $_.Name
-            $blobPath = "$nugetContainerName/$blobName"
             Write-Verbose -Verbose "Uploading $($_.FullName) to $nugetContainerName/$blobName"
             $null = Set-AzStorageBlobContent -File $_.FullName -Container $nugetContainerName -Blob $blobName -Context $context
             # Move to folder to we wont upload again
-            Move-Item -Path $_.FullName -Destination $nugetFolder.FullName -Force -Verbose
+            Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force -Verbose
         }
 
-        $globaltoolFiles = Get-ChildItem -Path $(ob_outputDirectory) -Filter "powershell*.nupkg" -Recurse
-        $globaltoolFolder = New-Item -Path $nugetFolder -Name "globaltool" -ItemType Directory -Force
+        $globaltoolFiles = Get-ChildItem -Path $downloadsDirectory -Filter "powershell*.nupkg"
         $globaltoolContainerName = "$containerName-nuget"
         $globaltoolFiles | ForEach-Object {
-            $blobName = $_.Name
+            $blobName = "globaltool/" + $_.Name
             $globaltoolContainerName = "$containerName-nuget"
-            $blobPath = "$globaltoolContainerName/globaltool/$blobName"
             Write-Verbose -Verbose "Uploading $($_.FullName) to $globaltoolContainerName/$blobName"
             $null = Set-AzStorageBlobContent -File $_.FullName -Container $globaltoolContainerName -Blob $blobName -Context $context
             # Move to folder to we wont upload again
-            Move-Item -Path $_.FullName -Destination $globaltoolFolder.FullName -Force
+            Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force
         }
 
-        $privateFiles = Get-ChildItem -Path $(ob_outputDirectory) -Include @("*.msix", "*.exe") -Recurse
-        $privateFolder = New-Item -Path $(ob_outputDirectory) -Name "private" -ItemType Directory -Force
+        $privateFiles = Get-ChildItem -Path $downloadsDirectory -Include @("*.msix", "*.exe")
         $privateContainerName = "$containerName-private"
         # Create the blob container if it doesn't exist
         $containerExists = Get-AzStorageContainer -Name $privateContainerName -Context $context -ErrorAction SilentlyContinue
@@ -310,19 +335,18 @@ jobs:
 
         $privateFiles | ForEach-Object {
             $blobName = $_.Name
-            $blobPath = "$privateContainerName/$blobName"
             Write-Verbose -Verbose "Uploading $($_.FullName) to $privateContainerName/$blobName"
             $null = Set-AzStorageBlobContent -File $_.FullName -Container $privateContainerName -Blob $blobName -Context $context
             # Move to folder to we wont upload again
-            Move-Item -Path $_.FullName -Destination $privateFolder.FullName -Force -Verbose
+            Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force -Verbose
         }
 
-        $files = Get-ChildItem -Path $(ob_outputDirectory) -Include @("*.deb", "*.tar.gz", "*.rpm", "*.msi", "*.zip", "*.pkg") -Recurse
+        $files = Get-ChildItem -Path $downloadsDirectory -Include @("*.deb", "*.tar.gz", "*.rpm", "*.msi", "*.zip", "*.pkg")
 
         $files | ForEach-Object {
           $blobName = $_.Name
-          $blobPath = "$containerName/$blobName"
           Write-Verbose -Verbose "Uploading $($_.FullName) to $containerName/$blobName"
           $null = Set-AzStorageBlobContent -File $_.FullName -Container $containerName -Blob $blobName -Context $context
           Write-Host "File $blobName uploaded to $containerName container."
+          Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force -Verbose
         }
