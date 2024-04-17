@@ -68,6 +68,7 @@ However, it's expected that many issues will require input from both WGs.
 * @vexx32
 * @SeeminglyScience
 * @IISResetMe
+* @powercode
 
 ## Interactive UX
 
@@ -91,6 +92,8 @@ These topics include (but are not limited to):
 * @SeeminglyScience
 * @sdwheeler
 * @kilasuit
+* @FriedrichWeinmann
+* @StevenBucher98
 
 ## Language
 

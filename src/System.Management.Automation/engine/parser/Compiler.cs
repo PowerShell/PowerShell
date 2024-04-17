@@ -2278,25 +2278,26 @@ namespace System.Management.Automation.Language
             switch (context)
             {
                 case CaptureAstContext.AssignmentWithResultPreservation:
-                    result = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
-
-                    // PipelineResult might get skipped in some circumstances due to an early return or a FlowControlException thrown out, in which case
-                    // we write to the oldPipe. This can happen in cases like:
-                    //     $(1;2;return 3)
-                    finallyExprs.Add(Expression.Call(CachedReflectionInfo.PipelineOps_FlushPipe, oldPipe, resultList));
-                    break;
                 case CaptureAstContext.AssignmentWithoutResultPreservation:
                     result = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
 
                     // Clear the temporary pipe in case of exception, if we are not required to preserve the results
-                    var catchExprs = new List<Expression>
+                    if (context == CaptureAstContext.AssignmentWithoutResultPreservation)
                     {
-                        Expression.Call(CachedReflectionInfo.PipelineOps_ClearPipe, resultList),
-                        Expression.Rethrow(),
-                        Expression.Constant(null, typeof(object))
-                    };
+                        var catchExprs = new List<Expression>
+                        {
+                            Expression.Call(CachedReflectionInfo.PipelineOps_ClearPipe, resultList),
+                            Expression.Rethrow(),
+                            Expression.Constant(null, typeof(object))
+                        };
 
-                    catches.Add(Expression.Catch(typeof(RuntimeException), Expression.Block(typeof(object), catchExprs)));
+                        catches.Add(Expression.Catch(typeof(RuntimeException), Expression.Block(typeof(object), catchExprs)));
+                    }
+
+                    // PipelineResult might get skipped in some circumstances due to an early return or a FlowControlException thrown out,
+                    // in which case we write to the oldPipe. This can happen in cases like:
+                    //     $(1;2;return 3)
+                    finallyExprs.Add(Expression.Call(CachedReflectionInfo.PipelineOps_FlushPipe, oldPipe, resultList));
                     break;
                 case CaptureAstContext.Condition:
                     result = DynamicExpression.Dynamic(PSPipelineResultToBoolBinder.Get(), typeof(bool), resultList);

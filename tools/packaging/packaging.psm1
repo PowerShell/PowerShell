@@ -16,7 +16,7 @@ $AllDistributions = @()
 $AllDistributions += $DebianDistributions
 $AllDistributions += $RedhatDistributions
 $AllDistributions += 'macOs'
-$script:netCoreRuntime = 'net8.0'
+$script:netCoreRuntime = 'net9.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
@@ -895,17 +895,74 @@ function Update-PSSignedBuildFolder
         [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap')
     )
 
+    $BuildPathNormalized = (Get-Item $BuildPath).FullName
+    $SignedFilesPathNormalized = (Get-Item $SignedFilesPath).FullName
+
+    Write-Verbose -Verbose "BuildPath = $BuildPathNormalized"
+    Write-Verbose -Verbose "SignedFilesPath = $signedFilesPath"
+
     # Replace unsigned binaries with signed
-    $signedFilesFilter = Join-Path -Path $SignedFilesPath -ChildPath '*'
-    Get-ChildItem -Path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | ForEach-Object -Process {
-        $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPath.ToLowerInvariant(),'')
-        $destination = Join-Path -Path $BuildPath -ChildPath $relativePath
-        Write-Log "replacing $destination with $_"
-        Copy-Item -Path $_ -Destination $destination -Force
+    $signedFilesFilter = Join-Path -Path $SignedFilesPathNormalized -ChildPath '*'
+    Write-Verbose -Verbose "signedFilesFilter = $signedFilesFilter"
+
+    $signedFilesList = Get-ChildItem -Path $signedFilesFilter -Recurse -File
+    foreach ($signedFileObject in $signedFilesList) {
+        # completely skip replacing pwsh on non-windows systems (there is no .exe extension here)
+        # and it may not be signed correctly
+        
+        # The Shim will not be signed in CI.
+        
+        if ($signedFileObject.Name -eq "pwsh" -or ($signedFileObject.Name -eq "Microsoft.PowerShell.GlobalTool.Shim.exe" -and $env:BUILD_REASON -eq 'PullRequest')) {
+            Write-Verbose -Verbose "Skipping $signedFileObject"
+            continue
+        }
+
+        $signedFilePath = $signedFileObject.FullName
+        Write-Verbose -Verbose "Processing $signedFilePath"
+
+        # Agents seems to be on a case sensitive file system
+        if ($IsLinux) {
+            $relativePath = $signedFilePath.Replace($SignedFilesPathNormalized, '')
+        } else {
+            $relativePath = $signedFilePath.ToLowerInvariant().Replace($SignedFilesPathNormalized.ToLowerInvariant(), '')
+        }
+
+        Write-Verbose -Verbose "relativePath = $relativePath"
+        $destination = (Get-Item (Join-Path -Path $BuildPathNormalized -ChildPath $relativePath)).FullName
+        Write-Verbose -Verbose "destination = $destination"
+        Write-Log "replacing $destination with $signedFilePath"
+
+        if (-not (Test-Path $destination)) {
+            $parent = Split-Path -Path $destination -Parent
+            $exists = Test-Path -Path $parent
+
+            if ($exists) {
+                Write-Verbose -Verbose "Parent:"
+                Get-ChildItem -Path $parent | Select-Object -ExpandProperty FullName | Write-Verbose -Verbose
+            }
+
+            Write-Error "File not found: $destination, parent - $parent exists: $exists"
+        }
+
+        # Get-AuthenticodeSignature will only work on Windows
+        if ($IsWindows)
+        {
+            $signature = Get-AuthenticodeSignature -FilePath $signedFilePath
+            if ($signature.Status -ne 'Valid') {
+                Write-Error "Invalid signature for $signedFilePath"
+            }
+        }
+        else
+        {
+            Write-Verbose -Verbose "Skipping certificate check of $signedFilePath on non-Windows"
+        }
+
+        Copy-Item -Path $signedFilePath -Destination $destination -Force
+
     }
 
     foreach($filter in $RemoveFilter) {
-        $removePath = Join-Path -Path $BuildPath -ChildPath $filter
+        $removePath = Join-Path -Path $BuildPathNormalized -ChildPath $filter
         Remove-Item -Path $removePath -Recurse -Force
     }
 }
@@ -1569,7 +1626,7 @@ function Get-PackageDependencies
             )
             if($Script:Options.Runtime -like 'fx*') {
                 $Dependencies += @(
-                    "dotnet-runtime-8.0"
+                    "dotnet-runtime-9.0"
                 )
             }
         } elseif ($Distribution -eq 'macOS') {

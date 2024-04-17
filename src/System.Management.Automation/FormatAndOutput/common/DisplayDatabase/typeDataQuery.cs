@@ -601,8 +601,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // if it is a type reference, just add the type name
                 if (r is TypeReference tr)
                 {
-                    if (!allTypes.Contains(tr.name))
-                        allTypes.Add(tr.name);
+                    allTypes.Add(tr.name);
                 }
                 else
                 {
@@ -619,8 +618,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // we found the group, go over it
                     foreach (TypeReference x in tgd.typeReferenceList)
                     {
-                        if (!allTypes.Contains(x.name))
-                            allTypes.Add(x.name);
+                        allTypes.Add(x.name);
                     }
                 }
             }
