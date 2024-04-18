@@ -278,7 +278,24 @@ jobs:
         }
 
         $nupkgFiles = Get-ChildItem -Path $downloadsDirectory -Filter "*.nupkg" | Where-Object { $_.Name -notlike "powershell*.nupkg" }
+
+        # create a SHA512 checksum file for each nupkg files
+
+        $checksums = $nupkgFiles |
+          ForEach-Object {
+              Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
+              $packageName = $_.Name
+              $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash.ToLower()
+              # the '*' before the packagename signifies it is a binary
+              "$hash *$packageName"
+          }
+
+        $checksums | Out-File -FilePath "$downloadsDirectory\SHA512SUMS" -Force
+        $fileContent = Get-Content -Path "$downloadsDirectory\SHA512SUMS" -Raw | Out-String
+        Write-Verbose -Verbose -Message $fileContent
+
         Write-Verbose -Verbose "nupkg files to upload."
+        $nupkgFiles += $downloadsDirectory\SHA512SUMS
         $nupkgFiles | Write-Verbose -Verbose
         $nugetContainerName = "$containerName-nuget"
         # Create the blob container if it doesn't exist
@@ -297,7 +314,24 @@ jobs:
         }
 
         $globaltoolFiles = Get-ChildItem -Path $downloadsDirectory -Filter "powershell*.nupkg"
+        # create a SHA512 checksum file for each nupkg files
+
+        $checksums = $globaltoolFiles |
+          ForEach-Object {
+              Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
+              $packageName = $_.Name
+              $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash.ToLower()
+              # the '*' before the packagename signifies it is a binary
+              "$hash *$packageName"
+          }
+
+        New-Item -Path "$downloadsDirectory\globaltool" -ItemType Directory -Force
+        $checksums | Out-File -FilePath "$downloadsDirectory\globaltool\SHA512SUMS" -Force
+        $fileContent = Get-Content -Path "$downloadsDirectory\globaltool\SHA512SUMS" -Raw | Out-String
+        Write-Verbose -Verbose -Message $fileContent
+
         Write-Verbose -Verbose "globaltool files to upload."
+        $globaltoolFiles += $downloadsDirectory\globaltool\SHA512SUMS
         $globaltoolFiles | Write-Verbose -Verbose
         $globaltoolContainerName = "$containerName-nuget"
         $globaltoolFiles | ForEach-Object {
