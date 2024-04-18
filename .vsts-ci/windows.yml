@@ -13,6 +13,7 @@ trigger:
     exclude:
     - .vsts-ci/misc-analysis.yml
     - .github/ISSUE_TEMPLATE/*
+    - .github/workflows/*
     - .dependabot/config.yml
     - test/perf/*
 pr:
