@@ -22,6 +22,7 @@ trigger:
     exclude:
     - .vsts-ci/misc-analysis.yml
     - .github/ISSUE_TEMPLATE/*
+    - .github/workflows/*
     - .dependabot/config.yml
     - test/perf/*
 pr:
@@ -36,6 +37,7 @@ pr:
     exclude:
     - .dependabot/config.yml
     - .github/ISSUE_TEMPLATE/*
+    - .github/workflows/*
     - .vsts-ci/misc-analysis.yml
     - .vsts-ci/windows.yml
     - .vsts-ci/windows/*
