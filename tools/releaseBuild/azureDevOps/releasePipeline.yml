@@ -402,6 +402,7 @@ stages:
     variables:
     - group: 'AzDevOpsArtifacts'
     - group: 'packages.microsoft.com'
+    - group: 'mscodehub-feed-read-akv'
     steps:
     - template: templates/release-PublishPackageMsftCom.yml
       parameters:
