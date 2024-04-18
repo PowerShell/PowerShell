@@ -27,6 +27,7 @@ pr:
     exclude:
     - .dependabot/config.yml
     - .github/ISSUE_TEMPLATE/*
+    - .github/workflows/*
     - .vsts-ci/misc-analysis.yml
     - tools/cgmanifest.json
     - LICENSE.txt
