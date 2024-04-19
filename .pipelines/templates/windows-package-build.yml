@@ -40,7 +40,7 @@ jobs:
       Get-ChildItem -Path env:
     displayName: Capture environment
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - template: SetVersionVariables.yml@self
     parameters:
@@ -59,14 +59,14 @@ jobs:
     displayName: Download signed artifacts
     condition: ${{ ne(parameters.runtime, 'minSize') }}
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_x64_${{ parameters.runtime }}
     displayName: Download minsize signed artifacts
     condition: ${{ eq(parameters.runtime, 'minSize') }}
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - pwsh: |
       Write-Verbose -Verbose "signed artifacts"
@@ -75,7 +75,7 @@ jobs:
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - pwsh: |
       # cleanup previous install
@@ -96,7 +96,7 @@ jobs:
       Expand-Archive '$(Pipeline.Workspace)\makeappx.zip' -destination '\' -Force
     displayName: Install packaging tools
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - pwsh: |
       $runtime = '$(Runtime)'
@@ -179,7 +179,7 @@ jobs:
     displayName: 'Package ${{ parameters.buildArchitecture}}'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - task: onebranch.pipeline.signing@1
     displayName: Sign MSI packages
@@ -273,5 +273,5 @@ jobs:
       Get-ChildItem -Path $(ob_outputDirectory) -Recurse
     displayName: 'List artifacts'
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 

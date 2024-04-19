@@ -46,7 +46,7 @@ jobs:
       Get-ChildItem -Path env:
     displayName: Capture environment
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - template: SetVersionVariables.yml@self
     parameters:
@@ -64,13 +64,13 @@ jobs:
     artifact: ${{ parameters.unsignedDrop }}
     displayName: 'Download unsigned artifacts'
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - download: CoOrdinatedBuildPipeline
     artifact: ${{ parameters.signedDrop }}
     displayName: 'Download signed artifacts'
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - pwsh: |
       Write-Verbose -Verbose "Unsigned artifacts"
@@ -82,7 +82,7 @@ jobs:
     # Diagnostics is not critical it passes every time it runs
     continueOnError: true
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - pwsh: |
       $packageType = '$(PackageType)'
@@ -156,7 +156,7 @@ jobs:
     displayName: 'Package ${{ parameters.packageType}}'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - task: onebranch.pipeline.signing@1
     displayName: Sign deb and rpm packages

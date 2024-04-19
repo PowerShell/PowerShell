@@ -35,7 +35,7 @@ jobs:
       Get-ChildItem -Path env:
     displayName: Capture environment
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - template: SetVersionVariables.yml@self
     parameters:
@@ -53,25 +53,25 @@ jobs:
     artifact: drop_windows_build_windows_fxdependent_release
     displayName: 'Download drop_windows_build_windows_fxdependent_release'
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_windows_build_windows_fxdependentWinDesktop_release
     displayName: 'Download drop_windows_build_windows_fxdependentWinDesktop_release'
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_linux_sign_linux_fxd
     displayName: 'Download drop_linux_sign_linux_fxd'
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - download: CoOrdinatedBuildPipeline
     artifact: drop_linux_sign_linux_fxd_x64_alpine
     displayName: 'Download drop_linux_sign_linux_fxd_x64_alpine'
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - pwsh: |
       Write-Verbose -Verbose "drop_windows_build_windows_fxdependent_release"
@@ -87,7 +87,7 @@ jobs:
       Get-ChildItem -Path $(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd_x64_alpine -Recurse | Out-String | Write-Verbose -Verbose
     displayName: 'Capture download artifacts'
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - pwsh: |
       $repoRoot = "$(PowerShellRoot)"
@@ -105,7 +105,7 @@ jobs:
     displayName: 'Add nuget.config for Azure DevOps feed for packages'
     condition: and(succeededOrFailed(), ne(variables['PowerShellCore_PublicPackages'], ''))
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - task: NuGetToolInstaller@1
     displayName: 'Install NuGet.exe'

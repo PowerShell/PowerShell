@@ -22,4 +22,4 @@ steps:
     Write-Host "##$vstsCommandString"
   displayName: 'Set SHOULD_SIGN Variable'
   env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
