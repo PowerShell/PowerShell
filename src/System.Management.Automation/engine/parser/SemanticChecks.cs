@@ -1187,6 +1187,27 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst memberExpressionAst)
         {
             CheckMemberAccess(memberExpressionAst);
+            if (memberExpressionAst.Arguments is not null)
+            {
+                var existingArguments = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (ExpressionAst argument in memberExpressionAst.Arguments)
+                {
+                    if (argument is LabeledExpressionAst labeledExpression)
+                    {
+                        if (!existingArguments.Add(labeledExpression.Label.Value))
+                        {
+                            _parser.ReportError(labeledExpression.Label.Extent,
+                            nameof(ParserStrings.DuplicateArgumentLabel),
+                            ParserStrings.DuplicateArgumentLabel,
+                            labeledExpression.Label.Value);
+                        }
+                    }
+                    else if (existingArguments.Count > 0)
+                    {
+                        _parser.ReportError(argument.Extent, nameof(ParserStrings.UnnamedArgumentAfterNamed), ParserStrings.UnnamedArgumentAfterNamed);
+                    }
+                }
+            }
             return AstVisitAction.Continue;
         }
 
