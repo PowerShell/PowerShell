@@ -7,7 +7,7 @@
 - [PowerShell 101][11]
 - [PowerShell learning resources][10]
 
-## What are the best practices and style?
+## What are the best practices and styles?
 
 The [PoshCode][03] unofficial guide is our reference.
 
@@ -33,7 +33,7 @@ The [PoshCode][03] unofficial guide is our reference.
 
 Error handling in PowerShell is unique, as not all errors result in catchable exceptions by default.
 Setting `$ErrorActionPreference = 'Stop'` will likely do what you want; that is, cause
-non-terminating errors instead to terminate. Read the [GitHub issue][02] for more information.
+non-terminating errors instead of terminating. Read the [GitHub issue][02] for more information.
 
 ## Where do I get the PowerShell Core SDK package?
 

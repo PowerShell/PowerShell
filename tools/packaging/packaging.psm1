@@ -914,20 +914,32 @@ function Update-PSSignedBuildFolder
     $signedFilesFilter = Join-Path -Path $SignedFilesPathNormalized -ChildPath '*'
     Write-Verbose -Verbose "signedFilesFilter = $signedFilesFilter"
 
-    Get-ChildItem -Path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | ForEach-Object -Process {
-        Write-Verbose -Verbose "Processing $_"
+    $signedFilesList = Get-ChildItem -Path $signedFilesFilter -Recurse -File
+    foreach ($signedFileObject in $signedFilesList) {
+        # completely skip replacing pwsh on non-windows systems (there is no .exe extension here)
+        # and it may not be signed correctly
+        
+        # The Shim will not be signed in CI.
+        
+        if ($signedFileObject.Name -eq "pwsh" -or ($signedFileObject.Name -eq "Microsoft.PowerShell.GlobalTool.Shim.exe" -and $env:BUILD_REASON -eq 'PullRequest')) {
+            Write-Verbose -Verbose "Skipping $signedFileObject"
+            continue
+        }
+
+        $signedFilePath = $signedFileObject.FullName
+        Write-Verbose -Verbose "Processing $signedFilePath"
 
         # Agents seems to be on a case sensitive file system
         if ($IsLinux) {
-            $relativePath = $_.Replace($SignedFilesPathNormalized, '')
+            $relativePath = $signedFilePath.Replace($SignedFilesPathNormalized, '')
         } else {
-            $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPathNormalized.ToLowerInvariant(), '')
+            $relativePath = $signedFilePath.ToLowerInvariant().Replace($SignedFilesPathNormalized.ToLowerInvariant(), '')
         }
 
         Write-Verbose -Verbose "relativePath = $relativePath"
         $destination = (Get-Item (Join-Path -Path $BuildPathNormalized -ChildPath $relativePath)).FullName
         Write-Verbose -Verbose "destination = $destination"
-        Write-Log "replacing $destination with $_"
+        Write-Log "replacing $destination with $signedFilePath"
 
         if (-not (Test-Path $destination)) {
             $parent = Split-Path -Path $destination -Parent
@@ -941,13 +953,21 @@ function Update-PSSignedBuildFolder
             Write-Error "File not found: $destination, parent - $parent exists: $exists"
         }
 
-        $signature = Get-AuthenticodeSignature -FilePath $_
-
-        if ($signature.Status -ne 'Valid') {
-            Write-Error "Invalid signature for $_"
+        # Get-AuthenticodeSignature will only work on Windows
+        if ($IsWindows)
+        {
+            $signature = Get-AuthenticodeSignature -FilePath $signedFilePath
+            if ($signature.Status -ne 'Valid') {
+                Write-Error "Invalid signature for $signedFilePath"
+            }
+        }
+        else
+        {
+            Write-Verbose -Verbose "Skipping certificate check of $signedFilePath on non-Windows"
         }
 
-        Copy-Item -Path $_ -Destination $destination -Force
+        Copy-Item -Path $signedFilePath -Destination $destination -Force
+
     }
 
     foreach($filter in $RemoveFilter) {
