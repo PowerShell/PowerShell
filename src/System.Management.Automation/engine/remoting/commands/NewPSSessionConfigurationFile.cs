@@ -484,6 +484,25 @@ namespace Microsoft.PowerShell.Commands
         private string[] _visibleProviders = Array.Empty<string>();
 
         /// <summary>
+        /// A list of read-only providers.
+        /// </summary>
+        [Parameter]
+        public string[] ReadOnlyProviders
+        {
+            get
+            {
+                return _readOnlyProviders;
+            }
+
+            set
+            {
+                _readOnlyProviders = value;
+            }
+        }
+
+        private string[] _readOnlyProviders = Array.Empty<string>();
+
+        /// <summary>
         /// A list of aliases.
         /// </summary>
         [Parameter]
@@ -915,6 +934,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleProviders, RemotingErrorIdStrings.DISCVisibleProvidersComment,
                         SessionConfigurationUtils.GetVisibilityDefault(_visibleProviders, streamWriter, this), streamWriter, _visibleProviders.Length == 0));
+                }
+
+                // Visible providers
+                if (ShouldGenerateConfigurationSnippet("ReadOnlyProviders"))
+                {
+                    result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ReadOnlyProviders, RemotingErrorIdStrings.DISCReadOnlyProvidersComment,
+                        SessionConfigurationUtils.GetVisibilityDefault(ReadOnlyProviders, streamWriter, this), streamWriter, ReadOnlyProviders.Length == 0));
                 }
 
                 // Alias definitions
@@ -1372,6 +1398,12 @@ namespace Microsoft.PowerShell.Commands
         private string[] _visibleProviders = Array.Empty<string>();
 
         /// <summary>
+        /// A list of read-only providers.
+        /// </summary>
+        [Parameter]
+        public string[] ReadOnlyProviders { get; set; } = Array.Empty<string>();
+
+        /// <summary>
         /// Scripts to process.
         /// </summary>
         [Parameter]
@@ -1663,6 +1695,10 @@ namespace Microsoft.PowerShell.Commands
                 // Visible providers
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleProviders, RemotingErrorIdStrings.DISCVisibleProvidersComment,
                     SessionConfigurationUtils.GetVisibilityDefault(_visibleProviders, streamWriter, this), streamWriter, _visibleProviders.Length == 0));
+
+                // Read-only providers
+                result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ReadOnlyProviders, RemotingErrorIdStrings.DISCReadOnlyProvidersComment,
+                    SessionConfigurationUtils.GetVisibilityDefault(ReadOnlyProviders, streamWriter, this), streamWriter, ReadOnlyProviders.Length == 0));
 
                 // Scripts to process
                 string resultData = (_scriptsToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(_scriptsToProcess) : "'C:\\ConfigData\\InitScript1.ps1', 'C:\\ConfigData\\InitScript2.ps1'";

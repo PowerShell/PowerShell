@@ -967,6 +967,7 @@ namespace System.Management.Automation.Remoting
         internal static readonly string VisibleCmdlets = "VisibleCmdlets";
         internal static readonly string VisibleFunctions = "VisibleFunctions";
         internal static readonly string VisibleProviders = "VisibleProviders";
+        internal static readonly string ReadOnlyProviders = "ReadOnlyProviders";
         internal static readonly string VisibleExternalCommands = "VisibleExternalCommands";
 
         internal static readonly ConfigTypeEntry[] ConfigFileKeys = new ConfigTypeEntry[] {
@@ -1004,6 +1005,7 @@ namespace System.Management.Automation.Remoting
             new ConfigTypeEntry(VisibleCmdlets,                  new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(VisibleFunctions,                new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(VisibleProviders,                new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
+            new ConfigTypeEntry(ReadOnlyProviders,               new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(VisibleExternalCommands,         new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
         };
 
@@ -1402,6 +1404,7 @@ namespace System.Management.Automation.Remoting
             "VisibleFunctions",
             "VisibleExternalCommands",
             "VisibleProviders",
+            "ReadOnlyProviders",
             "ScriptsToProcess",
             "AliasDefinitions",
             "FunctionDefinitions",
@@ -1987,6 +1990,7 @@ namespace System.Management.Automation.Remoting
             bool functionVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleFunctions);
             bool aliasVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleAliases);
             bool providerVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleProviders);
+            bool readonlyProvidersApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.ReadOnlyProviders);
             bool processDefaultSessionStateVisibility = false;
 
             if (!string.IsNullOrEmpty(initialSessionState))
@@ -2025,6 +2029,28 @@ namespace System.Management.Automation.Remoting
                     foreach (var cmd in iss.Commands)
                     {
                         cmd.Visibility = iss.DefaultCommandVisibility;
+                    }
+                }
+            }
+
+            if (readonlyProvidersApplied)
+            {
+                string[] providers = TryGetStringArray(_configHash[ConfigFileConstants.ReadOnlyProviders]);
+
+                if (providers != null)
+                {
+                    foreach (string provider in providers)
+                    {
+                        if (!string.IsNullOrEmpty(provider))
+                        {
+                            // Look up providers from provider name including wildcards.
+                            var providersFound = iss.Providers.LookUpByName(provider);
+
+                            foreach (SessionStateProviderEntry providerFound in providersFound)
+                            {
+                                providerFound.Options = ScopedItemOptions.ReadOnly;
+                            }
+                        }
                     }
                 }
             }
@@ -2955,7 +2981,8 @@ namespace System.Management.Automation.Remoting
             "VariableDefinitions",
             "VisibleExternalCommands",
             "VisibleFunctions",
-            "VisibleProviders"
+            "VisibleProviders",
+            "ReadOnlyProviders",
         };
 #else
         private static readonly HashSet<string> SupportedConfigOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -2985,7 +3012,8 @@ namespace System.Management.Automation.Remoting
             "VariableDefinitions",
             "VisibleExternalCommands",
             "VisibleFunctions",
-            "VisibleProviders"
+            "VisibleProviders",
+            "ReadOnlyProviders",
         };
 #endif
 

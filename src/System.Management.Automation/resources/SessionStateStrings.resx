@@ -342,6 +342,9 @@
   <data name="AliasNotWritable" xml:space="preserve">
     <value>Alias is not writeable because alias {0} is read-only or constant and cannot be written to.</value>
   </data>
+  <data name="ProviderNotWritable" xml:space="preserve">
+    <value>Cannot write to provider {0} because it is read-only.</value>
+  </data>
   <data name="FunctionNotWritable" xml:space="preserve">
     <value>Cannot write to function {0} because it is read-only or constant.</value>
   </data>

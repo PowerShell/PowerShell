@@ -1062,6 +1062,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="DISCVisibleProvidersComment" xml:space="preserve">
     <value>Providers to make visible when applied to a session</value>
   </data>
+  <data name="DISCReadOnlyProvidersComment" xml:space="preserve">
+    <value>Providers to make read-only when applied to a session</value>
+  </data>
   <data name="DISCVisibleExternalCommandsComment" xml:space="preserve">
     <value>External commands (scripts and applications) to make visible when applied to a session</value>
   </data>

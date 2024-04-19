@@ -12,6 +12,7 @@ using System.Management.Automation.Host;
 using System.Resources;
 using System.Diagnostics.CodeAnalysis; // for fxcop
 using System.Security.AccessControl;
+using System.Linq;
 
 namespace System.Management.Automation.Provider
 {
@@ -936,6 +937,16 @@ namespace System.Management.Automation.Provider
                 throw
                     PSTraceSource.NewNotSupportedException(
                         SessionStateStrings.IContentCmdletProvider_NotSupported);
+            }
+
+            if (Context.ExecutionContext.InitialSessionState.Providers[Context.ProviderInstance.ProviderInfo.Name]
+                .Any(static sspe => sspe.Options.HasFlag(ScopedItemOptions.ReadOnly)))
+            {
+                throw new SessionStateUnauthorizedAccessException(
+                    Context.ProviderInstance.ProviderInfo.Name,
+                    SessionStateCategory.CmdletProvider,
+                    nameof(SessionStateStrings.ProviderNotWritable),
+                    SessionStateStrings.ProviderNotWritable);
             }
 
             // Call interface method
@@ -1984,4 +1995,3 @@ namespace System.Management.Automation.Provider
 }
 
 #pragma warning restore 56506
-

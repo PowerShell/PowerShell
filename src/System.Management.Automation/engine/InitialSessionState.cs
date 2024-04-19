@@ -504,15 +504,38 @@ namespace System.Management.Automation.Runspaces
             HelpFileName = helpFileName;
         }
 
+        internal SessionStateProviderEntry(
+            string name,
+            Type implementingType,
+            string helpFileName,
+            SessionStateEntryVisibility visibility,
+            ScopedItemOptions options)
+            : base(name, visibility)
+        {
+            ImplementingType = implementingType;
+            HelpFileName = helpFileName;
+            Debug.Assert(
+                options is ScopedItemOptions.None or ScopedItemOptions.ReadOnly,
+                $"Caller should ensure that \"{nameof(options)}\" is {nameof(ScopedItemOptions.None)} or {nameof(ScopedItemOptions.ReadOnly)}.");
+
+            Options = options;
+        }
+
         /// <summary>
         /// Shallow-clone this object...
         /// </summary>
         /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
-            SessionStateProviderEntry entry = new SessionStateProviderEntry(Name, ImplementingType, HelpFileName, this.Visibility);
-            entry.SetPSSnapIn(this.PSSnapIn);
-            entry.SetModule(this.Module);
+            SessionStateProviderEntry entry = new(
+                Name,
+                ImplementingType,
+                HelpFileName,
+                Visibility,
+                Options);
+
+            entry.SetPSSnapIn(PSSnapIn);
+            entry.SetModule(Module);
             return entry;
         }
 
@@ -523,6 +546,10 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// </summary>
         public string HelpFileName { get; }
+
+        /// <summary>
+        /// </summary>
+        public ScopedItemOptions Options { get; internal set; }
     }
 
     /// <summary>
@@ -3079,8 +3106,12 @@ namespace System.Management.Automation.Runspaces
                             }
                             else
                             {
-                                cmd.Visibility = SessionStateEntryVisibility.Public;
-                                publicCommands.Add(cmd);
+                                // These CommandInfo implementations will throw when attempting to set Visibility
+                                if (cmd is not ApplicationInfo and not AliasInfo and not ExternalScriptInfo)
+                                {
+                                    cmd.Visibility = SessionStateEntryVisibility.Public;
+                                    publicCommands.Add(cmd);
+                                }
                             }
                         }
                         catch (PSNotImplementedException)
