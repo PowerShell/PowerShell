@@ -1431,31 +1431,6 @@ $c.Method(
             $actual[3].Expression.Value | Should -Be test
         }
 
-        It "Parses method invocation with label differing in case" {
-            $script = @'
-$c.Method(
-    label: $arg1,
-    Label: $arg2)
-'@
-
-            $errors = @()
-            $ast = [System.Management.Automation.Language.Parser]::ParseInput($script, [ref]$null, [ref]$errors)
-            $errors | Should -BeNullOrEmpty
-
-            $actual = $ast.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments
-            $actual.Count | Should -Be 2
-
-            $actual[0] | Should -BeOfType ([System.Management.Automation.Language.NamedMethodArgumentAst])
-            $actual[0].Label | Should -BeExactly label
-            $actual[0].Expression | Should -BeOfType ([System.Management.Automation.Language.VariableExpressionAst])
-            $actual[0].Expression.VariablePath | Should -Be arg1
-
-            $actual[1] | Should -BeOfType ([System.Management.Automation.Language.NamedMethodArgumentAst])
-            $actual[1].Label | Should -BeExactly Label
-            $actual[1].Expression | Should -BeOfType ([System.Management.Automation.Language.VariableExpressionAst])
-            $actual[1].Expression.VariablePath | Should -Be arg2
-        }
-
         It "Parses method invocation without label with string value" {
             $script = '$c.Method(''value'')'
 
@@ -1486,17 +1461,31 @@ $c.Method(
             $actual.VariablePath.UserPath | Should -Be 'provider:var'
         }
 
+        It "Fails to parse method invocation with label differing in case" {
+            $err = { ExecuteCommand '$c.Method(Arg: $value, arg: $value)' } | Should -Throw -ErrorId ParseException -PassThru
+            $pe = $err.Exception.InnerException
+            $pe | Should -BeOfType ([System.Management.Automation.ParseException])
+
+            $pe.Errors[0].ErrorId | Should -Be DuplicateArgumentLabel
+            $pe.Errors[0].Message | Should -Be 'Found duplicate argument name label "arg"'
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+                    'At line:1 char:24'
+                    '+ $c.Method(arg: $value, arg: $value)'
+                    '+                        ~~~'
+                ) -join [Environment]::NewLine)
+        }
+
         It "Fails to parse label with newline after separator" {
             $err = { ExecuteCommand "`$c.Method(label:`n'value')" } | Should -Throw -ErrorId ParseException -PassThru
             $pe = $err.Exception.InnerException
             $pe | Should -BeOfType ([System.Management.Automation.ParseException])
 
-            $pe.Errors[0].ErrorId | Should -Be MissingArgumentAfterLabel
-            $pe.Errors[0].Message | Should -Be 'Expected argument value after name identifier "label" but found "\u000a".'
+            $pe.Errors[0].ErrorId | Should -Be MissingExpressionAfterToken
+            $pe.Errors[0].Message | Should -Be "Missing expression after ':'."
             $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
-                    'At line:1 char:16'
+                    'At line:1 char:17'
                     '+ $c.Method(label:'
-                    '+                ~'
+                    '+                 ~'
                 ) -join [Environment]::NewLine)
         }
 
@@ -1655,7 +1644,7 @@ $c.Method(
             $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
                     'At line:1 char:24'
                     '+ $c.Method(arg: $value, arg: $value)'
-                    '+                        ~~~~~~~~~~~'
+                    '+                        ~~~'
                 ) -join [Environment]::NewLine)
         }
 
