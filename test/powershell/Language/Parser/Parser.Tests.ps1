@@ -1468,9 +1468,9 @@ $c.Method(
 
             $pe.Errors[0].ErrorId | Should -Be DuplicateArgumentLabel
             $pe.Errors[0].Message | Should -Be 'Found duplicate argument name label "arg"'
-            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -Be (@(
+            $pe.ErrorRecord.InvocationInfo.PositionMessage | Should -BeExactly (@(
                     'At line:1 char:24'
-                    '+ $c.Method(arg: $value, arg: $value)'
+                    '+ $c.Method(Arg: $value, arg: $value)'
                     '+                        ~~~'
                 ) -join [Environment]::NewLine)
         }
