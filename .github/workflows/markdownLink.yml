@@ -32,7 +32,7 @@ jobs:
         # list of changed files within `super-linter`
         fetch-depth: 0
     - name: Lint Markdown
-      uses: super-linter/super-linter@a8150b40c89574adb5f68bf9502b890a236a06b3 # v5.7.2
+      uses: super-linter/super-linter@9d8128f17796a16326ceed5a607d5639a47feb82 # v6.4.0
       env:
         VALIDATE_ALL_CODEBASE: false
         DEFAULT_BRANCH: master
