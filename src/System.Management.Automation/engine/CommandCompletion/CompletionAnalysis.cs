@@ -1787,7 +1787,11 @@ namespace System.Management.Automation
 
             var commandElementAst = lastAst as CommandElementAst;
             string wordToComplete =
-                CompletionCompleters.ConcatenateStringPathArguments(commandElementAst, string.Empty, completionContext);
+                CompletionCompleters.ConcatenateStringPathArguments(
+                    commandElementAst,
+                    string.Empty,
+                    completionContext,
+                    out List<CompletionCompleters.ExpressionValue> nestedExpressions);
 
             if (wordToComplete != null)
             {
@@ -1796,7 +1800,7 @@ namespace System.Management.Automation
                 // Handle scenarios like this: cd 'c:\windows\win'<tab>
                 if (lastAst.Parent is CommandAst || lastAst.Parent is CommandParameterAst)
                 {
-                    result = CompletionCompleters.CompleteCommandArgument(completionContext);
+                    result = CompletionCompleters.CompleteCommandArgument(completionContext, nestedExpressions);
                     replacementIndex = completionContext.ReplacementIndex;
                     replacementLength = completionContext.ReplacementLength;
                 }
@@ -1804,7 +1808,7 @@ namespace System.Management.Automation
                 else
                 {
                     // Handle path/commandname completion for quoted string
-                    result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
+                    result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext, nestedExpressions));
 
                     // Try command name completion only if the text contains '-'
                     if (wordToComplete.Contains('-'))
@@ -1976,7 +1980,7 @@ namespace System.Management.Automation
                                     StringLiterals.PowerShellILExecutableExtension,
                                     StringLiterals.PowerShellCmdletizationFileExtension
                                 };
-                                result = CompletionCompleters.CompleteFilename(completionContext, false, moduleExtensions).ToList();
+                                result = CompletionCompleters.CompleteFilename(completionContext, extension: moduleExtensions).ToList();
                                 if (completionContext.WordToComplete.IndexOfAny(Utils.Separators.DirectoryOrDrive) != -1)
                                 {
                                     // The partial input is a path, then we don't iterate modules under $ENV:PSModulePath
@@ -2007,6 +2011,7 @@ namespace System.Management.Automation
                 }
             }
 
+            List<CompletionCompleters.ExpressionValue> nestedExpressions = null;
             if ((tokenAtCursor.TokenFlags & TokenFlags.CommandName) != 0)
             {
                 // Handle completion for a path with variable, such as: $PSHOME\ty<tab>
@@ -2024,11 +2029,15 @@ namespace System.Management.Automation
                             if (tokenAtCursorText.AsSpan().IndexOfAny('\\', '/') == 0)
                             {
                                 string wordToComplete =
-                                    CompletionCompleters.ConcatenateStringPathArguments(cursorAst as CommandElementAst, tokenAtCursorText, completionContext);
+                                    CompletionCompleters.ConcatenateStringPathArguments(
+                                        cursorAst as CommandElementAst,
+                                        tokenAtCursorText,
+                                        completionContext,
+                                        out nestedExpressions);
                                 if (wordToComplete != null)
                                 {
                                     completionContext.WordToComplete = wordToComplete;
-                                    result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
+                                    result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext, nestedExpressions));
                                     if (result.Count > 0)
                                     {
                                         replacementIndex = cursorAst.Extent.StartScriptPosition.Offset;
@@ -2044,7 +2053,8 @@ namespace System.Management.Automation
                                         ? CompletionCompleters.CombineVariableWithPartialPath(
                                             variableAst: variableAst,
                                             extraText: tokenAtCursorText,
-                                            executionContext: completionContext.ExecutionContext)
+                                            executionContext: completionContext.ExecutionContext,
+                                            out nestedExpressions)
                                         : null;
 
                                     if (fullPath == null) { return result; }
@@ -2086,10 +2096,10 @@ namespace System.Management.Automation
                     {
                         string expandedString = null;
                         var expandableStringAst = new ExpandableStringExpressionAst(strConst.Extent, strConst.Value, StringConstantType.BareWord);
-                        if (CompletionCompleters.IsPathSafelyExpandable(expandableStringAst: expandableStringAst,
+                        if (CompletionCompleters.IsPathSafelyExpandable(expandableString: expandableStringAst,
                                                                         extraText: string.Empty,
                                                                         executionContext: completionContext.ExecutionContext,
-                                                                        expandedString: out expandedString))
+                                                                        expandedString: out expandedString, out nestedExpressions))
                         {
                             completionContext.WordToComplete = expandedString;
                         }
@@ -2118,7 +2128,7 @@ namespace System.Management.Automation
                 }
 
                 // Handle the file completion before command name completion
-                result = CompleteFileNameAsCommand(completionContext);
+                result = CompleteFileNameAsCommand(completionContext, nestedExpressions);
                 // Handle the command name completion
                 var commandNameResult = CompletionCompleters.CompleteCommand(completionContext);
 
@@ -2256,7 +2266,7 @@ namespace System.Management.Automation
             if (lastAst.Parent is FileRedirectionAst || CompleteAgainstSwitchFile(lastAst, completionContext.TokenBeforeCursor))
             {
                 string wordToComplete =
-                    CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, string.Empty, completionContext);
+                    CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, string.Empty, completionContext, out nestedExpressions);
                 if (wordToComplete != null)
                 {
                     needFileCompletion = true;
@@ -2274,7 +2284,7 @@ namespace System.Management.Automation
                         fileRedirection.Extent.EndColumnNumber == lastAst.Extent.StartColumnNumber)
                     {
                         string wordToComplete =
-                            CompletionCompleters.ConcatenateStringPathArguments(fileRedirection.Location, tokenAtCursorText, completionContext);
+                            CompletionCompleters.ConcatenateStringPathArguments(fileRedirection.Location, tokenAtCursorText, completionContext, out nestedExpressions);
 
                         if (wordToComplete != null)
                         {
@@ -2292,19 +2302,23 @@ namespace System.Management.Automation
 
             if (needFileCompletion)
             {
-                return new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
+                return new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext, nestedExpressions));
             }
             else
             {
                 string wordToComplete =
-                    CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, string.Empty, completionContext);
+                    CompletionCompleters.ConcatenateStringPathArguments(
+                        lastAst as CommandElementAst,
+                        string.Empty,
+                        completionContext,
+                        out nestedExpressions);
                 if (wordToComplete != null)
                 {
                     completionContext.WordToComplete = wordToComplete;
                 }
             }
 
-            result = CompletionCompleters.CompleteCommandArgument(completionContext);
+            result = CompletionCompleters.CompleteCommandArgument(completionContext, nestedExpressions);
             replacementIndex = completionContext.ReplacementIndex;
             replacementLength = completionContext.ReplacementLength;
 
@@ -2375,10 +2389,10 @@ namespace System.Management.Automation
         /// Complete file name as command.
         /// </summary>
         /// <param name="completionContext"></param>
+        /// <param name="nestedExpressions"></param>
         /// <returns></returns>
-        private static List<CompletionResult> CompleteFileNameAsCommand(CompletionContext completionContext)
+        private static List<CompletionResult> CompleteFileNameAsCommand(CompletionContext completionContext, List<CompletionCompleters.ExpressionValue> nestedExpressions = null)
         {
-            var addAmpersandIfNecessary = CompletionCompleters.IsAmpersandNeeded(completionContext, true);
             var result = new List<CompletionResult>();
             var clearLiteralPathsKey = false;
 
@@ -2395,22 +2409,7 @@ namespace System.Management.Automation
 
             try
             {
-                var fileNameResult = CompletionCompleters.CompleteFilename(completionContext);
-                foreach (var entry in fileNameResult)
-                {
-                    // Add '&' to file names that are quoted
-                    var completionText = entry.CompletionText;
-                    var len = completionText.Length;
-                    if (addAmpersandIfNecessary && len > 2 && completionText[0].IsSingleQuote() && completionText[len - 1].IsSingleQuote())
-                    {
-                        completionText = "& " + completionText;
-                        result.Add(new CompletionResult(completionText, entry.ListItemText, entry.ResultType, entry.ToolTip));
-                    }
-                    else
-                    {
-                        result.Add(entry);
-                    }
-                }
+                result.AddRange(CompletionCompleters.CompleteFilename(completionContext, nestedExpressions, asCommand: true));
             }
             finally
             {
