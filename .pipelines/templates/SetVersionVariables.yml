@@ -13,7 +13,7 @@ steps:
       downloadPath: '$(System.ArtifactsDirectory)'
     displayName: Download Build Info Json
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
 - powershell: |
     $path = "./build.psm1"
@@ -43,7 +43,7 @@ steps:
     }
   displayName: 'Set repo Root'
   env:
-    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+    ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
 - powershell: |
     $createJson = ("${{ parameters.CreateJson }}" -ne "no")
@@ -58,11 +58,11 @@ steps:
     Write-Host "##$vstsCommandString"
   displayName: 'Set ${{ parameters.ReleaseTagVarName }} and other version Variables'
   env:
-    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+    ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
 - powershell: |
     Get-ChildItem -Path env:
   displayName: Capture environment
   condition: succeededOrFailed()
   env:
-    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+    ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
