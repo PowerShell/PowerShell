@@ -1698,7 +1698,7 @@ function New-AfterScripts
         $packagingStrings.RedHatAfterInstallScript -f "$Link", $Destination  | Out-File -FilePath $AfterInstallScript -Encoding ascii
         $packagingStrings.RedHatAfterRemoveScript -f "$Link", $Destination | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
-    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
+    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily -or $Distribution -in $script:DebianDistributions) {
         $AfterInstallScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $AfterRemoveScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $packagingStrings.UbuntuAfterInstallScript -f "$Link", $Destination | Out-File -FilePath $AfterInstallScript -Encoding ascii
