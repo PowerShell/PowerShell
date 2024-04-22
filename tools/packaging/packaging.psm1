@@ -49,6 +49,10 @@ function Start-PSPackage {
         [ValidateScript({$Environment.IsMacOS})]
         [string] $MacOSRuntime,
 
+        [string] $PackageBinPath,
+
+        [switch] $Private,
+
         [Switch] $Force,
 
         [Switch] $SkipReleaseChecks,
@@ -212,7 +216,14 @@ function Start-PSPackage {
             $Version = (git --git-dir="$RepoRoot/.git" describe) -Replace '^v'
         }
 
-        $Source = Split-Path -Path $Script:Options.Output -Parent
+        $Source = if ($PackageBinPath) {
+            $PackageBinPath
+        }
+        else {
+            Split-Path -Path $Script:Options.Output -Parent
+        }
+
+        Write-Verbose -Verbose "Source: $Source"
 
         # Copy the ThirdPartyNotices.txt so it's part of the package
         Copy-Item "$RepoRoot/ThirdPartyNotices.txt" -Destination $Source -Force
@@ -773,8 +784,20 @@ function Update-PSSignedBuildFolder
     $signedFilesFilter = Join-Path -Path $SignedFilesPathNormalized -ChildPath '*'
     Write-Verbose -Verbose "signedFilesFilter = $signedFilesFilter"
 
-    Get-ChildItem -Path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | ForEach-Object -Process {
-        Write-Verbose -Verbose "Processing $_"
+    $signedFilesList = Get-ChildItem -Path $signedFilesFilter -Recurse -File
+    foreach ($signedFileObject in $signedFilesList) {
+        # completely skip replacing pwsh on non-windows systems (there is no .exe extension here)
+        # and it may not be signed correctly
+
+        # The Shim will not be signed in CI.
+
+        if ($signedFileObject.Name -eq "pwsh" -or ($signedFileObject.Name -eq "Microsoft.PowerShell.GlobalTool.Shim.exe" -and $env:BUILD_REASON -eq 'PullRequest')) {
+            Write-Verbose -Verbose "Skipping $signedFileObject"
+            continue
+        }
+
+        $signedFilePath = $signedFileObject.FullName
+        Write-Verbose -Verbose "Processing $signedFilePath"
 
         # Agents seems to be on a case sensitive file system
         if ($IsLinux) {
@@ -935,7 +958,7 @@ function New-UnixPackage {
         switch ($Type) {
             "deb" {
                 $packageVersion = Get-LinuxPackageSemanticVersion -Version $Version
-                if (!$Environment.IsUbuntu -and !$Environment.IsDebian) {
+                if (!$Environment.IsUbuntu -and !$Environment.IsDebian -and !$Environment.IsMariner) {
                     throw ($ErrorMessage -f "Ubuntu or Debian")
                 }
 
@@ -1529,7 +1552,7 @@ function New-AfterScripts
         $packagingStrings.RedHatAfterInstallScript -f "$Link", $Destination  | Out-File -FilePath $AfterInstallScript -Encoding ascii
         $packagingStrings.RedHatAfterRemoveScript -f "$Link", $Destination | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
-    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
+    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily -or $Distribution -in $script:DebianDistributions) {
         $AfterInstallScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $AfterRemoveScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $packagingStrings.UbuntuAfterInstallScript -f "$Link", $Destination | Out-File -FilePath $AfterInstallScript -Encoding ascii
@@ -2092,7 +2115,6 @@ function New-ILNugetPackageSource
         [Parameter(Mandatory = $true)]
         [string] $RefAssemblyPath,
 
-        [Parameter(Mandatory = $true)]
         [string] $CGManifestPath
 
     )
@@ -2149,9 +2171,15 @@ function New-ILNugetPackageSource
 
     CreateNugetPlatformFolder -FileName $FileName -Platform 'win' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $WinFxdBinPath
 
+    Write-Verbose -Verbose "Done creating Windows runtime assemblies for $FileName"
+
     if ($linuxExceptionList -notcontains $FileName )
     {
         CreateNugetPlatformFolder -FileName $FileName -Platform 'unix' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxFxdBinPath
+        Write-Verbose -Verbose "Done creating Linux runtime assemblies for $FileName"
+    }
+    else {
+        Write-Verbose -Verbose "Skipping creating Linux runtime assemblies for $FileName"
     }
 
     if ($FileName -eq "Microsoft.PowerShell.SDK.dll")
@@ -2199,6 +2227,14 @@ function New-ILNugetPackageSource
         }
 
         Write-Log "Copied the built-in modules to contentFiles for the SDK package"
+    }
+    else {
+        Write-Verbose -Verbose "Skipping copying the built-in modules and reference assemblies for $FileName"
+    }
+
+    if (-not $PSBoundParameters.ContainsKey("CGManifestPath")) {
+        Write-Verbose -Verbose "CGManifestPath is not provided. Skipping CGManifest creation."
+        return
     }
 
     # Create a CGManifest file that lists all dependencies for this package, which is used when creating the SBOM.
@@ -3910,18 +3946,52 @@ function New-GlobalToolNupkg
         Remove-Item -Path $libSSLPath -Verbose -Force
     }
 
-    ## Remove unnecessary xml files
-    Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath, $WindowsDesktopBinPath -Filter *.xml | Remove-Item -Verbose
+    # Remove unnecessary xml files
+    Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath, $WindowsDesktopBinPath, $AlpineBinPath -Filter *.xml | Remove-Item -Verbose
+}
 
-    if ($UnifiedPackage)
+<#
+.SYNOPSIS
+Create a single PowerShell Global tool nuget package NuSpec source directory for the provied
+package type.
+
+.DESCRIPTION
+A single NuSpec source directory is created for the individual package type, and the created
+directory path is set to the environement variable name: "GlobaToolNuSpecSourcePath_${PackageType}".
+
+.PARAMETER PackageType
+Global tool package type to create.
+
+.PARAMETER LinuxBinPath
+Path to the folder containing the fxdependent package for Linux.
+
+.PARAMETER WindowsBinPath
+Path to the folder containing the fxdependent package for Windows.
+
+.PARAMETER WindowsDesktopBinPath
+Path to the folder containing desktop framework package for Windows.
+
+.PARAMETER PackageVersion
+Version for the NuGet package that will be generated.
+#>
+function New-GlobalToolNupkgSource
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] [string] $PackageType,
+        [Parameter(Mandatory)] [string] $LinuxBinPath,
+        [Parameter(Mandatory)] [string] $WindowsBinPath,
+        [Parameter(Mandatory)] [string] $WindowsDesktopBinPath,
+        [Parameter(Mandatory)] [string] $AlpineBinPath,
+        [Parameter(Mandatory)] [string] $PackageVersion,
+        [Parameter()] [switch] $SkipCGManifest
+    )
+
+    if ($PackageType -ne "Unified")
     {
-        Write-Log "Creating a unified package"
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell"; Type = "Unified"}
-        $ShimDllPath = Join-Path $WindowsDesktopBinPath "Microsoft.PowerShell.GlobalTool.Shim.dll"
-    }
-    else
-    {
-        Write-Log "Reducing size of Linux package"
+        Write-Log "New-GlobalToolNupkgSource: Reducing package size for non-unified packages."
+
+        Write-Log "New-GlobalToolNupkgSource: Reducing size of Linux package"
         ReduceFxDependentPackage -Path $LinuxBinPath
 
         Write-Log "Reducing size of Windows package"
@@ -4036,9 +4106,96 @@ function New-GlobalToolNupkg
         $nuSpec | Out-File -FilePath (Join-Path $_.RootFolder "$packageName.nuspec") -Encoding ascii
         $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml") -Encoding ascii
 
-        Write-Log "Creating a package: $packageName"
-        New-NugetPackage -NuSpecPath $_.RootFolder -PackageDestinationPath $DestinationPath
+    # Source created.
+    Write-Log "New-GlobalToolNupkgSource: Global tool package ($PackageName) source created at: $RootFolder"
+
+    # Set VSTS environment variable for package NuSpec source path.
+    $pkgNuSpecSourcePathVar = "GlobalToolNuSpecSourcePath"
+    Write-Log "New-GlobalToolNupkgSource: Creating NuSpec source path VSTS variable: $pkgNuSpecSourcePathVar"
+    Write-Verbose -Verbose "sending: [task.setvariable variable=$pkgNuSpecSourcePathVar]$RootFolder"
+    Write-Host "##vso[task.setvariable variable=$pkgNuSpecSourcePathVar]$RootFolder"
+    $global:GlobalToolNuSpecSourcePath = $RootFolder
+
+    # Set VSTS environment variable for package Name.
+    $pkgNameVar = "GlobalToolPkgName"
+    Write-Log "New-GlobalToolNupkgSource: Creating current package name variable: $pkgNameVar"
+    Write-Verbose -Verbose "sending: vso[task.setvariable variable=$pkgNameVar]$PackageName"
+    Write-Host "##vso[task.setvariable variable=$pkgNameVar]$PackageName"
+    $global:GlobalToolPkgName = $PackageName
+
+    if ($SkipCGManifest.IsPresent) {
+        Write-Verbose -Verbose "New-GlobalToolNupkgSource: Skipping CGManifest creation."
+        return
     }
+
+    # Set VSTS environment variable for CGManifest file path.
+    $globalToolCGManifestPFilePath = Join-Path -Path "$env:REPOROOT" -ChildPath "tools\cgmanifest.json"
+    $globalToolCGManifestFilePath = Resolve-Path -Path $globalToolCGManifestPFilePath -ErrorAction SilentlyContinue
+    if (($null -eq $globalToolCGManifestFilePath) -or (! (Test-Path -Path $globalToolCGManifestFilePath)))
+    {
+        throw "New-GlobalToolNupkgSource: Invalid build source CGManifest file path: $globalToolCGManifestPFilePath"
+    }
+    $globalToolCGManifestSourceRoot = New-TempFolder
+    Write-Log "New-GlobalToolNupkgSource: Creating new CGManifest.json file at: $globalToolCGManifestSourceRoot"
+    Copy-Item -Path $globalToolCGManifestFilePath -Destination $globalToolCGManifestSourceRoot -Force
+
+    $globalToolCGManifestPathVar = "GlobalToolCGManifestPath"
+    Write-Log "New-GlobalToolNupkgSource: Creating CGManifest path variable, $globalToolCGManifestPathVar, for path: $globalToolCGManifestSourceRoot"
+    Write-Host "##vso[task.setvariable variable=$globalToolCGManifestPathVar]$globalToolCGManifestSourceRoot"
+}
+
+<#
+.SYNOPSIS
+Create a single PowerShell Global tool nuget package from the provied package source folder.
+
+.DESCRIPTION
+Creates a single PowerShell Global tool nuget package based on the provided package NuSpec source
+folder (created by New-GlobalNupkgSource), and places the created package in the provided destination
+folder.
+
+.PARAMETER PackageNuSpecPath
+Location of NuSpec path containing source for package creation.
+
+.PARAMETER PackageName
+Name of Global Tool package being created.
+
+.PARAMETER DestinationPath
+Path to the folder where the generated package is placed.
+#>
+function New-GlobalToolNupkgFromSource
+{
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)] [string] $PackageNuSpecPath,
+        [Parameter(Mandatory)] [string] $PackageName,
+        [Parameter(Mandatory)] [string] $DestinationPath,
+        [Parameter()] [string] $CGManifestPath
+    )
+
+    if (! (Test-Path -Path $PackageNuSpecPath))
+    {
+        throw "New-GlobalToolNupkgFromSource: failed because NuSpec path does not exist: $PackageNuSpecPath"
+    }
+
+    Write-Log "New-GlobalToolNupkgFromSource: Creating package: $PackageName"
+    New-NugetPackage -NuSpecPath $PackageNuSpecPath -PackageDestinationPath $DestinationPath
+
+    Write-Log "New-GlobalToolNupkgFromSource: Removing GlobalTool NuSpec source directory: $PackageNuSpecPath"
+    Remove-Item -Path $PackageNuSpecPath -Recurse -Force -ErrorAction SilentlyContinue
+
+    if (-not ($PSBoundParameters.ContainsKey('CGManifestPath')))
+    {
+        Write-Verbose -Verbose "New-GlobalToolNupkgFromSource: CGManifest file path not provided."
+        return
+    }
+
+    Write-Log "New-GlobalToolNupkgFromSource: Removing GlobalTool CGManifest source directory: $CGManifestPath"
+    if (! (Test-Path -Path $CGManifestPath))
+    {
+        Write-Verbose -Verbose -Message "New-GlobalToolNupkgFromSource: CGManifest file does not exist: $CGManifestPath"
+        return
+    }
+    Remove-Item -Path $CGManifestPath -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 ${mainLinuxBuildFolder} = 'pwshLinuxBuild'
