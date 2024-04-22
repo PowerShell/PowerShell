@@ -2244,6 +2244,7 @@ function Start-PSBootstrap {
                 Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.12.0"
                 Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.11.0"
                 Install-GlobalGem -Sudo $sudo -GemName "ronn" -GemVersion "0.7.3"
+                Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
             }
         }
 

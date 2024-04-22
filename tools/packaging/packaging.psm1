@@ -918,9 +918,9 @@ function Update-PSSignedBuildFolder
     foreach ($signedFileObject in $signedFilesList) {
         # completely skip replacing pwsh on non-windows systems (there is no .exe extension here)
         # and it may not be signed correctly
-        
+
         # The Shim will not be signed in CI.
-        
+
         if ($signedFileObject.Name -eq "pwsh" -or ($signedFileObject.Name -eq "Microsoft.PowerShell.GlobalTool.Shim.exe" -and $env:BUILD_REASON -eq 'PullRequest')) {
             Write-Verbose -Verbose "Skipping $signedFileObject"
             continue
@@ -1099,7 +1099,7 @@ function New-UnixPackage {
         switch ($Type) {
             "deb" {
                 $packageVersion = Get-LinuxPackageSemanticVersion -Version $Version
-                if (!$Environment.IsUbuntu -and !$Environment.IsDebian) {
+                if (!$Environment.IsUbuntu -and !$Environment.IsDebian -and !$Environment.IsMariner) {
                     throw ($ErrorMessage -f "Ubuntu or Debian")
                 }
 
