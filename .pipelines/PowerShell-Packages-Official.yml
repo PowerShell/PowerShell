@@ -42,7 +42,7 @@ variables:
   - name: WindowsContainerImage
     value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project https://aka.ms/obpipelines/containers
   - name: LinuxContainerImage
-    value: onebranch.azurecr.io/linux/ubuntu-2004:latest
+    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
   - group: mscodehub-feed-read-akv
 
 resources:
