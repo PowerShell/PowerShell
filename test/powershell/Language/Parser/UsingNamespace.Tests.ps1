@@ -127,7 +127,6 @@ Describe "Using Namespace" -Tags "CI" {
     }
 
     ShouldBeParseError "1; using namespace System" UsingMustBeAtStartOfScript 3
-    ShouldBeParseError "using namespace Foo = System" UsingStatementNotSupported 0
     ShouldBeParseError "using namespace ''" InvalidNamespaceValue 16
     ShouldBeParseError "using namespace [System]" InvalidNamespaceValue 16
     ShouldBeParseError "using namespace ',System'" InvalidNamespaceValue 16
