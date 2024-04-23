@@ -1324,13 +1324,13 @@ namespace System.Management.Automation.Language
             if (kind is UsingStatementKind.Namespace)
             {
                 Regex nsPattern = NamespacePattern();
-                string valueToCheck = usingStatementAst.Alias is null
-                    ? usingStatementAst.Name.Value
-                    : usingStatementAst.Alias.Value;
-                if (!nsPattern.IsMatch(valueToCheck))
+                StringConstantExpressionAst namespaceExpression = usingStatementAst.Alias is null
+                    ? usingStatementAst.Name
+                    : usingStatementAst.Alias;
+                if (!nsPattern.IsMatch(namespaceExpression.Value))
                 {
                     _parser.ReportError(
-                        usingStatementAst.Name.Extent,
+                        namespaceExpression.Extent,
                         nameof(ParserStrings.InvalidNamespaceValue),
                         ParserStrings.InvalidNamespaceValue);
                 }
