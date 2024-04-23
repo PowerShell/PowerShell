@@ -24,6 +24,7 @@ trigger:
     - .github/ISSUE_TEMPLATE/*
     - .github/workflows/*
     - .dependabot/config.yml
+    - .pipelines/*
     - test/perf/*
 pr:
   branches:
