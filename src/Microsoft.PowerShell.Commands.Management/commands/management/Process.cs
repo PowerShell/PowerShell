@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel; // Win32Exception
 using System.Diagnostics; // Process class
@@ -11,6 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -543,20 +545,6 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Check the elevation mode if IncludeUserName is specified.
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            // The parameter 'IncludeUserName' requires administrator privilege
-            if (IncludeUserName.IsPresent && !Utils.IsAdministrator())
-            {
-                var ex = new InvalidOperationException(ProcessResources.IncludeUserNameRequiresElevation);
-                var er = new ErrorRecord(ex, "IncludeUserNameRequiresElevation", ErrorCategory.InvalidOperation, null);
-                ThrowTerminatingError(er);
-            }
-        }
-
-        /// <summary>
         /// Write the process objects.
         /// </summary>
         protected override void ProcessRecord()
@@ -683,7 +671,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    WriteObject(IncludeUserName.IsPresent ? AddUserNameToProcess(process) : (object)process);
+                    WriteObject(IncludeUserName.IsPresent ? AddUserNameToProcess(process) : process);
                 }
             }
         }
@@ -763,27 +751,16 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
-
-                // Max username is defined as UNLEN = 256 in lmcons.h
-                // Max domainname is defined as DNLEN = CNLEN = 15 in lmcons.h
-                // The buffer length must be +1, last position is for a null string terminator.
-                int userNameLength = 257;
-                int domainNameLength = 16;
-                Span<char> userNameStr = stackalloc char[userNameLength];
-                Span<char> domainNameStr = stackalloc char[domainNameLength];
-                Win32Native.SID_NAME_USE accountType;
-
-                // userNameLength and domainNameLength will be set to actual lengths.
-                if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
-                {
-                    return null;
-                }
-
-                userName = string.Concat(domainNameStr.Slice(0, domainNameLength), "\\", userNameStr.Slice(0, userNameLength));
+                SecurityIdentifier sid = new SecurityIdentifier(tokenUser.User.Sid);
+                userName = sid.Translate(typeof(System.Security.Principal.NTAccount)).Value;
             }
             catch (NotSupportedException)
             {
                 // The Process not started yet, or it's a process from a remote machine.
+            }
+            catch (IdentityNotMappedException)
+            {
+                // SID cannot be mapped to a user
             }
             catch (InvalidOperationException)
             {
@@ -896,7 +873,7 @@ namespace Microsoft.PowerShell.Commands
                 _timeOutSpecified = true;
             }
         }
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether to return after any one process exits.
         /// </summary>
@@ -1045,7 +1022,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            
+
             if (PassThru)
             {
                 WriteObject(_processList, enumerateCollection: true);
@@ -1800,6 +1777,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = "UseShellExecute")]
         [ValidateNotNullOrEmpty]
+        [ArgumentCompleter(typeof(VerbArgumentCompleter))]
         public string Verb { get; set; }
 
         /// <summary>
@@ -2131,7 +2109,21 @@ namespace Microsoft.PowerShell.Commands
                 //   "Process was not started by this object, so requested information cannot be determined."
                 // Fetching the process handle will trigger the `Process` object to update its internal state by calling `SetProcessHandle`,
                 // the result is discarded as it's not used later in this code.
-                _ = process.Handle;
+                try
+                {
+                    _ = process.Handle;
+                }
+                catch (Win32Exception e)
+                {
+                    // If the caller was not an admin and the process was started with another user's credentials .NET
+                    // won't be able to retrieve the process handle. As this is not a critical failure we treat this as
+                    // a warning.
+                    if (PassThru)
+                    {
+                        string msg = StringUtil.Format(ProcessResources.FailedToCreateProcessObject, e.Message);
+                        WriteDebug(msg);
+                    }
+                }
 
                 // Resume the process now that is has been set up.
                 processInfo.Resume();
@@ -2654,6 +2646,95 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
         #endregion
+    }
+
+    /// <summary>
+    /// Provides argument completion for Verb parameter.
+    /// </summary>
+    public class VerbArgumentCompleter : IArgumentCompleter
+    {
+        /// <summary>
+        /// Returns completion results for verb parameter.
+        /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of Completion Results.</returns>
+        public IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+        {
+            // -Verb is not supported on non-Windows platforms as well as Windows headless SKUs
+            if (!Platform.IsWindowsDesktop)
+            {
+                yield break;
+            }
+
+            // Completion: Start-Process -FilePath <path> -Verb <wordToComplete>
+            if (commandName.Equals("Start-Process", StringComparison.OrdinalIgnoreCase)
+                && fakeBoundParameters.Contains("FilePath"))
+            {
+                string filePath = fakeBoundParameters["FilePath"].ToString();
+
+                // Complete file verbs if extension exists
+                if (Path.HasExtension(filePath))
+                {
+                    foreach (string verb in CompleteFileVerbs(filePath, wordToComplete))
+                    {
+                        yield return new CompletionResult(verb);
+                    }
+
+                    yield break;
+                }
+
+                // Otherwise check if command is an Application to resolve executable full path with extension
+                // e.g if powershell was given, resolve to powershell.exe to get verbs
+                using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+
+                var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
+
+                ps.AddCommand(commandInfo);
+                ps.AddParameter("Name", filePath);
+                ps.AddParameter("CommandType", CommandTypes.Application);
+
+                Collection<CommandInfo> commands = ps.Invoke<CommandInfo>();
+
+                // Start-Process & Get-Command select first found application based on PATHEXT environment variable
+                if (commands.Count >= 1)
+                {
+                    foreach (string verb in CompleteFileVerbs(commands[0].Source, wordToComplete))
+                    {
+                        yield return new CompletionResult(verb);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Completes file verbs.
+        /// </summary>
+        /// <param name="filePath">The file path to get verbs.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <returns>List of file verbs to complete.</returns>
+        private static IEnumerable<string> CompleteFileVerbs(string filePath, string wordToComplete)
+        {
+            var verbPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            string[] verbs = new ProcessStartInfo(filePath).Verbs;
+
+            foreach (string verb in verbs)
+            {
+                if (verbPattern.IsMatch(verb))
+                {
+                    yield return verb;
+                }
+            }
+        }
     }
 
 #if !UNIX

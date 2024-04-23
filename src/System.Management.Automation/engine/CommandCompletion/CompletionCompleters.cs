@@ -2185,6 +2185,22 @@ namespace System.Management.Automation
                         NativeCompletionGetHelpCommand(context, parameterName, /* isHelpRelated: */ true, result);
                         break;
                     }
+                case "Save-Help":
+                    {
+                        if (parameterName.Equals("Module", StringComparison.OrdinalIgnoreCase))
+                        {
+                            CompleteModule(context, result);
+                        }
+                        break;
+                    }
+                case "Update-Help":
+                    {
+                        if (parameterName.Equals("Module", StringComparison.OrdinalIgnoreCase))
+                        {
+                            CompleteModule(context, result);
+                        }
+                        break;
+                    }
                 case "Invoke-Expression":
                     {
                         if (parameterName.Equals("Command", StringComparison.OrdinalIgnoreCase))
@@ -3032,37 +3048,42 @@ namespace System.Management.Automation
             }
             else if (!string.IsNullOrEmpty(paramName) && paramName.Equals("Module", StringComparison.OrdinalIgnoreCase))
             {
-                RemoveLastNullCompletionResult(result);
-
-                var modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                var moduleResults = CompleteModuleName(context, loadedModulesOnly: true);
-                if (moduleResults != null)
-                {
-                    foreach (CompletionResult moduleResult in moduleResults)
-                    {
-                        if (!modules.Contains(moduleResult.ToolTip))
-                        {
-                            modules.Add(moduleResult.ToolTip);
-                            result.Add(moduleResult);
-                        }
-                    }
-                }
-
-                moduleResults = CompleteModuleName(context, loadedModulesOnly: false);
-                if (moduleResults != null)
-                {
-                    foreach (CompletionResult moduleResult in moduleResults)
-                    {
-                        if (!modules.Contains(moduleResult.ToolTip))
-                        {
-                            modules.Add(moduleResult.ToolTip);
-                            result.Add(moduleResult);
-                        }
-                    }
-                }
-
-                result.Add(CompletionResult.Null);
+                CompleteModule(context, result);
             }
+        }
+
+        private static void CompleteModule(CompletionContext context, List<CompletionResult> result)
+        {
+            RemoveLastNullCompletionResult(result);
+
+            var modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var moduleResults = CompleteModuleName(context, loadedModulesOnly: true);
+            if (moduleResults != null)
+            {
+                foreach (CompletionResult moduleResult in moduleResults)
+                {
+                    if (!modules.Contains(moduleResult.ToolTip))
+                    {
+                        modules.Add(moduleResult.ToolTip);
+                        result.Add(moduleResult);
+                    }
+                }
+            }
+
+            moduleResults = CompleteModuleName(context, loadedModulesOnly: false);
+            if (moduleResults != null)
+            {
+                foreach (CompletionResult moduleResult in moduleResults)
+                {
+                    if (!modules.Contains(moduleResult.ToolTip))
+                    {
+                        modules.Add(moduleResult.ToolTip);
+                        result.Add(moduleResult);
+                    }
+                }
+            }
+
+            result.Add(CompletionResult.Null);
         }
 
         private static void NativeCompletionGetHelpCommand(CompletionContext context, string paramName, bool isHelpRelated, List<CompletionResult> result)
@@ -4764,20 +4785,17 @@ namespace System.Management.Automation
                     // Save relevant info and try again to get just the names.
                     foreach (dynamic child in childItemOutput)
                     {
-                        // TryAdd is used because some providers (like SCCM) may include duplicate PSPaths in a container.
-                        _ = childrenInfoTable.TryAdd(GetChildNameFromPsObject(child, provider.ItemSeparator), child.PSIsContainer);
+                        childrenInfoTable.Add(GetChildNameFromPsObject(child, provider.ItemSeparator), child.PSIsContainer);
                     }
 
                     _ = context.Helper.CurrentPowerShell
                         .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-ChildItem")
                         .AddParameter("LiteralPath", pathInfo.Path)
-                        .AddParameter("Name")
-                        .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object")
-                        .AddParameter("Unique");
+                        .AddParameter("Name");
                     childItemOutput = context.Helper.ExecuteCurrentPowerShell(out _);
-                    foreach (PSObject child in childItemOutput)
+                    foreach (var child in childItemOutput)
                     {
-                        string childName = (string)child.BaseObject;
+                        var childName = (string)child.BaseObject;
                         childNameList.Add(childName);
                     }
                 }
@@ -4786,12 +4804,8 @@ namespace System.Management.Automation
                     foreach (dynamic child in childItemOutput)
                     {
                         var childName = GetChildNameFromPsObject(child, provider.ItemSeparator);
-
-                        // TryAdd is used because some providers (like SCCM) may include duplicate PSPaths in a container.
-                        if (childrenInfoTable.TryAdd(childName, child.PSIsContainer))
-                        {
-                            childNameList.Add(childName);
-                        }
+                        childrenInfoTable.Add(childName, child.PSIsContainer);
+                        childNameList.Add(childName);
                     }
                 }
 
@@ -4864,10 +4878,22 @@ namespace System.Management.Automation
 
         private static string GetChildNameFromPsObject(dynamic psObject, char separator)
         {
-            // The obvious solution would be to use the "PSChildName" property
-            // but some providers don't have it (like the Variable provider)
-            // So we use a substring of "PSPath" instead.
-            string childName = psObject.PSPath ?? string.Empty;
+            if (((PSObject)psObject).BaseObject is string result)
+            {
+                // The "Get-ChildItem" call for this provider returned a string that we assume is the child name.
+                // This is what the SCCM provider returns.
+                return result;
+            }
+
+            string childName = psObject.PSChildName;
+            if (childName is not null)
+            {
+                return childName;
+            }
+
+            // Some providers (Like the variable provider) don't include a PSChildName property
+            // so we get the child name from the path instead.
+            childName = psObject.PSPath ?? string.Empty;
             int ProviderSeparatorIndex = childName.IndexOf("::", StringComparison.Ordinal);
             childName = childName.Substring(ProviderSeparatorIndex + 2);
             int indexOfName = childName.LastIndexOf(separator);
@@ -4878,7 +4904,7 @@ namespace System.Management.Automation
 
             return childName.Substring(indexOfName + 1);
         }
-        
+
         /// <summary>
         /// Takes a path and rebuilds it with the specified variable replacements.
         /// Also escapes special characters as needed.
@@ -5174,6 +5200,12 @@ namespace System.Management.Automation
 
             var lastAst = context.RelatedAsts?[^1];
             var variableAst = lastAst as VariableExpressionAst;
+            if (lastAst is PropertyMemberAst ||
+                (lastAst is not null && lastAst.Parent is ParameterAst parameter && parameter.DefaultValue != lastAst))
+            {
+                // User is adding a new parameter or a class member, variable tab completion is not useful.
+                return results;
+            }
             var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
             bool tokenAtCursorUsedBraces = context.TokenAtCursor is not null && context.TokenAtCursor.Text.StartsWith("${");
 

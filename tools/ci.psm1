@@ -541,9 +541,11 @@ function Invoke-CIFinish
                 }
                 'win-arm.*' {
                     $runPackageTest = $false
-                    $packageTypes = 'zip', 'zip-pdb', 'msix'
+                    $packageTypes = 'msi', 'zip', 'zip-pdb', 'msix'
                 }
             }
+
+            Install-WixArmZip
             $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
             foreach ($package in $packages) {
@@ -617,6 +619,62 @@ function Invoke-CIFinish
         if (!$pushedAllArtifacts) {
             throw "Some artifacts did not exist!"
         }
+    }
+}
+
+function Install-WixArmZip
+{
+    # cleanup previous install
+    if((Test-Path "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy")) {
+        Remove-Item "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy" -Recurse -Force
+    }
+
+    # This URI is for wix 3.14 which supports generating msi for arm architecures.
+    $wixUriArmSupport = 'https://aka.ms/ps-wix-3-14-zip'
+    $zipArmSupport = "$env:TEMP\wixArmSupport.zip"
+    $targetRoot = "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy"
+    Invoke-RestMethod -Uri $wixUriArmSupport -OutFile $zipArmSupport
+
+    $binPath = Join-Path -Path $targetRoot -ChildPath 'bin'
+    Write-Verbose "Expanding $zipArmSupport to $binPath ..." -Verbose
+    Expand-Archive -Path $zipArmSupport -DestinationPath $binPath -Force
+    $docExpandPath = Join-Path -Path $binPath -ChildPath 'doc'
+    $sdkExpandPath = Join-Path -Path $binPath -ChildPath 'sdk'
+    $docTargetPath = Join-Path -Path $targetRoot -ChildPath 'doc'
+    $sdkTargetPath = Join-Path -Path $targetRoot -ChildPath 'sdk'
+    Write-Verbose "Fixing folder structure ..." -Verbose
+    Move-Item -Path $docExpandPath -Destination $docTargetPath
+    Move-Item -Path $sdkExpandPath -Destination $sdkTargetPath
+    Set-Path -Append -Path $binPath
+    Write-Verbose "Done installing WIX for arm!"
+}
+
+function Set-Path
+{
+    param
+    (
+        [Parameter(Mandatory)]
+        [string]
+        $Path,
+
+        [Parameter(Mandatory)]
+        [switch]
+        $Append
+    )
+
+    $machinePathString = [System.Environment]::GetEnvironmentVariable('path',[System.EnvironmentVariableTarget]::Machine)
+    $machinePath = $machinePathString -split ';'
+
+    if($machinePath -inotcontains $path)
+    {
+        $newPath = "$machinePathString;$path"
+        Write-Verbose "Adding $path to path..." -Verbose
+        [System.Environment]::SetEnvironmentVariable('path',$newPath,[System.EnvironmentVariableTarget]::Machine)
+        Write-Verbose "Added $path to path." -Verbose
+    }
+    else
+    {
+        Write-Verbose "$path already in path." -Verbose
     }
 }
 

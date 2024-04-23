@@ -5524,7 +5524,7 @@ namespace System.Management.Automation.Language
                     return target.ThrowRuntimeError(args, moreTests, errorID, resourceString);
                 }
 
-                string targetName = (targetValue as Type)?.FullName;
+                string targetName = (targetValue as Type)?.FullName ?? targetValue?.GetType().FullName;
                 SystemPolicy.LogWDACAuditMessage(
                     context: context,
                     title: ParameterBinderStrings.WDACBinderInvocationLogTitle,

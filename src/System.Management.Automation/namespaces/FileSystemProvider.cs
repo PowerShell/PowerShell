@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(FileSecurity), typeof(DirectorySecurity), ProviderCmdlet = ProviderCmdlet.GetAcl)]
     [OutputType(typeof(bool), typeof(string), typeof(FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(bool), typeof(string), typeof(DateTime), typeof(System.IO.FileInfo), typeof(System.IO.DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetItemProperty)]
-    [OutputType(typeof(string), typeof(System.IO.FileInfo), ProviderCmdlet = ProviderCmdlet.NewItem)]
+    [OutputType(typeof(string), typeof(System.IO.FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.NewItem)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This coupling is required")]
     public sealed partial class FileSystemProvider : NavigationCmdletProvider,
                                                      IContentCmdletProvider,
@@ -1077,6 +1077,21 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     throw;
+                }
+            }
+
+            // .NET introduced a change where invalid characters are accepted https://learn.microsoft.com/en-us/dotnet/core/compatibility/2.1#path-apis-dont-throw-an-exception-for-invalid-characters
+            // We need to check for invalid characters ourselves.  `Path.GetInvalidFileNameChars()` is a supserset of `Path.GetInvalidPathChars()`
+
+            // Remove drive root first
+            string pathWithoutDriveRoot = path.Substring(Path.GetPathRoot(path).Length);
+            char[] invalidFileChars = Path.GetInvalidFileNameChars();
+
+            foreach (string segment in pathWithoutDriveRoot.Split(Path.DirectorySeparatorChar))
+            {
+                if (segment.IndexOfAny(invalidFileChars) != -1)
+                {
+                    return false;
                 }
             }
 
@@ -3319,12 +3334,12 @@ namespace Microsoft.PowerShell.Commands
 
                     if (itemExistsDynamicParameters.OlderThan.HasValue)
                     {
-                        result = lastWriteTime < itemExistsDynamicParameters.OlderThan.Value;
+                        result &= lastWriteTime < itemExistsDynamicParameters.OlderThan.Value;
                     }
 
                     if (itemExistsDynamicParameters.NewerThan.HasValue)
                     {
-                        result = lastWriteTime > itemExistsDynamicParameters.NewerThan.Value;
+                        result &= lastWriteTime > itemExistsDynamicParameters.NewerThan.Value;
                     }
                 }
             }

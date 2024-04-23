@@ -714,6 +714,18 @@ namespace System.Management.Automation
                 // of invoking it. So the trustworthiness is defined by the trustworthiness of the
                 // script block's language mode.
                 bool isTrusted = scriptBlock.LanguageMode == PSLanguageMode.FullLanguage;
+                if (scriptBlock.LanguageMode == PSLanguageMode.ConstrainedLanguage
+                    && SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Audit)
+                {
+                    // In audit mode, report but don't enforce.
+                    isTrusted = true;
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: context,
+                        title: ParserStrings.WDACGetSteppablePipelineLogTitle,
+                        message: ParserStrings.WDACGetSteppablePipelineLogMessage,
+                        fqid: "GetSteppablePipelineMayFail",
+                        dropIntoDebugger: true);
+                }
 
                 foreach (var commandAst in pipelineAst.PipelineElements.Cast<CommandAst>())
                 {
@@ -729,7 +741,7 @@ namespace System.Management.Automation
 
                         var exprAst = (ExpressionAst)commandElement;
                         var argument = Compiler.GetExpressionValue(exprAst, isTrusted, context);
-                        var splatting = (exprAst is VariableExpressionAst && ((VariableExpressionAst)exprAst).Splatted);
+                        var splatting = exprAst is VariableExpressionAst && ((VariableExpressionAst)exprAst).Splatted;
                         commandParameters.Add(CommandParameterInternal.CreateArgument(argument, exprAst, splatting));
                     }
 
@@ -797,8 +809,8 @@ namespace System.Management.Automation
             }
 
             object argumentValue = Compiler.GetExpressionValue(argumentAst, isTrusted, context);
-            bool spaceAfterParameter = (errorPos.EndLineNumber != argumentAst.Extent.StartLineNumber ||
-                                        errorPos.EndColumnNumber != argumentAst.Extent.StartColumnNumber);
+            bool spaceAfterParameter = errorPos.EndLineNumber != argumentAst.Extent.StartLineNumber ||
+                                       errorPos.EndColumnNumber != argumentAst.Extent.StartColumnNumber;
             return CommandParameterInternal.CreateParameterWithArgument(commandParameterAst, commandParameterAst.ParameterName,
                                                                         errorPos.Text, argumentAst, argumentValue,
                                                                         spaceAfterParameter);

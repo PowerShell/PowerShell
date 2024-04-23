@@ -797,10 +797,7 @@ namespace System.Management.Automation.Internal
                     return;
                 }
 
-                if (_preparingForDisconnectList.Contains(bcmdTM))
-                {
-                    _preparingForDisconnectList.Remove(bcmdTM);
-                }
+                _preparingForDisconnectList.Remove(bcmdTM);
 
                 if (_preparingForDisconnectList.Count == 0)
                 {

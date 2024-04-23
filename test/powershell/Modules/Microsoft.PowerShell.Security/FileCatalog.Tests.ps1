@@ -416,6 +416,52 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $catalogPath | Should -Not -Exist
         }
     }
+
+    Context "TestCatalog Executing File Validation Tests"{
+
+        AfterEach {
+            Remove-Item "$script:catalogPath" -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Test-FileCatalog should pass when target file is an executing process" {
+            $processFolder =  (Get-Process -Id $pid).Path
+            $script:catalogPath = "$env:TEMP\TestCatalogExecutingFileValidation.cat"
+            $null = New-FileCatalog -Path "$processFolder" -CatalogFilePath $script:catalogPath -CatalogVersion 2
+            $result = Test-FileCatalog -Path "$processFolder" -CatalogFilePath $script:catalogPath
+            $result | Should -Be "Valid"
+        }
+    }
+
+    Context "TestCatalog File Open Validation Tests" {
+
+        BeforeEach {
+            $null = New-Item -ItemType Directory -Path "$env:TEMP\testCatalog" -Force -ErrorAction SilentlyContinue
+            Set-Content -PassThru "$env:TEMP\testCatalog\test.txt" -Value "Test Data" | Out-Null
+        }
+
+        AfterEach {
+            Remove-Item "$script:catalogPath" -Force -ErrorAction SilentlyContinue
+            Remove-Item "$env:TEMP\testCatalog" -Recurse -Force -ErrorAction SilentlyContinue
+        }
+
+        it "Test-FileCatalog should pass when target file has an open reader with FileMode Open FileAccess Read and FileShare <name>" -TestCases @(
+            @{ Name = "Read"; fileShareParameter = [System.IO.FileShare]::Read }
+            @{ Name = "ReadWrite"; fileShareParameter = [System.IO.FileShare]::ReadWrite }
+        ) {
+            param($name, [System.IO.FileShare] $fileShareParameter)
+
+            $script:catalogPath = "$env:TEMP\TestCatalogFileOpenValidation.cat"
+            $null = New-FileCatalog -Path "$env:TEMP\testCatalog\" -CatalogFilePath $script:catalogPath -CatalogVersion 2
+            $fileStream = [System.IO.File]::Open("$env:TEMP\testCatalog\test.txt", [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, $fileShareParameter)
+            try {
+                $result = Test-FileCatalog -Path "$env:TEMP\testCatalog\" -CatalogFilePath $script:catalogPath
+                $result | Should -Be "Valid"
+            } finally {
+                $fileStream.Close()
+                $fileStream.Dispose()
+            }
+        }
+    }
 }
 
 } finally {
