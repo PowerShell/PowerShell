@@ -51,6 +51,7 @@ pr:
     - tools/releaseBuild/azureDevOps/templates/*
     - README.md
     - .spelling
+    - .pipelines/*
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
