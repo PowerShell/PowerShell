@@ -878,8 +878,15 @@ Describe 'Test PSSession configuration file options' -Tags CI {
         try {
             { New-PSSessionConfigurationFile @configParams -Path $ConfigFilePath } | Should -Not -Throw
             $env:READONLY_PROVIDER_TESTING_VALUE = '1'
-            $result = { & $PSPath -NonInteractive -NoProfile -ConfigurationFile $ConfigFilePath { $env:READONLY_PROVIDER_TESTING_VALUE = '2' } }
-                | Should -Throw -ErrorId ProviderNotWritable
+
+            {
+                $results = & $PSPath -NonInteractive -NoProfile -ConfigurationFile $ConfigFilePath { $env:READONLY_PROVIDER_TESTING_VALUE = '2' } } 2>&1
+                foreach ($result in $results) {
+                    if ($result -is [System.Management.Automation.ErrorRecord]) {
+                        throw $result
+                    }
+                }
+            } | Should -Throw -ErrorId ProviderNotWritable
         } finally {
             $env:READONLY_PROVIDER_TESTING_VALUE = ''
             if (Test-Path -LiteralPath $ConfigFilePath) {
