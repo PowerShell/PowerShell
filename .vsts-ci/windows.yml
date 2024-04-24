@@ -16,6 +16,7 @@ trigger:
     - .github/workflows/*
     - .dependabot/config.yml
     - test/perf/*
+    - .pipelines/*
 pr:
   branches:
     include:
@@ -39,6 +40,7 @@ pr:
     - tools/releaseBuild/azureDevOps/templates/*
     - README.md
     - .spelling
+    - .pipelines/*
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
