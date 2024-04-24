@@ -880,7 +880,7 @@ Describe 'Test PSSession configuration file options' -Tags CI {
             $env:READONLY_PROVIDER_TESTING_VALUE = '1'
 
             {
-                $results = & $PSPath -NonInteractive -NoProfile -ConfigurationFile $ConfigFilePath { $env:READONLY_PROVIDER_TESTING_VALUE = '2' } } 2>&1
+                $results = & $PSPath -NonInteractive -NoProfile -ConfigurationFile $ConfigFilePath { $env:READONLY_PROVIDER_TESTING_VALUE = '2' } 2>&1
                 foreach ($result in $results) {
                     if ($result -is [System.Management.Automation.ErrorRecord]) {
                         throw $result
