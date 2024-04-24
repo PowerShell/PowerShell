@@ -707,6 +707,7 @@ namespace PowershellTestConfigNamespace
                     VisibleVariables = "*"
                     LanguageMode = "RestrictedLanguage"
                     ExecutionPolicy = "AllSigned"
+                    ReadOnlyProviders = 'Environment'
                 }
             }
         }
@@ -785,7 +786,8 @@ namespace PowershellTestConfigNamespace
                 -LanguageMode $parmMap.LanguageMode `
                 -ExecutionPolicy $parmMap.ExecutionPolicy `
                 -ScriptsToProcess $parmMap.ScriptsToProcess `
-                -GUID $parmMap.GUID
+                -GUID $parmMap.GUID `
+                -ReadOnlyProviders $parmMap.ReadOnlyProviders
 
                 # Verify the generated config file using the Test-PSSessionConfigurationFile
                 $result = Test-PSSessionConfigurationFile -Path $configFilePath -Verbose
@@ -840,10 +842,50 @@ namespace PowershellTestConfigNamespace
             $matchedEndpoint | Should -Not -BeNullOrEmpty
         }
     }
+
+    Describe 'Test configuration options' -Tags CI {
+        BeforeAll {
+            $ConfigFilePath = Join-Path $TestDrive "TestPSSessionConfigurationFile.pssc"
+            $PSFileName = $IsWindows ? 'pwsh.exe' : 'pwsh'
+            $PSPath = Join-Path -Path $PSHOME -ChildPath $psFileName
+        }
+
+        It 'ReadOnlyProviders cannot be written to.' {
+            $configParams = @{
+                SchemaVersion = '2.0.0.0'
+                GUID = [guid]::NewGuid()
+                Author = 'User'
+                SessionType = 'RestrictedRemoteServer'
+                LanguageMode = 'ConstrainedLanguage'
+                VisibleAliases = '*'
+                VisibleCmdlets = '*'
+                VisibleFunctions = '*'
+                VisibleExternalCommands = '*'
+                VisibleProviders = 'FileSystem', 'Registry', 'Environment', 'Function'
+                ReadOnlyProviders = 'Environment'
+            }
+
+            if (Test-Path -LiteralPath $ConfigFilePath) {
+                Remove-Item -LiteralPath $ConfigFilePath
+            }
+
+            try {
+                { New-PSSessionConfigurationFile @configParams -Path $ConfigFilePath } | Should -Not -Throw
+                $env:READONLY_PROVIDER_TESTING_VALUE = '1'
+                $result = { & $PSPath -NonInteractive -NoProfile -ConfigurationFile $ConfigFilePath { $env:READONLY_PROVIDER_TESTING_VALUE = '2' } }
+                    | Should -Throw -ErrorId ProviderNotWritable
+            } finally {
+                $env:READONLY_PROVIDER_TESTING_VALUE = ''
+                if (Test-Path -LiteralPath $ConfigFilePath) {
+                    Remove-Item -LiteralPath $ConfigFilePath
+                }
+            }
+
+        }
+    }
 }
 finally
 {
     Pop-DefaultParameterValueStack
     $WarningPreference = $originalWarningPreference
 }
-
