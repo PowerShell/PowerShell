@@ -28,7 +28,6 @@ if (-not $isAdmin -and $args[0] -eq "1") {
     Write-Host "This script is configured to apply only for admin PowerShell sessions."
     Exit
 }
-
 # Define variables
 $registryKey = "HKCU:\Software\MyApplication"
 $registryValueName = "DisableCMD"
