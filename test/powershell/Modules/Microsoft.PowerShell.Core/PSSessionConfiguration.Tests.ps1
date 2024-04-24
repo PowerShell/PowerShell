@@ -842,50 +842,50 @@ namespace PowershellTestConfigNamespace
             $matchedEndpoint | Should -Not -BeNullOrEmpty
         }
     }
-
-    Describe 'Test configuration options' -Tags CI {
-        BeforeAll {
-            $ConfigFilePath = Join-Path $TestDrive "TestPSSessionConfigurationFile.pssc"
-            $PSFileName = $IsWindows ? 'pwsh.exe' : 'pwsh'
-            $PSPath = Join-Path -Path $PSHOME -ChildPath $psFileName
-        }
-
-        It 'ReadOnlyProviders cannot be written to.' {
-            $configParams = @{
-                SchemaVersion = '2.0.0.0'
-                GUID = [guid]::NewGuid()
-                Author = 'User'
-                SessionType = 'RestrictedRemoteServer'
-                LanguageMode = 'ConstrainedLanguage'
-                VisibleAliases = '*'
-                VisibleCmdlets = '*'
-                VisibleFunctions = '*'
-                VisibleExternalCommands = '*'
-                VisibleProviders = 'FileSystem', 'Registry', 'Environment', 'Function'
-                ReadOnlyProviders = 'Environment'
-            }
-
-            if (Test-Path -LiteralPath $ConfigFilePath) {
-                Remove-Item -LiteralPath $ConfigFilePath
-            }
-
-            try {
-                { New-PSSessionConfigurationFile @configParams -Path $ConfigFilePath } | Should -Not -Throw
-                $env:READONLY_PROVIDER_TESTING_VALUE = '1'
-                $result = { & $PSPath -NonInteractive -NoProfile -ConfigurationFile $ConfigFilePath { $env:READONLY_PROVIDER_TESTING_VALUE = '2' } }
-                    | Should -Throw -ErrorId ProviderNotWritable
-            } finally {
-                $env:READONLY_PROVIDER_TESTING_VALUE = ''
-                if (Test-Path -LiteralPath $ConfigFilePath) {
-                    Remove-Item -LiteralPath $ConfigFilePath
-                }
-            }
-
-        }
-    }
 }
 finally
 {
     Pop-DefaultParameterValueStack
     $WarningPreference = $originalWarningPreference
+}
+
+Describe 'Test PSSession configuration file options' -Tags CI {
+    BeforeAll {
+        $ConfigFilePath = Join-Path $TestDrive "TestPSSessionConfigurationFile.pssc"
+        $PSFileName = $IsWindows ? 'pwsh.exe' : 'pwsh'
+        $PSPath = Join-Path -Path $PSHOME -ChildPath $psFileName
+    }
+
+    It 'ReadOnlyProviders cannot be written to.' {
+        $configParams = @{
+            SchemaVersion = '2.0.0.0'
+            GUID = [guid]::NewGuid()
+            Author = 'User'
+            SessionType = 'RestrictedRemoteServer'
+            LanguageMode = 'ConstrainedLanguage'
+            VisibleAliases = '*'
+            VisibleCmdlets = '*'
+            VisibleFunctions = '*'
+            VisibleExternalCommands = '*'
+            VisibleProviders = 'FileSystem', 'Registry', 'Environment', 'Function'
+            ReadOnlyProviders = 'Environment'
+        }
+
+        if (Test-Path -LiteralPath $ConfigFilePath) {
+            Remove-Item -LiteralPath $ConfigFilePath
+        }
+
+        try {
+            { New-PSSessionConfigurationFile @configParams -Path $ConfigFilePath } | Should -Not -Throw
+            $env:READONLY_PROVIDER_TESTING_VALUE = '1'
+            $result = { & $PSPath -NonInteractive -NoProfile -ConfigurationFile $ConfigFilePath { $env:READONLY_PROVIDER_TESTING_VALUE = '2' } }
+                | Should -Throw -ErrorId ProviderNotWritable
+        } finally {
+            $env:READONLY_PROVIDER_TESTING_VALUE = ''
+            if (Test-Path -LiteralPath $ConfigFilePath) {
+                Remove-Item -LiteralPath $ConfigFilePath
+            }
+        }
+
+    }
 }
