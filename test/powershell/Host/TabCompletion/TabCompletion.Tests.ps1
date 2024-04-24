@@ -1409,12 +1409,16 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
         }
 
-        It "Should keep '~' in completiontext when it's used to refer to home in input" {
+        It "Should handle '~' in completiontext when it's used to refer to home in input" {
             $res = TabExpansion2 -inputScript "~$separator"
             # select the first answer which does not have a space in the completion (those completions look like & '3D Objects')
             $observedResult = $res.CompletionMatches.Where({$_.CompletionText.IndexOf("&") -eq -1})[0].CompletionText
             $completedText = $res.CompletionMatches.CompletionText -join ","
-            $observedResult | Should -BeLike "~$separator*" -Because "$completedText"
+            if ($IsWindows) {
+                $observedResult | Should -BeLike "$home$separator*" -Because "$completedText"
+            } else {
+                $observedResult | Should -BeLike "~$separator*" -Because "$completedText"
+            }
         }
 
         It "Should use '~' as relative filter text when not followed by separator" {
