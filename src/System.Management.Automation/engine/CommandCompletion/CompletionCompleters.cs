@@ -4892,12 +4892,15 @@ namespace System.Management.Automation
 
             for (int i = 0; i < path.Length; i++)
             {
+                // on Windows, we need to preserve the expanded home path as native commands don't understand it
+#if UNIX                
                 if (i == homeIndex)
                 {
                     _ = sb.Append('~');
                     i += homePath.Length - 1;
                     continue;
                 }
+#endif
 
                 EscapeCharIfNeeded(sb, path, i, stringType, literalPath, useSingleQuoteEscapeRules, ref quotesAreNeeded);
                 _ = sb.Append(path[i]);
