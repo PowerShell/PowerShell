@@ -488,6 +488,13 @@ Fix steps:
         $Arguments += "/property:PublishReadyToRun=false"
     }
 
+    # Using $Options.Top instead of $IsLinux to determine if we are building on Linux
+    # This ensures that we are able to cross-compile for Linux on Windows
+    if ($Options.Runtime -eq 'fxdependent' -and $Options.Top -like '*powershell-unix*') {
+        $Arguments += '/property:PackAsTool=true'
+        $Arguments += '/property:"PackAsToolShimRuntimeIdentifiers=win-x64;win-x86;win-arm64;linux-x64;linux-arm;linux-arm64;linux-musl-x64;osx-x64;osx-arm64"'
+    }
+
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
 
