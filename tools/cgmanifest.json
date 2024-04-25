@@ -86,7 +86,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Bcl.AsyncInterfaces",
-          "Version": "5.0.0"
+          "Version": "8.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -126,7 +126,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "5.0.10"
+          "Version": "8.0.3"
         }
       },
       "DevelopmentDependency": false
@@ -226,7 +226,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "8.0.2"
+          "Version": "8.0.4"
         }
       },
       "DevelopmentDependency": false
@@ -556,7 +556,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Diagnostics.DiagnosticSource",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -616,7 +616,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "8.0.2"
+          "Version": "8.0.4"
         }
       },
       "DevelopmentDependency": false
