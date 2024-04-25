@@ -4,14 +4,14 @@ Import-Module "$PSScriptRoot\dockerInstall.psm1"
 
 # Install using Wix Zip because the MSI requires an older version of dotnet
 # which was large and unstable in docker
-function Install-WixZip
+function Install-Wix
 {
-    param($zipPath, $arm64 = $false)
+    param($arm64 = $false)
 
     $targetRoot = $arm64 ? "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy" : "${env:ProgramFiles(x86)}\WiX Toolset xcopy"
     $binPath = Join-Path -Path $targetRoot -ChildPath 'bin'
-    Write-Verbose "Expanding $zipPath to $binPath ..." -Verbose
-    Expand-Archive -Path $zipPath -DestinationPath $binPath -Force
+    Register-PSRepository -Name NuGetGallery -SourceLocation https://api.nuget.org/v3/index.json
+    Save-Module -name wix -RequiredVersion 3.14.1 -path "$binPath/"
     $docExpandPath = Join-Path -Path $binPath -ChildPath 'doc'
     $sdkExpandPath = Join-Path -Path $binPath -ChildPath 'sdk'
     $docTargetPath = Join-Path -Path $targetRoot -ChildPath 'doc'

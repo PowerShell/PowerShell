@@ -2295,6 +2295,15 @@ function Start-PSBootstrap {
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
             }
+            if ($Package) {
+                # cleanup previous install
+                if((Test-Path "${env:ProgramFiles(x86)}\WiX Toolset xcopy")) {
+                    Remove-Item "${env:ProgramFiles(x86)}\WiX Toolset xcopy" -Recurse -Force
+                }
+                Import-Module '$(PowerShellRoot)\tools\releaseBuild\Images\microsoft_powershell_windowsservercore\wix.psm1'
+                $isArm64 = '$(Runtime)' -eq 'arm64'
+                Install-Wix -arm64:$isArm64
+            }
         }
     } finally {
         Pop-Location
