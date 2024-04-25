@@ -288,6 +288,7 @@ function Start-PSBuild {
         [switch]$Restore,
         # Accept a path to the output directory
         # When specified, --output <path> will be passed to dotnet
+        [switch]$RestoreOnly,
         [string]$Output,
         [switch]$ResGen,
         [switch]$TypeGen,
@@ -298,6 +299,7 @@ function Start-PSBuild {
         [switch]$NoPSModuleRestore,
         [switch]$CI,
         [switch]$ForMinimalSize,
+        [switch]$Interactive,
 
         # Skips the step where the pwsh that's been built is used to create a configuration
         # Useful when changing parsing/compilation, since bugs there can mean we can't get past this step
@@ -514,7 +516,11 @@ Fix steps:
     }
 
     # handle Restore
-    Restore-PSPackage -Options $Options -Force:$Restore -InteractiveAuth:$InteractiveAuth
+    Restore-PSPackage -Options $Options -Force:$($Restore -or $RestoreOnly) -InteractiveAuth:$InteractiveAuth
+    if ($RestoreOnly) {
+        return
+    }
+
 
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
