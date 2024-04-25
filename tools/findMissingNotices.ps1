@@ -7,7 +7,8 @@
 
 param(
     [switch] $Fix,
-    [switch] $IsStable
+    [switch] $IsStable,
+    [switch] $InteractiveAuth
 )
 
 Import-Module dotnet.project.assets
@@ -218,9 +219,13 @@ function Get-CGRegistrations {
     Write-Verbose "Getting registrations for $folder - $actualRuntime ..." -Verbose
     Get-PSDrive -Name $folder -ErrorAction Ignore | Remove-PSDrive
     Push-Location $PSScriptRoot\..\src\$folder
+    $extraParams = @()
+    if ($InteractiveAuth) {
+        $extraParams += "--interactive"
+    }
     try {
         Start-NativeExecution -VerboseOutputOnError -sb {
-            dotnet restore --runtime $actualRuntime  "/property:SDKToUse=$sdkToUse"
+            dotnet restore --runtime $actualRuntime  "/property:SDKToUse=$sdkToUse" $extraParams
         }
         $null = New-PADrive -Path $PSScriptRoot\..\src\$folder\obj\project.assets.json -Name $folder
         try {
