@@ -112,7 +112,7 @@ jobs:
         Write-Verbose -Message "Building PowerShell global tool for Windows.x64" -Verbose
         $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
         Push-Location -Path $globalToolCsProjDir -Verbose
-        dotnet publish --no-self-contained /p
+        dotnet publish --no-self-contained /property:PackageVersion=$(Version)
         $globalToolBuildModulePath = Join-Path $globalToolCsProjDir 'bin' 'Release' 'net9.0' 'publish'
         Pop-Location
         Restore-PSModuleToBuild -PublishPath $globalToolBuildModulePath
