@@ -110,7 +110,7 @@ jobs:
       {
         ## Also build global tool
         Write-Verbose -Message "Building PowerShell global tool for Windows.x64"
-        $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalToools' 'PowerShell.Windows.x64'
+        $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
         Push-Location -Path $globalToolCsProjDir -Verbose
         dotnet publish --no-self-contained
         $globalToolBuildModulePath = Join-Path $globalToolCsProjDir 'bin' 'Release' 'net9.0' 'publish'
@@ -166,7 +166,7 @@ jobs:
   - pwsh: |
       $outputPath = Join-Path '$(ob_outputDirectory)' 'globaltool'
       $null = New-Item -ItemType Directory -Path $outputPath -Force
-      $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalToools' 'PowerShell.Windows.x64'
+      $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
       Push-Location -Path $globalToolCsProjDir -Verbose
       dotnet pack --output $outputPath --no-build
 
