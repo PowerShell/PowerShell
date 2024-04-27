@@ -123,7 +123,10 @@ jobs:
         $filesToKeep = @("apphost.exe", "PowerShell.Windows.x64.pdb", "PowerShell.Windows.x64.dll", "project.assets.json")
 
         # only four files are needed in obj folder for global tool packaging
-        Get-ChildItem D:\PSGit\PowerShell\src\GlobalTools\PowerShell.Windows.x64\obj -Recurse -File | Where-Object { $_.name -notin $filesToKeep } | Remove-Item -Verbose
+        Get-ChildItem -Path $objDir -File -Recurse |
+          Where-Object { -not $_.PSIsContainer } |
+          Where-Object { $_.name -notin $filesToKeep } |
+          Remove-Item -Verbose
       }
 
       Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
