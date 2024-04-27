@@ -1,25 +1,3 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
-# Command privilege management for powershell 
-# This script safeguards PowerShell environments by managing command privileges and preventing unauthorized activity. Here's how it works:
-
-# Administrative Privileges Check:
-# The script verifies administrative privileges, ensuring it executes authorized actions securely.
-
-# Conditional Execution:
-# Based on provided arguments and administrative status, it selectively applies configurations to administer PowerShell sessions effectively.
-
-# Registry Value Management:
-# It controls access to the command prompt via registry values, limiting unauthorized usage within PowerShell.
-
-# Secure Credential Handling:
-# The script prompts users for credentials securely, limiting authentication attempts and handling errors to prevent unauthorized access.
-
-# Structured Execution Flow:
-# Continuously prompting for credentials until successful authentication,
-# it ensures authorized access and protects against unauthorized activity within PowerShell environments.
-
 # Check if the script is running with administrative privileges
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
@@ -28,6 +6,7 @@ if (-not $isAdmin -and $args[0] -eq "1") {
     Write-Host "This script is configured to apply only for admin PowerShell sessions."
     Exit
 }
+
 # Define variables
 $registryKey = "HKCU:\Software\MyApplication"
 $registryValueName = "DisableCMD"
@@ -100,9 +79,7 @@ function Prompt-ForCredentials {
             return $false
         }
     } catch {
-       Write-Host " 
-            Sorry , [Windows] Require password !!
-       "
+        Write-Host "[windows require password]"
     }
 }
 
@@ -137,5 +114,5 @@ try {
     # Additional operations can be performed here if needed after successful authentication
 
 } catch {
-    Write-Host "Error occurred: $_"
+    Write-Host "[Windows] needs credintials"
 }
