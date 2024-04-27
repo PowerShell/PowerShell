@@ -147,11 +147,11 @@ jobs:
       binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
 
   ## first we sign all the files in the bin folder
-  - template: /.pipelines/templates/obp-file-signing.yml@self
-    parameters:
-      binPath: '$(PowerShellRoot)/src/GlobalTools/PowerShell.Windows.x64/bin/Release/net9.0'
-      globalTool: 'true'
-    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
+  - ${{ if eq(variables['Archirecture'], 'fxdependent') }}:
+    - template: /.pipelines/templates/obp-file-signing.yml@self
+      parameters:
+        binPath: '$(PowerShellRoot)/src/GlobalTools/PowerShell.Windows.x64/bin/Release/net9.0'
+        globalTool: 'true'
 
   ## Now we sign couple of file from the obj folder which are needed for the global tool packaging
   - task: onebranch.pipeline.signing@1
