@@ -109,19 +109,21 @@ jobs:
       if ($runtime -eq 'fxdependent')
       {
         ## Also build global tool
-        Write-Verbose -Message "Building PowerShell global tool for Windows.x64"
+        Write-Verbose -Message "Building PowerShell global tool for Windows.x64" -Verbose
         $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
         Push-Location -Path $globalToolCsProjDir -Verbose
-        dotnet publish --no-self-contained
+        dotnet publish --no-self-contained /p
         $globalToolBuildModulePath = Join-Path $globalToolCsProjDir 'bin' 'Release' 'net9.0' 'publish'
         Pop-Location
         Restore-PSModuleToBuild -PublishPath $globalToolBuildModulePath
 
-        # clean unnecessary files in obj directory
+        Write-Verbose -Verbose "clean unnecessary files in obj directory"
         $objDir = Join-Path $globalToolCsProjDir 'obj'
 
+        $filesToKeep = @("apphost.exe", "PowerShell.Windows.x64.pdb", "PowerShell.Windows.x64.dll", "project.assets.json")
+
         # only four files are needed in obj folder for global tool packaging
-        Remove-Item -Path $objDir -Recurse -Force -Exclude "apphost.exe", "PowerShell.Windows.x64.pdb", "PowerShell.Windows.x64.dll", "project.assets.json"
+        Get-ChildItem D:\PSGit\PowerShell\src\GlobalTools\PowerShell.Windows.x64\obj -Recurse -File | Where-Object { $_.name -notin $filesToKeep } | Remove-Item -Verbose
       }
 
       Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
@@ -170,7 +172,7 @@ jobs:
       Push-Location -Path $globalToolCsProjDir -Verbose
       dotnet pack --output $outputPath --no-build
 
-      if (-not Test-Path $outputPath\powershell.windows.x64.*.nupkg) {
+      if (-not (Test-Path $outputPath\powershell.windows.x64.*.nupkg)) {
         throw "Global tool package not found at $outputPath"
       }
     displayName: 'Pack Windows.x64 global tool'
