@@ -258,7 +258,8 @@ jobs:
       $linuxFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd\Signed-fxdependent"
       $alpineFxdPath = "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline\drop_linux_sign_linux_fxd_x64_alpine\Signed-fxdependent-noopt-linux-musl-x64"
 
-      $packageTypes = @('Unified', 'PowerShell.Linux.Alpine', 'PowerShell.Linux.x64', 'PowerShell.Linux.arm32', 'PowerShell.Linux.arm64', 'PowerShell.Windows.x64')
+      # Build global tools which do not have the shims exe generated in build.
+      $packageTypes = @('Unified', 'PowerShell.Linux.Alpine', 'PowerShell.Linux.x64', 'PowerShell.Linux.arm32', 'PowerShell.Linux.arm64')
 
       $packageTypes | Foreach-Object {
         $PackageType = $_
