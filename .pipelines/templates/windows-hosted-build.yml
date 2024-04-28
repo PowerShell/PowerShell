@@ -112,13 +112,19 @@ jobs:
         Write-Verbose -Message "Building PowerShell global tool for Windows.x64" -Verbose
         $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
         Push-Location -Path $globalToolCsProjDir -Verbose
-        dotnet publish --no-self-contained /property:PackageVersion=$(Version)
-        $globalToolBuildModulePath = Join-Path $globalToolCsProjDir 'bin' 'Release' 'net9.0' 'publish'
+
+        $globalToolArtifactPath = Join-Path $(Build.SourcesDirectory) 'GlobalTool'
+        $vstsCommandString = "vso[task.setvariable variable=GlobalToolArtifactPath]${globalToolArtifactPath}"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+
+        dotnet publish --no-self-contained --artifacts-path $globalToolArtifactPath /property:PackageVersion=$(Version)
+        $globalToolBuildModulePath = Join-Path $globalToolArtifactPath 'publish' 'PowerShell.Windows.x64' 'release'
         Pop-Location
         Restore-PSModuleToBuild -PublishPath $globalToolBuildModulePath
 
         Write-Verbose -Verbose "clean unnecessary files in obj directory"
-        $objDir = Join-Path $globalToolCsProjDir 'obj'
+        $objDir = Join-Path $globalToolArtifactPath 'obj' 'PowerShell.Windows.x64' 'release'
 
         $filesToKeep = @("apphost.exe", "PowerShell.Windows.x64.pdb", "PowerShell.Windows.x64.dll", "project.assets.json")
 
@@ -155,12 +161,13 @@ jobs:
   - ${{ if eq(variables['Architecture'], 'fxdependent') }}:
     - template: /.pipelines/templates/obp-file-signing.yml@self
       parameters:
-        binPath: '$(PowerShellRoot)/src/GlobalTools/PowerShell.Windows.x64/bin/Release/net9.0/publish'
+        binPath: '$(GlobalToolArtifactPath)/publish/PowerShell.Windows.x64/release'
         globalTool: 'true'
 
   - pwsh: |
-      Get-ChildItem $(PowerShellRoot)/src/GlobalTools/PowerShell.Windows.x64/obj/Release/net9.0
+      Get-ChildItem '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
     displayName: Capture obj files
+    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
   ## Now we sign couple of file from the obj folder which are needed for the global tool packaging
   - task: onebranch.pipeline.signing@1
@@ -169,7 +176,7 @@ jobs:
       command: 'sign'
       signing_profile: external_distribution
       files_to_sign: '**\*.dll;**\*.exe'
-      search_root: '$(PowerShellRoot)/src/GlobalTools/PowerShell.Windows.x64/obj/Release/net9.0'
+      search_root: '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
   - pwsh: |
@@ -180,7 +187,8 @@ jobs:
       $null = New-Item -ItemType Directory -Path $outputPath -Force
       $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
       Push-Location -Path $globalToolCsProjDir -Verbose
-      dotnet pack --output $outputPath --no-build
+
+      dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)'
 
       if (-not (Test-Path $outputPath\powershell.windows.x64.*.nupkg)) {
         throw "Global tool package not found at $outputPath"
