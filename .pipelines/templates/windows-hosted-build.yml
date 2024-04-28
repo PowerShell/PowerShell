@@ -155,12 +155,16 @@ jobs:
   - ${{ if eq(variables['Architecture'], 'fxdependent') }}:
     - template: /.pipelines/templates/obp-file-signing.yml@self
       parameters:
-        binPath: '$(PowerShellRoot)/src/GlobalTools/PowerShell.Windows.x64/bin/Release/net9.0'
+        binPath: '$(PowerShellRoot)/src/GlobalTools/PowerShell.Windows.x64/bin/Release/net9.0/publish'
         globalTool: 'true'
+
+  - pwsh: |
+      Get-ChildItem $(PowerShellRoot)/src/GlobalTools/PowerShell.Windows.x64/obj/Release/net9.0
+    displayName: Capture obj files
 
   ## Now we sign couple of file from the obj folder which are needed for the global tool packaging
   - task: onebranch.pipeline.signing@1
-    displayName: Sign 1st party files
+    displayName: Sign obj files
     inputs:
       command: 'sign'
       signing_profile: external_distribution
