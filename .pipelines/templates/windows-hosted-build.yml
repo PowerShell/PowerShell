@@ -152,7 +152,7 @@ jobs:
       binPath: '$(Pipeline.Workspace)/Symbols_$(Architecture)'
 
   ## first we sign all the files in the bin folder
-  - ${{ if eq(variables['Archirecture'], 'fxdependent') }}:
+  - ${{ if eq(variables['Architecture'], 'fxdependent') }}:
     - template: /.pipelines/templates/obp-file-signing.yml@self
       parameters:
         binPath: '$(PowerShellRoot)/src/GlobalTools/PowerShell.Windows.x64/bin/Release/net9.0'
