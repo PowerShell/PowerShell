@@ -169,6 +169,9 @@ jobs:
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
   - pwsh: |
+      Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+      Start-PSBootstrap
+
       $outputPath = Join-Path '$(ob_outputDirectory)' 'globaltool'
       $null = New-Item -ItemType Directory -Path $outputPath -Force
       $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
