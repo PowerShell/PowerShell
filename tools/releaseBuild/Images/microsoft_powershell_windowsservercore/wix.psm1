@@ -9,6 +9,10 @@ function Install-Wix
     param($arm64 = $false)
 
     $targetRoot = $arm64 ? "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy" : "${env:ProgramFiles(x86)}\WiX Toolset xcopy"
+    # cleanup previous install
+    if(Test-Path $targetRoot) {
+        Remove-Item $targetRoot -Recurse -Force
+    }
     $binPath = Join-Path -Path $targetRoot -ChildPath 'bin'
     Register-PSRepository -Name NuGetGallery -SourceLocation https://api.nuget.org/v3/index.json
     Save-Module -name wix -RequiredVersion 3.14.1 -path "$binPath/"
