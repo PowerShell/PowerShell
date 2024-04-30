@@ -203,6 +203,25 @@ jobs:
       # Expand zip and remove content and contentFiles folders
       Expand-Archive -Path $zipPath -DestinationPath "$outputPath\temp" -Force
 
+
+
+      $modulesToCopy = @(
+        'PowerShellGet'
+        'PackageManagement'
+        'Microsoft.PowerShell.PSResourceGet'
+        'Microsoft.PowerShell.Archive'
+        'PSReadLine'
+        'ThreadJob'
+      )
+
+      $sourceModulePath = Join-Path '$(GlobalToolArtifactPath)' 'publish' 'PowerShell.Windows.x64' 'release' 'Modules'
+      $destModulesPath = Join-Path "$outputPath" 'temp" 'tools' 'net9.0' 'any' 'modules'
+
+      $modulesToCopy | ForEach-Object {
+        $modulePath = Join-Path $sourceModulePath $_
+        Copy-Item -Path $modulePath -Destination "$destModulesPath" -Recurse -Force
+      }
+
       $contentPath = Join-Path "$outputPath\temp" 'content'
       $contentFilesPath = Join-Path "$outputPath\temp" 'contentFiles'
 
