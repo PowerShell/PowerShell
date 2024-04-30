@@ -190,6 +190,29 @@ jobs:
 
       dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)'
 
+      Write-Verbose -Verbose "Deleting content and contentFiles folders from the nupkg"
+
+      $nupkgs = Get-ChildItem -Path $outputPath -Filter powershell*.nupkg
+
+      $nupkgName = $nupkgs.Name
+      $newName = $nupkgName -replace '(\.nupkg)$', '.zip'
+      Rename-Item -Path $nupkgs.FullName -NewName $newName
+
+      $zipPath = Get-ChildItem -Path $outputPath -Filter powershell*.zip
+
+      # Expand zip and remove content and contentFiles folders
+      Expand-Archive -Path $zipPath -DestinationPath "$outputPath\temp" -Force
+
+      $contentPath = Join-Path "$outputPath\temp" 'content'
+      $contentFilesPath = Join-Path "$outputPath\temp" 'contentFiles'
+
+      Remove-Item -Path $contentPath,$contentFilesPath -Recurse -Force
+
+      Compress-Archive -Path "$outputPath\temp\*" -DestinationPath "$outputPath\$nupkgName" -Force
+
+      Remove-Item -Path "$outputPath\temp" -Recurse -Force
+      Remove-Item -Path $zipPath -Force
+
       if (-not (Test-Path $outputPath\powershell.windows.x64.*.nupkg)) {
         throw "Global tool package not found at $outputPath"
       }

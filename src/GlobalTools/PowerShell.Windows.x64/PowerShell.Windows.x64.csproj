@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
-    <Content Include="..\..\Modules\Unix\**\*;..\..\Modules\Shared\**\*" >
+    <Content Include="..\..\Modules\Windows\**\*;..\..\Modules\Shared\**\*">
       <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
