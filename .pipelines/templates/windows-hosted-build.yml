@@ -188,7 +188,7 @@ jobs:
       $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
       Push-Location -Path $globalToolCsProjDir -Verbose
 
-      dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)'
+      dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)' /property:PackageVersion=$(Version)
 
       Write-Verbose -Verbose "Deleting content and contentFiles folders from the nupkg"
 
