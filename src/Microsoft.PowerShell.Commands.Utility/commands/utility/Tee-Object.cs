@@ -95,20 +95,20 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ErrorRecordVariable parameter.
+        /// Gets or Sets the name of the variable used to store ErrorRecords.
         /// <summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("ERV")]
         public string ErrorRecordVariable
         {
-            get { return _errorRecordVariable; }
+            get { return this.errorRecordVariable; }
 
-            set { _errorRecordVariable = value; }
+            set { this.errorRecordVariable = value; }
         }
 
         private string _variable;
-        private string _errorRecordVariable;
+        private string errorRecordVariable;
 
         /// <summary>
         /// </summary>
@@ -138,11 +138,11 @@ namespace Microsoft.PowerShell.Commands
                 // the values to be written
             }
 
-            if (!string.IsNullOrEmpty(_errorRecordVariable))
+            if (!string.IsNullOrEmpty(this.errorRecordVariable))
             {
-                _errorCommandWrapper = new CommandWrapper();
-                _errorCommandWrapper.Initialize(Context, "set-variable", typeof(SetVariableCommand));
-                _errorCommandWrapper.AddNamedParameter("name", _errorRecordVariable);
+                this.errorCommandWrapper = new CommandWrapper();
+                this.errorCommandWrapper.Initialize(Context, "set-variable", typeof(SetVariableCommand));
+                this.errorCommandWrapper.AddNamedParameter("name", this.errorRecordVariable);
             }
         }
 
@@ -150,11 +150,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_errorCommandWrapper is not null)
+            if (this.errorCommandWrapper is not null)
             {
-                if (_inputObject.BaseObject is ErrorRecord er)
+                if (this._inputObject.BaseObject is ErrorRecord er)
                 {
-                    _errorCommandWrapper.Process(_inputObject);
+                    this.errorCommandWrapper.Process(_inputObject);
                     return;
                 }
             }
@@ -167,11 +167,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            // _commandWrapper is always created, but _errorCommandWrapper may not be.
+            // _commandWrapper is always created, but errorCommandWrapper may not be.
             _commandWrapper.ShutDown();
-            if (_errorCommandWrapper is not null)
+            if (this.errorCommandWrapper is not null)
             {
-                _errorCommandWrapper.ShutDown();
+                errorCommandWrapper.ShutDown();
             }
         }
 
@@ -186,10 +186,10 @@ namespace Microsoft.PowerShell.Commands
                     _commandWrapper = null;
                 }
 
-                if (isDisposing && _errorCommandWrapper is not null)
+                if (isDisposing && this.errorCommandWrapper is not null)
                 {
-                    _errorCommandWrapper.Dispose();
-                    _errorCommandWrapper = null;
+                    this.errorCommandWrapper.Dispose();
+                    errorCommandWrapper = null;
                 }
             }
         }
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region private
         private CommandWrapper _commandWrapper;
-        private CommandWrapper _errorCommandWrapper;
+        private CommandWrapper errorCommandWrapper;
         private bool _alreadyDisposed;
         #endregion private
     }
