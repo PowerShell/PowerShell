@@ -92,4 +92,18 @@ Describe "Tee-Object DRT Unit Tests" -Tags "CI" {
         $results | Should -Be $expected
     }
 
+    It "Positive Variable/ErrorRecordVariable Test" {
+        $results = Get-Item $PSHOME,doesnotexist1,$PWD,doesnotexist2 2>&1 | Tee-Object -Variable outputVar -ErrorRecordVariable errVar
+        $results.Length | Should -Be 2
+        $outputVar.Length | Should -Be 2
+        $errVar.Length | Should -Be 2
+    }
+
+    It "Positive File/ErrorRecordVariable Test" {
+        $results = Get-Item $PSHOME,doesnotexist1,$PWD,doesnotexist2 2>&1 | Tee-Object -File $tempFile -ErrorRecordVariable errVar
+        $results.Length | Should -Be 2
+        (Get-Content $tempFile).Length | Should -BeGreaterThan 2
+        $errVar.Length | Should -Be 2
+    }
+
 }

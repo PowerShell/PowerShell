@@ -94,7 +94,21 @@ namespace Microsoft.PowerShell.Commands
             set { _variable = value; }
         }
 
+        /// <summary>
+        /// ErrorRecordVariable parameter.
+        /// <summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        [Alias("ERV")]
+        public string ErrorRecordVariable
+        {
+            get { return _errorRecordVariable; }
+
+            set { _errorRecordVariable = value; }
+        }
+
         private string _variable;
+        private string _errorRecordVariable;
 
         /// <summary>
         /// </summary>
@@ -123,12 +137,28 @@ namespace Microsoft.PowerShell.Commands
                 // Can't use set-var's passthru because it writes the var object to the pipeline, we want just
                 // the values to be written
             }
+
+            if (!string.IsNullOrEmpty(_errorRecordVariable))
+            {
+                _errorCommandWrapper = new CommandWrapper();
+                _errorCommandWrapper.Initialize(Context, "set-variable", typeof(SetVariableCommand));
+                _errorCommandWrapper.AddNamedParameter("name", _errorRecordVariable);
+            }
         }
 
         /// <summary>
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (_errorCommandWrapper is not null)
+            {
+                if (_inputObject.BaseObject is ErrorRecord er)
+                {
+                    _errorCommandWrapper.Process(_inputObject);
+                    return;
+                }
+            }
+
             _commandWrapper.Process(_inputObject);
             WriteObject(_inputObject);
         }
@@ -137,7 +167,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
+            // _commandWrapper is always created, but _errorCommandWrapper may not be.
             _commandWrapper.ShutDown();
+            if (_errorCommandWrapper is not null)
+            {
+                _errorCommandWrapper.ShutDown();
+            }
         }
 
         private void Dispose(bool isDisposing)
@@ -149,6 +184,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _commandWrapper.Dispose();
                     _commandWrapper = null;
+                }
+
+                if (isDisposing && _errorCommandWrapper is not null)
+                {
+                    _errorCommandWrapper.Dispose();
+                    _errorCommandWrapper = null;
                 }
             }
         }
@@ -164,6 +205,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region private
         private CommandWrapper _commandWrapper;
+        private CommandWrapper _errorCommandWrapper;
         private bool _alreadyDisposed;
         #endregion private
     }
