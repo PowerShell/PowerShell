@@ -202,7 +202,7 @@ jobs:
       $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
       Push-Location -Path $globalToolCsProjDir -Verbose
 
-      $iconFile = Resolve-Path (Join-Path $(PowerShellRoot) 'assets' 'Powershell_black_64.png')
+      $iconFile = Resolve-Path (Join-Path '$(Build.SourcesDirectory)' 'PowerShell' 'assets' 'Powershell_black_64.png')
       $nuspecFilePath = "$globalToolCsProjDir\PowerShell.Windows.x64.nuspec"
       $nuSpec = $packagingStrings.GlobalToolNuSpec -f 'PowerShell.Windows.x64', '$(Version)', $iconFile
       $nuSpec | Out-File -FilePath $nuspecFilePath -Encoding ascii
