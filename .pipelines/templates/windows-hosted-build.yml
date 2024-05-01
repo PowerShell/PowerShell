@@ -89,6 +89,8 @@ jobs:
       $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
       Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath -Clean -PSModuleRestore @params
 
+      $refFolderPath = Join-Path $buildWithSymbolsPath 'ref'
+      Write-Verbose -Verbose "refFolderPath: $refFolderPath"
       $outputPath = Join-Path '$(ob_outputDirectory)' 'psoptions'
       $null = New-Item -ItemType Directory -Path $outputPath -Force
       $psOptPath = "$outputPath/psoptions.json"
@@ -121,7 +123,11 @@ jobs:
         dotnet publish --no-self-contained --artifacts-path $globalToolArtifactPath /property:PackageVersion=$(Version)
         $globalToolBuildModulePath = Join-Path $globalToolArtifactPath 'publish' 'PowerShell.Windows.x64' 'release'
         Pop-Location
+        # do this to ensure everything gets signed.
         Restore-PSModuleToBuild -PublishPath $globalToolBuildModulePath
+
+        # Copy reference assemblies
+        Copy-Item -Path $refFolderPath -Destination $globalToolBuildModulePath -Recurse -Force
 
         Write-Verbose -Verbose "clean unnecessary files in obj directory"
         $objDir = Join-Path $globalToolArtifactPath 'obj' 'PowerShell.Windows.x64' 'release'
@@ -180,6 +186,13 @@ jobs:
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
   - pwsh: |
+      <#  The way the packaging works is a bit tricky as when it is built, we cannot add the modules that come from gallery.
+          We have to use dotnet pack to build the nupkg and then expand it as a zip.
+          After expanding we restore the signed files for the modules from the gallery.
+          We also delete pdbs, content and contentFiles folder which are not necessary.
+          After that, we repack using Compress-Archive and rename it back to a nupkg.
+        #>
+
       Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
       Start-PSBootstrap
 
@@ -220,10 +233,19 @@ jobs:
         Copy-Item -Path $modulePath -Destination $destModulesPath -Recurse -Force
       }
 
+      # Copy ref assemblies
+      Copy-Item '$(Pipeline.Workspace)/Symbols_$(Architecture)/ref' "$outputPath\temp\tools\net9.0\any\ref" -Recurse -Force
+
+      #copy icon file
+      Copy-Item '$(Pipeline.Workspace)/PowerShell/assets/Powershell_64.png' "$outputPath\temp" -Force -Verbose
+
       $contentPath = Join-Path "$outputPath\temp" 'content'
       $contentFilesPath = Join-Path "$outputPath\temp" 'contentFiles'
 
       Remove-Item -Path $contentPath,$contentFilesPath -Recurse -Force
+
+      # remove PDBs to reduce the size of the nupkg
+      Remove-Item -Path "$outputPath\temp\tools\net9.0\any\*.pdb" -Recurse -Force
 
       Compress-Archive -Path "$outputPath\temp\*" -DestinationPath "$outputPath\$nupkgName" -Force
 

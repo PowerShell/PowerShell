@@ -4341,7 +4341,8 @@ function New-GlobalToolNupkgSource
             $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
         }
 
-        # Due to needing a signed shim for the global tool, we build the global tool in build instead of packaging
+        # Due to needing a signed shim for the global tool, we build the global tool in build instead of packaging.
+        # keeping the code for reference.
         # "PowerShell.Windows.x64"
         # {
         #     $PackageName = "PowerShell.Windows.x64"
