@@ -195,13 +195,18 @@ jobs:
 
       Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
       Start-PSBootstrap
+      $packagingStrings = Import-PowerShellDataFile "$(PowerShellRoot)\tools\packaging\packaging.strings.psd1"
 
       $outputPath = Join-Path '$(ob_outputDirectory)' 'globaltool'
       $null = New-Item -ItemType Directory -Path $outputPath -Force
       $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
       Push-Location -Path $globalToolCsProjDir -Verbose
 
-      dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)' /property:PackageVersion=$(Version)
+      $nuspecFilePath = "$globalToolCsProjDir\PowerShell.Windows.x64.nuspec"
+      $nuSpec = $packagingStrings.GlobalToolNuSpec -f 'PowerShell.Windows.x64', '$(Version)', "Powershell_black_64.png"
+      $nuSpec | Out-File -FilePath $nuspecFilePath -Encoding ascii
+
+      dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)' /property:PackageVersion=$(Version) /property:Nuspecfile=$nuspecFilePath
 
       Write-Verbose -Verbose "Deleting content and contentFiles folders from the nupkg"
 
