@@ -241,9 +241,6 @@ jobs:
       # Copy ref assemblies
       Copy-Item '$(Pipeline.Workspace)/Symbols_$(Architecture)/ref' "$outputPath\temp\tools\net9.0\any\ref" -Recurse -Force
 
-      #copy icon file
-      Copy-Item '$(Pipeline.Workspace)/PowerShell/assets/Powershell_64.png' "$outputPath\temp" -Force -Verbose
-
       $contentPath = Join-Path "$outputPath\temp" 'content'
       $contentFilesPath = Join-Path "$outputPath\temp" 'contentFiles'
 
