@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-  <Import Project="..\..\..\..\PowerShell.Common.props" />
+  <Import Project="..\..\PowerShell.Common.props" />
 
   <ItemGroup>
     <!-- Keep version in sync with wix.psm1 line 18 -->
