@@ -710,7 +710,7 @@ function Restore-PSPackage
 
     if (-not $ProjectDirs)
     {
-        $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
+        $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules", "$PSScriptRoot/tools/wix")
 
         if ($Options.Runtime -like 'fxdependent*') {
             $ProjectDirs += "$PSScriptRoot/src/Microsoft.PowerShell.GlobalTool.Shim"
@@ -2147,7 +2147,7 @@ function Start-PSBootstrap {
                 & $psInstallFile -AddToPath
             }
             if ($Package) {
-                Import-Module "$PSScriptRoot\tools\wix\wix.psm1"
+                Import-Module '$(PowerShellRoot)\tools\wix\wix.psm1'
                 $isArm64 = '$(Runtime)' -eq 'arm64'
                 Install-Wix -arm64:$isArm64
             }
