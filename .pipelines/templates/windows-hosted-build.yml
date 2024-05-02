@@ -202,11 +202,13 @@ jobs:
       $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
       Push-Location -Path $globalToolCsProjDir -Verbose
 
+      <#
       $nuspecFilePath = "$globalToolCsProjDir\PowerShell.Windows.x64.nuspec"
       $nuSpec = $packagingStrings.WindowsX64GlobalToolNuspec -f '$(Version)'
       $nuSpec | Out-File -FilePath $nuspecFilePath -Encoding ascii
+      #>
 
-      dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)' /property:PackageVersion=$(Version) /property:Nuspecfile=$nuspecFilePath
+      dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)' /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png
 
       Write-Verbose -Verbose "Deleting content and contentFiles folders from the nupkg"
 

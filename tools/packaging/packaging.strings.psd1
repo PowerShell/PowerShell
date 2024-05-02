@@ -215,9 +215,6 @@ open {0}
             <packageType name="DotnetTool" />
         </packageTypes>
     </metadata>
-    <files>
-        <file src="Powershell_64.png" target="" />
-    </files>
 </package>
 '@
 

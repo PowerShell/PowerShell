@@ -18,7 +18,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <None Include="..\..\..\assets\Powershell_64.png" Pack="true" PackagePath=""/>
+    <None Include="Powershell_64.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
