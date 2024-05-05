@@ -78,19 +78,6 @@ jobs:
       ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
   - pwsh: |
-      # cleanup previous install
-      if((Test-Path "${env:ProgramFiles(x86)}\WiX Toolset xcopy")) {
-        Remove-Item "${env:ProgramFiles(x86)}\WiX Toolset xcopy" -Recurse -Force
-      }
-      $toolsDir = New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)\tools'
-      $wixUri = 'https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip'
-
-      Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -MaximumRetryCount 5 -RetryIntervalSec 10
-      Import-Module '$(PowerShellRoot)\tools\releaseBuild\Images\microsoft_powershell_windowsservercore\wix.psm1'
-      $isArm64 = '$(Runtime)' -eq 'arm64'
-
-      Install-WixZip -zipPath '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -arm64:$isArm64
-
       $msixUrl = '$(makeappUrl)'
       Invoke-RestMethod -Uri $msixUrl -OutFile '$(Pipeline.Workspace)\makeappx.zip'
       Expand-Archive '$(Pipeline.Workspace)\makeappx.zip' -destination '\' -Force
