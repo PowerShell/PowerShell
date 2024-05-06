@@ -28,7 +28,7 @@ variables:
   WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project https://aka.ms/obpipelines/containers
 
 resources:
-  repositories: 
+  repositories:
     - repository: templates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
@@ -44,29 +44,32 @@ extends:
         enabled: true
         tsaOptionsFile: .config/tsaoptions.json
       tsa:
-        enabled: false # onebranch publish all sdl results to TSA. If TSA is disabled all SDL tools will forced into 'break' build mode.
-      # credscan:
-      #   suppressionsFile: $(Build.SourcesDirectory)\.config\CredScanSuppressions.json
+        enabled: true
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
       binskim:
-        break: true # always break the build on binskim issues in addition to TSA upload
+        break: false # always break the build on binskim issues in addition to TSA upload
       policheck:
         break: true # always break the build on policheck issues. You can disable it by setting to 'false'
       # suppression:
       #   suppressionFile: $(Build.SourcesDirectory)\.gdn\global.gdnsuppress
 
     stages:
-    - stage: build
+    - stage: msixbundle
+      displayName: 'Create MSIX Bundle'
       jobs:
       - job: main
         pool:
           type: windows  # read more about custom job pool types at https://aka.ms/obpipelines/yaml/jobs
-        
+
         variables:
           ob_outputDirectory: '$(REPOROOT)\out' # this directory is uploaded to pipeline artifacts, reddog and cloudvault. More info at https://aka.ms/obpipelines/artifacts
           ob_sdl_binskim_break: true # https://aka.ms/obpipelines/sdl
           ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}: # conditionally enable symbolsPublishing for main branch only
             ob_symbolsPublishing_enabled: true # https://aka.ms/obpipelines/symbols
-          
+
           # ob_sdl_suppression_suppressionFile: $(Build.SourcesDirectory)\.gdn\build.official.gdnsuppress
 
         steps:
