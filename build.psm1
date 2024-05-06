@@ -2146,6 +2146,11 @@ function Start-PSBootstrap {
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
             }
+            if ($Package) {
+                Import-Module "$PSScriptRoot\tools\wix\wix.psm1"
+                $isArm64 = '$(Runtime)' -eq 'arm64'
+                Install-Wix -arm64:$isArm64
+            }
         }
     } finally {
         Pop-Location
