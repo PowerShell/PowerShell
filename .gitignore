@@ -101,3 +101,5 @@ StartupProfileData-NonInteractive
 
 # Ignore logfiles
 logfile/*
+
+.fake
