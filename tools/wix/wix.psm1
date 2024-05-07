@@ -37,6 +37,12 @@ function Install-Wix
     $binPath = Join-Path -Path $targetRoot -ChildPath 'bin'
     Register-PSRepository -Name NuGetGallery -SourceLocation https://api.nuget.org/v3/index.json
     # keep version in sync with Microsoft.PowerShell.Packaging.csproj
+
+    if (-not (Test-Path $binPath)) {
+        $null = New-Item -ItemType Directory -Path $binPath
+        Write-Verbose -Verbose "Created bin directory for WIX at $binPath"
+    }
+
     Save-Module -name wix -RequiredVersion 3.14.1 -path "$binPath/"
     $docExpandPath = Join-Path -Path $binPath -ChildPath 'doc'
     $sdkExpandPath = Join-Path -Path $binPath -ChildPath 'sdk'
