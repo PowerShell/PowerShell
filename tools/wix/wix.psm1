@@ -44,10 +44,24 @@ function Install-Wix
     }
 
     Save-Module -name wix -RequiredVersion 3.14.1 -path "$binPath/"
+
     $docExpandPath = Join-Path -Path $binPath -ChildPath 'doc'
     $sdkExpandPath = Join-Path -Path $binPath -ChildPath 'sdk'
+
     $docTargetPath = Join-Path -Path $targetRoot -ChildPath 'doc'
+
+    if (-not (Test-Path $docTargetPath)) {
+        $null = New-Item -ItemType Directory -Path $docTargetPath
+        Write-Verbose -Verbose "Created doc directory for WIX at $docTargetPath"
+    }
+
     $sdkTargetPath = Join-Path -Path $targetRoot -ChildPath 'sdk'
+
+    if (-not (Test-Path $sdkTargetPath)) {
+        $null = New-Item -ItemType Directory -Path $sdkTargetPath
+        Write-Verbose -Verbose "Created sdk directory for WIX at $sdkTargetPath"
+    }
+
     Write-Verbose "Fixing folder structure ..." -Verbose
     Move-Item -Path $docExpandPath -Destination $docTargetPath
     Move-Item -Path $sdkExpandPath -Destination $sdkTargetPath
