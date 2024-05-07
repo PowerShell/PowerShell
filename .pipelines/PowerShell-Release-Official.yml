@@ -24,7 +24,7 @@ variables:
   - name: ENABLE_PRS_DELAYSIGN
     value: 1
   - name: ROOT
-    vaue: $(Build.SourcesDirectory)
+    value: $(Build.SourcesDirectory)
   - name: REPOROOT
     value: $(Build.SourcesDirectory)
   - name: OUTPUTROOT
