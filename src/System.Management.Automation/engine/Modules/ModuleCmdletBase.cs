@@ -4692,7 +4692,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Path resolution failed, use the combined path as default.
-            string result = combinedPath; // TODO- should we return null?
+            string result = combinedPath;
 
             // For dlls, we cannot get the path from the provider.
             // We need to load the assembly and then get the path.
