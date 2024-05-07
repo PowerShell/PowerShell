@@ -53,6 +53,7 @@ function Install-Wix
 
     $docExpandPath = Join-Path -Path "$binPath\wix\3.14.1\tools\" -ChildPath 'doc'
     $sdkExpandPath = Join-Path -Path "$binPath\wix\3.14.1\tools\" -ChildPath 'sdk'
+    $x86ExpandPath = Join-Path -Path "$binPath\wix\3.14.1\tools\" -ChildPath 'x86'
 
     $docTargetPath = Join-Path -Path $targetRoot -ChildPath 'doc'
 
@@ -75,10 +76,18 @@ function Install-Wix
         Write-Verbose -Verbose "Created bin directory for WIX at $binTargetPath"
     }
 
+    $x86TargetPath = Join-Path -Path $binPath -ChildPath 'x86'
+
+    if (-not (Test-Path $x86TargetPath)) {
+        $null = New-Item -ItemType Directory -Path $x86TargetPath
+        Write-Verbose -Verbose "Created x86 directory for WIX at $x86TargetPath"
+    }
+
     Write-Verbose "Fixing folder structure ..." -Verbose
     Copy-Item -Path $docExpandPath -Destination $docTargetPath
     Copy-Item -Path $sdkExpandPath -Destination $sdkTargetPath
     Copy-Item -Path "$binPath\wix\3.14.1\tools\*" -Destination $binTargetPath
+    Copy-Item -Path $x86ExpandPath -Destination $x86TargetPath
 
     Append-Path -path "$binPath\wix\3.14.1\tools"
     Write-Verbose "Done installing WIX!"
