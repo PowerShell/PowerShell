@@ -84,10 +84,10 @@ function Install-Wix
     }
 
     Write-Verbose "Fixing folder structure ..." -Verbose
-    Copy-Item -Path $docExpandPath -Destination $docTargetPath
-    Copy-Item -Path $sdkExpandPath -Destination $sdkTargetPath
-    Copy-Item -Path "$binPath\wix\3.14.1\tools\*" -Destination $binTargetPath
-    Copy-Item -Path $x86ExpandPath -Destination $x86TargetPath
+    Copy-Item -Path $docExpandPath -Destination $docTargetPath -Force
+    Copy-Item -Path $sdkExpandPath -Destination $sdkTargetPath -Force
+    Copy-Item -Path "$binPath\wix\3.14.1\tools\*" -Destination $binTargetPath -Force
+    Copy-Item -Path $x86ExpandPath -Destination $x86TargetPath -Force
 
     Append-Path -path "$binPath\wix\3.14.1\tools"
     Write-Verbose "Done installing WIX!"
