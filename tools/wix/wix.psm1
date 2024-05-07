@@ -35,7 +35,13 @@ function Install-Wix
         Remove-Item $targetRoot -Recurse -Force
     }
     $binPath = Join-Path -Path $targetRoot -ChildPath 'bin'
-    Register-PSRepository -Name NuGetGallery -SourceLocation https://api.nuget.org/v3/index.json
+
+    $respository = Get-PSRepository -Name NuGetGallery -ErrorAction SilentlyContinue
+
+    if (-not $respository) {
+        Register-PSRepository -Name NuGetGallery -SourceLocation https://api.nuget.org/v3/index.json
+    }
+
     # keep version in sync with Microsoft.PowerShell.Packaging.csproj
 
     if (-not (Test-Path $binPath)) {
