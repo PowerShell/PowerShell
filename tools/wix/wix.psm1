@@ -68,9 +68,18 @@ function Install-Wix
         Write-Verbose -Verbose "Created sdk directory for WIX at $sdkTargetPath"
     }
 
+    $binTargetPath = Join-Path -Path $targetRoot -ChildPath 'bin'
+
+    if (-not (Test-Path $binTargetPath)) {
+        $null = New-Item -ItemType Directory -Path $binTargetPath
+        Write-Verbose -Verbose "Created bin directory for WIX at $binTargetPath"
+    }
+
     Write-Verbose "Fixing folder structure ..." -Verbose
     Copy-Item -Path $docExpandPath -Destination $docTargetPath
     Copy-Item -Path $sdkExpandPath -Destination $sdkTargetPath
+    Copy-Item -Path "$binPath\wix\3.14.1\tools\*" -Destination $binTargetPath
+
     Append-Path -path "$binPath\wix\3.14.1\tools"
     Write-Verbose "Done installing WIX!"
 }
