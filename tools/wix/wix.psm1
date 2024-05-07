@@ -1,6 +1,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Import-Module "$PSScriptRoot\dockerInstall.psm1"
+
+function Append-Path
+{
+    param
+    (
+        $path
+    )
+    $machinePathString = [System.Environment]::GetEnvironmentVariable('path',[System.EnvironmentVariableTarget]::Machine)
+    $machinePath = $machinePathString -split ';'
+
+    if($machinePath -inotcontains $path)
+    {
+        $newPath = "$machinePathString;$path"
+        Write-Verbose "Adding $path to path..." -Verbose
+        [System.Environment]::SetEnvironmentVariable('path',$newPath,[System.EnvironmentVariableTarget]::Machine)
+        Write-Verbose "Added $path to path." -Verbose
+    }
+    else
+    {
+        Write-Verbose "$path already in path." -Verbose
+    }
+}
 
 # Install using Wix Zip because the MSI requires an older version of dotnet
 # which was large and unstable in docker
