@@ -2296,7 +2296,7 @@ function Start-PSBootstrap {
                 & $psInstallFile -AddToPath
             }
             if ($Package) {
-                Import-Module '$(PowerShellRoot)\tools\wix\wix.psm1'
+                Import-Module "$PSScriptRoot\tools\wix\wix.psm1"
                 $isArm64 = '$(Runtime)' -eq 'arm64'
                 Install-Wix -arm64:$isArm64
             }
