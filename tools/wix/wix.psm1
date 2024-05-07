@@ -87,7 +87,8 @@ function Install-Wix
     Copy-Item -Path $docExpandPath -Destination $docTargetPath -Force
     Copy-Item -Path $sdkExpandPath -Destination $sdkTargetPath -Force
     Copy-Item -Path "$binPath\wix\3.14.1\tools\*" -Destination $binTargetPath -Force
-    Copy-Item -Path $x86ExpandPath -Destination $x86TargetPath -Force -Recurse
+    Copy-Item -Path $x86ExpandPath -Destination $x86TargetPath -Force -Recurse -Verbose
+    Copy-Item -Path "$x86ExpandPath\burn.exe" -Destination "$x86TargetPath\burn.exe" -Force -Verbose
 
     Append-Path -path $binPath
     Write-Verbose "Done installing WIX!"
