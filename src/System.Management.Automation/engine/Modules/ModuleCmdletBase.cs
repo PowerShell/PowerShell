@@ -4670,9 +4670,7 @@ namespace Microsoft.PowerShell.Commands
             // The 'Microsoft.WSMan.Management' module in PowerShell was updated to not use the relative path for 'FormatsToProcess' entry,
             // but it's safer to keep the original behavior to avoid unexpected breaking changes.
             string combinedPath = Path.Combine(moduleBase, fileName);
-            string resolvedPath = IsRooted(fileName)
-                ? ResolveRootedFilePath(fileName, Context) ?? ResolveRootedFilePath(combinedPath, Context)
-                : ResolveRootedFilePath(combinedPath, Context);
+            string resolvedPath = ResolveRootedFilePath(combinedPath, Context);
 
             // Return the path if successfully resolved.
             if (resolvedPath is not null)
@@ -4694,7 +4692,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Path resolution failed, use the combined path as default.
-            string result = combinedPath;
+            string result = combinedPath; // TODO- should we return null?
 
             // For dlls, we cannot get the path from the provider.
             // We need to load the assembly and then get the path.
