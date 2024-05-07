@@ -45,8 +45,8 @@ function Install-Wix
 
     Save-Module -name wix -RequiredVersion 3.14.1 -path "$binPath/"
 
-    $docExpandPath = Join-Path -Path $binPath -ChildPath 'doc'
-    $sdkExpandPath = Join-Path -Path $binPath -ChildPath 'sdk'
+    $docExpandPath = Join-Path -Path "$binPath\wix\3.14.1\tools\" -ChildPath 'doc'
+    $sdkExpandPath = Join-Path -Path "$binPath\wix\3.14.1\tools\" -ChildPath 'sdk'
 
     $docTargetPath = Join-Path -Path $targetRoot -ChildPath 'doc'
 
@@ -63,8 +63,8 @@ function Install-Wix
     }
 
     Write-Verbose "Fixing folder structure ..." -Verbose
-    Move-Item -Path $docExpandPath -Destination $docTargetPath
-    Move-Item -Path $sdkExpandPath -Destination $sdkTargetPath
-    Append-Path -path $binPath
+    Copy-Item -Path $docExpandPath -Destination $docTargetPath
+    Copy-Item -Path $sdkExpandPath -Destination $sdkTargetPath
+    Append-Path -path "$binPath\wix\3.14.1\tools"
     Write-Verbose "Done installing WIX!"
 }
