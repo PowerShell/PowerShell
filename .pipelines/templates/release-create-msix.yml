@@ -7,7 +7,7 @@ jobs:
     - group: 'Azure Blob variable group'
 
   steps:
-    - template: release-SetReleaseTagAndContainerName.yml
+    - template: release-SetReleaseTagandContainerName.yml@self
 
     - task: DownloadPipelineArtifact@2
       retryCountOnTaskFailure: 2
