@@ -15,17 +15,17 @@ jobs:
 
     - download: PSPackagesOfficial
       artifact: drop_windows_package_package_win_arm64
-      displayName: Download nupkgs
+      displayName: Download arm64 msix
       patterns: '**/*.msix'
 
     - download: PSPackagesOfficial
       artifact: drop_windows_package_package_win_x64
-      displayName: Download nupkgs
+      displayName: Download x64 msix
       patterns: '**/*.msix'
 
     - download: PSPackagesOfficial
       artifact: drop_windows_package_package_win_x86
-      displayName: Download nupkgs
+      displayName: Download x86 msix
       patterns: '**/*.msix'
 
     - pwsh: |
@@ -52,6 +52,13 @@ jobs:
 
     - pwsh: |
         $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
+        $null = New-Item -Path $sourceDir -ItemType Directory -Force
+
+        $msixFiles = Get-ChildItem -Path "$(Pipeline.Workspace)/PSPackagesOfficial/*.msix" -Recurse
+        foreach ($msixFile in $msixFiles) {
+            $null = Copy-Item -Path $msixFile.FullName -Destination $sourceDir -Force -Verbose
+        }
+
         $file = Get-ChildItem $sourceDir | Select-Object -First 1
         $prefix = ($file.BaseName -split "-win")[0]
         $pkgName = "$prefix.msixbundle"
