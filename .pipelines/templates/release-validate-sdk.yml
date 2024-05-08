@@ -25,6 +25,8 @@ jobs:
     - checkout: self
       clean: true
 
+    - template: release-SetReleaseTagandContainerName.yml@self
+
     - download: PSPackagesOfficial
       artifact: drop_nupkg_build_nupkg
       displayName: Download nupkgs
@@ -87,6 +89,8 @@ jobs:
         "@
 
         $releaseVersion = '$(Version)'
+
+        Write-Verbose -Message "Release Version: $releaseVersion" -Verbose
 
         Set-Location -Path $repoRoot/test/hosting
 
