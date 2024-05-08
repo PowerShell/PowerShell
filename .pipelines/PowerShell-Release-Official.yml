@@ -80,13 +80,13 @@ resources:
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@templates # https://aka.ms/obpipelines/templates
   parameters:
-    disableLegacyManifest: true
-    # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
-    armory:
-      enabled: false
     cloudvault: # https://aka.ms/obpipelines/cloudvault
       enabled: false
     globalSdl: # https://aka.ms/obpipelines/sdl
+      disableLegacyManifest: true
+      # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
+      armory:
+        enabled: false
       asyncSdl:
         enabled: true
         tsaOptionsFile: .config/tsaoptions.json
