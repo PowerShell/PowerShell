@@ -14,9 +14,9 @@ function Install-Wix
         Remove-Item $targetRoot -Recurse -Force
     }
     $binPath = Join-Path -Path $targetRoot -ChildPath 'bin'
-    Register-PSRepository -Name NuGetGallery -SourceLocation https://api.nuget.org/v3/index.json
+    Register-PSRepository -Name NuGetGallery -SourceLocation "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json"
     # keep version in sync with Microsoft.PowerShell.Packaging.csproj
-    Save-Module -name wix -RequiredVersion 3.14.1 -path "$binPath/"
+    Save-Module -name Microsoft.Signed.Wix -RequiredVersion 3.14.1-8722.20240403.1 -path "$binPath/"
     $docExpandPath = Join-Path -Path $binPath -ChildPath 'doc'
     $sdkExpandPath = Join-Path -Path $binPath -ChildPath 'sdk'
     $docTargetPath = Join-Path -Path $targetRoot -ChildPath 'doc'
