@@ -1,14 +1,17 @@
 parameters:
   jobName: ""
   displayName: ""
-  jobtype: ""
+  jobtype: "windows"
 
 jobs:
 - job: ${{ parameters.jobName }}
   displayName: ${{ parameters.displayName }}
   pool:
     ${{ if eq(parameters.jobtype, 'macos') }}:
-      vmImage: macOS-latest
+      type: linux
+      isCustom: true
+      name: Azure Pipelines
+      vmImage: 'macOS-latest'
     ${{ else }}:
       type: ${{ parameters.jobtype }}
 
