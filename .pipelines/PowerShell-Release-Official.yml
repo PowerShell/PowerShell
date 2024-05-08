@@ -145,3 +145,5 @@ extends:
           jobName: "LinuxGlobalTools"
           displayName: "Linux Global Tools Validation"
           jobtype: linux
+          globalToolExeName: 'pwsh'
+          globalToolPackageName: 'PowerShell.Linux.x64'

@@ -32,6 +32,14 @@ jobs:
       displayName: Download nupkgs
 
     - pwsh: |
+        Get-ChildItem -Path env:
+      displayName: Capture environment
+
+    - pwsh: |
+        Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg" -Recurse
+      displayName: 'Capture Downloaded Artifacts'
+
+    - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
         $dotnetMetadataPath = "$repoRoot/DotnetRuntimeMetadata.json"
         $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
@@ -80,7 +88,11 @@ jobs:
 
         $toolPath = New-Item -ItemType Directory "$(System.DefaultWorkingDirectory)/toolPath" | Select-Object -ExpandProperty FullName
 
-        dotnet tool install --add-source "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg" --tool-path $toolPath --version '$(PowerShellVersion)' '${{ parameters.globalToolPackageName }}'
+        dotnet tool list -g
+
+        $packageName = '${{ parameters.globalToolPackageName }}'
+
+        dotnet tool install --add-source "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg" --tool-path $toolPath --version '$(PowerShellVersion)' $packageName
 
         Get-ChildItem -Path $toolPath
 
