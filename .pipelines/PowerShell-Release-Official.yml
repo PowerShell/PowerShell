@@ -106,7 +106,7 @@ extends:
     #   jobs:
     #   - template: /.pipelines/templates/release-create-msix.yml@self
 
-    - stage: validate-sdk
+    - stage: validateSdk
       displayName: 'Validate SDK'
       jobs:
       - template: /.pipelines/templates/release-validate-sdk.yml@self
