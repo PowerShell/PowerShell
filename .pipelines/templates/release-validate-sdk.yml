@@ -12,6 +12,9 @@ jobs:
   variables:
   - group: AzDevOpsArtifacts
   - group: DotNetPrivateBuildAccess
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+
   steps:
     - checkout: self
       clean: true
