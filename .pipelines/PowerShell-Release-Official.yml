@@ -101,10 +101,10 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - stage: msixbundle
-      displayName: 'Create MSIX Bundle'
-      jobs:
-      - template: /.pipelines/templates/release-create-msix.yml@self
+    # - stage: msixbundle
+    #   displayName: 'Create MSIX Bundle'
+    #   jobs:
+    #   - template: /.pipelines/templates/release-create-msix.yml@self
 
     # - stage: validate-sdk
     #   displayName: 'Validate SDK'
