@@ -30,6 +30,14 @@ jobs:
       displayName: Download nupkgs
 
     - pwsh: |
+        Get-ChildItem -Path env:
+      displayName: Capture environment
+
+    - pwsh: |
+        Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg" -Recurse
+      displayName: 'Capture Downloaded Artifacts'
+
+    - pwsh: |
         $dotnetMetadataPath = "$(Build.SourcesDirectory)/PowerShell/DotnetRuntimeMetadata.json"
         $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
 
