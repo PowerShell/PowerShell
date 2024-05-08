@@ -106,14 +106,14 @@ extends:
     #   jobs:
     #   - template: /.pipelines/templates/release-create-msix.yml@self
 
-    # - stage: validate-sdk
-    #   displayName: 'Validate SDK'
-    #   jobs:
-    #   - template: /.pipelines/templates/release-validate-sdk.yml@self
-    #     parameters:
-    #       jobName: "windowsSDK"
-    #       displayName: "Windows SDK Validation"
-    #       jobtype: windows
+    - stage: validate-sdk
+      displayName: 'Validate SDK'
+      jobs:
+      - template: /.pipelines/templates/release-validate-sdk.yml@self
+        parameters:
+          jobName: "windowsSDK"
+          displayName: "Windows SDK Validation"
+          jobtype: windows
 
     #   # - template: /.pipelines/templates/release-validate-sdk.yml@self
     #   #   parameters:
@@ -121,8 +121,8 @@ extends:
     #   #     displayName: "MacOS SDK Validation"
     #   #     jobtype: mac
 
-    #   - template: /.pipelines/templates/release-validate-sdk.yml@self
-    #     parameters:
-    #       jobName: "LinuxSDK"
-    #       displayName: "Linux SDK Validation"
-    #       jobtype: linux
+      - template: /.pipelines/templates/release-validate-sdk.yml@self
+        parameters:
+          jobName: "LinuxSDK"
+          displayName: "Linux SDK Validation"
+          jobtype: linux
