@@ -21,7 +21,7 @@ jobs:
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_credscan_suppressionsFile
-      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
 
   steps:
     - checkout: self
