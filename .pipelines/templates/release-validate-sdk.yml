@@ -38,20 +38,22 @@ jobs:
       displayName: 'Capture Downloaded Artifacts'
 
     - pwsh: |
-        $dotnetMetadataPath = "$(Build.SourcesDirectory)/PowerShell/DotnetRuntimeMetadata.json"
+        $repoRoot = $isMacOS ? "$(Build.SourcesDirectory)" : "$(Build.SourcesDirectory)/PowerShell"
+
+        $dotnetMetadataPath = "$repoRoot/DotnetRuntimeMetadata.json"
         $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
 
         # Channel is like: $Channel = "5.0.1xx-preview2"
         $Channel = $dotnetMetadataJson.sdk.channel
 
-        $sdkVersion = (Get-Content "$(Build.SourcesDirectory)/PowerShell/global.json" -Raw | ConvertFrom-Json).sdk.version
-        Import-Module "$(Build.SourcesDirectory)/PowerShell/build.psm1" -Force
+        $sdkVersion = (Get-Content "$repoRoot/global.json" -Raw | ConvertFrom-Json).sdk.version
+        Import-Module "$repoRoot/build.psm1" -Force
 
         Find-Dotnet
 
         if(-not (Get-PackageSource -Name 'dotnet' -ErrorAction SilentlyContinue))
         {
-            $nugetFeed = ([xml](Get-Content $(Build.SourcesDirectory)/PowerShell/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet' } | Select-Object -ExpandProperty Value
+            $nugetFeed = ([xml](Get-Content $repoRoot/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet' } | Select-Object -ExpandProperty Value
 
             if ($nugetFeed) {
               Register-PackageSource -Name 'dotnet' -Location $nugetFeed -ProviderName NuGet
@@ -71,8 +73,10 @@ jobs:
         __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
+        $repoRoot = $isMacOS ? "$(Build.SourcesDirectory)" : "$(Build.SourcesDirectory)/PowerShell"
+
         $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-        Import-Module "$(Build.SourcesDirectory)/PowerShell/build.psm1" -Force
+        Import-Module "$repoRoot/build.psm1" -Force
         Start-PSBootstrap
 
         $localLocation = "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg"
@@ -84,7 +88,7 @@ jobs:
 
         $releaseVersion = '$(Version)'
 
-        Set-Location -Path $(Build.SourcesDirectory)/PowerShell/test/hosting
+        Set-Location -Path $repoRoot/test/hosting
 
         Get-ChildItem
 
