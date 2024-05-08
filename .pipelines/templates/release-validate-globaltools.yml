@@ -73,14 +73,6 @@ jobs:
         __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
-        $branch = $ENV:BUILD_SOURCEBRANCH
-        $version = $branch -replace '^.*(release[-/])v'
-        $vstsCommandString = "vso[task.setvariable variable=PowerShellVersion]$version"
-        Write-Verbose -Message "Version is $version" -Verbose
-        Write-Host -Object "##$vstsCommandString"
-      displayName: Set PowerShell Version
-
-    - pwsh: |
         $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
         $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
         Import-Module "$repoRoot/build.psm1" -Force
@@ -88,11 +80,13 @@ jobs:
 
         $toolPath = New-Item -ItemType Directory "$(System.DefaultWorkingDirectory)/toolPath" | Select-Object -ExpandProperty FullName
 
+        Write-Verbose -Verbose "dotnet tool list -g"
         dotnet tool list -g
 
         $packageName = '${{ parameters.globalToolPackageName }}'
+        Write-Verbose -Verbose "Installing $packageName"
 
-        dotnet tool install --add-source "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg" --tool-path $toolPath --version '$(PowerShellVersion)' $packageName
+        dotnet tool install --add-source "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg" --tool-path $toolPath --version '$(Version)' $packageName
 
         Get-ChildItem -Path $toolPath
 
@@ -140,7 +134,7 @@ jobs:
 
         $versionFound = & $toolPath -c '$PSVersionTable.PSVersion.ToString()'
 
-        if ( '$(PowerShellVersion)' -ne $versionFound)
+        if ( '$(Version)' -ne $versionFound)
         {
             throw "Expected version of global tool not found. Installed version is $versionFound"
         }
