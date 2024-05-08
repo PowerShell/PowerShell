@@ -13,44 +13,20 @@ jobs:
   steps:
     - template: release-SetReleaseTagandContainerName.yml@self
 
-    - task: DownloadPipelineArtifact@2
-      retryCountOnTaskFailure: 2
-      inputs:
-        source: specific
-        project: PowerShellCore
-        pipeline: '486465'
-        preferTriggeringPipeline: true
-        runVersion: latestFromBranch
-        runBranch: '$(Build.SourceBranch)'
-        artifact: drop_windows_package_package_win_arm64
-        patterns: '**/*.msix'
-        path: '$(Pipeline.Workspace)\releasePipeline\msix'
+    - download: PSPackagesOfficial
+      artifact: drop_windows_package_package_win_arm64
+      displayName: Download nupkgs
+      patterns: '**/*.msix'
 
-    - task: DownloadPipelineArtifact@2
-      retryCountOnTaskFailure: 2
-      inputs:
-        source: specific
-        project: PowerShellCore
-        pipeline: '486465'
-        preferTriggeringPipeline: true
-        runVersion: latestFromBranch
-        runBranch: '$(Build.SourceBranch)'
-        artifact: drop_windows_package_package_win_x64
-        patterns: '**/*.msix'
-        path: '$(Pipeline.Workspace)\releasePipeline\msix'
+    - download: PSPackagesOfficial
+      artifact: drop_windows_package_package_win_x64
+      displayName: Download nupkgs
+      patterns: '**/*.msix'
 
-    - task: DownloadPipelineArtifact@2
-      retryCountOnTaskFailure: 2
-      inputs:
-        source: specific
-        project: PowerShellCore
-        pipeline: '486465'
-        preferTriggeringPipeline: true
-        runVersion: latestFromBranch
-        runBranch: '$(Build.SourceBranch)'
-        artifact: drop_windows_package_package_win_x86
-        patterns: '**/*.msix'
-        path: '$(Pipeline.Workspace)\releasePipeline\msix'
+    - download: PSPackagesOfficial
+      artifact: drop_windows_package_package_win_x86
+      displayName: Download nupkgs
+      patterns: '**/*.msix'
 
     - pwsh: |
         $cmd = Get-Command makeappx.exe -ErrorAction Ignore
