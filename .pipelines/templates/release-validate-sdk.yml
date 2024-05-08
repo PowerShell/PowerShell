@@ -24,20 +24,20 @@ jobs:
       displayName: Download nupkgs
 
     - pwsh: |
-        $dotnetMetadataPath = "$(Build.SourcesDirectory)/DotnetRuntimeMetadata.json"
+        $dotnetMetadataPath = "$(Build.SourcesDirectory)/PowerShell/DotnetRuntimeMetadata.json"
         $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
 
         # Channel is like: $Channel = "5.0.1xx-preview2"
         $Channel = $dotnetMetadataJson.sdk.channel
 
-        $sdkVersion = (Get-Content "$(Build.SourcesDirectory)/global.json" -Raw | ConvertFrom-Json).sdk.version
-        Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
+        $sdkVersion = (Get-Content "$(Build.SourcesDirectory)/PowerShell/global.json" -Raw | ConvertFrom-Json).sdk.version
+        Import-Module "$(Build.SourcesDirectory)/PowerShell/build.psm1" -Force
 
         Find-Dotnet
 
         if(-not (Get-PackageSource -Name 'dotnet' -ErrorAction SilentlyContinue))
         {
-            $nugetFeed = ([xml](Get-Content $(Build.SourcesDirectory)/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet' } | Select-Object -ExpandProperty Value
+            $nugetFeed = ([xml](Get-Content $(Build.SourcesDirectory)/PowerShell/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet' } | Select-Object -ExpandProperty Value
 
             if ($nugetFeed) {
               Register-PackageSource -Name 'dotnet' -Location $nugetFeed -ProviderName NuGet
@@ -58,7 +58,7 @@ jobs:
 
     - pwsh: |
         $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-        Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
+        Import-Module "$(Build.SourcesDirectory)/PowerShell/build.psm1" -Force
         Start-PSBootstrap
 
         $localLocation = "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg"
@@ -70,7 +70,7 @@ jobs:
 
         $releaseVersion = '$(Version)'
 
-        Set-Location -Path $(Build.SourcesDirectory)/test/hosting
+        Set-Location -Path $(Build.SourcesDirectory)/PowerShell/test/hosting
 
         Get-ChildItem
 
