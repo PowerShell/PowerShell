@@ -130,3 +130,18 @@ extends:
           jobName: "LinuxSDK"
           displayName: "Linux SDK Validation"
           jobtype: linux
+
+    - stage: gbltool
+      displayName: 'Validate Global tools'
+      jobs:
+      - template: /.pipelines/templates/release-validate-globaltools.yml@self
+        parameters:
+          jobName: "WindowsGlobalTools"
+          displayName: "Windows Global Tools Validation"
+          jobtype: windows
+
+      - template: /.pipelines/templates/release-validate-globaltools.yml@self
+        parameters:
+          jobName: "LinuxGlobalTools"
+          displayName: "Linux Global Tools Validation"
+          jobtype: linux
