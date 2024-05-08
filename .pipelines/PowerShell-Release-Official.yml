@@ -11,10 +11,22 @@
 trigger: none # https://aka.ms/obpipelines/triggers
 
 parameters: # parameters are shown up in ADO UI in a build queue time
-- name: 'debug'
-  displayName: 'Enable debug output'
-  type: boolean
-  default: false
+  - name: 'debug'
+    displayName: 'Enable debug output'
+    type: boolean
+    default: false
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    displayName: Release Tag
+    type: string
+    default: 'fromBranch'
+  - name: SKIP_SIGNING
+    displayName: Skip Signing
+    type: string
+    default: 'NO'
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -37,10 +49,14 @@ variables:
     value: none
   - name: skipNugetSecurityAnalysis
     value: true
-  - name: WindowsContainerImage
-    value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project https://aka.ms/obpipelines/containers
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: WindowsContainerImage
+    value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project https://aka.ms/obpipelines/containers
+  - name: LinuxContainerImage
+    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+  - name: ReleaseTagVar
+    value: ${{ parameters.ReleaseTagVar }}
 
 resources:
   repositories:
