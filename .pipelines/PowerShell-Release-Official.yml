@@ -85,16 +85,22 @@ extends:
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
       jobs:
-      - template: /.pipelines/templates/SetVersionVariables.yml@self
-        parameters:
-          ReleaseTagVar: $(ReleaseTagVar)
-          CreateJson: yes
-          UseJson: no
-
-      - template: /.pipelines/templates/cloneToOfficialPath.yml@self
-
-      - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
-        parameters:
-          repoRoot: $(PowerShellRoot)
-
       - template: /.pipelines/templates/release-create-msix.yml@self
+
+    - stage: validate-sdk
+      displayName: 'Validate SDK'
+      jobs:
+      - template: /.pipelines/templates/release-validate-sdk.yml@self
+        parameters:
+          jobName: "windowsSDK"
+          displayName: "Windows SDK Validation"
+
+      - template: /.pipelines/templates/release-validate-sdk.yml@self
+        parameters:
+          jobName: "MacOSSDK"
+          displayName: "MacOS SDK Validation"
+
+      - template: /.pipelines/templates/release-validate-sdk.yml@self
+        parameters:
+          jobName: "LinuxSDK"
+          displayName: "Linux SDK Validation"
