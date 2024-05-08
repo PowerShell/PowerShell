@@ -1,11 +1,14 @@
 parameters:
   jobName: ""
   displayName: ""
-  imageName: ""
+  jobtype: ""
 
 jobs:
 - job: ${{ parameters.jobName }}
   displayName: ${{ parameters.displayName }}
+  pool:
+    type: ${{ parameters.jobtype }}
+
   variables:
   - group: AzDevOpsArtifacts
   - group: DotNetPrivateBuildAccess
