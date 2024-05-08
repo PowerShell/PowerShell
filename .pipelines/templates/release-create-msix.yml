@@ -1,6 +1,8 @@
 jobs:
 - job: CreateMSIXBundle
   displayName: Create .msixbundle file
+  pool:
+    type: windows
 
   variables:
     - group: msixTools
