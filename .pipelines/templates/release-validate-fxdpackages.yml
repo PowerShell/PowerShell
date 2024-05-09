@@ -77,7 +77,7 @@ jobs:
         $artifactName = '$(artifactName)'
         $rootPath = "$(Pipeline.Workspace)/PSPackagesOfficial/$artifactName"
 
-        $destPath = New-Item '$rootPath/fxd' -ItemType Directory
+        $destPath = New-Item "$rootPath/fxd" -ItemType Directory
         $packageNameFilter = '${{ parameters.packageNamePattern }}'
 
         if ($packageNameFilter.EndsWith('tar.gz')) {
