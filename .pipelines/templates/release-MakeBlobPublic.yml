@@ -1,5 +1,5 @@
 jobs:
-- template: /.pipelines/templates/approvalJob.yml
+- template: /.pipelines/templates/approvalJob.yml@slef
   parameters:
     displayName: Approve Blob Public
     jobName: ApproveBlobPublic
