@@ -10,7 +10,6 @@ jobs:
 - job: ${{ parameters.jobName }}
   displayName: ${{ parameters.displayName }}
   pool:
-    # test
     type: ${{ parameters.jobtype }}
   variables:
     - group: DotNetPrivateBuildAccess
