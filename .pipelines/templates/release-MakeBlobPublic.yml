@@ -85,7 +85,7 @@ jobs:
           -Container "$containerName-gc" `
           -PublicAccess $publicAccess
 
-- template: templates/release/approvalJob.yml
+- template: /.pipelines/templates/approvalJob.yml@self
   parameters:
     displayName: Copy Global tool packages to PSInfra storage
     jobName: CopyBlobApproval
