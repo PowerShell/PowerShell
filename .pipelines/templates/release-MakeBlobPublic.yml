@@ -117,54 +117,54 @@ jobs:
         CreateJson: yes
         UseJson: no
 
-  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+    - template: /.pipelines/templates/cloneToOfficialPath.yml@self
 
-  - pwsh: |
-      Get-ChildItem Env:
-    displayName: 'Capture Environment Variables'
+    - pwsh: |
+        Get-ChildItem Env:
+      displayName: 'Capture Environment Variables'
 
-  - pwsh: |
-      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
-      if ($azureRmModule) {
-        Write-Host 'AzureRM module exists. Removing it'
-        Uninstall-AzureRm
-        Write-Host 'AzureRM module removed'
-      }
-
-      Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
-    displayName: Remove AzRM modules
-
-  - task: AzurePowerShell@5
-    displayName: Copy blobs to PSInfra storage
-    inputs:
-      azureSubscription: az-blob-cicd-infra
-      scriptType: inlineScript
-      azurePowerShellVersion: LatestVersion
-      pwsh: true
-      inline: |
-        $sourceStorageAccountName = '$(StorageAccount)'
-        $sourceContainerName = '$(AzureVersion)'
-
-        $destinationStorageAccountName = '$(PSInfraStorageAccount)'
-        $destinationContainerName = "tool/$(Version)"
-
-        $sourceContext = New-AzStorageContext -StorageAccountName $sourceStorageAccountName
-        $destinationContext = New-AzStorageContext -StorageAccountName $destinationStorageAccountName
-
-        $blobs = Get-AzStorageBlob -Context $sourceContext -Container $sourceContainerName
-
-        foreach ($blob in $blobs) {
-          $sourceBlobName = $blob.Name
-          $destinationBlobName = $sourceBlobName
-
-          $destinationBlob = Start-AzStorageBlobCopy -Context $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName
-
-          # Wait for the copy operation to complete
-          $destinationBlob | Wait-AzStorageBlobCopy
-
-          if ($destinationBlob.CopyStatus -eq "Success") {
-            Write-Host "Blob copy completed successfully for $sourceBlobName."
-          } else {
-            Write-Host "Blob copy failed for $sourceBlobName."
-          }
+    - pwsh: |
+        $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
+        if ($azureRmModule) {
+          Write-Host 'AzureRM module exists. Removing it'
+          Uninstall-AzureRm
+          Write-Host 'AzureRM module removed'
         }
+
+        Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
+      displayName: Remove AzRM modules
+
+    - task: AzurePowerShell@5
+      displayName: Copy blobs to PSInfra storage
+      inputs:
+        azureSubscription: az-blob-cicd-infra
+        scriptType: inlineScript
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        inline: |
+          $sourceStorageAccountName = '$(StorageAccount)'
+          $sourceContainerName = '$(AzureVersion)'
+
+          $destinationStorageAccountName = '$(PSInfraStorageAccount)'
+          $destinationContainerName = "tool/$(Version)"
+
+          $sourceContext = New-AzStorageContext -StorageAccountName $sourceStorageAccountName
+          $destinationContext = New-AzStorageContext -StorageAccountName $destinationStorageAccountName
+
+          $blobs = Get-AzStorageBlob -Context $sourceContext -Container $sourceContainerName
+
+          foreach ($blob in $blobs) {
+            $sourceBlobName = $blob.Name
+            $destinationBlobName = $sourceBlobName
+
+            $destinationBlob = Start-AzStorageBlobCopy -Context $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName
+
+            # Wait for the copy operation to complete
+            $destinationBlob | Wait-AzStorageBlobCopy
+
+            if ($destinationBlob.CopyStatus -eq "Success") {
+              Write-Host "Blob copy completed successfully for $sourceBlobName."
+            } else {
+              Write-Host "Blob copy failed for $sourceBlobName."
+            }
+          }
