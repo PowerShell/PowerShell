@@ -193,14 +193,14 @@ extends:
       dependsOn: []
       displayName: Manual Validation
       jobs:
-      - template: /.pipelines/templates/approvalJob.yml
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Validate Windows Packages
           jobName: ValidateWinPkg
           instructions: |
             Validate zip package on windows
 
-      - template: /.pipelines/templates/approvalJob.yml
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Validate OSX Packages
           jobName: ValidateOsxPkg
@@ -211,21 +211,21 @@ extends:
       dependsOn: []
       displayName: 'Release Automation'
       jobs:
-      - template: /.pipelines/templates/approvalJob.yml
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Start Release Automation
           jobName: StartRA
           instructions: |
             Kick off Release automation build at: https://dev.azure.com/powershell-rel/Release-Automation/_build?definitionId=10&_a=summary
 
-      - template: /.pipelines/templates/approvalJob.yml
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Triage results
           jobName: TriageRA
           instructions: |
             Triage ReleaseAutomation results
 
-      - template: /.pipelines/templates/approvalJob.yml
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Signoff Tests
           jobName: SignoffTests
@@ -244,7 +244,7 @@ extends:
         - msixbundle
 
       jobs:
-      - template: /.pipelines/templates/approvalJob.yml
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Make sure the changelog is updated
           jobName: MergeChangeLog
