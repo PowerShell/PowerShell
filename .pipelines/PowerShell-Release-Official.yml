@@ -220,10 +220,45 @@ extends:
 
       - template: /.pipelines/templates/approvalJob.yml
         parameters:
-          displayName: Validate OSX Packages
-          jobName: ValidateOsxPkg
+          displayName: Triage results
+          jobName: TriageRA
           instructions: |
-            Validate tar.gz package on osx-arm64
+            Triage ReleaseAutomation results
+
+      - template: /.pipelines/templates/approvalJob.yml
+        parameters:
+          displayName: Signoff Tests
+          jobName: SignoffTests
+          instructions: |
+            Signoff ReleaseAutomation results
+
+    - stage: UpdateChangeLog
+      displayName: Update the changelog
+      dependsOn:
+        - ManualValidation
+        - ReleaseAutomation
+        - validatePackages
+        - fxdpackages
+        - gbltool
+        - validateSdk
+        - msixbundle
+
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml
+        parameters:
+          displayName: Make sure the changelog is updated
+          jobName: MergeChangeLog
+          instructions: |
+            Update and merge the changelog for the release.
+            This step is required for creating GitHub draft release.
+
+    - stage: BlobPublic
+      displayName: Make Blob Public
+      dependsOn: UpdateChangeLog
+      jobs:
+      - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
+
+
 
 
 
