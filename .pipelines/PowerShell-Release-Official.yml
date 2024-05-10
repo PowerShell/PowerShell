@@ -207,4 +207,23 @@ extends:
           instructions: |
             Validate tar.gz package on osx-arm64
 
+    - stage: ReleaseAutomation
+      dependsOn: []
+      displayName: 'Release Automation'
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml
+        parameters:
+          displayName: Start Release Automation
+          jobName: StartRA
+          instructions: |
+            Kick off Release automation build at: https://dev.azure.com/powershell-rel/Release-Automation/_build?definitionId=10&_a=summary
+
+      - template: /.pipelines/templates/approvalJob.yml
+        parameters:
+          displayName: Validate OSX Packages
+          jobName: ValidateOsxPkg
+          instructions: |
+            Validate tar.gz package on osx-arm64
+
+
 
