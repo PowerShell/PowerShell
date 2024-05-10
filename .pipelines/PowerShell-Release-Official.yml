@@ -189,3 +189,22 @@ extends:
       jobs:
       - template: /.pipelines/templates/release-validate-packagenames.yml@self
 
+    - stage: ManualValidation
+      dependsOn: []
+      displayName: Manual Validation
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml
+        parameters:
+          displayName: Validate Windows Packages
+          jobName: ValidateWinPkg
+          instructions: |
+            Validate zip package on windows
+
+      - template: /.pipelines/templates/approvalJob.yml
+        parameters:
+          displayName: Validate OSX Packages
+          jobName: ValidateOsxPkg
+          instructions: |
+            Validate tar.gz package on osx-arm64
+
+
