@@ -87,7 +87,7 @@ jobs:
 
 - template: /.pipelines/templates/approvalJob.yml@self
   parameters:
-    displayName: Copy Global tool packages to PSInfra storage
+    displayName: Approve Copy Global tool packages to PSInfra storage
     jobName: CopyBlobApproval
     dependsOnJob: blobPublic
     instructions: |
