@@ -68,7 +68,7 @@ jobs:
         foreach ($blob in $blobList) {
           $blobName = $blob.Name
           $destinationFile = Join-Path -Path $destinationPath -ChildPath $blobName
-          Get-AzStorageBlobContent -Container $container -Blob $blobName -Destination $destinationFile -Context $ctx -Force
+          Get-AzStorageBlobContent -Container $containerName -Blob $blobName -Destination $destinationFile -Context $storageContext -Force
           Write-Output "Downloaded $blobName to $destinationFile"
         }
 
