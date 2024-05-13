@@ -65,7 +65,7 @@ jobs:
         $storageContext = New-AzStorageContext -StorageAccountName $storageAccount
 
         # Copy files from Azure Storage to local path
-        Get-AzStorageBlob -Container $containerName -Context $storageContext -Destination $localPath -Force -Verbose
+        Get-AzStorageBlobContent -Container $containerName -Context $storageContext -Destination $localPath -Force -Verbose
 
   - pwsh: |
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty FullName
