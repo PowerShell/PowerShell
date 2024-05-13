@@ -261,3 +261,7 @@ extends:
       - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
 
     - stage: PublishGitHubRelease
+      displayName: Publish GitHub Release
+      dependsOn: BlobPublic
+      jobs:
+      - template: /.pipelines/templates/release-githubtasks.yml@self
