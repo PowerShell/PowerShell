@@ -697,7 +697,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets whether we will append to the variable if it exists.
         /// </summary>
         [Parameter]
-        [Experimental("PSRedirectToVariable", ExperimentAction.Show)]
+        [Experimental(ExperimentalFeature.PSRedirectToVariable, ExperimentAction.Show)]
         public SwitchParameter Append { get; set; }
 
         private bool _nameIsFormalParameter;
