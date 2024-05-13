@@ -93,8 +93,6 @@ jobs:
       Write-Verbose -Verbose -Message $fileContent
     displayName: Add sha256 hashes
 
-  - checkout: ComplianceRepo
-
   - pwsh: |
       $releaseVersion = '$(ReleaseTag)' -replace '^v',''
       $vstsCommandString = "vso[task.setvariable variable=ReleaseVersion]$releaseVersion"
