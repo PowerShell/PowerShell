@@ -1,7 +1,6 @@
 jobs:
 - job: GithubReleaseDraft
   displayName: Create GitHub Release Draft
-  dependsOn: ApproveBlobPublic
   condition: succeeded()
   pool:
     type: windows
