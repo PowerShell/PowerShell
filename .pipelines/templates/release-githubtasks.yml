@@ -56,7 +56,7 @@ jobs:
       scriptType: inlineScript
       azurePowerShellVersion: LatestVersion
       pwsh: true
-      pwsh: |
+      inline: |
         $storageAccount = "$(StorageAccount)"
         $containerName = "$(AzureVersion)"
         $localPath = "$(System.ArtifactsDirectory)"
