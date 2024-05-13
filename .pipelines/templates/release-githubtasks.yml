@@ -77,7 +77,7 @@ jobs:
     displayName: Capture downloaded artifacts
 
   - pwsh: |
-      git clone https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
+      git clone https://$(MSCodeHubPAT)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
     displayName: Clone Internal-Tools repository
 
   - pwsh: |
