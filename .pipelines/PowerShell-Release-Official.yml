@@ -257,8 +257,3 @@ extends:
       dependsOn: UpdateChangeLog
       jobs:
       - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
-
-
-
-
-
