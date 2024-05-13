@@ -1092,7 +1092,7 @@ namespace System.Management.Automation
         {
             // Check first to see if File is a variable path. If so, we'll not create the FileBytePipe
             bool redirectToVariable = false;
-            if (ExperimentalFeature.IsEnabled("PSRedirectToVariable"))
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSRedirectToVariable))
             {
                 ProviderInfo p;
                 context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(File, out p, out _);
