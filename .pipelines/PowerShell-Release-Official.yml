@@ -222,12 +222,14 @@ extends:
         parameters:
           displayName: Triage results
           jobName: TriageRA
+          dependsOnJob: StartRA
           instructions: |
             Triage ReleaseAutomation results
 
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Signoff Tests
+          dependsOnJob: TriageRA
           jobName: SignoffTests
           instructions: |
             Signoff ReleaseAutomation results
