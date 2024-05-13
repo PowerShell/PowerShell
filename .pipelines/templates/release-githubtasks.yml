@@ -59,13 +59,18 @@ jobs:
       inline: |
         $storageAccount = "$(StorageAccount)"
         $containerName = "$(AzureVersion)"
-        $localPath = "$(System.ArtifactsDirectory)"
+        $destinatinPath = "$(System.ArtifactsDirectory)"
 
         # Get storage account context
         $storageContext = New-AzStorageContext -StorageAccountName $storageAccount
 
-        # Copy files from Azure Storage to local path
-        Get-AzStorageBlobContent -Container $containerName -Context $storageContext -Destination $localPath -Force -Verbose
+        $blobList = Get-AzStorageBlob -Container $containerName -Context $storageContext
+        foreach ($blob in $blobList) {
+          $blobName = $blob.Name
+          $destinationFile = Join-Path -Path $destinationPath -ChildPath $blobName
+          Get-AzStorageBlobContent -Container $container -Blob $blobName -Destination $destinationFile -Context $ctx -Force
+          Write-Output "Downloaded $blobName to $destinationFile"
+        }
 
   - pwsh: |
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty FullName
@@ -113,6 +118,13 @@ jobs:
       else {
         $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
       }
+
+      Write-Verbose -Verbose "Getting the latest commit to get the latest changelog"
+
+      Write-Verbose -Verbose "Before git pull"
+      git log --oneline -n 1
+      git pull origin '$(Build.SourceBranch)' --no-edit
+
 
       $filePath = "$env:BUILD_SOURCESDIRECTORY/PowerShell/CHANGELOG/$fileName"
       Write-Verbose -Verbose "Selected Log file: $filePath"
