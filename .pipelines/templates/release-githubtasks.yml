@@ -59,7 +59,7 @@ jobs:
       inline: |
         $storageAccount = "$(StorageAccount)"
         $containerName = "$(AzureVersion)"
-        $destinatinPath = "$(System.ArtifactsDirectory)"
+        $destinationPath = "$(System.ArtifactsDirectory)"
 
         # Get storage account context
         $storageContext = New-AzStorageContext -StorageAccountName $storageAccount
