@@ -12,6 +12,7 @@ jobs:
   - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
     value: 1
   - group: 'ReleasePipelineSecrets'
+  - group: 'Azure Blob variable group'
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_codeSignValidation_enabled
