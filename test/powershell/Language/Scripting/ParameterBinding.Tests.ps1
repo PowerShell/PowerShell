@@ -141,7 +141,14 @@ Describe "Tests for parameter binding" -Tags "CI" {
         $b -join ',' | Should -BeExactly '10,20,30,40,50,60,70,80,90,100'
     }
 
-    It 'Value from remaining arguments' {
+    It "Value from remaining arguments for '<scriptblock>' should be '<expected>'" -TestCases @(
+        @{ scriptblock = { get-foo a b c d }; Expected = 'b','c','d' }
+        @{ scriptblock = { get-foo a b -a c d }; Expected = 'a','b','d' }
+        @{ scriptblock = { get-foo a b -a c -q d }; Expected = 'a','b','-q','d' }
+        @{ scriptblock = { get-foo a -p1:bar -p1=bar }; Expected = '-p1:', 'bar', '-p1=bar' }
+        @{ scriptblock = { get-foo a -p1:bar -p1=$str..$str }; Expected = '-p1:', 'bar', '-p1=str str..str str' }
+        ) {
+            param ([scriptblock]$scriptblock, [object]$expected)
         function get-foo
         {
             param(
@@ -151,9 +158,9 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $foo
         }
 
-        ( get-foo a b c d ) -join ',' | Should -BeExactly 'b,c,d'
-        ( get-foo a b -a c d ) -join ',' | Should -BeExactly 'a,b,d'
-        ( get-foo a b -a c -q d ) -join ',' | Should -BeExactly 'a,b,-q,d'
+        $str = "str str"
+        & $scriptblock | Should -BeExactly $expected
+
     }
 
     It 'Multiple parameter sets with Value from remaining arguments' {

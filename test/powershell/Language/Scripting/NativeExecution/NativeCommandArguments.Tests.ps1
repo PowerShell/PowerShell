@@ -186,6 +186,72 @@ Describe "find.exe uses legacy behavior on Windows" -Tag 'CI' {
     }
 }
 
+Describe "parameters are properly bound when complex" -Tag 'CI' {
+
+	BeforeAll {
+        $ef = get-experimentalfeature -name PSNativeParameterParsing
+        $enabled = $ef -eq $null ? $false : $ef.Enabled
+		$a = "STR STR"
+		$o = [pscustomobject]@{ one = 1; two = @{ three = 4 }}
+		$tests = @(
+		@{ sb = {testexe -echoargs -foo 'bar'""}; Expected = @("-foo","bar") }
+		@{ sb = {testexe -echoargs -foo ""'bar'}; Expected = @("-foo","bar") }
+		@{ sb = {testexe -echoargs -foo ""bar}; Expected = @("-foo","bar") }
+		@{ sb = {testexe -echoargs -foo " "ab" de "f}; Expected = @("-foo"," ab de f") }
+		@{ sb = {testexe -echoargs -foo:bar" "baz}; Expected = @("-foo:bar baz") }
+		@{ sb = {testexe -echoargs -foo:""bar}; Expected = @("-foo:bar") }
+		@{ sb = {testexe -echoargs -foo:""bar""}; Expected = @("-foo:bar") }
+		@{ sb = {testexe -echoargs -foo:'"bar"'}; Expected = @("-foo:""bar""") }
+		@{ sb = {testexe -echoargs -foo:$null..6}; Expected = @("-foo:..6") }
+		@{ sb = {testexe -echoargs -foo:6..$null}; Expected = @("-foo:6..") }
+		@{ sb = {testexe -echoargs -foo:$a..$a}; Expected = @("-foo:STR STR..STR STR") }
+		@{ sb = {testexe -echoargs -foo:$a..6}; Expected = @("-foo:${a}..6") }
+		@{ sb = {testexe -echoargs -foo:${a}..6}; Expected = @("-foo:${a}..6") }
+		@{ sb = {testexe -echoargs -foo:6..$a}; Expected = @("-foo:6..STR STR") }
+		@{ sb = {testexe -echoargs -foo:6..${a}}; Expected = @("-foo:6..STR STR") }
+		@{ sb = {testexe -echoargs -foo=bar" "baz}; Expected = @("-foo=bar baz") }
+		@{ sb = {testexe -echoargs -foo=""bar}; Expected = @("-foo=bar") }
+		@{ sb = {testexe -echoargs -foo=""bar""}; Expected = @("-foo=bar") }
+		@{ sb = {testexe -echoargs -foo='"bar"'}; Expected = @("-foo=""bar""") }
+		@{ sb = {testexe -echoargs -foo=$null..6}; Expected = @("-foo=..6") }
+		@{ sb = {testexe -echoargs -foo=6..$null}; Expected = @("-foo=6..") }
+		@{ sb = {testexe -echoargs -foo=$a..6}; Expected = @("-foo=STR STR..6") }
+		@{ sb = {testexe -echoargs -foo=$a..$a}; Expected = @("-foo=STR STR..STR STR") }
+		@{ sb = {testexe -echoargs -foo=${a}..6}; Expected = @("-foo=STR STR..6") }
+		@{ sb = {testexe -echoargs -foo=6..$a}; Expected = @("-foo=6..STR STR") }
+		@{ sb = {testexe -echoargs ""bar""}; Expected = @("bar") }
+		@{ sb = {testexe -echoargs ""$null""}; Expected = @("") }
+		@{ sb = {testexe -echoargs ""$a""}; Expected = @("STR STR") }
+		@{ sb = {testexe -echoargs ""$a}; Expected = @("STR STR") }
+		@{ sb = {testexe -echoargs $a""}; Expected = @("STR STR") }
+		@{ sb = {testexe -echoargs 1,2,3}; Expected = @("1,2,3") }
+		@{ sb = {testexe -echoargs bar" "baz}; Expected = @("bar baz") }
+		@{ sb = {testexe -echoargs ""bar}; Expected = @("bar") }
+		@{ sb = {testexe -echoargs ""bar""}; Expected = @("bar") }
+		@{ sb = {testexe -echoargs '"bar"'}; Expected = @("""bar""") }
+		@{ sb = {testexe -echoargs $null..6}; Expected = @("..6") }
+		@{ sb = {testexe -echoargs 6..$null}; Expected = @("6..") }
+		@{ sb = {testexe -echoargs $a..6}; Expected = @("STR STR..6") }
+		@{ sb = {testexe -echoargs 6..$a}; Expected = @("6..STR STR") }
+		@{ sb = {testexe -echoargs 6..${a} }; Expected = @("6..STR STR") }
+		@{ sb = {testexe -echoargs $a..$a}; Expected = @("STR STR..STR STR") }
+		@{ sb = {testexe -echoargs ${a}..${a} }; Expected = @("STR STR..STR STR") }
+		@{ sb = [scriptblock]::Create('testexe -echoargs --% 6..$a'); Expected = @('6..$a') }
+ 		@{ sb = [scriptblock]::Create('testexe -echoargs $a..6..$a --% 6..$a'); Expected = @('STR STR..6..STR STR', '6..$a') }
+		)
+	}
+
+	It "'<sb>' should be bound properly" -testcase $tests -skip:(-not $enabled) {
+		param ($sb, $expected)
+		$eStrings = @()
+		for($i = 0; $i -lt $expected.Count; $i++) {
+			$eStrings += "Arg {0} is <{1}>" -f $i, $expected[$i]
+		}
+		$r = invoke-expression $sb.ToString()
+		$r | Should -Be $eStrings
+	}
+}
+
 foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
     $PSNativeCommandArgumentPassing = $argumentListValue
     Describe "Native Command Arguments (${PSNativeCommandArgumentPassing})" -tags "CI" {

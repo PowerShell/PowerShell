@@ -127,8 +127,10 @@ namespace System.Management.Automation
                     description: "Enable `-CommandWithArgs` parameter for pwsh"),
                 new ExperimentalFeature(
                     name: PSNativeWindowsTildeExpansion,
-                    description: "On windows, expand unquoted tilde (`~`) with the user's current home folder."
-                )
+                    description: "On windows, expand unquoted tilde (`~`) with the user's current home folder."),
+                new ExperimentalFeature(
+                    name: "PSNativeParameterParsing",
+                    description: "Adjust how parameters are parsed and passed to better support native applications."),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
