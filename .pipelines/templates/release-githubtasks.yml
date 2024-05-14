@@ -13,6 +13,7 @@ jobs:
     value: 1
   - group: 'mscodehub-code-read-akv'
   - group: 'Azure Blob variable group'
+  - group: 'GitHubTokens'
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_codeSignValidation_enabled
@@ -139,9 +140,8 @@ jobs:
 
       Write-Verbose -Verbose "Selected content: `n$clContent"
 
-      ##Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder $(PackagesRoot) -Token $(GitHubReleasePat)
+      Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder $(PackagesRoot) -Token $(GitHubReleasePat)
     displayName: Publish Release Draft
-    workingDirectory: '$(Build.SourcesDirectory)'
 
 - template: /.pipelines/templates/approvalJob.yml@self
   parameters:
