@@ -119,15 +119,6 @@ jobs:
         $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
       }
 
-      Write-Verbose -Verbose "Getting the latest commit to get the latest changelog"
-
-      Write-Verbose -Verbose "Before git pull"
-
-      $pwd
-      git remote --v
-      git log --oneline -n 1
-      git pull origin '$(Build.SourceBranch)' --no-edit
-
       $filePath = "$env:BUILD_SOURCESDIRECTORY/PowerShell/CHANGELOG/$fileName"
       Write-Verbose -Verbose "Selected Log file: $filePath"
 
