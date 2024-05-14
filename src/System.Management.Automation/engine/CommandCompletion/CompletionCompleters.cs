@@ -4925,12 +4925,15 @@ namespace System.Management.Automation
 
             for (int i = 0; i < path.Length; i++)
             {
+                // on Windows, we need to preserve the expanded home path as native commands don't understand it
+#if UNIX                
                 if (i == homeIndex)
                 {
                     _ = sb.Append('~');
                     i += homePath.Length - 1;
                     continue;
                 }
+#endif
 
                 EscapeCharIfNeeded(sb, path, i, stringType, literalPath, useSingleQuoteEscapeRules, ref quotesAreNeeded);
                 _ = sb.Append(path[i]);
@@ -5200,6 +5203,12 @@ namespace System.Management.Automation
 
             var lastAst = context.RelatedAsts?[^1];
             var variableAst = lastAst as VariableExpressionAst;
+            if (lastAst is PropertyMemberAst ||
+                (lastAst is not null && lastAst.Parent is ParameterAst parameter && parameter.DefaultValue != lastAst))
+            {
+                // User is adding a new parameter or a class member, variable tab completion is not useful.
+                return results;
+            }
             var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
             bool tokenAtCursorUsedBraces = context.TokenAtCursor is not null && context.TokenAtCursor.Text.StartsWith("${");
 
