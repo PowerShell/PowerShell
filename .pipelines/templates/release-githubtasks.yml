@@ -11,7 +11,7 @@ jobs:
     value: none
   - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
     value: 1
-  - group: 'ReleasePipelineSecrets'
+  - group: 'mscodehub-code-read-akv'
   - group: 'Azure Blob variable group'
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
@@ -77,7 +77,7 @@ jobs:
     displayName: Capture downloaded artifacts
 
   - pwsh: |
-      git clone https://$(MSCodeHubPAT)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
+      git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
     displayName: Clone Internal-Tools repository
 
   - pwsh: |
