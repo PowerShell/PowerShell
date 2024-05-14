@@ -265,3 +265,19 @@ extends:
       dependsOn: BlobPublic
       jobs:
       - template: /.pipelines/templates/release-githubtasks.yml@self
+
+    - stage: PublishNuGet
+      displayName: Publish NuGet
+      dependsOn: PublishGitHubRelease
+      jobs:
+      - template: /.pipelines/templates/release-publish-nuget.yml@self
+        parameters:
+          skipPublish: true
+
+    - stage: PublishPMC
+      displayName: Publish PMC
+      dependsOn: PublishGitHubRelease
+      jobs:
+      - template: /.pipelines/templates/release-publish-pmc.yml@self
+        parameters:
+          skipPublish: true
