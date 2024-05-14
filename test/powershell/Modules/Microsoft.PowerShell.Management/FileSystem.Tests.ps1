@@ -672,6 +672,31 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $link.LinkType | Should -BeExactly "SymbolicLink"
             $link.Target | Should -BeExactly $real.ToString()
         }
+
+        It "New-Item can create a directory symbolic link to a directory using a relative path" -Skip:(-Not $IsWindows) {
+            $target = Split-Path -Leaf $realDir
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $target > $null
+            Test-Path $symLinkToDir | Should -BeTrue
+            $real = Get-Item -Path $realDir
+            $link = Get-Item -Path $symLinkToDir
+            $link | Should -BeOfType System.IO.DirectoryInfo
+            $link.LinkType | Should -BeExactly "SymbolicLink"
+            $link.ResolvedTarget | Should -BeExactly $real.ToString()
+            $link.Target | Should -BeExactly $target
+        }
+
+        It "New-Item can create a directory symbolic link to a directory using a relative path with .\" -Skip:(-Not $IsWindows) {
+            $target = ".\$(Split-Path -Leaf $realDir)"
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $target > $null
+            Test-Path $symLinkToDir | Should -BeTrue
+            $real = Get-Item -Path $realDir
+            $link = Get-Item -Path $symLinkToDir
+            $link | Should -BeOfType System.IO.DirectoryInfo
+            $link.LinkType | Should -BeExactly "SymbolicLink"
+            $link.ResolvedTarget | Should -BeExactly $real.ToString()
+            $link.Target | Should -BeExactly $target
+        }
+
         It "New-Item can create a directory junction to a directory" -Skip:(-Not $IsWindows) {
             New-Item -ItemType Junction -Path $junctionToDir -Value $realDir > $null
             Test-Path $junctionToDir | Should -BeTrue
