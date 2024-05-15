@@ -305,7 +305,7 @@ extends:
       dependsOn: PublishGitHubRelease
       displayName: Update DotNet SDK Docker images
       jobs:
-      - template: templates/release/approvalJob.yml
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Update .NET SDK docker images
           jobName: DotnetDocker
@@ -320,7 +320,7 @@ extends:
       dependsOn: PublishGitHubRelease
       displayName: Add manifest entry to winget
       jobs:
-      - template: templates/release/approvalJob.yml
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Add manifest entry to winget
           jobName: UpdateWinGet
@@ -331,7 +331,7 @@ extends:
       dependsOn: PublishGitHubRelease
       displayName: Publish MSIX to store
       jobs:
-      - template: templates/release/approvalJob.yml
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Publish the MSIX Bundle package to store
           jobName: PublishMsix
@@ -342,7 +342,7 @@ extends:
       dependsOn: PublishGitHubRelease
       displayName: Release vPack
       jobs:
-      - template: templates/release/approvalJob.yml
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Start vPack Release pipeline
           jobName: PublishVPack
