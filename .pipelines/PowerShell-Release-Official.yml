@@ -281,3 +281,139 @@ extends:
       - template: /.pipelines/templates/release-publish-pmc.yml@self
         parameters:
           skipPublish: true
+
+    - stage: ReleaseDocker
+      dependsOn: PublishGitHubRelease
+      displayName: 'Docker Release'
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Start Docker Build
+          jobName: StartDockerBuild
+          instructions: |
+            Kick off Docker build
+
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Start Docker Release
+          dependsOnJob: StartDockerBuild
+          jobName: StartDockerRelease
+          instructions: |
+            Kickoff docker release
+
+    - stage: UpdateDotnetDocker
+      dependsOn: PublishGitHubRelease
+      displayName: Update DotNet SDK Docker images
+      jobs:
+      - template: templates/release/approvalJob.yml
+        parameters:
+          displayName: Update .NET SDK docker images
+          jobName: DotnetDocker
+          instructions: |
+            Create PR for updating dotnet-docker images to use latest PowerShell version.
+            1. Fork and clone https://github.com/dotnet/dotnet-docker.git
+            2. git checkout upstream/nightly -b updatePS
+            3. dotnet run --project .\eng\update-dependencies\ -- <dotnetversion> --product-version powershell=<powershellversion> --compute-shas
+            4. create PR targeting nightly branch
+
+    - stage: UpdateWinGet
+      dependsOn: PublishGitHubRelease
+      displayName: Add manifest entry to winget
+      jobs:
+      - template: templates/release/approvalJob.yml
+        parameters:
+          displayName: Add manifest entry to winget
+          jobName: UpdateWinGet
+          instructions: |
+            This is typically done by the community 1-2 days after the release.
+
+    - stage: PublishMsix
+      dependsOn: PublishGitHubRelease
+      displayName: Publish MSIX to store
+      jobs:
+      - template: templates/release/approvalJob.yml
+        parameters:
+          displayName: Publish the MSIX Bundle package to store
+          jobName: PublishMsix
+          instructions: |
+            Ask Steve to release MSIX bundle package to Store
+
+    - stage: PublishVPack
+      dependsOn: PublishGitHubRelease
+      displayName: Release vPack
+      jobs:
+      - template: templates/release/approvalJob.yml
+        parameters:
+          displayName: Start vPack Release pipeline
+          jobName: PublishVPack
+          instructions: |
+            Kick off vPack release pipeline
+
+    # Need to verify if the Az PS / CLI team still uses this. Skippinng for this release.
+    # - stage: ReleaseDeps
+    #   dependsOn: GitHubTasks
+    #   displayName: Update pwsh.deps.json links
+    #   jobs:
+    #   - template: templates/release-UpdateDepsJson.yml
+
+    - stage: UploadBuildInfoJson
+      dependsOn: PublishGitHubRelease
+      displayName: Upload BuildInfo.json
+      jobs:
+      - template: /.pipelines/templates/release-upload-buildinfo.yml@self
+
+    - stage: ReleaseSymbols
+      dependsOn: PublishGitHubRelease
+      displayName: Release Symbols
+      jobs:
+      - template: /.pipelines/templates/release-symbols.yml@self
+
+    - stage: ChangesToMaster
+      displayName: Ensure changes are in GH master
+      dependsOn: ['PublishNuGet', 'PublishPMC']
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Make sure changes are in master
+          jobName: MergeToMaster
+          instructions: |
+            Make sure that changes README.md and metadata.json are merged into master on GitHub.
+
+    - stage: ReleaseSnap
+      displayName: Release Snap
+      dependsOn: 'ChangesToMaster'
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Publish Snap
+          jobName: PublishSnapJob
+          instructions: |
+            Publish Snap
+
+    - stage: ReleaseToMU
+      displayName: Release to MU
+      dependsOn: ['PublishNuGet', 'PublishPMC', 'ChangesToMaster']
+      jobs:
+      - template: templates/release/approvalJob.yml
+        parameters:
+          displayName: Release to MU
+          instructions: |
+            Notify the PM team to start the process of releasing to MU.
+
+    - stage: ReleaseClose
+      displayName: Finish Release
+      dependsOn: ['ReleaseToMU', 'ReleaseSymbols', 'PublishSnap']
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Retain Build
+          jobName: RetainBuild
+          instructions: |
+            Retain the build
+
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Delete release branch
+          jobName: DeleteBranch
+          instructions: |
+            Delete release
