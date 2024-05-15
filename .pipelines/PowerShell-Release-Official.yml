@@ -402,7 +402,7 @@ extends:
 
     - stage: ReleaseClose
       displayName: Finish Release
-      dependsOn: ['ReleaseToMU', 'ReleaseSymbols', 'PublishSnap']
+      dependsOn: ['ReleaseToMU', 'ReleaseSymbols', 'ReleaseSnap']
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
