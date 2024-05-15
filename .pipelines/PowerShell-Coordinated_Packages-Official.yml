@@ -84,7 +84,7 @@ extends:
       cg:
         enabled: true
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
-      asyncSdl: # https://aka.ms/obpipelines/asyncsdl
+      asyncSdl:
         enabled: true
         forStages: [prep, macos, linux, windows, SignFiles, test_and_release_artifacts]
         credscan:

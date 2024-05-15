@@ -1,4 +1,4 @@
-trigger: none # https://aka.ms/obpipelines/triggers
+trigger: none
 
 parameters: # parameters are shown up in ADO UI in a build queue time
   - name: ForceAzureBlobDelete
@@ -27,7 +27,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
-    value: $[counter('', 0)] # needed for onebranch.pipeline.version task https://aka.ms/obpipelines/versioning
+    value: $[counter('', 0)] # needed for onebranch.pipeline.version task
   - name: system.debug
     value: ${{ parameters.debug }}
   - name: ENABLE_PRS_DELAYSIGN
@@ -49,7 +49,7 @@ variables:
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: WindowsContainerImage
-    value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project https://aka.ms/obpipelines/containers
+    value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project
   - name: LinuxContainerImage
     value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
   - group: mscodehub-feed-read-akv
@@ -75,9 +75,9 @@ resources:
       ref: refs/heads/main
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@templates # https://aka.ms/obpipelines/templates
+  template: v2/OneBranch.Official.CrossPlat.yml@templates
   parameters:
-    cloudvault: # https://aka.ms/obpipelines/cloudvault
+    cloudvault:
       enabled: false
     featureFlags:
       linuxEsrpSigning: true
@@ -97,7 +97,7 @@ extends:
       cg:
         enabled: true
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
-      asyncSdl: # https://aka.ms/obpipelines/asyncsdl
+      asyncSdl:
         enabled: true
         forStages: ['build']
         credscan:
