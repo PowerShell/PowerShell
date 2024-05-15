@@ -76,16 +76,25 @@ jobs:
       displayName: Create MsixBundle
       retryCountOnTaskFailure: 1
 
-    # Upload using
+    - task: AzurePowerShell@5
+      displayName: Upload msix to blob
+      inputs:
+        azureSubscription: az-blob-cicd-infra
+        scriptType: inlineScript
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        inline: |
+          $containerName = '$(AzureVersion)-private'
+          $storageAccount = '$(StorageAccount)'
 
-    # - task: AzureFileCopy@4
-    #   displayName: 'Upload MSIX Bundle package to Az Blob'
-    #   retryCountOnTaskFailure: 2
-    #   inputs:
-    #     SourcePath: '$(BundleDir)/*.msixbundle'
-    #     azureSubscription: az-blob-cicd-infra
-    #     Destination: AzureBlob
-    #     storage: '$(StorageAccount)'
-    #     ContainerName: '$(AzureVersion)-private'
-    #     resourceGroup: '$(StorageResourceGroup)'
-    #   condition: succeeded()
+          $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
+
+          if ($env:BundleDir) {
+            $bundleFile = "$env:BundleDir\*.msixbundle"
+            $blobName = Get-Item $bundleFile | Split-Path -Leaf
+            Write-Verbose -Verbose "Uploading $bundleFile to $containerName/$blobName"
+            Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext
+          }
+          else{
+            throw "BundleDir not found"
+          }
