@@ -20,6 +20,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "clrgcexp.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "clrjit.dll",
     "FileType": "NonProduct"
   },
