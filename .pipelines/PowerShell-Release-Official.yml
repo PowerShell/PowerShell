@@ -165,14 +165,14 @@ extends:
           artifactName: 'drop_linux_package_fxdependent'
           packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
 
-      # defer task to run in Arm64
-      # - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
-      #   parameters:
-      #     jobName: 'linuxArm64fxd'
-      #     displayName: 'Validate Linux ARM64 Fxd Packages'
-      #     jobtype: 'linux'
-      #     artifactName: 'drop_linux_package_fxdependent'
-      #     packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
+      - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
+        parameters:
+          jobName: 'linuxArm64fxd'
+          displayName: 'Validate Linux ARM64 Fxd Packages'
+          jobtype: 'linux'
+          artifactName: 'drop_linux_package_fxdependent'
+          packageNamePattern: '**/*linux-x64-fxdependent.tar.gz'
+          arm64: 'yes'
 
     - stage: validatePackages
       displayName: 'Validate Packages'
