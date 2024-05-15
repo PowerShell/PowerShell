@@ -394,7 +394,7 @@ extends:
       displayName: Release to MU
       dependsOn: ['PublishNuGet', 'PublishPMC', 'ChangesToMaster']
       jobs:
-      - template: templates/release/approvalJob.yml
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Release to MU
           instructions: |
