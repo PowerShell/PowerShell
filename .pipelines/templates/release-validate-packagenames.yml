@@ -128,7 +128,7 @@ jobs:
       if($message.count -gt 0){throw ($message | out-string)}
     displayName: Validate Deb Package Names
 
-# Disable this til we fix the SBOM
+# Move to 1ES SBOM validation tool
 # - job: validateBOM
 #   displayName: Validate Package Names
 #   pool:
