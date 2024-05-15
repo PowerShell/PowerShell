@@ -107,7 +107,7 @@ jobs:
           Write-Verbose -Verbose "Pdb: $($_.FullName)"
         }
 
-        $pdbs | Compress-Archive -DestinationPath "$(ob_outputDirectory)/symbols.zip" -Force -Update
+        $pdbs | Compress-Archive -DestinationPath "$(ob_outputDirectory)/symbols.zip" -Update
       }
 
       if ($runtime -eq 'fxdependent')
