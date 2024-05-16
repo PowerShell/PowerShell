@@ -64,7 +64,6 @@ function Install-Wix
         Unregister-PSResourceRepository -Name 'dotnet-eng'
     }
 
-
     $docExpandPath = Join-Path -Path "$binPath\Microsoft.Signed.Wix\3.14.1\tools\" -ChildPath 'doc'
     $sdkExpandPath = Join-Path -Path "$binPath\Microsoft.Signed.Wix\3.14.1\tools\" -ChildPath 'sdk'
     $x86ExpandPath = Join-Path -Path "$binPath\Microsoft.Signed.Wix\3.14.1\tools\" -ChildPath 'x86'
