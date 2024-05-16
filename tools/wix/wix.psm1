@@ -45,7 +45,7 @@ function Install-Wix
     $respository = Get-PSResourceRepository -Name 'dotnet-eng' -ErrorAction SilentlyContinue
 
     if (-not $respository) {
-        Register-PSResourceRepository -Name 'dotnet-eng' -SourceLocation 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json'
+        Register-PSResourceRepository -Name 'dotnet-eng' -Uri 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json'
     }
 
     # keep version in sync with Microsoft.PowerShell.Packaging.csproj
