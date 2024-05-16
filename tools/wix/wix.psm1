@@ -45,7 +45,8 @@ function Install-Wix
     $respository = Get-PSResourceRepository -Name 'dotnet-eng' -ErrorAction SilentlyContinue
 
     if (-not $respository) {
-        Register-PSResourceRepository -Name 'dotnet-eng' -Uri 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json'
+        Write-Verbose -Verbose "Registering dotnet-eng repository..."
+        Register-PSResourceRepository -Name 'dotnet-eng' -Uri 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json' -Trusted
     }
 
     # keep version in sync with Microsoft.PowerShell.Packaging.csproj
@@ -55,7 +56,14 @@ function Install-Wix
         Write-Verbose -Verbose "Created bin directory for WIX at $binPath"
     }
 
-    Save-PSResource -Name 'Microsoft.Signed.Wix' -Repository 'dotnet-eng' -path "$binPath/" -Prerelease
+    try {
+        Save-PSResource -Name 'Microsoft.Signed.Wix' -Repository 'dotnet-eng' -path "$binPath/" -Prerelease
+    }
+    finally {
+        Write-Verbose -Verbose "Unregistering dotnet-eng repository..."
+        Unregister-PSResourceRepository -Name 'dotnet-eng'
+    }
+
 
     $docExpandPath = Join-Path -Path "$binPath\Microsoft.Signed.Wix\3.14.1\tools\" -ChildPath 'doc'
     $sdkExpandPath = Join-Path -Path "$binPath\Microsoft.Signed.Wix\3.14.1\tools\" -ChildPath 'sdk'
