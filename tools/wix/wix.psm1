@@ -36,6 +36,12 @@ function Install-Wix
     }
     $binPath = Join-Path -Path $targetRoot -ChildPath 'bin'
 
+    $psresourceGet = Get-Module -ListAvailable -Name 'Microsoft.PowerShell.PSResourceGet' -ErrorAction SilentlyContinue
+
+    if (-not $psresourceGet) {
+        Install-Module -Name 'Microsoft.PowerShell.PSResourceGet' -Force -AllowClobber -Scope CurrentUser
+    }
+
     $respository = Get-PSResourceRepository -Name 'dotnet-eng' -ErrorAction SilentlyContinue
 
     if (-not $respository) {
