@@ -88,7 +88,14 @@ jobs:
 
       Start-PSBootstrap -Package
       $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
-      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath -Clean -PSModuleRestore @params
+
+      $ReleaseTagParam = @{}
+
+      if ($env:RELEASETAGVAR) {
+        $ReleaseTagParam['ReleaseTag'] = $env:RELEASETAGVAR
+      }
+
+      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath -Clean -PSModuleRestore @params @ReleaseTagParam
 
       $refFolderPath = Join-Path $buildWithSymbolsPath 'ref'
       Write-Verbose -Verbose "refFolderPath: $refFolderPath"
