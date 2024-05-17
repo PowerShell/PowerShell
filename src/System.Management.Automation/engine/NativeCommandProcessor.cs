@@ -814,12 +814,6 @@ namespace System.Management.Automation
         {
             if (blocking)
             {
-                if (_stdOutByteTransfer is not null)
-                {
-                    _stdOutByteTransfer.EOF.GetAwaiter().GetResult();
-                    return null;
-                }
-
                 // If adding was completed and collection is empty (IsCompleted == true)
                 // there is no need to do a blocking Take(), we should just return.
                 if (!_nativeProcessOutputQueue.IsCompleted)
@@ -841,17 +835,9 @@ namespace System.Management.Automation
 
                 return null;
             }
-            else
-            {
-                if (_stdOutByteTransfer is not null)
-                {
-                    return null;
-                }
 
-                ProcessOutputObject record = null;
-                _nativeProcessOutputQueue.TryTake(out record);
-                return record;
-            }
+            _nativeProcessOutputQueue.TryTake(out ProcessOutputObject record);
+            return record;
         }
 
         /// <summary>
@@ -859,21 +845,38 @@ namespace System.Management.Automation
         /// </summary>
         private void ConsumeAvailableNativeProcessOutput(bool blocking)
         {
-            if (!_isRunningInBackground)
+            if (_isRunningInBackground)
             {
-                if (_nativeProcess.StartInfo.RedirectStandardOutput || _nativeProcess.StartInfo.RedirectStandardError)
-                {
-                    ProcessOutputObject record;
-                    while ((record = DequeueProcessOutput(blocking)) != null)
-                    {
-                        if (this.Command.Context.CurrentPipelineStopping)
-                        {
-                            this.StopProcessing();
-                            return;
-                        }
+                return;
+            }
 
-                        ProcessOutputRecord(record);
+            bool stdOutRedirected = _nativeProcess.StartInfo.RedirectStandardOutput;
+            bool stdErrRedirected = _nativeProcess.StartInfo.RedirectStandardError;
+            if (stdOutRedirected && _stdOutByteTransfer is not null)
+            {
+                if (blocking)
+                {
+                    _stdOutByteTransfer.EOF.GetAwaiter().GetResult();
+                }
+
+                if (!stdErrRedirected)
+                {
+                    return;
+                }
+            }
+
+            if (stdOutRedirected || stdErrRedirected)
+            {
+                ProcessOutputObject record;
+                while ((record = DequeueProcessOutput(blocking)) != null)
+                {
+                    if (this.Command.Context.CurrentPipelineStopping)
+                    {
+                        this.StopProcessing();
+                        return;
                     }
+
+                    ProcessOutputRecord(record);
                 }
             }
         }
@@ -886,7 +889,7 @@ namespace System.Management.Automation
                 if (!_isRunningInBackground)
                 {
                     // Wait for input writer to finish.
-                    if (!UpstreamIsNativeCommand)
+                    if (!UpstreamIsNativeCommand || _nativeProcess.StartInfo.RedirectStandardError)
                     {
                         _inputWriter.Done();
                     }
@@ -1771,7 +1774,7 @@ namespace System.Management.Automation
 
             // we incrementing refCount on the same thread and before running any processing
             // so it's safe to do it without Interlocked.
-            if (process.StartInfo.RedirectStandardOutput)
+            if (process.StartInfo.RedirectStandardOutput && stdOutDestination is null)
             {
                 _refCount++;
             }

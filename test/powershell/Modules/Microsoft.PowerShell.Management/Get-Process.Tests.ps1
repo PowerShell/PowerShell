@@ -1,10 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
-    It "Should support -IncludeUserName" {
-        (Get-Process -Id $PID -IncludeUserName).UserName | Should -Match $env:USERNAME
-    }
-
     It "Should support -Module" -Pending:$IsMacOS {
         $modules = Get-Process -Id $PID -Module
         $modules.GetType() | Should -BeExactly "System.Object[]"
@@ -78,12 +74,8 @@ Describe "Get-Process" -Tags "CI" {
         (Get-Process -Id $PID).Id | Should -BeExactly $PID
     }
 
-    It "Should fail to run Get-Process with -IncludeUserName without admin" -Skip:(!$IsWindows) {
-        if (Test-IsElevated) {
-            Set-ItResult -Skipped -Because "must NOT be run as admin"
-        }
-
-        { Get-Process -IncludeUserName } | Should -Throw -ErrorId "IncludeUserNameRequiresElevation,Microsoft.PowerShell.Commands.GetProcessCommand"
+    It "Should support -IncludeUserName" {
+        (Get-Process -Id $PID -IncludeUserName).UserName | Should -Match $env:USERNAME
     }
 
     It "Should fail to run Get-Process with -Module without admin" -Skip:(!$IsWindows) {

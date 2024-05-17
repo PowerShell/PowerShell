@@ -20,6 +20,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "clrgcexp.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "clrjit.dll",
     "FileType": "NonProduct"
   },
@@ -396,6 +400,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Humanizer.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "it/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -564,10 +572,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "JetBrains.Annotations.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Json.More.dll",
     "FileType": "NonProduct"
   },
@@ -665,10 +669,6 @@
   },
   {
     "Pattern": "Markdig.Signed.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "mi.dll",
     "FileType": "NonProduct"
   },
   {
@@ -788,10 +788,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "miutils.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Modules/*.json",
     "FileType": "NonProduct"
   },
@@ -805,10 +801,6 @@
   },
   {
     "Pattern": "Modules/Microsoft.PowerShell.Archive/*.ps?1",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/_manifest/spdx_2.2/manifest.cat",
     "FileType": "NonProduct"
   },
   {
@@ -905,6 +897,10 @@
   },
   {
     "Pattern": "Modules\\PSReadLine\\_manifest\\spdx_2.2\\manifest.cat",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules\\PSReadLine\\.signature.p7s",
     "FileType": "NonProduct"
   },
   {
@@ -2597,6 +2593,10 @@
   },
   {
     "Pattern": "System.Private.Uri.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "System.Private.Windows.Core.dll",
     "FileType": "NonProduct"
   },
   {

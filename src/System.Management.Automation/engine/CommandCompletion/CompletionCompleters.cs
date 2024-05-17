@@ -4878,10 +4878,22 @@ namespace System.Management.Automation
 
         private static string GetChildNameFromPsObject(dynamic psObject, char separator)
         {
-            // The obvious solution would be to use the "PSChildName" property
-            // but some providers don't have it (like the Variable provider)
-            // So we use a substring of "PSPath" instead.
-            string childName = psObject.PSPath ?? string.Empty;
+            if (((PSObject)psObject).BaseObject is string result)
+            {
+                // The "Get-ChildItem" call for this provider returned a string that we assume is the child name.
+                // This is what the SCCM provider returns.
+                return result;
+            }
+
+            string childName = psObject.PSChildName;
+            if (childName is not null)
+            {
+                return childName;
+            }
+
+            // Some providers (Like the variable provider) don't include a PSChildName property
+            // so we get the child name from the path instead.
+            childName = psObject.PSPath ?? string.Empty;
             int ProviderSeparatorIndex = childName.IndexOf("::", StringComparison.Ordinal);
             childName = childName.Substring(ProviderSeparatorIndex + 2);
             int indexOfName = childName.LastIndexOf(separator);
@@ -4892,7 +4904,7 @@ namespace System.Management.Automation
 
             return childName.Substring(indexOfName + 1);
         }
-        
+
         /// <summary>
         /// Takes a path and rebuilds it with the specified variable replacements.
         /// Also escapes special characters as needed.
@@ -4913,12 +4925,15 @@ namespace System.Management.Automation
 
             for (int i = 0; i < path.Length; i++)
             {
+                // on Windows, we need to preserve the expanded home path as native commands don't understand it
+#if UNIX                
                 if (i == homeIndex)
                 {
                     _ = sb.Append('~');
                     i += homePath.Length - 1;
                     continue;
                 }
+#endif
 
                 EscapeCharIfNeeded(sb, path, i, stringType, literalPath, useSingleQuoteEscapeRules, ref quotesAreNeeded);
                 _ = sb.Append(path[i]);
@@ -5188,6 +5203,12 @@ namespace System.Management.Automation
 
             var lastAst = context.RelatedAsts?[^1];
             var variableAst = lastAst as VariableExpressionAst;
+            if (lastAst is PropertyMemberAst ||
+                (lastAst is not null && lastAst.Parent is ParameterAst parameter && parameter.DefaultValue != lastAst))
+            {
+                // User is adding a new parameter or a class member, variable tab completion is not useful.
+                return results;
+            }
             var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
             bool tokenAtCursorUsedBraces = context.TokenAtCursor is not null && context.TokenAtCursor.Text.StartsWith("${");
 

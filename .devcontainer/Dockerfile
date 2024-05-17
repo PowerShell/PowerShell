@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
 #-------------------------------------------------------------------------------------------------------------
 
-FROM mcr.microsoft.com/powershell/test-deps:ubuntu-18.04
+FROM mcr.microsoft.com/powershell/test-deps:ubuntu-18.04@sha256:20154a16708d4a92ebe81393361f27c7567e6553869e89dd6abdd198cc8ba309
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
