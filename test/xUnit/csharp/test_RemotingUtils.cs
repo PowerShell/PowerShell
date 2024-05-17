@@ -30,9 +30,9 @@ namespace PSTests.Parallel
         [Fact]
         public void TestParseSshHostnameWithPort()
         {
-            string hostname = "foo.bar.com:22";
+            string hostname = "Foo.Bar.com:22";
             RemotingUtils.ParseSshHostName(cmdlet, hostname, out string host, out string userName, out int port);
-            Assert.Equal("foo.bar.com", host);
+            Assert.Equal("Foo.Bar.com", host);
             Assert.Null(userName);
             Assert.Equal(22, port);
         }
@@ -40,9 +40,9 @@ namespace PSTests.Parallel
         [Fact]
         public void TestParseSshHostnameWithUsername()
         {
-            string hostname = "user@foo.bar.com";
+            string hostname = "user@Foo.Bar.com";
             RemotingUtils.ParseSshHostName(cmdlet, hostname, out string host, out string userName, out int port);
-            Assert.Equal("foo.bar.com", host);
+            Assert.Equal("Foo.Bar.com", host);
             Assert.Equal("user", userName);
             Assert.Equal(0, port);
         }
@@ -50,9 +50,9 @@ namespace PSTests.Parallel
         [Fact]
         public void TestParseSshHostnameWithUsernameAndPort()
         {
-            string hostname = "user@foo.bar.com:22";
+            string hostname = "user@Foo.Bar.com:22";
             RemotingUtils.ParseSshHostName(cmdlet, hostname, out string host, out string userName, out int port);
-            Assert.Equal("foo.bar.com", host);
+            Assert.Equal("Foo.Bar.com", host);
             Assert.Equal("user", userName);
             Assert.Equal(22, port);
         }
