@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 # https://github.com/dotnet/project-system/blob/master/docs/opening-with-new-project-system.md#project-type-guids
 VisualStudioVersion = 15.0.26730.12
@@ -40,6 +40,8 @@ EndProject
 #
 # 73EA0BE6-C0C5-4B56-A5AA-DADA4C01D690 - powershell-unix
 # Only Linux is valid, all configurations mapped to Linux
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PSVersionInfoGenerator", "src\System.Management.Automation\SourceGenerators\PSVersionInfoGenerator\PSVersionInfoGenerator.csproj", "{B22424E8-0516-4FC3-A9CB-D84D15EF0589}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CodeCoverage|Any CPU = CodeCoverage|Any CPU
