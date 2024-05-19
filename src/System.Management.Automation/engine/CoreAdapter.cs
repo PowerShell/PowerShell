@@ -1163,6 +1163,7 @@ namespace System.Management.Automation
         }
 
 #nullable enable
+        [DebuggerDisplay("OverloadCandidate: {Method.methodDefinition}")]
         private sealed class OverloadCandidate
         {
             /// <summary>
