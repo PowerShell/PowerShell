@@ -4,6 +4,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Net.Http;
 using System.Security;
@@ -97,12 +98,22 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string SchemaFile { get; set; }
 
+        /// <summary>
+        /// Gets or sets JSON document options.
+        /// </summary>
+        /// <value></value>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        [ValidateSet("IgnoreComments", "AllowTrailingCommas")]
+        public string[] Option { get; set; } = Array.Empty<string>();
+
         #endregion
 
         #region Private Members
 
         private bool _isLiteralPath = false;
         private JsonSchema _jschema;
+        private JsonDocumentOptions _documentOptions;
 
         #endregion
 
@@ -200,6 +211,14 @@ namespace Microsoft.PowerShell.Commands
                 Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, e);
                 ThrowTerminatingError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, resolvedpath));
             }
+
+            _documentOptions = new JsonDocumentOptions
+            {
+                CommentHandling = Option.Contains("IgnoreComments", StringComparer.OrdinalIgnoreCase)
+                    ? JsonCommentHandling.Skip
+                    : JsonCommentHandling.Disallow,
+                AllowTrailingCommas = Option.Contains("AllowTrailingCommas", StringComparer.OrdinalIgnoreCase)
+            };
         }
 
         /// <summary>
@@ -235,7 +254,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
 
-                var parsedJson = JsonNode.Parse(jsonToParse);
+                var parsedJson = JsonNode.Parse(jsonToParse, null, _documentOptions);
 
                 if (_jschema != null)
                 {
