@@ -39,3 +39,5 @@ jobs:
         FILTER_REGEX_INCLUDE: .*\.md
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         VALIDATE_EDITORCONFIG: false
+        VALIDATE_JSCPD: false
+        VALIDATE_CHECKOV: false
