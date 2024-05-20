@@ -102,7 +102,12 @@ extends:
           enabled: false
         tsaOptionsFile: .config\tsaoptions.json
     stages:
+    - stage: prep
+      jobs:
+      - template: /.pipelines/templates/checkAzureContainer.yml@self
+
     - stage: mac_package
+      dependsOn: [prep]
       jobs:
       - template: /.pipelines/templates/mac-package-build.yml@self
         parameters:
@@ -113,6 +118,7 @@ extends:
           buildArchitecture: arm64
 
     - stage: windows_package
+      dependsOn: [prep]
       jobs:
       - template: /.pipelines/templates/windows-package-build.yml@self
         parameters:
@@ -139,6 +145,7 @@ extends:
           runtime: minsize
 
     - stage: linux_package
+      dependsOn: [prep]
       jobs:
       - template: /.pipelines/templates/linux-package-build.yml@self
         parameters:
@@ -218,6 +225,7 @@ extends:
           jobName: minSize
 
     - stage: nupkg
+      dependsOn: [prep]
       jobs:
       - template: /.pipelines/templates/nupkg.yml@self
 

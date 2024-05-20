@@ -8,7 +8,7 @@ steps:
 - ${{ if eq(parameters['UseJson'],'yes') }}:
   - task: DownloadBuildArtifacts@0
     inputs:
-      artifactName: 'drop_prep_DeleteBlob'
+      artifactName: 'drop_prep_SetVars'
       itemPattern: '*.json'
       downloadPath: '$(System.ArtifactsDirectory)'
     displayName: Download Build Info Json
