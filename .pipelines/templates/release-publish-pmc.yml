@@ -9,6 +9,10 @@ jobs:
   condition: succeeded()
   pool:
     type: linux
+    isCustom: true
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMSUbuntu20.04-Secure
   variables:
   - name: runCodesignValidationInjection
     value: false
@@ -30,6 +34,9 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
 
   steps:
+  - checkout: self ## the global setting on lfs didn't work
+    lfs: false
+
   - template: release-SetReleaseTagAndContainerName.yml
 
   - pwsh: |
@@ -40,7 +47,7 @@ jobs:
     displayName: Set Package version
 
   - pwsh: |
-      $branch = 'main-mirror'
+      $branch = 'mirror-target'
       $gitArgs = "clone",
       "--verbose",
       "--branch",
@@ -57,7 +64,7 @@ jobs:
       pythonDownloadServiceConnections: pmcDownload
 
   - pwsh: |
-      pip install pmc-cli
+      pip install pmc-cli==1.12.0
 
       $newPath = (resolve-path '~/.local/bin').providerpath
       $vstsCommandString = "vso[task.setvariable variable=PATH]${env:PATH}:$newPath"
