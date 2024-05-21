@@ -656,7 +656,7 @@ namespace Microsoft.PowerShell.Commands
                             TestConnectionExceptionId,
                             ErrorCategory.ResourceUnavailable,
                             timeoutReply);
-                        ThrowTerminatingError(errorRecord);
+                        WriteError(errorRecord);
                     }
                     else
                     {
