@@ -102,8 +102,8 @@ jobs:
           $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
 
           if ($env:BundleDir) {
-            $bundleFile = "$env:BundleDir\*.msixbundle"
-            $blobName = Get-Item $bundleFile | Split-Path -Leaf
+            $bundleFile = Get-Item "$env:BundleDir\*.msixbundle"
+            $blobName = $bundleFile | Split-Path -Leaf
             Write-Verbose -Verbose "Uploading $bundleFile to $containerName/$blobName"
             Set-AzStorageBlobContent -File $bundleFile -Container $containerName -Blob $blobName -Context $storageContext
           }
