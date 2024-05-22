@@ -12,6 +12,9 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
   - name: ob_sdl_credscan_suppressionsFile
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - name: ob_sdl_codeSignValidation_excludes
+    value: '-|**\*.ps1;-|**\*.psm1;-|**\*.ps1xml;-|**\*.psd1;-|**\*.exe;-|**\*.dll;-|**\*.cdxml'
+
   displayName: Build windows test artifacts
   condition: succeeded()
   pool:
@@ -29,6 +32,7 @@ jobs:
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
   - pwsh: |
+      New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force
       Import-Module $(Build.SourcesDirectory)/PowerShell/build.psm1
       function BuildTestPackage([string] $runtime)
       {
@@ -45,13 +49,16 @@ jobs:
           win-arm64 { $packageName = "TestPackage-win-arm64.zip" }
         }
         Rename-Item $(System.ArtifactsDirectory)/TestPackage.zip $packageName
-        Write-Host "##vso[artifact.upload containerfolder=testArtifacts;artifactname=testArtifacts]$(System.ArtifactsDirectory)/$packageName"
+        ## Write-Host "##vso[artifact.upload containerfolder=testArtifacts;artifactname=testArtifacts]$(System.ArtifactsDirectory)/$packageName"
+
+        Copy-Item -Path $(System.ArtifactsDirectory)/$packageName -Destination $(ob_outputDirectory) -Force -Verbose
       }
       BuildTestPackage -runtime win7-x64
       BuildTestPackage -runtime win7-x86
       BuildTestPackage -runtime win-arm64
     displayName: Build test package and upload
     retryCountOnTaskFailure: 1
+
 - job: build_testartifacts_nonwin
   variables:
   - name: runCodesignValidationInjection
@@ -78,6 +85,7 @@ jobs:
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
   - pwsh: |
+      New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force
       Import-Module $(Build.SourcesDirectory)/PowerShell/build.psm1
       function BuildTestPackage([string] $runtime)
       {
@@ -96,7 +104,7 @@ jobs:
           linux-musl-x64 { $packageName = "TestPackage-alpine-x64.zip"}
         }
         Rename-Item $(System.ArtifactsDirectory)/TestPackage.zip $packageName
-        Write-Host "##vso[artifact.upload containerfolder=testArtifacts;artifactname=testArtifacts]$(System.ArtifactsDirectory)/$packageName"
+        Copy-Item -Path $(System.ArtifactsDirectory)/$packageName -Destination $(ob_outputDirectory) -Force -Verbose
       }
       BuildTestPackage -runtime linux-x64
       BuildTestPackage -runtime linux-arm
@@ -105,4 +113,3 @@ jobs:
       BuildTestPackage -runtime linux-musl-x64
     displayName: Build test package and upload
     retryCountOnTaskFailure: 1
-  - template: /.pipelines/templates/step/finalize.yml@self
