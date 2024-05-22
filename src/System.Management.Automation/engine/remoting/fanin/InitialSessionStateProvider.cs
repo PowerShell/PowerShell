@@ -2062,7 +2062,6 @@ namespace System.Management.Automation.Remoting
 
                 if (providers != null)
                 {
-                    System.Collections.Generic.HashSet<string> addedProviders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     foreach (string provider in providers)
                     {
                         if (!string.IsNullOrEmpty(provider))
@@ -2070,13 +2069,9 @@ namespace System.Management.Automation.Remoting
                             // Look up providers from provider name including wildcards.
                             var providersFound = iss.Providers.LookUpByName(provider);
 
-                            foreach (var providerFound in providersFound)
+                            foreach (SessionStateProviderEntry providerFound in providersFound)
                             {
-                                if (!addedProviders.Contains(providerFound.Name))
-                                {
-                                    addedProviders.Add(providerFound.Name);
-                                    providerFound.Visibility = SessionStateEntryVisibility.Public;
-                                }
+                                providerFound.Visibility = SessionStateEntryVisibility.Public;
                             }
                         }
                     }
