@@ -105,7 +105,7 @@ jobs:
             $bundleFile = "$env:BundleDir\*.msixbundle"
             $blobName = Get-Item $bundleFile | Split-Path -Leaf
             Write-Verbose -Verbose "Uploading $bundleFile to $containerName/$blobName"
-            Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext
+            Set-AzStorageBlobContent -File $bundleFile -Container $containerName -Blob $blobName -Context $storageContext
           }
           else{
             throw "BundleDir not found"
