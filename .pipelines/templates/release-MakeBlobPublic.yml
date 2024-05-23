@@ -127,21 +127,29 @@ jobs:
         pwsh: true
         inline: |
           $sourceStorageAccountName = '$(StorageAccount)'
-          $sourceContainerName = '$(AzureVersion)'
+          $sourceContainerName = '$(AzureVersion)-nuget'
 
           $destinationStorageAccountName = '$(PSInfraStorageAccount)'
           $destinationContainerName = "tool/$(Version)"
 
           $sourceContext = New-AzStorageContext -StorageAccountName $sourceStorageAccountName
-          $destinationContext = New-AzStorageContext -StorageAccountName $destinationStorageAccountName
+          Write-Verbose -Verbose "Source context: $($sourceContext.BlobEndPoint)"
 
-          $blobs = Get-AzStorageBlob -Context $sourceContext -Container $sourceContainerName
+          $destinationContext = New-AzStorageContext -StorageAccountName $destinationStorageAccountName
+          Write-Verbose -Verbose "Destination context: $($destinationContext.BlobEndPoint)"
+
+          $blobs = Get-AzStorageBlob -Context $sourceContext -Container $sourceContainerName -Prefix 'globaltool'
+
+          Write-Verbose -Verbose "Blobs found in $sourceContainerName:"
+          $blobs.Name | Write-Verbose -Verbose
+
+          Write-Verbose -Verbose "Copying blobs from $sourceContainerName to $destinationContainerName"
 
           foreach ($blob in $blobs) {
             $sourceBlobName = $blob.Name
             $destinationBlobName = $sourceBlobName
 
-            $destinationBlob = Start-AzStorageBlobCopy -Context $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName
+            $destinationBlob = Start-AzStorageBlobCopy -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName
 
             # Wait for the copy operation to complete
             $destinationBlob | Wait-AzStorageBlobCopy
