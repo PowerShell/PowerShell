@@ -61,27 +61,15 @@ jobs:
       Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
     displayName: Remove AzRM modules
 
-  - task: AzurePowerShell@5
-    displayName: Set blob permissions
+  - task: AzureCLI@2
+    displayName: 'Set blob permissions'
     inputs:
       azureSubscription: az-blob-cicd-infra
-      scriptType: inlineScript
-      azurePowerShellVersion: LatestVersion
-      pwsh: true
-      inline: |
-        $storageAccount = "$(StorageAccount)"
-        $containerName = "$(azureVersion)"
-        $publicAccess = "blob"
-
-        Set-AzStorageContainerAcl `
-          -Context (New-AzStorageContext -StorageAccountName $storageAccount) `
-          -Container $containerName `
-          -PublicAccess $publicAccess
-
-        Set-AzStorageContainerAcl `
-          -Context (New-AzStorageContext -StorageAccountName $storageAccount) `
-          -Container "$containerName-gc" `
-          -PublicAccess $publicAccess
+      scriptType: 'pscore'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az storage container set-permission --account-name $(StorageAccount) --name $(azureVersion) --public-access blob
+        az storage container set-permission --account-name $(StorageAccount) --name $(azureVersion)-gc --public-access blob
 
 - template: /.pipelines/templates/approvalJob.yml@self
   parameters:
