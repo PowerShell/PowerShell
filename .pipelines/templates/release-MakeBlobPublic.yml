@@ -140,7 +140,7 @@ jobs:
 
           $blobs = Get-AzStorageBlob -Context $sourceContext -Container $sourceContainerName -Prefix 'globaltool'
 
-          Write-Verbose -Verbose "Blobs found in $sourceContainerName:"
+          Write-Verbose -Verbose "Blobs found in $sourceContainerName"
           $blobs.Name | Write-Verbose -Verbose
 
           Write-Verbose -Verbose "Copying blobs from $sourceContainerName to $destinationContainerName"
