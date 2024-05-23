@@ -46,8 +46,6 @@ jobs:
       CreateJson: yes
       UseJson: no
 
-  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
-
   - pwsh: |
       Get-ChildItem Env:
     displayName: 'Capture Environment Variables'
@@ -116,8 +114,6 @@ jobs:
         ReleaseTagVar: $(ReleaseTagVar)
         CreateJson: yes
         UseJson: no
-
-    - template: /.pipelines/templates/cloneToOfficialPath.yml@self
 
     - pwsh: |
         Get-ChildItem Env:
