@@ -73,6 +73,10 @@ jobs:
           Write-Output "Downloaded $blobName to $destinationFile"
         }
 
+        $packagesPath = Get-ChildItem -Path $destinationPath\*.deb -Recurse -File | Select-Object -First 1 -ExpandProperty DirectoryName
+        Write-Host "sending -- vso[task.setvariable variable=PackagesRoot]$packagesPath"
+        Write-Host "##vso[task.setvariable variable=PackagesRoot]$packagesPath"
+
   - pwsh: |
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty FullName
     displayName: Capture downloaded artifacts
