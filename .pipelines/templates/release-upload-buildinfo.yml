@@ -4,8 +4,8 @@ parameters:
     type: boolean
 
 jobs:
-- job: PMCPublish
-  displayName: Publish to PMC
+- job: BuildInfoPublish
+  displayName: Publish BuildInfo
   condition: succeeded()
   pool:
     type: windows
@@ -92,6 +92,17 @@ jobs:
         Set-BuildVariable -Name CopyVersionBuildInfo -Value NO
       }
     displayName: Create json files
+
+  - pwsh: |
+      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
+      if ($azureRmModule) {
+        Write-Host 'AzureRM module exists. Removing it'
+        Uninstall-AzureRm
+        Write-Host 'AzureRM module removed'
+      }
+
+      Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
+    displayName: Remove AzRM modules
 
   - task: AzurePowerShell@5
     displayName: Upload buildjson to blob
