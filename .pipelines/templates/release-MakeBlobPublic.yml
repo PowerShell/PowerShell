@@ -150,7 +150,7 @@ jobs:
             $sourceBlobName = $blob.Name
             $destinationBlobName = $sourceBlobName.Name -replace "$prefix/"
 
-            $destinationBlob = Start-AzStorageBlobCopy -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sr -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName
+            $destinationBlob = Start-AzStorageBlobCopy -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName
 
             # Wait for the copy operation to complete
             $destinationBlob | Wait-AzStorageBlobCopy
