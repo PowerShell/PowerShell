@@ -90,6 +90,10 @@ jobs:
   - group: 'Azure Blob variable group'
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
 
   steps:
     - checkout: self
@@ -150,7 +154,7 @@ jobs:
             $sourceBlobName = $blob.Name
             Write-Verbose -Verbose "sourceBlobName = $sourceBlobName"
 
-            $destinationBlobName = $sourceBlobName -replace "$prefix", "tool"
+            $destinationBlobName = $sourceBlobName -replace "$prefix", '$(Version)'
             Write-Verbose -Verbose "destinationBlobName = $destinationBlobName"
 
             Copy-AzStorageBlob -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName -Force -Verbose -Confirm:$false
