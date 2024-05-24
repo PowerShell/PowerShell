@@ -153,14 +153,5 @@ jobs:
             $destinationBlobName = $sourceBlobName -replace "$prefix/"
             Write-Verbose -Verbose "destinationBlobName = $destinationBlobName"
 
-            $destinationBlob = Start-AzStorageBlobCopy -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName
-
-            # Wait for the copy operation to complete
-            $destinationBlob | Wait-AzStorageBlobCopy
-
-            if ($destinationBlob.CopyStatus -eq "Success") {
-              Write-Host "Blob copy completed successfully for $sourceBlobName."
-            } else {
-              Write-Host "Blob copy failed for $sourceBlobName."
-            }
+            Copy-AzStorageBlob -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName
           }
