@@ -148,7 +148,10 @@ jobs:
 
           foreach ($blob in $blobs) {
             $sourceBlobName = $blob.Name
-            $destinationBlobName = $sourceBlobName.Name -replace "$prefix/"
+            Write-Verbose -Verbose "sourceBlobName = $sourceBlobName"
+
+            $destinationBlobName = $sourceBlobName -replace "$prefix/"
+            Write-Verbose -Verbose "destinationBlobName = $destinationBlobName"
 
             $destinationBlob = Start-AzStorageBlobCopy -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName
 
