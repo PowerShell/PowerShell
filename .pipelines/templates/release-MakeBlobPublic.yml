@@ -150,7 +150,7 @@ jobs:
             $sourceBlobName = $blob.Name
             Write-Verbose -Verbose "sourceBlobName = $sourceBlobName"
 
-            $destinationBlobName = $sourceBlobName -replace "$prefix/"
+            $destinationBlobName = $sourceBlobName -replace "$prefix", "tool"
             Write-Verbose -Verbose "destinationBlobName = $destinationBlobName"
 
             Copy-AzStorageBlob -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName
