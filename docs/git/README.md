@@ -46,7 +46,7 @@ We are leaving few links here:
 
 [Git pretty flowchart](http://justinhileman.info/article/git-pretty/): what to do, when your local repo became a mess.
 
-[Linus]:https://wincent.com/wiki/git_rebase%3A_you're_doing_it_wrong
+[Linus]:https://web.archive.org/web/20230522041845/https://wincent.com/wiki/git_rebase%3A_you're_doing_it_wrong
 
 ## Tags
 
