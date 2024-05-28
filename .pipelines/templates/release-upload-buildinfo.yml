@@ -113,7 +113,7 @@ jobs:
       azurePowerShellVersion: LatestVersion
       pwsh: true
       inline: |
-        $containerName = "BuildInfo"
+        $containerName = "buildinfo"
         $storageAccount = '$(StorageAccount)'
 
         $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
