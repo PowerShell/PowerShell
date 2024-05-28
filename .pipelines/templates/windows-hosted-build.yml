@@ -87,7 +87,14 @@ jobs:
 
       Start-PSBootstrap -Package
       $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
-      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath -Clean -PSModuleRestore @params
+
+      $ReleaseTagParam = @{}
+
+      if ($env:RELEASETAGVAR) {
+        $ReleaseTagParam['ReleaseTag'] = $env:RELEASETAGVAR
+      }
+
+      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath -Clean -PSModuleRestore @params @ReleaseTagParam
 
       $refFolderPath = Join-Path $buildWithSymbolsPath 'ref'
       Write-Verbose -Verbose "refFolderPath: $refFolderPath"
@@ -110,41 +117,67 @@ jobs:
         $pdbs | Compress-Archive -DestinationPath "$(ob_outputDirectory)/symbols.zip" -Update
       }
 
-      if ($runtime -eq 'fxdependent')
-      {
-        ## Also build global tool
-        Write-Verbose -Message "Building PowerShell global tool for Windows.x64" -Verbose
-        $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
-        Push-Location -Path $globalToolCsProjDir -Verbose
-
-        $globalToolArtifactPath = Join-Path $(Build.SourcesDirectory) 'GlobalTool'
-        $vstsCommandString = "vso[task.setvariable variable=GlobalToolArtifactPath]${globalToolArtifactPath}"
-        Write-Host "sending " + $vstsCommandString
-        Write-Host "##$vstsCommandString"
-
-        dotnet publish --no-self-contained --artifacts-path $globalToolArtifactPath /property:PackageVersion=$(Version)
-        $globalToolBuildModulePath = Join-Path $globalToolArtifactPath 'publish' 'PowerShell.Windows.x64' 'release'
-        Pop-Location
-        # do this to ensure everything gets signed.
-        Restore-PSModuleToBuild -PublishPath $globalToolBuildModulePath
-
-        # Copy reference assemblies
-        Copy-Item -Path $refFolderPath -Destination $globalToolBuildModulePath -Recurse -Force
-
-        Write-Verbose -Verbose "clean unnecessary files in obj directory"
-        $objDir = Join-Path $globalToolArtifactPath 'obj' 'PowerShell.Windows.x64' 'release'
-
-        $filesToKeep = @("apphost.exe", "PowerShell.Windows.x64.pdb", "PowerShell.Windows.x64.dll", "project.assets.json")
-
-        # only four files are needed in obj folder for global tool packaging
-        Get-ChildItem -Path $objDir -File -Recurse |
-          Where-Object { -not $_.PSIsContainer } |
-          Where-Object { $_.name -notin $filesToKeep } |
-          Remove-Item -Verbose
-      }
-
       Write-Verbose -Verbose "Completed building PowerShell for '$env:BuildConfiguration' configuration"
     displayName: 'Build Windows Universal - $(Architecture)-$(BuildConfiguration) Symbols folder'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
+
+  - pwsh: |
+      $runtime = switch ($env:Architecture)
+        {
+          "x64" { "win7-x64" }
+          "x86" { "win7-x86" }
+          "arm64" { "win-arm64" }
+          "fxdependent" { "fxdependent" }
+          "fxdependentWinDesktop" { "fxdependent-win-desktop" }
+        }
+
+      Import-Module -Name $(PowerShellRoot)/build.psm1 -Force
+      Start-PSBootstrap
+
+      ## Build global tool
+      Write-Verbose -Message "Building PowerShell global tool for Windows.x64" -Verbose
+      $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
+      Push-Location -Path $globalToolCsProjDir -Verbose
+
+      $globalToolArtifactPath = Join-Path $(Build.SourcesDirectory) 'GlobalTool'
+      $vstsCommandString = "vso[task.setvariable variable=GlobalToolArtifactPath]${globalToolArtifactPath}"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+
+      if ($env:RELEASETAGVAR) {
+        $ReleaseTagToUse = $env:RELEASETAGVAR -Replace '^v'
+      }
+
+      Write-Verbose -Verbose "Building PowerShell global tool for Windows.x64 with cmdline: dotnet publish --no-self-contained --artifacts-path $globalToolArtifactPath /property:PackageVersion=$(Version) --configuration 'Release' /property:ReleaseTag=$ReleaseTagToUse"
+      dotnet publish --no-self-contained --artifacts-path $globalToolArtifactPath /property:PackageVersion=$(Version) --configuration 'Release' /property:ReleaseTag=$ReleaseTagToUse
+      $globalToolBuildModulePath = Join-Path $globalToolArtifactPath 'publish' 'PowerShell.Windows.x64' 'release'
+      Pop-Location
+      # do this to ensure everything gets signed.
+      Restore-PSModuleToBuild -PublishPath $globalToolBuildModulePath
+
+      $buildWithSymbolsPath = Get-Item -Path "$(Pipeline.Workspace)/Symbols_$(Architecture)"
+      $refFolderPath = Join-Path $buildWithSymbolsPath 'ref'
+      Write-Verbose -Verbose "refFolderPath: $refFolderPath"
+
+      # Copy reference assemblies
+      Copy-Item -Path $refFolderPath -Destination $globalToolBuildModulePath -Recurse -Force
+
+      Write-Verbose -Verbose "clean unnecessary files in obj directory"
+      $objDir = Join-Path $globalToolArtifactPath 'obj' 'PowerShell.Windows.x64' 'release'
+
+      $filesToKeep = @("apphost.exe", "PowerShell.Windows.x64.pdb", "PowerShell.Windows.x64.dll", "project.assets.json")
+
+      # only four files are needed in obj folder for global tool packaging
+      Get-ChildItem -Path $objDir -File -Recurse |
+        Where-Object { -not $_.PSIsContainer } |
+        Where-Object { $_.name -notin $filesToKeep } |
+        Remove-Item -Verbose
+
+
+    displayName: 'Build Winx64 Global tool'
+    condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
       ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
@@ -204,13 +237,13 @@ jobs:
       $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
       Push-Location -Path $globalToolCsProjDir -Verbose
 
-      <#
-      $nuspecFilePath = "$globalToolCsProjDir\PowerShell.Windows.x64.nuspec"
-      $nuSpec = $packagingStrings.WindowsX64GlobalToolNuspec -f '$(Version)'
-      $nuSpec | Out-File -FilePath $nuspecFilePath -Encoding ascii
-      #>
+      if ($env:RELASETAGVAR) {
+        $ReleaseTagToUse = $env:RELASETAGVAR -Replace '^v'
+      }
 
-      dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)' /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png
+      Write-Verbose -Verbose "Packing PowerShell global tool for Windows.x64 with cmdline: dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)' /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png /property:Version=$(Version) /property:ReleaseTag=$ReleaseTagToUse"
+
+      dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)' /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png /property:Version=$(Version) /property:ReleaseTag=$ReleaseTagToUse
 
       Write-Verbose -Verbose "Deleting content and contentFiles folders from the nupkg"
 

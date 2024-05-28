@@ -3,7 +3,7 @@ parameters:
   signedeDrop: 'drop_linux_sign_linux_x64'
   packageType: deb
   jobName: 'deb'
-  signingProfile: 'CP-450779-Pgp'
+  signingProfile: 'CP-450779-pgpdetached'
 
 jobs:
 - job: ${{ parameters.jobName }}

@@ -4,8 +4,8 @@ parameters:
     type: boolean
 
 jobs:
-- job: PMCPublish
-  displayName: Publish to PMC
+- job: BuildInfoPublish
+  displayName: Publish BuildInfo
   condition: succeeded()
   pool:
     type: windows
@@ -18,6 +18,7 @@ jobs:
     value: 1
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - group: 'Azure Blob variable group'
   - name: ob_sdl_codeSignValidation_enabled
     value: false
   - name: ob_sdl_binskim_enabled
@@ -93,6 +94,17 @@ jobs:
       }
     displayName: Create json files
 
+  - pwsh: |
+      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
+      if ($azureRmModule) {
+        Write-Host 'AzureRM module exists. Removing it'
+        Uninstall-AzureRm
+        Write-Host 'AzureRM module removed'
+      }
+
+      Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
+    displayName: Remove AzRM modules
+
   - task: AzurePowerShell@5
     displayName: Upload buildjson to blob
     inputs:
@@ -101,7 +113,7 @@ jobs:
       azurePowerShellVersion: LatestVersion
       pwsh: true
       inline: |
-        $containerName = "BuildInfo"
+        $containerName = "buildinfo"
         $storageAccount = '$(StorageAccount)'
 
         $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
@@ -110,20 +122,20 @@ jobs:
           $jsonFile = "$env:BuildInfoJsonFile"
           $blobName = Get-Item $jsonFile | Split-Path -Leaf
           Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$blobName"
-          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext
+          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext -Force
         }
 
         if ($env:CopyLTSBuildInfo -eq 'YES') {
           $jsonFile = "$env:LtsBuildInfoJsonFile"
           $blobName = Get-Item $jsonFile | Split-Path -Leaf
           Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$blobName"
-          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext
+          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext -Force
         }
 
         if ($env:CopyVersionBuildInfo -eq 'YES') {
           $jsonFile = "$env:VersionBuildInfoJsonFile"
           $blobName = Get-Item $jsonFile | Split-Path -Leaf
           Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$blobName"
-          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext
+          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext -Force
         }
     condition: and(succeeded(), eq(variables['CopyMainBuildInfo'], 'YES'))

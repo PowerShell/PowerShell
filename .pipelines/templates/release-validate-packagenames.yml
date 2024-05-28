@@ -13,11 +13,14 @@ jobs:
     - group: 'Azure Blob variable group'
 
   steps:
-  - pwsh: |
-      Get-ChildItem ENV:
-    displayName: Capture environment
+  - checkout: self
+    clean: true
 
   - template: release-SetReleaseTagAndContainerName.yml
+
+  - pwsh: |
+       Get-ChildItem ENV:
+    displayName: Capture environment
 
   - pwsh: |
       $name = "{0}_{1:x}" -f '$(releaseTag)', (Get-Date).Ticks

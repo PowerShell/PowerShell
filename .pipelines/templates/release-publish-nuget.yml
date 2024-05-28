@@ -47,10 +47,10 @@ jobs:
   - pwsh: |
       #Exclude all global tool packages. Their names start with 'PowerShell.'
       $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
-      Copy-Item "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
+      Copy-Item "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
 
       $releaseVersion = '$(VERSION)'
-      $globalToolPath = "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/PowerShell.$releaseVersion.nupkg"
+      $globalToolPath = "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg/PowerShell.$releaseVersion.nupkg"
 
       if ($releaseVersion -notlike '*-*') {
           # Copy the global tool package for stable releases
@@ -59,11 +59,11 @@ jobs:
 
       Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
     displayName: Download and capture nupkgs
-    condition: and(eq('${{ parameters.skipPublish }}', 'false'), succeeded())
+    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
 
   - task: NuGetCommand@2
     displayName: 'NuGet push'
-    condition: and(eq('${{ parameters.skipPublish }}', 'false'), succeeded())
+    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
     inputs:
       command: push
       packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
