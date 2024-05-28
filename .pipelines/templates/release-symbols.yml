@@ -51,7 +51,7 @@ jobs:
 
   - pwsh: |
       Write-Verbose -Verbose "Enumerating $(Pipeline.Workspace)\CoOrdinatedBuildPipeline"
-      $downloadedArtifacts = Get-ChildItem -Recurse "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline" -Recurse -Filter 'symbols.zip'
+      $downloadedArtifacts = Get-ChildItem -Path "$(Pipeline.Workspace)\CoOrdinatedBuildPipeline" -Recurse -Filter 'symbols.zip'
       $downloadedArtifacts
       $expandedRoot = New-Item -Path "$(Pipeline.Workspace)/expanded" -ItemType Directory -Verbose
       $symbolsRoot = New-Item -Path "$(Pipeline.Workspace)/symbols" -ItemType Directory -Verbose
