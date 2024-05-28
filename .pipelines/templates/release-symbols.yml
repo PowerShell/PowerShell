@@ -58,10 +58,11 @@ jobs:
 
       $downloadedArtifacts | ForEach-Object {
         $folderName = (Get-Item (Split-Path $_.FullName)).Name
+        Write-Verbose -Verbose "Expanding $($_.FullName) to $expandedRoot/$folderName/$($_.BaseName)"
         $destFolder = New-Item -Path "$expandedRoot/$folderName/$($_.BaseName)/" -ItemType Directory -Verbose
         Expand-Archive -Path $_.FullName -DestinationPath $destFolder -Force
 
-        $symbolsToPublish = New-Item -Path "$symbolsRoot/$($_.BaseName)" -ItemType Directory -Verbose
+        $symbolsToPublish = New-Item -Path "$symbolsRoot/$folderName/$($_.BaseName)" -ItemType Directory -Verbose
 
         Get-ChildItem -Path $destFolder -Recurse -Filter '*.pdb' | ForEach-Object {
           Copy-Item -Path $_.FullName -Destination $symbolsToPublish -Verbose
