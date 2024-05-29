@@ -199,11 +199,35 @@ jobs:
       Set-Location $repoRoot
 
       $exePath = New-ExePackage -ProductVersion $version -ProductTargetArchitecture $runtime -MsiLocationPath $msiLocation
+      Write-Verbose -Verbose "setting vso[task.setvariable variable=exePath]$exePath"
+      Write-Host "##vso[task.setvariable variable=exePath]$exePath"
       Write-Verbose -Verbose "exePath: $exePath"
-    displayName: 'Make exe package'
+
+      $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
+      Expand-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
+    displayName: 'Make exe and expand package'
 
   - task: onebranch.pipeline.signing@1
-    displayName: Sign MSI packages
+    displayName: Sign exe engine
+    inputs:
+      command: 'sign'
+      signing_profile: 135020002
+      files_to_sign: '$(System.ArtifactsDirectory)\unsignedEngine\*.exe'
+      search_root: '$(Pipeline.Workspace)'
+
+  - pwsh: |
+      $repoRoot = "$env:REPOROOT"
+      Import-Module "$repoRoot\build.psm1"
+      Import-Module "$repoRoot\tools\packaging"
+
+      $exePath = '$(exePath)'
+      $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
+      $enginePath | Get-AuthenticodeSignature | out-string | Write-Verbose -verbose
+      Compress-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
+    displayName: Compress signed exe package
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign exe packages
     inputs:
       command: 'sign'
       signing_profile: external_distribution
