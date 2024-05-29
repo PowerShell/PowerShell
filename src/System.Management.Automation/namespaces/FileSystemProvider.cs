@@ -3121,7 +3121,7 @@ namespace Microsoft.PowerShell.Commands
                                 StringUtil.Format(FileSystemProviderStrings.RemovingLocalFileActivity, _removedFiles, _totalFiles),
                                 StringUtil.Format(FileSystemProviderStrings.RemovingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_removedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
                             );
-                            var percentComplete = (int)Math.Min(_removedBytes * 100 / _totalBytes, 100);
+                            var percentComplete = _totalBytes != 0 ? (int)Math.Min(_removedBytes * 100 / _totalBytes, 100) : 100;
                             progress.PercentComplete = percentComplete;
                             progress.RecordType = ProgressRecordType.Processing;
                             WriteProgress(progress);
