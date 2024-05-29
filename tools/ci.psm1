@@ -545,7 +545,8 @@ function Invoke-CIFinish
                 }
             }
 
-            Install-WixArmZip
+            Import-Module "$PSScriptRoot\wix\wix.psm1"
+            Install-Wix -arm64:$true
             $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
             foreach ($package in $packages) {
@@ -620,33 +621,6 @@ function Invoke-CIFinish
             throw "Some artifacts did not exist!"
         }
     }
-}
-
-function Install-WixArmZip
-{
-    # cleanup previous install
-    if((Test-Path "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy")) {
-        Remove-Item "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy" -Recurse -Force
-    }
-
-    # This URI is for wix 3.14 which supports generating msi for arm architecures.
-    $wixUriArmSupport = 'https://aka.ms/ps-wix-3-14-zip'
-    $zipArmSupport = "$env:TEMP\wixArmSupport.zip"
-    $targetRoot = "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy"
-    Invoke-RestMethod -Uri $wixUriArmSupport -OutFile $zipArmSupport
-
-    $binPath = Join-Path -Path $targetRoot -ChildPath 'bin'
-    Write-Verbose "Expanding $zipArmSupport to $binPath ..." -Verbose
-    Expand-Archive -Path $zipArmSupport -DestinationPath $binPath -Force
-    $docExpandPath = Join-Path -Path $binPath -ChildPath 'doc'
-    $sdkExpandPath = Join-Path -Path $binPath -ChildPath 'sdk'
-    $docTargetPath = Join-Path -Path $targetRoot -ChildPath 'doc'
-    $sdkTargetPath = Join-Path -Path $targetRoot -ChildPath 'sdk'
-    Write-Verbose "Fixing folder structure ..." -Verbose
-    Move-Item -Path $docExpandPath -Destination $docTargetPath
-    Move-Item -Path $sdkExpandPath -Destination $sdkTargetPath
-    Set-Path -Append -Path $binPath
-    Write-Verbose "Done installing WIX for arm!"
 }
 
 function Set-Path
