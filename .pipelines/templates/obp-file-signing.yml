@@ -128,7 +128,7 @@ steps:
   displayName: Sign 3rd Party files
   inputs:
     command: 'sign'
-    signing_profile: 135020002
+    signing_profile: $(msft_3rd_party_cert_id)
     files_to_sign: '**\*.dll;**\*.exe'
     search_root: $(Pipeline.Workspace)/thirdPartyToBeSigned
 
