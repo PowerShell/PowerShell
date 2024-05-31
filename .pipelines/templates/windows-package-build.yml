@@ -18,6 +18,7 @@ jobs:
     - name: skipNugetSecurityAnalysis
       value: true
     - group: DotNetPrivateBuildAccess
+    - group: certificate_logical_to_actual
     - name: ob_outputDirectory
       value: '$(Build.ArtifactStagingDirectory)\ONEBRANCH_ARTIFACT'
     - name: ob_sdl_binskim_enabled
