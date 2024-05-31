@@ -211,7 +211,7 @@ jobs:
     displayName: Sign exe engine
     inputs:
       command: 'sign'
-      signing_profile: 135020002
+      signing_profile: $(msft_3rd_party_cert_id)
       files_to_sign: '$(System.ArtifactsDirectory)\unsignedEngine\*.exe'
       search_root: '$(Pipeline.Workspace)'
 
