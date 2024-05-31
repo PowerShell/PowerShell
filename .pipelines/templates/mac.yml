@@ -81,6 +81,7 @@ jobs:
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - group: DotNetPrivateBuildAccess
+  - group: certificate_logical_to_actual
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_codeSignValidation_enabled
