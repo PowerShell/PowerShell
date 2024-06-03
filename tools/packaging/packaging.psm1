@@ -3994,95 +3994,116 @@ function New-GlobalToolNupkgSource
         Write-Log "New-GlobalToolNupkgSource: Reducing size of Linux package"
         ReduceFxDependentPackage -Path $LinuxBinPath
 
-        Write-Log "Reducing size of Windows package"
+        Write-Log "New-GlobalToolNupkgSource: Reducing size of Alpine package"
+        ReduceFxDependentPackage -Path $AlpineBinPath
+
+        Write-Log "New-GlobalToolNupkgSource: Reducing size of Windows package"
         ReduceFxDependentPackage -Path $WindowsBinPath -KeepWindowsRuntimes
 
-        Write-Log "Reducing size of WindowsDesktop package"
+        Write-Log "New-GlobalToolNupkgSource: Reducing size of WindowsDesktop package"
         ReduceFxDependentPackage -Path $WindowsDesktopBinPath -KeepWindowsRuntimes
-
-        Write-Log "Creating a Linux and Windows packages"
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.Alpine"; Type = "PowerShell.Linux.Alpine"}
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.x64"; Type = "PowerShell.Linux.x64"}
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.arm32"; Type = "PowerShell.Linux.arm32"}
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Linux.arm64"; Type = "PowerShell.Linux.arm64"}
-
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows.x64"; Type = "PowerShell.Windows.x64"}
-        $packageInfo += @{ RootFolder = (New-TempFolder); PackageName = "PowerShell.Windows.arm32"; Type = "PowerShell.Windows.arm32"}
     }
 
-    $packageInfo | ForEach-Object {
-        $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+    Write-Log "New-GlobalToolNupkgSource: Creating package: $PackageType"
 
-        # Add the icon file to the package
-        Copy-Item -Path $iconPath -Destination "$($_.RootFolder)/$iconFileName" -Verbose
-
-        $packageType = $_.Type
-
-        switch ($packageType)
+    switch ($PackageType)
+    {
+        "Unified"
         {
-            "Unified"
-            {
-                $winFolder = New-Item (Join-Path $ridFolder "win") -ItemType Directory
-                $unixFolder = New-Item (Join-Path $ridFolder "unix") -ItemType Directory
+            $ShimDllPath = Join-Path $WindowsDesktopBinPath "Microsoft.PowerShell.GlobalTool.Shim.dll"
 
-                Write-Log "Copying runtime assemblies from $WindowsDesktopBinPath"
-                Copy-Item "$WindowsDesktopBinPath\*" -Destination $winFolder -Recurse
+            $PackageName = "PowerShell"
+            $RootFolder = New-TempFolder
 
-                Write-Log "Copying runtime assemblies from $LinuxBinPath"
-                Copy-Item "$LinuxBinPath\*" -Destination $unixFolder -Recurse
+            Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
 
-                Write-Log "Copying shim dll from $ShimDllPath"
-                Copy-Item $ShimDllPath -Destination $ridFolder
+            $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+            $winFolder = New-Item (Join-Path $ridFolder "win") -ItemType Directory
+            $unixFolder = New-Item (Join-Path $ridFolder "unix") -ItemType Directory
 
-                $shimConfigFile = Join-Path (Split-Path $ShimDllPath -Parent) 'Microsoft.PowerShell.GlobalTool.Shim.runtimeconfig.json'
-                Write-Log "Copying shim config file from $shimConfigFile"
-                Copy-Item $shimConfigFile -Destination $ridFolder -ErrorAction Stop
+            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $WindowsDesktopBinPath"
+            Copy-Item "$WindowsDesktopBinPath\*" -Destination $winFolder -Recurse
 
-                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f (Split-Path $ShimDllPath -Leaf)
-            }
+            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $LinuxBinPath"
+            Copy-Item "$LinuxBinPath\*" -Destination $unixFolder -Recurse
 
-            "PowerShell.Linux.Alpine"
-            {
-                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
-                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
-                Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
-                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
-            }
+            Write-Log "New-GlobalToolNupkgSource: Copying shim dll from $ShimDllPath"
+            Copy-Item $ShimDllPath -Destination $ridFolder
 
-            "PowerShell.Linux.x64"
-            {
-                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
-                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
-                Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
-                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
-            }
+            $shimConfigFile = Join-Path (Split-Path $ShimDllPath -Parent) 'Microsoft.PowerShell.GlobalTool.Shim.runtimeconfig.json'
+            Write-Log "New-GlobalToolNupkgSource: Copying shim config file from $shimConfigFile"
+            Copy-Item $shimConfigFile -Destination $ridFolder -ErrorAction Stop
 
-            "PowerShell.Linux.arm32"
-            {
-                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
-                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
-                Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
-                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
-            }
+            $toolSettings = $packagingStrings.GlobalToolSettingsFile -f (Split-Path $ShimDllPath -Leaf)
+        }
 
-            "PowerShell.Linux.arm64"
-            {
-                Write-Log "Copying runtime assemblies from $LinuxBinPath for $packageType"
-                Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
-                Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
-                Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
-                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
-            }
+        "PowerShell.Linux.Alpine"
+        {
+            $PackageName = "PowerShell.Linux.Alpine"
+            $RootFolder = New-TempFolder
+
+            Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
+
+            $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+
+            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $AlpineBinPath for $PackageType"
+            Copy-Item "$AlpineBinPath/*" -Destination $ridFolder -Recurse
+            $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+        }
+
+        "PowerShell.Linux.x64"
+        {
+            $PackageName = "PowerShell.Linux.x64"
+            $RootFolder = New-TempFolder
+
+            Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
+
+            $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+
+            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $LinuxBinPath for $PackageType"
+            Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+            Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
+            Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
+            Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
+            Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+            $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+        }
+
+        "PowerShell.Linux.arm32"
+        {
+            $PackageName = "PowerShell.Linux.arm32"
+            $RootFolder = New-TempFolder
+
+            Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
+
+            $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+
+            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $LinuxBinPath for $PackageType"
+            Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+            Remove-Item -Path $ridFolder/runtimes/linux-arm64 -Recurse -Force
+            Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
+            Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
+            Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+            $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+        }
+
+        "PowerShell.Linux.arm64"
+        {
+            $PackageName = "PowerShell.Linux.arm64"
+            $RootFolder = New-TempFolder
+
+            Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
+
+            $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+
+            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $LinuxBinPath for $PackageType"
+            Copy-Item "$LinuxBinPath/*" -Destination $ridFolder -Recurse
+            Remove-Item -Path $ridFolder/runtimes/linux-arm -Recurse -Force
+            Remove-Item -Path $ridFolder/runtimes/linux-musl-x64 -Recurse -Force
+            Remove-Item -Path $ridFolder/runtimes/linux-x64 -Recurse -Force
+            Remove-Item -Path $ridFolder/runtimes/osx -Recurse -Force
+            $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+        }
 
         # Due to needing a signed shim for the global tool, we build the global tool in build instead of packaging.
         # keeping the code for reference.
@@ -4101,19 +4122,27 @@ function New-GlobalToolNupkgSource
         #     $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
         # }
 
-            "PowerShell.Windows.arm32"
-            {
-                Write-Log "Copying runtime assemblies from $WindowsBinPath for $packageType"
-                Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
-                Remove-Item -Path $ridFolder/runtimes/win-x64 -Recurse -Force
-                $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
-            }
+        "PowerShell.Windows.arm32"
+        {
+            $PackageName = "PowerShell.Windows.arm32"
+            $RootFolder = New-TempFolder
+
+            Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
+
+            $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+
+            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $WindowsBinPath for $PackageType"
+            Copy-Item "$WindowsBinPath/*" -Destination $ridFolder -Recurse
+            Remove-Item -Path $ridFolder/runtimes/win-x64 -Recurse -Force
+            $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
         }
 
-        $packageName = $_.PackageName
-        $nuSpec = $packagingStrings.GlobalToolNuSpec -f $packageName, $PackageVersion, $iconFileName
-        $nuSpec | Out-File -FilePath (Join-Path $_.RootFolder "$packageName.nuspec") -Encoding ascii
-        $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml") -Encoding ascii
+        default { throw "New-GlobalToolNupkgSource: Unknown package type: $PackageType" }
+    }
+
+    $nuSpec = $packagingStrings.GlobalToolNuSpec -f $PackageName, $PackageVersion, $iconFileName
+    $nuSpec | Out-File -FilePath (Join-Path $RootFolder "$PackageName.nuspec") -Encoding ascii
+    $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml") -Encoding ascii
 
     # Source created.
     Write-Log "New-GlobalToolNupkgSource: Global tool package ($PackageName) source created at: $RootFolder"
