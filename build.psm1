@@ -307,6 +307,7 @@ function Start-PSBuild {
         # If this parameter is not provided it will get determined automatically.
         [ValidateSet("linux-musl-x64",
                      "fxdependent",
+                     "fxdependent-noopt-linux-musl-x64",
                      "fxdependent-linux-x64",
                      "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",

@@ -803,6 +803,8 @@ function Update-PSSignedBuildFolder
         if ($IsLinux) {
             $relativePath = $_.Replace($SignedFilesPathNormalized, '')
         } else {
+            Write-Verbose -Verbose "Normalizing path"
+            Write-Verbose -Verbose "signedFileObject = $_"
             $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPathNormalized.ToLowerInvariant(), '')
         }
 
