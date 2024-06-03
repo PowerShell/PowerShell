@@ -271,7 +271,7 @@ function Test-IsReleaseCandidate
     return $false
 }
 
-$optimizedFddRegex = 'fxdependent-(linux|alpine|win|win7|osx)-(x64|x86|arm64|arm)'
+$optimizedFddRegex = 'fxdependent-(linux|linux-musl|win|win7|osx)-(x64|x86|arm64|arm)'
 
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName="Default")]
@@ -305,7 +305,7 @@ function Start-PSBuild {
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         # If this parameter is not provided it will get determined automatically.
-        [ValidateSet("alpine-x64",
+        [ValidateSet("linux-musl-x64",
                      "fxdependent",
                      "fxdependent-linux-x64",
                      "fxdependent-linux-arm64",
@@ -828,7 +828,7 @@ function New-PSOptions {
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
-                     "alpine-x64",
+                     "linux-musl-x64",
                      "fxdependent",
                      "fxdependent-linux-x64",
                      "fxdependent-linux-arm64",
@@ -1219,7 +1219,7 @@ function Start-PSPester {
         # if we are building for Alpine, we must include the runtime as linux-x64
         # will not build runnable test tools
         if ( $environment.IsLinux -and $environment.IsAlpine ) {
-            $publishArgs['runtime'] = 'alpine-x64'
+            $publishArgs['runtime'] = 'linux-musl-x64'
         }
         Publish-PSTestTools @publishArgs | ForEach-Object {Write-Host $_}
     }
