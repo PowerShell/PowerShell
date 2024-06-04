@@ -801,11 +801,11 @@ function Update-PSSignedBuildFolder
 
         # Agents seems to be on a case sensitive file system
         if ($IsLinux) {
-            $relativePath = $signedFileObject.Replace($SignedFilesPathNormalized, '')
+            $relativePath = $signedFilePath.Replace($SignedFilesPathNormalized, '')
         } else {
             Write-Verbose -Verbose "Normalizing path"
-            Write-Verbose -Verbose "signedFileObject = $signedFileObject"
-            $relativePath = $signedFileObject.ToLowerInvariant().Replace($SignedFilesPathNormalized.ToLowerInvariant(), '')
+            Write-Verbose -Verbose "signedFileObject = $signedFilePath"
+            $relativePath = $signedFilePath.ToLowerInvariant().Replace($SignedFilesPathNormalized.ToLowerInvariant(), '')
         }
 
         Write-Verbose -Verbose "relativePath = $relativePath"
