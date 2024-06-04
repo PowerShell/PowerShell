@@ -893,6 +893,8 @@ function New-PSOptions {
             # So we, will change the RID to win7-<arch>
             $RuntimeTemp = $RID -replace "win\d+", "win7"
 
+            Write-Verbose -Verbose "RuntimeTemp is $RuntimeTemp"
+
             if ($RuntimeTemp -like 'win-*') {
                 $Runtime = $Runtime -replace 'win-', 'win7-'
             }
