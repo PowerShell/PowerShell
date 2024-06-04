@@ -885,10 +885,14 @@ function New-PSOptions {
                 }
             }
 
+            Write-Verbose -Verbose "RID is $RID"
+
             # We plan to release packages targeting win7-x64 and win7-x86 RIDs,
             # which supports all supported windows platforms.
             # So we, will change the RID to win7-<arch>
             $Runtime = $RID -replace "win\d+", "win7"
+
+            Write-Verbose -Verbose "Setting runtime to '$Runtime'"
         }
 
         if (-not $Runtime) {
