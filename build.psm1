@@ -896,7 +896,7 @@ function New-PSOptions {
             Write-Verbose -Verbose "RuntimeTemp is $RuntimeTemp"
 
             if ($RuntimeTemp -like 'win-*') {
-                $Runtime = $Runtime -replace 'win-', 'win7-'
+                $Runtime = $RuntimeTemp -replace 'win-', 'win7-'
             }
             else {
                 $Runtime = $RuntimeTemp
