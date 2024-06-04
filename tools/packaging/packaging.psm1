@@ -804,14 +804,14 @@ function Update-PSSignedBuildFolder
             $relativePath = $_.Replace($SignedFilesPathNormalized, '')
         } else {
             Write-Verbose -Verbose "Normalizing path"
-            Write-Verbose -Verbose "signedFileObject = $_"
+            Write-Verbose -Verbose "signedFileObject = $signedFileObject"
             $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPathNormalized.ToLowerInvariant(), '')
         }
 
         Write-Verbose -Verbose "relativePath = $relativePath"
         $destination = (Get-Item (Join-Path -Path $BuildPathNormalized -ChildPath $relativePath)).FullName
         Write-Verbose -Verbose "destination = $destination"
-        Write-Log "replacing $destination with $_"
+        Write-Log "replacing $destination with $signedFileObject"
 
         if (-not (Test-Path $destination)) {
             $parent = Split-Path -Path $destination -Parent
@@ -825,13 +825,13 @@ function Update-PSSignedBuildFolder
             Write-Error "File not found: $destination, parent - $parent exists: $exists"
         }
 
-        $signature = Get-AuthenticodeSignature -FilePath $_
+        $signature = Get-AuthenticodeSignature -FilePath $signedFileObject
 
         if ($signature.Status -ne 'Valid') {
-            Write-Error "Invalid signature for $_"
+            Write-Error "Invalid signature for $signedFileObject"
         }
 
-        Copy-Item -Path $_ -Destination $destination -Force
+        Copy-Item -Path $signedFileObject -Destination $destination -Force
     }
 
     foreach($filter in $RemoveFilter) {
