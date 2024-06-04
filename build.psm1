@@ -831,6 +831,7 @@ function New-PSOptions {
         [ValidateSet("",
                      "linux-musl-x64",
                      "fxdependent",
+                     "fxdependent-noopt-linux-musl-x64",
                      "fxdependent-linux-x64",
                      "fxdependent-linux-arm64",
                      "fxdependent-win-desktop",
