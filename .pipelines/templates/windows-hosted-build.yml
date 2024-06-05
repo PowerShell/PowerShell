@@ -140,6 +140,8 @@ jobs:
       Write-Verbose -Message "Building PowerShell global tool for Windows.x64" -Verbose
       $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
       $vstsCommandString = "vso[task.setvariable variable=GlobalToolCsProjDir]${globalToolCsProjDir}"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
 
       Push-Location -Path $globalToolCsProjDir -Verbose
 
@@ -149,7 +151,7 @@ jobs:
 
       Write-Verbose -Verbose "Building PowerShell global tool for Windows.x64 with cmdline: dotnet publish --no-self-contained /property:PackageVersion=$(Version) --configuration 'Release' /property:ReleaseTag=$ReleaseTagToUse"
       dotnet publish --no-self-contained --configuration 'Release' /property:PackageVersion=$(Version) /property:ReleaseTag=$ReleaseTagToUse
-      $globalToolBuildModulePath = Join-Path $globalToolCsProjDir 'bin' 'Release' 'net6.0'
+      $globalToolBuildModulePath = Join-Path $globalToolCsProjDir 'bin' 'Release' 'net6.0' 'publish'
       Pop-Location
       # do this to ensure everything gets signed.
       Restore-PSModuleToBuild -PublishPath $globalToolBuildModulePath
@@ -171,8 +173,6 @@ jobs:
         Where-Object { -not $_.PSIsContainer } |
         Where-Object { $_.name -notin $filesToKeep } |
         Remove-Item -Verbose
-
-
     displayName: 'Build Winx64 Global tool'
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
     env:
@@ -199,7 +199,7 @@ jobs:
   - ${{ if eq(variables['Architecture'], 'fxdependent') }}:
     - template: /.pipelines/templates/obp-file-signing.yml@self
       parameters:
-        binPath: '$(GlobalToolCsProjDir)/bin/Release/net6.0/publish'
+        binPath: $(GlobalToolCsProjDir)/bin/Release/net6.0/publish
         globalTool: 'true'
 
   - pwsh: |
@@ -265,7 +265,7 @@ jobs:
       )
 
       $sourceModulePath = Join-Path '$(GlobalToolCsProjDir)' 'bin' 'Release' 'net6.0' 'publish'
-      $destModulesPath = Join-Path "$outputPath" 'temp' 'tools' 'net9.0' 'any' 'modules'
+      $destModulesPath = Join-Path "$outputPath" 'temp' 'tools' 'net6.0' 'any' 'modules'
 
       $modulesToCopy | ForEach-Object {
         $modulePath = Join-Path $sourceModulePath $_
@@ -273,7 +273,7 @@ jobs:
       }
 
       # Copy ref assemblies
-      Copy-Item '$(Pipeline.Workspace)/Symbols_$(Architecture)/ref' "$outputPath\temp\tools\net9.0\any\ref" -Recurse -Force
+      Copy-Item '$(Pipeline.Workspace)/Symbols_$(Architecture)/ref' "$outputPath\temp\tools\net6.0\any\ref" -Recurse -Force
 
       $contentPath = Join-Path "$outputPath\temp" 'content'
       $contentFilesPath = Join-Path "$outputPath\temp" 'contentFiles'
@@ -281,7 +281,7 @@ jobs:
       Remove-Item -Path $contentPath,$contentFilesPath -Recurse -Force
 
       # remove PDBs to reduce the size of the nupkg
-      Remove-Item -Path "$outputPath\temp\tools\net9.0\any\*.pdb" -Recurse -Force
+      Remove-Item -Path "$outputPath\temp\tools\net6.0\any\*.pdb" -Recurse -Force
 
       Compress-Archive -Path "$outputPath\temp\*" -DestinationPath "$outputPath\$nupkgName" -Force
 
