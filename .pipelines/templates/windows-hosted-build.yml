@@ -139,20 +139,17 @@ jobs:
       ## Build global tool
       Write-Verbose -Message "Building PowerShell global tool for Windows.x64" -Verbose
       $globalToolCsProjDir = Join-Path $(PowerShellRoot) 'src' 'GlobalTools' 'PowerShell.Windows.x64'
-      Push-Location -Path $globalToolCsProjDir -Verbose
+      $vstsCommandString = "vso[task.setvariable variable=GlobalToolCsProjDir]${globalToolCsProjDir}"
 
-      $globalToolArtifactPath = Join-Path $(Build.SourcesDirectory) 'GlobalTool'
-      $vstsCommandString = "vso[task.setvariable variable=GlobalToolArtifactPath]${globalToolArtifactPath}"
-      Write-Host "sending " + $vstsCommandString
-      Write-Host "##$vstsCommandString"
+      Push-Location -Path $globalToolCsProjDir -Verbose
 
       if ($env:RELEASETAGVAR) {
         $ReleaseTagToUse = $env:RELEASETAGVAR -Replace '^v'
       }
 
-      Write-Verbose -Verbose "Building PowerShell global tool for Windows.x64 with cmdline: dotnet publish --no-self-contained --artifacts-path $globalToolArtifactPath /property:PackageVersion=$(Version) --configuration 'Release' /property:ReleaseTag=$ReleaseTagToUse"
-      dotnet publish --no-self-contained --artifacts-path $globalToolArtifactPath /property:PackageVersion=$(Version) --configuration 'Release' /property:ReleaseTag=$ReleaseTagToUse
-      $globalToolBuildModulePath = Join-Path $globalToolArtifactPath 'publish' 'PowerShell.Windows.x64' 'release'
+      Write-Verbose -Verbose "Building PowerShell global tool for Windows.x64 with cmdline: dotnet publish --no-self-contained /property:PackageVersion=$(Version) --configuration 'Release' /property:ReleaseTag=$ReleaseTagToUse"
+      dotnet publish --no-self-contained --configuration 'Release' /property:PackageVersion=$(Version) /property:ReleaseTag=$ReleaseTagToUse
+      $globalToolBuildModulePath = Join-Path $globalToolCsProjDir 'bin' 'Release' 'net6.0'
       Pop-Location
       # do this to ensure everything gets signed.
       Restore-PSModuleToBuild -PublishPath $globalToolBuildModulePath
@@ -165,7 +162,7 @@ jobs:
       Copy-Item -Path $refFolderPath -Destination $globalToolBuildModulePath -Recurse -Force
 
       Write-Verbose -Verbose "clean unnecessary files in obj directory"
-      $objDir = Join-Path $globalToolArtifactPath 'obj' 'PowerShell.Windows.x64' 'release'
+      $objDir = Join-Path $globalToolCsProjDir 'obj' 'Release' 'net6.0'
 
       $filesToKeep = @("apphost.exe", "PowerShell.Windows.x64.pdb", "PowerShell.Windows.x64.dll", "project.assets.json")
 
@@ -202,11 +199,11 @@ jobs:
   - ${{ if eq(variables['Architecture'], 'fxdependent') }}:
     - template: /.pipelines/templates/obp-file-signing.yml@self
       parameters:
-        binPath: '$(GlobalToolArtifactPath)/publish/PowerShell.Windows.x64/release'
+        binPath: '$(GlobalToolCsProjDir)/bin/Release/net6.0/publish'
         globalTool: 'true'
 
   - pwsh: |
-      Get-ChildItem '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
+      Get-ChildItem '$(GlobalToolCsProjDir)/bin/Release/net6.0/publish'
     displayName: Capture obj files
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
@@ -217,7 +214,7 @@ jobs:
       command: 'sign'
       signing_profile: external_distribution
       files_to_sign: '**\*.dll;**\*.exe'
-      search_root: '$(GlobalToolArtifactPath)/obj/PowerShell.Windows.x64/release'
+      search_root: '$(GlobalToolCsProjDir)/obj/Release/net6.0'
     condition: and(succeeded(), eq(variables['Architecture'], 'fxdependent'))
 
   - pwsh: |
@@ -241,9 +238,9 @@ jobs:
         $ReleaseTagToUse = $env:RELASETAGVAR -Replace '^v'
       }
 
-      Write-Verbose -Verbose "Packing PowerShell global tool for Windows.x64 with cmdline: dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)' /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png /property:Version=$(Version) /property:ReleaseTag=$ReleaseTagToUse"
+      Write-Verbose -Verbose "Packing PowerShell global tool for Windows.x64 with cmdline: dotnet pack --output $outputPath --no-build --configuration 'Release' /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png /property:Version=$(Version) /property:ReleaseTag=$ReleaseTagToUse"
 
-      dotnet pack --output $outputPath --no-build --artifacts-path '$(GlobalToolArtifactPath)' /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png /property:Version=$(Version) /property:ReleaseTag=$ReleaseTagToUse
+      dotnet pack --output $outputPath --no-build --configuration 'Release' /property:PackageVersion=$(Version) /property:PackageIcon=Powershell_64.png /property:Version=$(Version) /property:ReleaseTag=$ReleaseTagToUse
 
       Write-Verbose -Verbose "Deleting content and contentFiles folders from the nupkg"
 
@@ -267,7 +264,7 @@ jobs:
         'ThreadJob'
       )
 
-      $sourceModulePath = Join-Path '$(GlobalToolArtifactPath)' 'publish' 'PowerShell.Windows.x64' 'release' 'Modules'
+      $sourceModulePath = Join-Path '$(GlobalToolCsProjDir)' 'bin' 'Release' 'net6.0' 'publish'
       $destModulesPath = Join-Path "$outputPath" 'temp' 'tools' 'net9.0' 'any' 'modules'
 
       $modulesToCopy | ForEach-Object {
