@@ -264,7 +264,7 @@ jobs:
         'ThreadJob'
       )
 
-      $sourceModulePath = Join-Path '$(GlobalToolCsProjDir)' 'bin' 'Release' 'net6.0' 'publish'
+      $sourceModulePath = Join-Path '$(GlobalToolCsProjDir)' 'bin' 'Release' 'net6.0' 'publish' 'Modules'
       $destModulesPath = Join-Path "$outputPath" 'temp' 'tools' 'net6.0' 'any' 'modules'
 
       $modulesToCopy | ForEach-Object {
