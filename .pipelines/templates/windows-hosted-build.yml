@@ -156,6 +156,11 @@ jobs:
       # do this to ensure everything gets signed.
       Restore-PSModuleToBuild -PublishPath $globalToolBuildModulePath
 
+      Write-Verbose -Verbose "Restored modules to build folder for global tool packaging"
+      Get-ChildItem "$globalToolBuildModulePath/Modules" | ForEach-Object {
+        Write-Verbose -Verbose "Module: $($_.FullName)"
+      }
+
       $buildWithSymbolsPath = Get-Item -Path "$(Pipeline.Workspace)/Symbols_$(Architecture)"
       $refFolderPath = Join-Path $buildWithSymbolsPath 'ref'
       Write-Verbose -Verbose "refFolderPath: $refFolderPath"
