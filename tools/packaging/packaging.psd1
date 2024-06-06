@@ -17,6 +17,7 @@
         'New-GlobalToolNupkg'
         'New-ILNugetPackageSource'
         'New-ILNugetPackageFromSource'
+        'Start-PrepForGlobalToolNupkg'
         'New-PSBuildZip'
         'New-PSSignedBuildZip'
         'Publish-NugetToMyGet'
