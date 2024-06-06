@@ -149,7 +149,7 @@ jobs:
       $packageTypes = switch ($runtime) {
         'x64' { @('msi', 'zip', 'msix') }
         'x86' { @('msi', 'zip', 'msix') }
-        'arm64' { @('msi', 'zip', 'msix') }
+        'arm64' { @('msi', 'zip') }
         'fxdependent' { 'fxdependent' }
         'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
         'minsize' { 'min-size' }
