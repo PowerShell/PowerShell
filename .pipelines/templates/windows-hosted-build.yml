@@ -263,7 +263,6 @@ jobs:
       $modulesToCopy = @(
         'PowerShellGet'
         'PackageManagement'
-        'Microsoft.PowerShell.PSResourceGet'
         'Microsoft.PowerShell.Archive'
         'PSReadLine'
         'ThreadJob'
