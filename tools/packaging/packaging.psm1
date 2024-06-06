@@ -3954,6 +3954,49 @@ function New-GlobalToolNupkg
 
 <#
 .SYNOPSIS
+Performs clean up work for preparation to running New-GlobalToolNupkgSource package source creation.
+
+.DESCRIPTION
+Unnecessary package source files are removed.
+
+.PARAMETER LinuxBinPath
+Path to the folder containing the fxdependent package for Linux.
+
+.PARAMETER WindowsBinPath
+Path to the folder containing the fxdependent package for Windows.
+
+.PARAMETER WindowsDesktopBinPath
+Path to the folder containing desktop framework package for Windows.
+#>
+function Start-PrepForGlobalToolNupkg
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] [string] $LinuxBinPath,
+        [Parameter(Mandatory)] [string] $WindowsBinPath,
+        [Parameter(Mandatory)] [string] $WindowsDesktopBinPath,
+        [Parameter(Mandatory)] [string] $AlpineBinPath
+    )
+
+    Write-Log "Start-PrepForGlobalToolNupkg: Running clean up for New-GlobalToolNupkg package creation."
+
+    $libCryptoPath = Join-Path $LinuxBinPath 'libcrypto.so.1.0.0'
+    $libSSLPath = Join-Path $LinuxBinPath 'libssl.so.1.0.0'
+
+    if (Test-Path $libCryptoPath) {
+        Remove-Item -Path $libCryptoPath -Verbose -Force
+    }
+
+    if (Test-Path $libSSLPath) {
+        Remove-Item -Path $libSSLPath -Verbose -Force
+    }
+
+    # Remove unnecessary xml files
+    Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath, $WindowsDesktopBinPath, $AlpineBinPath -Filter *.xml | Remove-Item -Verbose
+}
+
+<#
+.SYNOPSIS
 Create a single PowerShell Global tool nuget package NuSpec source directory for the provied
 package type.
 

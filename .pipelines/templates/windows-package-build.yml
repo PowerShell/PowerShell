@@ -149,7 +149,7 @@ jobs:
       $packageTypes = switch ($runtime) {
         'x64' { @('msi', 'zip', 'msix') }
         'x86' { @('msi', 'zip', 'msix') }
-        'arm64' { @('msi', 'zip') }
+        'arm64' { @('msix', 'zip') }
         'fxdependent' { 'fxdependent' }
         'fxdependentWinDesktop' { 'fxdependent-win-desktop' }
         'minsize' { 'min-size' }
@@ -184,7 +184,7 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      $noExeRuntimes = @('fxdependent', 'fxdependentWinDesktop', 'minsize')
+      $noExeRuntimes = @('fxdependent', 'fxdependentWinDesktop', 'minsize', 'arm64')
 
       if ($runtime -in $noExeRuntimes) {
         Write-Verbose -Verbose "No EXE generated for $runtime"
