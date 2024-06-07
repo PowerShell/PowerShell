@@ -114,14 +114,6 @@ jobs:
   - task: DownloadPipelineArtifact@2
     inputs:
       buildType: 'current'
-      artifact: drop_linux_package_tar_alpine_fxd
-      itemPattern: '**/*.tar.gz'
-      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
-    displayName: Download linux alpine fxd tar package
-
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      buildType: 'current'
       artifact: drop_linux_package_tar_arm
       itemPattern: '**/*.tar.gz'
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
