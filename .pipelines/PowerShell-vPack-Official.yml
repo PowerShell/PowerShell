@@ -186,7 +186,7 @@ extends:
           - pwsh: |
               Write-Verbose "VPack Version: $(ob_createvpack_version)" -Verbose
               Get-ChildItem -Path $(ob_outputDirectory)\* -Recurse
-              Get-Content $(ob_outputdirectory)\preview.json | Write-Host
+              Get-Content $(ob_outputdirectory)\preview.json -ErrorAction SilentlyContinue | Write-Host
             displayName: Debug Output Directory and Version
             condition: succeededOrFailed()
 
