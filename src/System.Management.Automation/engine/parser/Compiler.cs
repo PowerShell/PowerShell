@@ -39,6 +39,9 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo ObjectList_ToArray =
             typeof(List<object>).GetMethod(nameof(List<object>.ToArray), Type.EmptyTypes);
 
+        internal static readonly MethodInfo ArrayOps_AddObject =
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.AddObjectArray), StaticFlags);
+
         internal static readonly MethodInfo ArrayOps_GetMDArrayValue =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), StaticFlags);
 
