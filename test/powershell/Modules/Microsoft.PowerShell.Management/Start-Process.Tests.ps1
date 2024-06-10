@@ -189,7 +189,7 @@ Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWi
 Describe "Environment Tests" -Tags "Feature" {
 
     It "UseNewEnvironment parameter should reset environment variables for child process" {
-        
+
         $PWSH = (Get-Process -Id $PID).MainModule.FileName
         $env:TestEnvVariable = 1
 
