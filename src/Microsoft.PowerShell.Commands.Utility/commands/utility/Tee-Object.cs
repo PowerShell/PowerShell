@@ -155,7 +155,6 @@ namespace Microsoft.PowerShell.Commands
                 if (this._inputObject.BaseObject is ErrorRecord er)
                 {
                     this.errorCommandWrapper.Process(_inputObject);
-                    return;
                 }
             }
 

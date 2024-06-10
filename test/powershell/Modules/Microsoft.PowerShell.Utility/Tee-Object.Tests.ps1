@@ -94,22 +94,23 @@ Describe "Tee-Object DRT Unit Tests" -Tags "CI" {
 
     It "Positive Variable/ErrorRecordVariable Test" {
         $results = Get-Item $PSHOME,doesnotexist1,$PWD,doesnotexist2 2>&1 | Tee-Object -Variable outputVar -ErrorRecordVariable errVar
-        $results.Length | Should -Be 2
-        $outputVar.Length | Should -Be 2
+        $results.Length | Should -Be 4
+        $outputVar.Length | Should -Be 4
         $errVar.Length | Should -Be 2
     }
 
     It "Positive File/ErrorRecordVariable Test" {
         $results = Get-Item $PSHOME,doesnotexist1,$PWD,doesnotexist2 2>&1 | Tee-Object -File $tempFile -ErrorRecordVariable errVar
-        $results.Length | Should -Be 2
-        (Get-Content $tempFile).Length | Should -BeGreaterThan 2
+        $results.Length | Should -Be 4
+        (Get-Content $tempFile).Length | Should -BeGreaterThan 4
         $errVar.Length | Should -Be 2
     }
 
 	It "Positive native process test" {
 		$results = .{ TestExe -echoargs a; TestExe } 2>&1 | Tee-Object -Variable outputVar -ErrorRecordVariable errVar
-		$results | Should -Be 'Arg 0 is <a>'
-		$outputVar | Should -Be 'Arg 0 is <a>'
+        $expectedResults = 'Arg 0 is <a>','Test not specified'
+		$results | Should -Be $expectedResults
+		$outputVar | Should -Be $expectedResults
 		$errVar | Should -Be "Test not specified"
 	}
 
