@@ -126,11 +126,6 @@ extends:
               }
             displayName: Stop any preview release
 
-          - pwsh:
-              Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
-            displayName: Set Build Name for Non-PR
-            condition: ne(variables['Build.Reason'], 'PullRequest')
-
           - task: UseDotNet@2
             displayName: 'Use .NET Core sdk'
             inputs:
