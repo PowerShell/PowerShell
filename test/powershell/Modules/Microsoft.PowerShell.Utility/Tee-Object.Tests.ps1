@@ -107,7 +107,7 @@ Describe "Tee-Object DRT Unit Tests" -Tags "CI" {
     }
 
 	It "Positive native process test" {
-		$results = .{ TestExe -echoargs a; TestExe } 2>&1 | Tee-Object -Variable outputVar -ErrorRecordVariable errVar
+		$results = .{ testexe -echoargs a; testexe } 2>&1 | Tee-Object -Variable outputVar -ErrorRecordVariable errVar
         $expectedResults = 'Arg 0 is <a>','Test not specified'
 		$results | Should -Be $expectedResults
 		$outputVar | Should -Be $expectedResults
