@@ -68,6 +68,7 @@ variables:
   - name: SKIP_SIGNING
     value: ${{ parameters.SKIP_SIGNING }}
   - group: 'AzDevOpsArtifacts'
+  - group: 'mscodehub-feed-read-akv'
 
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
