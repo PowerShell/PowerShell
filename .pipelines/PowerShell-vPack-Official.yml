@@ -38,9 +38,9 @@ variables:
   - name: BuildConfiguration
     value: Release
   - name: WindowsContainerImage
-    value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' 
+    value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest'
   - name: Codeql.Enabled
-    value: false  #  pipeline is not building artifacts; it repackages existing artifacts into a vpack 
+    value: false  #  pipeline is not building artifacts; it repackages existing artifacts into a vpack
   - name: DOTNET_CLI_TELEMETRY_OPTOUT
     value: 1
   - name: POWERSHELL_TELEMETRY_OPTOUT
@@ -53,7 +53,7 @@ variables:
   - group: certificate_logical_to_actual # used within signing task
 
 resources:
-  repositories: 
+  repositories:
     - repository: templates
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
@@ -64,10 +64,10 @@ extends:
   parameters:
     platform:
       name: 'windows_undocked' # windows undocked
-            
+
     cloudvault:
       enabled: false
-    
+
     globalSdl:
       useCustomPolicy: true # for signing code
       disableLegacyManifest: true
@@ -100,10 +100,10 @@ extends:
       jobs:
       - job: main
         pool:
-          type: windows  
-        
+          type: windows
+
         variables:
-          ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out' 
+          ob_outputDirectory: '$(BUILD.SOURCESDIRECTORY)\out'
           ob_createvpack_enabled: ${{ parameters.createVPack }}
           ob_createvpack_packagename: 'PowerShell.${{ parameters.architecture }}'
           ob_createvpack_description: PowerShell ${{ parameters.architecture }} $(version)
@@ -119,14 +119,14 @@ extends:
               ReleaseTagVar: $(ReleaseTagVar)
               CreateJson: yes
               UseJson: no
-              
+
           - pwsh: |
               if($env:RELEASETAGVAR -match '-') {
                   throw "Don't release a preview build without coordinating with Windows Engineering Build Tools Team"
               }
             displayName: Stop any preview release
 
-          - pwsh:  
+          - pwsh:
               Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
             displayName: Set Build Name for Non-PR
             condition: ne(variables['Build.Reason'], 'PullRequest')
