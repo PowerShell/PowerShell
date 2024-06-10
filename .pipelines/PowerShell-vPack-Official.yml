@@ -22,7 +22,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 - name: 'VPackPublishOverride'
   type: string
   displayName: 'VPack Publish Override Version (can leave blank):'
-  default: ''
+  default: ' '
 - name: 'ReleaseTagVar'
   type: string
   displayName: 'Release Tag Var:'
@@ -47,8 +47,6 @@ variables:
     value: 1
   - name: nugetMultiFeedWarnLevel
     value: none
-  - name: VPackPublishOverride
-    value: ${{ parameters.VPackPublishOverride }}
   - name: ReleaseTagVar
     value: ${{ parameters.ReleaseTagVar }}
   - group: Azure Blob variable group
@@ -192,11 +190,11 @@ extends:
 
           - pwsh: |
               Write-Host "Using VPackPublishOverride variable"
-              $vpackVersion = '$(VPackPublishOverride)'
+              $vpackVersion = '${{ parameters.VPackPublishOverride }}'
               $vstsCommandString = "vso[task.setvariable variable=ob_createvpack_version]$vpackVersion"
               Write-Host "sending " + $vstsCommandString
               Write-Host "##$vstsCommandString"
-            condition: and(ne(variables.VPackPublishOverride, ''), ne(variables.VPackPublishOverride, 'None'))
+            condition: ne(${{ parameters.VPackPublishOverride }}, ' '))
             displayName: 'Set ob_createvpack_version with VPackPublishOverride'
 
           - pwsh: |
