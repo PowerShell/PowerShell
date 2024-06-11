@@ -986,7 +986,7 @@ namespace System.Management.Automation.Language
             {
                 ExpressionAst value = arguments[i];
 
-                if (value is LabeledExpressionAst labelAst)
+                if (value is NamedMethodArgumentAst labelAst)
                 {
                     argNames.Add(labelAst.Label.Value);
                     value = labelAst.Expression;

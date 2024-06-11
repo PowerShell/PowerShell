@@ -7999,7 +7999,7 @@ namespace System.Management.Automation.Language
                             reportedError = true;
                             break;
                         }
-                        arguments.Add(new LabeledExpressionAst(entryExtent, argumentName, argument));
+                        arguments.Add(new NamedMethodArgumentAst(entryExtent, argumentName, argument));
                     }
 
                     SkipNewlines();

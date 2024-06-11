@@ -1635,8 +1635,6 @@ namespace System.Management.Automation
                 }
             }
 
-            try{
-
             OverloadCandidate bestCandidate = candidates.Count == 1
                 ? candidates[0]
                 : FindBestCandidate(candidates, arguments.Select(a => a.Item2).ToArray(), invocationConstraints);
@@ -1651,12 +1649,6 @@ namespace System.Management.Automation
             errorMsg = ExtendedTypeSystem.MethodAmbiguousException;
             argumentMap = null;
             return null;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                throw;
-            }
         }
 
 #nullable enable
