@@ -1353,7 +1353,7 @@ foo``u{2195}abc
         }
     }
 
-    Context "Method invocation argument labels" -Tag Jordan {
+    Context "Method invocation argument labels" {
         It "Parses single argument with label <Label.Trim()>" -TestCases @(
             @{ Label = "simple" }
             @{ Label = "_underscore" }
@@ -1373,7 +1373,7 @@ foo``u{2195}abc
 
             $actual = $ast.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments
             $actual.Count | Should -Be 1
-            $actual | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual | Should -BeOfType ([System.Management.Automation.Language.NamedMethodArgumentAst])
             $actual.Label | Should -Be $Label.Trim()
             $actual.Expression | Should -Be '''value'''
         }
@@ -1387,7 +1387,7 @@ foo``u{2195}abc
 
             $actual = $ast.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments
             $actual.Count | Should -Be 1
-            $actual | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual | Should -BeOfType ([System.Management.Automation.Language.NamedMethodArgumentAst])
             $actual.Label | Should -Be label
             $actual.Expression | Should -BeOfType ([System.Management.Automation.Language.StringConstantExpressionAst])
             $actual.Expression.StringConstantType | Should -Be SingleQuoted
@@ -1413,18 +1413,18 @@ $c.Method(
             $actual[0] | Should -BeOfType ([System.Management.Automation.Language.VariableExpressionAst])
             $actual[0].VariablePath | Should -Be arg1
 
-            $actual[1] | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual[1] | Should -BeOfType ([System.Management.Automation.Language.NamedMethodArgumentAst])
             $actual[1].Label | Should -Be label
             $actual[1].Expression | Should -BeOfType ([System.Management.Automation.Language.VariableExpressionAst])
             $actual[1].Expression.VariablePath | Should -Be arg2
 
-            $actual[2] | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual[2] | Should -BeOfType ([System.Management.Automation.Language.NamedMethodArgumentAst])
             $actual[2].Label | Should -Be other
             $actual[2].Expression | Should -BeOfType ([System.Management.Automation.Language.StringConstantExpressionAst])
             $actual[2].Expression.StringConstantType | Should -Be SingleQuoted
             $actual[2].Expression.Value | Should -Be 'string value'
 
-            $actual[3] | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual[3] | Should -BeOfType ([System.Management.Automation.Language.NamedMethodArgumentAst])
             $actual[3].Label | Should -Be final
             $actual[3].Expression | Should -BeOfType ([System.Management.Automation.Language.StringConstantExpressionAst])
             $actual[3].Expression.StringConstantType | Should -Be DoubleQuoted
@@ -1445,12 +1445,12 @@ $c.Method(
             $actual = $ast.EndBlock.Statements[0].PipelineElements[0].Expression.Arguments
             $actual.Count | Should -Be 2
 
-            $actual[0] | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual[0] | Should -BeOfType ([System.Management.Automation.Language.NamedMethodArgumentAst])
             $actual[0].Label | Should -BeExactly label
             $actual[0].Expression | Should -BeOfType ([System.Management.Automation.Language.VariableExpressionAst])
             $actual[0].Expression.VariablePath | Should -Be arg1
 
-            $actual[1] | Should -BeOfType ([System.Management.Automation.Language.LabeledExpressionAst])
+            $actual[1] | Should -BeOfType ([System.Management.Automation.Language.NamedMethodArgumentAst])
             $actual[1].Label | Should -BeExactly Label
             $actual[1].Expression | Should -BeOfType ([System.Management.Automation.Language.VariableExpressionAst])
             $actual[1].Expression.VariablePath | Should -Be arg2

@@ -7404,7 +7404,7 @@ namespace System.Management.Automation.Language
     /// The ast representing an expression with a string label inside a method invocation argument list, e.g.
     /// <c>$class.Method(name: $value)</c>.
     /// </summary>
-    public class LabeledExpressionAst : ExpressionAst
+    public class NamedMethodArgumentAst : ExpressionAst
     {
         /// <summary>
         /// Initializes a new instance of the argument with label expression.
@@ -7412,7 +7412,7 @@ namespace System.Management.Automation.Language
         /// <param name="extent">The extent of the expression.</param>
         /// <param name="label">The expression label.</param>
         /// <param name="expression">The labeled expression.</param>
-        public LabeledExpressionAst(
+        public NamedMethodArgumentAst(
             IScriptExtent extent,
             StringConstantExpressionAst label,
             ExpressionAst expression) : base(extent)
@@ -7434,7 +7434,7 @@ namespace System.Management.Automation.Language
         public ExpressionAst Expression { get; }
 
         /// <summary>
-        /// Copy the LabeledExpressionAst instance.
+        /// Copy the NamedMethodArgumentAst instance.
         /// </summary>
         /// <returns>
         /// Returns a copy of the ast.
@@ -7443,20 +7443,20 @@ namespace System.Management.Automation.Language
         {
             StringConstantExpressionAst newLabel = CopyElement(this.Label);
             ExpressionAst newExpression = CopyElement(this.Expression);
-            return new LabeledExpressionAst(this.Extent, newLabel, newExpression);
+            return new NamedMethodArgumentAst(this.Extent, newLabel, newExpression);
         }
 
         #region Visitors
 
         internal override object? Accept(ICustomAstVisitor visitor)
-            => (visitor as ICustomAstVisitor2)?.VisitLabeledExpression(this);
+            => (visitor as ICustomAstVisitor2)?.VisitNamedMethodArgumentExpression(this);
 
         internal override AstVisitAction InternalVisit(AstVisitor visitor)
         {
             var action = AstVisitAction.Continue;
             if (visitor is AstVisitor2 visitor2)
             {
-                action = visitor2.VisitLabeledExpression(this);
+                action = visitor2.VisitNamedMethodArgumentExpression(this);
                 if (action == AstVisitAction.SkipChildren)
                 {
                     return visitor.CheckForPostAction(this, AstVisitAction.Continue);

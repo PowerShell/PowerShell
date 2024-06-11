@@ -247,7 +247,7 @@ namespace System.Management.Automation.Language
         public virtual AstVisitAction VisitPipelineChain(PipelineChainAst statementChain) => DefaultVisit(statementChain);
 
         /// <summary/>
-        public virtual AstVisitAction VisitLabeledExpression(LabeledExpressionAst argumentWithLabelAst) => DefaultVisit(argumentWithLabelAst);
+        public virtual AstVisitAction VisitNamedMethodArgumentExpression(NamedMethodArgumentAst argumentWithLabelAst) => DefaultVisit(argumentWithLabelAst);
     }
 
     /// <summary>
