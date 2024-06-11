@@ -12,8 +12,8 @@ jobs:
   markdown-link-check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: gaurav-nelson/github-action-markdown-link-check@v1
+    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+    - uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
       with:
         use-quiet-mode: 'yes'
         use-verbose-mode: 'yes'
@@ -26,13 +26,13 @@ jobs:
       statuses: write
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       with:
         # Full git history is needed to get a proper
         # list of changed files within `super-linter`
         fetch-depth: 0
     - name: Lint Markdown
-      uses: super-linter/super-linter@v5
+      uses: super-linter/super-linter@a8150b40c89574adb5f68bf9502b890a236a06b3 # v5.7.2
       env:
         VALIDATE_ALL_CODEBASE: false
         DEFAULT_BRANCH: master
