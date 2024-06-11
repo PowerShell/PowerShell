@@ -17,6 +17,10 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip Signing
     type: string
     default: 'NO'
+  - name: SkipPMCPublish
+    displayName: Skip PMC Publish
+    type: boolean
+    default: false
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -270,7 +274,7 @@ extends:
       jobs:
       - template: /.pipelines/templates/release-publish-pmc.yml@self
         parameters:
-          skipPublish: true
+          skipPublish: ${{ parameters.SkipPMCPublish }}
 
     - stage: ReleaseDocker
       dependsOn: PublishGitHubRelease

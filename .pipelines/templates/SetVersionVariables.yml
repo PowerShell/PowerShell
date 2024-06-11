@@ -8,7 +8,7 @@ steps:
 - ${{ if eq(parameters['UseJson'],'yes') }}:
   - task: DownloadBuildArtifacts@0
     inputs:
-      artifactName: 'drop_prep_DeleteBlob'
+      artifactName: 'drop_prep_SetVars'
       itemPattern: '*.json'
       downloadPath: '$(System.ArtifactsDirectory)'
     displayName: Download Build Info Json
@@ -47,7 +47,18 @@ steps:
 
 - powershell: |
     $createJson = ("${{ parameters.CreateJson }}" -ne "no")
-    $releaseTag = & "$env:REPOROOT/tools/releaseBuild/setReleaseTag.ps1" -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
+
+    $REPOROOT = $env:REPOROOT
+
+    if (-not (Test-Path $REPOROOT/tools/releaseBuild/setReleaseTag.ps1)) {
+      if ((Test-Path "$REPOROOT/PowerShell/tools/releaseBuild/setReleaseTag.ps1")) {
+        $REPOROOT = "$REPOROOT/PowerShell"
+      } else {
+        throw "Could not find setReleaseTag.ps1 in $REPOROOT/tools/releaseBuild or $REPOROOT/PowerShell/tools/releaseBuild"
+      }
+    }
+
+    $releaseTag = & "$REPOROOT/tools/releaseBuild/setReleaseTag.ps1" -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
     $version = $releaseTag.Substring(1)
     $vstsCommandString = "vso[task.setvariable variable=Version]$version"
     Write-Host ("sending " + $vstsCommandString)

@@ -56,7 +56,14 @@ jobs:
       # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
 
       Import-Module ./build.psm1 -Force
-      Start-PSBuild -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -Output $(OB_OUTPUTDIRECTORY)
+
+      $ReleaseTagParam = @{}
+
+      if ($env:RELEASETAGVAR) {
+        $ReleaseTagParam['ReleaseTag'] = $env:RELEASETAGVAR
+      }
+
+      Start-PSBuild -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -Output $(OB_OUTPUTDIRECTORY) @ReleaseTagParam
       $artifactName = "macosBinResults-${{ parameters.buildArchitecture }}"
 
       $psOptPath = "$(OB_OUTPUTDIRECTORY)/psoptions.json"

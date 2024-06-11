@@ -2,13 +2,6 @@ name: UnifiedPackageBuild-$(Build.BuildId)
 trigger: none
 
 parameters:
-  - name: ForceAzureBlobDelete
-    displayName: Delete Azure Blob
-    type: string
-    values:
-    - true
-    - false
-    default: false
   - name: InternalSDKBlobURL
     displayName: URL to the blob having internal .NET SDK
     type: string
@@ -51,8 +44,6 @@ variables:
     value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
   - name: branchCounter
     value: $[counter(variables['branchCounterKey'], 1)]
-  - name: ForceAzureBlobDelete
-    value: ${{ parameters.ForceAzureBlobDelete }}
   - name: BUILDSECMON_OPT_IN
     value: true
   - name: __DOTNET_RUNTIME_FEED
@@ -110,7 +101,37 @@ extends:
     stages:
     - stage: prep
       jobs:
-      - template: /.pipelines/templates/checkAzureContainer.yml@self
+      - job: SetVars
+        displayName: Set Variables
+        pool:
+          type: windows
+
+        variables:
+          - name: ob_sdl_tsa_configFile
+            value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+          - name: ob_sdl_credscan_suppressionsFile
+            value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+          - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+            - name: ob_sdl_codeql_compiled_enabled
+              value: true
+          - name: ob_outputDirectory
+            value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/BuildJson'
+
+        steps:
+        - checkout: self
+          clean: true
+          env:
+            ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+        - pwsh: |
+            Get-ChildItem Env:
+          displayName: Capture environment variables
+
+        - template: /.pipelines/templates/SetVersionVariables.yml@self
+          parameters:
+            ReleaseTagVar: $(ReleaseTagVar)
+            CreateJson: yes
+            UseJson: no
 
     - stage: macos
       displayName: macOS - build and sign

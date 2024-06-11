@@ -46,8 +46,6 @@ jobs:
       CreateJson: yes
       UseJson: no
 
-  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
-
   - pwsh: |
       Get-ChildItem Env:
     displayName: 'Capture Environment Variables'
@@ -63,27 +61,15 @@ jobs:
       Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
     displayName: Remove AzRM modules
 
-  - task: AzurePowerShell@5
-    displayName: Set blob permissions
+  - task: AzureCLI@2
+    displayName: 'Set blob permissions'
     inputs:
       azureSubscription: az-blob-cicd-infra
-      scriptType: inlineScript
-      azurePowerShellVersion: LatestVersion
-      pwsh: true
-      inline: |
-        $storageAccount = "$(StorageAccount)"
-        $containerName = "$(azureVersion)"
-        $publicAccess = "blob"
-
-        Set-AzStorageContainerAcl `
-          -Context (New-AzStorageContext -StorageAccountName $storageAccount) `
-          -Container $containerName `
-          -PublicAccess $publicAccess
-
-        Set-AzStorageContainerAcl `
-          -Context (New-AzStorageContext -StorageAccountName $storageAccount) `
-          -Container "$containerName-gc" `
-          -PublicAccess $publicAccess
+      scriptType: 'pscore'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az storage container set-permission --account-name $(StorageAccount) --name $(azureVersion) --public-access blob
+        az storage container set-permission --account-name $(StorageAccount) --name $(azureVersion)-gc --public-access blob
 
 - template: /.pipelines/templates/approvalJob.yml@self
   parameters:
@@ -104,6 +90,10 @@ jobs:
   - group: 'Azure Blob variable group'
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
 
   steps:
     - checkout: self
@@ -116,8 +106,6 @@ jobs:
         ReleaseTagVar: $(ReleaseTagVar)
         CreateJson: yes
         UseJson: no
-
-    - template: /.pipelines/templates/cloneToOfficialPath.yml@self
 
     - pwsh: |
         Get-ChildItem Env:
@@ -143,28 +131,31 @@ jobs:
         pwsh: true
         inline: |
           $sourceStorageAccountName = '$(StorageAccount)'
-          $sourceContainerName = '$(AzureVersion)'
+          $sourceContainerName = '$(AzureVersion)-nuget'
 
           $destinationStorageAccountName = '$(PSInfraStorageAccount)'
-          $destinationContainerName = "tool/$(Version)"
+          $destinationContainerName = "tool"
 
           $sourceContext = New-AzStorageContext -StorageAccountName $sourceStorageAccountName
-          $destinationContext = New-AzStorageContext -StorageAccountName $destinationStorageAccountName
+          Write-Verbose -Verbose "Source context: $($sourceContext.BlobEndPoint)"
 
-          $blobs = Get-AzStorageBlob -Context $sourceContext -Container $sourceContainerName
+          $destinationContext = New-AzStorageContext -StorageAccountName $destinationStorageAccountName
+          Write-Verbose -Verbose "Destination context: $($destinationContext.BlobEndPoint)"
+
+          $prefix = 'globaltool'
+          $blobs = Get-AzStorageBlob -Context $sourceContext -Container $sourceContainerName -Prefix $prefix
+
+          Write-Verbose -Verbose "Blobs found in $sourceContainerName"
+          $blobs.Name | Write-Verbose -Verbose
+
+          Write-Verbose -Verbose "Copying blobs from $sourceContainerName to $destinationContainerName"
 
           foreach ($blob in $blobs) {
             $sourceBlobName = $blob.Name
-            $destinationBlobName = $sourceBlobName
+            Write-Verbose -Verbose "sourceBlobName = $sourceBlobName"
 
-            $destinationBlob = Start-AzStorageBlobCopy -Context $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName
+            $destinationBlobName = $sourceBlobName -replace "$prefix", '$(Version)'
+            Write-Verbose -Verbose "destinationBlobName = $destinationBlobName"
 
-            # Wait for the copy operation to complete
-            $destinationBlob | Wait-AzStorageBlobCopy
-
-            if ($destinationBlob.CopyStatus -eq "Success") {
-              Write-Host "Blob copy completed successfully for $sourceBlobName."
-            } else {
-              Write-Host "Blob copy failed for $sourceBlobName."
-            }
+            Copy-AzStorageBlob -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName -Force -Verbose -Confirm:$false
           }
