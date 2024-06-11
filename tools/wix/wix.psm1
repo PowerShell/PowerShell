@@ -1,6 +1,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Import-Module "$PSScriptRoot\dockerInstall.psm1"
+
+function Append-Path
+{
+    param
+    (
+        $path
+    )
+    $machinePathString = [System.Environment]::GetEnvironmentVariable('path',[System.EnvironmentVariableTarget]::Machine)
+    $machinePath = $machinePathString -split ';'
+
+    if($machinePath -inotcontains $path)
+    {
+        $newPath = "$machinePathString;$path"
+        Write-Verbose "Adding $path to path..." -Verbose
+        [System.Environment]::SetEnvironmentVariable('path',$newPath,[System.EnvironmentVariableTarget]::Machine)
+        Write-Verbose "Added $path to path." -Verbose
+    }
+    else
+    {
+        Write-Verbose "$path already in path." -Verbose
+    }
+}
 
 # Install using Wix Zip because the MSI requires an older version of dotnet
 # which was large and unstable in docker
@@ -48,7 +69,33 @@ function Install-Wix
     $x86ExpandPath = Join-Path -Path "$binPath\Microsoft.Signed.Wix\3.14.1\tools\" -ChildPath 'x86'
 
     $docTargetPath = Join-Path -Path $targetRoot -ChildPath 'doc'
+
+    if (-not (Test-Path $docTargetPath)) {
+        $null = New-Item -ItemType Directory -Path $docTargetPath
+        Write-Verbose -Verbose "Created doc directory for WIX at $docTargetPath"
+    }
+
     $sdkTargetPath = Join-Path -Path $targetRoot -ChildPath 'sdk'
+
+    if (-not (Test-Path $sdkTargetPath)) {
+        $null = New-Item -ItemType Directory -Path $sdkTargetPath
+        Write-Verbose -Verbose "Created sdk directory for WIX at $sdkTargetPath"
+    }
+
+    $binTargetPath = Join-Path -Path $targetRoot -ChildPath 'bin'
+
+    if (-not (Test-Path $binTargetPath)) {
+        $null = New-Item -ItemType Directory -Path $binTargetPath
+        Write-Verbose -Verbose "Created bin directory for WIX at $binTargetPath"
+    }
+
+    $x86TargetPath = Join-Path -Path $binPath -ChildPath 'x86'
+
+    if (-not (Test-Path $x86TargetPath)) {
+        $null = New-Item -ItemType Directory -Path $x86TargetPath
+        Write-Verbose -Verbose "Created x86 directory for WIX at $x86TargetPath"
+    }
+
     Write-Verbose "Fixing folder structure ..." -Verbose
     Copy-Item -Path $docExpandPath -Destination $docTargetPath -Force
     Copy-Item -Path $sdkExpandPath -Destination $sdkTargetPath -Force

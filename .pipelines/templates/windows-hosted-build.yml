@@ -107,6 +107,8 @@ jobs:
         $pdbs | ForEach-Object {
           Write-Verbose -Verbose "Pdb: $($_.FullName)"
         }
+
+        $pdbs | Compress-Archive -DestinationPath "$(ob_outputDirectory)/symbols.zip" -Update
       }
 
       if ($runtime -eq 'fxdependent')
