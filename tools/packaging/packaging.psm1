@@ -4335,20 +4335,22 @@ function New-GlobalToolNupkgSource
             $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
         }
 
-        "PowerShell.Windows.x64"
-        {
-            $PackageName = "PowerShell.Windows.x64"
-            $RootFolder = New-TempFolder
+        # Due to needing a signed shim for the global tool, we build the global tool in build instead of packaging.
+        # keeping the code for reference.
+        # "PowerShell.Windows.x64"
+        # {
+        #     $PackageName = "PowerShell.Windows.x64"
+        #     $RootFolder = New-TempFolder
 
-            Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
+        #     Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
 
-            $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+        #     $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
 
-            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $WindowsDesktopBinPath for $PackageType"
-            Copy-Item "$WindowsDesktopBinPath/*" -Destination $ridFolder -Recurse
-            Remove-Item -Path $ridFolder/runtimes/win-arm -Recurse -Force
-            $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
-        }
+        #     Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $WindowsDesktopBinPath for $PackageType"
+        #     Copy-Item "$WindowsDesktopBinPath/*" -Destination $ridFolder -Recurse
+        #     Remove-Item -Path $ridFolder/runtimes/win-arm -Recurse -Force
+        #     $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+        # }
 
         "PowerShell.Windows.arm32"
         {
