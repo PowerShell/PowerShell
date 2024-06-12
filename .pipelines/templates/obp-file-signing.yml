@@ -89,11 +89,17 @@ steps:
   displayName: Capture environment
 
 - pwsh: |
+    Get-ChildItem -Path '$(Pipeline.Workspace)/toBeSigned/*'
+  displayName: Capture signed files
+
+- pwsh: |
     Import-Module $(PowerShellRoot)/build.psm1 -Force
     Import-Module $(PowerShellRoot)/tools/packaging -Force
 
     $BuildPath = (Get-Item '${{ parameters.binPath }}').FullName
     Write-Verbose -Verbose -Message "BuildPath: $BuildPath"
+
+    Write-Verbose -Verbose "Signed Path: $(Pipeline.Workspace)/toBeSigned"
 
     ## copy all files to be signed to build folder
     Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath '$(Pipeline.Workspace)/toBeSigned'
