@@ -893,7 +893,6 @@ function New-PSBuildZip
     }
 }
 
-
 function Update-PSSignedBuildFolder
 {
     param(
@@ -903,6 +902,12 @@ function Update-PSSignedBuildFolder
         [string]$SignedFilesPath,
         [string[]] $RemoveFilter = ('*.pdb', '*.zip', '*.r2rmap')
     )
+
+    $BuildPathNormalized = (Get-Item $BuildPath).FullName
+    $SignedFilesPathNormalized = (Get-Item $SignedFilesPath).FullName
+
+    Write-Verbose -Verbose "BuildPath = $BuildPathNormalized"
+    Write-Verbose -Verbose "SignedFilesPath = $signedFilesPath"
 
     # Replace unsigned binaries with signed
     $signedFilesFilter = Join-Path -Path $SignedFilesPathNormalized -ChildPath '*'
@@ -965,11 +970,10 @@ function Update-PSSignedBuildFolder
     }
 
     foreach($filter in $RemoveFilter) {
-        $removePath = Join-Path -Path $BuildPath -ChildPath $filter
+        $removePath = Join-Path -Path $BuildPathNormalized -ChildPath $filter
         Remove-Item -Path $removePath -Recurse -Force
     }
 }
-
 
 function Expand-PSSignedBuild
 {
