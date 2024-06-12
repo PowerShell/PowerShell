@@ -2,7 +2,6 @@ on:
   pull_request:
     branches:
       - master
-      - 'release/**'
 
 name: Check modified markdown files
 permissions:
@@ -38,4 +37,4 @@ jobs:
         DEFAULT_BRANCH: master
         FILTER_REGEX_INCLUDE: .*\.md
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        VALIDATE_EDITORCONFIG: false        
+        VALIDATE_EDITORCONFIG: false
