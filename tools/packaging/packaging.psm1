@@ -3598,7 +3598,12 @@ function Expand-ExePackageEngine {
         # Location to put the expanded engine.
         [Parameter(Mandatory = $true)]
         [string]
-        $EnginePath
+        $EnginePath,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64", "arm64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture,
     )
 
     <#
@@ -3606,7 +3611,7 @@ function Expand-ExePackageEngine {
     insignia -ib TestInstaller.exe -o engine.exe
     #>
 
-    $wixPaths = Get-WixPath
+    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
 
     $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
     $resolvedEnginePath = [System.IO.Path]::GetFullPath($EnginePath)
@@ -3628,7 +3633,12 @@ function Compress-ExePackageEngine {
         # Location of the signed engine
         [Parameter(Mandatory = $true)]
         [string]
-        $EnginePath
+        $EnginePath,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64", "arm64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture,
     )
 
 
@@ -3637,7 +3647,7 @@ function Compress-ExePackageEngine {
     insignia -ab engine.exe TestInstaller.exe -o TestInstaller.exe
     #>
 
-    $wixPaths = Get-WixPath
+    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
 
     $resolvedEnginePath = (Resolve-Path -Path $EnginePath).ProviderPath
     $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
