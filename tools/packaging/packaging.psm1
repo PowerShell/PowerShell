@@ -3603,7 +3603,7 @@ function Expand-ExePackageEngine {
         [Parameter(Mandatory = $true)]
         [ValidateSet("x86", "x64", "arm64")]
         [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture,
+        [string] $ProductTargetArchitecture
     )
 
     <#
@@ -3638,7 +3638,7 @@ function Compress-ExePackageEngine {
         [Parameter(Mandatory = $true)]
         [ValidateSet("x86", "x64", "arm64")]
         [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture,
+        [string] $ProductTargetArchitecture
     )
 
 
