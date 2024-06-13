@@ -295,68 +295,6 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static bool CompleteAgainstStatementFlags(Ast scriptAst, Ast lastAst, Token token, out TokenKind kind)
-        {
-            kind = TokenKind.Unknown;
-
-            // Handle "switch -f<tab>"
-            var errorStatement = lastAst as ErrorStatementAst;
-            if (errorStatement != null && errorStatement.Kind != null)
-            {
-                switch (errorStatement.Kind.Kind)
-                {
-                    case TokenKind.Switch:
-                        kind = TokenKind.Switch;
-                        return true;
-                    default:
-                        break;
-                }
-            }
-
-            // Handle "switch -<tab>". Skip cases like "switch ($a) {} -<tab> "
-            var scriptBlockAst = scriptAst as ScriptBlockAst;
-            if (token != null && token.Kind == TokenKind.Minus && scriptBlockAst != null)
-            {
-                var asts = AstSearcher.FindAll(scriptBlockAst, ast => IsCursorAfterExtent(token.Extent.StartScriptPosition, ast.Extent), searchNestedScriptBlocks: true);
-
-                Ast last = asts.LastOrDefault();
-                errorStatement = null;
-
-                while (last != null)
-                {
-                    errorStatement = last as ErrorStatementAst;
-                    if (errorStatement != null) { break; }
-
-                    last = last.Parent;
-                }
-
-                if (errorStatement != null && errorStatement.Kind != null)
-                {
-                    switch (errorStatement.Kind.Kind)
-                    {
-                        case TokenKind.Switch:
-
-                            Tuple<Token, Ast> value;
-                            if (errorStatement.Flags != null && errorStatement.Flags.TryGetValue(Parser.VERBATIM_ARGUMENT, out value))
-                            {
-                                if (IsTokenTheSame(value.Item1, token))
-                                {
-                                    kind = TokenKind.Switch;
-                                    return true;
-                                }
-                            }
-
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-            }
-
-            return false;
-        }
-
         private static bool IsTokenTheSame(Token x, Token y)
         {
             if (x.Kind == y.Kind && x.TokenFlags == y.TokenFlags &&
@@ -448,10 +386,9 @@ namespace System.Management.Automation
                             break;
                         }
 
-                        TokenKind statementKind;
-                        if (CompleteAgainstStatementFlags(null, lastAst, null, out statementKind))
+                        result = CompletionCompleters.CompleteStatementFlags(completionContext);
+                        if (result is not null)
                         {
-                            result = CompletionCompleters.CompleteStatementFlags(statementKind, completionContext.WordToComplete);
                             break;
                         }
 
@@ -646,13 +583,7 @@ namespace System.Management.Automation
                             break;
                         }
 
-                        // Handle the flag completion for statements, such as the switch statement
-                        if (CompleteAgainstStatementFlags(completionContext.RelatedAsts[0], null, tokenAtCursor, out statementKind))
-                        {
-                            completionContext.WordToComplete = tokenAtCursor.Text;
-                            result = CompletionCompleters.CompleteStatementFlags(statementKind, completionContext.WordToComplete);
-                            break;
-                        }
+                        result = CompletionCompleters.CompleteStatementFlags(completionContext);
 
                         break;
 
