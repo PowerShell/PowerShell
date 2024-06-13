@@ -221,6 +221,13 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
+      $noExeRuntimes = @('fxdependent', 'fxdependentWinDesktop', 'minsize')
+
+      if ($runtime -in $noExeRuntimes) {
+        Write-Verbose -Verbose "No EXE generated for $runtime"
+        return
+      }
+
       $exePath = '$(exePath)'
       $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
       $enginePath | Get-AuthenticodeSignature | out-string | Write-Verbose -verbose
