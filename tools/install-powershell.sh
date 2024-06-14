@@ -121,6 +121,9 @@ install(){
 			if [[ $osname = *SUSE* ]]; then
 				DistroBasedOn='suse'
 				REV=$(source /etc/os-release; echo $VERSION_ID)
+            elif [ $osname = *Azure Linux* ] ; then
+                DistroBasedOn='mariner'
+                REV=$(source /etc/os-release; echo $VERSION_ID)
 			fi			
             OS=$(lowercase $OS)
             DistroBasedOn=$(lowercase $DistroBasedOn)
