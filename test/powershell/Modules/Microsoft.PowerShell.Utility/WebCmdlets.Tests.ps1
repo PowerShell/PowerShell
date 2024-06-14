@@ -692,8 +692,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $uri = Get-WebListenerUrl -Test $method
             $body = GetTestData -contentType $contentType
             $command = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
+            $commandNoContentType = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method"
 
-            It "Invoke-WebRequest -Uri $uri  -Method $method -ContentType $contentType -Body [body data]" {
+            It "Invoke-WebRequest -Uri $uri -Method $method -ContentType $contentType -Body [body data]" {
 
                 $result = ExecuteWebCommand -command $command
                 ValidateResponse -response $result
@@ -702,6 +703,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 $jsonContent = $result.Output.Content | ConvertFrom-Json
                 $jsonContent.url | Should -Match $uri
                 $jsonContent.headers.'Content-Type' | Should -Match $contentType
+                # Validate that the response Content.data field is the same as what we sent.
+                $jsonContent.data | Should -Be $body
+            }
+
+            It "Invoke-WebRequest -Uri $uri -Method $method -Body [body data]" {
+
+                $result = ExecuteWebCommand -command $commandNoContentType
+                ValidateResponse -response $result
+
+                # Validate response content
+                $jsonContent = $result.Output.Content | ConvertFrom-Json
+                $jsonContent.url | Should -Match $uri
                 # Validate that the response Content.data field is the same as what we sent.
                 $jsonContent.data | Should -Be $body
             }
@@ -2739,6 +2752,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $uri = Get-WebListenerUrl -Test $method
             $body = GetTestData -contentType $contentType
             $command = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
+            $commandNoContentType = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method"
 
             It "Invoke-RestMethod -Uri $uri -Method $method -ContentType $contentType -Body [body data]" {
 
@@ -2747,6 +2761,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
                 # Validate response
                 $result.Output.url | Should -Match $uri
                 $result.Output.headers.'Content-Type' | Should -Match $contentType
+
+                # Validate that the response Content.data field is the same as what we sent.
+                $result.Output.data | Should -Be $body
+            }
+
+            It "Invoke-RestMethod -Uri $uri -Method $method -Body [body data]" {
+
+                $result = ExecuteWebCommand -command $commandNoContentType
+
+                # Validate response
+                $result.Output.url | Should -Match $uri
 
                 # Validate that the response Content.data field is the same as what we sent.
                 $result.Output.data | Should -Be $body
