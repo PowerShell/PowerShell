@@ -2752,7 +2752,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $uri = Get-WebListenerUrl -Test $method
             $body = GetTestData -contentType $contentType
             $command = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
-            $commandNoContentType = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method"
+            $commandNoContentType = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method"
 
             It "Invoke-RestMethod -Uri $uri -Method $method -ContentType $contentType -Body [body data]" {
 
