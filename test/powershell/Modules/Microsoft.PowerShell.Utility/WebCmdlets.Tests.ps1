@@ -715,8 +715,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 # Validate response content
                 $jsonContent = $result.Output.Content | ConvertFrom-Json
                 $jsonContent.url | Should -Match $uri
-                # Validate that the response Content.data field is the same as what we sent.
-                $jsonContent.data | Should -Be $body
+                if ($method -eq "POST")
+                {
+                    $jsonContent.headers.'Content-Type' | Should -Match "application/x-www-form-urlencoded"
+                    # Validate that the response Content.form field is the same as what we sent.
+                    [string]$jsonContent.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = [System.Object[]]})
+                    $jsonContent.data | Should -BeNullOrEmpty
+                }
+                else
+                {
+                    # Validate that the response Content.data field is the same as what we sent.
+                    $jsonContent.data | Should -Be $body
+                }
+
             }
         }
     }
@@ -2773,8 +2784,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
                 # Validate response
                 $result.Output.url | Should -Match $uri
 
-                # Validate that the response Content.data field is the same as what we sent.
-                $result.Output.data | Should -Be $body
+                if ($method -eq "POST")
+                {
+                    $result.Output.headers.'Content-Type' | Should -Match "application/x-www-form-urlencoded"
+                    # Validate that the response Content.form field is the same as what we sent.
+                    [string]$result.Output.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = [System.Object[]]})
+                    $result.Output.data | Should -BeNullOrEmpty
+                }
+                else
+                {
+                    # Validate that the response Content.data field is the same as what we sent.
+                    $result.Output.data | Should -Be $body
+                }
+
             }
         }
     }
