@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        [ValidateSet("IgnoreComments", "AllowTrailingCommas")]
+        [ValidateSet(IgnoreCommentsOption, AllowTrailingCommasOption)]
         public string[] Options { get; set; } = Array.Empty<string>();
 
         #endregion
