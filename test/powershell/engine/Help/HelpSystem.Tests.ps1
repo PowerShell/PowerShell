@@ -695,3 +695,21 @@ Describe 'Update-Help allows partial culture matches' -Tags 'CI' {
         Test-UpdateHelpAux $null $Pass
     }
 }
+
+Describe 'InputTypes accurately describe pipelinable input' {
+    BeforeAll {
+        function invoke-inputtypetest {
+            [CmdletBinding()]
+            param (
+            [Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true)][string]$a,
+            [Parameter(Position=1,ValueFromRemainingArguments=$true)][object[]]$c)
+            Process { "$a $c" }
+        }
+    }
+
+    It 'Should have only 1 input type' {
+        $inputTypes = (Get-Help -full invoke-inputtypetest).inputtypes.inputtype.type.name.trim().split("`n")
+        $inputTypes.Count | Should -Be 1
+        $inputTypes | Should -Be "System.String"
+    }
+}

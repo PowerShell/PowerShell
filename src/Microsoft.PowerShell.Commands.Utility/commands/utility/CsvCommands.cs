@@ -1419,11 +1419,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (!string.IsNullOrEmpty(currentHeader))
                         {
-                            if (!headers.Contains(currentHeader))
-                            {
-                                headers.Add(currentHeader);
-                            }
-                            else
+                            if (!headers.Add(currentHeader))
                             {
                                 // throw a terminating error as there are duplicate headers in the input.
                                 string memberAlreadyPresentMsg =

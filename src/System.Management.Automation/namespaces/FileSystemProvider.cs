@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(FileSecurity), typeof(DirectorySecurity), ProviderCmdlet = ProviderCmdlet.GetAcl)]
     [OutputType(typeof(bool), typeof(string), typeof(FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(bool), typeof(string), typeof(DateTime), typeof(System.IO.FileInfo), typeof(System.IO.DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetItemProperty)]
-    [OutputType(typeof(string), typeof(System.IO.FileInfo), ProviderCmdlet = ProviderCmdlet.NewItem)]
+    [OutputType(typeof(string), typeof(System.IO.FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.NewItem)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This coupling is required")]
     public sealed partial class FileSystemProvider : NavigationCmdletProvider,
                                                      IContentCmdletProvider,
@@ -61,6 +61,7 @@ namespace Microsoft.PowerShell.Commands
         private const int FILETRANSFERSIZE = 4 * 1024 * 1024;
 
         private const int COPY_FILE_ACTIVITY_ID = 0;
+        private const int REMOVE_FILE_ACTIVITY_ID = 0;
 
         // The name of the key in an exception's Data dictionary when attempting
         // to copy an item onto itself.
@@ -1077,6 +1078,21 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     throw;
+                }
+            }
+
+            // .NET introduced a change where invalid characters are accepted https://learn.microsoft.com/en-us/dotnet/core/compatibility/2.1#path-apis-dont-throw-an-exception-for-invalid-characters
+            // We need to check for invalid characters ourselves.  `Path.GetInvalidFileNameChars()` is a supserset of `Path.GetInvalidPathChars()`
+
+            // Remove drive root first
+            string pathWithoutDriveRoot = path.Substring(Path.GetPathRoot(path).Length);
+            char[] invalidFileChars = Path.GetInvalidFileNameChars();
+
+            foreach (string segment in pathWithoutDriveRoot.Split(Path.DirectorySeparatorChar))
+            {
+                if (segment.IndexOfAny(invalidFileChars) != -1)
+                {
+                    return false;
                 }
             }
 
@@ -2860,6 +2876,19 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
+                if (Context != null
+                    && Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.UserPath).Value is ActionPreference progressPreference
+                    && progressPreference == ActionPreference.Continue)
+                {
+                    {
+                        Task.Run(() =>
+                        {
+                            GetTotalFiles(path, recurse);
+                        });
+                        _removeStopwatch.Start();
+                    }
+                }
+
 #if UNIX
                 if (iscontainer)
                 {
@@ -2922,6 +2951,16 @@ namespace Microsoft.PowerShell.Commands
                     {
                         RemoveFileInfoItem((FileInfo)fsinfo, Force);
                     }
+                }
+
+                if (Stopping || _removedFiles == _totalFiles)
+                {
+                    _removeStopwatch.Stop();
+                    var progress = new ProgressRecord(REMOVE_FILE_ACTIVITY_ID, " ", " ")
+                    {
+                        RecordType = ProgressRecordType.Completed
+                    };
+                    WriteProgress(progress);
                 }
 #endif
             }
@@ -3057,6 +3096,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (file != null)
                     {
+                        long fileBytesSize = file.Length;
+
                         if (recurse)
                         {
                             // When recurse is specified we need to confirm each
@@ -3068,6 +3109,22 @@ namespace Microsoft.PowerShell.Commands
                             // When recurse is not specified just delete all the
                             // subitems without confirming with the user.
                             RemoveFileSystemItem(file, force);
+                        }
+
+                        if (_totalFiles > 0)
+                        {
+                            _removedFiles++;
+                            _removedBytes += fileBytesSize;
+                            double speed = _removedBytes / 1024 / 1024 / _removeStopwatch.Elapsed.TotalSeconds;
+                            var progress = new ProgressRecord(
+                                REMOVE_FILE_ACTIVITY_ID,
+                                StringUtil.Format(FileSystemProviderStrings.RemovingLocalFileActivity, _removedFiles, _totalFiles),
+                                StringUtil.Format(FileSystemProviderStrings.RemovingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_removedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
+                            );
+                            var percentComplete = (int)Math.Min(_removedBytes * 100 / _totalBytes, 100);
+                            progress.PercentComplete = percentComplete;
+                            progress.RecordType = ProgressRecordType.Processing;
+                            WriteProgress(progress);
                         }
                     }
                 }
@@ -4883,6 +4940,10 @@ namespace Microsoft.PowerShell.Commands
         private long _copiedFiles;
         private long _copiedBytes;
         private readonly Stopwatch _copyStopwatch = new Stopwatch();
+
+        private long _removedBytes;
+        private long _removedFiles;
+        private readonly Stopwatch _removeStopwatch = new();
 
         #endregion CopyItem
 

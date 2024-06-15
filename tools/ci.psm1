@@ -541,9 +541,12 @@ function Invoke-CIFinish
                 }
                 'win-arm.*' {
                     $runPackageTest = $false
-                    $packageTypes = 'zip', 'zip-pdb', 'msix'
+                    $packageTypes = 'msi', 'zip', 'zip-pdb', 'msix'
                 }
             }
+
+            Import-Module "$PSScriptRoot\wix\wix.psm1"
+            Install-Wix -arm64:$true
             $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
             foreach ($package in $packages) {
@@ -617,6 +620,35 @@ function Invoke-CIFinish
         if (!$pushedAllArtifacts) {
             throw "Some artifacts did not exist!"
         }
+    }
+}
+
+function Set-Path
+{
+    param
+    (
+        [Parameter(Mandatory)]
+        [string]
+        $Path,
+
+        [Parameter(Mandatory)]
+        [switch]
+        $Append
+    )
+
+    $machinePathString = [System.Environment]::GetEnvironmentVariable('path',[System.EnvironmentVariableTarget]::Machine)
+    $machinePath = $machinePathString -split ';'
+
+    if($machinePath -inotcontains $path)
+    {
+        $newPath = "$machinePathString;$path"
+        Write-Verbose "Adding $path to path..." -Verbose
+        [System.Environment]::SetEnvironmentVariable('path',$newPath,[System.EnvironmentVariableTarget]::Machine)
+        Write-Verbose "Added $path to path." -Verbose
+    }
+    else
+    {
+        Write-Verbose "$path already in path." -Verbose
     }
 }
 

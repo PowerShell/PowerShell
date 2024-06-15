@@ -191,6 +191,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsRedHatFamily' = $environment.IsCentOS -or $environment.IsFedora -or $environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $environment.IsSLES -or $environment.IsOpenSUSE}
         $environment += @{'IsAlpine' = $LinuxInfo.ID -match 'alpine'}
+        $environment += @{'IsMariner' = $LinuxInfo.ID -match 'mariner'}
 
         # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
         # https://github.com/PowerShell/PowerShell/issues/2511
@@ -204,7 +205,8 @@ function Get-EnvironmentInformation
             $environment.IsUbuntu -or
             $environment.IsRedHatFamily -or
             $environment.IsSUSEFamily -or
-            $environment.IsAlpine)
+            $environment.IsAlpine -or
+            $environment.IsMariner)
         ) {
             if ($SkipLinuxDistroCheck) {
                 Write-Warning "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
@@ -776,7 +778,7 @@ function Restore-PSPackage
 
     if (-not $ProjectDirs)
     {
-        $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
+        $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules", "$PSScriptRoot/tools/wix")
 
         if ($Options.Runtime -like 'fxdependent*') {
             $ProjectDirs += "$PSScriptRoot/src/Microsoft.PowerShell.GlobalTool.Shim"
@@ -893,8 +895,8 @@ function New-PSOptions {
         [ValidateSet('Debug', 'Release', 'CodeCoverage', 'StaticAnalysis', '')]
         [string]$Configuration,
 
-        [ValidateSet("net8.0")]
-        [string]$Framework = "net8.0",
+        [ValidateSet("net9.0")]
+        [string]$Framework = "net9.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -2168,7 +2170,7 @@ function Start-PSBootstrap {
                     # change the apt frontend back to the original
                     $env:DEBIAN_FRONTEND=$originalDebianFrontEnd
                 }
-            } elseif ($environment.IsLinux -and $environment.IsRedHatFamily) {
+            } elseif ($environment.IsLinux -and ($environment.IsRedHatFamily -or $environment.IsMariner)) {
                 # Build tools
                 $Deps += "which", "curl", "wget"
 
@@ -2214,9 +2216,9 @@ function Start-PSBootstrap {
                 }
             } elseif ($environment.IsMacOS) {
                 if ($environment.UsingHomebrew) {
-                    $PackageManager = "brew"
+                    $baseCommand = "brew install --quiet"
                 } elseif ($environment.UsingMacports) {
-                    $PackageManager = "$sudo port"
+                    $baseCommand = "$sudo port -q install"
                 }
 
                 # wget for downloading dotnet
@@ -2227,7 +2229,7 @@ function Start-PSBootstrap {
 
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
-                Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
+                Start-NativeExecution ([ScriptBlock]::Create("$baseCommand $Deps")) -IgnoreExitcode
             } elseif ($environment.IsLinux -and $environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'build-base', 'git', 'curl', 'wget'
 
@@ -2238,9 +2240,11 @@ function Start-PSBootstrap {
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
             if ($Package) {
-                Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.12.0"
-                Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.11.0"
+                Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
+                Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
+                Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
                 Install-GlobalGem -Sudo $sudo -GemName "ronn" -GemVersion "0.7.3"
+                Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
             }
         }
 
@@ -2290,6 +2294,11 @@ function Start-PSBootstrap {
                 Write-Log -message "pwsh.exe not found. Install latest PowerShell release and add it to Path"
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
+            }
+            if ($Package) {
+                Import-Module "$PSScriptRoot\tools\wix\wix.psm1"
+                $isArm64 = "$env:RUNTIME" -eq 'arm64'
+                Install-Wix -arm64:$isArm64
             }
         }
     } finally {
@@ -3503,7 +3512,7 @@ function Clear-NativeDependencies
     $filesToDeleteWinDesktop = @()
 
     $deps = Get-Content "$PublishFolder/pwsh.deps.json" -Raw | ConvertFrom-Json -Depth 20
-    $targetRuntime = ".NETCoreApp,Version=v8.0/$($script:Options.Runtime)"
+    $targetRuntime = ".NETCoreApp,Version=v9.0/$($script:Options.Runtime)"
 
     $runtimePackNetCore = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.NETCore.App.Runtime*'
     $runtimePackWinDesktop = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.WindowsDesktop.App.Runtime*'

@@ -1,0 +1,19 @@
+parameters:
+  nativePathRoot: ''
+
+steps:
+- powershell: |
+    $dirSeparatorChar = [system.io.path]::DirectorySeparatorChar
+    $nativePath = "${{parameters.nativePathRoot }}${dirSeparatorChar}PowerShell"
+    Write-Host "##vso[task.setvariable variable=PowerShellRoot]$nativePath"
+    if ((Test-Path "$nativePath")) {
+      Remove-Item -Path "$nativePath" -Force -Recurse -Verbose -ErrorAction ignore
+    }
+    else {
+      Write-Verbose -Verbose -Message "No cleanup required."
+    }
+    git clone --quiet $env:REPOROOT $nativePath
+  displayName: Clone PowerShell Repo to /PowerShell
+  errorActionPreference: silentlycontinue
+  env:
+    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
