@@ -2796,7 +2796,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
                     # Validate that the response Content.data field is the same as what we sent.
                     $result.Output.data | Should -Be $body
                 }
-
             }
         }
     }
