@@ -46,15 +46,7 @@ Describe "TabCompletion" -Tags CI {
                 New-ModuleManifest -Path "$($NewDir.FullName)\$ModuleName.psd1" -RootModule "$ModuleName.psm1" -FunctionsToExport "MyTestFunction" -ModuleVersion $NewDir.Name
             }
 
-            if ($IsWindows)
-            {
-                $env:PSModulePath += ";$tempDir"
-            }
-            else
-            {
-                $env:PSModulePath += ":$tempDir"
-            }
-            
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir            
             $Res = TabExpansion2 -inputScript MyTestFunction
             $Res.CompletionMatches.Count | Should -Be 2
             $SortedMatches = $Res.CompletionMatches.CompletionText | Sort-Object
