@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [ValidateSet("IgnoreComments", "AllowTrailingCommas")]
-        public string[] Option { get; set; } = Array.Empty<string>();
+        public string[] Options { get; set; } = Array.Empty<string>();
 
         #endregion
 
@@ -214,10 +214,10 @@ namespace Microsoft.PowerShell.Commands
 
             _documentOptions = new JsonDocumentOptions
             {
-                CommentHandling = Option.Contains("IgnoreComments", StringComparer.OrdinalIgnoreCase)
+                CommentHandling = Options.Contains("IgnoreComments", StringComparer.OrdinalIgnoreCase)
                     ? JsonCommentHandling.Skip
                     : JsonCommentHandling.Disallow,
-                AllowTrailingCommas = Option.Contains("AllowTrailingCommas", StringComparer.OrdinalIgnoreCase)
+                AllowTrailingCommas = Options.Contains("AllowTrailingCommas", StringComparer.OrdinalIgnoreCase)
             };
         }
 
