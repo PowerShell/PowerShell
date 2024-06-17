@@ -144,7 +144,7 @@ jobs:
       Write-Verbose -Verbose "LTS: $LTS"
 
       if ($LTS) {
-        Write-Verbose -Message "LTS Release: $LTS"
+        Write-Verbose -Message "LTS Release: $LTS" -Verbose
       }
 
       if (-not (Test-Path $(ob_outputDirectory))) {

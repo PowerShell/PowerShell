@@ -142,7 +142,7 @@ jobs:
       Write-Verbose -Verbose "LTS: $LTS"
 
       if ($LTS) {
-        Write-Verbose -Message "LTS Release: $LTS"
+        Write-Verbose -Message "LTS Release: $LTS" -Verbose
       }
 
       Start-PSBootstrap -Package
