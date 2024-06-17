@@ -136,7 +136,13 @@ jobs:
       }
 
       $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
-      $LTS = $metadata.LTSRelease.Package
+
+      Write-Verbose -Verbose "metadata:"
+      $metadata | Out-String | Write-Verbose -Verbose
+
+      $LTS = $metadata.LTSRelease.Package -eq 'True'
+
+      Write-Verbose -Verbose "LTS: $LTS"
 
       if ($LTS) {
         Write-Verbose -Message "LTS Release: $LTS"
@@ -149,7 +155,7 @@ jobs:
       $packageType = '$(PackageType)'
       Write-Verbose -Verbose "packageType = $packageType"
 
-      Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+      Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
 
       $vstsCommandString = "vso[task.setvariable variable=PackageFilter]$pkgFilter"
       Write-Host ("sending " + $vstsCommandString)
