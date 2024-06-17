@@ -155,7 +155,12 @@ jobs:
       $packageType = '$(PackageType)'
       Write-Verbose -Verbose "packageType = $packageType"
 
-      Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
+      Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+
+      if ($LTS) {
+        Write-Verbose -Message "LTS Release: $LTS" -Verbose
+        Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS
+      }
 
       $vstsCommandString = "vso[task.setvariable variable=PackageFilter]$pkgFilter"
       Write-Host ("sending " + $vstsCommandString)
