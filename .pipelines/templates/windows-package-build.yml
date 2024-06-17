@@ -129,7 +129,15 @@ jobs:
       Restore-PSOptions -PSOptionsPath "$psoptionsFilePath"
       Get-PSOptions | Write-Verbose -Verbose
 
+      if (-not (Test-Path "$repoRoot/tools/metadata.json")) {
+        throw "metadata.json not found in $repoRoot/tools"
+      }
+
       $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
+
+      Write-Verbose -Verbose "metadata:"
+      $metadata | Out-String | Write-Verbose -Verbose
+
       $LTS = $metadata.LTSRelease.Package
 
       if ($LTS) {

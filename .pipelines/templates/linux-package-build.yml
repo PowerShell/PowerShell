@@ -110,7 +110,7 @@ jobs:
       }
 
       Restore-PSOptions $psOptionsPath
-      Write-Verbose -Message "Restoring PSOptions from $psoptionsFilePath" -Verbose
+      Write-Verbose -Message "Restoring PSOptions from $psOptionsPath" -Verbose
       Get-PSOptions | Write-Verbose -Verbose
 
       $signedFolder, $pkgFilter = switch ($packageType) {
