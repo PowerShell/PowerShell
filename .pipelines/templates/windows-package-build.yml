@@ -137,7 +137,9 @@ jobs:
       Write-Verbose -Verbose "metadata:"
       $metadata | Out-String | Write-Verbose -Verbose
 
-      $LTS = $metadata.LTSRelease.Package
+      $LTS = $metadata.LTSRelease.Package -eq 'True'
+
+      Write-Verbose -Verbose "LTS: $LTS"
 
       if ($LTS) {
         Write-Verbose -Message "LTS Release: $LTS"
