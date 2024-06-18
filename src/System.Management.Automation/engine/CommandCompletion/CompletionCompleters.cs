@@ -328,7 +328,6 @@ namespace System.Management.Automation
                 }
             }
 
-            List<CompletionResult> endResults = null;
             foreach (var keyValuePair in commandTable)
             {
                 if (keyValuePair.Value is List<object> commandList)
@@ -346,9 +345,11 @@ namespace System.Management.Automation
                         }
 
                         modulesWithCommand.Add(commandInfo.ModuleName);
-                        if ((commandInfo.CommandType != CommandTypes.Alias && commandInfo.CommandMetadata.CommandType is not null)
+                        if ((commandInfo.CommandType == CommandTypes.Cmdlet && commandInfo.CommandMetadata.CommandType is not null)
+                            || (commandInfo.CommandType is CommandTypes.Function or CommandTypes.Filter && commandInfo.Definition != string.Empty)
                             || (commandInfo.CommandType == CommandTypes.Alias && commandInfo.Definition is not null))
                         {
+                            // Checks if the command or source module has been imported.
                             _ = importedModules.Add(commandInfo.ModuleName);
                         }
                     }
@@ -361,9 +362,12 @@ namespace System.Management.Automation
                         || moduleCount < 2)
                     {
                         // We can use the short name for this command because there's no ambiguity about which command it resolves to.
+                        // If the first element is an application then we know there's no conflicting commands/aliases (because of the command precedence).
+                        // If there's just 1 module imported then the short name refers to that module (and it will be the first element in the list)
+                        // If there's less than 2 unique modules exporting that command then we can use the short name because it can only refer to that module.
                         index = 1;
                         results.Add(GetCommandNameCompletionResult(keyValuePair.Key, commandInfoArray[0], addAmpersandIfNecessary, quote));
-                        _ = modulesWithCommand.Add(commandInfoArray[0].ModuleName);
+                        modulesWithCommand.Add(commandInfoArray[0].ModuleName);
                     }
                     else
                     {
@@ -405,11 +409,6 @@ namespace System.Management.Automation
 
                     results.Add(GetCommandNameCompletionResult(completionName, keyValuePair.Value, addAmpersandIfNecessary, quote));
                 }
-            }
-
-            if (endResults != null && endResults.Count > 0)
-            {
-                results.AddRange(endResults);
             }
 
             return results;
