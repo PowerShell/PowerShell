@@ -139,8 +139,6 @@ jobs:
         Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$file"
       }
 
-      Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$pkgPath"
-
       Start-PSPackage -Type tar -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
       $tarPkgNameFilter = "powershell-*$macosRuntime.tar.gz"
       $tarPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $tarPkgNameFilter -Recurse -File
