@@ -127,7 +127,7 @@ jobs:
       Start-PSPackage -Type osxpkg -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
 
       if ($LTS) {
-        Start-PSPackage -Type osxpkg -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+        Start-PSPackage -Type osxpkg -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS
       }
 
       $pkgNameFilter = "powershell-*$macosRuntime.pkg"
