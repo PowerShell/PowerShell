@@ -336,7 +336,7 @@ namespace System.Management.Automation
                     var modulesWithCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     var importedModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     var commandInfoArray = new CommandInfo[commandList.Count];
-                    for (int i = 0; i < commandInfoArray.Length; i++)
+                    for (int i = 0; i < commandList.Count; i++)
                     {
                         var commandInfo = (CommandInfo)commandList[i];
                         commandInfoArray[i] = commandInfo;
@@ -345,7 +345,7 @@ namespace System.Management.Automation
                             continue;
                         }
 
-                        _ = modulesWithCommand.Add(commandInfo.ModuleName);
+                        modulesWithCommand.Add(commandInfo.ModuleName);
                         if ((commandInfo.CommandType != CommandTypes.Alias && commandInfo.CommandMetadata.CommandType is not null)
                             || (commandInfo.CommandType == CommandTypes.Alias && commandInfo.Definition is not null))
                         {
