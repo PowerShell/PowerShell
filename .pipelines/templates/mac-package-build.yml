@@ -131,20 +131,24 @@ jobs:
       }
 
       $pkgNameFilter = "powershell-*$macosRuntime.pkg"
-      $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+      $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File
 
       foreach($p in $pkgPath) {
-        Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$p"
+        $file = $p.FullName
+        Write-Verbose -verbose "Uploading $file to macos-pkgs"
+        Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$file"
       }
 
       Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$pkgPath"
 
       Start-PSPackage -Type tar -SkipReleaseChecks -MacOSRuntime $macosRuntime -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath -LTS:$LTS
       $tarPkgNameFilter = "powershell-*$macosRuntime.tar.gz"
-      $tarPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $tarPkgNameFilter -Recurse -File | Select-Object -ExpandProperty FullName
+      $tarPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $tarPkgNameFilter -Recurse -File
 
       foreach($t in $tarPkgPath) {
-        Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$t"
+        $file = $p.FullName
+        Write-Verbose -verbose "Uploading $file to macos-pkgs"
+        Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$file"
       }
 
     displayName: 'Package ${{ parameters.buildArchitecture}}'
