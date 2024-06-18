@@ -144,7 +144,7 @@ jobs:
       $tarPkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $tarPkgNameFilter -Recurse -File
 
       foreach($t in $tarPkgPath) {
-        $file = $p.FullName
+        $file = $t.FullName
         Write-Verbose -verbose "Uploading $file to macos-pkgs"
         Write-Host "##vso[artifact.upload containerfolder=macos-pkgs;artifactname=macos-pkgs]$file"
       }
