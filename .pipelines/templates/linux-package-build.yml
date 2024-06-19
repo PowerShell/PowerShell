@@ -36,6 +36,8 @@ jobs:
       value: $(Build.SourcesDirectory)/PowerShell/.config/tsaoptions.json
     - name: ob_sdl_credscan_suppressionsFile
       value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
+    - name: SigningProfile
+      value: ${{ parameters.signingProfile }}
 
   steps:
   - checkout: self
@@ -174,7 +176,7 @@ jobs:
     displayName: Sign deb and rpm packages
     inputs:
       command: 'sign'
-      signing_profile: CP-459159-pgpdetached
+      signing_profile: '$(SigningProfile)'
       files_to_sign: '**/*.rpm;**/*.deb'
       search_root: '$(Pipeline.Workspace)'
 
