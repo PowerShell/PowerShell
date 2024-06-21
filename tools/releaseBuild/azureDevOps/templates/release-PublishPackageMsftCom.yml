@@ -16,10 +16,10 @@ steps:
 - pwsh: |
     $branch = 'main-mirror'
     $gitArgs = "clone",
-    "--verbose", 
+    "--verbose",
     "--branch",
     "$branch",
-    "https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools", 
+    "https://$(mscodehubPackageReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools",
     '$(Pipeline.Workspace)/tools'
     $gitArgs | Write-Verbose -Verbose
     git $gitArgs
@@ -38,7 +38,7 @@ steps:
     Write-Host "sending " + $vstsCommandString
     Write-Host "##$vstsCommandString"
   displayName: Install pmc cli
-  
+
 - pwsh: |
     $metadata = Get-Content -Path "$(Build.SourcesDirectory)/tools/metadata.json" -Raw | ConvertFrom-Json
     $params = @{
@@ -50,7 +50,7 @@ steps:
         SkipPublish = $${{ parameters.skipPublish }}
         MappingFilePath = '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'
     }
-    
+
     $params | Out-String -width 9999 -Stream | write-Verbose -Verbose
 
     & '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/releaseLinuxPackages.ps1' @params

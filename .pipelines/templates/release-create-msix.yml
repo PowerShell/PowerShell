@@ -1,0 +1,112 @@
+jobs:
+- job: CreateMSIXBundle
+  displayName: Create .msixbundle file
+  pool:
+    type: windows
+
+  variables:
+    - group: msixTools
+    - group: 'Azure Blob variable group'
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+
+  steps:
+    - template: release-SetReleaseTagandContainerName.yml@self
+
+    - download: PSPackagesOfficial
+      artifact: drop_windows_package_package_win_arm64
+      displayName: Download arm64 msix
+      patterns: '**/*.msix'
+
+    - download: PSPackagesOfficial
+      artifact: drop_windows_package_package_win_x64
+      displayName: Download x64 msix
+      patterns: '**/*.msix'
+
+    - download: PSPackagesOfficial
+      artifact: drop_windows_package_package_win_x86
+      displayName: Download x86 msix
+      patterns: '**/*.msix'
+
+    - pwsh: |
+        $cmd = Get-Command makeappx.exe -ErrorAction Ignore
+        if ($cmd) {
+            Write-Verbose -Verbose 'makeappx available in PATH'
+            $exePath = $cmd.Source
+        } else {
+            $toolsDir = '$(Pipeline.Workspace)\releasePipeline\tools'
+            New-Item $toolsDir -Type Directory -Force > $null
+            Invoke-RestMethod -Uri '$(makeappUrl)' -OutFile "$toolsDir\makeappx.zip"
+            Expand-Archive "$toolsDir\makeappx.zip" -DestinationPath "$toolsDir\makeappx" -Force
+            $exePath = "$toolsDir\makeappx\makeappx.exe"
+
+            Write-Verbose -Verbose 'makeappx was installed:'
+            Get-ChildItem -Path $toolsDir -Recurse
+        }
+
+        $vstsCommandString = "vso[task.setvariable variable=MakeAppxPath]$exePath"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+      displayName: Install makeappx tool
+      retryCountOnTaskFailure: 1
+
+    - pwsh: |
+        $sourceDir = '$(Pipeline.Workspace)\releasePipeline\msix'
+        $null = New-Item -Path $sourceDir -ItemType Directory -Force
+
+        $msixFiles = Get-ChildItem -Path "$(Pipeline.Workspace)/PSPackagesOfficial/*.msix" -Recurse
+        foreach ($msixFile in $msixFiles) {
+            $null = Copy-Item -Path $msixFile.FullName -Destination $sourceDir -Force -Verbose
+        }
+
+        $file = Get-ChildItem $sourceDir | Select-Object -First 1
+        $prefix = ($file.BaseName -split "-win")[0]
+        $pkgName = "$prefix.msixbundle"
+        Write-Verbose -Verbose "Creating $pkgName"
+
+        $makeappx = '$(MakeAppxPath)'
+        $outputDir = "$sourceDir\output"
+        New-Item $outputDir -Type Directory -Force > $null
+        & $makeappx bundle /d $sourceDir /p "$outputDir\$pkgName"
+
+        Get-ChildItem -Path $sourceDir -Recurse
+        $vstsCommandString = "vso[task.setvariable variable=BundleDir]$outputDir"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+      displayName: Create MsixBundle
+      retryCountOnTaskFailure: 1
+
+    - pwsh: |
+        $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
+        if ($azureRmModule) {
+          Write-Host 'AzureRM module exists. Removing it'
+          Uninstall-AzureRm
+          Write-Host 'AzureRM module removed'
+        }
+
+        Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
+
+      displayName: Remove AzRM modules and install Az.Storage
+
+    - task: AzurePowerShell@5
+      displayName: Upload msix to blob
+      inputs:
+        azureSubscription: az-blob-cicd-infra
+        scriptType: inlineScript
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        inline: |
+          $containerName = '$(AzureVersion)-private'
+          $storageAccount = '$(StorageAccount)'
+
+          $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
+
+          if ($env:BundleDir) {
+            $bundleFile = Get-Item "$env:BundleDir\*.msixbundle"
+            $blobName = $bundleFile | Split-Path -Leaf
+            Write-Verbose -Verbose "Uploading $bundleFile to $containerName/$blobName"
+            Set-AzStorageBlobContent -File $bundleFile -Container $containerName -Blob $blobName -Context $storageContext
+          }
+          else{
+            throw "BundleDir not found"
+          }

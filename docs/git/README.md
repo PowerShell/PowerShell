@@ -13,9 +13,9 @@ git clone https://github.com/PowerShell/PowerShell.git --branch=master
 * Checkout a new local branch from `master` for every change you want to make (bugfix, feature).
 * Use lowercase-with-dashes for naming.
 * Follow [Linus' recommendations][Linus] about history.
-    - "People can (and probably should) rebase their _private_ trees (their own work). That's a _cleanup_. But never other peoples code. That's a 'destroy history'...
-    You must never EVER destroy other peoples history. You must not rebase commits other people did.
-    Basically, if it doesn't have your sign-off on it, it's off limits: you can't rebase it, because it's not yours."
+  * "People can (and probably should) rebase their _private_ trees (their own work). That's a _cleanup_. But never other peoples code. That's a 'destroy history'...
+  You must never EVER destroy other peoples history. You must not rebase commits other people did.
+  Basically, if it doesn't have your sign-off on it, it's off limits: you can't rebase it, because it's not yours."
 
 ### Understand branches
 
@@ -23,12 +23,12 @@ git clone https://github.com/PowerShell/PowerShell.git --branch=master
   It could be unstable.
 * Send your pull requests to **master**.
 
-### Sync your local repo
+### Sync your local repository
 
 Use **git rebase** instead of **git merge** and **git pull**, when you're updating your feature-branch.
 
 ```sh
-# fetch updates all remote branch references in the repo
+# fetch updates all remote branch references in the repository
 # --all : tells it to do it for all remotes (handy, when you use your fork)
 # -p : tells it to remove obsolete remote branch references (when they are removed from remote)
 git fetch --all -p
@@ -42,11 +42,9 @@ git rebase origin/master
 Covering all possible git scenarios is behind the scope of the current document.
 Git has excellent documentation and lots of materials available online.
 
-We are leaving few links here:
+We are leaving a few links here:
 
-[Git pretty flowchart](http://justinhileman.info/article/git-pretty/): what to do, when your local repo became a mess.
-
-[Linus]:https://wincent.com/wiki/git_rebase%3A_you're_doing_it_wrong
+[Linus]:https://web.archive.org/web/20230522041845/https://wincent.com/wiki/git_rebase%3A_you're_doing_it_wrong
 
 ## Tags
 
@@ -57,12 +55,12 @@ you will find it via **tags**.
 * Find the tag that corresponds to the release.
 * Use `git checkout <tag-name>` to get this version.
 
-**Note:** [checking out a tag][tag] will move the repo to a [DETACHED HEAD][HEAD] state.
+**Note:** [checking out a tag][tag] will move the repository to a [DETACHED HEAD][HEAD] state.
 
 [tag]:https://git-scm.com/book/en/v2/Git-Basics-Tagging#Checking-out-Tags
 [HEAD]:https://www.git-tower.com/learn/git/faq/detached-head-when-checkout-commit
 
-If you want to make changes, based on tag's version (i.e. a hotfix), 
+If you want to make changes, based on tag's version (i.e. a hotfix),
 checkout a new branch from this DETACHED HEAD state.
 
 ```sh

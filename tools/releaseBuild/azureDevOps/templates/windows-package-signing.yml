@@ -99,7 +99,7 @@ jobs:
     parameters:
       architecture: arm64
       version: $(version)
-      msi: no
+      msi: yes
 
   - template: upload.yml
     parameters:

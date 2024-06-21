@@ -266,7 +266,7 @@ namespace System.Management.Automation.Remoting
         /// This parameter holds the string in the resource file.
         /// </param>
         /// <param name="args">
-        /// Optional parameters required by the resource string formating information.
+        /// Optional parameters required by the resource string formatting information.
         /// </param>
         /// <returns>
         /// The formatted localized string.
