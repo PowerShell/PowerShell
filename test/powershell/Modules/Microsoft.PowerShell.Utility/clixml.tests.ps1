@@ -270,9 +270,10 @@ Describe "CliXml test" -Tags "CI" {
             $cred =  [PSCredential]::new($UserName, $pass)
 
             $content = $cred | ConvertTo-CliXml
-            $cred = ConvertFrom-CliXml -InputObject $content
-            $cred.UserName | Should -BeExactly "Foo"
-            $cred.Password | Should -BeOfType System.Security.SecureString
+            $cred2 = ConvertFrom-CliXml -InputObject $content
+            $cred2.UserName | Should -BeExactly $cred.UserName
+            $cred2.Password | Should -BeOfType System.Security.SecureString
+            $cred2.GetNetworkCredential().Password | Should -BeExactly $cred.GetNetworkCredential().Password
         }
     }
 }
