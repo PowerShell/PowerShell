@@ -112,6 +112,15 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
             $help.Description | Out-String | Should -Match $cmdletName
             $help.Examples | Out-String | Should -Match $cmdletName
         }
+
+        It "Validate 'Aliases' is present in help content formatting" {
+            ## The parameter help content should be formatted with the following section:
+            ##   Accept pipeline input?       xxxx
+            ##   Aliases                      NoOverwrite
+            ##   Accept wildcard characters?  xxxx
+            $output = Get-Help Import-Module -Parameter NoClobber | Out-String
+            $output | Should -Match "Accept pipeline input\?.*\n\s+Aliases\s+NoOverwrite.*\n\s+Accept wildcard characters\?.*"
+        }
     }
 }
 
@@ -684,5 +693,23 @@ Describe 'Update-Help allows partial culture matches' -Tags 'CI' {
 
         [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('CurrentUICulture', [System.Globalization.CultureInfo]::new($UICulture))
         Test-UpdateHelpAux $null $Pass
+    }
+}
+
+Describe 'InputTypes accurately describe pipelinable input' {
+    BeforeAll {
+        function invoke-inputtypetest {
+            [CmdletBinding()]
+            param (
+            [Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true)][string]$a,
+            [Parameter(Position=1,ValueFromRemainingArguments=$true)][object[]]$c)
+            Process { "$a $c" }
+        }
+    }
+
+    It 'Should have only 1 input type' {
+        $inputTypes = (Get-Help -full invoke-inputtypetest).inputtypes.inputtype.type.name.trim().split("`n")
+        $inputTypes.Count | Should -Be 1
+        $inputTypes | Should -Be "System.String"
     }
 }

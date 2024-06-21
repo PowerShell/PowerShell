@@ -2717,6 +2717,14 @@ namespace System.Management.Automation.Language
                                            lhsEnumerator.Expression.Cast(typeof(IEnumerator)),
                                            rhsEnumerator.Expression.Cast(typeof(IEnumerator)));
                 }
+                else if (target.Value is object[] targetArray)
+                {
+                    // Adding 1 item to an object[]
+                    // This is an optimisation over the default EnumerableOps_AddObject.
+                    call = Expression.Call(CachedReflectionInfo.ArrayOps_AddObject,
+                                           target.Expression.Cast(typeof(object[])),
+                                           arg.Expression.Cast(typeof(object)));
+                }
                 else
                 {
                     // Adding 1 item to a list
