@@ -232,7 +232,7 @@ function Register-PSSessionConfiguration
                 }}
                 else
                 {{
-                    $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $newSDDL -NoServiceRestart:$NoRestart -force:$force -WarningAction 0
+                    $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $newSDDL -NoServiceRestart:$noRestart -Force:$force -WarningAction 0
                 }}
 
             }} catch {{
