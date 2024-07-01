@@ -334,7 +334,7 @@
     <value>Skip already-visited directory {0}.</value>
   </data>
   <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
-    <value>Destination path cannot be a subdirectory of the source: {0}.</value>
+    <value>Destination path cannot be a subdirectory of the source or the source itself: {0}.</value>
   </data>
   <data name="NewItemTargetIsSameAsLink" xml:space="preserve">
     <value>The target and path cannot be the same.</value>
