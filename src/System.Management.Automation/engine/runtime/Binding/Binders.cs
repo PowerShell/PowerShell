@@ -7175,6 +7175,13 @@ namespace System.Management.Automation.Language
                     {
                         argExprs[i] = Expression.Default(parameterType);
                     }
+                    else if (!parameters[i].HasDefaultValue && parameterType != typeof(object) && argValue == Type.Missing)
+                    {
+                        // If the method contains just [Optional] without a default value set then we cannot use
+                        // Type.Missing as a placeholder. Instead we use the default value for that type. Only
+                        // exception to this rule is when the parameter type is object.
+                        argExprs[i] = Expression.Default(parameterType);
+                    }
                     else
                     {
                         // We don't specify the parameter type in the constant expression. Normally the default
