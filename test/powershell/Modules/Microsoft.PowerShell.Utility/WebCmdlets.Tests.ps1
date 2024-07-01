@@ -692,8 +692,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $uri = Get-WebListenerUrl -Test $method
             $body = GetTestData -contentType $contentType
             $command = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
+            $commandNoContentType = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method"
 
-            It "Invoke-WebRequest -Uri $uri  -Method $method -ContentType $contentType -Body [body data]" {
+            It "Invoke-WebRequest -Uri $uri -Method $method -ContentType $contentType -Body [body data]" {
 
                 $result = ExecuteWebCommand -command $command
                 ValidateResponse -response $result
@@ -704,6 +705,29 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 $jsonContent.headers.'Content-Type' | Should -Match $contentType
                 # Validate that the response Content.data field is the same as what we sent.
                 $jsonContent.data | Should -Be $body
+            }
+
+            It "Invoke-WebRequest -Uri $uri -Method $method -Body [body data]" {
+
+                $result = ExecuteWebCommand -command $commandNoContentType
+                ValidateResponse -response $result
+
+                # Validate response content
+                $jsonContent = $result.Output.Content | ConvertFrom-Json
+                $jsonContent.url | Should -Match $uri
+                if ($method -eq "POST")
+                {
+                    $jsonContent.headers.'Content-Type' | Should -Match "application/x-www-form-urlencoded"
+                    # Validate that the response Content.form field is the same as what we sent.
+                    [string]$jsonContent.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = [System.Object[]]})
+                    $jsonContent.data | Should -BeNullOrEmpty
+                }
+                else
+                {
+                    # Validate that the response Content.data field is the same as what we sent.
+                    $jsonContent.data | Should -Be $body
+                }
+
             }
         }
     }
@@ -2752,6 +2776,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $uri = Get-WebListenerUrl -Test $method
             $body = GetTestData -contentType $contentType
             $command = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
+            $commandNoContentType = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method"
 
             It "Invoke-RestMethod -Uri $uri -Method $method -ContentType $contentType -Body [body data]" {
 
@@ -2763,6 +2788,27 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
                 # Validate that the response Content.data field is the same as what we sent.
                 $result.Output.data | Should -Be $body
+            }
+
+            It "Invoke-RestMethod -Uri $uri -Method $method -Body [body data]" {
+
+                $result = ExecuteWebCommand -command $commandNoContentType
+
+                # Validate response
+                $result.Output.url | Should -Match $uri
+
+                if ($method -eq "POST")
+                {
+                    $result.Output.headers.'Content-Type' | Should -Match "application/x-www-form-urlencoded"
+                    # Validate that the response Content.form field is the same as what we sent.
+                    [string]$result.Output.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = [System.Object[]]})
+                    $result.Output.data | Should -BeNullOrEmpty
+                }
+                else
+                {
+                    # Validate that the response Content.data field is the same as what we sent.
+                    $result.Output.data | Should -Be $body
+                }
             }
         }
     }
