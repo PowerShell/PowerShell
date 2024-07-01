@@ -201,6 +201,17 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             { Move-Item -Path $src -Destination $dest -ErrorAction Stop } | Should -Throw -ErrorId 'MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand'
         }
 
+        It 'Verify Move-Item fails for destination to be same as source without directory separator' {
+            try {
+                Push-Location $TestDrive
+                New-Item -ItemType Directory -Path 'Empty'
+                { Move-Item -Path ./Empty/ -ErrorAction Stop } | Should -Throw -ErrorId 'MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand'
+            }
+            finally {
+                Pop-Location
+            }
+        }
+
         It "Verify Move-Item throws correct error for non-existent source" {
             { Move-Item -Path /does/not/exist -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.MoveItemCommand'
         }
