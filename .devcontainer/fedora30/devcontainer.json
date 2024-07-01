@@ -3,6 +3,9 @@
 	"name": "Fedora 30",
 	"dockerFile": "Dockerfile",
 
+	"workspaceMount": "source=${localWorkspaceFolder},target=/PowerShell,type=bind",
+	"workspaceFolder": "/PowerShell",
+
 	// Uncomment the next line to run commands after the container is created.
 	"postCreateCommand": "pwsh -c 'import-module ./build.psm1;start-psbootstrap'",
 

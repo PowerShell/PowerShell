@@ -3,6 +3,9 @@
 	"name": ".NET Core 6.0, including pwsh (Ubuntu 18.04)",
 	"dockerFile": "Dockerfile",
 
+	"workspaceMount": "source=${localWorkspaceFolder},target=/PowerShell,type=bind",
+	"workspaceFolder": "/PowerShell",
+
 	// Uncomment the next line to run commands after the container is created.
 	"postCreateCommand": "cd src/powershell-unix && dotnet restore",
 
