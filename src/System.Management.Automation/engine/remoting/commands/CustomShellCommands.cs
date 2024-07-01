@@ -228,7 +228,7 @@ function Register-PSSessionConfiguration
                 if ($runAsUserName)
                 {{
                     $runAsCredential = new-object system.management.automation.PSCredential($runAsUserName, $runAsPassword)
-                    $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $newSDDL -NoServiceRestart:$NoRestart -force:$force -WarningAction 0 -RunAsCredential $runAsCredential
+                    $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $newSDDL -NoServiceRestart:$noRestart -Force:$force -WarningAction 0 -RunAsCredential $runAsCredential
                 }}
                 else
                 {{
