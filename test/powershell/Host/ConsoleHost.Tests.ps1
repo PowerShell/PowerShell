@@ -533,7 +533,7 @@ export $envVarName='$guid'
             $process.StandardOutput.ReadLine() | Should -Be "PS> 1+2`b3"
             $process.StandardOutput.ReadLine() | Should -Be "4"
             $process.StandardInput.Close()
-            $process.StandardOutput.ReadToEnd() | Should -Be "PS> "
+            $process.StandardOutput.ReadToEnd() | Should -Be "PS> `n"
             EnsureChildHasExited $process
         }
 
@@ -547,7 +547,7 @@ export $envVarName='$guid'
             $process.StandardOutput.ReadLine() | Should -Be "PS> 1+2"
             $process.StandardOutput.ReadLine() | Should -Be "3"
             $process.StandardInput.Close()
-            $process.StandardOutput.ReadToEnd() | Should -Be "PS> "
+            $process.StandardOutput.ReadToEnd() | Should -Be "PS> `n"
             EnsureChildHasExited $process
         }
 
@@ -560,7 +560,7 @@ export $envVarName='$guid'
             $process.StandardOutput.ReadLine() | Should -Be "PS> 1+1"
             $process.StandardOutput.ReadLine() | Should -Be "2"
             $process.StandardInput.Close()
-            $process.StandardOutput.ReadToEnd() | Should -Be "PS> "
+            $process.StandardOutput.ReadToEnd() | Should -Be "PS> `n"
             EnsureChildHasExited $process
         }
 
@@ -607,7 +607,7 @@ foo
             $process.StandardInput.Write("exit`n")
             $process.StandardOutput.ReadLine() | Should -Be "PS>> exit"
             $process.StandardInput.Close()
-            $process.StandardOutput.ReadToEnd() | Should -Be "PS> "
+            $process.StandardOutput.ReadToEnd() | Should -Be "`nPS> `n"
             EnsureChildHasExited $process
         }
     }
