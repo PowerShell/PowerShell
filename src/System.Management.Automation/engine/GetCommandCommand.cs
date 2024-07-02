@@ -809,7 +809,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // If they've specified a module name, we can do some smarter filtering.
                     // Otherwise, we have to filter everything.
-                    if ((this.Module.Length == 1) && (!WildcardPattern.ContainsWildcardCharacters(this.Module[0])))
+                    if ((this.Module.Length >= 1) && (!WildcardPattern.ContainsWildcardCharacters(this.Module[0])))
                     {
                         moduleName = this.Module[0];
                     }
