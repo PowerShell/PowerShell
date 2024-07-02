@@ -836,6 +836,22 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules/Microsoft.WinGet.CommandNotFound/LICENSE",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.CommandNotFound/Microsoft.WinGet.CommandNotFound.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.CommandNotFound/Microsoft.WinGet.CommandNotFound.psd1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules/Microsoft.WinGet.CommandNotFound/ValidateOS.psm1",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Modules/PackageManagement/*.dll",
     "FileType": "NonProduct"
   },
