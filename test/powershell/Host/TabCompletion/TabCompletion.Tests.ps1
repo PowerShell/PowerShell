@@ -2054,8 +2054,15 @@ dir -Recurse `
         It "Test member completion of a static method invocation" {
             $inputStr = '[powershell]::Create().'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 33
+            $res.CompletionMatches | Should -HaveCount 34
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "Commands"
+        }
+
+        It "Completes event member names" {
+            $inputStr = '$timer = [System.Timers.Timer]::new(); $timer.El'
+            $results = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $results.CompletionMatches | Should -HaveCount 1
+            $results.CompletionMatches[0].CompletionText | Should -BeExactly 'Elapsed'
         }
 
         It "Test completion with common parameters" {
