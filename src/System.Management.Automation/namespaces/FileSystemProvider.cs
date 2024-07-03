@@ -2878,7 +2878,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (Context != null
                     && Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.UserPath).Value is ActionPreference progressPreference
-                    && progressPreference == ActionPreference.Continue)
+                    && progressPreference == ActionPreference.Continue && _totalFiles >= 5)
                 {
                     {
                         Task.Run(() =>
@@ -2953,8 +2953,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (Stopping || _removedFiles == _totalFiles)
+                if (_totalFiles >= 5 && (Stopping || _removedFiles == _totalFiles))
                 {
+
                     _removeStopwatch.Stop();
                     var progress = new ProgressRecord(REMOVE_FILE_ACTIVITY_ID, " ", " ")
                     {
