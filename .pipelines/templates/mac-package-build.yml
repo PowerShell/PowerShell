@@ -180,7 +180,7 @@ jobs:
       AppRegistrationTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
       AuthAKVName: 'pwsh-CICD-Keyvault'
       AuthCertName: 'PS-macos-signing'
-      AuthSignCertName: 'PS-macos-signing' # this is not needed for pkg signing
+      #AuthSignCertName: 'PS-macos-signing' # this is not needed for pkg signing
       FolderPath: $(Pipeline.Workspace)
       Pattern: '*.zip'
       SessionTimeout: 90
