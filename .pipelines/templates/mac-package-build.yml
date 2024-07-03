@@ -127,3 +127,52 @@ jobs:
     displayName: 'Package ${{ parameters.buildArchitecture}}'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+- job: sign_package_macOS_${{ parameters.buildArchitecture }}
+  displayName: Sign Package macOS ${{ parameters.buildArchitecture }}
+  dependsOn: package_macOS_${{ parameters.buildArchitecture }}
+  condition: succeeded()
+  pool:
+    type: windows
+
+  steps:
+  - download: current
+    artifact: macos-pkgs
+
+  - pwsh: |
+      $buildArch = '${{ parameters.buildArchitecture }}'
+      $macosRuntime = "osx-$buildArch"
+      $pkgNameFilter = "powershell-*$macosRuntime.pkg"
+      $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgNameFilter -Recurse -File
+
+      if ($pkgPath.Count -eq 0) {
+        throw "No package found for $macosRuntime"
+      }
+
+      foreach($p in $pkgPath) {
+        $file = $p.FullName
+        $fileName = $p.BaseName
+        Write-Verbose -verbose "Compressing $file"
+        $zipFile = "$(Pipeline.Workspace)\${fileName}.zip"
+        Write-Verbose -Verbose "Zip file: $zipFile"
+        Compress-Archive -Path $file -Destination $zipFile
+      }
+
+      Write-Verbose -Verbose "Compressed files:"
+      Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*.zip" -Recurse -File | Write-Verbose -Verbose
+    display: Compress package files for signing
+
+  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@5
+    displayName: 'ESRP CodeSigning'
+    inputs:
+      ConnectedServiceName: 'ESRPMacOSSigning'
+      AppRegistrationClientId: '9dfad4b0-b54d-463e-a4df-340b56fa720b'
+      AppRegistrationTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
+      AuthAKVName: 'pwsh-CICD-Keyvault'
+      AuthCertName: 'PS-macos-signing'
+      AuthSignCertName: 'PS-macos-signing' # this is not needed for pkg signing
+      FolderPath: $(Pipeline.Workspace)
+      Pattern: '*.zip'
+      SessionTimeout: 90
+      ServiceEndpointUrl: 'https://api.esrp.microsoft.com/api/v2'
+      MaxConcurrency: 25
