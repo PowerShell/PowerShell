@@ -160,7 +160,7 @@ jobs:
 
       Write-Verbose -Verbose "Compressed files:"
       Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*.zip" -Recurse -File | Write-Verbose -Verbose
-    display: Compress package files for signing
+    displayName: Compress package files for signing
 
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@5
     displayName: 'ESRP CodeSigning'
