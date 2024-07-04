@@ -2878,7 +2878,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (Context != null
                     && Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.UserPath).Value is ActionPreference progressPreference
-                    && progressPreference == ActionPreference.Continue && _totalFiles >= 5)
+                    && progressPreference == ActionPreference.Continue)
                 {
                     {
                         Task.Run(() =>
@@ -2953,7 +2953,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (_totalFiles >= 5 && (Stopping || _removedFiles == _totalFiles))
+                if (Stopping || _removedFiles == _totalFiles)
                 {
 
                     _removeStopwatch.Stop();
@@ -3112,7 +3112,7 @@ namespace Microsoft.PowerShell.Commands
                             RemoveFileSystemItem(file, force);
                         }
 
-                        if (_totalFiles > 0)
+                        if (_removeStopwatch.Elapsed.TotalSeconds > 0.6 && _totalFiles > 0)
                         {
                             _removedFiles++;
                             _removedBytes += fileBytesSize;
