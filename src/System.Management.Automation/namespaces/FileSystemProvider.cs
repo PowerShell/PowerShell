@@ -2955,6 +2955,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (Stopping || _removedFiles == _totalFiles)
                 {
+
                     _removeStopwatch.Stop();
                     var progress = new ProgressRecord(REMOVE_FILE_ACTIVITY_ID, " ", " ")
                     {
@@ -3111,7 +3112,7 @@ namespace Microsoft.PowerShell.Commands
                             RemoveFileSystemItem(file, force);
                         }
 
-                        if (_totalFiles > 0)
+                        if (_removeStopwatch.Elapsed.TotalSeconds > 0.2 && _totalFiles > 0)
                         {
                             _removedFiles++;
                             _removedBytes += fileBytesSize;
@@ -3990,7 +3991,7 @@ namespace Microsoft.PowerShell.Commands
                             FileInfo result = new FileInfo(destinationPath);
                             WriteItemObject(result, destinationPath, false);
 
-                            if (_totalFiles > 0)
+                            if (_copyStopwatch.Elapsed.TotalSeconds > 0.2 && _totalFiles > 0)
                             {
                                 _copiedFiles++;
                                 _copiedBytes += file.Length;
