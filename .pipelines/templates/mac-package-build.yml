@@ -169,7 +169,7 @@ jobs:
       }
 
       Write-Verbose -Verbose "Compressed files:"
-      Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*.zip" -Recurse -File | Write-Verbose -Verbose
+      Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*.zip" -File | Write-Verbose -Verbose
     displayName: Compress package files for signing
 
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@5
@@ -204,3 +204,22 @@ jobs:
       SessionTimeout: 90
       ServiceEndpointUrl: 'https://api.esrp.microsoft.com/api/v2'
       MaxConcurrency: 25
+
+  - pwsh: |
+      $signedPkg = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*osx*.zip" -File
+
+      Write-Verbose -Verbose "Signed package zip: $signedPkg"
+
+      if (-not (Test-Path $signedPkg)) {
+        throw "Package not found: $signedPkg"
+      }
+
+      if (-not (Test-Path $env:ob_outputDirectory)) {
+        $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory
+      }
+
+      Expand-Archive -Path $signedPkg -DestinationPath $env:ob_outputDirectory -Verbose
+
+      Write-Verbose -Verbose "Expanded pkg file:"
+      Get-ChildItem -Path $env:ob_outputDirectory | Write-Verbose -Verbose
+    displayName: Expand signed file
