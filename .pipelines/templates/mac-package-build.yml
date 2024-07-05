@@ -180,9 +180,27 @@ jobs:
       AppRegistrationTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
       AuthAKVName: 'pwsh-CICD-Keyvault'
       AuthCertName: 'PS-macos-signing'
-      #AuthSignCertName: 'PS-macos-signing' # this is not needed for pkg signing
+      AuthSignCertName: 'PS-macos-signing' # this is not needed for pkg signing
       FolderPath: $(Pipeline.Workspace)
       Pattern: '*.zip'
+      signConfigType: inlineSignParams
+      inlineOperation: |
+        [{
+            "KeyCode": "CP-401337-Apple",
+            "OperationSetCode": "MacAppDeveloperSign",
+            "parameters": [
+            {
+                "parameterName": "hardening",
+                "parameterValue": "enable"
+            },
+            {
+                "parameterName": "OpusInfo",
+                "parameterValue": "http://Microsoft.com"
+            }
+            ],
+            "ToolName": "sign",
+            "ToolVersion": "1.0"
+        }]
       SessionTimeout: 90
       ServiceEndpointUrl: 'https://api.esrp.microsoft.com/api/v2'
       MaxConcurrency: 25
