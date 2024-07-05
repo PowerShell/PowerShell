@@ -144,6 +144,7 @@ jobs:
     value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
   - name: BuildArch
     value: ${{ parameters.buildArchitecture }}
+  - group: mscodehub-macos-package-signing
 
   steps:
   - download: current
@@ -176,8 +177,8 @@ jobs:
     displayName: 'ESRP CodeSigning'
     inputs:
       ConnectedServiceName: 'ESRPMacOSSigning'
-      AppRegistrationClientId: '9dfad4b0-b54d-463e-a4df-340b56fa720b'
-      AppRegistrationTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
+      AppRegistrationClientId: '$(AppRegistrationClientId)'
+      AppRegistrationTenantId: '$(AppRegistrationTenantId)'
       AuthAKVName: 'pwsh-CICD-Keyvault'
       AuthCertName: 'PS-macos-signing'
       AuthSignCertName: 'ESRP-OneCert' # this is not needed for pkg signing
@@ -186,7 +187,7 @@ jobs:
       signConfigType: inlineSignParams
       inlineOperation: |
         [{
-            "KeyCode": "CP-401337-Apple",
+            "KeyCode": "$(KeyCode)",
             "OperationSetCode": "MacAppDeveloperSign",
             "parameters": [
             {
@@ -202,7 +203,7 @@ jobs:
             "ToolVersion": "1.0"
         }]
       SessionTimeout: 90
-      ServiceEndpointUrl: 'https://api.esrp.microsoft.com/api/v2'
+      ServiceEndpointUrl: '$(ServiceEndpointUrl)'
       MaxConcurrency: 25
 
   - pwsh: |
