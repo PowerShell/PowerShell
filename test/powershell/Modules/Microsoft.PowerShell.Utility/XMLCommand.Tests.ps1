@@ -415,9 +415,10 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $deserialized_one = ConvertFrom-CliXml -InputObject $content
             $deserialized_one.value | Should -Be 1
             $deserialized_one.two | Should -Not -BeNullOrEmpty
+            $deserialized_one.two | Should -BeExactly 'Two'
             $deserialized_one.two.value | Should -Be 2
-            $deserialized_one.two.three | Should -BeExactly 'Three'
             $deserialized_one.two.three | Should -Not -BeNullOrEmpty
+            $deserialized_one.two.three | Should -BeExactly 'Three'
             $deserialized_one.two.three.num | Should -BeNullOrEmpty
         }
 
@@ -429,11 +430,32 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $deserialized_one = ConvertFrom-CliXml -InputObject $content
             $deserialized_one.value | Should -Be 1
             $deserialized_one.two | Should -Not -BeNullOrEmpty
+            $deserialized_one.two | Should -BeExactly 'Two'
             $deserialized_one.two.value | Should -Be 2
             $deserialized_one.two.three | Should -Not -BeNullOrEmpty
+            $deserialized_one.two.three | Should -BeExactly 'Three'
             $deserialized_one.two.three.num | Should -Be 3
             $deserialized_one.two.three.four | Should -Not -BeNullOrEmpty
+            $deserialized_one.two.three.four | Should -BeExactly 'Four'
             $deserialized_one.two.three.four.num | Should -BeNullOrEmpty
+        }
+
+        It "Using -Depth 4 should work" {
+            $testObject = [One]::New()
+            $content = $testObject | ConvertTo-CliXml -Depth 4
+            $testObject | Export-CliXml -Path $testfile -Depth 4
+            (Get-Content -Path $testfile -Raw) | Should -Be $content
+            $deserialized_one = ConvertFrom-CliXml -InputObject $content
+            $deserialized_one.value | Should -Be 1
+            $deserialized_one.two | Should -Not -BeNullOrEmpty
+            $deserialized_one.two | Should -BeExactly 'Two'
+            $deserialized_one.two.value | Should -Be 2
+            $deserialized_one.two.three | Should -Not -BeNullOrEmpty
+            $deserialized_one.two.three | Should -BeExactly 'Three'
+            $deserialized_one.two.three.num | Should -Be 3
+            $deserialized_one.two.three.four | Should -Not -BeNullOrEmpty
+            $deserialized_one.two.three.four | Should -BeExactly 'Four'
+            $deserialized_one.two.three.four.num | Should -Be 4
         }
 
         It "Using -Depth 2 cannot get value beyond depth" {
@@ -444,9 +466,10 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $deserialized_one = ConvertFrom-CliXml -InputObject $content
             $deserialized_one.value | Should -Be 1
             $deserialized_one.two | Should -Not -BeNullOrEmpty
+            $deserialized_one.two | Should -BeExactly 'Two'
             $deserialized_one.two.value | Should -Be 2
-            $deserialized_one.two.three | Should -BeExactly 'Three'
             $deserialized_one.two.three | Should -Not -BeNullOrEmpty
+            $deserialized_one.two.three | Should -BeExactly 'Three'
             $deserialized_one.two.three.num | Should -BeNullOrEmpty
         }
 
