@@ -185,8 +185,7 @@ public sealed class OverloadTests
             Trace-Command -Name MethodInvocation -Expression {
                 $obj.GenericMethod[int]()
             } -FilePath $filePath
-            # FUTURE: The underlying mechanism should be improved here
-            Get-Content $filePath | Should -BeLike "*Invoking method: void GenericMethod()"
+            Get-Content $filePath | Should -BeLike "*Invoking method: void GenericMethod``[int``]()"
         }
 
         It "Traces generic method with argument" {
@@ -194,7 +193,7 @@ public sealed class OverloadTests
             Trace-Command -Name MethodInvocation -Expression {
                 $obj.GenericMethodWithArg("foo")
             } -FilePath $filePath
-            Get-Content $filePath | Should -BeLike "*Invoking method: string GenericMethodWithArg(string obj)"
+            Get-Content $filePath | Should -BeLike "*Invoking method: string GenericMethodWithArg``[string``](string obj)"
         }
 
         It "Traces .NET call with default value" {
@@ -239,14 +238,14 @@ public sealed class OverloadTests
                 }
             } -FilePath $filePath
             # type fqn is used, the wildcard avoids hardcoding that
-            Get-Content $filePath | Should -BeLike "*Invoking method: static int SizeOf(System.RuntimeType, * structure)"
+            Get-Content $filePath | Should -BeLike "*Invoking method: static int SizeOf``[System.RuntimeType, *``](System.RuntimeType, * structure)"
         }
 
         It "Traces LINQ call" {
             Trace-Command -Name MethodInvocation -Expression {
                 [System.Linq.Enumerable]::Union([int[]]@(1, 2), [int[]]@(3, 4))
             } -FilePath $filePath
-            Get-Content $filePath | Should -BeLike "*Invoking method: static System.Collections.Generic.IEnumerable``[int``] Union(System.Collections.Generic.IEnumerable``[int``] first, System.Collections.Generic.IEnumerable``[int``] second)"
+            Get-Content $filePath | Should -BeLike "*Invoking method: static System.Collections.Generic.IEnumerable``[int``] Union``[int``](System.Collections.Generic.IEnumerable``[int``] first, System.Collections.Generic.IEnumerable``[int``] second)"
         }
     }
 
