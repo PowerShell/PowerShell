@@ -31,8 +31,9 @@ namespace PSTests.Parallel
         [Fact]
         public static void TestSerializerWithoutEnumerate()
         {
+            var listAssemblyDisplayName = System.Reflection.Assembly.GetAssembly(typeof(List<object>)).FullName;
             var source = new List<object> { 1, 2, 3 };
-            var expected = $"<Objs Version=\"1.1.0.1\" xmlns=\"http://schemas.microsoft.com/powershell/2004/04\">{Environment.NewLine}  <Obj RefId=\"0\">{Environment.NewLine}    <TN RefId=\"0\">{Environment.NewLine}      <T>System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</T>{Environment.NewLine}      <T>System.Object</T>{Environment.NewLine}    </TN>{Environment.NewLine}    <LST>{Environment.NewLine}      <I32>1</I32>{Environment.NewLine}      <I32>2</I32>{Environment.NewLine}      <I32>3</I32>{Environment.NewLine}    </LST>{Environment.NewLine}  </Obj>{Environment.NewLine}</Objs>";
+            var expected = $"<Objs Version=\"1.1.0.1\" xmlns=\"http://schemas.microsoft.com/powershell/2004/04\">{Environment.NewLine}  <Obj RefId=\"0\">{Environment.NewLine}    <TN RefId=\"0\">{Environment.NewLine}      <T>System.Collections.Generic.List`1[[System.Object, {listAssemblyDisplayName}]]</T>{Environment.NewLine}      <T>System.Object</T>{Environment.NewLine}    </TN>{Environment.NewLine}    <LST>{Environment.NewLine}      <I32>1</I32>{Environment.NewLine}      <I32>2</I32>{Environment.NewLine}      <I32>3</I32>{Environment.NewLine}    </LST>{Environment.NewLine}  </Obj>{Environment.NewLine}</Objs>";
             var serialized = PSSerializer.Serialize(source, depth: 2, enumerate: false);
             Assert.Equal(expected, serialized);
             var deserialized = PSSerializer.Deserialize(serialized);
