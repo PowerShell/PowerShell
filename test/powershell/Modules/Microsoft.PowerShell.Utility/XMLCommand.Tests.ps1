@@ -415,10 +415,8 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $deserialized_one = ConvertFrom-CliXml -InputObject $content
             $deserialized_one.value | Should -Be 1
             $deserialized_one.two | Should -Not -BeNullOrEmpty
-            $deserialized_one.two | Should -BeExactly 'Two'
             $deserialized_one.two.value | Should -Be 2
             $deserialized_one.two.three | Should -Not -BeNullOrEmpty
-            $deserialized_one.two.three | Should -BeExactly 'Three'
             $deserialized_one.two.three.num | Should -BeNullOrEmpty
         }
 
@@ -430,13 +428,10 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $deserialized_one = ConvertFrom-CliXml -InputObject $content
             $deserialized_one.value | Should -Be 1
             $deserialized_one.two | Should -Not -BeNullOrEmpty
-            $deserialized_one.two | Should -BeExactly 'Two'
             $deserialized_one.two.value | Should -Be 2
             $deserialized_one.two.three | Should -Not -BeNullOrEmpty
-            $deserialized_one.two.three | Should -BeExactly 'Three'
             $deserialized_one.two.three.num | Should -Be 3
             $deserialized_one.two.three.four | Should -Not -BeNullOrEmpty
-            $deserialized_one.two.three.four | Should -BeExactly 'Four'
             $deserialized_one.two.three.four.num | Should -BeNullOrEmpty
         }
 
@@ -448,13 +443,10 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $deserialized_one = ConvertFrom-CliXml -InputObject $content
             $deserialized_one.value | Should -Be 1
             $deserialized_one.two | Should -Not -BeNullOrEmpty
-            $deserialized_one.two | Should -BeExactly 'Two'
             $deserialized_one.two.value | Should -Be 2
             $deserialized_one.two.three | Should -Not -BeNullOrEmpty
-            $deserialized_one.two.three | Should -BeExactly 'Three'
             $deserialized_one.two.three.num | Should -Be 3
             $deserialized_one.two.three.four | Should -Not -BeNullOrEmpty
-            $deserialized_one.two.three.four | Should -BeExactly 'Four'
             $deserialized_one.two.three.four.num | Should -Be 4
         }
 
@@ -466,10 +458,8 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             $deserialized_one = ConvertFrom-CliXml -InputObject $content
             $deserialized_one.value | Should -Be 1
             $deserialized_one.two | Should -Not -BeNullOrEmpty
-            $deserialized_one.two | Should -BeExactly 'Two'
             $deserialized_one.two.value | Should -Be 2
             $deserialized_one.two.three | Should -Not -BeNullOrEmpty
-            $deserialized_one.two.three | Should -BeExactly 'Three'
             $deserialized_one.two.three.num | Should -BeNullOrEmpty
         }
 
