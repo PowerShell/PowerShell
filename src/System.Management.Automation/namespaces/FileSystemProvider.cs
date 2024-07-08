@@ -5838,8 +5838,10 @@ namespace Microsoft.PowerShell.Commands
                         destination = MakePath(destination, dir.Name);
                     }
 
-                    // Don't allow moving a directory into itself
-                    if (destination.StartsWith(Path.TrimEndingDirectorySeparator(path) + Path.DirectorySeparatorChar))
+                    // Don't allow moving a directory into itself or its sub-directory.
+                    string pathWithoutEndingSeparator = Path.TrimEndingDirectorySeparator(path);
+                    if (destination.StartsWith(pathWithoutEndingSeparator + Path.DirectorySeparatorChar)
+                        || destination.Equals(pathWithoutEndingSeparator, StringComparison.OrdinalIgnoreCase))
                     {
                         string error = StringUtil.Format(FileSystemProviderStrings.TargetCannotBeSubdirectoryOfSource, destination);
                         var e = new IOException(error);
