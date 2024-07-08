@@ -201,14 +201,22 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             { Move-Item -Path $src -Destination $dest -ErrorAction Stop } | Should -Throw -ErrorId 'MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand'
         }
 
-        It 'Verify Move-Item fails for destination to be same as source without directory separator' {
+        It 'Verify Move-Item fails when destination is same as source w/wo directory separator: <source>' -TestCases @(
+            @{ source = './Empty/' }
+            @{ source = './Empty' }
+            @{ source = '.\Empty\' }
+            @{ source = '.\Empty' }
+        ) {
+            param($source)
+
             try {
                 Push-Location $TestDrive
                 New-Item -ItemType Directory -Path 'Empty'
-                { Move-Item -Path ./Empty/ -ErrorAction Stop } | Should -Throw -ErrorId 'MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand'
+                { Move-Item -Path $source -ErrorAction Stop } | Should -Throw -ErrorId 'MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand'
             }
             finally {
                 Pop-Location
+                Remove-Item 'Empty' -Force
             }
         }
 
