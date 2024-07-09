@@ -445,6 +445,40 @@ namespace Microsoft.PowerShell.Commands
             FastSavingCritical,
         }
 
+#nullable enable
+        /// <summary>
+        /// Get the State property from Get-VM result.
+        /// </summary>
+        /// <param name="value">The raw PSObject as returned by Get-VM.</param>
+        /// <returns>The VMState value of the State property if present and parsable, otherwise null.</returns>
+        internal VMState? GetVMStateProperty(PSObject value)
+        {
+            ReadOnlyPSMemberInfoCollection<PSPropertyInfo> stateProps = value.Properties.Match("State");
+            if (stateProps.Count == 0)
+            {
+                return null;
+            }
+
+            object? rawState = stateProps[0].Value;
+            if (rawState is Enum enumState)
+            {
+                // If the Hyper-V module was directly importable we have the VMState enum
+                // value which we can just cast to our VMState type.
+                return (VMState)enumState;
+            }
+            else if (rawState is string stringState && Enum.TryParse(stringState, true, out VMState result))
+            {
+                // If the Hyper-V module was imported through implicit remoting on old
+                // Windows versions we get a string back which we will try and parse
+                // as the enum label.
+                return result;
+            }
+
+            // Unknown scenario, this should not happen.
+            return null;
+        }
+#nullable disable
+
         #endregion
 
         #region Tracer
@@ -1658,7 +1692,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         this.VMName[index] = (string)results[0].Properties["VMName"].Value;
 
-                        if ((VMState)results[0].Properties["State"].Value == VMState.Running)
+                        if (GetVMStateProperty(results[0]) == VMState.Running)
                         {
                             vmIsRunning[index] = true;
                         }
@@ -1707,7 +1741,7 @@ namespace Microsoft.PowerShell.Commands
                         this.VMId[index] = (Guid)results[0].Properties["VMId"].Value;
                         this.VMName[index] = (string)results[0].Properties["VMName"].Value;
 
-                        if ((VMState)results[0].Properties["State"].Value == VMState.Running)
+                        if (GetVMStateProperty(results[0]) == VMState.Running)
                         {
                             vmIsRunning[index] = true;
                         }
