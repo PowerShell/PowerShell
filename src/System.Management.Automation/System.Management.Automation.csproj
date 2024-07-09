@@ -17,6 +17,10 @@
       So, we are forcing a newer version.
     -->
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <!--
+      Forcing new version of transative dependecies
+    -->
+    <PackageReference Include="System.Formats.Asn1" Version="6.0.1" />
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
