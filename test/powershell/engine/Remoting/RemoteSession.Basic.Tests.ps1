@@ -161,8 +161,8 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
             $ExpectedError
         )
 
-        [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
-        [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
+        [string]$RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
+        [string]$PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
         $configurationName = 'RestrictedWithNoGetHelpProxy'
         try
         {
