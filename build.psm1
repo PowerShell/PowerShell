@@ -3406,3 +3406,23 @@ function Clear-NativeDependencies
 
     $deps | ConvertTo-Json -Depth 20 | Set-Content "$PublishFolder/pwsh.deps.json" -Force
 }
+
+
+function Update-DotNetSdkVersion {
+    $globalJsonPath = "$PSScriptRoot/global.json"
+    $globalJson = get-content $globalJsonPath | convertfrom-json
+    $oldVersion = $globalJson.sdk.version
+    $versionParts = $oldVersion -split '\.'
+    $channel = $versionParts[0], $versionParts[1] -join '.'
+    Write-Verbose "channel: $channel" -Verbose
+    $azure_feed = 'https://dotnetcli.azureedge.net/dotnet'
+    $version_file_url = "$azure_feed/Sdk/$channel/latest.version"
+    $version = Invoke-RestMethod $version_file_url
+    Write-Verbose "updating from: $oldVersion to: $version" -Verbose
+    $globalJson.sdk.version = $version
+    $globalJson | convertto-json | out-file $globalJsonPath
+    $dotnetRuntimeMetaPath = "$psscriptroot\DotnetRuntimeMetadata.json"
+    $dotnetRuntimeMeta = get-content $dotnetRuntimeMetaPath | convertfrom-json
+    $dotnetRuntimeMeta.sdk.sdkImageVersion = $version
+    $dotnetRuntimeMeta | ConvertTo-Json | Out-File $dotnetRuntimeMetaPath
+}
