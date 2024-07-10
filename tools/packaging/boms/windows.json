@@ -836,6 +836,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Modules/Microsoft.WinGet.CommandNotFound/.signature.p7s",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "Modules/Microsoft.WinGet.CommandNotFound/LICENSE",
     "FileType": "NonProduct"
   },
