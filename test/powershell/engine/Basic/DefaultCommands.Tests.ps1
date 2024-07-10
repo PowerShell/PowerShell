@@ -207,6 +207,7 @@ Describe "Verify aliases and cmdlets" -Tags "CI" {
 "Alias",        "sv",                               "Set-Variable",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "",                     ""
 "Alias",        "swmi",                             "Set-WMIInstance",                  $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "tee",                              "Tee-Object",                       $($FullCLR -or $CoreWindows              ),     "ReadOnly",             "",                     ""
+"Alias",        "touch",                            "New-Item",                         $($FullCLR -or $CoreWindows              ),     "",                     "",                     ""
 "Alias",        "trcm",                             "Trace-Command",                    $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "type",                             "Get-Content",                      $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
 "Alias",        "wget",                             "Invoke-WebRequest",                $($FullCLR                               ),     "ReadOnly",             "",                     ""

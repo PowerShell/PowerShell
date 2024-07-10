@@ -4790,6 +4790,7 @@ end {
                     new SessionStateAliasEntry("sasv", "Start-Service", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("spsv", "Stop-Service", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("tee", "Tee-Object", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("touch", "New-Item", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("write", "Write-Output", string.Empty, ReadOnly),
                     // These were transferred from the "transferred from the profile" section
                     new SessionStateAliasEntry("cat", "Get-Content"),
