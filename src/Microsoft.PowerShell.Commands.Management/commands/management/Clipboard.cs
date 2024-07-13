@@ -76,8 +76,18 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                tool = "xclip";
-                args = "-selection clipboard -out";
+                string sessionType = Environment.GetEnvironmentVariable("XDG_SESSION_TYPE");
+
+                if (sessionType == "wayland")
+                {
+                    tool = "wl-paste";
+                }
+                else
+                {
+                    // Previous behavior: use xclip regardless of XDG_SESSION_TYPE
+                    tool = "xclip";
+                    args = "-selection clipboard -out";
+                }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
@@ -109,14 +119,25 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                tool = "xclip";
-                if (string.IsNullOrEmpty(text))
+                string sessionType = Environment.GetEnvironmentVariable("XDG_SESSION_TYPE");
+
+                if (sessionType == "wayland")
                 {
-                    args = "-selection clipboard /dev/null";
+                    tool = "wl-copy";
                 }
                 else
                 {
-                    args = "-selection clipboard -in";
+                    // Previous behavior: use xclip regardless of XDG_SESSION_TYPE
+                    tool = "xclip";
+
+                    if (string.IsNullOrEmpty(text))
+                    {
+                        args = "-selection clipboard /dev/null";
+                    }
+                    else
+                    {
+                        args = "-selection clipboard -in";
+                    }
                 }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
