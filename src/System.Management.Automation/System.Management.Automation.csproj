@@ -36,6 +36,8 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
     <PackageReference Include="System.DirectoryServices" Version="8.0.0" />
+    <!-- force update transative dependecies -->
+    <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
     <!--PackageReference Include="System.IO.FileSystem.AccessControl" Version="6.0.0-preview.5.21301.5" /-->
     <PackageReference Include="System.Management" Version="8.0.0" />
     <PackageReference Include="System.Security.AccessControl" Version="6.0.1" />
