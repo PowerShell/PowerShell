@@ -38,7 +38,7 @@
     <PackageReference Include="JsonSchema.Net" Version="5.2.7" />
     <!-- This section is to force the version of non-direct dependencies -->
     <PackageReference Include="Json.More.Net" Version="1.9.3" />
-    <PackageReference Include="System.Text.Json" Version="6.0.9" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
   </ItemGroup>
 
 </Project>
