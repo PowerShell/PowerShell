@@ -4528,6 +4528,24 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// A utility routine to fix up filename without loading the assembly.
+        /// </summary>
+        private string FixFileNameWithoutLoadingAssembly(string moduleBase, string fileName, string extension)
+        {
+            return FixFileName(moduleName: null, moduleBase, fileName, extension, canLoadAssembly: false, pathIsResolved: out _);
+        }
+
+        /// <summary>
+        /// A utility routine to fix up a file name so it's rooted and has an extension.
+        /// </summary>
+        private string FixFileName(string moduleName, string moduleBase, string fileName, string extension, bool canLoadAssembly, out bool pathIsResolved)
+        {
+            // Do not use moduleName here as it is used for ALC, which does not exist in 7.2
+            pathIsResolved = false;
+            return FixupFileName(moduleBase, fileName, extension, canLoadAssembly, pathIsResolved: out _);
+        }
+
+        /// <summary>
         /// A utility routine to fix up a file name so it's rooted and has an extension.
         /// </summary>
         internal string FixupFileName(string moduleBase, string name, string extension, bool isImportingModule, bool skipLoading = false)
@@ -4572,7 +4590,7 @@ namespace Microsoft.PowerShell.Commands
             //    Check for combinedPath in this case will get us the normalized rooted path 'C:\Windows\System32\WindowsPowerShell\v1.0\WSMan.format.ps1xml'.
             // The 'Microsoft.WSMan.Management' module in PowerShell was updated to not use the relative path for 'FormatsToProcess' entry,
             // but it's safer to keep the original behavior to avoid unexpected breaking changes.
-            string combinedPath = Path.Combine(moduleBase, fileName);
+            string combinedPath = Path.Combine(moduleBase, name);
             string resolvedPath = ResolveRootedFilePath(combinedPath, Context);
 
             // Return the path if successfully resolved.
