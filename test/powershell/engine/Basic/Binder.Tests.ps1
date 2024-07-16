@@ -84,7 +84,7 @@ public class DynamicClass : DynamicObject
             [BinderTests.TestClass]::SingleOverload(value: 'foo') | Should -Be foo
         }
 
-        It "Calls verload with case insensitive name Match" {
+        It "Calls overload with case insensitive name Match" {
             [BinderTests.TestClass]::SingleOverload(Value: 'foo') | Should -Be foo
         }
 

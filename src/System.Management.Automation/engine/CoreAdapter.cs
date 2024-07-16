@@ -1716,14 +1716,13 @@ namespace System.Management.Automation
                     // Argument had no name, get the first parameter if avail.
                     if (parameterNames.Count == 0)
                     {
-                        // No params left
+                        // No params left.
                         return false;
                     }
 
                     (argName, paramIndex) = parameterNames[0];
                     parameterNames.RemoveAt(0);
                 }
-                // else if (!parameterIndexes.TryGetValue(argName, out paramIndex))
                 else
                 {
                     int selectedIndex = parameterNames.FindIndex(n => string.Equals(argName, n.Item1, StringComparison.OrdinalIgnoreCase));
