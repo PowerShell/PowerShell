@@ -208,10 +208,27 @@ jobs:
       buildType: 'current'
       artifact: macos-pkgs
       itemPattern: |
-        **/*.pkg
         **/*.tar.gz
       targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
-    displayName: Download macos packages
+    displayName: Download macos tar packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_mac_package_sign_package_macos_arm64
+      itemPattern: |
+        **/*.pkg
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download macos arm packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_mac_package_sign_package_macos_x64
+      itemPattern: |
+        **/*.pkg
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download macos x64 packages
 
   - pwsh: |
       Get-ChildItem '$(Build.ArtifactStagingDirectory)/downloads' | Select-Object -ExpandProperty FullName
