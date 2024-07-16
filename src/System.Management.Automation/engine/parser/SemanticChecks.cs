@@ -1192,14 +1192,14 @@ namespace System.Management.Automation.Language
                 var existingArguments = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 foreach (ExpressionAst argument in memberExpressionAst.Arguments)
                 {
-                    if (argument is LabeledExpressionAst labeledExpression)
+                    if (argument is NamedMethodArgumentAst namedArgumentExpression)
                     {
-                        if (!existingArguments.Add(labeledExpression.Label.Value))
+                        if (!existingArguments.Add(namedArgumentExpression.Label.Value))
                         {
-                            _parser.ReportError(labeledExpression.Label.Extent,
+                            _parser.ReportError(namedArgumentExpression.Label.Extent,
                             nameof(ParserStrings.DuplicateArgumentLabel),
                             ParserStrings.DuplicateArgumentLabel,
-                            labeledExpression.Label.Value);
+                            namedArgumentExpression.Label.Value);
                         }
                     }
                     else if (existingArguments.Count > 0)
