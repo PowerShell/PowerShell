@@ -4439,31 +4439,14 @@ namespace Microsoft.PowerShell.Commands
 
             if (listOfStrings != null)
             {
-                var psHome = Utils.DefaultPowerShellAppBase;
-                string alternateDirToCheck = null;
-                if (moduleBase.StartsWith(psHome, StringComparison.OrdinalIgnoreCase))
-                {
-                    // alternateDirToCheck is an ugly hack for how Microsoft.PowerShell.Diagnostics and
-                    // Microsoft.WSMan.Management refer to the ps1xml that was in $PSHOME but removed.
-                    alternateDirToCheck = moduleBase + "\\..\\..";
-                }
-
                 list = new List<string>();
                 foreach (string s in listOfStrings)
                 {
                     try
                     {
                         string fixedFileName = FixFileNameWithoutLoadingAssembly(moduleBase, s, extension);
-                        var dir = Path.GetDirectoryName(fixedFileName);
 
-                        if (string.Equals(psHome, dir, StringComparison.OrdinalIgnoreCase) ||
-                            (alternateDirToCheck != null && string.Equals(alternateDirToCheck, dir, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            // The ps1xml file no longer exists in $PSHOME.  Downstream, we expect a resolved path,
-                            // which we can't really do b/c the file doesn't exist.
-                            fixedFileName = psHome + "\\" + Path.GetFileName(s);
-                        }
-                        else if (verifyFilesExist && !File.Exists(fixedFileName))
+                        if (verifyFilesExist && !File.Exists(fixedFileName))
                         {
                             string message = StringUtil.Format(SessionStateStrings.PathNotFound, fixedFileName);
                             throw new FileNotFoundException(message, fixedFileName);
@@ -4663,7 +4646,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Try to get the resolved fully qualified path to the file.
-            // Note that, the 'IsRooted' method also returns true for relative paths, in which case we need to check for 'combinedPath' as well.
+            // We only use the combinedPath to resolve the file path, as that combines the file specified with the moduleBase path
+            // and ensures that the file is found relative only to the moduleBase not current working directory path.
             //  * For example, the 'Microsoft.WSMan.Management.psd1' in Windows PowerShell defines 'FormatsToProcess="..\..\WSMan.format.ps1xml"'.
             //  * For such a module, we will have the following input when reaching this method:
             //     - moduleBase = 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.WSMan.Management'
@@ -4672,9 +4656,7 @@ namespace Microsoft.PowerShell.Commands
             // The 'Microsoft.WSMan.Management' module in PowerShell was updated to not use the relative path for 'FormatsToProcess' entry,
             // but it's safer to keep the original behavior to avoid unexpected breaking changes.
             string combinedPath = Path.Combine(moduleBase, fileName);
-            string resolvedPath = IsRooted(fileName)
-                ? ResolveRootedFilePath(fileName, Context) ?? ResolveRootedFilePath(combinedPath, Context)
-                : ResolveRootedFilePath(combinedPath, Context);
+            string resolvedPath = ResolveRootedFilePath(combinedPath, Context);
 
             // Return the path if successfully resolved.
             if (resolvedPath is not null)

@@ -1,0 +1,24 @@
+<Configuration>
+   <ViewDefinitions>
+   <View>
+    <Name>TestModule2TypeTable</Name>
+    <ViewSelectedBy>
+     <TypeName>TestModule2Type</TypeName>
+    </ViewSelectedBy>
+    <TableControl>
+     <TableHeaders>
+      <TableColumnHeader><Label>prop1</Label></TableColumnHeader>
+      <TableColumnHeader><Label>prop2</Label></TableColumnHeader>
+     </TableHeaders>
+     <TableRowEntries>
+      <TableRowEntry>
+       <TableColumnItems>
+        <TableColumnItem><PropertyName>prop1</PropertyName></TableColumnItem>
+        <TableColumnItem><PropertyName>prop2</PropertyName></TableColumnItem>
+       </TableColumnItems>
+      </TableRowEntry>
+     </TableRowEntries>
+    </TableControl>
+   </View>
+   </ViewDefinitions>
+</Configuration>

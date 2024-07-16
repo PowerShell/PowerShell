@@ -210,6 +210,48 @@ Describe "Module loading with version constraints" -Tags "Feature" {
         Get-Module $moduleName | Remove-Module
     }
 
+    It "Loads the module files (ie .ps1xml) relative to module base only" {
+        # Create module base file structure
+        $testModule2Name = "TestModule2"
+        $testModule2Base = Join-Path $TestDrive -ChildPath "$($testModule2Name)Base" # $TestDrive/TestModule2Base
+        New-Item -Path $testModule2Base -ItemType Directory
+        $testModule2Path = Join-Path $testModule2Base -ChildPath $testModule2Name # $TestDrive/TestModule2Base/TestModule2
+        New-Item -Path $testModule2Path -ItemType Directory
+
+        $assetsFolderPath = Join-Path $PSScriptRoot -ChildPath "assets"
+
+        Copy-Item -Path (Join-Path -Path $assetsFolderPath -ChildPath "$($testModule2Name).psd1") -Destination $testModule2Path # $TestDrive/TestModule2Base/TestModule2/TestModule2.psd1
+        Copy-Item -Path (Join-Path -Path $assetsFolderPath -ChildPath "$($testModule2Name).psm1") -Destination $testModule2Path # $TestDrive/TestModule2Base/TestModule2/TestModule2.psm1
+        Copy-Item -Path (Join-Path -Path $assetsFolderPath -ChildPath "$($testModule2Name).Format.ps1xml") -Destination $testModule2Base # $TestDrive/TestModule2Base/TestModule2.Format.ps1xml
+        Copy-Item -Path (Join-Path -Path $assetsFolderPath -ChildPath "$($testModule2Name).Types.ps1xml") -Destination $testModule2Base # $TestDrive/TestModule2Base/TestModule2.Types.ps1xml
+
+        # Also create subfolder file structure within module base
+        $subFolder1 = Join-Path -Path $testModule2Base -ChildPath "subFolder1" # $TestDrive/TestModule2Base/subFolder1
+        New-Item -Path $subFolder1 -ItemType Directory
+        $subFolder2 = Join-Path -Path $subFolder1 -ChildPath "subFolder2" # $TestDrive/TestModule2Base/subFolder1/subFolder2
+        New-Item -Path $subFolder2 -ItemType Directory
+        $subFolder3 = Join-Path -Path $subFolder2 -ChildPath "subFolder3" # $TestDrive/TestModule2Base/subFolder1/subFolder2/subFolder3
+        New-Item -Path $subFolder3 -ItemType Directory
+
+        Copy-Item -Path (Join-Path -Path $assetsFolderPath -ChildPath "$($testModule2Name).Format.ps1xml") -Destination $subFolder2 # $TestDrive/subFolder2/TestModule2.Format.ps1xml
+        Copy-Item -Path (Join-Path -Path $assetsFolderPath -ChildPath "$($testModule2Name).Types.ps1xml") -Destination $subFolder2 # $TestDrive/subFolder2/TestModule2.Types.ps1xml
+
+        try {
+            Push-Location -Path $folder3 # $TestDrive/TestModule2Base/subFolder1/subFolder2/subFolder3
+            $psd1Path = Join-Path -Path $testModule2Path -ChildPath "$($testModule2Name).psd1"
+            Import-Module $psd1Path
+            $filesLoaded = Get-MyFormatsAndTypesFilePath
+            $filesLoaded[0] | Should -BeLike "*${testModule2Path}*"
+            $filesLoaded[0] | Should -Not -BeLike "*${subFolder2}*"
+            $filesLoaded[1] | Should -BeLike "*${testModule2Path}*"
+            $filesLoaded[1] | Should -Not -BeLike "*${subFolder2}*"
+        }
+        finally {
+            Pop-Location
+            Remove-Module $testModule2Name
+        }
+    }
+
     It "Loads the module by FullyQualifiedName from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
         param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
 

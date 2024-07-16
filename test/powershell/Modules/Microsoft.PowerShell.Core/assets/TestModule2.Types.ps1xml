@@ -1,0 +1,13 @@
+<Types>
+  <Type>
+    <Name>TestModule2Type</Name>
+    <Members>
+      <ScriptMethod>
+        <Name>ToString</Name>
+        <Script>
+            return (":: {0} : {1} ::" -f $this.prop1, $this.prop2)
+        </Script>
+      </ScriptMethod>
+    </Members>
+  </Type>
+</Types>
