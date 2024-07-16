@@ -1676,9 +1676,11 @@ namespace System.Management.Automation
             arguments. It follows these rules:
 
             + If unnamed, argument is set to the next method parameter.
+                + If there are no remaining parameters the overload is not
+                  valid.
             + If named, argument is set to the parameter for that name
-              + If the parameter has already been set positionally the overload
-                is not valid.
+              + If there is not match for the name or it has already been set
+                positionally, the overload is not valid.
             + If the argument is mapped to a param array
                 + If named, only that argument is set as the param value
                 + If unnamed, the argument and subsequent unnamed arguments are
@@ -1688,32 +1690,19 @@ namespace System.Management.Automation
                 + If param, the overload is still valid and param is an empty
                   array
                 + Otherwise, the overload is not valid.
+
+            A caveat is when encountering arg names that are not unique (case
+            insensitive). Only the last parameter with that name can be set by
+            name and only if the preceding ones have been set positionally.
             */
             selectedCandidate = null;
 
             ParameterInformation[] parameters = methodInfo.parameters;
 
-            Dictionary<string, int> parameterIndexes = new Dictionary<string, int>(
-                parameters.Length,
-                StringComparer.OrdinalIgnoreCase);
-            foreach (ParameterInformation paramInfo in parameters)
+            List<(string?, int)> parameterNames = new List<(string?, int)>(parameters.Length);
+            for (int i = 0; i < parameters.Length; i++)
             {
-                int nextIndex = parameterIndexes.Count;
-                string? argName = paramInfo.name;
-                if (string.IsNullOrEmpty(argName))
-                {
-                    // It is possible for dynamically defined methods to not
-                    // have a name for the argument.
-                    argName = $"arg{nextIndex}";
-                }
-
-                // We could have a collision with the name if this was built
-                // with MethodBuilder or there's a case insensitive match. This
-                // adds a '_' suffix until the arg name is unique enough.
-                while (!parameterIndexes.TryAdd(argName, nextIndex))
-                {
-                    argName += "_";
-                }
+                parameterNames.Add((parameters[i].name, i));
             }
 
             OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length);
@@ -1725,26 +1714,32 @@ namespace System.Management.Automation
                 if (string.IsNullOrEmpty(argName))
                 {
                     // Argument had no name, get the first parameter if avail.
-                    using IEnumerator<KeyValuePair<string, int>> keyEnumerator = parameterIndexes.GetEnumerator();
-                    if (!keyEnumerator.MoveNext())
+                    if (parameterNames.Count == 0)
                     {
-                        // No params left.
+                        // No params left
                         return false;
                     }
 
-                    KeyValuePair<string, int> nextParam = keyEnumerator.Current;
-                    argName = nextParam.Key;
-                    paramIndex = nextParam.Value;
+                    (argName, paramIndex) = parameterNames[0];
+                    parameterNames.RemoveAt(0);
                 }
-                else if (!parameterIndexes.TryGetValue(argName, out paramIndex))
+                // else if (!parameterIndexes.TryGetValue(argName, out paramIndex))
+                else
                 {
-                    // Had a name but it didn't match any remaining parameters.
-                    return false;
+                    int selectedIndex = parameterNames.FindIndex(n => string.Equals(argName, n.Item1, StringComparison.OrdinalIgnoreCase));
+                    if (selectedIndex == -1)
+                    {
+                        // Had a name but it didn't match any remaining parameters.
+                        return false;
+                    }
+
+                    (argName, paramIndex) = parameterNames[selectedIndex];
+                    parameterNames.RemoveAt(selectedIndex);
                 }
 
-                parameterIndexes.Remove(argName);
                 ParameterInformation paramInfo = parameters[paramIndex];
                 candidate.ArgumentMap[paramIndex] = i;
+
                 if (paramInfo.isParamArray)
                 {
                     // First determine how many args there are for the param arg.
@@ -1842,7 +1837,7 @@ namespace System.Management.Automation
             }
 
             // Unmapped args only work if they are optional or param.
-            foreach (int paramIndex in parameterIndexes.Values)
+            foreach ((string? _, int paramIndex) in parameterNames)
             {
                 ParameterInformation paramInfo = parameters[paramIndex];
                 if (paramInfo.isParamArray)

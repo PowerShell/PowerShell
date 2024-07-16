@@ -98,12 +98,32 @@ public class DynamicClass : DynamicObject
             [string]$err | Should -Be 'Cannot find an overload for "SingleOverload" and the argument count: "2".'
         }
 
-        It "Uses overload with arg name that differs by case" {
-            [BinderTests.TestClass]::OverloadWithSameNameDifferentCase(value: 'foo', value_: 'bar') | Should -Be foobar
+        It "Fails to use named arg with overload arg name that differs by case" {
+            {
+                [BinderTests.TestClass]::OverloadWithSameNameDifferentCase(value: 'foo', value_: 'bar')
+            } | Should -Throw "Cannot find an overload for ""OverloadWithSameNameDifferentCase"" and the argument count: ""2"""
         }
 
-        It "Uses overload with arg name that differs by case" {
-            [BinderTests.TestClass]::OverloadWithMultipleSameNameDifferentCase(value: 'foo', value_: 'bar', value__: 'test') | Should -Be foobartest
+        It "Failed to use named arg with overload arg name that differs by case multiple times" {
+            {
+                [BinderTests.TestClass]::OverloadWithMultipleSameNameDifferentCase(value: 'foo', value_: 'bar', value__: 'test')
+            } | Should -Throw "Cannot find an overload for ""OverloadWithMultipleSameNameDifferentCase"" and the argument count: ""3"""
+        }
+
+        It "Can still call overload with arg name that differs by case positionally two matches" {
+            [BinderTests.TestClass]::OverloadWithSameNameDifferentCase('foo', 'bar') | Should -Be foobar
+        }
+
+        It "Can still call overload with arg name that differs by case positionally three matches" {
+            [BinderTests.TestClass]::OverloadWithMultipleSameNameDifferentCase('foo', 'bar', 'test') | Should -Be foobartest
+        }
+
+        It "Can still call overload with arg name that differs by case once positional conflict was matched" {
+            [BinderTests.TestClass]::OverloadWithSameNameDifferentCase('foo', value: 'bar') | Should -Be foobar
+        }
+
+        It "Can still call overload with arg name that differs by case once positional conflict was matched three matches" {
+            [BinderTests.TestClass]::OverloadWithMultipleSameNameDifferentCase('foo', 'bar', value: 'test') | Should -Be foobartest
         }
 
         It "Calls method with arguments in different positional order" {
@@ -347,8 +367,12 @@ public class DynamicClass : DynamicObject
             $TestClass::MethodWithDefault('foo', defaultArg: 'bar') | Should -Be foo-bar
         }
 
-        It "Calls method with argumane name conflict" {
-            $TestClass::MethodWithNameConflict(arg0: 'foo', arg0_: 'bar', arg0__: 'test') | Should -Be foo-bar-test
+        It "Calls method with argument name conflict positionally" {
+            $TestClass::MethodWithNameConflict('foo', 'bar', 'test') | Should -Be foo-bar-test
+        }
+
+        It "Calls method with argument name conflict last match set" {
+            $TestClass::MethodWithNameConflict('foo', 'bar', arg0: 'test') | Should -Be foo-bar-test
         }
     }
 
