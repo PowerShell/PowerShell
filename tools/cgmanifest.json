@@ -125,7 +125,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "8.0.4"
+          "Version": "8.0.7"
         }
       },
       "DevelopmentDependency": false
@@ -225,7 +225,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "8.0.4"
+          "Version": "8.0.7"
         }
       },
       "DevelopmentDependency": false
@@ -505,7 +505,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "8.0.4"
+          "Version": "8.0.7"
         }
       },
       "DevelopmentDependency": false
@@ -515,7 +515,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Formats.Asn1",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -555,7 +555,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Net.Http.WinHttpHandler",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -665,7 +665,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Xml",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -795,7 +795,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Text.Json",
-          "Version": "6.0.9"
+          "Version": "8.0.4"
         }
       },
       "DevelopmentDependency": false
