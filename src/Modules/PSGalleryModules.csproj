@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-  <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Product>PowerShell</Product>
     <Company>Microsoft Corporation</Company>
