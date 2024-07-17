@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
 
-                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
+                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(outFilePath)}"));
 
                 // ContentLength is always the partial length, while ContentRange is the full length
                 // Without Request.Range set, ContentRange is null and partial length (ContentLength) equals to full length
