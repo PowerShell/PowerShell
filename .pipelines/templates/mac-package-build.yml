@@ -234,17 +234,19 @@ jobs:
   - pwsh: |
       $signedPkg = Get-ChildItem -Path $(Pipeline.Workspace) -Filter "*osx*.zip" -File
 
-      Write-Verbose -Verbose "Signed package zip: $signedPkg"
+      $signedPkg | ForEach-Object {
+        Write-Verbose -Verbose "Signed package zip: $_"
 
-      if (-not (Test-Path $signedPkg)) {
-        throw "Package not found: $signedPkg"
+        if (-not (Test-Path $_)) {
+          throw "Package not found: $_"
+        }
+
+        if (-not (Test-Path $env:ob_outputDirectory)) {
+          $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory
+        }
+
+        Expand-Archive -Path $_ -DestinationPath $env:ob_outputDirectory -Verbose
       }
-
-      if (-not (Test-Path $env:ob_outputDirectory)) {
-        $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory
-      }
-
-      Expand-Archive -Path $signedPkg -DestinationPath $env:ob_outputDirectory -Verbose
 
       Write-Verbose -Verbose "Expanded pkg file:"
       Get-ChildItem -Path $env:ob_outputDirectory | Write-Verbose -Verbose
