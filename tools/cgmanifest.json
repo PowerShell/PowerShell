@@ -535,7 +535,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Formats.Asn1",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
