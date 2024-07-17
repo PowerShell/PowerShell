@@ -17,124 +17,6 @@ required to debug changes to any libraries licensed under the GNU Lesser General
 
 ---------------------------------------------------------
 
-Microsoft.Extensions.ObjectPool 5.0.10 - Apache-2.0
-
-
-(c) Microsoft Corporation
-Copyright (c) Andrew Arnott
-Copyright (c) 2019 David Fowler
-Copyright (c) 2016 Richard Morris
-Copyright (c) 2017 Yoshifumi Kawai
-Copyright (c) Microsoft Corporation
-Copyright (c) 2014-2018 Michael Daines
-Copyright (c) 2013-2017, Milosz Krajewski
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2019-2020 West Wind Technologies
-Copyright (c) 2010-2019 Google LLC. http://angular.io/license
-Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
-
-Apache License
-
-Version 2.0, January 2004
-
-http://www.apache.org/licenses/ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
-
-   1. Definitions.
-
-      
-
-      "License" shall mean the terms and conditions for use, reproduction, and distribution as defined by Sections 1 through 9 of this document.
-
-      
-
-      "Licensor" shall mean the copyright owner or entity authorized by the copyright owner that is granting the License.
-
-      
-
-      "Legal Entity" shall mean the union of the acting entity and all other entities that control, are controlled by, or are under common control with that entity. For the purposes of this definition, "control" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, or (ii) ownership of fifty percent (50%) or more of the outstanding shares, or (iii) beneficial ownership of such entity.
-
-      
-
-      "You" (or "Your") shall mean an individual or Legal Entity exercising permissions granted by this License.
-
-      
-
-      "Source" form shall mean the preferred form for making modifications, including but not limited to software source code, documentation source, and configuration files.
-
-      
-
-      "Object" form shall mean any form resulting from mechanical transformation or translation of a Source form, including but not limited to compiled object code, generated documentation, and conversions to other media types.
-
-      
-
-      "Work" shall mean the work of authorship, whether in Source or Object form, made available under the License, as indicated by a copyright notice that is included in or attached to the work (an example is provided in the Appendix below).
-
-      
-
-      "Derivative Works" shall mean any work, whether in Source or Object form, that is based on (or derived from) the Work and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship. For the purposes of this License, Derivative Works shall not include works that remain separable from, or merely link (or bind by name) to the interfaces of, the Work and Derivative Works thereof.
-
-      
-
-      "Contribution" shall mean any work of authorship, including the original version of the Work and any modifications or additions to that Work or Derivative Works thereof, that is intentionally submitted to Licensor for inclusion in the Work by the copyright owner or by an individual or Legal Entity authorized to submit on behalf of the copyright owner. For the purposes of this definition, "submitted" means any form of electronic, verbal, or written communication sent to the Licensor or its representatives, including but not limited to communication on electronic mailing lists, source code control systems, and issue tracking systems that are managed by, or on behalf of, the Licensor for the purpose of discussing and improving the Work, but excluding communication that is conspicuously marked or otherwise designated in writing by the copyright owner as "Not a Contribution."
-
-      
-
-      "Contributor" shall mean Licensor and any individual or Legal Entity on behalf of whom a Contribution has been received by Licensor and subsequently incorporated within the Work.
-
-   2. Grant of Copyright License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare Derivative Works of, publicly display, publicly perform, sublicense, and distribute the Work and such Derivative Works in Source or Object form.
-
-   3. Grant of Patent License. Subject to the terms and conditions of this License, each Contributor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer the Work, where such license applies only to those patent claims licensable by such Contributor that are necessarily infringed by their Contribution(s) alone or by combination of their Contribution(s) with the Work to which such Contribution(s) was submitted. If You institute patent litigation against any entity (including a cross-claim or counterclaim in a lawsuit) alleging that the Work or a Contribution incorporated within the Work constitutes direct or contributory patent infringement, then any patent licenses granted to You under this License for that Work shall terminate as of the date such litigation is filed.
-
-   4. Redistribution. You may reproduce and distribute copies of the Work or Derivative Works thereof in any medium, with or without modifications, and in Source or Object form, provided that You meet the following conditions:
-
-      (a) You must give any other recipients of the Work or Derivative Works a copy of this License; and
-
-      (b) You must cause any modified files to carry prominent notices stating that You changed the files; and
-
-      (c) You must retain, in the Source form of any Derivative Works that You distribute, all copyright, patent, trademark, and attribution notices from the Source form of the Work, excluding those notices that do not pertain to any part of the Derivative Works; and
-
-      (d) If the Work includes a "NOTICE" text file as part of its distribution, then any Derivative Works that You distribute must include a readable copy of the attribution notices contained within such NOTICE file, excluding those notices that do not pertain to any part of the Derivative Works, in at least one of the following places: within a NOTICE text file distributed as part of the Derivative Works; within the Source form or documentation, if provided along with the Derivative Works; or, within a display generated by the Derivative Works, if and wherever such third-party notices normally appear. The contents of the NOTICE file are for informational purposes only and do not modify the License. You may add Your own attribution notices within Derivative Works that You distribute, alongside or as an addendum to the NOTICE text from the Work, provided that such additional attribution notices cannot be construed as modifying the License.
-
-      You may add Your own copyright statement to Your modifications and may provide additional or different license terms and conditions for use, reproduction, or distribution of Your modifications, or for any such Derivative Works as a whole, provided Your use, reproduction, and distribution of the Work otherwise complies with the conditions stated in this License.
-
-   5. Submission of Contributions. Unless You explicitly state otherwise, any Contribution intentionally submitted for inclusion in the Work by You to the Licensor shall be under the terms and conditions of this License, without any additional terms or conditions. Notwithstanding the above, nothing herein shall supersede or modify the terms of any separate license agreement you may have executed with Licensor regarding such Contributions.
-
-   6. Trademarks. This License does not grant permission to use the trade names, trademarks, service marks, or product names of the Licensor, except as required for reasonable and customary use in describing the origin of the Work and reproducing the content of the NOTICE file.
-
-   7. Disclaimer of Warranty. Unless required by applicable law or agreed to in writing, Licensor provides the Work (and each Contributor provides its Contributions) on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or conditions of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE. You are solely responsible for determining the appropriateness of using or redistributing the Work and assume any risks associated with Your exercise of permissions under this License.
-
-   8. Limitation of Liability. In no event and under no legal theory, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, shall any Contributor be liable to You for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this License or out of the use or inability to use the Work (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such Contributor has been advised of the possibility of such damages.
-
-   9. Accepting Warranty or Additional Liability. While redistributing the Work or Derivative Works thereof, You may choose to offer, and charge a fee for, acceptance of support, warranty, indemnity, or other liability obligations and/or rights consistent with this License. However, in accepting such obligations, You may act only on Your own behalf and on Your sole responsibility, not on behalf of any other Contributor, and only if You agree to indemnify, defend, and hold each Contributor harmless for any liability incurred by, or claims asserted against, such Contributor by reason of your accepting any such warranty or additional liability. END OF TERMS AND CONDITIONS
-
-APPENDIX: How to apply the Apache License to your work.
-
-To apply the Apache License to your work, attach the following boilerplate notice, with the fields enclosed by brackets "[]" replaced with your own identifying information. (Don't include the brackets!) The text should be enclosed in the appropriate comment syntax for the file format. We also recommend that a file or class name and description of purpose be included on the same "printed page" as the copyright notice for easier identification within third-party archives.
-
-Copyright [yyyy] [name of copyright owner]
-
-Licensed under the Apache License, Version 2.0 (the "License");
-
-you may not use this file except in compliance with the License.
-
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-
-distributed under the License is distributed on an "AS IS" BASIS,
-
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-
-See the License for the specific language governing permissions and
-
-limitations under the License.
-
----------------------------------------------------------
-
----------------------------------------------------------
-
 Markdig.Signed 0.33.0 - BSD-2-Clause
 
 
@@ -172,7 +54,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Json.More.Net 1.9.0 - MIT
+Json.More.Net 1.9.3 - MIT
 
 
 (c) Microsoft 2023
@@ -238,7 +120,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-JsonSchema.Net 5.2.6 - MIT
+JsonSchema.Net 5.2.7 - MIT
 
 
 
@@ -259,6 +141,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.ApplicationInsights 2.21.0 - MIT
 
 
+(c) Microsoft Corporation
 
 MIT License
 
@@ -274,45 +157,62 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Bcl.AsyncInterfaces 5.0.0 - MIT
+Microsoft.Bcl.AsyncInterfaces 8.0.0 - MIT
 
 
-(c) Microsoft Corporation.
+Copyright (c) Six Labors
+(c) Microsoft Corporation
 Copyright (c) Andrew Arnott
+Copyright 2019 LLVM Project
 Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
+Copyright (c) .NET Foundation
 Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
+Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
+Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 1999 Lucent Technologies
+Copyright (c) 2008-2016, Wojciech Mula
+Copyright (c) 2011-2020 Microsoft Corp
 Copyright (c) 2015-2017, Wojciech Mula
+Copyright (c) 2021 csFastFloat authors
 Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
 Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
 Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
+Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
+Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
+Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
+Copyright (c) 1995-2022 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
 Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
 Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
+Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
+Copyright (c) 1980, 1986, 1993 The Regents of the University of California
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
 
 The MIT License (MIT)
 
@@ -343,7 +243,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.CodeAnalysis.Common 4.7.0 - MIT
+Microsoft.CodeAnalysis.Common 4.8.0 - MIT
 
 
 (c) Microsoft Corporation
@@ -363,13 +263,63 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.CodeAnalysis.CSharp 4.7.0 - MIT
+Microsoft.CodeAnalysis.CSharp 4.8.0 - MIT
 
 
 (c) Microsoft Corporation
 Copyright (c) Microsoft Corporation
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) Microsoft Corporation. Alle Rechte
+
+MIT License
+
+Copyright (c) <year> <copyright holders>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---------------------------------------------------------
+
+---------------------------------------------------------
+
+Microsoft.Extensions.ObjectPool 8.0.7 - MIT
+
+
+Copyright 2019 The gRPC
+Copyright Jorn Zaefferer
+(c) Microsoft Corporation
+Copyright (c) Andrew Arnott
+Copyright (c) 2015, Google Inc.
+Copyright (c) 2019 David Fowler
+Copyright (c) HTML5 Boilerplate
+Copyright (c) 2016 Richard Morris
+Copyright (c) 1998 John D. Polstra
+Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) Microsoft Corporation
+Copyright (c) 2007 James Newton-King
+Copyright (c) 2013 - 2018 AngleSharp
+Copyright (c) 2000-2013 Julian Seward
+Copyright (c) 2011-2021 Twitter, Inc.
+Copyright (c) 2014-2018 Michael Daines
+Copyright (c) 1996-1998 John D. Polstra
+Copyright (c) 2013-2017, Milosz Krajewski
+Copyright (c) .NET Foundation Contributors
+Copyright (c) 2011-2021 The Bootstrap Authors
+Copyright (c) 2019-2023 The Bootstrap Authors
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2019-2020 West Wind Technologies
+Copyright (c) 2007 John Birrell (jb@freebsd.org)
+Copyright (c) 2011 Alex MacCaw (info@eribium.org)
+Copyright (c) Nicolas Gallagher and Jonathan Neal
+Copyright (c) 2010-2019 Google LLC. http://angular.io/license
+Copyright (c) 2011 Nicolas Gallagher (nicolas@nicolasgallagher.com)
+Copyright (c) 1989, 1993 The Regents of the University of California
+Copyright (c) 1990, 1993 The Regents of the University of California
+Copyright OpenJS Foundation and other contributors, https://openjsf.org
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
 MIT License
 
@@ -534,9 +484,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Win32.Registry.AccessControl 7.0.0 - MIT
+Microsoft.Win32.Registry.AccessControl 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -546,11 +497,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -565,12 +518,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -584,7 +540,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -615,9 +570,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Win32.SystemEvents 7.0.0 - MIT
+Microsoft.Win32.SystemEvents 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -627,11 +583,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -646,12 +604,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -665,7 +626,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -696,82 +656,20 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 7.0.5 - MIT
+Microsoft.Windows.Compatibility 8.0.7 - MIT
 
 
 (c) Microsoft Corporation
-Copyright (c) Andrew Arnott
-Copyright 2019 LLVM Project
-Copyright 2018 Daniel Lemire
-Copyright (c) .NET Foundation
-Copyright (c) 2011, Google Inc.
-Copyright (c) 2020 Dan Shechter
-(c) 1997-2005 Sean Eron Anderson
-Copyright (c) 1998 Microsoft. To
-Copyright (c) 2017 Yoshifumi Kawai
-Copyright (c) 2005-2020 Rich Felker
-Copyright (c) Microsoft Corporation
-Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
-Copyright (c) 1991-2022 Unicode, Inc.
-Copyright (c) 2013-2017, Alfred Klomp
-Copyright 2012 the V8 project authors
-Copyright (c) 1999 Lucent Technologies
-Copyright (c) 2008-2016, Wojciech Mula
-Copyright (c) 2011-2020 Microsoft Corp
-Copyright (c) 2015-2017, Wojciech Mula
-Copyright (c) 2021 csFastFloat authors
-Copyright (c) 2005-2007, Nick Galbreath
-Copyright (c) 2015 The Chromium Authors
-Copyright (c) 2018 Alexander Chermyanin
-Copyright (c) The Internet Society 1997
-Portions (c) International Organization
-Copyright (c) 2004-2006 Intel Corporation
-Copyright (c) 2013-2017, Milosz Krajewski
-Copyright (c) 2016-2017, Matthieu Darbois
-Copyright (c) The Internet Society (2003)
-Copyright (c) .NET Foundation Contributors
-Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
-Copyright (c) 2019 Microsoft Corporation, Daan Leijen
-Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2022 Jean-loup Gailly and Mark Adler
-Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
-Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
-Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
-Copyright (c) 1980, 1986, 1993 The Regents of the University of California
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
-The MIT License (MIT)
+MIT License
 
-Copyright (c) .NET Foundation and Contributors
+Copyright (c) <year> <copyright holders>
 
-All rights reserved.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---------------------------------------------------------
 
@@ -811,9 +709,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.linux-arm.runtime.native.System.IO.Ports 7.0.0 - MIT
+runtime.linux-arm.runtime.native.System.IO.Ports 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -823,11 +722,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -842,12 +743,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -861,7 +765,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -892,9 +795,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.linux-arm64.runtime.native.System.IO.Ports 7.0.0 - MIT
+runtime.linux-arm64.runtime.native.System.IO.Ports 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -904,11 +808,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -923,12 +829,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -942,7 +851,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -973,9 +881,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.linux-x64.runtime.native.System.IO.Ports 7.0.0 - MIT
+runtime.linux-x64.runtime.native.System.IO.Ports 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -985,11 +894,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -1004,12 +915,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -1023,7 +937,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -1107,9 +1020,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.native.System.IO.Ports 7.0.0 - MIT
+runtime.native.System.IO.Ports 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -1119,11 +1033,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -1138,12 +1054,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -1157,7 +1076,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -1188,9 +1106,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.osx-arm64.runtime.native.System.IO.Ports 7.0.0 - MIT
+runtime.osx-arm64.runtime.native.System.IO.Ports 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -1200,11 +1119,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -1219,12 +1140,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -1238,7 +1162,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -1269,9 +1192,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-runtime.osx-x64.runtime.native.System.IO.Ports 7.0.0 - MIT
+runtime.osx-x64.runtime.native.System.IO.Ports 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -1281,11 +1205,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -1300,12 +1226,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -1319,7 +1248,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -1350,9 +1278,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.CodeDom 7.0.0 - MIT
+System.CodeDom 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -1362,11 +1291,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -1381,12 +1312,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -1400,7 +1334,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -1512,9 +1445,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ComponentModel.Composition 7.0.0 - MIT
+System.ComponentModel.Composition 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -1524,11 +1458,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -1543,12 +1479,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -1562,7 +1501,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -1593,9 +1531,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ComponentModel.Composition.Registration 7.0.0 - MIT
+System.ComponentModel.Composition.Registration 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -1605,11 +1544,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -1624,12 +1565,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -1643,7 +1587,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -1674,9 +1617,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Configuration.ConfigurationManager 7.0.0 - MIT
+System.Configuration.ConfigurationManager 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -1686,11 +1630,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -1705,12 +1651,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -1724,7 +1673,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -1755,9 +1703,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Data.Odbc 7.0.0 - MIT
+System.Data.Odbc 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -1767,11 +1716,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -1786,12 +1737,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -1805,7 +1759,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -1836,9 +1789,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Data.OleDb 7.0.0 - MIT
+System.Data.OleDb 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -1848,11 +1802,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -1867,12 +1823,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -1886,7 +1845,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -1917,7 +1875,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Data.SqlClient 4.8.5 - MIT
+System.Data.SqlClient 4.8.6 - MIT
 
 
 (c) Microsoft Corporation
@@ -1970,9 +1928,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Diagnostics.DiagnosticSource 7.0.2 - MIT
+System.Diagnostics.DiagnosticSource 8.0.1 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -1982,11 +1941,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -2001,12 +1962,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -2020,7 +1984,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2051,9 +2014,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Diagnostics.EventLog 7.0.0 - MIT
+System.Diagnostics.EventLog 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -2063,11 +2027,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -2082,12 +2048,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -2101,7 +2070,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2132,9 +2100,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Diagnostics.PerformanceCounter 7.0.0 - MIT
+System.Diagnostics.PerformanceCounter 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -2144,11 +2113,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -2163,12 +2134,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -2182,7 +2156,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2213,9 +2186,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.DirectoryServices 7.0.1 - MIT
+System.DirectoryServices 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -2225,11 +2199,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -2244,12 +2220,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -2263,7 +2242,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2294,9 +2272,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.DirectoryServices.AccountManagement 7.0.1 - MIT
+System.DirectoryServices.AccountManagement 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -2306,11 +2285,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -2325,12 +2306,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -2344,7 +2328,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2375,9 +2358,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.DirectoryServices.Protocols 7.0.1 - MIT
+System.DirectoryServices.Protocols 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -2387,11 +2371,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -2406,12 +2392,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -2425,7 +2414,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2456,9 +2444,45 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Drawing.Common 7.0.0 - MIT
+System.Drawing.Common 8.0.7 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) Sven Groot (Ookii.org) 2009
+Copyright (c) .NET Foundation and Contributors
+
+The MIT License (MIT)
+
+Copyright (c) .NET Foundation and Contributors
+
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---------------------------------------------------------
+
+---------------------------------------------------------
+
+System.Formats.Asn1 8.0.1 - MIT
+
+
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -2468,11 +2492,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -2487,12 +2513,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -2506,7 +2535,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2537,9 +2565,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Formats.Asn1 7.0.0 - MIT
+System.IO.Packaging 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -2549,11 +2578,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -2568,12 +2599,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -2587,7 +2621,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2618,9 +2651,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.IO.Packaging 7.0.0 - MIT
+System.IO.Ports 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -2630,11 +2664,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -2649,12 +2685,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -2668,7 +2707,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2699,9 +2737,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.IO.Ports 7.0.0 - MIT
+System.Management 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -2711,11 +2750,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -2730,12 +2771,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -2749,7 +2793,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2780,9 +2823,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Management 7.0.2 - MIT
+System.Net.Http.WinHttpHandler 8.0.1 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -2792,11 +2836,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -2811,12 +2857,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -2830,88 +2879,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
-
-The MIT License (MIT)
-
-Copyright (c) .NET Foundation and Contributors
-
-All rights reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
----------------------------------------------------------
-
----------------------------------------------------------
-
-System.Net.Http.WinHttpHandler 7.0.0 - MIT
-
-
-(c) Microsoft Corporation
-Copyright (c) Andrew Arnott
-Copyright 2019 LLVM Project
-Copyright 2018 Daniel Lemire
-Copyright (c) .NET Foundation
-Copyright (c) 2011, Google Inc.
-Copyright (c) 2020 Dan Shechter
-(c) 1997-2005 Sean Eron Anderson
-Copyright (c) 1998 Microsoft. To
-Copyright (c) 2017 Yoshifumi Kawai
-Copyright (c) 2005-2020 Rich Felker
-Copyright (c) Microsoft Corporation
-Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
-Copyright (c) 1991-2022 Unicode, Inc.
-Copyright (c) 2013-2017, Alfred Klomp
-Copyright 2012 the V8 project authors
-Copyright (c) 1999 Lucent Technologies
-Copyright (c) 2008-2016, Wojciech Mula
-Copyright (c) 2011-2020 Microsoft Corp
-Copyright (c) 2015-2017, Wojciech Mula
-Copyright (c) 2021 csFastFloat authors
-Copyright (c) 2005-2007, Nick Galbreath
-Copyright (c) 2015 The Chromium Authors
-Copyright (c) 2018 Alexander Chermyanin
-Copyright (c) The Internet Society 1997
-Portions (c) International Organization
-Copyright (c) 2004-2006 Intel Corporation
-Copyright (c) 2013-2017, Milosz Krajewski
-Copyright (c) 2016-2017, Matthieu Darbois
-Copyright (c) The Internet Society (2003)
-Copyright (c) .NET Foundation Contributors
-Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
-Copyright (c) 2019 Microsoft Corporation, Daan Leijen
-Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2022 Jean-loup Gailly and Mark Adler
-Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
-Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
-Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
-Copyright (c) 1980, 1986, 1993 The Regents of the University of California
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2945,20 +2912,22 @@ SOFTWARE.
 System.Numerics.Vectors 4.5.0 - MIT
 
 
-(c) Microsoft Corporation.
+(c) 2023 GitHub, Inc.
+(c) Microsoft Corporation
+Copyright (c) .NET Foundation
 Copyright (c) 2011, Google Inc.
-(c) 1997-2005 Sean Eron Anderson.
+(c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1991-2017 Unicode, Inc.
+Copyright (c) 2015 The Chromium Authors
 Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
 Copyright (c) 2004-2006 Intel Corporation
 Copyright (c) .NET Foundation Contributors
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
 
 The MIT License (MIT)
 
@@ -3025,9 +2994,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Reflection.Context 7.0.0 - MIT
+System.Reflection.Context 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -3037,11 +3007,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -3056,12 +3028,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -3075,7 +3050,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -3240,9 +3214,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Runtime.Caching 7.0.0 - MIT
+System.Runtime.Caching 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -3252,11 +3227,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -3271,12 +3248,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -3290,7 +3270,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -3324,191 +3303,44 @@ SOFTWARE.
 System.Runtime.CompilerServices.Unsafe 6.0.0 - MIT
 
 
-(c) Microsoft Corporation.
+(c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
+Copyright (c) .NET Foundation
 Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2005-2020 Rich Felker
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
 Copyright (c) 2012-2014, Yann Collet
+Copyright (c) 1991-2020 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 2011-2020 Microsoft Corp
 Copyright (c) 2015-2017, Wojciech Mula
 Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
 Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
 Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
 Copyright (c) 2004-2006 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
-Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
-Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
-
-The MIT License (MIT)
-
-Copyright (c) .NET Foundation and Contributors
-
-All rights reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
----------------------------------------------------------
-
----------------------------------------------------------
-
-System.Security.AccessControl 6.0.0 - MIT
-
-
-(c) Microsoft Corporation.
-Copyright (c) Andrew Arnott
-Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
-Copyright (c) 2011, Google Inc.
-Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
-Copyright (c) 2017 Yoshifumi Kawai
-Copyright (c) Microsoft Corporation
-Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
-Copyright (c) 2013-2017, Alfred Klomp
-Copyright (c) 2015-2017, Wojciech Mula
-Copyright (c) 2005-2007, Nick Galbreath
-Copyright (c) 2018 Alexander Chermyanin
-Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
-Copyright (c) 2004-2006 Intel Corporation
-Copyright (c) 2013-2017, Milosz Krajewski
-Copyright (c) 2016-2017, Matthieu Darbois
-Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2019 Microsoft Corporation, Daan Leijen
-Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
-Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
-Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
-Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
-
-The MIT License (MIT)
-
-Copyright (c) .NET Foundation and Contributors
-
-All rights reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
----------------------------------------------------------
-
----------------------------------------------------------
-
-System.Security.Cryptography.Pkcs 7.0.3 - MIT
-
-
-(c) Microsoft Corporation
-Copyright (c) Andrew Arnott
-Copyright 2019 LLVM Project
-Copyright 2018 Daniel Lemire
-Copyright (c) .NET Foundation
-Copyright (c) 2011, Google Inc.
-Copyright (c) 2020 Dan Shechter
-(c) 1997-2005 Sean Eron Anderson
-Copyright (c) 1998 Microsoft. To
-Copyright (c) 2017 Yoshifumi Kawai
-Copyright (c) 2005-2020 Rich Felker
-Copyright (c) Microsoft Corporation
-Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
-Copyright (c) 1991-2022 Unicode, Inc.
-Copyright (c) 2013-2017, Alfred Klomp
-Copyright 2012 the V8 project authors
-Copyright (c) 1999 Lucent Technologies
-Copyright (c) 2008-2016, Wojciech Mula
-Copyright (c) 2011-2020 Microsoft Corp
-Copyright (c) 2015-2017, Wojciech Mula
-Copyright (c) 2021 csFastFloat authors
-Copyright (c) 2005-2007, Nick Galbreath
-Copyright (c) 2015 The Chromium Authors
-Copyright (c) 2018 Alexander Chermyanin
-Copyright (c) The Internet Society 1997
-Portions (c) International Organization
-Copyright (c) 2004-2006 Intel Corporation
-Copyright (c) 2013-2017, Milosz Krajewski
-Copyright (c) 2016-2017, Matthieu Darbois
-Copyright (c) The Internet Society (2003)
-Copyright (c) .NET Foundation Contributors
-Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
-Copyright (c) 2019 Microsoft Corporation, Daan Leijen
-Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2022 Jean-loup Gailly and Mark Adler
-Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
 Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
 Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
 Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
 Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
 Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
-Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
@@ -3542,7 +3374,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.ProtectedData 7.0.1 - MIT
+System.Security.AccessControl 6.0.1 - MIT
 
 
 (c) Microsoft Corporation
@@ -3559,14 +3391,11 @@ Copyright (c) 2005-2020 Rich Felker
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
 Copyright (c) 2012-2014, Yann Collet
-Copyright (c) 1991-2022 Unicode, Inc.
+Copyright (c) 1991-2020 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
-Copyright (c) 1999 Lucent Technologies
-Copyright (c) 2008-2016, Wojciech Mula
 Copyright (c) 2011-2020 Microsoft Corp
 Copyright (c) 2015-2017, Wojciech Mula
-Copyright (c) 2021 csFastFloat authors
 Copyright (c) 2005-2007, Nick Galbreath
 Copyright (c) 2015 The Chromium Authors
 Copyright (c) 2018 Alexander Chermyanin
@@ -3577,9 +3406,7 @@ Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
-Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2022 Jean-loup Gailly and Mark Adler
@@ -3589,7 +3416,6 @@ Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
 Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
 Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
 Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
-Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
@@ -3623,9 +3449,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Security.Cryptography.Xml 7.0.1 - MIT
+System.Security.Cryptography.Pkcs 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -3635,11 +3462,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -3654,12 +3483,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -3673,7 +3505,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -3704,9 +3535,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Security.Permissions 7.0.0 - MIT
+System.Security.Cryptography.ProtectedData 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -3716,11 +3548,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -3735,12 +3569,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -3754,7 +3591,178 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
+
+The MIT License (MIT)
+
+Copyright (c) .NET Foundation and Contributors
+
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+---------------------------------------------------------
+
+---------------------------------------------------------
+
+System.Security.Cryptography.Xml 8.0.1 - MIT
+
+
+Copyright (c) Six Labors
+(c) Microsoft Corporation
+Copyright (c) Andrew Arnott
+Copyright 2019 LLVM Project
+Copyright 2018 Daniel Lemire
+Copyright (c) .NET Foundation
+Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
+Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
+Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
+Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
+Copyright (c) Microsoft Corporation
+Copyright (c) 2007 James Newton-King
+Copyright (c) 1991-2022 Unicode, Inc.
+Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 1999 Lucent Technologies
+Copyright (c) 2008-2016, Wojciech Mula
+Copyright (c) 2011-2020 Microsoft Corp
+Copyright (c) 2015-2017, Wojciech Mula
+Copyright (c) 2021 csFastFloat authors
+Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
+Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
+Portions (c) International Organization
+Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
+Copyright (c) 2013-2017, Milosz Krajewski
+Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
+Copyright (c) .NET Foundation Contributors
+Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
+Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
+Copyright (c) 2019 Microsoft Corporation, Daan Leijen
+Copyright (c) 2011 Novell, Inc (http://www.novell.com)
+Copyright (c) 1995-2022 Jean-loup Gailly and Mark Adler
+Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
+Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
+Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
+Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
+Copyright (c) 1980, 1986, 1993 The Regents of the University of California
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
+
+The MIT License (MIT)
+
+Copyright (c) .NET Foundation and Contributors
+
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+---------------------------------------------------------
+
+---------------------------------------------------------
+
+System.Security.Permissions 8.0.0 - MIT
+
+
+Copyright (c) Six Labors
+(c) Microsoft Corporation
+Copyright (c) Andrew Arnott
+Copyright 2019 LLVM Project
+Copyright 2018 Daniel Lemire
+Copyright (c) .NET Foundation
+Copyright (c) 2011, Google Inc.
+Copyright (c) 2020 Dan Shechter
+(c) 1997-2005 Sean Eron Anderson
+Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
+Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
+Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
+Copyright (c) Microsoft Corporation
+Copyright (c) 2007 James Newton-King
+Copyright (c) 1991-2022 Unicode, Inc.
+Copyright (c) 2013-2017, Alfred Klomp
+Copyright 2012 the V8 project authors
+Copyright (c) 1999 Lucent Technologies
+Copyright (c) 2008-2016, Wojciech Mula
+Copyright (c) 2011-2020 Microsoft Corp
+Copyright (c) 2015-2017, Wojciech Mula
+Copyright (c) 2021 csFastFloat authors
+Copyright (c) 2005-2007, Nick Galbreath
+Copyright (c) 2015 The Chromium Authors
+Copyright (c) 2018 Alexander Chermyanin
+Copyright (c) The Internet Society 1997
+Portions (c) International Organization
+Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
+Copyright (c) 2013-2017, Milosz Krajewski
+Copyright (c) 2016-2017, Matthieu Darbois
+Copyright (c) The Internet Society (2003)
+Copyright (c) .NET Foundation Contributors
+Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
+Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
+Copyright (c) 2019 Microsoft Corporation, Daan Leijen
+Copyright (c) 2011 Novell, Inc (http://www.novell.com)
+Copyright (c) 1995-2022 Jean-loup Gailly and Mark Adler
+Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
+Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
+Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
+Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
+Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
+Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
+Copyright (c) 1980, 1986, 1993 The Regents of the University of California
+Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
+Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
 
 The MIT License (MIT)
 
@@ -4034,9 +4042,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceModel.Syndication 7.0.0 - MIT
+System.ServiceModel.Syndication 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -4046,11 +4055,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -4065,12 +4076,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -4084,7 +4098,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -4115,9 +4128,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.ServiceProcess.ServiceController 7.0.1 - MIT
+System.ServiceProcess.ServiceController 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -4127,11 +4141,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -4146,12 +4162,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -4165,7 +4184,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -4196,9 +4214,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Speech 7.0.0 - MIT
+System.Speech 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -4208,11 +4227,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -4227,12 +4248,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -4246,7 +4270,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -4277,9 +4300,43 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Text.Encoding.CodePages 7.0.0 - MIT
+System.Text.Encoding.CodePages 8.0.0 - MIT
 
 
+
+The MIT License (MIT)
+
+Copyright (c) .NET Foundation and Contributors
+
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+---------------------------------------------------------
+
+---------------------------------------------------------
+
+System.Text.Encodings.Web 8.0.0 - MIT
+
+
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -4289,11 +4346,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -4308,12 +4367,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -4327,7 +4389,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -4358,9 +4419,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Text.Encodings.Web 7.0.0 - MIT
+System.Text.Json 8.0.4 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -4370,11 +4432,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -4389,12 +4453,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -4408,7 +4475,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -4439,83 +4505,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Text.Json 6.0.2 - MIT
+System.Threading.AccessControl 8.0.0 - MIT
 
 
-(c) Microsoft Corporation
-Copyright (c) Andrew Arnott
-Copyright 2018 Daniel Lemire
-Copyright (c) .NET Foundation
-Copyright (c) 2011, Google Inc.
-Copyright (c) 2020 Dan Shechter
-(c) 1997-2005 Sean Eron Anderson
-Copyright (c) 1998 Microsoft. To
-Copyright (c) 2017 Yoshifumi Kawai
-Copyright (c) 2005-2020 Rich Felker
-Copyright (c) Microsoft Corporation
-Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
-Copyright (c) 1991-2020 Unicode, Inc.
-Copyright (c) 2013-2017, Alfred Klomp
-Copyright 2012 the V8 project authors
-Copyright (c) 2011-2020 Microsoft Corp
-Copyright (c) 2015-2017, Wojciech Mula
-Copyright (c) 2005-2007, Nick Galbreath
-Copyright (c) 2015 The Chromium Authors
-Copyright (c) 2018 Alexander Chermyanin
-Copyright (c) The Internet Society 1997
-Portions (c) International Organization
-Copyright (c) 2004-2006 Intel Corporation
-Copyright (c) 2013-2017, Milosz Krajewski
-Copyright (c) 2016-2017, Matthieu Darbois
-Copyright (c) The Internet Society (2003)
-Copyright (c) .NET Foundation Contributors
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2019 Microsoft Corporation, Daan Leijen
-Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
-Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors
-Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
-Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
-
-The MIT License (MIT)
-
-Copyright (c) .NET Foundation and Contributors
-
-All rights reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
----------------------------------------------------------
-
----------------------------------------------------------
-
-System.Threading.AccessControl 7.0.1 - MIT
-
-
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -4525,11 +4518,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -4544,12 +4539,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -4563,7 +4561,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -4594,9 +4591,12 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Web.Services.Description 4.10.0 - MIT
+System.Web.Services.Description 4.10.3 - MIT
 
 
+(c) Microsoft Corporation
+Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
 
 The MIT License (MIT)
 
@@ -4627,9 +4627,10 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Windows.Extensions 7.0.0 - MIT
+System.Windows.Extensions 8.0.0 - MIT
 
 
+Copyright (c) Six Labors
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2019 LLVM Project
@@ -4639,11 +4640,13 @@ Copyright (c) 2011, Google Inc.
 Copyright (c) 2020 Dan Shechter
 (c) 1997-2005 Sean Eron Anderson
 Copyright (c) 1998 Microsoft. To
+Copyright (c) 2022, Wojciech Mula
 Copyright (c) 2017 Yoshifumi Kawai
+Copyright (c) 2022, Geoff Langdale
 Copyright (c) 2005-2020 Rich Felker
+Copyright (c) 2012-2021 Yann Collet
 Copyright (c) Microsoft Corporation
 Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
 Copyright (c) 1991-2022 Unicode, Inc.
 Copyright (c) 2013-2017, Alfred Klomp
 Copyright 2012 the V8 project authors
@@ -4658,12 +4661,15 @@ Copyright (c) 2018 Alexander Chermyanin
 Copyright (c) The Internet Society 1997
 Portions (c) International Organization
 Copyright (c) 2004-2006 Intel Corporation
+Copyright (c) 2011-2015 Intel Corporation
 Copyright (c) 2013-2017, Milosz Krajewski
 Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) The Internet Society (2003)
 Copyright (c) .NET Foundation Contributors
 Copyright (c) 2020 Mara Bos <m-ou.se@m-ou.se>
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2012 - present, Victor Zverovich
+Copyright (c) 2006 Jb Evain (jbevain@gmail.com)
 Copyright (c) 2008-2020 Advanced Micro Devices, Inc.
 Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
@@ -4677,7 +4683,6 @@ Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip
 Copyright (c) 1980, 1986, 1993 The Regents of the University of California
 Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California
 Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -4705,197 +4710,4 @@ SOFTWARE.
 
 
 ---------------------------------------------------------
-
-
--------------------------------------------------------------------
-
--------------------------------------------------------------------
-
-Additional  -
-
--------------------------------------------------
-Microsoft.PowerShell.Archive
--------------------------------------------------
-
-Copyright (c) 2016 Microsoft Corporation.
-
-The MIT License (MIT)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
--------------------------------------------------
-Microsoft.Management.Infrastructure.Runtime.Unix
-Microsoft.Management.Infrastructure
--------------------------------------------------
-
-Copyright (c) Microsoft Corporation
-
-All rights reserved.
-
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the ""Software""), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
---------------------------------------------------------
-•	NuGet.Common
-•	NuGet.Configuration
-•	NuGet.DependencyResolver.Core
-•	NuGet.Frameworks
-•	NuGet.LibraryModel
-•	NuGet.Packaging
-•	NuGet.Packaging.Core
-•	NuGet.Packaging.Core.Types
-•	NuGet.ProjectModel
-•	NuGet.Protocol.Core.Types
-•	NuGet.Protocol.Core.v3
-•	NuGet.Repositories
-•	NuGet.RuntimeModel
-•	NuGet.Versioning
-----------------------------------------------------------
-
-Copyright (c) .NET Foundation. All rights reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-these files except in compliance with the License. You may obtain a copy of the
-License at
-
-https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for the
-specific language governing permissions and limitations under the License.
-
--------------------------------------------------
-PackageManagement
--------------------------------------------------
-
-Copyright (c) Microsoft Corporation
-All rights reserved.
-
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the Software), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
--------------------------------------------------
-PowerShellGet
--------------------------------------------------
-
-Copyright (c) Microsoft Corporation
-
-All rights reserved.
-
-The MIT License (MIT)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
----------------------------------------------
-File:  PSReadLine
----------------------------------------------
-
-https://github.com/PowerShell/PSReadLine
-
-Copyright (c) 2013, Jason Shirk
-
-All rights reserved.
-
-BSD License
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
--------------------------------------------------
-ThreadJob
--------------------------------------------------
-
-Copyright (c) 2018 Paul Higinbotham
-
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 

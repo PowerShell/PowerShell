@@ -1,0 +1,34 @@
+{
+  "Registrations": [
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Management.Infrastructure.Runtime.Unix",
+          "Version": "2.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.PowerShell.Native",
+          "Version": "7.3.2"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Management.Infrastructure",
+          "Version": "2.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    }],
+  "$schema": "https://json.schemastore.org/component-detection-manifest.json"
+}

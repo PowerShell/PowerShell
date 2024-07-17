@@ -234,10 +234,23 @@ function Get-CGRegistrations {
         Get-PSDrive -Name $folder -ErrorAction Ignore | Remove-PSDrive
     }
 
+    # Name to skip for TPN generation
+    $skipNames = @(
+        "Microsoft.PowerShell.Native",
+        "Microsoft.Management.Infrastructure.Runtime.Unix",
+        "Microsoft.Management.Infrastructure"
+    )
+
     $targets | ForEach-Object {
         $target = $_
         $parts = ($target -split '\|')
         $name = $parts[0]
+
+        if ($name -in $skipNames) {
+            Write-Verbose -Verbose "Skipping $name..."
+            continue
+        }
+
         $targetVersion = $parts[1]
         $publicVersion = Get-NuGetPublicVersion -Name $name -Version $targetVersion
 
