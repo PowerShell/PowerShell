@@ -20,6 +20,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "clrgcexp.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "clrjit.dll",
     "FileType": "NonProduct"
   },
@@ -800,10 +804,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/_manifest/spdx_2.2/manifest.cat",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Modules/Microsoft.PowerShell.PSResourceGet/dependencies/*.dll",
     "FileType": "NonProduct"
   },
@@ -897,6 +897,10 @@
   },
   {
     "Pattern": "Modules\\PSReadLine\\_manifest\\spdx_2.2\\manifest.cat",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules\\PSReadLine\\.signature.p7s",
     "FileType": "NonProduct"
   },
   {

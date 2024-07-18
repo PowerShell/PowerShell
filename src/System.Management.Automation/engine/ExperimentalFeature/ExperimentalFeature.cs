@@ -25,6 +25,7 @@ namespace System.Management.Automation
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
         internal const string PSCommandWithArgs = "PSCommandWithArgs";
         internal const string PSNativeWindowsTildeExpansion = nameof(PSNativeWindowsTildeExpansion);
+        internal const string PSRedirectToVariable = "PSRedirectToVariable";
 
         #endregion
 
@@ -127,8 +128,10 @@ namespace System.Management.Automation
                     description: "Enable `-CommandWithArgs` parameter for pwsh"),
                 new ExperimentalFeature(
                     name: PSNativeWindowsTildeExpansion,
-                    description: "On windows, expand unquoted tilde (`~`) with the user's current home folder."
-                )
+                    description: "On windows, expand unquoted tilde (`~`) with the user's current home folder."),
+                new ExperimentalFeature(
+                    name: PSRedirectToVariable,
+                    description: "Add support for redirecting to the variable drive"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

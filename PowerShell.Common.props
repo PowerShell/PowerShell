@@ -137,6 +137,7 @@
     <Product>PowerShell</Product>
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation.</Copyright>
+    <AssemblyTitle>PowerShell 7</AssemblyTitle>
 
     <TargetFramework>net9.0</TargetFramework>
     <LangVersion>11.0</LangVersion>
