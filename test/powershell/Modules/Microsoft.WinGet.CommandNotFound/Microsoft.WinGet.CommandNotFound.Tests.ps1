@@ -13,6 +13,8 @@ Describe "Microsoft.WinGet.CommandNotFound" -tags "CI" {
 
         It "Should import the module correctly" -Skip:(-not $IsWindows) {
             try {
+                # define an alias to simulate winget being available on the system
+                New-Alias -Name winget -Value Get-ChildItem
                 $module = Import-Module -Name Microsoft.WinGet.CommandNotFound -PassThru
                 $module.Name | Should -BeExactly 'Microsoft.WinGet.CommandNotFound'
                 $module.Version | Should -BeGreaterThan "1.0.4"
