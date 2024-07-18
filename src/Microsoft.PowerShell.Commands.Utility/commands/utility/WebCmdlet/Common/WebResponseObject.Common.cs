@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the output file path.
         /// </summary>
-        public string? OutFile { get; set; }
+        public string? OutFile { get; internal set; }
 
         #endregion Properties
 
