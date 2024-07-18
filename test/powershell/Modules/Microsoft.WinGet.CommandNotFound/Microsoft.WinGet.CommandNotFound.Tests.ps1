@@ -8,8 +8,8 @@ Describe "Microsoft.WinGet.CommandNotFound" -tags "CI" {
     }
 
     Context "Windows only" {
-        # Microsoft.WinGet.CommandNotFound relies on winget being available
-        Mock Get-Command -ParameterFilter { $cmd -eq "winget" }
+        # Microsoft.WinGet.CommandNotFound relies on winget "being available" by checking if Get-Command returns a result
+        Mock Get-Command -ParameterFilter { $cmd -eq "winget" } -MockWith { return Get-Command * }
 
         It "Should import the module correctly" -Skip:(-not $IsWindows) {
             try {
