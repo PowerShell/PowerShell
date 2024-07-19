@@ -1157,6 +1157,102 @@ namespace System.Management.Automation
                 }
             }
 
+            if (result == null || result.Count == 0)
+            {
+                // Handles the following scenario: pwsh -<tab>
+                result = CompletePwshCommands(completionContext);
+            }
+
+            return result;
+        }
+
+        private static List<CompletionResult> CompletePwshCommands(CompletionContext completionContext)
+        {
+            if (!completionContext.CursorPosition.Line.Contains("pwsh -"))
+            {
+                return null;
+            }
+            List<CompletionResult> result = new List<CompletionResult>();
+            string parameterToComplete = completionContext.RelatedAsts[^1].Extent.Text;
+            List<string> parameters = new List<string>()
+            {
+                "-File",
+                "-Command",
+                "-CommandWithArgs",
+                "-ConfigurationName",
+                "-ConfigurationFile",
+                "-CustomPipeName",
+                "-EncodedCommand",
+                "-ExecutionPolicy",
+                "-InputFormat",
+                "-Interactive",
+                "-Login",
+                "-MTA",
+                "-NoExit",
+                "-NoLogo",
+                "-NonInteractive",
+                "-NoProfile",
+                "-NoProfileLoadTime",
+                "-OutputFormat",
+                "-SettingsFile",
+                "-SSHServerMode",
+                "-STA",
+                "-Version",
+                "-WindowStyle",
+                "-WorkingDirectory",
+                "-Help"
+            };
+            List<string> alias = new List<string>()
+            {
+                "-f",
+                "-c",
+                "-cwa",
+                "-config",
+                "-e",
+                "-ec",
+                "-ex",
+                "-ep",
+                "-i",
+                "-l",
+                "-noe",
+                "-nol",
+                "-noni",
+                "-nop",
+                "-of",
+                "-settings",
+                "-sshs",
+                "-v",
+                "-w",
+                "-wd",
+                "-?"
+            };
+            if (parameterToComplete.Equals("-"))
+            {
+                foreach (string parameter in parameters)
+                {
+                    result.Add(new CompletionResult(parameter, parameter, CompletionResultType.ParameterName, parameter));
+                }
+            }
+            else
+            {
+                foreach (string parameter in parameters)
+                {
+                    if (parameter.StartsWith(parameterToComplete, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(new CompletionResult(parameter, parameter, CompletionResultType.ParameterName, parameter));
+                    }
+                }
+                if (result.Count == 0)
+                {
+                    foreach (string parameter in alias)
+                    {
+                        if (parameter.StartsWith(parameterToComplete, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Add(new CompletionResult(parameter, parameter, CompletionResultType.ParameterName, parameter));
+                        }
+                    }
+                }
+            }
             return result;
         }
 
