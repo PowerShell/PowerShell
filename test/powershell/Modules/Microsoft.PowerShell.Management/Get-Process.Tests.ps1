@@ -92,10 +92,11 @@ Describe "Get-Process" -Tags "CI" {
     }
 
     It "Should return CommandLine property" -Skip:($IsMacOS) {
+        $pwshPath = (Get-Command pwsh).Source
         if ($IsWindows) {
             # Windows will convert the bound parameters and quote them if it
             # contains whitespace. Any inner double quotes are escaped with \".
-            $expected = "`"$PSHOME\pwsh.exe`" -NoProfile -NoLogo -NonInteractive -Command `"(Get-Process -Id \`"`$pid\`").CommandLine`""
+            $expected = "`"$pwshPath`" -NoProfile -NoLogo -NonInteractive -Command `"(Get-Process -Id \`"`$pid\`").CommandLine`""
 
             $actual = & {
                 $PSNativeCommandArgumentPassing = 'Windows'
@@ -105,7 +106,7 @@ Describe "Get-Process" -Tags "CI" {
             # Linux passes arguments as they are bound. As there is no actual
             # command line string, pwsh just joins each array with a space
             # without attempting to use some sort of quoting rule.
-            $expected = "$PSHOME/pwsh -NoProfile -NoLogo -NonInteractive -Command (Get-Process -Id `"`$pid`").CommandLine"
+            $expected = "$pwshPath -NoProfile -NoLogo -NonInteractive -Command (Get-Process -Id `"`$pid`").CommandLine"
 
             $actual = & "$PSHOME/pwsh" -NoProfile -NoLogo -NonInteractive -Command '(Get-Process -Id "$pid").CommandLine'
         }
