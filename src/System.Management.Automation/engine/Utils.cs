@@ -482,7 +482,8 @@ namespace System.Management.Automation
 
         internal static string GetApplicationBase(string shellId)
         {
-            return AppContext.BaseDirectory;
+            // Try the host exe first, then fall back to SMA location.  Host exe can be null if hosted in WinRM.
+            return AppContext.BaseDirectory ?? Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
         }
 
         private static string[] s_productFolderDirectories;
