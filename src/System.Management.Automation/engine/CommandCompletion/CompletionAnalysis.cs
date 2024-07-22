@@ -2348,6 +2348,12 @@ namespace System.Management.Automation
                 }
             }
 
+            if (completionContext.RelatedAsts[0].Extent.Text.Contains("-Command")
+                && completionContext.RelatedAsts[0].Extent.Text.Contains("pwsh"))
+            {
+                return CompletionCompleters.CompleteCommand(completionContext);
+            }
+
             bool needFileCompletion = false;
             if (lastAst.Parent is FileRedirectionAst || CompleteAgainstSwitchFile(lastAst, completionContext.TokenBeforeCursor))
             {

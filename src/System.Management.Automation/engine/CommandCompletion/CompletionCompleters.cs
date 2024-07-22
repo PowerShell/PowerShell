@@ -1348,6 +1348,14 @@ namespace System.Management.Automation
                     }
                 }
 
+                if (commandName == "pwsh")
+                {
+                    if (commandAst.CommandElements[^1].Extent.Text.Equals("-Command"))
+                    {
+                        return CompleteCommand(context);
+                    }
+                }
+
                 var clearLiteralPathKey = false;
                 if (pseudoBinding == null)
                 {
