@@ -453,13 +453,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The VMState value of the State property if present and parsable, otherwise null.</returns>
         internal VMState? GetVMStateProperty(PSObject value)
         {
-            ReadOnlyPSMemberInfoCollection<PSPropertyInfo> stateProps = value.Properties.Match("State");
-            if (stateProps.Count == 0)
-            {
-                return null;
-            }
-
-            object? rawState = stateProps[0].Value;
+            object? rawState = value.Properties["State"].Value;
             if (rawState is Enum enumState)
             {
                 // If the Hyper-V module was directly importable we have the VMState enum
@@ -475,7 +469,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Unknown scenario, this should not happen.
-            return null;
+            string message = PSRemotingErrorInvariants.FormatResourceString(
+                RemotingErrorIdStrings.HyperVFailedToGetStateUnknownType,
+                    rawState?.GetType()?.FullName ?? "null");
+            throw new InvalidOperationException(message);
         }
 #nullable disable
 
