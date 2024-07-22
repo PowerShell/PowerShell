@@ -482,8 +482,14 @@ namespace System.Management.Automation
 
         internal static string GetApplicationBase(string shellId)
         {
-            // Try the host exe first, then fall back to SMA location.  Host exe can be null if hosted in WinRM.
-            return AppContext.BaseDirectory ?? Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
+            // Try the host exe first, then fall back to SMA location.  Host exe can be empty if hosted in WinRM.
+            var baseDirectory = AppContext.BaseDirectory;
+            if (string.IsNullOrEmpty(baseDirectory))
+            {
+                baseDirectory = Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
+            }
+
+            return baseDirectory;
         }
 
         private static string[] s_productFolderDirectories;
