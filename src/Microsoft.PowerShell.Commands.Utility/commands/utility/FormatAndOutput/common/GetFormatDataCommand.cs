@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (ViewDefinition definition in viewdefinitions)
             {
-                this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, GetFormatDataStrings.ProcessRecord, definition.name));
+                this.WriteVerbose(string.Format(CultureInfo.CurrentCulture, GetFormatDataStrings.ProcessViewDefinition, definition.name));
                 if (definition.isHelpFormatter)
                     continue;
 
