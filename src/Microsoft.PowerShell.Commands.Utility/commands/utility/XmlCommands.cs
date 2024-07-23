@@ -636,7 +636,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implements ConvertTo-CliXml command.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2243:AttributeStringLiteralsShouldParseCorrectly")]
-    [Cmdlet(VerbsData.ConvertTo, "CliXml", HelpUri = "")]
+    [Cmdlet(VerbsData.ConvertTo, "CliXml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2280866")]
     [OutputType(typeof(string))]
     public sealed class ConvertToClixmlCommand : PSCmdlet
     {
@@ -688,7 +688,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implements ConvertFrom-CliXml command.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2243:AttributeStringLiteralsShouldParseCorrectly")]
-    [Cmdlet(VerbsData.ConvertFrom, "CliXml", HelpUri = "")]
+    [Cmdlet(VerbsData.ConvertFrom, "CliXml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2280770")]
     public sealed class ConvertFromClixmlCommand : PSCmdlet
     {
         #region Parameters
