@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldSaveToOutFile)
             {
-                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(outFilePath)}"));
+                WriteVerbose($"File Name: {Path.GetFileName(outFilePath)}");
 
                 // ContentLength is always the partial length, while ContentRange is the full length
                 // Without Request.Range set, ContentRange is null and partial length (ContentLength) equals to full length
