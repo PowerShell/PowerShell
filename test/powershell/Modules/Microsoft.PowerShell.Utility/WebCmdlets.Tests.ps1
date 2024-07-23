@@ -786,6 +786,28 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
+    It "Invoke-WebRequest -PassThru -OutFile <directory> saves the downloaded file path as a property in WebResponseObject"{
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $content = Invoke-WebRequest -Uri $uri -PassThru -OutFile $TestDrive
+        $content.OutFile | Should -exist
+        $content.OutFile | Should -Be (Join-Path $TestDrive 'Get')
+    }
+
+    It "Invoke-WebRequest -PassThru -OutFile <file> saves the downloaded file path as a property in WebResponseObject"{
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $filePath = Join-Path $TestDrive "pestertest-outfile"
+        $content = Invoke-WebRequest -Uri $uri -PassThru -OutFile $filePath
+        $content.OutFile | Should -exist
+        $content.OutFile | Should -Be $filePath
+    }
+
+    It "Invoke-WebRequest -PassThru -OutFile -Verbose File Name reflects the downloaded file name" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $filePath = Join-Path $TestDrive "pestertest-outfile"
+        $content = Invoke-WebRequest -Verbose -Uri $uri -PassThru -OutFile $filePath 4>variable:verbo
+        $verbo[-1].Message | Should -Match "pestertest-outfile"
+    }
+
     It "Invoke-WebRequest should fail if -OutFile is <Name>." -TestCases @(
         @{ Name = "empty"; Value = [string]::Empty }
         @{ Name = "null"; Value = $null }
@@ -4637,7 +4659,6 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support OperationTimeoutSecond
         RunWithNetworkTimeout -Command Invoke-RestMethod -Uri $uri -OperationTimeoutSeconds 2 -WillTimeout -Arguments '-SkipCertificateCheck'
     }
 }
-
 
 Describe "Invoke-RestMethod should run in the default synchronization context (threadpool)" -Tag "CI" {
     BeforeAll {
