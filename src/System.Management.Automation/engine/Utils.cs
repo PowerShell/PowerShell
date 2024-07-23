@@ -486,7 +486,7 @@ namespace System.Management.Automation
             if (!string.IsNullOrEmpty(baseDirectory))
             {
                 // need to remove any trailing directory separator characters
-                baseDirectory = baseDirectory.Trim(Path.DirectorySeparatorChar);
+                baseDirectory = baseDirectory.TrimEnd(Path.DirectorySeparatorChar);
             }
             else
             {
