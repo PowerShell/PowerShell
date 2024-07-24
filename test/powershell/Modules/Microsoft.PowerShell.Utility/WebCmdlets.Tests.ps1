@@ -2876,6 +2876,27 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
     }
 
+    It "Invoke-RestMethod -PassThru -OutFile Downloads the file and pipes it" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $content = Invoke-WebRequest -Uri $uri
+        $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
+
+        # ensure the file does not exist
+        Remove-Item -Force -ErrorAction Ignore -Path $outFile
+        $response = Invoke-RestMethod -Uri $uri -PassThru -OutFile $outFile
+
+        # check if the file is downloaded.
+        Test-Path $outFile | Should -Be $true
+
+        # check if the file is correctly downloaded
+        Get-Content -Path $outFile | Should -BeExactly $content.Content
+
+        # check if the response stores the downloaded file contents
+        # response is a PSCustomObject so converted it string for comparison
+        $responseAsJsonString = $response | ConvertTo-Json -Compress
+        $responseAsJsonString | Should -BeExactly $content.Content
+    }
+
     It "Invoke-RestMethod should fail if -OutFile is <Name>." -TestCases @(
         @{ Name = "empty"; Value = [string]::Empty }
         @{ Name = "null"; Value = $null }
