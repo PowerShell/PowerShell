@@ -137,6 +137,7 @@ namespace Microsoft.PowerShell.Commands
 
                     WriteObject(obj);
                 }
+
                 responseStream.Position = 0;
             }
             
