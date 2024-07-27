@@ -70,14 +70,14 @@ bazz = 2
     }
 
     It "Should return a hashtable if input is unescaped and -AsLiteral switch is set with input <string>" -TestCases @(
-      @{ string = 'a=b\C'; keys = 'a'; values = 'b\C' }
-      @{ string = 'a\b=c\D'; keys = 'a\\b'; values = 'c\D' }
+      @{ String = 'a=b\C'; Keys = 'a'; Values = 'b\C' }
+      @{ String = 'a\b=c\D'; Keys = 'a\\b'; Values = 'c\D' }
     ) {
-        params($string, $keys, $values)
-        $result = ConvertFrom-StringData -StringData $string -AsLiteral
+        param($String, $Keys, $Values)
+        $result = ConvertFrom-StringData -StringData $String -AsLiteral
         $result | Should -BeOfType [hashtable]
-        $result.Keys | Should -BeExactly $keys
-        $result.Values | Should -BeExactly $values
+        $result.Keys | Should -BeExactly $Keys
+        $result.Values | Should -BeExactly $Values
     }
 }
 
