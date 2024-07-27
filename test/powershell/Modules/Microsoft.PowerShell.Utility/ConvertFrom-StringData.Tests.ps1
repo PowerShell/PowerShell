@@ -69,11 +69,15 @@ bazz = 2
         { ConvertFrom-StringData -StringData 'a=b\C' } | Should -Throw -ErrorId "System.Text.RegularExpressions.RegexParseException,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
     }
 
-    It "Should return a hashtable if input is unescaped and -AsLiteral switch is set" {
-        $result = ConvertFrom-StringData -StringData 'a=b\C' -AsLiteral
+    It "Should return a hashtable if input is unescaped and -AsLiteral switch is set with input <string>" -TestCases @(
+      @{ string = 'a=b\C'; keys = 'a'; values = 'b\C' }
+      @{ string = 'a\b=c\D'; keys = 'a\\b'; values = 'c\D' }
+    ) {
+        params($string, $keys, $values)
+        $result = ConvertFrom-StringData -StringData $string -AsLiteral
         $result | Should -BeOfType [hashtable]
-        $result.Keys | Should -BeExactly 'a'
-        $result.Values | Should -BeExactly 'b\C'
+        $result.Keys | Should -BeExactly $keys
+        $result.Values | Should -BeExactly $values
     }
 }
 
