@@ -53,7 +53,7 @@ jobs:
   - pwsh: |
       Import-Module .\tools\ci.psm1
       Switch-PSNugetConfig -Source Public
-    displayName: Bootstrap
+    displayName: Switch to public feeds
     condition: succeeded()
     workingDirectory: $(repoPath)
 
