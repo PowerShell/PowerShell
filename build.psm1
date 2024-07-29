@@ -3444,10 +3444,17 @@ class NugetPackageSource {
 
 function New-NugetConfigFile {
     param(
-        [Parameter(Mandatory = $true)] [NugetPackageSource[]] $NugetPackageSource,
-        [Parameter(Mandatory = $true)] [string] $UserName,
-        [Parameter(Mandatory = $true)] [string] $ClearTextPAT,
-        [Parameter(Mandatory = $true)] [string] $Destination
+        [Parameter(Mandatory = $true, ParameterSetName ='user')]
+        [Parameter(Mandatory = $true, ParameterSetName ='nouser')]
+        [NugetPackageSource[]] $NugetPackageSource,
+
+        [Parameter(Mandatory = $true)] [string] $Destination,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'user')]
+        [string] $UserName,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'user')]
+        [string] $ClearTextPAT
     )
 
     $nugetConfigHeaderTemplate = @'
