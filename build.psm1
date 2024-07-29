@@ -739,18 +739,19 @@ function Switch-PSNugetConfig {
         $gallery = [NugetPackageSource] @{Url = 'https://www.powershellgallery.com/api/v2/'; Name = 'psgallery' }
         $nugetorg = [NugetPackageSource] @{Url = 'https://api.nuget.org/v3/index.json'; Name = 'nuget.org' }
 
-        New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetSdk   -Destination "$PSScriptRoot/NuGet.Config"
-        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/nuget.config"
-        New-NugetConfigFile -NugetPackageSource $nugetorg               -Destination "$PSScriptRoot/test/hosting/NuGet.Config"
-        New-NugetConfigFile -NugetPackageSource $nugetorg               -Destination "$PSScriptRoot/test/tools/NamedPipeConnection/nuget.config"
-        New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetPerf  -Destination "$PSScriptRoot/test/perf/nuget.config"
+        New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetSdk   -Destination "$PSScriptRoot/"
+        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/"
+        New-NugetConfigFile -NugetPackageSource $nugetorg               -Destination "$PSScriptRoot/test/hosting/"
+        New-NugetConfigFile -NugetPackageSource $nugetorg               -Destination "$PSScriptRoot/test/tools/NamedPipeConnection/"
+        New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetPerf  -Destination "$PSScriptRoot/test/perf/"
     } elseif ( $Source -eq 'Private') {
         $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/powershell/nuget/v3/index.json'; Name = 'dotnet' }
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/NuGet.Config"
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/nuget.config"
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/hosting/NuGet.Config"
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/NamedPipeConnection/nuget.config"
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/perf/nuget.config"
+
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/"
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/"
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/hosting/"
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/NamedPipeConnection/"
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/perf/"
     } else {
         throw "Unknown source: $Source"
     }
