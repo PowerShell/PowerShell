@@ -740,17 +740,11 @@ function Switch-PSNugetConfig {
 
         New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetSdk   -Destination "$PSScriptRoot/"
         New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/"
-        New-NugetConfigFile -NugetPackageSource $nugetorg               -Destination "$PSScriptRoot/test/hosting/"
-        New-NugetConfigFile -NugetPackageSource $nugetorg               -Destination "$PSScriptRoot/test/tools/NamedPipeConnection/"
-        New-NugetConfigFile -NugetPackageSource $nugetorg               -Destination "$PSScriptRoot/test/perf/"
     } elseif ( $Source -eq 'Private') {
         $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/powershell/nuget/v3/index.json'; Name = 'powershell' }
 
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/"
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/"
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/hosting/"
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/NamedPipeConnection/"
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/perf/"
     } else {
         throw "Unknown source: $Source"
     }
