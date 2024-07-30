@@ -734,7 +734,6 @@ function Switch-PSNugetConfig {
     )
 
     if ( $Source -eq 'Public') {
-        $dotnetPerf = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/dnceng/public/_packaging/benchmark-dotnet-prerelease/nuget/v3/index.json'; Name = 'dotnet' }
         $dotnetSdk = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v2'; Name = 'dotnet' }
         $gallery = [NugetPackageSource] @{Url = 'https://www.powershellgallery.com/api/v2/'; Name = 'psgallery' }
         $nugetorg = [NugetPackageSource] @{Url = 'https://api.nuget.org/v3/index.json'; Name = 'nuget.org' }
@@ -743,7 +742,7 @@ function Switch-PSNugetConfig {
         New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/"
         New-NugetConfigFile -NugetPackageSource $nugetorg               -Destination "$PSScriptRoot/test/hosting/"
         New-NugetConfigFile -NugetPackageSource $nugetorg               -Destination "$PSScriptRoot/test/tools/NamedPipeConnection/"
-        New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetPerf  -Destination "$PSScriptRoot/test/perf/"
+        New-NugetConfigFile -NugetPackageSource $nugetorg               -Destination "$PSScriptRoot/test/perf/"
     } elseif ( $Source -eq 'Private') {
         $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/powershell/nuget/v3/index.json'; Name = 'powershell' }
 
