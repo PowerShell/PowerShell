@@ -11,7 +11,7 @@ R2, though they should work anywhere the dependencies work.
 ### Git Setup
 
 Using Git requires it to be setup correctly; refer to the
-[README](../../README.md) and
+[Readme](../../README.md) and
 [Contributing Guidelines](../../.github/CONTRIBUTING.md).
 
 This guide assumes that you have recursively cloned the PowerShell repository and `cd`ed into it.
