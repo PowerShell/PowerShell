@@ -330,7 +330,7 @@ function Start-PSPackage {
                     throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
                 }
             } elseif ($Environment.IsMacOS) {
-                "osxpkg" "tar"
+                "osxpkg", "tar"
             } elseif ($Environment.IsWindows) {
                 "msi" "msix"
             }
