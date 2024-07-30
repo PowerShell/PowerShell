@@ -56,7 +56,7 @@ We maintain a [PowerShell module](../../build.psm1) with the function `Start-PSB
 
 ```powershell
 Import-Module ./build.psm1
-Start-PSBuild -Clean -PSModuleRestore
+Start-PSBuild -Clean -PSModuleRestore -UseNuGetOrg
 ```
 
 Congratulations! If everything went right, PowerShell is now built and executable as `./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe`.
@@ -77,7 +77,7 @@ You can run our cross-platform Pester tests with `Start-PSPester`.
 
 ```powershell
 Import-Module ./build.psm1
-Start-PSPester
+Start-PSPester -UseNuGetOrg
 ```
 
 ## Building in Visual Studio
