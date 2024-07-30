@@ -537,7 +537,7 @@ function Invoke-CIFinish
             switch -regex ($Runtime){
                 default {
                     $runPackageTest = $true
-                    $packageTypes = 'msi', 'nupkg', 'zip', 'zip-pdb', 'msix'
+                    $packageTypes = 'msi', 'zip', 'zip-pdb', 'msix'
                 }
                 'win-arm.*' {
                     $runPackageTest = $false
@@ -589,14 +589,6 @@ function Invoke-CIFinish
                 # fail the CI job if the tests failed, or nothing passed
                 if (-not $packagingTestResult -is [pscustomobject] -or $packagingTestResult.FailedCount -ne 0 -or $packagingTestResult.PassedCount -eq 0) {
                     throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
-                }
-            }
-
-            # only publish assembly nuget packages if it is a daily build and tests passed
-            if (Test-DailyBuild) {
-                $nugetArtifacts = Get-ChildItem $PSScriptRoot\packaging\nugetOutput -ErrorAction SilentlyContinue -Filter *.nupkg | Select-Object -ExpandProperty FullName
-                if ($nugetArtifacts) {
-                    $artifacts.AddRange(@($nugetArtifacts))
                 }
             }
         }
