@@ -307,6 +307,9 @@ function Start-PSBuild {
         # it's useful for development, to do a quick changes in the engine
         [switch]$SMAOnly,
 
+        # Use nuget.org instead of the PowerShell specific feed
+        [switch]$UseNuGetOrg,
+
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         # If this parameter is not provided it will get determined automatically.
@@ -360,6 +363,12 @@ function Start-PSBuild {
         if ($Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
             throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
         }
+    }
+
+    if ($UseNuGetOrg) {
+        Switch-PSNugetConfig -Source Public
+    } else {
+        Write-Verbose -Message "Using default feeds which are Microsoft, use `-UseNuGetOrg` to switch to Public feeds" -Verbose
     }
 
     function Stop-DevPowerShell {
@@ -715,6 +724,29 @@ Fix steps:
             $null = New-Item -ItemType Directory -Path $parent
         }
         Save-PSOptions -PSOptionsPath $PSOptionsPath -Options $Options
+    }
+}
+
+function Switch-PSNugetConfig {
+    param(
+        [ValidateSet('Public', 'Private')]
+        [string] $Source = 'Public'
+    )
+
+    if ( $Source -eq 'Public') {
+        $dotnetSdk = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v2'; Name = 'dotnet' }
+        $gallery = [NugetPackageSource] @{Url = 'https://www.powershellgallery.com/api/v2/'; Name = 'psgallery' }
+        $nugetorg = [NugetPackageSource] @{Url = 'https://api.nuget.org/v3/index.json'; Name = 'nuget.org' }
+
+        New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetSdk   -Destination "$PSScriptRoot/"
+        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/"
+    } elseif ( $Source -eq 'Private') {
+        $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/powershell/nuget/v3/index.json'; Name = 'powershell' }
+
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/"
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/"
+    } else {
+        throw "Unknown source: $Source"
     }
 }
 
@@ -1284,8 +1316,13 @@ function Start-PSPester {
         [Parameter(ParameterSetName='Wait', Mandatory=$true,
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait,
-        [switch]$SkipTestToolBuild
+        [switch]$SkipTestToolBuild,
+        [switch]$UseNuGetOrg
     )
+
+    if ($UseNuGetOrg) {
+        Switch-PSNugetConfig -Source Public
+    }
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
     {
@@ -3394,36 +3431,67 @@ function New-TestPackage
     [System.IO.Compression.ZipFile]::CreateFromDirectory($packageRoot, $packagePath)
 }
 
-function New-NugetConfigFile
-{
+class NugetPackageSource {
+    [string] $Url
+    [string] $Name
+}
+
+function New-NugetConfigFile {
     param(
-        [Parameter(Mandatory=$true)] [string] $NugetFeedUrl,
-        [Parameter(Mandatory=$true)] [string] $FeedName,
-        [Parameter(Mandatory=$true)] [string] $UserName,
-        [Parameter(Mandatory=$true)] [string] $ClearTextPAT,
-        [Parameter(Mandatory=$true)] [string] $Destination
+        [Parameter(Mandatory = $true, ParameterSetName ='user')]
+        [Parameter(Mandatory = $true, ParameterSetName ='nouser')]
+        [NugetPackageSource[]] $NugetPackageSource,
+
+        [Parameter(Mandatory = $true)] [string] $Destination,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'user')]
+        [string] $UserName,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'user')]
+        [string] $ClearTextPAT
     )
 
-    $nugetConfigTemplate = @'
+    $nugetConfigHeaderTemplate = @'
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <packageSources>
     <clear />
+'@
+
+    $nugetPackageSourceTemplate = @'
     <add key="[FEEDNAME]" value="[FEED]" />
+'@
+    $nugetPackageSourceFooterTemplate = @'
   </packageSources>
   <disabledPackageSources>
     <clear />
   </disabledPackageSources>
+'@
+    $nugetCredentialsTemplate = @'
   <packageSourceCredentials>
     <[FEEDNAME]>
       <add key="Username" value="[USERNAME]" />
       <add key="ClearTextPassword" value="[PASSWORD]" />
     </[FEEDNAME]>
   </packageSourceCredentials>
+'@
+    $nugetConfigFooterTemplate = @'
 </configuration>
 '@
+    $content = $nugetConfigHeaderTemplate
 
-    $content = $nugetConfigTemplate.Replace('[FEED]', $NugetFeedUrl).Replace('[FEEDNAME]', $FeedName).Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
+    [NugetPackageSource]$source = $null
+    foreach ($source in $NugetPackageSource) {
+        $content += $nugetPackageSourceTemplate.Replace('[FEED]', $source.Url).Replace('[FEEDNAME]', $source.Name)
+    }
+
+    $content += $nugetPackageSourceFooterTemplate
+
+    if ($UserName -or $ClearTextPAT) {
+        $content += $nugetCredentialsTemplate.Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
+    }
+
+    $content += $nugetConfigFooterTemplate
 
     Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
 }
