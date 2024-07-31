@@ -99,7 +99,7 @@ function Invoke-CIBuild
         Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
     }
 
-    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
+    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag -UseNuGetOrg
     Save-PSOptions
 
     $options = (Get-PSOptions)
@@ -122,6 +122,10 @@ function Invoke-CIInstall
         [switch]
         $SkipUser
     )
+
+    # Switch to public sources in CI
+    Switch-PSNugetConfig -Source Public
+
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
 
@@ -447,6 +451,9 @@ function Invoke-CIFinish
         [Validateset('Build','Package')]
         [string[]] $Stage = ('Build','Package')
     )
+
+    # Switch to public sources in CI
+    Switch-PSNugetConfig -Source Public
 
     if ($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS) -and $Stage -contains 'Build') {
         return New-LinuxPackage
