@@ -471,7 +471,7 @@ namespace Microsoft.PowerShell.Commands
             // Unknown scenario, this should not happen.
             string message = PSRemotingErrorInvariants.FormatResourceString(
                 RemotingErrorIdStrings.HyperVFailedToGetStateUnknownType,
-                    rawState?.GetType()?.FullName ?? "null");
+                rawState?.GetType()?.FullName ?? "null");
             throw new InvalidOperationException(message);
         }
 #nullable disable
