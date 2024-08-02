@@ -1,13 +1,12 @@
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <packageSources>
     <clear />
-    <!-- Use the following line when you build
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" /> 
-    The following line is required for compliance reasons -->
-    <add key="powershell" value="https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/powershell/nuget/v3/index.json" />
   </packageSources>
   <disabledPackageSources>
     <clear />
   </disabledPackageSources>
 </configuration>
+```md
