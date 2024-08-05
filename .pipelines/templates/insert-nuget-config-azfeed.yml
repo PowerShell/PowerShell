@@ -6,7 +6,7 @@ steps:
     $configPath = "${env:NugetConfigDir}/nuget.config"
     Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
 
-    $powerShellPublicPackages = New-NugetPackageSource -Url '$(PowerShellCore_PublicPackages)' -Name 'AzDevOpsFeed'
+    $powerShellPublicPackages = New-NugetPackageSource -Url '$(AzDevOpsPackageFeed)' -Name 'AzDevOpsFeed'
 
     New-NugetConfigFile -NugetPackageSource $powerShellPublicPackages -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(powershellPackageReadPat) -Destination "${env:NugetConfigDir}"
     if(-not (Test-Path $configPath))
@@ -15,7 +15,7 @@ steps:
     }
     Get-Content $configPath | Write-Verbose -Verbose
   displayName: 'Add nuget.config for Azure DevOps feed for PSGallery modules'
-  condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
   env:
     NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
     ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
@@ -24,7 +24,7 @@ steps:
     $configPath = "${env:NugetConfigDir}/nuget.config"
     Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
 
-    $powerShellPublicPackages = New-NugetPackageSource -Url '$(PowerShellCore_PublicPackages)' -Name 'AzDevOpsFeed'
+    $powerShellPublicPackages = New-NugetPackageSource -Url '$(AzDevOpsPackageFeed)' -Name 'AzDevOpsFeed'
 
     New-NugetConfigFile -NugetPackageSource $powerShellPublicPackages -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(powershellPackageReadPat) -Destination "${env:NugetConfigDir}"
     if (-not (Test-Path $configPath))
@@ -33,7 +33,7 @@ steps:
     }
     Get-Content $configPath | Write-Verbose -Verbose
   displayName: 'Add nuget.config for Azure DevOps feed for packages'
-  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
   env:
     NugetConfigDir: ${{ parameters.repoRoot }}
     ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase

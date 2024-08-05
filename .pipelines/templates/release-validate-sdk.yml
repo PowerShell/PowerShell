@@ -16,7 +16,8 @@ jobs:
       type: ${{ parameters.jobtype }}
 
   variables:
-  - group: AzDevOpsArtifacts
+  - group: mscodehub-feed-read-general
+  - group: mscodehub-feed-read-akv
   - group: DotNetPrivateBuildAccess
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'

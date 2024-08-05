@@ -23,7 +23,7 @@ steps:
 - pwsh: |
       $configPath = "$(REPOROOT)/nuget.config"
       Import-Module '$(REPOROOT)/build.psm1' -Force
-      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "$(REPOROOT)"
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsPackageFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevopsFeedUserNameKVPAT) -FeedName AzDevOpsFeed -Destination "$(REPOROOT)"
 
       if(-not (Test-Path $configPath))
       {
@@ -31,7 +31,7 @@ steps:
       }
       Get-Content $configPath | Write-Verbose -Verbose
   displayName: 'Add nuget.config for Azure DevOps feed for packages'
-  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
 
 - pwsh: |
     Import-Module "$env:REPOROOT/build.psm1" -Force

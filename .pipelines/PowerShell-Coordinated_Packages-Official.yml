@@ -70,8 +70,8 @@ variables:
     value: ${{ parameters.ReleaseTagVar }}
   - name: SKIP_SIGNING
     value: ${{ parameters.SKIP_SIGNING }}
-  - group: 'AzDevOpsArtifacts'
-  - group: 'mscodehub-feed-read-akv'
+  - group: mscodehub-feed-read-general
+  - group: mscodehub-feed-read-akv
   - name: ENABLE_MSBUILD_BINLOGS
     value: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
 

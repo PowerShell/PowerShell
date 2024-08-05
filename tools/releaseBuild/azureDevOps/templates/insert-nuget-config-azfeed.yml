@@ -6,7 +6,7 @@ steps:
 - pwsh: |
       $configPath = "${env:NugetConfigDir}/nuget.config"
       Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeedPreview) -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(powershellPackageReadPat) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
 
       if(-not (Test-Path $configPath))
       {
@@ -14,14 +14,14 @@ steps:
       }
       Get-Content $configPath | Write-Verbose -Verbose
   displayName: 'Add nuget.config for Azure DevOps feed for PSGallery modules'
-  condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
   env:
     NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
 
 - pwsh: |
       $configPath = "${env:NugetConfigDir}/nuget.config"
       Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeedPreview) -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(powershellPackageReadPat) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
 
       if(-not (Test-Path $configPath))
       {
@@ -29,10 +29,10 @@ steps:
       }
       Get-Content $configPath | Write-Verbose -Verbose
   displayName: 'Add nuget.config for Azure DevOps feed for packages'
-  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
   env:
     NugetConfigDir: ${{ parameters.repoRoot }}
 
 - task: nuget-security-analysis@0
   displayName: 'Run Secure Supply Chain analysis'
-  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''), ne(variables['AzDevOpsFeed'], ''))
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
