@@ -8,7 +8,7 @@ steps:
 
     $powerShellPublicPackages = New-NugetPackageSource -Url '$(PowerShellCore_PublicPackages)' -Name 'AzDevOpsFeed'
 
-    New-NugetConfigFile -NugetPackageSource $powerShellPublicPackages -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(mscodehubPackageReadPat) -Destination "${env:NugetConfigDir}"
+    New-NugetConfigFile -NugetPackageSource $powerShellPublicPackages -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(powershellPackageReadPat) -Destination "${env:NugetConfigDir}"
     if(-not (Test-Path $configPath))
     {
         throw "nuget.config is not created"
@@ -26,7 +26,7 @@ steps:
 
     $powerShellPublicPackages = New-NugetPackageSource -Url '$(PowerShellCore_PublicPackages)' -Name 'AzDevOpsFeed'
 
-    New-NugetConfigFile -NugetPackageSource $powerShellPublicPackages -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(mscodehubPackageReadPat) -Destination "${env:NugetConfigDir}"
+    New-NugetConfigFile -NugetPackageSource $powerShellPublicPackages -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(powershellPackageReadPat) -Destination "${env:NugetConfigDir}"
     if (-not (Test-Path $configPath))
     {
         throw "nuget.config is not created"
