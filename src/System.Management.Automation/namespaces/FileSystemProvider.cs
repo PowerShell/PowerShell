@@ -2258,13 +2258,8 @@ namespace Microsoft.PowerShell.Commands
                         {
                             exists = true;
 
-                            var normalizedTargetPath = strTargetPath;
-                            if (strTargetPath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                                strTargetPath.StartsWith("./", StringComparison.OrdinalIgnoreCase))
-                            {
-                                normalizedTargetPath = Path.Join(SessionState.Internal.CurrentLocation.ProviderPath, strTargetPath.AsSpan(2));
-                            }
-
+                            // check if the target is a file or directory
+                            var normalizedTargetPath = Path.Combine(Path.GetDirectoryName(path), strTargetPath);
                             GetFileSystemInfo(normalizedTargetPath, out isDirectory);
 
                             strTargetPath = strTargetPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
