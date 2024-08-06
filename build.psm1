@@ -2359,6 +2359,12 @@ function Start-PSBootstrap {
                 Install-Wix -arm64:$isArm64
             }
         }
+
+        if ($env:TF_BUILD) {
+            Write-Verbose -Verbose "--- Start - Capturing nuget sources"
+            dotnet nuget list source --format detailed
+            Write-Verbose -Verbose "--- End   - Capturing nuget sources"
+        }
     } finally {
         Pop-Location
     }
