@@ -3511,17 +3511,18 @@ function New-NugetConfigFile {
     $content = $nugetConfigHeaderTemplate
 
     [NugetPackageSource]$source = $null
+    $newLine = [Environment]::NewLine
     foreach ($source in $NugetPackageSource) {
-        $content += $nugetPackageSourceTemplate.Replace('[FEED]', $source.Url).Replace('[FEEDNAME]', $source.Name)
+        $content += $newLine + $nugetPackageSourceTemplate.Replace('[FEED]', $source.Url).Replace('[FEEDNAME]', $source.Name)
     }
 
-    $content += $nugetPackageSourceFooterTemplate
+    $content += $newLine + $nugetPackageSourceFooterTemplate
 
     if ($UserName -or $ClearTextPAT) {
-        $content += $nugetCredentialsTemplate.Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
+        $content += $newLine + $nugetCredentialsTemplate.Replace('[FEEDNAME]', $source.Name).Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
     }
 
-    $content += $nugetConfigFooterTemplate
+    $content += $newLine + $nugetConfigFooterTemplate
 
     Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
 }
