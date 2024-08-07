@@ -79,6 +79,11 @@ extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
   parameters:
     customTags: 'ES365AIMigrationTooling'
+    featureFlags:
+      LinuxHostVersion:
+          Network: KS3
+      WindowsHostVersion:
+          Network: KS3
     globalSdl:
       disableLegacyManifest: true
       # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
