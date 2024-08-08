@@ -130,9 +130,8 @@ extends:
             value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
           - name: ob_sdl_credscan_suppressionsFile
             value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-          - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-            - name: ob_sdl_codeql_compiled_enabled
-              value: true
+          - name: ob_sdl_codeql_compiled_enabled
+            value: false
           - name: ob_outputDirectory
             value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/BuildJson'
           - name: ob_signing_setup_enabled
