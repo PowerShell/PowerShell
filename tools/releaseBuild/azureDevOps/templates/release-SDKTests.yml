@@ -40,9 +40,12 @@ jobs:
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
 
+    - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+      parameters:
+        repoRoot: $(Build.SourcesDirectory)
+
     - pwsh:  |
         Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
-        New-NugetConfigFile -NugetFeedUrl $(UseAzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevopsFeedUserNameKVPAT) -FeedName AzDevOpsFeed -Destination '$(Build.SourcesDirectory)/test/hosting'
 
         Write-Verbose -Verbose "Capture hosting folder files"
         Get-ChildItem '$(Build.SourcesDirectory)/test/hosting'
