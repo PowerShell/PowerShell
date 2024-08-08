@@ -148,6 +148,8 @@ extends:
         - pwsh: |
             Get-ChildItem Env:
           displayName: Capture environment variables
+          env:
+            ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
         - template: /.pipelines/templates/SetVersionVariables.yml@self
           parameters:
