@@ -3,18 +3,24 @@ parameters:
   default: $(REPOROOT)
 steps:
 - pwsh: |
-    $configPath = "${env:NugetConfigDir}/nuget.config"
-    Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
+    try {
+      $configPath = "${env:NugetConfigDir}/nuget.config"
+      Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
 
-    $powerShellPublicPackages = New-NugetPackageSource -Url '$(AzDevOpsFeed)' -Name 'AzDevOpsFeed'
+      Write-Verbose -Verbose "Running: Switch-PSNugetConfig -Source Private -UserName '$(AzDevopsFeedUserNameKVPAT)' -ClearTextPAT '$(powershellPackageReadPat)'"
+      Switch-PSNugetConfig -Source Private -UserName '$(AzDevopsFeedUserNameKVPAT)' -ClearTextPAT '$(powershellPackageReadPat)'
 
-    New-NugetConfigFile -NugetPackageSource $powerShellPublicPackages -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(powershellPackageReadPat) -Destination "${env:NugetConfigDir}"
-    if(-not (Test-Path $configPath))
-    {
-        throw "nuget.config is not created"
+      if(-not (Test-Path $configPath))
+      {
+          throw "nuget.config is not created"
+      }
+      Get-Content $configPath | Write-Verbose -Verbose
     }
-    Get-Content $configPath | Write-Verbose -Verbose
-  displayName: 'Add nuget.config for Azure DevOps feed for PSGallery modules'
+    catch {
+      Get-Error
+      throw
+    }
+  displayName: 'Switch to production Azure DevOps feed for all nuget.configs'
   condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
   env:
     NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
