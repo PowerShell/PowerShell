@@ -27,19 +27,12 @@ steps:
     ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
 - pwsh: |
-    $configPath = "${env:NugetConfigDir}/nuget.config"
-    Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-
-    $powerShellPublicPackages = New-NugetPackageSource -Url '$(AzDevOpsFeed)' -Name 'AzDevOpsFeed'
-
-    New-NugetConfigFile -NugetPackageSource $powerShellPublicPackages -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(powershellPackageReadPat) -Destination "${env:NugetConfigDir}"
-    if (-not (Test-Path $configPath))
-    {
-        throw "nuget.config is not created"
+    Get-ChildItem ${{ parameters.repoRoot }}/nuget.config -Recurse | Foreach-Object {
+      Write-Verbose -Verbose "--- START $($_.fullname) ---"
+      get-content $_.fullname  | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      Write-Verbose -Verbose "--- END $($_.fullname) ---"
     }
-    Get-Content $configPath | Write-Verbose -Verbose
-  displayName: 'Add nuget.config for Azure DevOps feed for packages'
+  displayName: 'Capture all nuget.config files'
   condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
   env:
-    NugetConfigDir: ${{ parameters.repoRoot }}
     ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
