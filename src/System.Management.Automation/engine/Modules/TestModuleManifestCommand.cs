@@ -374,7 +374,8 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(er);
                 }
 
-                path = pathInfos[0].Path;
+                // This should be the FileSystemProvider path and not the provider path
+                path = pathInfos[0].ProviderPath;
 
                 // First, we validate if the path does exist.
                 if (!File.Exists(path) && !Directory.Exists(path))
