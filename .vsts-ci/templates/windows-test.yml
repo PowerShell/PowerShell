@@ -102,5 +102,5 @@ jobs:
       MAPPED_ADO_PRIVATE_PAT: $(ado_private_pat)
       MAPPED_ADO_PRIVATE_REPO_URL: $(ado_private_repo_url)
     displayName: 'PSResourceGet ACR functional tests using AzAuth'
-    condition: and(succeeded(), eq(${{ parameters.purpose }}, 'PSResourceGetACRTests')
+    condition: and(succeeded(), eq(${{ parameters.purpose }}, 'PSResourceGetACRTests'))
 
