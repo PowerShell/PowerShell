@@ -120,6 +120,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "D3DCompiler_47_cor3.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "de/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
