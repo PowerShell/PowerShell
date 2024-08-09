@@ -59,6 +59,13 @@ steps:
     displayName: Test
     condition: and(succeeded(), ne('${{ parameters.purpose }}', 'PSResourceGetACRTests'))
 
+  - powershell: |
+      # Set environment variable to identify in tests that secret store should not be used.
+        $vstsCommandString = "vso[task.setvariable variable=UsingAzAuth]true"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+    displayName: 'Set UsingAzAuth environment variable'
+
   - task: AzurePowerShell@5
     inputs:
       azureSubscription: PSResourceGetACR
