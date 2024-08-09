@@ -708,6 +708,8 @@ Fix steps:
     if ($config.Count -gt 0) {
         $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
         Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
+    } else {
+        Write-Warning "No powershell.config.json generated for $publishPath"
     }
 
     # Restore the Pester module
