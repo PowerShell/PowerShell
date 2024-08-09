@@ -1247,10 +1247,14 @@ function Publish-PSTestTools {
     $tools = @(
         @{ Path="${PSScriptRoot}/test/tools/TestAlc";     Output="library" }
         @{ Path="${PSScriptRoot}/test/tools/TestExe";     Output="exe" }
-        @{ Path="${PSScriptRoot}/test/tools/TestService"; Output="exe" }
         @{ Path="${PSScriptRoot}/test/tools/UnixSocket";  Output="exe" }
         @{ Path="${PSScriptRoot}/test/tools/WebListener"; Output="exe" }
     )
+
+    # This is a windows service, so it only works on windows
+    if ($environment.IsWindows) {
+        $tools += @{ Path = "${PSScriptRoot}/test/tools/TestService"; Output = "exe" }
+    }
 
     $Options = Get-PSOptions -DefaultToNew
 
