@@ -5,8 +5,12 @@
 $ProgressPreference = "SilentlyContinue"
 
 $RepositoryName = 'PSGallery'
+$ACRRepositoryName = "ACRRepo"
+$ACRRepoUri = "https://psresourcegettest.azurecr.io/"
 $TestModule = 'newTestModule'
 $TestScript = 'TestTestScript'
+$ACRTestModule = 'newTestMod'
+
 $Initialized = $false
 
 #region Install locations for modules and scripts
@@ -77,6 +81,17 @@ function Initialize
     {
         Register-PSResourceRepository -PSGallery -Trusted
     }
+
+
+    #$usingAzAuth = $env:USINGAZAUTH -eq 'true'
+    #if ($usingAzAuth)
+    #{
+    #    Register-PSResourceRepository -Name $ACRRepositoryName -Uri $ACRRepoUri -ApiVersion 'ContainerRegistry' -Trusted -Force
+    #}
+    #else
+    #{
+    #    throw "The tests require the USINGAZAUTH environment variable to be set to 'true' for ACR authentication."
+    #}
 }
 
 #endregion
@@ -213,3 +228,44 @@ Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
         Remove-InstalledScripts
     }
 }
+
+<#
+Describe "PSResourceGet - ACR tests" -tags "Feature" {
+
+    BeforeAll {
+        if ($script:Initialized -eq $false) {
+            Initialize
+            $script:Initialized = $true
+        }
+    }
+
+    BeforeEach {
+        Remove-InstalledModules
+    }
+
+    It "Should find a module correctly" {
+        $psgetModuleInfo = Find-PSResource -Name $TestModule -Repository $ACRRepositoryName
+        $ACRRepositoryName.Name | Should -Be $TestModule
+        $psgetModuleInfo.Repository | Should -Be $ACRRepositoryName
+    }
+
+    It "Should install a module correctly to the required location with default CurrentUser scope" {
+        Install-PSResource -Name $TestModule -Repository $ACRRepositoryName
+        $installedModuleInfo = Get-InstalledPSResource -Name $TestModule
+
+        if (!$IsMacOS) {
+            $installedModuleInfo | Should -Not -BeNullOrEmpty
+            $installedModuleInfo.Name | Should -Be $TestModule
+            $installedModuleInfo.InstalledLocation.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+
+            $module = Get-Module $TestModule -ListAvailable
+            $module.Name | Should -Be $TestModule
+            $module.ModuleBase.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+        }
+    }
+
+    AfterAll {
+        Remove-InstalledModules
+    }
+}
+#>
