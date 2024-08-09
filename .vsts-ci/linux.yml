@@ -111,6 +111,13 @@ stages:
       purpose: ElevatedPesterTests
       tagSet: Others
 
+  - template: templates/nix-test.yml
+    parameters:
+      name: Ubuntu
+      pool: ubuntu-20.04
+      purpose: PSResoureGetACRTests
+      tagSet: Others
+
   - template: templates/verify-xunit.yml
     parameters:
       pool: ubuntu-20.04

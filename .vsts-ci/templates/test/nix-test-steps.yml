@@ -57,7 +57,7 @@ steps:
       Set-PSOptions $options
       Invoke-CITest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}' -TitlePrefix '${{ parameters.buildName }}'
     displayName: Test
-    condition: succeeded()
+    condition: and(succeeded(), ne(${{ parameters.purpose }}, 'PSResourceGetACRTests'))
 
   - task: AzurePowerShell@5
     inputs:
@@ -76,3 +76,4 @@ steps:
       MAPPED_ADO_PRIVATE_PAT: $(ado_private_pat)
       MAPPED_ADO_PRIVATE_REPO_URL: $(ado_private_repo_url)
     displayName: 'PSResourceGet ACR functional tests using AzAuth'
+    condition: and(succeeded(), eq(${{ parameters.purpose }}, 'PSResourceGetACRTests')
