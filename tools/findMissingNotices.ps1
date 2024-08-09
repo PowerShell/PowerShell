@@ -88,6 +88,28 @@ if (!$IsWindows) {
     Write-Warning "Always using $winDesktopSdk since this is not windows!!!"
 }
 
+function ConvertTo-SemVer {
+    param(
+        [String] $Version
+    )
+
+    [System.Management.Automation.SemanticVersion]$desiredVersion = [System.Management.Automation.SemanticVersion]::Empty
+
+    try {
+        $desiredVersion = $Version
+    } catch {
+        <#
+            Json.More.Net broke the rules and published 2.0.1.2 as 2.0.1.
+            So, I'm making the logic work for that scenario by
+            thorwing away any part that doesn't match non-pre-release semver portion
+        #>
+        $null = $Version -match '^(\d+\.\d+\.\d+)).*'
+        $desiredVersion = $matches[1]
+    }
+
+    return $desiredVersion
+}
+
 function New-NugetComponent {
     param(
         [string]$name,
@@ -125,23 +147,15 @@ function Get-NuGetPublicVersion {
         return $nugetPublicVersionCache[$Name]
     }
 
-    try {
-        [System.Management.Automation.SemanticVersion]$desiredVersion = $Version
-    } catch {
-        [Version]$desiredVersion = $Version
-    }
+    [System.Management.Automation.SemanticVersion]$desiredVersion = ConvertTo-SemVer -Version $Version
 
     $publicVersion = $null
     $publicVersion = Find-Package -Name $Name -AllowPrereleaseVersions -source $packageSourceName -AllVersions -ErrorAction SilentlyContinue | ForEach-Object {
-        try {
-            $packageVersion = [System.Management.Automation.SemanticVersion]$_.Version
-        } catch {
-            # Fall back to using [version] if it is not a semantic version
-            $packageVersion = $_.Version
-        }
-
+        [System.Management.Automation.SemanticVersion]$packageVersion = ConvertTo-SemVer -Version $_.Version
         $_ | Add-Member -Name SemVer -MemberType NoteProperty -Value $packageVersion -PassThru
-    } | Where-Object { $_.SemVer -le $desiredVersion } | Sort-Object -Property semver -Descending | Select-Object -First 1 -ExpandProperty Version
+    } | Where-Object {
+            $_.SemVer -le $desiredVersion
+        } | Sort-Object -Property semver -Descending | Select-Object -First 1 -ExpandProperty Version
 
     if(!$publicVersion) {
         Write-Warning "No public version found for $Name, using $Version"
