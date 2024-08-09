@@ -2,7 +2,7 @@
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's System.Management.Automation project</Description>
-    <NoWarn>$(NoWarn);CS1570;CS1734;CA1416</NoWarn>
+    <NoWarn>$(NoWarn);CS1570;CS1734;CA1416;CA2022</NoWarn>
     <AssemblyName>System.Management.Automation</AssemblyName>
   </PropertyGroup>
 
