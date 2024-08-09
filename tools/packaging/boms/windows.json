@@ -120,10 +120,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "D3DCompiler_47_cor3.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "de/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -893,6 +889,10 @@
   },
   {
     "Pattern": "Modules/ThreadJob/*.psd1",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "Modules\\Microsoft.PowerShell.PSResourceGet\\Microsoft.PowerShell.PSResourceGet.pdb",
     "FileType": "NonProduct"
   },
   {
