@@ -83,15 +83,15 @@ function Initialize
     }
 
 
-    #$usingAzAuth = $env:USINGAZAUTH -eq 'true'
-    #if ($usingAzAuth)
-    #{
-    #    Register-PSResourceRepository -Name $ACRRepositoryName -Uri $ACRRepoUri -ApiVersion 'ContainerRegistry' -Trusted -Force
-    #}
-    #else
-    #{
-    #    throw "The tests require the USINGAZAUTH environment variable to be set to 'true' for ACR authentication."
-    #}
+    $usingAzAuth = $env:USINGAZAUTH -eq 'true'
+    if ($usingAzAuth)
+    {
+        Register-PSResourceRepository -Name $ACRRepositoryName -Uri $ACRRepoUri -ApiVersion 'ContainerRegistry' -Trusted -Force
+    }
+    else
+    {
+        throw "The tests require the USINGAZAUTH environment variable to be set to 'true' for ACR authentication."
+    }
 }
 
 #endregion
@@ -229,7 +229,6 @@ Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 }
 
-<#
 Describe "PSResourceGet - ACR tests" -tags "Feature" {
 
     BeforeAll {
@@ -244,22 +243,22 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
     }
 
     It "Should find a module correctly" {
-        $psgetModuleInfo = Find-PSResource -Name $TestModule -Repository $ACRRepositoryName
-        $ACRRepositoryName.Name | Should -Be $TestModule
+        $psgetModuleInfo = Find-PSResource -Name $ACRTestModule -Repository $ACRRepositoryName
+        $ACRRepositoryName.Name | Should -Be $ACRTestModule
         $psgetModuleInfo.Repository | Should -Be $ACRRepositoryName
     }
 
     It "Should install a module correctly to the required location with default CurrentUser scope" {
-        Install-PSResource -Name $TestModule -Repository $ACRRepositoryName
-        $installedModuleInfo = Get-InstalledPSResource -Name $TestModule
+        Install-PSResource -Name $ACRTestModule -Repository $ACRRepositoryName
+        $installedModuleInfo = Get-InstalledPSResource -Name $ACRTestModule
 
         if (!$IsMacOS) {
             $installedModuleInfo | Should -Not -BeNullOrEmpty
-            $installedModuleInfo.Name | Should -Be $TestModule
+            $installedModuleInfo.Name | Should -Be $ACRTestModule
             $installedModuleInfo.InstalledLocation.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
 
-            $module = Get-Module $TestModule -ListAvailable
-            $module.Name | Should -Be $TestModule
+            $module = Get-Module $ACRTestModule -ListAvailable
+            $module.Name | Should -Be $ACRTestModule
             $module.ModuleBase.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
         }
     }
@@ -268,4 +267,3 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
         Remove-InstalledModules
     }
 }
-#>
