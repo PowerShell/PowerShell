@@ -232,6 +232,10 @@ Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
 Describe "PSResourceGet - ACR tests" -tags "Feature" {
 
     BeforeAll {
+        if ($env:USINGAZAUTH -ne 'true') {
+            return
+        }
+
         if ($script:Initialized -eq $false) {
             Initialize
             $script:Initialized = $true
@@ -264,6 +268,10 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
     }
 
     AfterAll {
+        if ($env:USINGAZAUTH -ne 'true') {
+            return
+        }
+
         Remove-InstalledModules
     }
 }
