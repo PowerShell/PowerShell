@@ -243,16 +243,26 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
     }
 
     BeforeEach {
+        if ($env:USINGAZAUTH -ne 'true') {
+            return
+        }
+
         Remove-InstalledModules
     }
 
     It "Should find a module correctly" {
+        $isSkipped = $env:USINGAZAUTH -ne 'true'
+        Set-ItResult -Skipped:$isSkipped -Because "The tests require the USINGAZAUTH environment variable to be set to 'true' for ACR authentication."
+
         $psgetModuleInfo = Find-PSResource -Name $ACRTestModule -Repository $ACRRepositoryName
         $ACRRepositoryName.Name | Should -Be $ACRTestModule
         $psgetModuleInfo.Repository | Should -Be $ACRRepositoryName
     }
 
     It "Should install a module correctly to the required location with default CurrentUser scope" {
+        $isSkipped = $env:USINGAZAUTH -ne 'true'
+        Set-ItResult -Skipped:$isSkipped -Because "The tests require the USINGAZAUTH environment variable to be set to 'true' for ACR authentication."
+
         Install-PSResource -Name $ACRTestModule -Repository $ACRRepositoryName
         $installedModuleInfo = Get-InstalledPSResource -Name $ACRTestModule
 

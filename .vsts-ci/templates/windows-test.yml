@@ -91,6 +91,7 @@ jobs:
         Write-Host "sending " + $vstsCommandString
         Write-Host "##$vstsCommandString"
     displayName: 'Set UsingAzAuth environment variable'
+    condition: and(succeeded(), eq('${{ parameters.purpose }}', 'PSResourceGetACRTests'))
 
   - task: AzurePowerShell@5
     inputs:
