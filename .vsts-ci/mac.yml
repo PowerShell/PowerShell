@@ -92,6 +92,11 @@ stages:
       purpose: ElevatedPesterTests
       tagSet: Others
 
+  - template: templates/nix-test.yml
+    parameters:
+      purpose: PSResoureGetACRTests
+      tagSet: Feature
+
   - template: templates/verify-xunit.yml
     parameters:
       pool: macOS-latest

@@ -116,7 +116,7 @@ stages:
       name: Ubuntu
       pool: ubuntu-20.04
       purpose: PSResoureGetACRTests
-      tagSet: Others
+      tagSet: Feature
 
   - template: templates/verify-xunit.yml
     parameters:
