@@ -742,9 +742,9 @@ function Get-UpstreamInfo {
     Write-Verbose -Verbose "searching for an upstream with regex: '$pattern'"
     $Upstream = $Upstream | Where-Object { $_ -match $pattern }
 
-    Write-Verbose -Verbose "found $upstream"
+    Write-Verbose -Verbose "found $Upstream"
 
-    if (!$upstream) {
+    if (!$Upstream) {
         throw "Please create an upstream remote that points to $upstreamName"
     }
 
