@@ -87,7 +87,7 @@ stages:
   
   - template: templates/windows-test.yml
     parameters:
-      purpose: PSResoureGetACRTests
+      purpose: PSResourceGetACRTests
       tagSet: Feature
 
   - template: templates/verify-xunit.yml

@@ -94,7 +94,7 @@ stages:
 
   - template: templates/nix-test.yml
     parameters:
-      purpose: PSResoureGetACRTests
+      purpose: PSResourceGetACRTests
       tagSet: Feature
 
   - template: templates/verify-xunit.yml
