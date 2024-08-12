@@ -84,6 +84,8 @@ jobs:
     displayName: Bootstrap
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
   - pwsh: |
       New-Item -Path '$(ob_outputDirectory)' -ItemType Directory -Force
       Import-Module $(Build.SourcesDirectory)/PowerShell/build.psm1
@@ -113,3 +115,5 @@ jobs:
       BuildTestPackage -runtime linux-musl-x64
     displayName: Build test package and upload
     retryCountOnTaskFailure: 1
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
