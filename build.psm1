@@ -3537,17 +3537,21 @@ function New-NugetConfigFile {
 </configuration>
 '@
     $content = $nugetConfigHeaderTemplate
+    $feedNamePostfix = ''
+    if($UserName) {
+        $feedNamePostfix += '-' + $UserName.Replace('@','-').Replace('.','-')
+    }
 
     [NugetPackageSource]$source = $null
     $newLine = [Environment]::NewLine
     foreach ($source in $NugetPackageSource) {
-        $content += $newLine + $nugetPackageSourceTemplate.Replace('[FEED]', $source.Url).Replace('[FEEDNAME]', $source.Name)
+        $content += $newLine + $nugetPackageSourceTemplate.Replace('[FEED]', $source.Url).Replace('[FEEDNAME]', $source.Name + $feedNamePostfix)
     }
 
     $content += $newLine + $nugetPackageSourceFooterTemplate
 
     if ($UserName -or $ClearTextPAT) {
-        $content += $newLine + $nugetCredentialsTemplate.Replace('[FEEDNAME]', $source.Name).Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
+        $content += $newLine + $nugetCredentialsTemplate.Replace('[FEEDNAME]', $source.Name + $feedNamePostfix).Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
     }
 
     $content += $newLine + $nugetConfigFooterTemplate
