@@ -1,6 +1,10 @@
 parameters:
 - name: "repoRoot"
   default: $(REPOROOT)
+- name: "ob_restore_phase"
+  type: boolean
+  default: true
+
 steps:
 - pwsh: |
     try {
@@ -23,7 +27,7 @@ steps:
   condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
   env:
     NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
-    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}
 
 - pwsh: |
     Get-ChildItem ${{ parameters.repoRoot }}/nuget.config -Recurse | Foreach-Object {
@@ -34,4 +38,4 @@ steps:
   displayName: 'Capture all nuget.config files'
   condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
   env:
-    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}
