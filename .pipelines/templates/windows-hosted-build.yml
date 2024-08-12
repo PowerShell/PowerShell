@@ -292,7 +292,7 @@ jobs:
       $config.Add("Microsoft.PowerShell:ExecutionPolicy", "RemoteSigned")
       $config.Add("WindowsPowerShellCompatibilityModuleDenyList", @("PSScheduledJob", "BestPractices", "UpdateServices"))
 
-      $configPublishPath = Join-Path "$outputPath" 'temp' 'tools' 'net8.0' 'any' "powershell.config.json"
+      $configPublishPath = Join-Path "$outputPath" 'temp' 'tools' 'net9.0' 'any' "powershell.config.json"
       Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
 
       Compress-Archive -Path "$outputPath\temp\*" -DestinationPath "$outputPath\$nupkgName" -Force
