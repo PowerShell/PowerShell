@@ -173,6 +173,13 @@ stages:
       purpose: ElevatedPesterTests
       tagSet: Others
 
+  - template: templates/nix-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: PSResoureGetACRTests
+      tagSet: Feature
+
 - stage: PackageLinux
   displayName: Package Linux
   dependsOn: ["BuildLinuxStage"]

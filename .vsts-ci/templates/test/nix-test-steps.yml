@@ -73,15 +73,11 @@ steps:
       azurePowerShellVersion: LatestVersion
       ScriptType: InlineScript
       inline: |
+        Import-Module .\build.psm1 -force
         $modulePath = Join-Path -Path $env:AGENT_TEMPDIRECTORY -ChildPath 'TempModules'
         $env:PSModulePath = $modulePath + [System.IO.Path]::PathSeparator + $env:PSModulePath
-        Write-Verbose -Verbose "Importing build utilities (buildtools.psd1)"
-        Import-Module -Name (Join-Path -Path '${{ parameters.buildDirectory }}' -ChildPath 'buildtools.psd1') -Force
-        Invoke-ModuleTestsACR -Type Functional
-    env:
-      MAPPED_GITHUB_PAT: $(github_pat)
-      MAPPED_ADO_PUBLIC_PAT: $(ado_public_pat)
-      MAPPED_ADO_PRIVATE_PAT: $(ado_private_pat)
-      MAPPED_ADO_PRIVATE_REPO_URL: $(ado_private_repo_url)
+        $outputFilePath = "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\ACRTests.xml"
+        Invoke-Pester -Path "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1" -TestName "PSResourceGet - ACR tests" -OutputFile $outputFilePath -OutputFormat NUnitXml
+        Publish-TestResults -Title "PSResourceGet - ACR tests" -Path $outputFilePath -Type NUnit
     displayName: 'PSResourceGet ACR functional tests using AzAuth'
     condition: and(succeeded(), eq('${{ parameters.purpose }}', 'PSResourceGetACRTests'))
