@@ -24,7 +24,7 @@ jobs:
     clean: true
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
-      repoRoot: $(Build.SourcesDirectory)
+      repoRoot: $(Build.SourcesDirectory)/PowerShell
       ob_restore_phase: false
 
   - pwsh: |
@@ -79,8 +79,8 @@ jobs:
     clean: true
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
-      repoRoot: $(Build.SourcesDirectory)
-      ob_restore_phase: false
+      repoRoot: $(Build.SourcesDirectory)/PowerShell
+      ob_restore_phase: true
 
   - pwsh: |
       Import-Module $(Build.SourcesDirectory)/PowerShell/build.psm1
