@@ -68,6 +68,10 @@ jobs:
     env:
       ob_restore_phase: true
 
+  - pwsh: |
+      Write-Host "This doesn't do anything but make the build phase run."
+    displayName: Dummy build task
+
 
 - job: build_testartifacts_nonwin
   variables:
@@ -132,3 +136,7 @@ jobs:
     retryCountOnTaskFailure: 1
     env:
       ob_restore_phase: true
+
+  - pwsh: |
+      Write-Host "This doesn't do anything but make the build phase run."
+    displayName: Dummy build task
