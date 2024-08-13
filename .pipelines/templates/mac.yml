@@ -44,10 +44,12 @@ jobs:
     displayName: 'Create $(Agent.TempDirectory)/PowerShell'
 
   - pwsh: |
-      tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
+      Import-Module $(PowerShellRoot)/build.psm1 -Force
+      Start-PSBootstrap -Package
     displayName: 'Bootstrap VM'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(PowerShellRoot)
