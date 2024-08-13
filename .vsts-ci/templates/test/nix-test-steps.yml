@@ -57,4 +57,4 @@ steps:
       Set-PSOptions $options
       Invoke-CITest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}' -TitlePrefix '${{ parameters.buildName }}'
     displayName: Test
-
+    condition: succeeded()

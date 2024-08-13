@@ -83,4 +83,4 @@ jobs:
       Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
       Invoke-CITest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}'
     displayName: Test
-
+    condition: succeeded()
