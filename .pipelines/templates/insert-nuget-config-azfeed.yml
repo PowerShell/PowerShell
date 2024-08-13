@@ -39,3 +39,10 @@ steps:
   condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
   env:
     ob_restore_phase: ${{ parameters.ob_restore_phase }}
+
+- pwsh: |
+    Get-ChildItem -Path env:VSS* | Out-String -width 9999 -Stream | write-Verbose -Verbose
+  displayName: Capture VSS* Environment
+  condition: and(succeededOrFailed(), ne(variables['UseAzDevOpsFeed'], ''))
+  env:
+    ob_restore_phase: ${{ parameters.ob_restore_phase }}

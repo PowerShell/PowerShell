@@ -743,6 +743,8 @@ function Switch-PSNugetConfig {
         [string] $ClearTextPAT
     )
 
+    Clear-PipelineNugetAuthentication
+
     $extraParams = @()
     if ($UserName) {
         $extraParams = @{
@@ -765,6 +767,10 @@ function Switch-PSNugetConfig {
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
     } else {
         throw "Unknown source: $Source"
+    }
+
+    if ($UserName -or $ClearTextPAT) {
+        Set-PipelineNugetAuthentication
     }
 }
 
@@ -3494,6 +3500,7 @@ function New-NugetPackageSource {
     return [NugetPackageSource] @{Url = $Url; Name = $Name }
 }
 
+$script:NuGetEndpointCredentials = [System.Collections.Generic.Dictionary[String,System.Object]]::new()
 function New-NugetConfigFile {
     param(
         [Parameter(Mandatory = $true, ParameterSetName ='user')]
@@ -3551,12 +3558,38 @@ function New-NugetConfigFile {
     $content += $newLine + $nugetPackageSourceFooterTemplate
 
     if ($UserName -or $ClearTextPAT) {
-        $content += $newLine + $nugetCredentialsTemplate.Replace('[FEEDNAME]', $source.Name + $feedNamePostfix).Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
+        foreach ($source in $NugetPackageSource) {
+            if(!$script:NuGetEndpointCredentials.ContainsKey($source.Url)) {
+                $script:NuGetEndpointCredentials.Add($source.Url, @{
+                    endpoint = $source.Url
+                    username = $UserName
+                    password = $ClearTextPAT
+                })
+            }
+        }
+       # $content += $newLine + $nugetCredentialsTemplate.Replace('[FEEDNAME]', $source.Name + $feedNamePostfix).Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
     }
 
     $content += $newLine + $nugetConfigFooterTemplate
 
     Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
+}
+
+function Clear-PipelineNugetAuthentication {
+    $script:NuGetEndpointCredentials.Clear()
+}
+
+function Set-PipelineNugetAuthentication {
+    $endpointcredentials = @()
+
+    foreach ($key in $script:NuGetEndpointCredentials.Keys) {
+        $endpointcredentials += $script:NuGetEndpointCredentials[$key]
+    }
+
+    $json = @{
+        endpointCredentials = $endpointcredentials
+    } | convertto-json -Compress
+    Set-PipelineVariable -Name 'VSS_NUGET_EXTERNAL_FEED_ENDPOINTS' -Value $json
 }
 
 function Set-CorrectLocale
@@ -3691,4 +3724,20 @@ function Update-DotNetSdkVersion {
     $dotnetRuntimeMeta = get-content $dotnetRuntimeMetaPath | convertfrom-json
     $dotnetRuntimeMeta.sdk.sdkImageVersion = $version
     $dotnetRuntimeMeta | ConvertTo-Json | Out-File $dotnetRuntimeMetaPath
+}
+
+function Set-PipelineVariable {
+    param(
+        [parameter(Mandatory)]
+        [string] $Name,
+        [parameter(Mandatory)]
+        [string] $Value
+    )
+
+    $vstsCommandString = "vso[task.setvariable variable=$Name]$Value"
+    Write-Verbose -Verbose -Message ("sending " + $vstsCommandString)
+    Write-Host "##$vstsCommandString"
+
+    # also set in the current session
+    Set-Item -Path "env:$Name" -Value $Value
 }
