@@ -3118,15 +3118,15 @@ namespace Microsoft.PowerShell.Commands
                             double speed = _removedBytes / 1024 / 1024 / _removeStopwatch.Elapsed.TotalSeconds;
                             if (_removeStopwatch.Elapsed.TotalSeconds > ProgressBarDurationThreshold)
                             {
-                            var progress = new ProgressRecord(
-                                REMOVE_FILE_ACTIVITY_ID,
-                                StringUtil.Format(FileSystemProviderStrings.RemovingLocalFileActivity, _removedFiles, _totalFiles),
-                                StringUtil.Format(FileSystemProviderStrings.RemovingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_removedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
-                            );
-                            var percentComplete = _totalBytes != 0 ? (int)Math.Min(_removedBytes * 100 / _totalBytes, 100) : 100;
-                            progress.PercentComplete = percentComplete;
-                            progress.RecordType = ProgressRecordType.Processing;
-                            WriteProgress(progress);
+                                var progress = new ProgressRecord(
+                                    REMOVE_FILE_ACTIVITY_ID,
+                                    StringUtil.Format(FileSystemProviderStrings.RemovingLocalFileActivity, _removedFiles, _totalFiles),
+                                    StringUtil.Format(FileSystemProviderStrings.RemovingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_removedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
+                                );
+                                var percentComplete = _totalBytes != 0 ? (int)Math.Min(_removedBytes * 100 / _totalBytes, 100) : 100;
+                                progress.PercentComplete = percentComplete;
+                                progress.RecordType = ProgressRecordType.Processing;
+                                WriteProgress(progress);
                             }
                         }
                     }
@@ -4000,15 +4000,15 @@ namespace Microsoft.PowerShell.Commands
                                 double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
                                 if (_copyStopwatch.Elapsed.TotalSeconds > ProgressBarDurationThreshold)
                                 {
-                                var progress = new ProgressRecord(
-                                    COPY_FILE_ACTIVITY_ID,
-                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
-                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
-                                );
-                                var percentComplete = _totalBytes != 0 ? (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100) : 100;
-                                progress.PercentComplete = percentComplete;
-                                progress.RecordType = ProgressRecordType.Processing;
-                                WriteProgress(progress);
+                                    var progress = new ProgressRecord(
+                                        COPY_FILE_ACTIVITY_ID,
+                                        StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
+                                        StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
+                                    );
+                                    var percentComplete = _totalBytes != 0 ? (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100) : 100;
+                                    progress.PercentComplete = percentComplete;
+                                    progress.RecordType = ProgressRecordType.Processing;
+                                    WriteProgress(progress);
                                 }
                             }
                         }
@@ -4950,7 +4950,7 @@ namespace Microsoft.PowerShell.Commands
         private long _removedBytes;
         private long _removedFiles;
         private readonly Stopwatch _removeStopwatch = new();
-        
+
         private const double ProgressBarDurationThreshold = 3.0;
         #endregion CopyItem
 
