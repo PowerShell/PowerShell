@@ -3545,8 +3545,8 @@ function New-NugetConfigFile {
 '@
     $content = $nugetConfigHeaderTemplate
     $feedNamePostfix = ''
-    if($UserName) {
-        $feedNamePostfix += '-' + $UserName.Replace('@','-').Replace('.','-')
+    if ($UserName) {
+        $feedNamePostfix += '-' + $UserName.Replace('@', '-').Replace('.', '-')
     }
 
     [NugetPackageSource]$source = $null
@@ -3559,15 +3559,14 @@ function New-NugetConfigFile {
 
     if ($UserName -or $ClearTextPAT) {
         foreach ($source in $NugetPackageSource) {
-            if(!$script:NuGetEndpointCredentials.ContainsKey($source.Url)) {
+            if (!$script:NuGetEndpointCredentials.ContainsKey($source.Url)) {
                 $script:NuGetEndpointCredentials.Add($source.Url, @{
-                    endpoint = $source.Url
-                    username = $UserName
-                    password = $ClearTextPAT
-                })
+                        endpoint = $source.Url
+                        username = $UserName
+                        password = $ClearTextPAT
+                    })
             }
         }
-       # $content += $newLine + $nugetCredentialsTemplate.Replace('[FEEDNAME]', $source.Name + $feedNamePostfix).Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
     }
 
     $content += $newLine + $nugetConfigFooterTemplate
