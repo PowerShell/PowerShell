@@ -89,8 +89,7 @@ stages:
       displayName: 'Capture Artifacts Directory'
       continueOnError: true
 
-    # must be run frow Windows PowerShell
-    - powershell: |
+    - pwsh: |
         # Remove "Program Files\dotnet" from the env variable PATH, so old SDKs won't affect us.
         Write-Host "Old Path:"
         Write-Host $env:Path
@@ -130,17 +129,13 @@ stages:
           $rootPath = split-Path -path $path
           Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
 
-          if (-not (Test-Path -Path "$rootPath\pwsh.exe")) {
-            Write-Error "pwsh.exe not found at $rootPath"
-            Get-ChildItem -Path $rootPath -Recurse
-            exit 1
-          }
+          $pwshExe = Get-ChildItem -Path $rootPath -Recurse -Filter pwsh.exe | Select-Object -First 1
 
           $outputFilePath = "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\ACRTests.xml"
           $cmdline = 'Invoke-Pester -Path "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1" -TestName "PSResourceGet - ACR tests" -OutputFile $outputFilePath -OutputFormat NUnitXml'
           Write-Verbose -Verbose "Running $cmdline"
 
-          & $rootPath\pwsh.exe -Command $cmdline
+          & $pwshExe -Command $cmdline
 
           Publish-TestResults -Title "PSResourceGet - ACR tests" -Path $outputFilePath -Type NUnit
       displayName: 'PSResourceGet ACR functional tests using AzAuth'
