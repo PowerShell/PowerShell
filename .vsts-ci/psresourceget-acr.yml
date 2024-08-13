@@ -121,10 +121,20 @@ stages:
         ScriptType: InlineScript
         inline: |
           Import-Module .\build.psm1 -force
-          $modulePath = Join-Path -Path $env:AGENT_TEMPDIRECTORY -ChildPath 'TempModules'
-          $env:PSModulePath = $modulePath + [System.IO.Path]::PathSeparator + $env:PSModulePath
+          Start-PSBootstrap
+          Import-Module .\tools\ci.psm1
+          Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+          $options = (Get-PSOptions)
+          $path = split-path -path $options.Output
+          $rootPath = split-Path -path $path
+          Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
+
           $outputFilePath = "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\ACRTests.xml"
-          Invoke-Pester -Path "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1" -TestName "PSResourceGet - ACR tests" -OutputFile $outputFilePath -OutputFormat NUnitXml
+          $cmdline = 'Invoke-Pester -Path "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1" -TestName "PSResourceGet - ACR tests" -OutputFile $outputFilePath -OutputFormat NUnitXml'
+          Write-Verbose -Verbose "Running $cmdline"
+
+          & $rootPath\pwsh.exe -Command $cmdline
+
           Publish-TestResults -Title "PSResourceGet - ACR tests" -Path $outputFilePath -Type NUnit
       displayName: 'PSResourceGet ACR functional tests using AzAuth'
 
