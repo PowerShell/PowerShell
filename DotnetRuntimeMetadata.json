@@ -1,11 +1,11 @@
 {
   "sdk": {
-    "channel": "8.0.1xx",
+    "channel": "9.0.1xx-preview6",
     "quality": "daily",
     "qualityFallback": "preview",
-    "packageVersionPattern": "8.0.0",
-    "sdkImageVersion": "8.0.101",
-    "nextChannel": "8.0.1xx",
+    "packageVersionPattern": "9.0.0-preview.6",
+    "sdkImageVersion": "9.0.0-preview.6.24327.7",
+    "nextChannel": "9.0.0-preview.7",
     "azureFeed": "",
     "sdkImageOverride": ""
   },
