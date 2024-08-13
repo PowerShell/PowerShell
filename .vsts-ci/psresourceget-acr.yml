@@ -107,7 +107,7 @@ stages:
         Invoke-CIInstall
       displayName: Bootstrap
 
-    - powershell: |
+    - pwsh: |
         # Set environment variable to identify in tests that secret store should not be used.
           $vstsCommandString = "vso[task.setvariable variable=UsingAzAuth]true"
           Write-Host "sending " + $vstsCommandString
@@ -119,6 +119,7 @@ stages:
         azureSubscription: PSResourceGetACR
         azurePowerShellVersion: LatestVersion
         ScriptType: InlineScript
+        pwsh: true
         inline: |
           Import-Module .\build.psm1 -force
           Start-PSBootstrap
@@ -128,6 +129,12 @@ stages:
           $path = split-path -path $options.Output
           $rootPath = split-Path -path $path
           Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
+
+          if (-not (Test-Path -Path "$rootPath\pwsh.exe")) {
+            Write-Error "pwsh.exe not found at $rootPath"
+            Get-ChildItem -Path $rootPath -Recurse
+            exit 1
+          }
 
           $outputFilePath = "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\ACRTests.xml"
           $cmdline = 'Invoke-Pester -Path "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1" -TestName "PSResourceGet - ACR tests" -OutputFile $outputFilePath -OutputFormat NUnitXml'
