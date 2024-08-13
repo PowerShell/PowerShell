@@ -69,61 +69,62 @@ stages:
     displayName: PSResourceGet ACR Tests
     pool:
       vmImage: 'windows-latest'
+
     steps:
     - pwsh: |
-      Get-ChildItem -Path env:
-    displayName: Capture Environment
-    condition: succeededOrFailed()
+        Get-ChildItem -Path env:
+      displayName: Capture Environment
+      condition: succeededOrFailed()
 
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download Build Artifacts'
-    inputs:
-      downloadType: specific
-      itemPattern: |
-        build/**/*
-      downloadPath: '$(System.ArtifactsDirectory)'
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Artifacts'
+      inputs:
+        downloadType: specific
+        itemPattern: |
+          build/**/*
+        downloadPath: '$(System.ArtifactsDirectory)'
 
-  - pwsh: |
-      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
-    displayName: 'Capture Artifacts Directory'
-    continueOnError: true
+    - pwsh: |
+        Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+      displayName: 'Capture Artifacts Directory'
+      continueOnError: true
 
-  # must be run frow Windows PowerShell
-  - powershell: |
-      # Remove "Program Files\dotnet" from the env variable PATH, so old SDKs won't affect us.
-      Write-Host "Old Path:"
-      Write-Host $env:Path
+    # must be run frow Windows PowerShell
+    - powershell: |
+        # Remove "Program Files\dotnet" from the env variable PATH, so old SDKs won't affect us.
+        Write-Host "Old Path:"
+        Write-Host $env:Path
 
-      $dotnetPath = Join-Path $env:SystemDrive 'Program Files\dotnet'
-      $paths = $env:Path -split ";" | Where-Object { -not $_.StartsWith($dotnetPath) }
-      $env:Path = $paths -join ";"
+        $dotnetPath = Join-Path $env:SystemDrive 'Program Files\dotnet'
+        $paths = $env:Path -split ";" | Where-Object { -not $_.StartsWith($dotnetPath) }
+        $env:Path = $paths -join ";"
 
-      Write-Host "New Path:"
-      Write-Host $env:Path
+        Write-Host "New Path:"
+        Write-Host $env:Path
 
-      # Bootstrap
-      Import-Module .\tools\ci.psm1
-      Invoke-CIInstall
-    displayName: Bootstrap
+        # Bootstrap
+        Import-Module .\tools\ci.psm1
+        Invoke-CIInstall
+      displayName: Bootstrap
 
-  - powershell: |
-      # Set environment variable to identify in tests that secret store should not be used.
-        $vstsCommandString = "vso[task.setvariable variable=UsingAzAuth]true"
-        Write-Host "sending " + $vstsCommandString
-        Write-Host "##$vstsCommandString"
-    displayName: 'Set UsingAzAuth environment variable'
+    - powershell: |
+        # Set environment variable to identify in tests that secret store should not be used.
+          $vstsCommandString = "vso[task.setvariable variable=UsingAzAuth]true"
+          Write-Host "sending " + $vstsCommandString
+          Write-Host "##$vstsCommandString"
+      displayName: 'Set UsingAzAuth environment variable'
 
-  - task: AzurePowerShell@5
-    inputs:
-      azureSubscription: PSResourceGetACR
-      azurePowerShellVersion: LatestVersion
-      ScriptType: InlineScript
-      inline: |
-        Import-Module .\build.psm1 -force
-        $modulePath = Join-Path -Path $env:AGENT_TEMPDIRECTORY -ChildPath 'TempModules'
-        $env:PSModulePath = $modulePath + [System.IO.Path]::PathSeparator + $env:PSModulePath
-        $outputFilePath = "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\ACRTests.xml"
-        Invoke-Pester -Path "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1" -TestName "PSResourceGet - ACR tests" -OutputFile $outputFilePath -OutputFormat NUnitXml
-        Publish-TestResults -Title "PSResourceGet - ACR tests" -Path $outputFilePath -Type NUnit
-    displayName: 'PSResourceGet ACR functional tests using AzAuth'
+    - task: AzurePowerShell@5
+      inputs:
+        azureSubscription: PSResourceGetACR
+        azurePowerShellVersion: LatestVersion
+        ScriptType: InlineScript
+        inline: |
+          Import-Module .\build.psm1 -force
+          $modulePath = Join-Path -Path $env:AGENT_TEMPDIRECTORY -ChildPath 'TempModules'
+          $env:PSModulePath = $modulePath + [System.IO.Path]::PathSeparator + $env:PSModulePath
+          $outputFilePath = "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\ACRTests.xml"
+          Invoke-Pester -Path "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1" -TestName "PSResourceGet - ACR tests" -OutputFile $outputFilePath -OutputFormat NUnitXml
+          Publish-TestResults -Title "PSResourceGet - ACR tests" -Path $outputFilePath -Type NUnit
+      displayName: 'PSResourceGet ACR functional tests using AzAuth'
 
