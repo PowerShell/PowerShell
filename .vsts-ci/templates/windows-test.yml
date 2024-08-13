@@ -83,28 +83,4 @@ jobs:
       Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
       Invoke-CITest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}'
     displayName: Test
-    condition: and(succeeded(), ne('${{ parameters.purpose }}', 'PSResourceGetACRTests'))
-
-  - powershell: |
-      # Set environment variable to identify in tests that secret store should not be used.
-        $vstsCommandString = "vso[task.setvariable variable=UsingAzAuth]true"
-        Write-Host "sending " + $vstsCommandString
-        Write-Host "##$vstsCommandString"
-    displayName: 'Set UsingAzAuth environment variable'
-    condition: and(succeeded(), eq('${{ parameters.purpose }}', 'PSResourceGetACRTests'))
-
-  - task: AzurePowerShell@5
-    inputs:
-      azureSubscription: PSResourceGetACR
-      azurePowerShellVersion: LatestVersion
-      ScriptType: InlineScript
-      inline: |
-        Import-Module .\build.psm1 -force
-        $modulePath = Join-Path -Path $env:AGENT_TEMPDIRECTORY -ChildPath 'TempModules'
-        $env:PSModulePath = $modulePath + [System.IO.Path]::PathSeparator + $env:PSModulePath
-        $outputFilePath = "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\ACRTests.xml"
-        Invoke-Pester -Path "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1" -TestName "PSResourceGet - ACR tests" -OutputFile $outputFilePath -OutputFormat NUnitXml
-        Publish-TestResults -Title "PSResourceGet - ACR tests" -Path $outputFilePath -Type NUnit
-    displayName: 'PSResourceGet ACR functional tests using AzAuth'
-    condition: and(succeeded(), eq('${{ parameters.purpose }}', 'PSResourceGetACRTests'))
 

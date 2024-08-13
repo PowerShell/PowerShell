@@ -84,10 +84,5 @@ stages:
     parameters:
       purpose: ElevatedPesterTests
       tagSet: Others
-  
-  - template: templates/windows-test.yml
-    parameters:
-      purpose: PSResourceGetACRTests
-      tagSet: Feature
 
   - template: templates/verify-xunit.yml

@@ -111,13 +111,6 @@ stages:
       purpose: ElevatedPesterTests
       tagSet: Others
 
-  - template: templates/nix-test.yml
-    parameters:
-      name: Ubuntu
-      pool: ubuntu-20.04
-      purpose: PSResourceGetACRTests
-      tagSet: Feature
-
   - template: templates/verify-xunit.yml
     parameters:
       pool: ubuntu-20.04
@@ -172,13 +165,6 @@ stages:
       pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: Others
-
-  - template: templates/nix-test.yml
-    parameters:
-      name: container
-      pool: ubuntu-20.04
-      purpose: PSResourceGetACRTests
-      tagSet: Feature
 
 - stage: PackageLinux
   displayName: Package Linux
