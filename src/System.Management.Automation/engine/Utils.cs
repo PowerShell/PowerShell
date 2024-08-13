@@ -482,16 +482,11 @@ namespace System.Management.Automation
 
         internal static string GetApplicationBase(string shellId)
         {
-            var baseDirectory = AppContext.BaseDirectory;
-            if (!string.IsNullOrEmpty(baseDirectory))
+            var baseDirectory = Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
+            if (string.IsNullOrEmpty(baseDirectory))
             {
                 // need to remove any trailing directory separator characters
-                baseDirectory = baseDirectory.TrimEnd(Path.DirectorySeparatorChar);
-            }
-            else
-            {
-                // host path can be empty if hosted in WinRM, so fallback to using SMA.dll location
-                baseDirectory = Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
+                baseDirectory = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
             }
 
             return baseDirectory;
