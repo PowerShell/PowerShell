@@ -255,7 +255,9 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
 
         Write-Verbose -Verbose "Test - Skipping = $isSkipped"
 
-        Set-ItResult -Skipped:$isSkipped -Because "The tests require the USINGAZAUTH environment variable to be set to 'true' for ACR authentication."
+        if ($isSkipped) {
+            Set-ItResult -Skipped -Because "The tests require the USINGAZAUTH environment variable to be set to 'true' for ACR authentication."
+        }
 
         $psgetModuleInfo = Find-PSResource -Name $ACRTestModule -Repository $ACRRepositoryName
         $ACRRepositoryName.Name | Should -Be $ACRTestModule
