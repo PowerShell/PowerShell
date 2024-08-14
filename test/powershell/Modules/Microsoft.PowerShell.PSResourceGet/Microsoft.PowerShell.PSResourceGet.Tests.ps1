@@ -84,8 +84,6 @@ function Initialize
 
     $acrTests = $env:ACRTESTS -eq 'true'
 
-    Write-Verbose "Using AzAuth: $acrTests"
-
     if ($acrTests)
     {
         if ($null -eq $env:TENANTID)
@@ -237,13 +235,11 @@ Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
 Describe "PSResourceGet - ACR tests" -tags "Feature" {
 
     BeforeAll {
-        Write-Verbose -Verbose "BeforeAll - Using AzAuth = $env:ACRTESTS"
         if ($env:ACRTESTS -ne 'true') {
             return
         }
 
         if ($script:Initialized -eq $false) {
-            Write-Verbose -Verbose "BeforeAll - Initializing"
             Initialize
             $script:Initialized = $true
         }
@@ -267,7 +263,7 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
         }
 
         $psgetModuleInfo = Find-PSResource -Name $ACRTestModule -Repository $ACRRepositoryName
-        $ACRRepositoryName.Name | Should -Be $ACRTestModule
+        $psgetModuleInfo.Name | Should -Be $ACRTestModule
         $psgetModuleInfo.Repository | Should -Be $ACRRepositoryName
     }
 
