@@ -4,7 +4,7 @@
     "quality": "ga",
     "qualityFallback": "daily",
     "packageVersionPattern": "6.0.0",
-    "sdkImageVersion": "6.0.424",
+    "sdkImageVersion": "6.0.425",
     "nextChannel": "6.0.4xx",
     "azureFeed": "",
     "sdkImageOverride": ""
