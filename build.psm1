@@ -877,7 +877,7 @@ function Restore-PSPackage
             $RestoreArguments += "--interactive"
         }
 
-        if ($env:ENABLE_MSBUILD_BINLOGS) {
+        if ($env:ENABLE_MSBUILD_BINLOGS -eq 'true') {
             $RestoreArguments += '-bl'
         }
 
@@ -898,7 +898,7 @@ function Restore-PSPackage
                     $retryCount++
                     if($retryCount -ge $maxTries)
                     {
-                        if ($env:ENABLE_MSBUILD_BINLOGS) {
+                        if ($env:ENABLE_MSBUILD_BINLOGS -eq 'true') {
                             if ( Test-Path ./msbuild.binlog ) {
                                 if (!(Test-Path $env:OB_OUTPUTDIRECTORY -PathType Container)) {
                                     $null = New-Item -path $env:OB_OUTPUTDIRECTORY -ItemType Directory -Force -Verbose
