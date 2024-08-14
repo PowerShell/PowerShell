@@ -106,12 +106,12 @@ stages:
         Invoke-CIInstall
       displayName: Bootstrap
 
-    - pwsh: |
-        # Set environment variable to identify in tests that secret store should not be used.
-          $vstsCommandString = "vso[task.setvariable variable=UsingAzAuth]true"
-          Write-Host "sending " + $vstsCommandString
-          Write-Host "##$vstsCommandString"
-      displayName: 'Set UsingAzAuth environment variable'
+    # - pwsh: |
+    #     # Set environment variable to identify in tests that secret store should not be used.
+    #       $vstsCommandString = "vso[task.setvariable variable=UsingAzAuth]true"
+    #       Write-Host "sending " + $vstsCommandString
+    #       Write-Host "##$vstsCommandString"
+    #   displayName: 'Set UsingAzAuth environment variable'
 
     - task: AzurePowerShell@5
       inputs:
@@ -132,7 +132,7 @@ stages:
           $pwshExe = Get-ChildItem -Path $rootPath -Recurse -Filter pwsh.exe | Select-Object -First 1
 
           $outputFilePath = "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\ACRTests.xml"
-          $cmdline = "Invoke-Pester -Path '$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1' -TestName 'PSResourceGet - ACR tests' -OutputFile $outputFilePath -OutputFormat NUnitXml"
+          $cmdline = "$env:UsingAzAuth = 'true'; Invoke-Pester -Path '$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1' -TestName 'PSResourceGet - ACR tests' -OutputFile $outputFilePath -OutputFormat NUnitXml"
           Write-Verbose -Verbose "Running $cmdline"
 
           & $pwshExe -Command $cmdline
