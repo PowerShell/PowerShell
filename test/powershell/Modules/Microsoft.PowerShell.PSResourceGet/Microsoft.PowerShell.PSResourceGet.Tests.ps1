@@ -88,7 +88,7 @@ function Initialize
 
     if ($usingAzAuth)
     {
-        Register-PSResourceRepository -Name $ACRRepositoryName -Uri $ACRRepoUri -ApiVersion 'ContainerRegistry' -Trusted -Force
+        Register-PSResourceRepository -Name $ACRRepositoryName -Uri $ACRRepoUri -ApiVersion 'ContainerRegistry' -Trusted -Force -Verbose
     }
 }
 
@@ -236,6 +236,7 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
         }
 
         if ($script:Initialized -eq $false) {
+            Write-Verbose -Verbose "BeforeAll - Initializing"
             Initialize
             $script:Initialized = $true
         }
@@ -251,6 +252,8 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
 
     It "Should find a module correctly" {
         $isSkipped = $env:USINGAZAUTH -ne 'true'
+
+        Write-Verbose -Verbose "Test - Skipping = $isSkipped"
 
         Set-ItResult -Skipped:$isSkipped -Because "The tests require the USINGAZAUTH environment variable to be set to 'true' for ACR authentication."
 
