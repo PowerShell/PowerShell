@@ -6,6 +6,11 @@ parameters:
   default: true
 
 steps:
+- task: NuGetAuthenticate@1
+  displayName: Install Azure Artifacts Credential Provider
+  inputs:
+    forceReinstallCredentialProvider: true
+
 - pwsh: |
     try {
       $configPath = "${env:NugetConfigDir}/nuget.config"
