@@ -4,6 +4,7 @@
 
   <PropertyGroup>
     <Description>A simple ASP.NET Core MVC app to provide an HTTP and HTTPS server for testing.</Description>
+    <NoWarn>$(NoWarn);SYSLIB0057</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
