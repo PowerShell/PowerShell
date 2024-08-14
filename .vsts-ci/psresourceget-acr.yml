@@ -131,7 +131,6 @@ stages:
           Write-Host "sending " + $vstsCommandString
           Write-Host "##$vstsCommandString"
       displayName: 'Setup Azure Container Registry secret'
-      condition: eq(${{ parameters.useAzAuth }}, false)
 
     - pwsh: |
         Import-Module .\build.psm1 -force
