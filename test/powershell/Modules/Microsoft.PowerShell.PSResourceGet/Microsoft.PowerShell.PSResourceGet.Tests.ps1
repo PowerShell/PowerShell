@@ -83,6 +83,9 @@ function Initialize
     }
 
     $usingAzAuth = $env:USINGAZAUTH -eq 'true'
+
+    Write-Verbose "Using AzAuth: $usingAzAuth"
+
     if ($usingAzAuth)
     {
         Register-PSResourceRepository -Name $ACRRepositoryName -Uri $ACRRepoUri -ApiVersion 'ContainerRegistry' -Trusted -Force
@@ -227,6 +230,7 @@ Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
 Describe "PSResourceGet - ACR tests" -tags "Feature" {
 
     BeforeAll {
+        Write-Verbose -Verbose "BeforeAll - Using AzAuth = $env:USINGAZAUTH"
         if ($env:USINGAZAUTH -ne 'true') {
             return
         }
@@ -247,6 +251,7 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
 
     It "Should find a module correctly" {
         $isSkipped = $env:USINGAZAUTH -ne 'true'
+
         Set-ItResult -Skipped:$isSkipped -Because "The tests require the USINGAZAUTH environment variable to be set to 'true' for ACR authentication."
 
         $psgetModuleInfo = Find-PSResource -Name $ACRTestModule -Repository $ACRRepositoryName
