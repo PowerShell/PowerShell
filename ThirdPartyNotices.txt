@@ -285,7 +285,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.Extensions.ObjectPool 8.0.7 - MIT
+Microsoft.Extensions.ObjectPool 8.0.8 - MIT
 
 
 Copyright 2019 The gRPC
@@ -656,7 +656,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Windows.Compatibility 8.0.7 - MIT
+Microsoft.Windows.Compatibility 8.0.8 - MIT
 
 
 (c) Microsoft Corporation
@@ -2444,12 +2444,9 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Drawing.Common 8.0.7 - MIT
+System.Drawing.Common 8.0.8 - MIT
 
 
-(c) Microsoft Corporation
-Copyright (c) Sven Groot (Ookii.org) 2009
-Copyright (c) .NET Foundation and Contributors
 
 The MIT License (MIT)
 
@@ -2823,7 +2820,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Net.Http.WinHttpHandler 8.0.1 - MIT
+System.Net.Http.WinHttpHandler 8.0.2 - MIT
 
 
 Copyright (c) Six Labors
