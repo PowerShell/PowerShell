@@ -28,6 +28,8 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.8" />
     <PackageReference Include="XunitXml.TestLogger" Version="3.1.20" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <!-- This section is to force the version of non-direct dependencies -->
+    <PackageReference Include="Validation" Version="2.4.22" />
   </ItemGroup>
 
   <ItemGroup>

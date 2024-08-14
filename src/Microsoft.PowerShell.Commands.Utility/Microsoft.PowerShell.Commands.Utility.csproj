@@ -36,6 +36,8 @@
     <PackageReference Include="System.Threading.AccessControl" Version="9.0.0-preview.7.24405.7" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.0-preview.7.24405.4" />
     <PackageReference Include="JsonSchema.Net" Version="7.0.4" />
+    <!-- This section is to force the version of non-direct dependencies -->
+    <PackageReference Include="JsonPointer.Net" Version="5.0.2" />
   </ItemGroup>
 
 </Project>
