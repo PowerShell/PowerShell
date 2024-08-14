@@ -82,13 +82,20 @@ function Initialize
         Register-PSResourceRepository -PSGallery -Trusted
     }
 
-    $usingAzAuth = $env:USINGAZAUTH -eq 'true'
+    $acrTests = $env:ACRTESTS -eq 'true'
 
-    Write-Verbose "Using AzAuth: $usingAzAuth"
+    Write-Verbose "Using AzAuth: $acrTests"
 
-    if ($usingAzAuth)
+    if ($acrTests)
     {
-        Register-PSResourceRepository -Name $ACRRepositoryName -Uri $ACRRepoUri -ApiVersion 'ContainerRegistry' -Trusted -Force -Verbose
+        if ($null -eq $env:TENANTID)
+        {
+            Write-Error "The TENANTID environment variable must be set for ACR tests."
+            return
+        }
+
+        $psCredInfo = New-Object Microsoft.PowerShell.PSResourceGet.UtilClasses.PSCredentialInfo ("SecretStore", "$env:TENANTID")
+        Register-PSResourceRepository -Name $ACRRepoName -ApiVersion 'ContainerRegistry' -Uri $ACRRepoUri -CredentialInfo $psCredInfo -Verbose
     }
 }
 
@@ -230,8 +237,8 @@ Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
 Describe "PSResourceGet - ACR tests" -tags "Feature" {
 
     BeforeAll {
-        Write-Verbose -Verbose "BeforeAll - Using AzAuth = $env:USINGAZAUTH"
-        if ($env:USINGAZAUTH -ne 'true') {
+        Write-Verbose -Verbose "BeforeAll - Using AzAuth = $env:ACRTESTS"
+        if ($env:ACRTESTS -ne 'true') {
             return
         }
 
@@ -243,7 +250,7 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
     }
 
     BeforeEach {
-        if ($env:USINGAZAUTH -ne 'true') {
+        if ($env:ACRTESTS -ne 'true') {
             return
         }
 
@@ -251,12 +258,12 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
     }
 
     It "Should find a module correctly" {
-        $isSkipped = $env:USINGAZAUTH -ne 'true'
+        $isSkipped = $env:ACRTESTS -ne 'true'
 
         Write-Verbose -Verbose "Test - Skipping = $isSkipped"
 
         if ($isSkipped) {
-            Set-ItResult -Skipped -Because "The tests require the USINGAZAUTH environment variable to be set to 'true' for ACR authentication."
+            Set-ItResult -Skipped -Because "The tests require the ACRTESTS environment variable to be set to 'true' for ACR authentication."
         }
 
         $psgetModuleInfo = Find-PSResource -Name $ACRTestModule -Repository $ACRRepositoryName
@@ -265,8 +272,11 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
     }
 
     It "Should install a module correctly to the required location with default CurrentUser scope" {
-        $isSkipped = $env:USINGAZAUTH -ne 'true'
-        Set-ItResult -Skipped:$isSkipped -Because "The tests require the USINGAZAUTH environment variable to be set to 'true' for ACR authentication."
+        $isSkipped = $env:ACRTESTS -ne 'true'
+
+        if ($isSkipped) {
+            Set-ItResult -Skipped:$isSkipped -Because "The tests require the ACRTESTS environment variable to be set to 'true' for ACR authentication."
+        }
 
         Install-PSResource -Name $ACRTestModule -Repository $ACRRepositoryName
         $installedModuleInfo = Get-InstalledPSResource -Name $ACRTestModule
@@ -283,7 +293,7 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
     }
 
     AfterAll {
-        if ($env:USINGAZAUTH -ne 'true') {
+        if ($env:ACRTESTS -ne 'true') {
             return
         }
 

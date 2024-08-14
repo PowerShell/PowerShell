@@ -106,12 +106,13 @@ stages:
         Invoke-CIInstall
       displayName: Bootstrap
 
-    # - pwsh: |
-    #     # Set environment variable to identify in tests that secret store should not be used.
-    #       $vstsCommandString = "vso[task.setvariable variable=UsingAzAuth]true"
-    #       Write-Host "sending " + $vstsCommandString
-    #       Write-Host "##$vstsCommandString"
-    #   displayName: 'Set UsingAzAuth environment variable'
+    - pwsh: |
+        Install-Module -Name 'Microsoft.PowerShell.SecretManagement' -force -SkipPublisherCheck -AllowClobber
+        Install-Module -Name 'Microsoft.PowerShell.SecretStore' -force -SkipPublisherCheck -AllowClobber
+        $vaultPassword = ConvertTo-SecureString $("a!!"+ (Get-Random -Maximum ([int]::MaxValue))) -AsPlainText -Force
+        Set-SecretStoreConfiguration -Authentication None -Interaction None -Confirm:$false -Password $vaultPassword
+        Register-SecretVault -Name SecretStore -ModuleName Microsoft.PowerShell.SecretStore -DefaultVault
+      displayName: 'Install Secret store'
 
     - task: AzurePowerShell@5
       inputs:
@@ -120,23 +121,36 @@ stages:
         ScriptType: InlineScript
         pwsh: true
         inline: |
-          Import-Module .\build.psm1 -force
-          Start-PSBootstrap
-          Import-Module .\tools\ci.psm1
-          Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
-          $options = (Get-PSOptions)
-          $path = split-path -path $options.Output
-          $rootPath = split-Path -path $path
-          Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
+          Write-Verbose -Verbose "Getting Azure Container Registry"
+          Get-AzContainerRegistry -ResourceGroupName 'PSResourceGet' -Name 'psresourcegettest' | Select-Object -Property *
+          Write-Verbose -Verbose "Setting up secret for Azure Container Registry"
+          $azt = Get-AzAccessToken
+          $tenantId = $azt.TenantID
+          Set-Secret -Name $tenantId -Secret $azt.Token -Verbose
+          $vstsCommandString = "vso[task.setvariable variable=TenantId]$tenantId"
+          Write-Host "sending " + $vstsCommandString
+          Write-Host "##$vstsCommandString"
+      displayName: 'Setup Azure Container Registry secret'
+      condition: eq(${{ parameters.useAzAuth }}, false)
 
-          $pwshExe = Get-ChildItem -Path $rootPath -Recurse -Filter pwsh.exe | Select-Object -First 1
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Start-PSBootstrap
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+        $options = (Get-PSOptions)
+        $path = split-path -path $options.Output
+        $rootPath = split-Path -path $path
+        Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
 
-          $outputFilePath = "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\ACRTests.xml"
-          $cmdline = "`$env:UsingAzAuth = 'true'; Invoke-Pester -Path '$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1' -TestName 'PSResourceGet - ACR tests' -OutputFile $outputFilePath -OutputFormat NUnitXml"
-          Write-Verbose -Verbose "Running $cmdline"
+        $pwshExe = Get-ChildItem -Path $rootPath -Recurse -Filter pwsh.exe | Select-Object -First 1
 
-          & $pwshExe -Command $cmdline
+        $outputFilePath = "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\ACRTests.xml"
+        $cmdline = "`$env:ACRTESTS = 'true'; Invoke-Pester -Path '$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1' -TestName 'PSResourceGet - ACR tests' -OutputFile $outputFilePath -OutputFormat NUnitXml"
+        Write-Verbose -Verbose "Running $cmdline"
 
-          Publish-TestResults -Title "PSResourceGet - ACR tests" -Path $outputFilePath -Type NUnit
+        & $pwshExe -Command $cmdline
+
+        Publish-TestResults -Title "PSResourceGet - ACR tests" -Path $outputFilePath -Type NUnit
       displayName: 'PSResourceGet ACR functional tests using AzAuth'
 
