@@ -734,7 +734,7 @@ function Switch-PSNugetConfig {
         [Parameter(Mandatory = $true, ParameterSetName = 'user')]
         [Parameter(Mandatory = $true, ParameterSetName = 'nouser')]
         [ValidateSet('Public', 'Private')]
-        [string] $Source = 'Public',
+        [string] $Source,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'user')]
         [string] $UserName,
