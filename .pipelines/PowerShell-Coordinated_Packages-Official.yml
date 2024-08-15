@@ -70,8 +70,8 @@ variables:
     value: ${{ parameters.ReleaseTagVar }}
   - name: SKIP_SIGNING
     value: ${{ parameters.SKIP_SIGNING }}
-  - group: 'AzDevOpsArtifacts'
-  - group: 'mscodehub-feed-read-akv'
+  - group: mscodehub-feed-read-general
+  - group: mscodehub-feed-read-akv
   - name: ENABLE_MSBUILD_BINLOGS
     value: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
 
@@ -79,6 +79,11 @@ extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
   parameters:
     customTags: 'ES365AIMigrationTooling'
+    featureFlags:
+      LinuxHostVersion:
+          Network: KS3
+      WindowsHostVersion:
+          Network: KS3
     globalSdl:
       disableLegacyManifest: true
       # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
@@ -121,15 +126,18 @@ extends:
           type: windows
 
         variables:
-          - name: ob_sdl_tsa_configFile
-            value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
-          - name: ob_sdl_credscan_suppressionsFile
-            value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-          - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-            - name: ob_sdl_codeql_compiled_enabled
-              value: true
           - name: ob_outputDirectory
             value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/BuildJson'
+          - name: ob_sdl_codeSignValidation_enabled
+            value: false
+          - name: ob_sdl_codeql_compiled_enabled
+            value: false
+          - name: ob_sdl_credscan_suppressionsFile
+            value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+          - name: ob_sdl_tsa_configFile
+            value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+          - name: ob_signing_setup_enabled
+            value: false
 
         steps:
         - checkout: self
@@ -140,6 +148,8 @@ extends:
         - pwsh: |
             Get-ChildItem Env:
           displayName: Capture environment variables
+          env:
+            ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
         - template: /.pipelines/templates/SetVersionVariables.yml@self
           parameters:

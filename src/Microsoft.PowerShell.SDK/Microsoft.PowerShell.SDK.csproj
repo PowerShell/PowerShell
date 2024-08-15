@@ -17,7 +17,7 @@
   <ItemGroup>
     <!-- This section is to force the version of non-direct dependencies -->
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.4" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.8" />
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
