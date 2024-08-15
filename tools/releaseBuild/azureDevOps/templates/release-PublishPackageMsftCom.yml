@@ -19,7 +19,7 @@ steps:
     "--verbose",
     "--branch",
     "$branch",
-    "https://$(mscodehubPackageReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools",
+    "https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools",
     '$(Pipeline.Workspace)/tools'
     $gitArgs | Write-Verbose -Verbose
     git $gitArgs

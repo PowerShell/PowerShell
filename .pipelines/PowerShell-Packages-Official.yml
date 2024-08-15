@@ -52,6 +52,7 @@ variables:
     value: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest' # Docker image which is used to build the project
   - name: LinuxContainerImage
     value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+  - group: mscodehub-feed-read-general
   - group: mscodehub-feed-read-akv
   - name: branchCounterKey
     value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]

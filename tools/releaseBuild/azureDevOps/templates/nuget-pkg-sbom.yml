@@ -20,6 +20,10 @@ parameters:
 
 steps:
 
+- template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+  parameters:
+    repoRoot: $(REPOROOT)
+
 - pwsh: |
     Import-Module "$env:REPOROOT/build.psm1" -Force
     Start-PSBootstrap
