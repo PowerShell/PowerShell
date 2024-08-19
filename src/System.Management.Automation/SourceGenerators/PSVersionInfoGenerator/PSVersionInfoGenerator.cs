@@ -21,45 +21,48 @@ namespace SMA
         {
             IncrementalValueProvider<BuildOptions> buildOptionsProvider = context.AnalyzerConfigOptionsProvider
                 .Select(static (provider, _) =>
-            {
-                provider.GlobalOptions.TryGetValue("build_property.ProductVersion", out var productVersion);
-                provider.GlobalOptions.TryGetValue("build_property.PSCoreBuildVersion", out var mainVersion);
-                provider.GlobalOptions.TryGetValue("build_property.PowerShellVersion", out var gitDescribe);
-                provider.GlobalOptions.TryGetValue("build_property.ReleaseTag", out var releaseTag);
-
-                BuildOptions options = new BuildOptions
                 {
-                    ProductVersion = productVersion ?? string.Empty,
-                    MainVersion = mainVersion ?? string.Empty,
-                    GitDescribe = gitDescribe ?? string.Empty,
-                    ReleaseTag = releaseTag ?? string.Empty
-                };
+                    provider.GlobalOptions.TryGetValue("build_property.ProductVersion", out var productVersion);
+                    provider.GlobalOptions.TryGetValue("build_property.PSCoreBuildVersion", out var mainVersion);
+                    provider.GlobalOptions.TryGetValue("build_property.PowerShellVersion", out var gitDescribe);
+                    provider.GlobalOptions.TryGetValue("build_property.ReleaseTag", out var releaseTag);
 
-                return options;
-            });
+                    BuildOptions options = new()
+                    {
+                        ProductVersion = productVersion ?? string.Empty,
+                        MainVersion = mainVersion ?? string.Empty,
+                        GitDescribe = gitDescribe ?? string.Empty,
+                        ReleaseTag = releaseTag ?? string.Empty
+                    };
 
-            context.RegisterSourceOutput(buildOptionsProvider,
-            static (context, buildOptions) =>
-            {
-                string gitCommitId = string.IsNullOrEmpty(buildOptions.ReleaseTag) ? buildOptions.GitDescribe : buildOptions.ReleaseTag;
-                if (gitCommitId.StartsWith("v"))
+                    return options;
+                });
+
+            context.RegisterSourceOutput(
+                buildOptionsProvider,
+                static (context, buildOptions) =>
                 {
-                    gitCommitId = gitCommitId.Substring(1);
-                }
+                    string gitCommitId = string.IsNullOrEmpty(buildOptions.ReleaseTag) ? buildOptions.GitDescribe : buildOptions.ReleaseTag;
+                    if (gitCommitId.StartsWith("v"))
+                    {
+                        gitCommitId = gitCommitId.Substring(1);
+                    }
 
-                var versions = ParsePSVersion(buildOptions.MainVersion);
-                string result = string.Format(
-                    CultureInfo.InvariantCulture,
-                    SourceTemplate,
-                    buildOptions.ProductVersion,
-                    gitCommitId,
-                    versions.major,
-                    versions.minor,
-                    versions.patch,
-                    versions.preReleaseLabel);
+                    var versions = ParsePSVersion(buildOptions.MainVersion);
+                    string result = string.Format(
+                        CultureInfo.InvariantCulture,
+                        SourceTemplate,
+                        buildOptions.ProductVersion,
+                        gitCommitId,
+                        versions.major,
+                        versions.minor,
+                        versions.patch,
+                        versions.preReleaseLabel);
 
-                context.AddSource($"PSVersionInfo.g.cs", result);
-            });
+                    // We must use specific file name suffix (*.g.cs,*.g, *.i.cs, *.generated.cs, *.designer.cs)
+                    // so that Roslyn analyzers skip the file.
+                    context.AddSource("PSVersionInfo.g.cs", result);
+                });
         }
 
         private struct BuildOptions
