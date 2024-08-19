@@ -3115,9 +3115,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             _removedFiles++;
                             _removedBytes += fileBytesSize;
-                            double speed = _removedBytes / 1024 / 1024 / _removeStopwatch.Elapsed.TotalSeconds;
                             if (_removeStopwatch.Elapsed.TotalSeconds > ProgressBarDurationThreshold)
                             {
+                                double speed = _removedBytes / 1024 / 1024 / _removeStopwatch.Elapsed.TotalSeconds;
                                 var progress = new ProgressRecord(
                                     REMOVE_FILE_ACTIVITY_ID,
                                     StringUtil.Format(FileSystemProviderStrings.RemovingLocalFileActivity, _removedFiles, _totalFiles),
@@ -3997,9 +3997,9 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 _copiedFiles++;
                                 _copiedBytes += file.Length;
-                                double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
                                 if (_copyStopwatch.Elapsed.TotalSeconds > ProgressBarDurationThreshold)
                                 {
+                                    double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
                                     var progress = new ProgressRecord(
                                         COPY_FILE_ACTIVITY_ID,
                                         StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
@@ -4951,7 +4951,7 @@ namespace Microsoft.PowerShell.Commands
         private long _removedFiles;
         private readonly Stopwatch _removeStopwatch = new();
 
-        private const double ProgressBarDurationThreshold = 3.0;
+        private const double ProgressBarDurationThreshold = 2.0;
         #endregion CopyItem
 
         #endregion ContainerCmdletProvider members
