@@ -352,11 +352,7 @@ try {
 
         if ($IsWinEnv) {
             if ($UseMSI) {
-                if ($architecture -eq "arm64") {
-                    $packageName = "PowerShell-${release}-win-${architecture}.msix"
-                } else {
-                    $packageName = "PowerShell-${release}-win-${architecture}.msi"
-                }
+                $packageName = "PowerShell-${release}-win-${architecture}.msi"
             } else {
                 $packageName = "PowerShell-${release}-win-${architecture}.zip"
             }
