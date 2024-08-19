@@ -485,7 +485,7 @@ namespace System.Management.Automation
             var baseDirectory = Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
             if (string.IsNullOrEmpty(baseDirectory))
             {
-                // need to remove any trailing directory separator characters
+                // Need to remove any trailing directory separator characters
                 baseDirectory = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
             }
 
