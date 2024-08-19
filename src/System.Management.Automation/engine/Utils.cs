@@ -482,6 +482,8 @@ namespace System.Management.Automation
 
         internal static string GetApplicationBase(string shellId)
         {
+            // Use the location of SMA.dll as the application base if it exists,
+            // otherwise, use the base directory from `AppContext`.
             var baseDirectory = Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
             if (string.IsNullOrEmpty(baseDirectory))
             {
