@@ -1741,7 +1741,12 @@ function New-ManGzip
     Write-Log "Creating man gz - running gzip..."
     Start-NativeExecution { gzip -f $RoffFile } -VerboseOutputOnError
 
-    $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
+    if($Environment.IsMacOS) {
+        $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
+    }
+    else {
+        $ManFile = Join-Path "/usr/share/man/man1" (Split-Path -Leaf $GzipFile)
+    }
 
     return [PSCustomObject ] @{
         GZipFile = $GzipFile
