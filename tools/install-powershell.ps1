@@ -384,9 +384,7 @@ try {
 
         $null = New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
         if ($IsWinEnv) {
-            if ($UseMSI -and $architecture -eq "arm64") {
-                Add-AppxPackage -Path $packagePath
-            } elseif ($UseMSI -and $Quiet) {
+            if ($UseMSI -and $Quiet) {
                 Write-Verbose "Performing quiet install"
                 $ArgumentList=@("/i", $packagePath, "/quiet")
                 if($MSIArguments) {
