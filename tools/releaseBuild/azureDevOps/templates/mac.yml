@@ -50,7 +50,7 @@ jobs:
       repoRoot: $(PowerShellRoot)
 
   - pwsh: |
-      $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
+      $env:AzDevOpsFeedPAT2 = '$(powershellPackageReadPat)'
       # Add -SkipReleaseChecks as a mitigation to unblock release.
       # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
       $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks

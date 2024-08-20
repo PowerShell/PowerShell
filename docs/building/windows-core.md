@@ -10,7 +10,7 @@ R2, though they should work anywhere the dependencies work.
 
 ### Git Setup
 
-Using Git requires it to be setup correctly; refer to the
+Using Git requires it to be set up correctly; refer to the
 [Readme](../../README.md) and
 [Contributing Guidelines](../../.github/CONTRIBUTING.md).
 

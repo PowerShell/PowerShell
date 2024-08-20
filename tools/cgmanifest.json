@@ -225,7 +225,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "8.0.7"
+          "Version": "8.0.8"
         }
       },
       "DevelopmentDependency": false
@@ -584,6 +584,16 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "System.Diagnostics.PerformanceCounter",
+          "Version": "8.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "System.DirectoryServices.AccountManagement",
           "Version": "8.0.0"
         }
@@ -615,7 +625,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "8.0.7"
+          "Version": "8.0.8"
         }
       },
       "DevelopmentDependency": false
@@ -665,7 +675,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Net.Http.WinHttpHandler",
-          "Version": "8.0.1"
+          "Version": "8.0.2"
         }
       },
       "DevelopmentDependency": false
