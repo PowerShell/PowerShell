@@ -89,11 +89,11 @@ jobs:
         Start-PSBootstrap
 
         $localLocation = "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg"
-        $xmlElement = @"
-          <add key=`"local`" value=`"$localLocation`" />
-          <add key="dotnet" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v2" />
-        </packageSources>
-        "@
+        # $xmlElement = @"
+        #   <add key=`"local`" value=`"$localLocation`" />
+        #   <add key="dotnet" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v2" />
+        # </packageSources>
+        # "@
 
         $releaseVersion = '$(Version)'
 
