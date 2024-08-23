@@ -84,6 +84,14 @@ steps:
     files_to_sign: '**\*.psd1;**\*.psm1;**\*.ps1xml;**\*.ps1;**\*.dll;**\*.exe;**\pwsh'
     search_root: $(Pipeline.Workspace)/toBeSigned
 
+- task: onebranch.pipeline.signing@1
+  displayName: Sign pwsh.exe with Windows cert
+  inputs:
+    command: 'sign'
+    signing_profile:
+    files_to_sign: '**\pwsh.exe'
+    search_root: $(Pipeline.Workspace)/toBeSigned
+
 - pwsh : |
     Get-ChildItem -Path env:
   displayName: Capture environment
