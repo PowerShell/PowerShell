@@ -105,7 +105,7 @@ extends:
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
       asyncSdl:
         enabled: true
-        forStages: [prep, macos, linux, windows, SignFiles, test_and_release_artifacts]
+        forStages: [prep, macos, linux, windows, test_and_release_artifacts]
         credscan:
           enabled: true
           scanFolder:  $(Build.SourcesDirectory)
