@@ -77,7 +77,14 @@ jobs:
 
       Start-PSBootstrap
       $null = New-Item -ItemType Directory -Path $buildWithSymbolsPath -Force -Verbose
-      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath @params -Clean -PSModuleRestore
+
+      $ReleaseTagParam = @{}
+
+      if ($env:RELEASETAGVAR) {
+        $ReleaseTagParam['ReleaseTag'] = $env:RELEASETAGVAR
+      }
+
+      Start-PSBuild -Runtime $runtime -Configuration Release -Output $buildWithSymbolsPath @params -Clean -PSModuleRestore @ReleaseTagParam
 
       $outputPath = Join-Path '$(ob_outputDirectory)' 'psoptions'
       $null = New-Item -ItemType Directory -Path $outputPath -Force
@@ -136,6 +143,7 @@ jobs:
   - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
     value: 1
   - group: DotNetPrivateBuildAccess
+  - group: certificate_logical_to_actual
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_codeSignValidation_enabled

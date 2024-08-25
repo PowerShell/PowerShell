@@ -105,7 +105,7 @@ function Invoke-CIBuild
         Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
     }
 
-    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
+    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag -UseNuGetOrg
     Save-PSOptions
 
     $options = (Get-PSOptions)
@@ -128,6 +128,10 @@ function Invoke-CIInstall
         [switch]
         $SkipUser
     )
+
+    # Switch to public sources in CI
+    Switch-PSNugetConfig -Source Public
+
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
 
@@ -480,6 +484,9 @@ function Invoke-CIFinish
         [string[]] $Stage = ('Build','Package')
     )
 
+    # Switch to public sources in CI
+    Switch-PSNugetConfig -Source Public
+
     if ($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS) -and $Stage -contains 'Build') {
         return New-LinuxPackage
     }
@@ -537,7 +544,7 @@ function Invoke-CIFinish
             switch -regex ($Runtime){
                 default {
                     $runPackageTest = $true
-                    $packageTypes = 'msi', 'nupkg', 'zip', 'zip-pdb', 'msix'
+                    $packageTypes = 'msi', 'zip', 'zip-pdb', 'msix'
                 }
                 'win-arm.*' {
                     $runPackageTest = $false
@@ -545,7 +552,8 @@ function Invoke-CIFinish
                 }
             }
 
-            Install-WixArmZip
+            Import-Module "$PSScriptRoot\wix\wix.psm1"
+            Install-Wix -arm64:$true
             $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
             foreach ($package in $packages) {
@@ -591,14 +599,6 @@ function Invoke-CIFinish
                     throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
                 }
             }
-
-            # only publish assembly nuget packages if it is a daily build and tests passed
-            if (Test-DailyBuild) {
-                $nugetArtifacts = Get-ChildItem $PSScriptRoot\packaging\nugetOutput -ErrorAction SilentlyContinue -Filter *.nupkg | Select-Object -ExpandProperty FullName
-                if ($nugetArtifacts) {
-                    $artifacts.AddRange(@($nugetArtifacts))
-                }
-            }
         }
     } catch {
         Get-Error -InputObject $_
@@ -620,33 +620,6 @@ function Invoke-CIFinish
             throw "Some artifacts did not exist!"
         }
     }
-}
-
-function Install-WixArmZip
-{
-    # cleanup previous install
-    if((Test-Path "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy")) {
-        Remove-Item "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy" -Recurse -Force
-    }
-
-    # This URI is for wix 3.14 which supports generating msi for arm architecures.
-    $wixUriArmSupport = 'https://aka.ms/ps-wix-3-14-zip'
-    $zipArmSupport = "$env:TEMP\wixArmSupport.zip"
-    $targetRoot = "${env:ProgramFiles(x86)}\Arm Support WiX Toolset xcopy"
-    Invoke-RestMethod -Uri $wixUriArmSupport -OutFile $zipArmSupport
-
-    $binPath = Join-Path -Path $targetRoot -ChildPath 'bin'
-    Write-Verbose "Expanding $zipArmSupport to $binPath ..." -Verbose
-    Expand-Archive -Path $zipArmSupport -DestinationPath $binPath -Force
-    $docExpandPath = Join-Path -Path $binPath -ChildPath 'doc'
-    $sdkExpandPath = Join-Path -Path $binPath -ChildPath 'sdk'
-    $docTargetPath = Join-Path -Path $targetRoot -ChildPath 'doc'
-    $sdkTargetPath = Join-Path -Path $targetRoot -ChildPath 'sdk'
-    Write-Verbose "Fixing folder structure ..." -Verbose
-    Move-Item -Path $docExpandPath -Destination $docTargetPath
-    Move-Item -Path $sdkExpandPath -Destination $sdkTargetPath
-    Set-Path -Append -Path $binPath
-    Write-Verbose "Done installing WIX for arm!"
 }
 
 function Set-Path

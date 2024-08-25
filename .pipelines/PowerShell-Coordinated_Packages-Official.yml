@@ -2,13 +2,6 @@ name: UnifiedPackageBuild-$(Build.BuildId)
 trigger: none
 
 parameters:
-  - name: ForceAzureBlobDelete
-    displayName: Delete Azure Blob
-    type: string
-    values:
-    - true
-    - false
-    default: false
   - name: InternalSDKBlobURL
     displayName: URL to the blob having internal .NET SDK
     type: string
@@ -21,6 +14,18 @@ parameters:
     displayName: Skip Signing
     type: string
     default: 'NO'
+  - name: RUN_TEST_AND_RELEASE
+    displayName: Run Test and Release Artifacts Stage
+    type: boolean
+    default: true
+  - name: RUN_WINDOWS
+    displayName: Enable Windows Stage
+    type: boolean
+    default: true
+  - name: ENABLE_MSBUILD_BINLOGS
+    displayName: Enable MSBuild Binary Logs
+    type: boolean
+    default: false
 
 resources:
   repositories:
@@ -51,8 +56,6 @@ variables:
     value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
   - name: branchCounter
     value: $[counter(variables['branchCounterKey'], 1)]
-  - name: ForceAzureBlobDelete
-    value: ${{ parameters.ForceAzureBlobDelete }}
   - name: BUILDSECMON_OPT_IN
     value: true
   - name: __DOTNET_RUNTIME_FEED
@@ -67,12 +70,20 @@ variables:
     value: ${{ parameters.ReleaseTagVar }}
   - name: SKIP_SIGNING
     value: ${{ parameters.SKIP_SIGNING }}
-  - group: 'AzDevOpsArtifacts'
+  - group: mscodehub-feed-read-general
+  - group: mscodehub-feed-read-akv
+  - name: ENABLE_MSBUILD_BINLOGS
+    value: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
 
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
   parameters:
     customTags: 'ES365AIMigrationTooling'
+    featureFlags:
+      LinuxHostVersion:
+          Network: KS3
+      WindowsHostVersion:
+          Network: KS3
     globalSdl:
       disableLegacyManifest: true
       # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
@@ -92,9 +103,9 @@ extends:
       cg:
         enabled: true
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
-      asyncSdl: # https://aka.ms/obpipelines/asyncsdl
+      asyncSdl:
         enabled: true
-        forStages: [prep, macos, linux, windows, SignFiles, test_and_release_artifacts]
+        forStages: [prep, macos, linux, windows, test_and_release_artifacts]
         credscan:
           enabled: true
           scanFolder:  $(Build.SourcesDirectory)
@@ -109,7 +120,42 @@ extends:
     stages:
     - stage: prep
       jobs:
-      - template: /.pipelines/templates/checkAzureContainer.yml@self
+      - job: SetVars
+        displayName: Set Variables
+        pool:
+          type: windows
+
+        variables:
+          - name: ob_outputDirectory
+            value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/BuildJson'
+          - name: ob_sdl_codeSignValidation_enabled
+            value: false
+          - name: ob_sdl_codeql_compiled_enabled
+            value: false
+          - name: ob_sdl_credscan_suppressionsFile
+            value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+          - name: ob_sdl_tsa_configFile
+            value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+          - name: ob_signing_setup_enabled
+            value: false
+
+        steps:
+        - checkout: self
+          clean: true
+          env:
+            ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+        - pwsh: |
+            Get-ChildItem Env:
+          displayName: Capture environment variables
+          env:
+            ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+        - template: /.pipelines/templates/SetVersionVariables.yml@self
+          parameters:
+            ReleaseTagVar: $(ReleaseTagVar)
+            CreateJson: yes
+            UseJson: no
 
     - stage: macos
       displayName: macOS - build and sign
@@ -175,6 +221,7 @@ extends:
     - stage: windows
       displayName: windows - build and sign
       dependsOn: ['prep']
+      condition: and(succeeded(),eq('${{ parameters.RUN_WINDOWS }}','true'))
       jobs:
       - template: /.pipelines/templates/windows-hosted-build.yml@self
         parameters:
@@ -206,6 +253,7 @@ extends:
     - stage: test_and_release_artifacts
       displayName: Test and Release Artifacts
       dependsOn: ['prep']
+      condition: and(succeeded(),eq('${{ parameters.RUN_TEST_AND_RELEASE }}','true'))
       jobs:
       - template: /.pipelines/templates/testartifacts.yml@self
 

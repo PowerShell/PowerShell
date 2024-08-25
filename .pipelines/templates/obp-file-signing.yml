@@ -1,5 +1,6 @@
 parameters:
   binPath: '$(ob_outputDirectory)'
+  globalTool: 'false'
 
 steps:
 - pwsh: |
@@ -127,7 +128,7 @@ steps:
   displayName: Sign 3rd Party files
   inputs:
     command: 'sign'
-    signing_profile: 135020002
+    signing_profile: $(msft_3rd_party_cert_id)
     files_to_sign: '**\*.dll;**\*.exe'
     search_root: $(Pipeline.Workspace)/thirdPartyToBeSigned
 
@@ -138,10 +139,17 @@ steps:
 - pwsh: |
     Import-Module '$(PowerShellRoot)/build.psm1' -Force
     Import-Module '$(PowerShellRoot)/tools/packaging' -Force
-    $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Signed-$(Runtime)' -Force
-    Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
-    Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
-    Write-Verbose -Verbose -Message "Files copied to $pathForUpload"
+    $isGlobalTool = '${{ parameters.globalTool }}' -eq 'true'
+
+    if (-not $isGlobalTool) {
+      $pathForUpload = New-Item -ItemType Directory -Path '$(ob_outputDirectory)/Signed-$(Runtime)' -Force
+      Write-Verbose -Verbose -Message "pathForUpload: $pathForUpload"
+      Copy-Item -Path '${{ parameters.binPath }}\*' -Destination $pathForUpload -Recurse -Force -Verbose
+      Write-Verbose -Verbose -Message "Files copied to $pathForUpload"
+    }
+    else {
+      $pathForUpload = '${{ parameters.binPath }}'
+    }
 
     Write-Verbose "Copying third party signed files to the build folder"
     $thirdPartySignedFilesPath = (Get-Item '$(Pipeline.Workspace)/thirdPartyToBeSigned').FullName

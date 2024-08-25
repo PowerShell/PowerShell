@@ -50,7 +50,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "tar-alpine-fxdependent")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "rpm-fxdependent-arm64", "msi", "zip", "zip-pdb", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size", "tar-alpine-fxdependent")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -60,6 +60,8 @@ function Start-PSPackage {
         [ValidateSet('osx-x64', 'osx-arm64')]
         [ValidateScript({$Environment.IsMacOS})]
         [string] $MacOSRuntime,
+
+        [string] $PackageBinPath,
 
         [switch] $Private,
 
@@ -245,7 +247,14 @@ function Start-PSPackage {
             $Version = (git --git-dir="$RepoRoot/.git" describe) -Replace '^v'
         }
 
-        $Source = Split-Path -Path $Script:Options.Output -Parent
+        $Source = if ($PackageBinPath) {
+            $PackageBinPath
+        }
+        else {
+            Split-Path -Path $Script:Options.Output -Parent
+        }
+
+        Write-Verbose -Verbose "Source: $Source"
 
         # Copy the ThirdPartyNotices.txt so it's part of the package
         Copy-Item "$RepoRoot/ThirdPartyNotices.txt" -Destination $Source -Force
@@ -312,18 +321,18 @@ function Start-PSPackage {
         if (-not $Type) {
             $Type = if ($Environment.IsLinux) {
                 if ($Environment.LinuxInfo.ID -match "ubuntu") {
-                    "deb", "nupkg", "tar"
+                    "deb", "tar"
                 } elseif ($Environment.IsRedHatFamily) {
-                    "rpm", "nupkg"
+                    "rpm"
                 } elseif ($Environment.IsSUSEFamily) {
-                    "rpm", "nupkg"
+                    "rpm"
                 } else {
                     throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
                 }
             } elseif ($Environment.IsMacOS) {
-                "osxpkg", "nupkg", "tar"
+                "osxpkg", "tar"
             } elseif ($Environment.IsWindows) {
-                "msi", "nupkg", "msix"
+                "msi", "msix"
             }
             Write-Warning "-Type was not specified, continuing with $Type!"
         }
@@ -510,20 +519,6 @@ function Start-PSPackage {
 
                 if ($PSCmdlet.ShouldProcess("Create MSIX Package")) {
                     New-MSIXPackage @Arguments
-                }
-            }
-            'nupkg' {
-                $Arguments = @{
-                    PackageNameSuffix = $NameSuffix
-                    PackageSourcePath = $Source
-                    PackageVersion = $Version
-                    PackageRuntime = $Runtime
-                    PackageConfiguration = $Configuration
-                    Force = $Force
-                }
-
-                if ($PSCmdlet.ShouldProcess("Create NuPkg Package")) {
-                    New-NugetContentPackage @Arguments
                 }
             }
             "tar" {
@@ -909,9 +904,9 @@ function Update-PSSignedBuildFolder
     foreach ($signedFileObject in $signedFilesList) {
         # completely skip replacing pwsh on non-windows systems (there is no .exe extension here)
         # and it may not be signed correctly
-        
+
         # The Shim will not be signed in CI.
-        
+
         if ($signedFileObject.Name -eq "pwsh" -or ($signedFileObject.Name -eq "Microsoft.PowerShell.GlobalTool.Shim.exe" -and $env:BUILD_REASON -eq 'PullRequest')) {
             Write-Verbose -Verbose "Skipping $signedFileObject"
             continue
@@ -1090,7 +1085,7 @@ function New-UnixPackage {
         switch ($Type) {
             "deb" {
                 $packageVersion = Get-LinuxPackageSemanticVersion -Version $Version
-                if (!$Environment.IsUbuntu -and !$Environment.IsDebian) {
+                if (!$Environment.IsUbuntu -and !$Environment.IsDebian -and !$Environment.IsMariner) {
                     throw ($ErrorMessage -f "Ubuntu or Debian")
                 }
 
@@ -1689,7 +1684,7 @@ function New-AfterScripts
         $packagingStrings.RedHatAfterInstallScript -f "$Link", $Destination  | Out-File -FilePath $AfterInstallScript -Encoding ascii
         $packagingStrings.RedHatAfterRemoveScript -f "$Link", $Destination | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
-    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
+    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily -or $Distribution -in $script:DebianDistributions) {
         $AfterInstallScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $AfterRemoveScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $packagingStrings.UbuntuAfterInstallScript -f "$Link", $Destination | Out-File -FilePath $AfterInstallScript -Encoding ascii
@@ -1746,7 +1741,12 @@ function New-ManGzip
     Write-Log "Creating man gz - running gzip..."
     Start-NativeExecution { gzip -f $RoffFile } -VerboseOutputOnError
 
-    $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
+    if($Environment.IsMacOS) {
+        $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
+    }
+    else {
+        $ManFile = Join-Path "/usr/share/man/man1" (Split-Path -Leaf $GzipFile)
+    }
 
     return [PSCustomObject ] @{
         GZipFile = $GzipFile
@@ -2301,7 +2301,6 @@ function New-ILNugetPackageSource
         [Parameter(Mandatory = $true)]
         [string] $RefAssemblyPath,
 
-        [Parameter(Mandatory = $true)]
         [string] $CGManifestPath
 
     )
@@ -2358,9 +2357,15 @@ function New-ILNugetPackageSource
 
     CreateNugetPlatformFolder -FileName $FileName -Platform 'win' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $WinFxdBinPath
 
+    Write-Verbose -Verbose "Done creating Windows runtime assemblies for $FileName"
+
     if ($linuxExceptionList -notcontains $FileName )
     {
         CreateNugetPlatformFolder -FileName $FileName -Platform 'unix' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxFxdBinPath
+        Write-Verbose -Verbose "Done creating Linux runtime assemblies for $FileName"
+    }
+    else {
+        Write-Verbose -Verbose "Skipping creating Linux runtime assemblies for $FileName"
     }
 
     if ($FileName -eq "Microsoft.PowerShell.SDK.dll")
@@ -2408,6 +2413,14 @@ function New-ILNugetPackageSource
         }
 
         Write-Log "Copied the built-in modules to contentFiles for the SDK package"
+    }
+    else {
+        Write-Verbose -Verbose "Skipping copying the built-in modules and reference assemblies for $FileName"
+    }
+
+    if (-not $PSBoundParameters.ContainsKey("CGManifestPath")) {
+        Write-Verbose -Verbose "CGManifestPath is not provided. Skipping CGManifest creation."
+        return
     }
 
     # Create a CGManifest file that lists all dependencies for this package, which is used when creating the SBOM.
@@ -3031,95 +3044,6 @@ function Publish-NugetToMyGet
     }
 }
 
-<#
-.SYNOPSIS
-The function creates a nuget package for daily feed.
-
-.DESCRIPTION
-The nuget package created is a content package and has all the binaries laid out in a flat structure.
-This package is used by install-powershell.ps1
-#>
-function New-NugetContentPackage
-{
-    [CmdletBinding(SupportsShouldProcess=$true)]
-    param (
-
-        # Name of the Product
-        [ValidateNotNullOrEmpty()]
-        [string] $PackageName = 'powershell',
-
-        # Suffix of the Name
-        [string] $PackageNameSuffix,
-
-        # Version of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $PackageVersion,
-
-        # Runtime of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $PackageRuntime,
-
-        # Configuration of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $PackageConfiguration,
-
-        # Source Path to the Product Files - required to package the contents into an Zip
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $PackageSourcePath,
-
-        [Switch]
-        $Force
-    )
-
-    Write-Log "PackageVersion: $PackageVersion"
-    $nugetSemanticVersion = Get-NugetSemanticVersion -Version $PackageVersion
-    Write-Log "nugetSemanticVersion: $nugetSemanticVersion"
-
-    $nugetFolder = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetOutput' -Clean
-
-    $nuspecPackageName = $PackageName
-    if ($PackageNameSuffix)
-    {
-        $nuspecPackageName += '-' + $PackageNameSuffix
-    }
-
-    # Setup staging directory so we don't change the original source directory
-    $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
-    $contentFolder = Join-Path -Path $stagingRoot -ChildPath 'content'
-    if ($PSCmdlet.ShouldProcess("Create staging folder")) {
-        New-StagingFolder -StagingPath $contentFolder -PackageSourcePath $PackageSourcePath
-    }
-
-    $projectFolder = Join-Path $PSScriptRoot 'projects/nuget'
-
-    $arguments = @('pack')
-    $arguments += @('--output',$nugetFolder)
-    $arguments += @('--configuration',$PackageConfiguration)
-    $arguments += "/p:StagingPath=$stagingRoot"
-    $arguments += "/p:RID=$PackageRuntime"
-    $arguments += "/p:SemVer=$nugetSemanticVersion"
-    $arguments += "/p:PackageName=$nuspecPackageName"
-    $arguments += $projectFolder
-
-    Write-Log "Running dotnet $arguments"
-    Write-Log "Use -verbose to see output..."
-    Start-NativeExecution -sb {dotnet $arguments} | ForEach-Object {Write-Verbose $_}
-
-    $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
-    if (Test-Path $nupkgFile)
-    {
-        Get-Item $nupkgFile
-    }
-    else
-    {
-        throw "Failed to create $nupkgFile"
-    }
-}
-
 function New-SubFolder
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -3576,7 +3500,12 @@ function Expand-ExePackageEngine {
         # Location to put the expanded engine.
         [Parameter(Mandatory = $true)]
         [string]
-        $EnginePath
+        $EnginePath,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64", "arm64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture
     )
 
     <#
@@ -3584,7 +3513,7 @@ function Expand-ExePackageEngine {
     insignia -ib TestInstaller.exe -o engine.exe
     #>
 
-    $wixPaths = Get-WixPath
+    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
 
     $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
     $resolvedEnginePath = [System.IO.Path]::GetFullPath($EnginePath)
@@ -3606,7 +3535,12 @@ function Compress-ExePackageEngine {
         # Location of the signed engine
         [Parameter(Mandatory = $true)]
         [string]
-        $EnginePath
+        $EnginePath,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64", "arm64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture
     )
 
 
@@ -3615,7 +3549,7 @@ function Compress-ExePackageEngine {
     insignia -ab engine.exe TestInstaller.exe -o TestInstaller.exe
     #>
 
-    $wixPaths = Get-WixPath
+    $wixPaths = Get-WixPath -IsProductArchitectureArm ($ProductTargetArchitecture -eq "arm64")
 
     $resolvedEnginePath = (Resolve-Path -Path $EnginePath).ProviderPath
     $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
@@ -4197,7 +4131,8 @@ function New-GlobalToolNupkgSource
         [Parameter(Mandatory)] [string] $WindowsBinPath,
         [Parameter(Mandatory)] [string] $WindowsDesktopBinPath,
         [Parameter(Mandatory)] [string] $AlpineBinPath,
-        [Parameter(Mandatory)] [string] $PackageVersion
+        [Parameter(Mandatory)] [string] $PackageVersion,
+        [Parameter()] [switch] $SkipCGManifest
     )
 
     if ($PackageType -ne "Unified")
@@ -4318,20 +4253,22 @@ function New-GlobalToolNupkgSource
             $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
         }
 
-        "PowerShell.Windows.x64"
-        {
-            $PackageName = "PowerShell.Windows.x64"
-            $RootFolder = New-TempFolder
+        # Due to needing a signed shim for the global tool, we build the global tool in build instead of packaging.
+        # keeping the code for reference.
+        # "PowerShell.Windows.x64"
+        # {
+        #     $PackageName = "PowerShell.Windows.x64"
+        #     $RootFolder = New-TempFolder
 
-            Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
+        #     Copy-Item -Path $iconPath -Destination "$RootFolder/$iconFileName" -Verbose
 
-            $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
+        #     $ridFolder = New-Item -Path (Join-Path $RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
 
-            Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $WindowsDesktopBinPath for $PackageType"
-            Copy-Item "$WindowsDesktopBinPath/*" -Destination $ridFolder -Recurse
-            Remove-Item -Path $ridFolder/runtimes/win-arm -Recurse -Force
-            $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
-        }
+        #     Write-Log "New-GlobalToolNupkgSource: Copying runtime assemblies from $WindowsDesktopBinPath for $PackageType"
+        #     Copy-Item "$WindowsDesktopBinPath/*" -Destination $ridFolder -Recurse
+        #     Remove-Item -Path $ridFolder/runtimes/win-arm -Recurse -Force
+        #     $toolSettings = $packagingStrings.GlobalToolSettingsFile -f "pwsh.dll"
+        # }
 
         "PowerShell.Windows.arm32"
         {
@@ -4361,12 +4298,21 @@ function New-GlobalToolNupkgSource
     # Set VSTS environment variable for package NuSpec source path.
     $pkgNuSpecSourcePathVar = "GlobalToolNuSpecSourcePath"
     Write-Log "New-GlobalToolNupkgSource: Creating NuSpec source path VSTS variable: $pkgNuSpecSourcePathVar"
+    Write-Verbose -Verbose "sending: [task.setvariable variable=$pkgNuSpecSourcePathVar]$RootFolder"
     Write-Host "##vso[task.setvariable variable=$pkgNuSpecSourcePathVar]$RootFolder"
+    $global:GlobalToolNuSpecSourcePath = $RootFolder
 
     # Set VSTS environment variable for package Name.
     $pkgNameVar = "GlobalToolPkgName"
     Write-Log "New-GlobalToolNupkgSource: Creating current package name variable: $pkgNameVar"
+    Write-Verbose -Verbose "sending: vso[task.setvariable variable=$pkgNameVar]$PackageName"
     Write-Host "##vso[task.setvariable variable=$pkgNameVar]$PackageName"
+    $global:GlobalToolPkgName = $PackageName
+
+    if ($SkipCGManifest.IsPresent) {
+        Write-Verbose -Verbose "New-GlobalToolNupkgSource: Skipping CGManifest creation."
+        return
+    }
 
     # Set VSTS environment variable for CGManifest file path.
     $globalToolCGManifestPFilePath = Join-Path -Path "$env:REPOROOT" -ChildPath "tools\cgmanifest.json"
@@ -4409,7 +4355,7 @@ function New-GlobalToolNupkgFromSource
         [Parameter(Mandatory)] [string] $PackageNuSpecPath,
         [Parameter(Mandatory)] [string] $PackageName,
         [Parameter(Mandatory)] [string] $DestinationPath,
-        [Parameter(Mandatory)] [string] $CGManifestPath
+        [Parameter()] [string] $CGManifestPath
     )
 
     if (! (Test-Path -Path $PackageNuSpecPath))
@@ -4422,6 +4368,12 @@ function New-GlobalToolNupkgFromSource
 
     Write-Log "New-GlobalToolNupkgFromSource: Removing GlobalTool NuSpec source directory: $PackageNuSpecPath"
     Remove-Item -Path $PackageNuSpecPath -Recurse -Force -ErrorAction SilentlyContinue
+
+    if (-not ($PSBoundParameters.ContainsKey('CGManifestPath')))
+    {
+        Write-Verbose -Verbose "New-GlobalToolNupkgFromSource: CGManifest file path not provided."
+        return
+    }
 
     Write-Log "New-GlobalToolNupkgFromSource: Removing GlobalTool CGManifest source directory: $CGManifestPath"
     if (! (Test-Path -Path $CGManifestPath))

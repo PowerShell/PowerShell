@@ -13,9 +13,8 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
   - name: ob_sdl_credscan_suppressionsFile
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-    - name: ob_sdl_codeql_compiled_enabled
-      value: true
+  - name: ob_sdl_codeql_compiled_enabled
+    value: false
 
   displayName: Delete blob is exists
   pool:
@@ -69,22 +68,27 @@ jobs:
       scriptType: inlineScript
       azurePowerShellVersion: latestVersion
       inline: |
-        try {
-            $container = Get-AzStorageContainer -Container '$(AzureVersion)' -Context (New-AzStorageContext -StorageAccountName '$(StorageAccount)') -ErrorAction Stop
-            if ($container -ne $null -and '$(ForceAzureBlobDelete)' -eq 'false') {
-                throw 'Azure blob container $(AzureVersion) already exists. To overwrite, use ForceAzureBlobDelete parameter'
-            }
-            elseif ($container -ne $null -and '$(ForceAzureBlobDelete)' -eq 'true') {
-                Write-Verbose -Verbose 'Removing container $(AzureVersion) due to ForceAzureBlobDelete parameter'
-                Remove-AzStorageContainer -Name '$(AzureVersion)' -Context (New-AzStorageContext -StorageAccountName '$(StorageAccount)') -Force
-            }
-        }
-        catch {
-            if ($_.FullyQualifiedErrorId -eq 'ResourceNotFoundException,Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet.GetAzureStorageContainerCommand') {
-                Write-Verbose -Verbose 'Container "$(AzureVersion)" does not exists.'
-            }
-            else {
-                throw $_
-            }
+        $containersToDelete = @('$(AzureVersion)', '$(AzureVersion)-private', '$(AzureVersion)-nuget', '$(AzureVersion)-gc')
+
+        $containersToDelete | ForEach-Object {
+          $containerName = $_
+          try {
+              $container = Get-AzStorageContainer -Container $containerName -Context (New-AzStorageContext -StorageAccountName '$(StorageAccount)') -ErrorAction Stop
+              if ($container -ne $null -and '$(ForceAzureBlobDelete)' -eq 'false') {
+                  throw "Azure blob container $containerName already exists. To overwrite, use ForceAzureBlobDelete parameter"
+              }
+              elseif ($container -ne $null -and '$(ForceAzureBlobDelete)' -eq 'true') {
+                  Write-Verbose -Verbose "Removing container $containerName due to ForceAzureBlobDelete parameter"
+                  Remove-AzStorageContainer -Name $containerName -Context (New-AzStorageContext -StorageAccountName '$(StorageAccount)') -Force
+              }
+          }
+          catch {
+              if ($_.FullyQualifiedErrorId -eq 'ResourceNotFoundException,Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet.GetAzureStorageContainerCommand') {
+                  Write-Verbose -Verbose "Container $containerName does not exists."
+              }
+              else {
+                  throw $_
+              }
+          }
         }
   - template: /.pipelines/templates/step/finalize.yml@self

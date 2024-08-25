@@ -61,6 +61,7 @@ namespace Microsoft.PowerShell.Commands
         private const int FILETRANSFERSIZE = 4 * 1024 * 1024;
 
         private const int COPY_FILE_ACTIVITY_ID = 0;
+        private const int REMOVE_FILE_ACTIVITY_ID = 0;
 
         // The name of the key in an exception's Data dictionary when attempting
         // to copy an item onto itself.
@@ -2875,6 +2876,19 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
+                if (Context != null
+                    && Context.ExecutionContext.SessionState.PSVariable.Get(SpecialVariables.ProgressPreferenceVarPath.UserPath).Value is ActionPreference progressPreference
+                    && progressPreference == ActionPreference.Continue)
+                {
+                    {
+                        Task.Run(() =>
+                        {
+                            GetTotalFiles(path, recurse);
+                        });
+                        _removeStopwatch.Start();
+                    }
+                }
+
 #if UNIX
                 if (iscontainer)
                 {
@@ -2937,6 +2951,16 @@ namespace Microsoft.PowerShell.Commands
                     {
                         RemoveFileInfoItem((FileInfo)fsinfo, Force);
                     }
+                }
+
+                if (Stopping || _removedFiles == _totalFiles)
+                {
+                    _removeStopwatch.Stop();
+                    var progress = new ProgressRecord(REMOVE_FILE_ACTIVITY_ID, " ", " ")
+                    {
+                        RecordType = ProgressRecordType.Completed
+                    };
+                    WriteProgress(progress);
                 }
 #endif
             }
@@ -3072,6 +3096,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (file != null)
                     {
+                        long fileBytesSize = file.Length;
+
                         if (recurse)
                         {
                             // When recurse is specified we need to confirm each
@@ -3083,6 +3109,25 @@ namespace Microsoft.PowerShell.Commands
                             // When recurse is not specified just delete all the
                             // subitems without confirming with the user.
                             RemoveFileSystemItem(file, force);
+                        }
+
+                        if (_totalFiles > 0)
+                        {
+                            _removedFiles++;
+                            _removedBytes += fileBytesSize;
+                            if (_removeStopwatch.Elapsed.TotalSeconds > ProgressBarDurationThreshold)
+                            {
+                                double speed = _removedBytes / 1024 / 1024 / _removeStopwatch.Elapsed.TotalSeconds;
+                                var progress = new ProgressRecord(
+                                    REMOVE_FILE_ACTIVITY_ID,
+                                    StringUtil.Format(FileSystemProviderStrings.RemovingLocalFileActivity, _removedFiles, _totalFiles),
+                                    StringUtil.Format(FileSystemProviderStrings.RemovingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_removedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
+                                );
+                                var percentComplete = _totalBytes != 0 ? (int)Math.Min(_removedBytes * 100 / _totalBytes, 100) : 100;
+                                progress.PercentComplete = percentComplete;
+                                progress.RecordType = ProgressRecordType.Processing;
+                                WriteProgress(progress);
+                            }
                         }
                     }
                 }
@@ -3952,16 +3997,19 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 _copiedFiles++;
                                 _copiedBytes += file.Length;
-                                double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
-                                var progress = new ProgressRecord(
-                                    COPY_FILE_ACTIVITY_ID,
-                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
-                                    StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
-                                );
-                                var percentComplete = _totalBytes != 0 ? (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100) : 100;
-                                progress.PercentComplete = percentComplete;
-                                progress.RecordType = ProgressRecordType.Processing;
-                                WriteProgress(progress);
+                                if (_copyStopwatch.Elapsed.TotalSeconds > ProgressBarDurationThreshold)
+                                {
+                                    double speed = (double)(_copiedBytes / 1024 / 1024) / _copyStopwatch.Elapsed.TotalSeconds;
+                                    var progress = new ProgressRecord(
+                                        COPY_FILE_ACTIVITY_ID,
+                                        StringUtil.Format(FileSystemProviderStrings.CopyingLocalFileActivity, _copiedFiles, _totalFiles),
+                                        StringUtil.Format(FileSystemProviderStrings.CopyingLocalBytesStatus, Utils.DisplayHumanReadableFileSize(_copiedBytes), Utils.DisplayHumanReadableFileSize(_totalBytes), speed)
+                                    );
+                                    var percentComplete = _totalBytes != 0 ? (int)Math.Min(_copiedBytes * 100 / _totalBytes, 100) : 100;
+                                    progress.PercentComplete = percentComplete;
+                                    progress.RecordType = ProgressRecordType.Processing;
+                                    WriteProgress(progress);
+                                }
                             }
                         }
                         else
@@ -4899,6 +4947,11 @@ namespace Microsoft.PowerShell.Commands
         private long _copiedBytes;
         private readonly Stopwatch _copyStopwatch = new Stopwatch();
 
+        private long _removedBytes;
+        private long _removedFiles;
+        private readonly Stopwatch _removeStopwatch = new();
+
+        private const double ProgressBarDurationThreshold = 2.0;
         #endregion CopyItem
 
         #endregion ContainerCmdletProvider members
@@ -5792,8 +5845,10 @@ namespace Microsoft.PowerShell.Commands
                         destination = MakePath(destination, dir.Name);
                     }
 
-                    // Don't allow moving a directory into itself
-                    if (destination.StartsWith(Path.TrimEndingDirectorySeparator(path) + Path.DirectorySeparatorChar))
+                    // Don't allow moving a directory into itself or its sub-directory.
+                    string pathWithoutEndingSeparator = Path.TrimEndingDirectorySeparator(path);
+                    if (destination.StartsWith(pathWithoutEndingSeparator + Path.DirectorySeparatorChar)
+                        || destination.Equals(pathWithoutEndingSeparator, StringComparison.OrdinalIgnoreCase))
                     {
                         string error = StringUtil.Format(FileSystemProviderStrings.TargetCannotBeSubdirectoryOfSource, destination);
                         var e = new IOException(error);

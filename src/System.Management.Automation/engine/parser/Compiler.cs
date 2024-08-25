@@ -39,6 +39,9 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo ObjectList_ToArray =
             typeof(List<object>).GetMethod(nameof(List<object>.ToArray), Type.EmptyTypes);
 
+        internal static readonly MethodInfo ArrayOps_AddObject =
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.AddObjectArray), StaticFlags);
+
         internal static readonly MethodInfo ArrayOps_GetMDArrayValue =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), StaticFlags);
 
@@ -1565,7 +1568,15 @@ namespace System.Management.Automation.Language
 
                 if (args[0] is Type)
                 {
-                    result = new OutputTypeAttribute(LanguagePrimitives.ConvertTo<Type[]>(args));
+                    // We avoid `ConvertTo<Type[]>(args)` here as CLM would throw due to `Type[]`
+                    // being a "non-core" type. NOTE: This doesn't apply to `string[]`.
+                    Type[] types = new Type[args.Length];
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        types[i] = LanguagePrimitives.ConvertTo<Type>(args[i]);
+                    }
+
+                    result = new OutputTypeAttribute(types);
                 }
                 else
                 {

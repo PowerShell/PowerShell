@@ -692,8 +692,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $uri = Get-WebListenerUrl -Test $method
             $body = GetTestData -contentType $contentType
             $command = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
+            $commandNoContentType = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method"
 
-            It "Invoke-WebRequest -Uri $uri  -Method $method -ContentType $contentType -Body [body data]" {
+            It "Invoke-WebRequest -Uri $uri -Method $method -ContentType $contentType -Body [body data]" {
 
                 $result = ExecuteWebCommand -command $command
                 ValidateResponse -response $result
@@ -704,6 +705,29 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 $jsonContent.headers.'Content-Type' | Should -Match $contentType
                 # Validate that the response Content.data field is the same as what we sent.
                 $jsonContent.data | Should -Be $body
+            }
+
+            It "Invoke-WebRequest -Uri $uri -Method $method -Body [body data]" {
+
+                $result = ExecuteWebCommand -command $commandNoContentType
+                ValidateResponse -response $result
+
+                # Validate response content
+                $jsonContent = $result.Output.Content | ConvertFrom-Json
+                $jsonContent.url | Should -Match $uri
+                if ($method -eq "POST")
+                {
+                    $jsonContent.headers.'Content-Type' | Should -Match "application/x-www-form-urlencoded"
+                    # Validate that the response Content.form field is the same as what we sent.
+                    [string]$jsonContent.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = [System.Object[]]})
+                    $jsonContent.data | Should -BeNullOrEmpty
+                }
+                else
+                {
+                    # Validate that the response Content.data field is the same as what we sent.
+                    $jsonContent.data | Should -Be $body
+                }
+
             }
         }
     }
@@ -760,6 +784,28 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         Test-Path $outFile | Should -Be $true
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
+    }
+
+    It "Invoke-WebRequest -PassThru -OutFile <directory> saves the downloaded file path as a property in WebResponseObject"{
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $content = Invoke-WebRequest -Uri $uri -PassThru -OutFile $TestDrive
+        $content.OutFile | Should -exist
+        $content.OutFile | Should -Be (Join-Path $TestDrive 'Get')
+    }
+
+    It "Invoke-WebRequest -PassThru -OutFile <file> saves the downloaded file path as a property in WebResponseObject"{
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $filePath = Join-Path $TestDrive "pestertest-outfile"
+        $content = Invoke-WebRequest -Uri $uri -PassThru -OutFile $filePath
+        $content.OutFile | Should -exist
+        $content.OutFile | Should -Be $filePath
+    }
+
+    It "Invoke-WebRequest -PassThru -OutFile -Verbose File Name reflects the downloaded file name" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $filePath = Join-Path $TestDrive "pestertest-outfile"
+        $content = Invoke-WebRequest -Verbose -Uri $uri -PassThru -OutFile $filePath 4>variable:verbo
+        $verbo[-1].Message | Should -Match "pestertest-outfile"
     }
 
     It "Invoke-WebRequest should fail if -OutFile is <Name>." -TestCases @(
@@ -2739,6 +2785,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $uri = Get-WebListenerUrl -Test $method
             $body = GetTestData -contentType $contentType
             $command = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
+            $commandNoContentType = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method"
 
             It "Invoke-RestMethod -Uri $uri -Method $method -ContentType $contentType -Body [body data]" {
 
@@ -2750,6 +2797,27 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
                 # Validate that the response Content.data field is the same as what we sent.
                 $result.Output.data | Should -Be $body
+            }
+
+            It "Invoke-RestMethod -Uri $uri -Method $method -Body [body data]" {
+
+                $result = ExecuteWebCommand -command $commandNoContentType
+
+                # Validate response
+                $result.Output.url | Should -Match $uri
+
+                if ($method -eq "POST")
+                {
+                    $result.Output.headers.'Content-Type' | Should -Match "application/x-www-form-urlencoded"
+                    # Validate that the response Content.form field is the same as what we sent.
+                    [string]$result.Output.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = [System.Object[]]})
+                    $result.Output.data | Should -BeNullOrEmpty
+                }
+                else
+                {
+                    # Validate that the response Content.data field is the same as what we sent.
+                    $result.Output.data | Should -Be $body
+                }
             }
         }
     }
@@ -2806,6 +2874,27 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         Test-Path $outFile | Should -Be $true
         Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $content.Content.Length
+    }
+
+    It "Invoke-RestMethod -PassThru -OutFile Downloads the file and pipes it" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $content = Invoke-WebRequest -Uri $uri
+        $outFile = Join-Path $TestDrive $content.BaseResponse.RequestMessage.RequestUri.Segments[-1]
+
+        # ensure the file does not exist
+        Remove-Item -Force -ErrorAction Ignore -Path $outFile
+        $response = Invoke-RestMethod -Uri $uri -PassThru -OutFile $outFile
+
+        # check if the file is downloaded.
+        Test-Path $outFile | Should -Be $true
+
+        # check if the file is correctly downloaded
+        Get-Content -Path $outFile | Should -BeExactly $content.Content
+
+        # check if the response stores the downloaded file contents
+        # response is a PSCustomObject so converted it string for comparison
+        $responseAsJsonString = $response | ConvertTo-Json -Compress
+        $responseAsJsonString | Should -BeExactly $content.Content
     }
 
     It "Invoke-RestMethod should fail if -OutFile is <Name>." -TestCases @(
@@ -4591,7 +4680,6 @@ Describe 'Invoke-WebRequest and Invoke-RestMethod support OperationTimeoutSecond
         RunWithNetworkTimeout -Command Invoke-RestMethod -Uri $uri -OperationTimeoutSeconds 2 -WillTimeout -Arguments '-SkipCertificateCheck'
     }
 }
-
 
 Describe "Invoke-RestMethod should run in the default synchronization context (threadpool)" -Tag "CI" {
     BeforeAll {

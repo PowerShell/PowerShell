@@ -482,9 +482,16 @@ namespace System.Management.Automation
 
         internal static string GetApplicationBase(string shellId)
         {
-            // Use the location of SMA.dll as the application base.
-            Assembly assembly = typeof(PSObject).Assembly;
-            return Path.GetDirectoryName(assembly.Location);
+            // Use the location of SMA.dll as the application base if it exists,
+            // otherwise, use the base directory from `AppContext`.
+            var baseDirectory = Path.GetDirectoryName(typeof(PSObject).Assembly.Location);
+            if (string.IsNullOrEmpty(baseDirectory))
+            {
+                // Need to remove any trailing directory separator characters
+                baseDirectory = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
+            }
+
+            return baseDirectory;
         }
 
         private static string[] s_productFolderDirectories;
@@ -1536,8 +1543,8 @@ namespace System.Management.Automation
                 // if import-module is visible, then the session is not restricted,
                 // because the user can load arbitrary code.
                 if (cmdletInfo != null && cmdletInfo.Visibility == SessionStateEntryVisibility.Public)
-                {        
-                   return false; 
+                {
+                   return false;
                 }
                 return true;
         }

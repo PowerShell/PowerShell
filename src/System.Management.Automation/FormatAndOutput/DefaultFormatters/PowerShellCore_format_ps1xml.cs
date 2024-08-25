@@ -1351,7 +1351,11 @@ namespace System.Management.Automation.Runspaces
                                     if ($ErrorView -eq 'ConciseView') {
                                         $recommendedAction = $_.ErrorDetails.RecommendedAction
                                         if (-not [String]::IsNullOrWhiteSpace($recommendedAction)) {
-                                            $recommendedAction = $newline + '  Recommendation: ' + $recommendedAction
+                                            $recommendedAction = $newline +
+                                                ${errorColor} +
+                                                '  Recommendation: ' +
+                                                $recommendedAction +
+                                                ${resetcolor}
                                         }
 
                                         if ($err.PSMessageDetails) {

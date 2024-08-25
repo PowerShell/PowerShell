@@ -191,6 +191,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsRedHatFamily' = $environment.IsCentOS -or $environment.IsFedora -or $environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $environment.IsSLES -or $environment.IsOpenSUSE}
         $environment += @{'IsAlpine' = $LinuxInfo.ID -match 'alpine'}
+        $environment += @{'IsMariner' = $LinuxInfo.ID -match 'mariner'}
 
         # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
         # https://github.com/PowerShell/PowerShell/issues/2511
@@ -204,7 +205,8 @@ function Get-EnvironmentInformation
             $environment.IsUbuntu -or
             $environment.IsRedHatFamily -or
             $environment.IsSUSEFamily -or
-            $environment.IsAlpine)
+            $environment.IsAlpine -or
+            $environment.IsMariner)
         ) {
             if ($SkipLinuxDistroCheck) {
                 Write-Warning "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
@@ -305,6 +307,9 @@ function Start-PSBuild {
         # it's useful for development, to do a quick changes in the engine
         [switch]$SMAOnly,
 
+        # Use nuget.org instead of the PowerShell specific feed
+        [switch]$UseNuGetOrg,
+
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         # If this parameter is not provided it will get determined automatically.
@@ -358,6 +363,12 @@ function Start-PSBuild {
         if ($Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
             throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
         }
+    }
+
+    if ($UseNuGetOrg) {
+        Switch-PSNugetConfig -Source Public
+    } else {
+        Write-Verbose -Message "Using default feeds which are Microsoft, use `-UseNuGetOrg` to switch to Public feeds" -Verbose
     }
 
     function Stop-DevPowerShell {
@@ -697,6 +708,8 @@ Fix steps:
     if ($config.Count -gt 0) {
         $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
         Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
+    } else {
+        Write-Warning "No powershell.config.json generated for $publishPath"
     }
 
     # Restore the Pester module
@@ -713,6 +726,51 @@ Fix steps:
             $null = New-Item -ItemType Directory -Path $parent
         }
         Save-PSOptions -PSOptionsPath $PSOptionsPath -Options $Options
+    }
+}
+
+function Switch-PSNugetConfig {
+    param(
+        [Parameter(Mandatory = $true, ParameterSetName = 'user')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'nouser')]
+        [ValidateSet('Public', 'Private')]
+        [string] $Source,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'user')]
+        [string] $UserName,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'user')]
+        [string] $ClearTextPAT
+    )
+
+    Clear-PipelineNugetAuthentication
+
+    $extraParams = @()
+    if ($UserName) {
+        $extraParams = @{
+            UserName     = $UserName
+            ClearTextPAT = $ClearTextPAT
+        }
+    }
+
+    if ( $Source -eq 'Public') {
+        $dotnetSdk = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v2'; Name = 'dotnet' }
+        $gallery = [NugetPackageSource] @{Url = 'https://www.powershellgallery.com/api/v2/'; Name = 'psgallery' }
+        $nugetorg = [NugetPackageSource] @{Url = 'https://api.nuget.org/v3/index.json'; Name = 'nuget.org' }
+
+        New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetSdk   -Destination "$PSScriptRoot/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/" @extraParams
+    } elseif ( $Source -eq 'Private') {
+        $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell-7-5-preview-test-2/nuget/v3/index.json'; Name = 'powershell' }
+
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
+    } else {
+        throw "Unknown source: $Source"
+    }
+
+    if ($UserName -or $ClearTextPAT) {
+        Set-PipelineNugetAuthentication
     }
 }
 
@@ -776,7 +834,7 @@ function Restore-PSPackage
 
     if (-not $ProjectDirs)
     {
-        $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
+        $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules", "$PSScriptRoot/tools/wix")
 
         if ($Options.Runtime -like 'fxdependent*') {
             $ProjectDirs += "$PSScriptRoot/src/Microsoft.PowerShell.GlobalTool.Shim"
@@ -819,6 +877,10 @@ function Restore-PSPackage
             $RestoreArguments += "--interactive"
         }
 
+        if ($env:ENABLE_MSBUILD_BINLOGS -eq 'true') {
+            $RestoreArguments += '-bl'
+        }
+
         $ProjectDirs | ForEach-Object {
             $project = $_
             Write-Log -message "Run dotnet restore $project $RestoreArguments"
@@ -836,6 +898,23 @@ function Restore-PSPackage
                     $retryCount++
                     if($retryCount -ge $maxTries)
                     {
+                        if ($env:ENABLE_MSBUILD_BINLOGS -eq 'true') {
+                            if ( Test-Path ./msbuild.binlog ) {
+                                if (!(Test-Path $env:OB_OUTPUTDIRECTORY -PathType Container)) {
+                                    $null = New-Item -path $env:OB_OUTPUTDIRECTORY -ItemType Directory -Force -Verbose
+                                }
+
+                                $projectName = Split-Path -Leaf -Path $project
+                                $binlogFileName = "${projectName}.msbuild.binlog"
+                                if ($IsMacOS) {
+                                    $resolvedPath = (Resolve-Path -Path ./msbuild.binlog).ProviderPath
+                                    Write-Host "##vso[artifact.upload containerfolder=$binLogFileName;artifactname=$binLogFileName]$resolvedPath"
+                                } else {
+                                    Copy-Item -Path ./msbuild.binlog -Destination "$env:OB_OUTPUTDIRECTORY/${projectName}.msbuild.binlog" -Verbose
+                                }
+                            }
+                        }
+
                         throw
                     }
                     continue
@@ -1176,10 +1255,14 @@ function Publish-PSTestTools {
     $tools = @(
         @{ Path="${PSScriptRoot}/test/tools/TestAlc";     Output="library" }
         @{ Path="${PSScriptRoot}/test/tools/TestExe";     Output="exe" }
-        @{ Path="${PSScriptRoot}/test/tools/TestService"; Output="exe" }
         @{ Path="${PSScriptRoot}/test/tools/UnixSocket";  Output="exe" }
         @{ Path="${PSScriptRoot}/test/tools/WebListener"; Output="exe" }
     )
+
+    # This is a windows service, so it only works on windows
+    if ($environment.IsWindows) {
+        $tools += @{ Path = "${PSScriptRoot}/test/tools/TestService"; Output = "exe" }
+    }
 
     $Options = Get-PSOptions -DefaultToNew
 
@@ -1282,8 +1365,13 @@ function Start-PSPester {
         [Parameter(ParameterSetName='Wait', Mandatory=$true,
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait,
-        [switch]$SkipTestToolBuild
+        [switch]$SkipTestToolBuild,
+        [switch]$UseNuGetOrg
     )
+
+    if ($UseNuGetOrg) {
+        Switch-PSNugetConfig -Source Public
+    }
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
     {
@@ -2168,7 +2256,7 @@ function Start-PSBootstrap {
                     # change the apt frontend back to the original
                     $env:DEBIAN_FRONTEND=$originalDebianFrontEnd
                 }
-            } elseif ($environment.IsLinux -and $environment.IsRedHatFamily) {
+            } elseif ($environment.IsLinux -and ($environment.IsRedHatFamily -or $environment.IsMariner)) {
                 # Build tools
                 $Deps += "which", "curl", "wget"
 
@@ -2239,9 +2327,10 @@ function Start-PSBootstrap {
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
             if ($Package) {
                 Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
-                Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.12.0"
-                Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.11.0"
+                Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
+                Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
                 Install-GlobalGem -Sudo $sudo -GemName "ronn" -GemVersion "0.7.3"
+                Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
             }
         }
 
@@ -2292,6 +2381,17 @@ function Start-PSBootstrap {
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
             }
+            if ($Package) {
+                Import-Module "$PSScriptRoot\tools\wix\wix.psm1"
+                $isArm64 = "$env:RUNTIME" -eq 'arm64'
+                Install-Wix -arm64:$isArm64
+            }
+        }
+
+        if ($env:TF_BUILD) {
+            Write-Verbose -Verbose "--- Start - Capturing nuget sources"
+            dotnet nuget list source --format detailed
+            Write-Verbose -Verbose "--- End   - Capturing nuget sources"
         }
     } finally {
         Pop-Location
@@ -3386,38 +3486,109 @@ function New-TestPackage
     [System.IO.Compression.ZipFile]::CreateFromDirectory($packageRoot, $packagePath)
 }
 
-function New-NugetConfigFile
-{
+class NugetPackageSource {
+    [string] $Url
+    [string] $Name
+}
+
+function New-NugetPackageSource {
     param(
-        [Parameter(Mandatory=$true)] [string] $NugetFeedUrl,
-        [Parameter(Mandatory=$true)] [string] $FeedName,
-        [Parameter(Mandatory=$true)] [string] $UserName,
-        [Parameter(Mandatory=$true)] [string] $ClearTextPAT,
-        [Parameter(Mandatory=$true)] [string] $Destination
+        [Parameter(Mandatory = $true)] [string]$Url,
+        [Parameter(Mandatory = $true)] [string] $Name
     )
 
-    $nugetConfigTemplate = @'
+    return [NugetPackageSource] @{Url = $Url; Name = $Name }
+}
+
+$script:NuGetEndpointCredentials = [System.Collections.Generic.Dictionary[String,System.Object]]::new()
+function New-NugetConfigFile {
+    param(
+        [Parameter(Mandatory = $true, ParameterSetName ='user')]
+        [Parameter(Mandatory = $true, ParameterSetName ='nouser')]
+        [NugetPackageSource[]] $NugetPackageSource,
+
+        [Parameter(Mandatory = $true)] [string] $Destination,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'user')]
+        [string] $UserName,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'user')]
+        [string] $ClearTextPAT
+    )
+
+    $nugetConfigHeaderTemplate = @'
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <packageSources>
     <clear />
+'@
+
+    $nugetPackageSourceTemplate = @'
     <add key="[FEEDNAME]" value="[FEED]" />
+'@
+    $nugetPackageSourceFooterTemplate = @'
   </packageSources>
   <disabledPackageSources>
     <clear />
   </disabledPackageSources>
+'@
+    $nugetCredentialsTemplate = @'
   <packageSourceCredentials>
     <[FEEDNAME]>
       <add key="Username" value="[USERNAME]" />
       <add key="ClearTextPassword" value="[PASSWORD]" />
     </[FEEDNAME]>
   </packageSourceCredentials>
+'@
+    $nugetConfigFooterTemplate = @'
 </configuration>
 '@
+    $content = $nugetConfigHeaderTemplate
+    $feedNamePostfix = ''
+    if ($UserName) {
+        $feedNamePostfix += '-' + $UserName.Replace('@', '-').Replace('.', '-')
+    }
 
-    $content = $nugetConfigTemplate.Replace('[FEED]', $NugetFeedUrl).Replace('[FEEDNAME]', $FeedName).Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
+    [NugetPackageSource]$source = $null
+    $newLine = [Environment]::NewLine
+    foreach ($source in $NugetPackageSource) {
+        $content += $newLine + $nugetPackageSourceTemplate.Replace('[FEED]', $source.Url).Replace('[FEEDNAME]', $source.Name + $feedNamePostfix)
+    }
+
+    $content += $newLine + $nugetPackageSourceFooterTemplate
+
+    if ($UserName -or $ClearTextPAT) {
+        foreach ($source in $NugetPackageSource) {
+            if (!$script:NuGetEndpointCredentials.ContainsKey($source.Url)) {
+                $script:NuGetEndpointCredentials.Add($source.Url, @{
+                        endpoint = $source.Url
+                        username = $UserName
+                        password = $ClearTextPAT
+                    })
+            }
+        }
+    }
+
+    $content += $newLine + $nugetConfigFooterTemplate
 
     Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
+}
+
+function Clear-PipelineNugetAuthentication {
+    $script:NuGetEndpointCredentials.Clear()
+}
+
+function Set-PipelineNugetAuthentication {
+    $endpointcredentials = @()
+
+    foreach ($key in $script:NuGetEndpointCredentials.Keys) {
+        $endpointcredentials += $script:NuGetEndpointCredentials[$key]
+    }
+
+    $json = @{
+        endpointCredentials = $endpointcredentials
+    } | convertto-json -Compress
+    Set-PipelineVariable -Name 'VSS_NUGET_EXTERNAL_FEED_ENDPOINTS' -Value $json
 }
 
 function Set-CorrectLocale
@@ -3532,4 +3703,40 @@ function Clear-NativeDependencies
     }
 
     $deps | ConvertTo-Json -Depth 20 | Set-Content "$PublishFolder/pwsh.deps.json" -Force
+}
+
+
+function Update-DotNetSdkVersion {
+    $globalJsonPath = "$PSScriptRoot/global.json"
+    $globalJson = get-content $globalJsonPath | convertfrom-json
+    $oldVersion = $globalJson.sdk.version
+    $versionParts = $oldVersion -split '\.'
+    $channel = $versionParts[0], $versionParts[1] -join '.'
+    Write-Verbose "channel: $channel" -Verbose
+    $azure_feed = 'https://dotnetcli.azureedge.net/dotnet'
+    $version_file_url = "$azure_feed/Sdk/$channel/latest.version"
+    $version = Invoke-RestMethod $version_file_url
+    Write-Verbose "updating from: $oldVersion to: $version" -Verbose
+    $globalJson.sdk.version = $version
+    $globalJson | convertto-json | out-file $globalJsonPath
+    $dotnetRuntimeMetaPath = "$psscriptroot\DotnetRuntimeMetadata.json"
+    $dotnetRuntimeMeta = get-content $dotnetRuntimeMetaPath | convertfrom-json
+    $dotnetRuntimeMeta.sdk.sdkImageVersion = $version
+    $dotnetRuntimeMeta | ConvertTo-Json | Out-File $dotnetRuntimeMetaPath
+}
+
+function Set-PipelineVariable {
+    param(
+        [parameter(Mandatory)]
+        [string] $Name,
+        [parameter(Mandatory)]
+        [string] $Value
+    )
+
+    $vstsCommandString = "vso[task.setvariable variable=$Name]$Value"
+    Write-Verbose -Verbose -Message ("sending " + $vstsCommandString)
+    Write-Host "##$vstsCommandString"
+
+    # also set in the current session
+    Set-Item -Path "env:$Name" -Value $Value
 }

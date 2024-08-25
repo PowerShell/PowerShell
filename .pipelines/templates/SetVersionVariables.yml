@@ -8,12 +8,12 @@ steps:
 - ${{ if eq(parameters['UseJson'],'yes') }}:
   - task: DownloadBuildArtifacts@0
     inputs:
-      artifactName: 'drop_prep_DeleteBlob'
+      artifactName: 'drop_prep_SetVars'
       itemPattern: '*.json'
       downloadPath: '$(System.ArtifactsDirectory)'
     displayName: Download Build Info Json
     env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
 - powershell: |
     $path = "./build.psm1"
@@ -43,11 +43,22 @@ steps:
     }
   displayName: 'Set repo Root'
   env:
-    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+    ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
 - powershell: |
     $createJson = ("${{ parameters.CreateJson }}" -ne "no")
-    $releaseTag = & "$env:REPOROOT/tools/releaseBuild/setReleaseTag.ps1" -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
+
+    $REPOROOT = $env:REPOROOT
+
+    if (-not (Test-Path $REPOROOT/tools/releaseBuild/setReleaseTag.ps1)) {
+      if ((Test-Path "$REPOROOT/PowerShell/tools/releaseBuild/setReleaseTag.ps1")) {
+        $REPOROOT = "$REPOROOT/PowerShell"
+      } else {
+        throw "Could not find setReleaseTag.ps1 in $REPOROOT/tools/releaseBuild or $REPOROOT/PowerShell/tools/releaseBuild"
+      }
+    }
+
+    $releaseTag = & "$REPOROOT/tools/releaseBuild/setReleaseTag.ps1" -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
     $version = $releaseTag.Substring(1)
     $vstsCommandString = "vso[task.setvariable variable=Version]$version"
     Write-Host ("sending " + $vstsCommandString)
@@ -58,11 +69,11 @@ steps:
     Write-Host "##$vstsCommandString"
   displayName: 'Set ${{ parameters.ReleaseTagVarName }} and other version Variables'
   env:
-    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+    ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
 - powershell: |
     Get-ChildItem -Path env:
   displayName: Capture environment
   condition: succeededOrFailed()
   env:
-    ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+    ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue

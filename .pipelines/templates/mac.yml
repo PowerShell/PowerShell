@@ -20,10 +20,9 @@ jobs:
   - group: DotNetPrivateBuildAccess
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-  - name: ob_sdl_binskim_enabled
-    value: true
-  - name: ob_sdl_credscan_suppressionsfileforartifacts
-    value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
+  - name: PowerShellRoot
+    value: $(Build.SourcesDirectory)
+
   steps:
   - checkout: self
     clean: true
@@ -39,24 +38,31 @@ jobs:
       # make the current user the owner
       sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
     displayName: 'Create $(Agent.TempDirectory)/PowerShell'
-  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
-    parameters:
-      nativePathRoot: '$(Agent.TempDirectory)'
+
   - pwsh: |
-      tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
+      Import-Module $(PowerShellRoot)/build.psm1 -Force
+      Start-PSBootstrap -Package
     displayName: 'Bootstrap VM'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
   - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
     parameters:
       repoRoot: $(PowerShellRoot)
   - pwsh: |
-      $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
+      $env:AzDevOpsFeedPAT2 = '$(powershellPackageReadPat)'
       # Add -SkipReleaseChecks as a mitigation to unblock release.
       # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
 
       Import-Module ./build.psm1 -Force
-      Start-PSBuild -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -Output $(OB_OUTPUTDIRECTORY)
+
+      $ReleaseTagParam = @{}
+
+      if ($env:RELEASETAGVAR) {
+        $ReleaseTagParam['ReleaseTag'] = $env:RELEASETAGVAR
+      }
+
+      Start-PSBuild -Runtime 'osx-${{ parameters.buildArchitecture }}' -Configuration Release -PSModuleRestore -Clean -Output $(OB_OUTPUTDIRECTORY) @ReleaseTagParam
       $artifactName = "macosBinResults-${{ parameters.buildArchitecture }}"
 
       $psOptPath = "$(OB_OUTPUTDIRECTORY)/psoptions.json"
@@ -69,6 +75,7 @@ jobs:
     displayName: 'Build'
     env:
       __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
   - template: /.pipelines/templates/step/finalize.yml@self
 
 - job: sign_${{ parameters.buildArchitecture }}
@@ -81,6 +88,7 @@ jobs:
   - name: NugetSecurityAnalysisWarningLevel
     value: none
   - group: DotNetPrivateBuildAccess
+  - group: certificate_logical_to_actual
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_codeSignValidation_enabled
