@@ -6220,7 +6220,7 @@ namespace Microsoft.PowerShell.Commands
             return shouldProcessModule;
         }
 
-        private static readonly Lock s_lockObject = new();
+        private static readonly System.Threading.Lock s_lockObject = new();
 
         private static void ClearAnalysisCaches()
         {
