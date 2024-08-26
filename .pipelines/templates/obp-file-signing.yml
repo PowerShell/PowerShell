@@ -88,7 +88,7 @@ steps:
   displayName: Sign pwsh.exe with Windows cert
   inputs:
     command: 'sign'
-    signing_profile:
+    cp_code: : 'CP-229879'
     files_to_sign: '**\pwsh.exe'
     search_root: $(Pipeline.Workspace)/toBeSigned
 
