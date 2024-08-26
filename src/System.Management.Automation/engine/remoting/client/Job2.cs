@@ -116,7 +116,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        protected object SyncRoot
+        protected Lock SyncRoot
         {
             get { return syncObject; }
         }

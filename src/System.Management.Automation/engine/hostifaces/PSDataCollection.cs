@@ -1684,7 +1684,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Sync object for this collection.
         /// </summary>
-        internal Lock SyncObject { get; } = new();
+        internal object SyncObject { get; } = new();
 
         /// <summary>
         /// Reference count variable.
