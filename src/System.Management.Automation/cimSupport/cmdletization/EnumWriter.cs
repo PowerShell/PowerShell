@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Reflection;
 using System.Reflection.Emit;
-
+using System.Threading;
 using Microsoft.PowerShell.Cmdletization.Xml;
 
 namespace Microsoft.PowerShell.Cmdletization

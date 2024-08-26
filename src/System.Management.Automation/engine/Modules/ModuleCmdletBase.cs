@@ -23,7 +23,6 @@ using System.Diagnostics;
 using Microsoft.PowerShell.Cmdletization;
 
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Threading;
 
 //
 // Now define the set of commands for manipulating modules.
@@ -325,7 +324,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Synchronization object for creation/cleanup of WindowsPS compat remoting session.
         /// </summary>
-        internal static readonly Lock s_WindowsPowerShellCompatSyncObject = new();
+        internal static readonly System.Threading.Lock s_WindowsPowerShellCompatSyncObject = new();
 
         private readonly Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
 
