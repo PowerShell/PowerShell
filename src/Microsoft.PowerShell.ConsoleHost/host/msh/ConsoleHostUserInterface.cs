@@ -15,6 +15,8 @@ using System.Security;
 using System.Text;
 
 using Dbg = System.Management.Automation.Diagnostics;
+using System.Threading;
+
 #if !UNIX
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 #endif
@@ -2220,7 +2222,7 @@ namespace Microsoft.PowerShell
 
         // used to serialize access to instance data
 
-        private readonly object _instanceLock = new object();
+        private readonly Lock _instanceLock = new();
 
         // If this is true, class throws on read or prompt method which require
         // access to console.

@@ -1310,7 +1310,7 @@ namespace Microsoft.PowerShell.Commands
         private RemotePipeline _remotePipeline;
         private Job _job;
         private ManualResetEvent _stopPipelineReceive;
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
 
         #endregion
     }

@@ -358,7 +358,7 @@ namespace System.Management.Automation.Internal
         // bool indicating if session key was generated before
         private bool _sessionKeyGenerated = false;
 
-        private static readonly object s_syncObject = new object();
+        private static readonly Lock s_syncObject = new();
 
         #endregion Private Members
 
@@ -620,7 +620,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Object for synchronizing key exchange.
         /// </summary>
-        protected object syncObject = new object();
+        protected Lock syncObject = new();
 
         private bool _keyExchangeStarted = false;
 

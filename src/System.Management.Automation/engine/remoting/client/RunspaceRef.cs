@@ -6,7 +6,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
 using System.Management.Automation.Security;
-
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -25,7 +25,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private readonly ObjectRef<Runspace> _runspaceRef;
         private bool _stopInvoke;
-        private readonly object _localSyncObject;
+        private readonly Lock _localSyncObject;
         private static readonly RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(runspace != null, "Expected runspace != null");
             _runspaceRef = new ObjectRef<Runspace>(runspace);
             _stopInvoke = false;
-            _localSyncObject = new object();
+            _localSyncObject = new Lock();
         }
 
         /// <summary>

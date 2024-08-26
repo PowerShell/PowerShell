@@ -865,7 +865,7 @@ namespace System.Management.Automation.Internal
         #region Private Members
 
         private readonly Guid _clientRunspacePoolId;
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
         private bool _createRunspaceCalled = false;
         private Exception _closingReason;
         private readonly int _minRunspaces;
@@ -878,7 +878,7 @@ namespace System.Management.Automation.Internal
 
         // data structure handlers of all ClientRemotePowerShell which are
         // associated with this runspace pool
-        private readonly object _associationSyncObject = new object();
+        private readonly Lock _associationSyncObject = new();
         // object to synchronize operations to above
         private readonly BaseClientSessionTransportManager _transportManager;
         // session transport manager associated with this runspace
@@ -1607,7 +1607,7 @@ namespace System.Management.Automation.Internal
 
         // object for synchronizing input to be sent
         // to server powershell
-        private readonly object _inputSyncObject = new object();
+        private readonly Lock _inputSyncObject = new();
 
         private enum connectionStates
         {

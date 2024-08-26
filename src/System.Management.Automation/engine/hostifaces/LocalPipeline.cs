@@ -1273,7 +1273,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Object used for synchronization.
         /// </summary>
-        private readonly object _syncRoot = new object();
+        private readonly Lock _syncRoot = new();
         private readonly LocalPipeline _localPipeline;
 
         /// <summary>

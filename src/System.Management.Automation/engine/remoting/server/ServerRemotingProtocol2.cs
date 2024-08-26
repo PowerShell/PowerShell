@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
 using System.Management.Automation.Runspaces;
-
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -417,7 +417,7 @@ namespace System.Management.Automation
 
         // powershell data structure handlers associated with this
         // runspace pool data structure handler
-        private readonly object _associationSyncObject = new object();
+        private readonly Lock _associationSyncObject = new();
         // object to synchronize operations to above
 
         #endregion Private Members

@@ -14,7 +14,7 @@ using System.Management.Automation.Interpreter;
 using System.Management.Automation.Language;
 using System.Reflection;
 using System.Text;
-
+using System.Threading;
 using Microsoft.PowerShell;
 using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 
@@ -3308,7 +3308,7 @@ namespace System.Management.Automation
     /// </remarks>
     internal class PSInternalMemberSet : PSMemberSet
     {
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
         private readonly PSObject _psObject;
 
         #region Constructor

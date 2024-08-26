@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
+using System.Threading;
 
 namespace Microsoft.PowerShell
 {
@@ -125,6 +126,6 @@ namespace Microsoft.PowerShell
         }
 
         private StreamWriter _transcriptionWriter;
-        private readonly object _transcriptionStateLock = new object();
+        private readonly Lock _transcriptionStateLock = new();
     }
 }   // namespace

@@ -499,7 +499,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// </summary>
-        public object SyncObject { get; set; }
+        public Lock SyncObject { get; set; }
 
         /// <summary>
         /// </summary>

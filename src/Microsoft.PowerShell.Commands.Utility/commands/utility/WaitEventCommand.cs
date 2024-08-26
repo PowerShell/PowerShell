@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly AutoResetEvent _eventArrived = new(false);
         private PSEventArgs _receivedEvent = null;
-        private readonly object _receivedEventLock = new();
+        private readonly Lock _receivedEventLock = new();
         private WildcardPattern _matchPattern;
 
         /// <summary>

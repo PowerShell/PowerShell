@@ -8,7 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Security;
 using System.Text;
-
+using System.Threading;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
 
@@ -1321,7 +1321,7 @@ namespace System.Management.Automation
         }
 
         private static IList<DefaultPSSnapInInformation> s_defaultMshSnapins = null;
-        private static readonly object s_syncObject = new object();
+        private static readonly Lock s_syncObject = new();
 
         #endregion
 

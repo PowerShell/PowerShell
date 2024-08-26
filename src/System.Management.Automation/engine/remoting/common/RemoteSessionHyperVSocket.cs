@@ -137,7 +137,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Members
 
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         #endregion
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Remoting
             byte[] buffer = new byte[1000];
             int bytesRead;
             */
-            _syncObject = new object();
+            _syncObject = new Lock();
 
             Exception ex = null;
 
@@ -339,7 +339,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Members
 
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         private static readonly ManualResetEvent s_connectDone =
@@ -397,7 +397,7 @@ namespace System.Management.Automation.Remoting
         {
             Guid serviceId;
 
-            _syncObject = new object();
+            _syncObject = new Lock();
 
             if (isFirstConnection)
             {

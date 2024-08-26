@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Management.Automation.Remoting;
+using System.Threading;
 
 namespace System.Management.Automation
 {
@@ -127,7 +128,7 @@ namespace System.Management.Automation
         #region Private Members
 
         private readonly Dictionary<Guid, T> _repository = new Dictionary<Guid, T>();
-        private readonly object _syncObject = new object();      // object for synchronization
+        private readonly Lock _syncObject = new();      // object for synchronization
         private readonly string _identifier;
 
         #endregion Private Members

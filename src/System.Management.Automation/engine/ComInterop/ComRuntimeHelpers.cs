@@ -10,6 +10,7 @@ using System.Management.Automation.InteropServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
+using System.Threading;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -417,7 +418,7 @@ namespace System.Management.Automation.ComInterop
 
         #region non-public members
 
-        private static readonly object s_lock = new object();
+        private static readonly Lock s_lock = new();
         private static ModuleBuilder s_dynamicModule;
 
         internal static ModuleBuilder DynamicModule

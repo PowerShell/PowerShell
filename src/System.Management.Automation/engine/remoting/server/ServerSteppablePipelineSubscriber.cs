@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 // Warning: Events StartSteppablePipeline and RunProcessRecord are never used
@@ -29,7 +30,7 @@ namespace System.Management.Automation
     {
         #region Private data
 
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
         private bool _initialized = false;
         private PSLocalEventManager _eventManager;
         private PSEventSubscriber _startSubscriber;

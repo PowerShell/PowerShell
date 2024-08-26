@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
+using System.Threading;
 
 namespace System.Management.Automation.Subsystem
 {
@@ -73,12 +74,12 @@ namespace System.Management.Automation.Subsystem
 
         #region "private/internal instance members"
 
-        private protected readonly object _syncObj;
+        private protected readonly Lock _syncObj;
         private protected ReadOnlyCollection<ImplementationInfo> _cachedImplInfos;
 
         private protected SubsystemInfo(SubsystemKind kind, Type subsystemType)
         {
-            _syncObj = new object();
+            _syncObj = new Lock();
             _cachedImplInfos = Utils.EmptyReadOnlyCollection<ImplementationInfo>();
 
             Kind = kind;

@@ -298,7 +298,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Members
 
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         private const string _threadName = "IPC Listener Thread";
@@ -307,7 +307,7 @@ namespace System.Management.Automation.Remoting
         private const int _maxPipePathLengthMacOS = 104;
 
         // Singleton server.
-        private static readonly object s_syncObject;
+        private static readonly Lock s_syncObject;
         internal static RemoteSessionNamedPipeServer IPCNamedPipeServer;
         internal static bool IPCNamedPipeServerEnabled;
 
@@ -405,7 +405,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSArgumentNullException(nameof(pipeName));
             }
 
-            _syncObject = new object();
+            _syncObject = new Lock();
             PipeName = pipeName;
 
             Stream = CreateNamedPipe(
@@ -498,7 +498,7 @@ namespace System.Management.Automation.Remoting
 
         static RemoteSessionNamedPipeServer()
         {
-            s_syncObject = new object();
+            s_syncObject = new Lock();
 
             // All PowerShell instances will start with the named pipe
             // and listener created and running.

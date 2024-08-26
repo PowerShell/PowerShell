@@ -36,7 +36,7 @@ namespace System.Management.Automation.Runspaces.Internal
         protected Guid instanceId;
         private bool _isDisposed;
         protected bool isServicingRequests;
-        protected object syncObject = new object();
+        protected Lock syncObject = new();
 
         private static readonly TimeSpan s_defaultCleanupPeriod = new TimeSpan(0, 15, 0);   // 15 minutes.
         private TimeSpan _cleanupInterval;

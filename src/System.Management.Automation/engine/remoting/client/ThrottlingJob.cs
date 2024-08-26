@@ -69,7 +69,7 @@ namespace System.Management.Automation
 
         private readonly DateTime _progressStartTime = DateTime.UtcNow;
         private readonly int _progressActivityId;
-        private readonly object _progressLock = new object();
+        private readonly Lock _progressLock = new();
         private DateTime _progressReportLastTime = DateTime.MinValue;
 
         internal int GetProgressActivityId()
@@ -252,7 +252,7 @@ namespace System.Management.Automation
             }
         }
 
-        private readonly object _lockObject = new object();
+        private readonly Lock _lockObject = new();
 
         /// <summary>
         /// Creates a new <see cref="ThrottlingJob"/> object.
@@ -451,7 +451,7 @@ namespace System.Management.Automation
             }
         }
 
-        private readonly object _alreadyWroteFlowControlBuffersHighMemoryUsageWarningLock = new object();
+        private readonly Lock _alreadyWroteFlowControlBuffersHighMemoryUsageWarningLock = new();
         private bool _alreadyWroteFlowControlBuffersHighMemoryUsageWarning;
 
         private const long FlowControlBuffersHighMemoryUsageThreshold = 30000;
@@ -864,7 +864,7 @@ namespace System.Management.Automation
 
             private readonly ThrottlingJob _throttlingJob;
 
-            private readonly object _myLock;
+            private readonly Lock _myLock;
             private readonly BlockingCollection<PSStreamObject> _aggregatedResults;
             private readonly HashSet<Job> _monitoredJobs;
 
@@ -875,7 +875,7 @@ namespace System.Management.Automation
             {
                 _throttlingJob = throttlingJob;
 
-                _myLock = new object();
+                _myLock = new Lock();
                 _monitoredJobs = new HashSet<Job>();
 
                 _aggregatedResults = new BlockingCollection<PSStreamObject>();

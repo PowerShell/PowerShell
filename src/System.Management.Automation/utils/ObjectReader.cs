@@ -198,7 +198,7 @@ namespace System.Management.Automation.Internal
         /// we are protected from outside code interfering in our
         /// critical section.  Thanks to Wintellect for the hint.
         /// </remarks>
-        private readonly object _monitorObject = new object();
+        private readonly Lock _monitorObject = new();
 
         #endregion Private fields
 

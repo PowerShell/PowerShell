@@ -18,6 +18,7 @@ using System.Linq.Expressions;
 #endif
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 //using Microsoft.Scripting.Generation;
 
@@ -36,7 +37,7 @@ namespace System.Management.Automation.Interpreter
         // Adaptive compilation support:
         private Type _compiledDelegateType;
         private Delegate _compiled;
-        private readonly object _compileLock = new object();
+        private readonly Lock _compileLock = new();
 
         internal LightDelegateCreator(Interpreter interpreter, LambdaExpression lambda)
         {

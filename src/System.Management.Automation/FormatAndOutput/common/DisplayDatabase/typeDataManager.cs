@@ -27,10 +27,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal TypeInfoDataBase Database { get; private set; }
 
         // for locking the F&O database
-        internal object databaseLock = new object();
+        internal Lock databaseLock = new();
 
         // for locking the update from XMLs
-        internal object updateDatabaseLock = new object();
+        internal Lock updateDatabaseLock = new();
         // this is used to throw errors when updating a shared TypeTable.
         internal bool isShared;
         private readonly List<string> _formatFileList;

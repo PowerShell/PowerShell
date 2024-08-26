@@ -23,8 +23,8 @@ namespace System.Management.Automation.Remoting.Server
         protected OutOfProcessServerSessionTransportManager sessionTM;
         protected OutOfProcessUtils.DataProcessingDelegates callbacks;
 
-        protected static object SyncObject = new object();
-        protected object _syncObject = new object();
+        protected static Lock SyncObject = new();
+        protected Lock _syncObject = new();
         protected string _initialCommand;
         protected ManualResetEvent allcmdsClosedEvent;
 

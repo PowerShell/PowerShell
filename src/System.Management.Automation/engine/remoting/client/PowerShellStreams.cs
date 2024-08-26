@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Threading;
+
 namespace System.Management.Automation
 {
     /// <summary>
@@ -56,7 +58,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Private object for thread-safe execution.
         /// </summary>
-        private readonly object _syncLock = new object();
+        private readonly Lock _syncLock = new();
 
         /// <summary>
         /// Default constructor.

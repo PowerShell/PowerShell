@@ -14,7 +14,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security;
-
+using System.Threading;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands.Internal.Format;
 
@@ -1674,7 +1674,7 @@ namespace System.Management.Automation
             Modules = new ModuleIntrinsics(this);
         }
 
-        private static readonly object lockObject = new object();
+        private static readonly Lock lockObject = new();
     }
 
     /// <summary>

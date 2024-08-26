@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Net;
 using System.Text;
+using System.Threading;
 using Microsoft.Management.Infrastructure.Options;
 #endregion
 
@@ -594,7 +595,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock object.
         /// </summary>
-        private readonly object myLock = new();
+        private readonly Lock myLock = new();
 
         /// <summary>
         /// This flag is introduced to resolve the parameter set name

@@ -479,7 +479,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Data
 
         internal bool isClosed;
-        internal object syncObject = new object();
+        internal Lock syncObject = new();
         internal PrioritySendDataCollection dataToBeSent;
         // used to handle callbacks from the server..these are used to synchronize received callbacks
         private readonly Queue<CallbackNotificationInformation> _callbackNotificationQueue;
@@ -1285,7 +1285,7 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
         // used to listen to data available events from serialized datastream.
         private readonly SerializedDataStream.OnDataAvailableCallback _onDataAvailable;
         // the following variable are used by onDataAvailableCallback.

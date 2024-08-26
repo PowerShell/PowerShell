@@ -644,7 +644,7 @@ namespace System.Management.Automation.PSTasks
         private readonly ManualResetEvent _addAvailable;
         private readonly int _sizeLimit;
         private readonly ManualResetEvent _stopAll;
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
         private readonly Dictionary<int, PSTaskBase> _taskPool;
         private readonly ConcurrentQueue<Runspace> _runspacePool;
         private readonly ConcurrentDictionary<int, Runspace> _activeRunspaces;
@@ -675,7 +675,7 @@ namespace System.Management.Automation.PSTasks
             _sizeLimit = size;
             _useRunspacePool = !useNewRunspace;
             _isOpen = true;
-            _syncObject = new object();
+            _syncObject = new Lock();
             _addAvailable = new ManualResetEvent(true);
             _stopAll = new ManualResetEvent(false);
             _waitHandles = new WaitHandle[]

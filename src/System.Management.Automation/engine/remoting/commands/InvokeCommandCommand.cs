@@ -2043,7 +2043,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _needToStartSteppablePipelineOnServer = false;
         private bool _clearInvokeCommandOnRunspace = false;
         private readonly List<PipelineWriter> _inputWriters = new List<PipelineWriter>();
-        private readonly object _jobSyncObject = new object();
+        private readonly Lock _jobSyncObject = new();
         private bool _nojob = false;
         private readonly Guid _instanceId = Guid.NewGuid();
         private bool _propagateErrors = false;
@@ -2132,7 +2132,7 @@ namespace System.Management.Automation.Internal
         private ProgressRecord _progressRecord;
         private long _sourceId;
         private bool _progressIsRunning;
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
         private Timer _updateTimer;
 
         /// <summary>
@@ -2140,7 +2140,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         public RobustConnectionProgress()
         {
-            _syncObject = new object();
+            _syncObject = new Lock();
             _activity = RemotingErrorIdStrings.RCProgressActivity;
         }
 

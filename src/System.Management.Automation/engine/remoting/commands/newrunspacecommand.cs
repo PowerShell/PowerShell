@@ -1289,7 +1289,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _startComplete;
         private bool _stopComplete;
 
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
 
         internal RemoteRunspace OperatedRunspace { get; }
 

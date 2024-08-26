@@ -505,7 +505,7 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private readonly RunspacePoolInternal _internalPool;
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
 
         private event EventHandler<RunspacePoolStateChangedEventArgs> InternalStateChanged = null;
 

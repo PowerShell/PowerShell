@@ -51,7 +51,7 @@ namespace System.Management.Automation.Remoting
 
         // all events raised through the state machine
         // will be queued in this
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
         // object for synchronizing access to the above
         // queue
 

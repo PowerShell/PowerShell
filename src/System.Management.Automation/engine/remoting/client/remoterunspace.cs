@@ -33,7 +33,7 @@ namespace System.Management.Automation
         #region Private Members
 
         private readonly List<RemotePipeline> _runningPipelines = new List<RemotePipeline>();
-        private readonly object _syncRoot = new object();
+        private readonly Lock _syncRoot = new();
         private RunspaceStateInfo _runspaceStateInfo = new RunspaceStateInfo(RunspaceState.BeforeOpen);
         private readonly bool _bSessionStateProxyCallInProgress = false;
         private readonly RunspaceConnectionInfo _connectionInfo;

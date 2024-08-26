@@ -116,7 +116,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// SyncObject.
         /// </summary>
-        internal object SyncObject { get; } = new object();
+        internal Lock SyncObject { get; } = new();
 
         /// <summary>
         /// Marks the async operation as completed.

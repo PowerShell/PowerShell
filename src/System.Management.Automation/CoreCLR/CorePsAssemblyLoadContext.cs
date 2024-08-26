@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Threading;
 
 namespace System.Management.Automation
 {
@@ -108,7 +109,7 @@ namespace System.Management.Automation
 
         #region Fields
 
-        private static readonly object s_syncObj = new();
+        private static readonly Lock s_syncObj = new();
         private readonly string[] _probingPaths;
         private readonly string[] _extensions = new string[] { ".ni.dll", ".dll" };
         // CoreCLR type catalog dictionary

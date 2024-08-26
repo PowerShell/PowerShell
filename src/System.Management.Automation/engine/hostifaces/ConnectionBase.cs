@@ -199,7 +199,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Object used for synchronization.
         /// </summary>
-        protected internal object SyncRoot { get; } = new object();
+        protected internal Lock SyncRoot { get; } = new();
 
         /// <summary>
         /// Information about the computer where this runspace is created.
@@ -833,7 +833,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         protected bool ByPassRunspaceStateCheck { get; set; }
 
-        private readonly object _pipelineListLock = new object();
+        private readonly Lock _pipelineListLock = new();
 
         /// <summary>
         /// List of pipeline which are currently executing in this runspace.

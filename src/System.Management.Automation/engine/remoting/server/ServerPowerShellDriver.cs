@@ -33,7 +33,7 @@ namespace System.Management.Automation
         private readonly bool[] _datasent = new bool[2];
 
         // sync object for synchronizing sending data to client
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
 
         // there is no input when this driver was created
         private readonly bool _noInput;

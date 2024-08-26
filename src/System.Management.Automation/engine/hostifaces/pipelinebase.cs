@@ -1025,7 +1025,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Object used for synchronization.
         /// </summary>
-        protected internal object SyncRoot { get; } = new object();
+        protected internal Lock SyncRoot { get; } = new();
 
         #endregion misc
 

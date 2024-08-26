@@ -25,7 +25,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal abstract class WSManPluginServerSession : IDisposable
     {
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
 
         protected bool isClosed;
         protected bool isContextReported;
@@ -56,7 +56,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest creationRequestDetails,
             WSManPluginServerTransportManager transportMgr)
         {
-            _syncObject = new object();
+            _syncObject = new Lock();
             this.creationRequestDetails = creationRequestDetails;
             this.transportMgr = transportMgr;
 
@@ -402,7 +402,7 @@ namespace System.Management.Automation.Remoting
 
         #region Internally Visible Members
 
-        internal object shellSyncObject;
+        internal Lock shellSyncObject;
 
         #endregion
 
@@ -419,7 +419,7 @@ namespace System.Management.Automation.Remoting
                 new EventHandler<RemoteSessionStateMachineEventArgs>(this.HandleServerRemoteSessionClosed);
 
             _activeCommandSessions = new Dictionary<IntPtr, WSManPluginCommandSession>();
-            this.shellSyncObject = new object();
+            this.shellSyncObject = new Lock();
             this.shutDownContext = shutDownContext;
         }
         #endregion
@@ -732,7 +732,7 @@ namespace System.Management.Automation.Remoting
 
         #region Internally Visible Members
 
-        internal object cmdSyncObject;
+        internal Lock cmdSyncObject;
 
         #endregion
 
@@ -745,7 +745,7 @@ namespace System.Management.Automation.Remoting
             : base(creationRequestDetails, transportMgr)
         {
             _remoteSession = remoteSession;
-            cmdSyncObject = new object();
+            cmdSyncObject = new Lock();
         }
 
         #endregion

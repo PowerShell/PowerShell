@@ -442,7 +442,7 @@ namespace System.Management.Automation.Remoting
             _operationsQueue = new List<IThrottleOperation>();
             _startOperationQueue = new List<IThrottleOperation>();
             _stopOperationQueue = new List<IThrottleOperation>();
-            _syncObject = new object();
+            _syncObject = new Lock();
         }
 
         #endregion Constructors
@@ -623,7 +623,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Object used to synchronize access to the queues.
         /// </summary>
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
 
         private bool _submitComplete = false;                    // to check if operations have been submitComplete
         private bool _stopping = false;                      // if stop is in process

@@ -35,7 +35,7 @@ namespace System.Management.Automation.Remoting
         private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSessionDSHandlerStateMachine", "ServerRemoteSessionDSHandlerStateMachine");
 
         private readonly ServerRemoteSession _session;
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
 
         private readonly Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
             = new Queue<RemoteSessionStateMachineEventArgs>();
@@ -77,7 +77,7 @@ namespace System.Management.Automation.Remoting
             }
 
             _session = session;
-            _syncObject = new object();
+            _syncObject = new Lock();
 
             _stateMachineHandle = new EventHandler<RemoteSessionStateMachineEventArgs>[(int)RemoteSessionState.MaxState, (int)RemoteSessionEvent.MaxEvent];
 

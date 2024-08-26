@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _holdingResultsRef;
         private readonly List<Job> _jobsBeingAggregated = new List<Job>();
         private readonly List<Guid> _jobsSpecifiedInParameters = new List<Guid>();
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
         private bool _outputJobFirst;
         private OutputProcessingState _outputProcessingNotification;
         private bool _processingOutput;

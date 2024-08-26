@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-
+using System.Threading;
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
 using Microsoft.PowerShell.Cim;
@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     internal sealed class CimCustomOptionsDictionary
     {
         private readonly IDictionary<string, object> _dict;
-        private readonly object _dictModificationLock = new();
+        private readonly Lock _dictModificationLock = new();
 
         private CimCustomOptionsDictionary(IEnumerable<KeyValuePair<string, object>> wrappedDictionary)
         {

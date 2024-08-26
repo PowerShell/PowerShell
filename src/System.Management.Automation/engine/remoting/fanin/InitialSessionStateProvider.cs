@@ -793,7 +793,7 @@ namespace System.Management.Automation.Remoting
         private static readonly Dictionary<string, ConfigurationDataFromXML> s_ssnStateProviders =
             new Dictionary<string, ConfigurationDataFromXML>(StringComparer.OrdinalIgnoreCase);
 
-        private static readonly object s_syncObject = new object();
+        private static readonly Lock s_syncObject = new();
 
         #endregion
     }

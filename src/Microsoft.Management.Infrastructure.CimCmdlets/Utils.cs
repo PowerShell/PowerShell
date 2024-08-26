@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
@@ -172,7 +173,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock the log file.
         /// </summary>
-        internal static readonly object logLock = new();
+        internal static readonly Lock logLock = new();
 
         #endregion
 

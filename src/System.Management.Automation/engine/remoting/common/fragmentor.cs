@@ -7,6 +7,7 @@ using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Tracing;
 using System.Text;
+using System.Threading;
 using System.Xml;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -447,7 +448,7 @@ namespace System.Management.Automation.Remoting
         private long _fragmentId;
 
         private readonly int _fragmentSize;
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
         private bool _isDisposed;
         private readonly bool _notifyOnWriteFragmentImmediately;
 
@@ -490,7 +491,7 @@ namespace System.Management.Automation.Remoting
         {
             s_trace.WriteLine("Creating SerializedDataStream with fragmentsize : {0}", fragmentSize);
             Dbg.Assert(fragmentSize > 0, "fragmentsize should be greater than 0.");
-            _syncObject = new object();
+            _syncObject = new Lock();
             _currentFragment = new FragmentedRemoteObject();
             _queuedStreams = new Queue<MemoryStream>();
             _fragmentSize = fragmentSize;

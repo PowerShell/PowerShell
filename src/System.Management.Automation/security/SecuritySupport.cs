@@ -855,6 +855,7 @@ namespace System.Management.Automation
 {
     using System.Management.Automation.Tracing;
     using System.Security.Cryptography.Pkcs;
+    using System.Threading;
 
     /// <summary>
     /// Utility class for CMS (Cryptographic Message Syntax) related operations.
@@ -1609,7 +1610,7 @@ namespace System.Management.Automation
 
         private static readonly bool s_amsiInitFailed = false;
         private static bool s_amsiNotifyFailed = false;
-        private static readonly object s_amsiLockObject = new object();
+        private static readonly Lock s_amsiLockObject = new();
 
         /// <summary>
         /// Reset the AMSI session (used to track related script invocations)

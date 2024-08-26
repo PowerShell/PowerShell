@@ -6,6 +6,7 @@
 using System;
 using System.ComponentModel;
 using System.Management.Automation;
+using System.Threading;
 
 #endregion
 
@@ -196,7 +197,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             enableRaisingEvents = false;
             status = Status.Default;
-            myLock = new object();
+            myLock = new Lock();
             cimRegisterCimIndication = new CimRegisterCimIndication();
             cimRegisterCimIndication.OnNewSubscriptionResult += NewSubscriptionResultHandler;
 
@@ -352,7 +353,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock started field.
         /// </summary>
-        private object myLock;
+        private Lock myLock;
 
         /// <summary>
         /// CimSession parameter name.

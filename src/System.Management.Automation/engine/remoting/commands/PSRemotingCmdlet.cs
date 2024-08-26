@@ -4264,7 +4264,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _stopProcessing;
 
-        private static readonly object s_SyncObject = new object();
+        private static readonly Lock s_SyncObject = new();
         private static TypeTable s_TypeTable;
 
         #endregion

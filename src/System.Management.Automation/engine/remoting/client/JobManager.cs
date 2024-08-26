@@ -31,14 +31,14 @@ namespace System.Management.Automation
         private readonly Dictionary<string, JobSourceAdapter> _sourceAdapters =
             new Dictionary<string, JobSourceAdapter>();
 
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
 
         /// <summary>
         /// Collection of job IDs that are valid for reuse.
         /// </summary>
         private static readonly Dictionary<Guid, KeyValuePair<int, string>> s_jobIdsForReuse = new Dictionary<Guid, KeyValuePair<int, string>>();
 
-        private static readonly object s_syncObject = new object();
+        private static readonly Lock s_syncObject = new();
 
         /// <summary>
         /// Creates a JobManager instance.

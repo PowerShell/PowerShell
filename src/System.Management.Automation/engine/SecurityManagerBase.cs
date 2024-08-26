@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation.Host;
-
+using System.Threading;
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -55,7 +55,7 @@ namespace System.Management.Automation
 
         #endregion constructor
 
-        private readonly object _policyCheckLock = new object();
+        private readonly Lock _policyCheckLock = new();
 
         #region methods to use internally
 

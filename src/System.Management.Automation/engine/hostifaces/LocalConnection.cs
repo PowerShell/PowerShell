@@ -361,7 +361,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         private static readonly string s_debugPreferenceCachePath = Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell", "DebugPreference.clixml");
-        private static readonly object s_debugPreferenceLockObject = new object();
+        private static readonly Lock s_debugPreferenceLockObject = new();
 
         /// <summary>
         /// DebugPreference serves as a property bag to keep

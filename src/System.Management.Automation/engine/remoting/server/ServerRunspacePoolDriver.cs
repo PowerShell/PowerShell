@@ -929,7 +929,7 @@ namespace System.Management.Automation
         }
 
         private bool? _initialSessionStateIncludesGetCommandWithListImportedSwitch;
-        private readonly object _initialSessionStateIncludesGetCommandWithListImportedSwitchLock = new object();
+        private readonly Lock _initialSessionStateIncludesGetCommandWithListImportedSwitchLock = new();
 
         private bool DoesInitialSessionStateIncludeGetCommandWithListImportedSwitch()
         {
@@ -1676,7 +1676,7 @@ namespace System.Management.Automation
             {
                 private readonly Queue<ServerPowerShellDriver> _driverInvokeQueue;
                 private readonly ManualResetEvent _processDrivers;
-                private readonly object _syncObject;
+                private readonly Lock _syncObject;
                 private bool _stopPump;
                 private bool _isDisposed;
 
@@ -1684,7 +1684,7 @@ namespace System.Management.Automation
                 {
                     _driverInvokeQueue = new Queue<ServerPowerShellDriver>();
                     _processDrivers = new ManualResetEvent(false);
-                    _syncObject = new object();
+                    _syncObject = new Lock();
                 }
 
                 public void Start()

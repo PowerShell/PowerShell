@@ -526,7 +526,7 @@ namespace System.Management.Automation
 
         private string _name;
         private IList<Job> _childJobs;
-        internal readonly object syncObject = new object();   // object used for synchronization
+        internal readonly Lock syncObject = new();   // object used for synchronization
         // ISSUE: Should Result be public property
         private PSDataCollection<PSStreamObject> _results = new PSDataCollection<PSStreamObject>();
         private bool _resultsOwner = true;
@@ -892,7 +892,7 @@ namespace System.Management.Automation
 
         private void InvokeCmdletMethodAndIgnoreResults(Action<Cmdlet> invokeCmdletMethod)
         {
-            object resultsLock = new object();
+            Lock resultsLock = new();
             CmdletMethodInvoker<object> methodInvoker = new CmdletMethodInvoker<object>
             {
                 Action = (Cmdlet cmdlet) => { invokeCmdletMethod(cmdlet); return null; },
@@ -908,7 +908,7 @@ namespace System.Management.Automation
 
             T methodResult = default(T);
             Exception closureSafeExceptionThrownOnCmdletThread = null;
-            object resultsLock = new object();
+            Lock resultsLock = new();
             using (var gotResultEvent = new ManualResetEventSlim(false))
             {
                 EventHandler<JobStateEventArgs> stateChangedEventHandler =
@@ -2666,7 +2666,7 @@ namespace System.Management.Automation
 
         private readonly ThrottleManager _throttleManager = new ThrottleManager();
 
-        private readonly object _syncObject = new object();           // sync object
+        private readonly Lock _syncObject = new();           // sync object
 
         #endregion Private Members
     }
@@ -3825,7 +3825,7 @@ namespace System.Management.Automation
         private readonly RemotePipeline _remotePipeline = null;
 
         // object used for synchronization
-        protected object SyncObject = new object();
+        protected Lock SyncObject = new();
 
         private ThrottleManager _throttleManager;
         private bool _stopIsCalled = false;

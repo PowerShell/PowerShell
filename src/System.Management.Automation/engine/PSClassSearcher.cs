@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -40,7 +40,7 @@ namespace System.Management.Automation
         private Collection<PSClassInfo> _matchingClassList = null;
         private readonly bool _useWildCards = false;
         private readonly Dictionary<string, PSModuleInfo> _moduleInfoCache = null;
-        private readonly object _lockObject = new object();
+        private readonly Lock _lockObject = new();
 
         #endregion
 

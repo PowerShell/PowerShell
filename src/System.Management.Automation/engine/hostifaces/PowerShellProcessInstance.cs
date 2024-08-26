@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation.Remoting;
 using System.Text;
+using System.Threading;
 
 namespace System.Management.Automation.Runspaces
 {
@@ -19,7 +20,7 @@ namespace System.Management.Automation.Runspaces
 
         private readonly ProcessStartInfo _startInfo;
         private RunspacePool _runspacePool;
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
         private bool _started;
         private bool _isDisposed;
         private bool _processExited;

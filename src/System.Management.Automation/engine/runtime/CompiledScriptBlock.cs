@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
@@ -1740,7 +1741,7 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static readonly object s_syncObject = new object();
+        private static readonly Lock s_syncObject = new();
         private static string s_lastSeenCertificate = string.Empty;
         private static bool s_hasProcessedCertificate = false;
         private static CmsMessageRecipient[] s_encryptionRecipients = null;

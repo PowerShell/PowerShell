@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         private static readonly Lazy<ModuleBuilder> s_moduleBuilder = new(CreateModuleBuilder, isThreadSafe: true);
-        private static readonly object s_moduleBuilderUsageLock = new();
+        private static readonly Lock s_moduleBuilderUsageLock = new();
 
         internal static string GetEnumFullName(EnumMetadataEnum enumMetadata)
         {

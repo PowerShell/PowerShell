@@ -992,8 +992,8 @@ namespace System.Management.Automation
             _runningJobs = new Dictionary<Guid, PSJobStartEventArgs>();
             _activeDebuggers = new ConcurrentStack<Debugger>();
             _debuggerStopEventArgs = new ConcurrentStack<DebuggerStopEventArgs>();
-            _syncObject = new object();
-            _syncActiveDebuggerStopObject = new object();
+            _syncObject = new Lock();
+            _syncActiveDebuggerStopObject = new Lock();
 
             _runningRunspaces = new Dictionary<Guid, PSMonitorRunspaceInfo>();
         }
@@ -1726,8 +1726,8 @@ namespace System.Management.Automation
         private DebuggerResumeAction _currentDebuggerAction;
         private DebuggerResumeAction _previousDebuggerAction;
         private CallStackInfo _nestedRunningFrame;
-        private readonly object _syncObject;
-        private readonly object _syncActiveDebuggerStopObject;
+        private readonly Lock _syncObject;
+        private readonly Lock _syncActiveDebuggerStopObject;
         private int _processingOutputCount;
         private ManualResetEventSlim _processingOutputCompleteEvent = new ManualResetEventSlim(true);
 

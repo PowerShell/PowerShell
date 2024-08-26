@@ -11,7 +11,7 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Security;
-
+using System.Threading;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
 
@@ -1316,7 +1316,7 @@ namespace System.Management.Automation
 
         #region private members
 
-        private static readonly object s_lockObject = new object();
+        private static readonly Lock s_lockObject = new();
         private static string s_pathExtCacheKey;
         private static string[] s_cachedPathExtCollection;
         private static string[] s_cachedPathExtCollectionWithPs1;

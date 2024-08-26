@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Resources;
+using System.Threading;
 
 namespace System.Management.Automation
 {
@@ -22,7 +23,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to synchronize access to the ResourceManagerCache.
         /// </summary>
-        private static readonly object s_syncRoot = new object();
+        private static readonly Lock s_syncRoot = new();
 
         /// <summary>
         /// Gets the ResourceManager from the cache or gets an instance of the ResourceManager

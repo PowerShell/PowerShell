@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
-
+using System.Threading;
 using Microsoft.Management.Infrastructure;
 using Microsoft.PowerShell.Cim;
 
@@ -622,7 +622,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private int _numberOfMatchingResults;
 
         private readonly List<CimInstanceFilterBase> _filters = new();
-        private readonly object _myLock = new();
+        private readonly Lock _myLock = new();
 
         #region "Public" interface for client-side filtering
 

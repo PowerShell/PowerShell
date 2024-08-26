@@ -458,7 +458,7 @@ namespace System.Management.Automation
         /// Object used for synchronization between StopProcessing thread and
         /// Pipeline thread.
         /// </summary>
-        private readonly object _sync = new object();
+        private readonly Lock _sync = new();
 
         private SemaphoreSlim _processInitialized;
 

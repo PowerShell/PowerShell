@@ -23,7 +23,7 @@ namespace System.Management.Automation.Remoting
         // the following variables are used to block thread from sending
         // data to the client until the client sends a receive request.
         private bool _isRequestPending;
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
         private readonly ManualResetEvent _waitHandle;
         private readonly Dictionary<Guid, WSManPluginServerTransportManager> _activeCmdTransportManagers;
         private bool _isClosed;
@@ -49,7 +49,7 @@ namespace System.Management.Automation.Remoting
             PSRemotingCryptoHelper cryptoHelper)
             : base(fragmentSize, cryptoHelper)
         {
-            _syncObject = new object();
+            _syncObject = new Lock();
             _activeCmdTransportManagers = new Dictionary<Guid, WSManPluginServerTransportManager>();
             _waitHandle = new ManualResetEvent(false);
         }

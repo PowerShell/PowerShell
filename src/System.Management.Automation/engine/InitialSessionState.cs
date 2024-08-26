@@ -1244,7 +1244,7 @@ namespace System.Management.Automation.Runspaces
         private readonly Collection<T> _internalCollection;
 
         // object to use for locking
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
     }
 
     /// <summary>
@@ -2126,7 +2126,7 @@ namespace System.Management.Automation.Runspaces
 
         private HashSet<string> _startupScripts = new HashSet<string>();
 
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
 
         internal void Bind(ExecutionContext context, bool updateOnly, PSModuleInfo module, bool noClobber, bool local, bool setLocation)
         {

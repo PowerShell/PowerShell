@@ -8,6 +8,7 @@ using System.Diagnostics.Eventing;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace System.Management.Automation.Tracing
 {
@@ -229,7 +230,7 @@ namespace System.Management.Automation.Tracing
         }
 
         private static readonly Dictionary<Guid, EventProvider> providers = new Dictionary<Guid, EventProvider>();
-        private static readonly object syncLock = new object();
+        private static readonly Lock syncLock = new();
 
         private static readonly EventDescriptor _WriteTransferEvent = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long)0x4000000000000000);
 

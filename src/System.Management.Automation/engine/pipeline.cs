@@ -7,6 +7,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Threading;
 using Microsoft.PowerShell.Telemetry;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -1434,7 +1435,7 @@ namespace System.Management.Automation.Internal
             _redirectionPipes = null;
         }
 
-        private readonly object _stopReasonLock = new object();
+        private readonly Lock _stopReasonLock = new();
         /// <summary>
         /// Makes an internal note of the exception, but only if this is
         /// the first error.

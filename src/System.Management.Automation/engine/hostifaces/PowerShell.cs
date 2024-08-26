@@ -589,7 +589,7 @@ namespace System.Management.Automation
         private PSDataCollection<ErrorRecord> _errorBuffer;
 
         private bool _isDisposed;
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
 
         // client remote powershell if the powershell
         // is executed with a remote runspace pool
@@ -5342,7 +5342,7 @@ namespace System.Management.Automation
             private readonly PSInvocationSettings _settings;
             private bool _isNotActive;
             private readonly PowerShell _shell;
-            private readonly object _syncObject = new object();
+            private readonly Lock _syncObject = new();
 
             /// <summary>
             /// </summary>

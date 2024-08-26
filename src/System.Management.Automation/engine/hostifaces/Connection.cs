@@ -454,7 +454,7 @@ namespace System.Management.Automation.Runspaces
         private static int s_globalId;
         private readonly Stack<PowerShell> _runningPowerShells;
         private PowerShell _baseRunningPowerShell;
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
 
         #endregion
 
@@ -469,7 +469,7 @@ namespace System.Management.Automation.Runspaces
             Id = System.Threading.Interlocked.Increment(ref s_globalId);
             Name = "Runspace" + Id.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
             _runningPowerShells = new Stack<PowerShell>();
-            _syncObject = new object();
+            _syncObject = new Lock();
 
             // Keep track of this runspace until it is disposed.
             lock (s_syncObject)
@@ -483,7 +483,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         static Runspace()
         {
-            s_syncObject = new object();
+            s_syncObject = new Lock();
             s_runspaceDictionary = new SortedDictionary<int, WeakReference<Runspace>>();
             s_globalId = 0;
         }
@@ -804,7 +804,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         private static readonly SortedDictionary<int, WeakReference<Runspace>> s_runspaceDictionary;
-        private static readonly object s_syncObject;
+        private static readonly Lock s_syncObject;
 
         /// <summary>
         /// Returns a read only list of runspaces.

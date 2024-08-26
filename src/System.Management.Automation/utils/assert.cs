@@ -13,6 +13,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using System.Threading;
 
 namespace System.Management.Automation
 {
@@ -72,7 +73,7 @@ namespace System.Management.Automation
             return frameString.ToString();
         }
 
-        private static readonly object s_throwInsteadOfAssertLock = 1;
+        private static readonly Lock s_throwInsteadOfAssertLock = new();
 
         private static bool s_throwInsteadOfAssert = false;
         /// <summary>

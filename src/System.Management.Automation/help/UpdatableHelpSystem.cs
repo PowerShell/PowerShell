@@ -235,7 +235,7 @@ namespace System.Management.Automation.Help
         private readonly TimeSpan _defaultTimeout;
         private readonly Collection<UpdatableHelpProgressEventArgs> _progressEvents;
         private bool _stopping;
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
         private readonly UpdatableHelpCommandBase _cmdlet;
         private readonly CancellationTokenSource _cancelTokenSource;
 
@@ -255,7 +255,7 @@ namespace System.Management.Automation.Help
             _progressEvents = new Collection<UpdatableHelpProgressEventArgs>();
             Errors = new Collection<Exception>();
             _stopping = false;
-            _syncObject = new object();
+            _syncObject = new Lock();
             _cmdlet = cmdlet;
             _cancelTokenSource = new CancellationTokenSource();
 

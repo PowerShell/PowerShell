@@ -18,6 +18,7 @@ using System.Management.Automation;
 using System.Management.Automation.Language;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
+using System.Threading;
 
 namespace Microsoft.PowerShell.Cmdletization
 {
@@ -2149,7 +2150,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                 /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(commandMetadata.Name));
         }
 
-        private static readonly object s_enumCompilationLock = new();
+        private static readonly Lock s_enumCompilationLock = new();
 
         private static void CompileEnum(EnumMetadataEnum enumMetadata)
         {

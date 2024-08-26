@@ -503,7 +503,7 @@ namespace System.Management.Automation.Internal
         /// we are protected from outside code interfering in our
         /// critical section.  Thanks to Wintellect for the hint.
         /// </remarks>
-        private readonly object _monitorObject = new object();
+        private readonly Lock _monitorObject = new();
 
         /// <summary>
         /// Indicates if this stream has already been disposed.
@@ -1536,7 +1536,7 @@ namespace System.Management.Automation.Internal
         private PipelineReader<PSObject> _psobjectReader;
         private PipelineReader<object> _objectReaderForPipeline;
         private PipelineReader<PSObject> _psobjectReaderForPipeline;
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
         private bool _disposed = false;
 
         #endregion

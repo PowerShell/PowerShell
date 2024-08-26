@@ -413,7 +413,7 @@ namespace System.Management.Automation.Remoting
 
         private readonly TextWriter _writer;
         private bool _isStopped;
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
         private const string _errorPrepend = "__NamedPipeError__:";
 
         #endregion
@@ -2490,7 +2490,7 @@ namespace System.Management.Automation.Remoting.Server
         private readonly OutOfProcessTextWriter _stdOutWriter;
         private readonly OutOfProcessTextWriter _stdErrWriter;
         private readonly Dictionary<Guid, OutOfProcessServerTransportManager> _cmdTransportManagers;
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
 
         #endregion
 

@@ -5,6 +5,7 @@
 
 using System.Reflection;
 using System.Management.Automation.Internal;
+using System.Threading;
 
 namespace System.Management.Automation
 {
@@ -49,7 +50,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Lock object for the GetTracer method.
         /// </summary>
-        private static readonly object s_getTracerLock = new object();
+        private static readonly Lock s_getTracerLock = new();
 
         /// <summary>
         /// A helper to get an instance of the PSTraceSource class.

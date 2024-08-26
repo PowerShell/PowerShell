@@ -205,7 +205,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Synchronization object.
         /// </summary>
-        internal object SyncObject { get; } = new object();
+        internal Lock SyncObject { get; } = new();
 
         /// <summary>
         /// Processing input.

@@ -11,6 +11,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System.Management.Automation.Security
 {
@@ -155,7 +156,7 @@ namespace System.Management.Automation.Security
             return s_systemLockdownPolicy.Value;
         }
 
-        private static readonly object s_systemLockdownPolicyLock = new object();
+        private static readonly Lock s_systemLockdownPolicyLock = new();
         private static SystemEnforcementMode? s_systemLockdownPolicy = null;
         private static bool s_allowDebugOverridePolicy = false;
         private static bool s_wldpCanExecuteAvailable = true;

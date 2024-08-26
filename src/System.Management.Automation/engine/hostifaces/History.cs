@@ -11,7 +11,7 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
-
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -804,7 +804,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Private object for synchronization.
         /// </summary>
-        private readonly object _syncRoot = new object();
+        private readonly Lock _syncRoot = new();
 
         #endregion private
 

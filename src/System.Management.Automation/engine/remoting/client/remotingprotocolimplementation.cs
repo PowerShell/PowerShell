@@ -5,7 +5,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting.Client;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
-
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -28,7 +28,7 @@ namespace System.Management.Automation.Remoting
         private Uri _redirectUri;
         private int _maxUriRedirectionCount;
         private bool _isCloseCalled;
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
         private readonly PSRemotingCryptoHelper _cryptoHelper;
 
         private readonly ClientRemoteSession.URIDirectionReported _uriRedirectionHandler;

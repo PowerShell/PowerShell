@@ -24,6 +24,8 @@ using System.Text;
 using System.Xml;
 
 using Microsoft.Management.Infrastructure;
+using System.Threading;
+
 #if !UNIX
 using System.DirectoryServices;
 using System.Management;
@@ -614,7 +616,7 @@ namespace System.Management.Automation
 
         #region instance fields
 
-        private readonly object _lockObject = new object();
+        private readonly Lock _lockObject = new();
 
         private ConsolidatedString _typeNames;
 

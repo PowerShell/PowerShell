@@ -2972,7 +2972,7 @@ namespace Microsoft.PowerShell
             private bool _shouldExit;
             private readonly Executor _exec;
             private readonly Executor _promptExec;
-            private readonly object _syncObject = new object();
+            private readonly Lock _syncObject = new();
             private bool _isRunspacePushed = false;
             private bool _runspacePopped = false;
 
@@ -3044,7 +3044,7 @@ namespace Microsoft.PowerShell
         // state that persists across method calls, like progress data. It's internal because the ui object also
         // uses this same object.
 
-        internal object hostGlobalLock = new object();
+        internal Lock hostGlobalLock = new();
 
         // These members are possibly accessed from multiple threads (the break handler thread, a pipeline thread, or the main
         // thread). We use hostGlobalLock to sync access to them.

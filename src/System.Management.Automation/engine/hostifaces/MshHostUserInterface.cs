@@ -1098,7 +1098,7 @@ namespace System.Management.Automation.Host
         }
 
         internal static TranscriptionOption systemTranscript = null;
-        private static readonly object s_systemTranscriptLock = new object();
+        private static readonly Lock s_systemTranscriptLock = new();
 
         private static readonly Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
             static () => Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig),

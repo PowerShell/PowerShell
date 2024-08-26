@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell
@@ -697,13 +697,13 @@ namespace Microsoft.PowerShell
         // to currentExecutor is guarded by staticStateLock, and static initializers are run by the CLR at program init time.
 
         private static Executor s_currentExecutor;
-        private static readonly object s_staticStateLock = new object();
+        private static readonly Lock s_staticStateLock = new();
 
         private readonly ConsoleHost _parent;
         private Pipeline _pipeline;
         private bool _cancelled;
         internal bool useNestedPipelines;
-        private readonly object _instanceStateLock = new object();
+        private readonly Lock _instanceStateLock = new();
         private readonly bool _isPromptFunctionExecutor;
     }
 }   // namespace

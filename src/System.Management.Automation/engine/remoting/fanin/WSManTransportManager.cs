@@ -2650,7 +2650,7 @@ namespace System.Management.Automation.Remoting.Client
             private WSManNativeApi.WSManStreamIDSet_ManToUn _outputStreamSet;
             // Dispose
             private bool _isDisposed;
-            private readonly object _syncObject = new object();
+            private readonly Lock _syncObject = new();
 #if !UNIX
             private readonly WindowsIdentity _identityToImpersonate;
 #endif

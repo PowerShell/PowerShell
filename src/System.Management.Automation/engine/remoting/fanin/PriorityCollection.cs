@@ -4,7 +4,7 @@
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Tracing;
-
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -57,7 +57,7 @@ namespace System.Management.Automation.Remoting
         private OnDataAvailableCallback _onDataAvailableCallback;
         private readonly SerializedDataStream.OnDataAvailableCallback _onSendCollectionDataAvailable;
         private bool _isHandlingCallback;
-        private readonly object _readSyncObject = new object();
+        private readonly Lock _readSyncObject = new();
 
         /// <summary>
         /// Callback that is called once a fragmented data is available to send.
@@ -330,7 +330,7 @@ namespace System.Management.Automation.Remoting
 
         // objects need to cleanly release resources without
         // locking entire processing logic.
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
         private bool _isDisposed;
         // holds the number of threads that are currently in
         // ProcessRawData method. This might happen only for
@@ -375,7 +375,7 @@ namespace System.Management.Automation.Remoting
             // depending on the parameters passed into the constructor. Empty memory streams are
             // resizable, and can be written to and read from.
             _pendingDataStream = new MemoryStream();
-            _syncObject = new object();
+            _syncObject = new Lock();
             _defragmentor = defragmentor;
             _isCreateByClientTM = createdByClientTM;
         }

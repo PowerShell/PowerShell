@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell.Commands
             private readonly Collection<PSSession> _retryList;
             private readonly PSHost _host;
             private readonly QueryRunspaces _queryRunspaces;
-            private static readonly object s_LockObject = new object();
+            private static readonly Lock s_LockObject = new();
 
             internal ConnectRunspaceOperation(
                 PSSession session,

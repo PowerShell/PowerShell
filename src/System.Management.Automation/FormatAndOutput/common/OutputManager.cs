@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Threading;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -130,7 +131,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Lock object.
         /// </summary>
-        private readonly object _syncRoot = new object();
+        private readonly Lock _syncRoot = new();
     }
 
     /// <summary>

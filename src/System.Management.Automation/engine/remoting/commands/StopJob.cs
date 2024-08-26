@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly List<Job> _allJobsToStop = new List<Job>();
         private readonly List<ErrorRecord> _errorsToWrite = new List<ErrorRecord>();
 
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
         private bool _needToCheckForWaitingJobs;
 
         #endregion Private Members

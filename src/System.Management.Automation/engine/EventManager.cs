@@ -1158,7 +1158,7 @@ namespace System.Management.Automation
             }
         }
 
-        private readonly object _actionProcessingLock = new object();
+        private readonly Lock _actionProcessingLock = new();
         private EventAction _processingAction = null;
 
         /// <summary>
@@ -2426,7 +2426,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the synchronization root for this collection.
         /// </summary>
-        public object SyncRoot { get; } = new object();
+        public Lock SyncRoot { get; } = new();
     }
 
     /// <summary>

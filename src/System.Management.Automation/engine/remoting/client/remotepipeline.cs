@@ -24,7 +24,7 @@ namespace System.Management.Automation
         private bool _isNested;
         private bool _isSteppable;
         private readonly Runspace _runspace;
-        private readonly object _syncRoot = new object();
+        private readonly Lock _syncRoot = new();
         private bool _disposed = false;
         private string _historyString;
         private PipelineStateInfo _pipelineStateInfo = new PipelineStateInfo(PipelineState.NotStarted);

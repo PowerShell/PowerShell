@@ -1048,7 +1048,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly Dictionary<Job2, EventHandler<AsyncCompletedEventArgs>> _cleanUpActions =
             new Dictionary<Job2, EventHandler<AsyncCompletedEventArgs>>();
 
-        private readonly object _syncObject = new object();
+        private readonly Lock _syncObject = new();
         private bool _needToCheckForWaitingJobs;
 
         #endregion Private Members

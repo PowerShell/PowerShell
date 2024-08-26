@@ -129,7 +129,7 @@ namespace System.Management.Automation.Remoting
         #region Private Members
 
         private readonly Dictionary<IntPtr, WSManPluginShellSession> _activeShellSessions;
-        private readonly object _syncObject;
+        private readonly Lock _syncObject;
         private static readonly Dictionary<IntPtr, WSManPluginInstance> s_activePlugins = new Dictionary<IntPtr, WSManPluginInstance>();
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace System.Management.Automation.Remoting
         internal WSManPluginInstance()
         {
             _activeShellSessions = new Dictionary<IntPtr, WSManPluginShellSession>();
-            _syncObject = new object();
+            _syncObject = new Lock();
         }
 
         /// <summary>

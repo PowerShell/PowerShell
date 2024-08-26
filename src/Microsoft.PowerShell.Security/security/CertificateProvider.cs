@@ -20,6 +20,7 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -583,7 +584,7 @@ namespace Microsoft.PowerShell.Commands
         /// -- storeLocations
         /// -- pathCache.
         /// </summary>
-        private static readonly object s_staticLock = new();
+        private static readonly Lock s_staticLock = new();
 
         /// <summary>
         /// List of store locations. They do not change once initialized.
@@ -3515,7 +3516,7 @@ namespace Microsoft.PowerShell.Commands
         /// Lock that guards access to the following static members
         /// -- storeNames.
         /// </summary>
-        private static readonly object s_staticLock = new();
+        private static readonly Lock s_staticLock = new();
 
         internal static readonly List<string> storeNames = new();
 
