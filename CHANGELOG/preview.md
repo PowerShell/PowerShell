@@ -223,7 +223,7 @@
 - Fix `Group-Object` output using interpolated strings (#20745) (Thanks @mawosoft!)
 - Fix rendering of `DisplayRoot` for network `PSDrive` (#20793)
 - Fix `Invoke-WebRequest` to report correct size when `-Resume` is specified (#20207) (Thanks @LNKLEO!)
-- Add `PSAdapter` and `ConsoleGuiTools` to module load telemetry whitelist (#20641)
+- Add `PSAdapter` and `ConsoleGuiTools` to module load telemetry allow list (#20641)
 - Fix Web Cmdlets to allow `WinForm` apps to work correctly (#20606)
 - Block getting help from network locations in restricted remoting sessions (#20593)
 - Fix `Group-Object` to use current culture for its output (#20608)
