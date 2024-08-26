@@ -196,7 +196,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal CmdletMethodInvoker<bool> GetErrorReportingDelegate(ErrorRecord errorRecord)
         {
             ManualResetEventSlim manualResetEventSlim = new();
-            object lockObject = new();
+            Lock lockObject = new();
             Func<Cmdlet, bool> action = (Cmdlet cmdlet) =>
             {
                 _numberOfReportedSessionTerminatingErrors++;
