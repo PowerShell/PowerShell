@@ -377,7 +377,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     // Wait till the runspace is opened - This is set in DoOpenHelper()
                     // Release the lock before we wait
-                    Monitor.Exit(SyncRoot);
+                    SyncRoot.Exit();
                     try
                     {
                         RunspaceOpening.Wait();
@@ -385,7 +385,7 @@ namespace System.Management.Automation.Runspaces
                     finally
                     {
                         // Acquire the lock before we carry on with the rest operations
-                        Monitor.Enter(SyncRoot);
+                        SyncRoot.Enter();
                     }
                 }
 
@@ -1196,7 +1196,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         // If so, wait and try again
                         // Release the lock before we wait for the pulse pipelines
-                        Monitor.Exit(SyncRoot);
+                        SyncRoot.Exit();
 
                         try
                         {
@@ -1205,7 +1205,7 @@ namespace System.Management.Automation.Runspaces
                         finally
                         {
                             // Acquire the lock before we carry on with the rest operations
-                            Monitor.Enter(SyncRoot);
+                            SyncRoot.Enter();
                         }
 
                         DoConcurrentCheckAndMarkSessionStateProxyCallInProgress();

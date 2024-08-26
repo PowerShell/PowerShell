@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>This function is thread safe</remarks>
         internal long AddEntry(long pipelineId, string cmdline, PipelineState status, DateTime startTime, DateTime endTime, bool skipIfLocked)
         {
-            if (!System.Threading.Monitor.TryEnter(_syncRoot, skipIfLocked ? 0 : System.Threading.Timeout.Infinite))
+            if (!_syncRoot.TryEnter(skipIfLocked ? 0 : System.Threading.Timeout.Infinite))
             {
                 return -1;
             }
@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                System.Threading.Monitor.Exit(_syncRoot);
+                _syncRoot.Exit();
             }
         }
 
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal void UpdateEntry(long id, PipelineState status, DateTime endTime, bool skipIfLocked)
         {
-            if (!System.Threading.Monitor.TryEnter(_syncRoot, skipIfLocked ? 0 : System.Threading.Timeout.Infinite))
+            if (!_syncRoot.TryEnter(skipIfLocked ? 0 : System.Threading.Timeout.Infinite))
             {
                 return;
             }
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                System.Threading.Monitor.Exit(_syncRoot);
+                _syncRoot.Exit();
             }
         }
 

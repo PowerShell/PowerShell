@@ -291,7 +291,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="remoteRunspace">Runspace to override.</param>
         /// <param name="syncObject">Object to use in synchronization.</param>
         /// <param name="isRunspacePushed">Set is runspace pushed.</param>
-        internal void Override(RemoteRunspace remoteRunspace, object syncObject, out bool isRunspacePushed)
+        internal void Override(RemoteRunspace remoteRunspace, Lock syncObject, out bool isRunspacePushed)
         {
             lock (_localSyncObject)
             {
