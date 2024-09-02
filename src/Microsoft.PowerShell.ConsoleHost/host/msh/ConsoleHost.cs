@@ -630,12 +630,11 @@ namespace Microsoft.PowerShell
             }
 
             RemoteRunspace remoteRunspace = runspace as RemoteRunspace;
-            if (remoteRunspace is null)
+            if (remoteRunspace is not RemoteRunspace remoteRunspace)
             {
                 throw new ArgumentException(ConsoleHostStrings.PushRunspaceNotRemote, nameof(runspace));
             }
 
-            Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
             remoteRunspace.StateChanged += HandleRemoteRunspaceStateChanged;
 
             // Unsubscribe the local session debugger.
