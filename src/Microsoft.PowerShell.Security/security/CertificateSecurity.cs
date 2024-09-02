@@ -22,12 +22,23 @@ namespace Microsoft.PowerShell.Commands;
 /// </summary>
 public sealed partial class CertificateProvider : ISecurityDescriptorCmdletProvider
 {
+#pragma warning disable SA1310 // Reflects native C constant name.
     private const int OWNER_SECURITY_INFORMATION = 0x00000001;
     private const int GROUP_SECURITY_INFORMATION = 0x00000002;
     private const int DACL_SECURITY_INFORMATION = 0x00000004;
     private const int SACL_SECURITY_INFORMATION = 0x00000008;
+#pragma warning restore SA1310
 
-    #region ISecurityDescriptorCmdletProvider members
+    private delegate int GetKeySecurityDescriptorDelegate(
+        SafeHandle key,
+        int sections,
+        Span<byte> data,
+        out int dataSize);
+
+    private delegate int SetKeySecurityDescriptorDelegate(
+        SafeHandle key,
+        int sections,
+        ReadOnlySpan<byte> data);
 
     /// <summary>
     /// Gets the SecurityDescriptor at the specified path, including only the specified
@@ -55,7 +66,7 @@ public sealed partial class CertificateProvider : ISecurityDescriptorCmdletProvi
         }
 
         path = NormalizePath(path);
-        object item = GetItemAtPath(path, false, out var _);
+        object item = this.GetItemAtPath(path, false, out var _);
         if (!(item is X509Certificate2 cert))
         {
             throw PSTraceSource.NewArgumentException(
@@ -176,7 +187,7 @@ public sealed partial class CertificateProvider : ISecurityDescriptorCmdletProvi
         }
 
         path = NormalizePath(path);
-        object item = GetItemAtPath(path, false, out var _);
+        object item = this.GetItemAtPath(path, false, out var _);
         if (!(item is X509Certificate2 cert))
         {
             throw PSTraceSource.NewArgumentException(
@@ -242,8 +253,6 @@ public sealed partial class CertificateProvider : ISecurityDescriptorCmdletProvi
             throw new CertificateProviderWrappedErrorRecord(err);
         }
     }
-
-    #endregion ISecurityDescriptorCmdletProvider members
 
     /// <summary>
     /// Gets the certificate key handle.
@@ -467,17 +476,6 @@ public sealed partial class CertificateProvider : ISecurityDescriptorCmdletProvi
         return sectionsFlag;
     }
 
-    private delegate int GetKeySecurityDescriptorDelegate(
-        SafeHandle key,
-        int sections,
-        Span<byte> data,
-        out int dataSize);
-
-    private delegate int SetKeySecurityDescriptorDelegate(
-        SafeHandle key,
-        int sections,
-        ReadOnlySpan<byte> data);
-
     private static int GetNCryptKeySecurityDescriptor(
         SafeHandle key,
         int sections,
@@ -622,139 +620,6 @@ public sealed partial class CertificateProvider : ISecurityDescriptorCmdletProvi
 
         return res ? Interop.Windows.ERROR_SUCCESS : errCode;
     }
-}
-
-/// <summary>
-/// Used to wrap a provider exception ErrorRecord.
-/// </summary>
-internal class CertificateProviderWrappedErrorRecord : Exception, IContainsErrorRecord
-{
-    /// <summary>
-    /// Gets the ErrorRecord the exception wraps.
-    /// </summary>
-    public ErrorRecord ErrorRecord { get; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CertificateProviderWrappedErrorRecord"/> class.
-    /// </summary>
-    /// <param name="err">The ErrorRecord to wrap.</param>
-    public CertificateProviderWrappedErrorRecord(ErrorRecord err) : base(string.Empty)
-    {
-        ErrorRecord = err;
-    }
-}
-
-/// <summary>
-/// Specifies the certificate key access and auditing rights.
-/// </summary>
-[Flags]
-public enum CertificateKeyRights
-{
-    /// <summary>
-    /// Read the key data.
-    /// </summary>
-    ReadData = 0x00000001,
-
-    /// <summary>
-    /// Specifies the right to append data.
-    /// </summary>
-    AppendData = 0x00000004,
-
-    /// <summary>
-    ///  Read extended attributes of the key.
-    /// </summary>
-    ReadExtendedAttributes = 0x00000008,
-
-    /// <summary>
-    /// Write extended attributes of the key.
-    /// </summary>
-    WriteExtendedAttributes = 0x00000010,
-
-    /// <summary>
-    /// Read attributes of the key.
-    /// </summary>
-    ReadAttributes = 0x00000080,
-
-    /// <summary>
-    /// Write attributes of the key.
-    /// </summary>
-    WriteAttributes = 0x00000100,
-
-    /// <summary>
-    ///  Delete the key.
-    /// </summary>
-    Delete = 0x00010000,
-
-    /// <summary>
-    ///  Read permissions for the key.
-    /// </summary>
-    ReadPermissions = 0x00020000,
-
-    /// <summary>
-    ///  Change permissions for the key.
-    /// </summary>
-    ChangePermissions = 0x00040000,
-
-    /// <summary>
-    /// Take ownership of the key.
-    /// </summary>
-    TakeOwnership = 0x00080000,
-
-    /// <summary>
-    ///  Use the key for synchronization.
-    /// </summary>
-    Synchronize = 0x00100000,
-
-    /// <summary>
-    /// Read access to the key. This represents the Read right as shown in the
-    /// security dialogue GUI.
-    /// </summary>
-    Read = Synchronize | ReadPermissions | ReadAttributes |
-        ReadExtendedAttributes | ReadData,
-
-    /// <summary>
-    /// Full control of the key. This represents the Full Control right as
-    /// shown in the security dialogue GUI.
-    /// </summary>
-    FullControl = Synchronize | TakeOwnership | ChangePermissions |
-        ReadPermissions | Delete | WriteAttributes | ReadAttributes |
-        WriteExtendedAttributes | ReadExtendedAttributes | AppendData |
-        ReadData | 0x62, // extra mask fills in missing rights for FC.
-
-    /// <summary>
-    /// A combination of GenericRead and GenericWrite.
-    /// </summary>
-    GenericAll = 0x10000000,
-
-    /// <summary>
-    /// Not used.
-    /// </summary>
-    GenericExecute = 0x20000000,
-
-    /// <summary>
-    ///  Write the key data, extended attributes of the key, attributes
-    ///  of the key, and permissions for the key.
-    /// </summary>
-    GenericWrite = 0x40000000,
-
-    /// <summary>
-    /// Read the key data, extended attributes of the key, attributes of
-    /// the key, and permissions for the key.
-    /// </summary>
-    GenericRead = unchecked((int)0x80000000),
-}
-
-/// <summary>
-/// The CertificateKeySecurity ObjectSecurity implementation.
-/// </summary>
-public sealed class CertificateKeySecurity : ObjectSecurity<CertificateKeyRights>
-{
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CertificateKeySecurity"/> class.
-    /// </summary>
-    public CertificateKeySecurity()
-        : base(false, ResourceType.Unknown)
-    { }
 }
 
 #endif
