@@ -622,14 +622,19 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// See base class.
         /// </summary>
-        public void PushRunspace(Runspace newRunspace)
+        public void PushRunspace(Runspace runspace)
         {
             if (_runspaceRef == null)
             {
                 return;
             }
 
-            RemoteRunspace remoteRunspace = newRunspace as RemoteRunspace;
+            RemoteRunspace remoteRunspace = runspace as RemoteRunspace;
+            if (remoteRunspace is null)
+            {
+                throw new ArgumentException(ConsoleHostStrings.PushRunspaceNotRemote, nameof(runspace));
+            }
+
             Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
             remoteRunspace.StateChanged += HandleRemoteRunspaceStateChanged;
 
