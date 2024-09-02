@@ -629,8 +629,7 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            RemoteRunspace remoteRunspace = runspace as RemoteRunspace;
-            if (remoteRunspace is not RemoteRunspace remoteRunspace)
+            if (runspace is not RemoteRunspace remoteRunspace)
             {
                 throw new ArgumentException(ConsoleHostStrings.PushRunspaceNotRemote, nameof(runspace));
             }
