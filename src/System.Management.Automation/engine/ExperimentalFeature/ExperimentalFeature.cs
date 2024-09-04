@@ -23,7 +23,6 @@ namespace System.Management.Automation
         internal const string EngineSource = "PSEngine";
         internal const string PSModuleAutoLoadSkipOfflineFilesFeatureName = "PSModuleAutoLoadSkipOfflineFiles";
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
-        internal const string PSCommandWithArgs = "PSCommandWithArgs";
         internal const string PSNativeWindowsTildeExpansion = nameof(PSNativeWindowsTildeExpansion);
         internal const string PSRedirectToVariable = "PSRedirectToVariable";
 
@@ -120,9 +119,6 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSFeedbackProvider,
                     description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
-                new ExperimentalFeature(
-                    name: PSCommandWithArgs,
-                    description: "Enable `-CommandWithArgs` parameter for pwsh"),
                 new ExperimentalFeature(
                     name: PSNativeWindowsTildeExpansion,
                     description: "On windows, expand unquoted tilde (`~`) with the user's current home folder."),
