@@ -4,6 +4,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Net.Http;
 using System.Security;
@@ -31,6 +32,13 @@ namespace Microsoft.PowerShell.Commands
         private const string JsonLiteralPathParameterSet = "JsonLiteralPath";
         private const string JsonLiteralPathWithSchemaStringParameterSet = "JsonLiteralPathWithSchemaString";
         private const string JsonLiteralPathWithSchemaFileParameterSet = "JsonLiteralPathWithSchemaFile";
+
+        #endregion
+
+        #region Json Document Option Constants
+
+        private const string IgnoreCommentsOption = "IgnoreComments";
+        private const string AllowTrailingCommasOption = "AllowTrailingCommas";
 
         #endregion
 
@@ -97,12 +105,21 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string SchemaFile { get; set; }
 
+        /// <summary>
+        /// Gets or sets JSON document options.
+        /// </summary>
+        [Parameter]
+        [ValidateNotNullOrEmpty]
+        [ValidateSet(IgnoreCommentsOption, AllowTrailingCommasOption)]
+        public string[] Options { get; set; } = Array.Empty<string>();
+
         #endregion
 
         #region Private Members
 
         private bool _isLiteralPath = false;
         private JsonSchema _jschema;
+        private JsonDocumentOptions _documentOptions;
 
         #endregion
 
@@ -200,6 +217,14 @@ namespace Microsoft.PowerShell.Commands
                 Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, e);
                 ThrowTerminatingError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, resolvedpath));
             }
+
+            _documentOptions = new JsonDocumentOptions
+            {
+                CommentHandling = Options.Contains(IgnoreCommentsOption, StringComparer.OrdinalIgnoreCase)
+                    ? JsonCommentHandling.Skip
+                    : JsonCommentHandling.Disallow,
+                AllowTrailingCommas = Options.Contains(AllowTrailingCommasOption, StringComparer.OrdinalIgnoreCase)
+            };
         }
 
         /// <summary>
@@ -235,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
 
-                var parsedJson = JsonNode.Parse(jsonToParse);
+                var parsedJson = JsonNode.Parse(jsonToParse, nodeOptions: null, _documentOptions);
 
                 if (_jschema != null)
                 {

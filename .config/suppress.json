@@ -1,0 +1,17 @@
+{
+    "tool": "Credential Scanner",
+    "suppressions": [
+      {
+       "file": "\\test\\tools\\Modules\\WebListener\\ClientCert.pfx",
+        "_justification": "Test certificate with private key"
+      },
+      {
+        "file": "\\test\\tools\\Modules\\WebListener\\ServerCert.pfx",
+         "_justification": "Test certificate with private key"
+       },
+       {
+         "file": "\\test\\powershell\\Modules\\Microsoft.PowerShell.Security\\certificateCommon.psm1",
+          "_justification": "Test certificate with private key and inline suppression isn't working"
+        }
+     ]
+}

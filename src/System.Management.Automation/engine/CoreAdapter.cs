@@ -4441,7 +4441,7 @@ namespace System.Management.Automation
             }
 
             builder.Append(memberName ?? methodEntry.Name);
-            if (methodEntry.IsGenericMethodDefinition)
+            if (methodEntry.IsGenericMethodDefinition || methodEntry.IsGenericMethod)
             {
                 builder.Append('[');
 

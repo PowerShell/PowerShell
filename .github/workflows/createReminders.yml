@@ -16,4 +16,4 @@ jobs:
 
     steps:
       - name: check for reminder
-        uses: agrc/create-reminder-action@v1
+        uses: agrc/create-reminder-action@ffa4363460fe5fff73b2b58e66fa7eb01f7465a0 # v1.1.15
