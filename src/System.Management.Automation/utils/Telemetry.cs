@@ -118,6 +118,9 @@ namespace Microsoft.PowerShell.Telemetry
     /// </summary>
     public static class ApplicationInsightsTelemetry
     {
+        // The string for SubsystermRegistration
+        internal static string s_subsystemRegistration = "Subsystem.Registration";
+
         // If this env var is true, yes, or 1, telemetry will NOT be sent.
         private const string _telemetryOptoutEnvVar = "POWERSHELL_TELEMETRY_OPTOUT";
 
@@ -146,9 +149,6 @@ namespace Microsoft.PowerShell.Telemetry
 
         // the unique identifier for the user, when we start we
         private static string s_uniqueUserIdentifier { get; }
-
-        // a SHA256 object for redaction.
-        private static SHA256 s_anonymizer { get; } 
 
         // the session identifier
         private static string s_sessionId { get; }
@@ -633,8 +633,6 @@ namespace Microsoft.PowerShell.Telemetry
                     };
 
                 s_uniqueUserIdentifier = GetUniqueIdentifier().ToString();
-                s_anonymizer = SHA256.Create();
-
                 s_knownSubsystemNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                     {
                         "Completion",
@@ -834,7 +832,7 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
 
-            if (string.Compare(featureName, "Subsystem.Registration", true) == 0)
+            if (string.Compare(featureName, s_subsystemRegistration, true) == 0)
             {
                 ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.FeatureUse, string.Join(":", featureName, GetSubsystemName(detail)), value);
             }
@@ -874,8 +872,7 @@ namespace Microsoft.PowerShell.Telemetry
             return Anonymous;
         }
 
-        // Get the module name. If we can report it, we'll return the name, otherwise, we'll return a string
-        // that won't identify the subsystem, but will be unique, and not convertable back to the subsystem name.
+        // Get the module name. If we can report it, we'll return the name, otherwise, we'll return the string "anonymous"
         private static string GetSubsystemName(string subsystemNameToValidate)
         {
             if (s_knownSubsystemNames.Contains(subsystemNameToValidate))
@@ -883,8 +880,7 @@ namespace Microsoft.PowerShell.Telemetry
                 return subsystemNameToValidate;
             }
         
-            // convert the name to a hash of the name as a base64 string.
-            return Convert.ToBase64String(s_anonymizer.ComputeHash(Encoding.ASCII.GetBytes(subsystemNameToValidate)));
+            return Anonymous;
         }
 
         // Get the module name. If we can report it, we'll return the name, otherwise, we'll return anonymous.
@@ -896,7 +892,6 @@ namespace Microsoft.PowerShell.Telemetry
             }
 
             return Anonymous;
-            // return Convert.ToBase64String(s_anonymizer.ComputeHash(Encoding.ASCII.GetBytes(moduleNameToValidate)));
         }
 
         /// <summary>

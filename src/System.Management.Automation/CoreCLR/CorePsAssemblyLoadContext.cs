@@ -608,18 +608,19 @@ namespace System.Management.Automation
         [UnmanagedCallersOnly]
         public static int LoadAssemblyFromNativeMemory(IntPtr data, int size)
         {
+            int result = 0;
             try
             {
                 using var stream = new UnmanagedMemoryStream((byte*)data, size);
                 AssemblyLoadContext.Default.LoadFromStream(stream);
-                ApplicationInsightsTelemetry.SendUseTelemetry("PSLoadAssemblyFromNativeCode", "LoadGood");
-                return 0;
             }
             catch
             {
-                ApplicationInsightsTelemetry.SendUseTelemetry("PSLoadAssemblyFromNativeCode", "LoadFail");
-                return -1;
+                result = -1;
             }
+
+            ApplicationInsightsTelemetry.SendUseTelemetry("PowerShellUnsafeAssemblyLoad", result == 0 ? "Success" : "Failure");
+            return result;
         }
     }
 }

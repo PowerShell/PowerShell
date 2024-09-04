@@ -98,7 +98,7 @@ namespace System.Management.Automation.Subsystem
         internal void RegisterImplementation(ISubsystem impl)
         {
             AddImplementation(impl);
-            ApplicationInsightsTelemetry.SendUseTelemetry("Subsystem.Registration", impl.Name);
+            ApplicationInsightsTelemetry.SendUseTelemetry(ApplicationInsightsTelemetry.s_subsystemRegistration, impl.Name);
         }
 
         internal ISubsystem UnregisterImplementation(Guid id)
