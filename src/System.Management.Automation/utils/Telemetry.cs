@@ -16,9 +16,6 @@ using Microsoft.ApplicationInsights.Metrics;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights.Extensibility.Implementation;
-using System.Security.Cryptography;
-using System.Text;
-using System.Reflection.PortableExecutable;
 
 namespace Microsoft.PowerShell.Telemetry
 {
@@ -727,14 +724,13 @@ namespace Microsoft.PowerShell.Telemetry
             try
             {
                 string allowedModuleName = GetModuleName(moduleInfo.Name);
-                string allowedModuleVersion = moduleInfo.Version?.ToString();
-                // string allowedModuleVersion = allowedModuleName == Anonymous ? AnonymousVersion : moduleInfo.Version?.ToString();
+                string allowedModuleVersion = allowedModuleName == Anonymous ? AnonymousVersion : moduleInfo.Version?.ToString();
                 var allowedModuleTags = moduleInfo.Tags.Where(t => s_knownModuleTags.Contains(t)).Distinct();
                 string allowedModuleTagString = allowedModuleTags.Any() ? string.Join(',', allowedModuleTags) : NoTag;
 
                 s_telemetryClient.
                     GetMetric(new MetricIdentifier(string.Empty, telemetryType.ToString(), "uuid", "SessionId", "ModuleName", "Version", "Tag")).
-                    TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, allowedModuleName, allowedModuleVersion, allowedModuleTagString); 
+                    TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, allowedModuleName, allowedModuleVersion, allowedModuleTagString);
             }
             catch
             {
@@ -879,7 +875,7 @@ namespace Microsoft.PowerShell.Telemetry
             {
                 return subsystemNameToValidate;
             }
-        
+
             return Anonymous;
         }
 
