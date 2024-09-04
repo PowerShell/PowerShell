@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation.Runspaces;
 using System.Text;
-
+using Microsoft.PowerShell.Telemetry;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal
@@ -45,7 +45,11 @@ namespace System.Management.Automation.Internal
                 | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS
                 | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_OPEN;
 
-            return;
+                ApplicationInsightsTelemetry.SendUseTelemetry(ExperimentalFeature.PSModuleAutoLoadSkipOfflineFilesFeatureName, "SkipOffLine");
+                return;
+            }
+
+            FileAttributesToSkip = FileAttributes.Hidden;
         }
 
         /// <summary>

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Runtime.Loader;
+using Microsoft.PowerShell.Telemetry;
 
 namespace System.Management.Automation
 {
@@ -611,10 +612,12 @@ namespace System.Management.Automation
             {
                 using var stream = new UnmanagedMemoryStream((byte*)data, size);
                 AssemblyLoadContext.Default.LoadFromStream(stream);
+                ApplicationInsightsTelemetry.SendUseTelemetry("PSLoadAssemblyFromNativeCode", "LoadGood");
                 return 0;
             }
             catch
             {
+                ApplicationInsightsTelemetry.SendUseTelemetry("PSLoadAssemblyFromNativeCode", "LoadFail");
                 return -1;
             }
         }
