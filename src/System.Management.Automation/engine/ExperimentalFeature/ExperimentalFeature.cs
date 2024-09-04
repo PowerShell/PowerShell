@@ -109,9 +109,6 @@ namespace System.Management.Automation
                     description: "Replace the old FileSystemProvider with cleaner design and faster code"),
                 */
                 new ExperimentalFeature(
-                    name: "PSCommandNotFoundSuggestion",
-                    description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
-                new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
                 new ExperimentalFeature(
