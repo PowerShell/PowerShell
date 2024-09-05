@@ -52,7 +52,7 @@ jobs:
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
     - run: |
-        Get-ChildItem -Path env:
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
       name: Capture Environment
 
     - run: |
