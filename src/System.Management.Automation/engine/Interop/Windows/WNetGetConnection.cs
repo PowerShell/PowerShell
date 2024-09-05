@@ -13,8 +13,8 @@ internal static partial class Interop
     {
         private static bool s_WNetApiNotAvailable;
 
-        [LibraryImport("mpr.dll", EntryPoint = "WNetGetConnectionW")]
-        internal static partial int WNetGetConnection(ReadOnlySpan<ushort> localName, Span<ushort> remoteName, ref uint remoteNameLength);
+        [LibraryImport("mpr.dll", EntryPoint = "WNetGetConnectionW", StringMarshalling = StringMarshalling.Utf16)]
+        internal static partial int WNetGetConnection(ReadOnlySpan<char> localName, Span<char> remoteName, ref uint remoteNameLength);
 
         internal static int GetUNCForNetworkDrive(char drive, out string? uncPath)
         {
@@ -33,11 +33,8 @@ internal static partial class Interop
             bufferSize = 3;
 #endif
 
-            // TODO: change ushort with char after LibraryImport will support 'ref char'
-            // without applying the 'System.Runtime.CompilerServices.DisableRuntimeMarshallingAttribute'
-            // to the assembly.
-            ReadOnlySpan<ushort> driveName = stackalloc ushort[] { drive, ':', '\0' };
-            Span<ushort> uncBuffer = stackalloc ushort[(int)bufferSize];
+            ReadOnlySpan<char> driveName = stackalloc char[] { drive, ':', '\0' };
+            Span<char> uncBuffer = stackalloc char[(int)bufferSize];
             int errorCode = ERROR_NO_NETWORK;
 
             try
@@ -52,26 +49,28 @@ internal static partial class Interop
 
             if (errorCode == ERROR_SUCCESS)
             {
-                uncPath = uncBuffer.Slice((int)bufferSize).ToString();
+                // exclude null terminator
+                uncPath = uncBuffer.Slice(0, (int)bufferSize - 1).ToString();
             }
             else if (errorCode == ERROR_MORE_DATA)
             {
-                ushort[]? rentedArray = null;
+                char[]? rentedArray = null;
                 try
                 {
-                    uncBuffer = rentedArray = ArrayPool<ushort>.Shared.Rent((int)bufferSize);
+                    uncBuffer = rentedArray = ArrayPool<char>.Shared.Rent((int)bufferSize);
                     errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
 
                     if (errorCode == ERROR_SUCCESS)
                     {
-                        uncPath = uncBuffer.Slice((int)bufferSize).ToString();
+                        // exclude null terminator
+                        uncPath = uncBuffer.Slice(0, (int)bufferSize - 1).ToString();
                     }
                 }
                 finally
                 {
                     if (rentedArray is not null)
                     {
-                        ArrayPool<ushort>.Shared.Return(rentedArray);
+                        ArrayPool<char>.Shared.Return(rentedArray);
                     }
                 }
             }

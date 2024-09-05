@@ -9,6 +9,7 @@
 
     <!-- Disable deps.json generation -->
     <GenerateDependencyFile>false</GenerateDependencyFile>
+    <NoWarn>NU1901;NU1902;NU1903;NU1904</NoWarn>
 
     <!-- Deploy the produced assembly -->
     <PublishDir>..\..\Modules\IsolatedModule\Dependencies</PublishDir>

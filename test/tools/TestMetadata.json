@@ -2,6 +2,7 @@
   "ExperimentalFeatures": {
     "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ],
     "PSCultureInvariantReplaceOperator": [ "test/powershell/Language/Operators/ReplaceOperator.Tests.ps1" ],
-    "Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace": [ "test/powershell/Modules/Microsoft.PowerShell.Utility/RunspaceBreakpointManagement.Tests.ps1" ]
+    "Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace": [ "test/powershell/Modules/Microsoft.PowerShell.Utility/RunspaceBreakpointManagement.Tests.ps1" ],
+    "PSNativeWindowsTildeExpansion": [ "test/powershell/Language/Scripting/NativeExecution/NativeWindowsTildeExpansion.Tests.ps1" ]
   }
 }

@@ -90,7 +90,7 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Progress record containing origin information.
     /// </summary>
-    [DataContract()]
+    [DataContract]
     public class RemotingProgressRecord : ProgressRecord
     {
         /// <summary>
@@ -101,7 +101,7 @@ namespace System.Management.Automation.Runspaces
             get { return _originInfo; }
         }
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private readonly OriginInfo _originInfo;
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Warning record containing origin information.
     /// </summary>
-    [DataContract()]
+    [DataContract]
     public class RemotingWarningRecord : WarningRecord
     {
         /// <summary>
@@ -150,7 +150,7 @@ namespace System.Management.Automation.Runspaces
             get { return _originInfo; }
         }
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private readonly OriginInfo _originInfo;
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Debug record containing origin information.
     /// </summary>
-    [DataContract()]
+    [DataContract]
     public class RemotingDebugRecord : DebugRecord
     {
         /// <summary>
@@ -192,7 +192,7 @@ namespace System.Management.Automation.Runspaces
             get { return _originInfo; }
         }
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private readonly OriginInfo _originInfo;
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Verbose record containing origin information.
     /// </summary>
-    [DataContract()]
+    [DataContract]
     public class RemotingVerboseRecord : VerboseRecord
     {
         /// <summary>
@@ -221,7 +221,7 @@ namespace System.Management.Automation.Runspaces
             get { return _originInfo; }
         }
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private readonly OriginInfo _originInfo;
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Information record containing origin information.
     /// </summary>
-    [DataContract()]
+    [DataContract]
     public class RemotingInformationRecord : InformationRecord
     {
         /// <summary>
@@ -250,7 +250,7 @@ namespace System.Management.Automation.Runspaces
             get { return _originInfo; }
         }
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private readonly OriginInfo _originInfo;
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace System.Management.Automation.Remoting
     /// In case of output objects, the information
     /// should directly be added to the object as
     /// properties</remarks>
-    [DataContract()]
+    [DataContract]
     public class OriginInfo
     {
         /// <summary>
@@ -292,7 +292,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private readonly string _computerName;
 
         /// <summary>
@@ -307,7 +307,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private readonly Guid _runspaceID;
 
         /// <summary>
@@ -327,7 +327,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private Guid _instanceId;
 
         /// <summary>

@@ -19,31 +19,26 @@ namespace System.Management.Automation.Subsystem.Feedback
     public enum FeedbackTrigger
     {
         /// <summary>
-        /// The last command line is comment only.
-        /// </summary>
-        Comment = 0x0001,
-
-        /// <summary>
         /// The last command line executed successfully.
         /// </summary>
-        Success = 0x0002,
+        Success = 0x0001,
 
         /// <summary>
         /// The last command line failed due to a command-not-found error.
         /// This is a special case of <see cref="Error"/>.
         /// </summary>
-        CommandNotFound = 0x0004,
+        CommandNotFound = 0x0002,
 
         /// <summary>
         /// The last command line failed with an error record.
         /// This includes the case of command-not-found error.
         /// </summary>
-        Error = CommandNotFound | 0x0008,
+        Error = CommandNotFound | 0x0004,
 
         /// <summary>
         /// All possible triggers.
         /// </summary>
-        All = Comment | Success | Error
+        All = Success | Error
     }
 
     /// <summary>

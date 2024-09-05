@@ -51,6 +51,7 @@ namespace Microsoft.PowerShell.Commands
         /// which scope the aliases are retrieved from.
         /// </summary>
         [Parameter]
+        [ArgumentCompleter(typeof(ScopeArgumentCompleter))]
         public string Scope { get; set; }
 
         /// <summary>

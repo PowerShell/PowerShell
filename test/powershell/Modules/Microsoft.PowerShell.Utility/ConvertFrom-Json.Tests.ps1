@@ -58,7 +58,7 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
             $json | Should -BeOfType Hashtable
         }
     }
-    
+
 	It 'Throws an ArgumentException with an incomplete array with AsHashtable switch set to <AsHashtable>' -TestCase $testCasesWithAndWithoutAsHashtableSwitch {
         Param($AsHashtable)
         { ConvertFrom-Json '["1",' -AsHashtable:$AsHashtable } |
@@ -66,7 +66,7 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
         { ConvertFrom-Json '[' -AsHashtable:$AsHashtable } |
             Should -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.ConvertFromJsonCommand"
     }
-	
+
     It 'Can convert multi-line object with AsHashtable switch set to <AsHashtable>' -TestCases $testCasesWithAndWithoutAsHashtableSwitch {
         Param($AsHashtable)
         $json = @('{"a" :', '"x"}') | ConvertFrom-Json -AsHashtable:$AsHashtable
@@ -160,6 +160,195 @@ a                              1
 b                              2
 c                              3
 "@
+    }
+
+    It 'Parses DateKind Default strings for <Value>' -TestCases @(
+        @{
+            Value = '"2022-11-02T12:01:44.5801388+04:00"'
+            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours 4)).AddTicks(8).LocalDateTime)
+        }
+        @{
+            Value = '"2022-11-02T12:01:44.5801388-04:00"'
+            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours -4)).AddTicks(8).LocalDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00"'
+            Expected = ([DateTime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Unspecified'))
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000Z"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).UtcDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000+00:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000-00:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000+10:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 10)).LocalDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000-10:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours -10)).LocalDateTime)
+        }
+    ) {
+        param ($Value, $Expected)
+
+        $json = $Value | ConvertFrom-Json
+        $json | Should -BeOfType ([DateTime])
+        $json.Kind | Should -Be $Expected.Kind
+        $json | Should -Be $Expected
+
+        $json = $Value | ConvertFrom-Json -DateKind Default
+        $json | Should -BeOfType ([DateTime])
+        $json.Kind | Should -Be $Expected.Kind
+        $json | Should -Be $Expected
+    }
+
+    It 'Parses DateKind Local strings for <Value>' -TestCases @(
+        @{
+            Value = '"2022-11-02T12:01:44.5801388+04:00"'
+            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours 4)).AddTicks(8).LocalDateTime)
+        }
+        @{
+            Value = '"2022-11-02T12:01:44.5801388-04:00"'
+            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours -4)).AddTicks(8).LocalDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00"'
+            Expected = ([DateTime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Local'))
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000Z"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000+00:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000-00:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).LocalDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000+10:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 10)).LocalDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000-10:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours -10)).LocalDateTime)
+        }
+    ) {
+        param ($Value, $Expected)
+
+        $json = $Value | ConvertFrom-Json -DateKind Local
+        $json | Should -BeOfType ([DateTime])
+        $json.Kind | Should -Be Local
+        $json | Should -Be $Expected
+    }
+
+    It 'Parses DateKind Utc strings for <Value>' -TestCases @(
+        @{
+            Value = '"2022-11-02T12:01:44.5801388+04:00"'
+            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours 4)).AddTicks(8).UtcDateTime)
+        }
+        @{
+            Value = '"2022-11-02T12:01:44.5801388-04:00"'
+            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours -4)).AddTicks(8).UtcDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00"'
+            Expected = ([DateTime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Utc'))
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000Z"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).UtcDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000+00:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).UtcDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000-00:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)).UtcDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000+10:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 10)).UtcDateTime)
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000-10:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours -10)).UtcDateTime)
+        }
+    ) {
+        param ($Value, $Expected)
+
+        $json = $Value | ConvertFrom-Json -DateKind Utc
+        $json | Should -BeOfType ([DateTime])
+        $json.Kind | Should -Be Utc
+        $json | Should -Be $Expected
+    }
+
+    It 'Parses DateKind Offset strings for <Value>' -TestCases @(
+        @{
+            Value = '"2022-11-02T12:01:44.5801388+04:00"'
+            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours 4)).AddTicks(8))
+        }
+        @{
+            Value = '"2022-11-02T12:01:44.5801388-04:00"'
+            Expected = ([DateTimeOffset]::new(2022, 11, 2, 12, 1, 44, 580, 138, (New-TimeSpan -Hours -4)).AddTicks(8))
+        }
+        @{
+            Value = '"1970-01-01T00:00:00"'
+            Expected = ([DateTimeOffset]::new([DateTime]::new(1970, 1, 1, 0, 0, 0, 0, 0, 'Local')))
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000Z"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)))
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000+00:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)))
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000-00:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 0)))
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000+10:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours 10)))
+        }
+        @{
+            Value = '"1970-01-01T00:00:00.0000000-10:00"'
+            Expected = ([DateTimeOffset]::new(1970, 1, 1, 0, 0, 0, 0, 0, (New-TimeSpan -Hours -10)))
+        }
+    ) {
+        param ($Value, $Expected)
+
+        $json = $Value | ConvertFrom-Json -DateKind Offset
+        $json | Should -BeOfType ([DateTimeOffset])
+        $json.EqualsExact($Expected) | Should -BeTrue
+    }
+
+    It 'Parses DateKind String strings for <Value>' -TestCases @(
+        @{ Value = '"2022-11-02T12:01:44.5801388+04:00"' }
+        @{ Value = '"2022-11-02T12:01:44.5801388-04:00"' }
+        @{ Value = '"1970-01-01T00:00:00"' }
+        @{ Value = '"1970-01-01T00:00:00.0000000Z"' }
+        @{ Value = '"1970-01-01T00:00:00.0000000+00:00"' }
+        @{ Value = '"1970-01-01T00:00:00.0000000-00:00"' }
+        @{ Value = '"1970-01-01T00:00:00.0000000+10:00"' }
+        @{ Value = '"1970-01-01T00:00:00.0000000-10:00"' }
+    ) {
+        param ($Value)
+
+        $json = $Value | ConvertFrom-Json -DateKind String
+        $json | Should -BeOfType ([string])
+        $json | Should -Be $Value.Substring(1, $Value.Length - 2)
     }
 }
 

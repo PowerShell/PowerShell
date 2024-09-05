@@ -15,7 +15,6 @@ They have [write access](https://docs.github.com/en/free-pro-team@latest/github/
 - [Repository Maintainer Responsibilities](#repository-maintainer-responsibilities)
 - [Issue Management Process](#issue-management-process)
 - [Pull Request Workflow](#pull-request-workflow)
-    - [Abandoned Pull Requests](#abandoned-pull-requests)
 - [Becoming a Repository Maintainer](#becoming-a-repository-maintainer)
 
 ## Current Repository Maintainers
@@ -33,7 +32,7 @@ They have [write access](https://docs.github.com/en/free-pro-team@latest/github/
 
 <!-- please keep in alphabetical order -->
 
-- Andy Schwartzmeyer ([andschwa](https://github.com/andschwa))
+- Andy Jordan ([andyleejordan](https://github.com/andyleejordan))
 - Jason Shirk ([lzybkr](https://github.com/lzybkr))
 - Mike Richmond ([mirichmo](https://github.com/mirichmo))
 - Sergei Vorobev ([vors](https://github.com/vors))
@@ -44,6 +43,7 @@ Repository Maintainers enable rapid contributions while maintaining a high level
 
 If you are a Repository Maintainer, you:
 
+1. **MUST** abide by the [Code of Conduct](../../CODE_OF_CONDUCT.md) and report suspected violations to the [PowerShell Committee][ps-committee]
 1. **MUST** ensure that each contributor has signed a valid Microsoft Contributor License Agreement (CLA)
 1. **MUST** verify compliance with any third party code license terms (e.g., requiring attribution, etc.) if the contribution contains third party code.
 1. **MUST** make sure that [any change requiring approval from the PowerShell Committee](../community/governance.md#changes-that-require-an-rfc) has gone through the proper [RFC][RFC-repo] or approval process
@@ -96,10 +96,11 @@ At any point in time, the existing Repository Maintainers can unanimously nomina
 Nominations are brought to the PowerShell Committee to understand the reasons and justification.
 A simple majority of the PowerShell Committee is required to veto the nomination.
 When a nominee has been approved, a PR will be submitted by a current Maintainer to update this document to add the nominee's name to
-the [Current Repository Maintainers](#Current-Repository-Maintainers) with justification as the description of the PR to serve as the public announcement.
+the [Current Repository Maintainers](#current-repository-maintainers) with justification as the description of the PR to serve as the public announcement.
 
 [RFC-repo]: https://github.com/PowerShell/PowerShell-RFC
 [ci-system]: ../testing-guidelines/testing-guidelines.md#ci-system
 [issue-management]: issue-management.md
 [CONTRIBUTING]: ../../.github/CONTRIBUTING.md
 [best-practice]: best-practice.md
+[ps-committee]: ../community/governance.md#powershell-committee

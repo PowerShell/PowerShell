@@ -431,7 +431,7 @@ namespace System.Management.Automation
             return AstVisitAction.SkipChildren;
         }
 
-        private void ProcessCmdletArguments(object value, Action<string> onEachArgument)
+        private static void ProcessCmdletArguments(object value, Action<string> onEachArgument)
         {
             if (value == null)
             {

@@ -67,9 +67,15 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
     AfterAll {
         $ProgressPreference = $SavedProgressPreference
-        Unregister-PackageSource -Source $localSourceName -ErrorAction Ignore
-        Unregister-PackageSource -Name $gallerySourceName -ErrorAction Ignore
-        Uninstall-Module NanoServerPackage -ErrorAction Ignore -WarningAction SilentlyContinue
+        try {
+            # non-fatal errors
+            Unregister-PackageSource -Source $localSourceName -ErrorAction Ignore
+            Unregister-PackageSource -Name $gallerySourceName -ErrorAction Ignore
+            Uninstall-Module NanoServerPackage -ErrorAction Ignore -WarningAction SilentlyContinue
+        }
+        catch {
+            Write-Warning "Failure in AfterAll: $_"
+        }
     }
 
     It "get-packageprovider" {

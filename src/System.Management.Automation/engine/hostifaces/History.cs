@@ -1346,7 +1346,7 @@ namespace Microsoft.PowerShell.Commands
         /// A Boolean that indicates whether history objects should be
         /// passed to the next element in the pipeline.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Passthru
         {
             get { return _passthru; }
@@ -1542,7 +1542,7 @@ namespace Microsoft.PowerShell.Commands
         /// Command line name of an entry in the session history.
         /// </summary>
         [Parameter(ParameterSetName = "CommandLineParameter", HelpMessage = "Specifies the name of a command in the session history")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CommandLine
         {

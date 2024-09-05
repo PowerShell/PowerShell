@@ -73,13 +73,13 @@ made.
   In most cases, it means "one clause/idea per line".
 * Otherwise, these issues should be treated like any other issue in this repository.
 
-#### Spellchecking documentation
+#### Spell checking documentation
 
 Documentation is spellchecked. We use the
 [textlint](https://github.com/textlint/textlint/wiki/Collection-of-textlint-rule) command-line tool,
 which can be run in interactive mode to correct typos.
 
-To run the spellchecker, follow these steps:
+To run the spell checker, follow these steps:
 
 * install [Node.js](https://nodejs.org/en/) (v10 or up)
 * install [textlint](https://github.com/textlint/textlint/wiki/Collection-of-textlint-rule) by
@@ -169,7 +169,7 @@ Additional references:
   A better example is: "Add Ensure parameter to New-Item cmdlet", with "Fix #5" in the PR's body.
 * When you create a pull request,
   include a summary about your changes in the PR description.
-  The description is used to create change logs,
+  The description is used to create changelogs,
   so try to have the first sentence explain the benefit to end users.
   If the changes are related to an existing GitHub issue,
   please reference the issue in the PR description (e.g. ```Fix #11```).
@@ -234,8 +234,8 @@ Additional references:
 * After submitting your pull request,
   our [CI system (Azure DevOps Pipelines)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
-* Our CI contains automated spellchecking and link checking for Markdown files. If there is any false-positive,
-  [run the spellchecker command-line tool in interactive mode](#spellchecking-documentation)
+* Our CI contains automated spell checking and link checking for Markdown files. If there is any false-positive,
+  [run the spell checker command-line tool in interactive mode](#spell-checking-documentation)
   to add words to the `.spelling` file.
 * Our packaging test may not pass and ask you to update `files.wxs` file if you add/remove/update nuget package references or add/remove assert files.
 
@@ -382,8 +382,8 @@ Once you sign a CLA, all your existing and future pull requests will have the st
 
 ## Code of Conduct Enforcement
 
-Reports of abuse will be reviewed by the PS-Committee and if it has been determined that violations of the
-Code of Conduct has occurred, then a temporary ban may be imposed.
+Reports of abuse will be reviewed by the [PowerShell Committee][ps-committee] and if it has been determined that violations of the
+[Code of Conduct](../CODE_OF_CONDUCT.md) has occurred, then a temporary ban may be imposed.
 The duration of the temporary ban will depend on the impact and/or severity of the infraction.
 This can vary from 1 day, a few days, a week, and up to 30 days.
 Repeat offenses may result in a permanent ban from the PowerShell org.
@@ -409,3 +409,4 @@ Repeat offenses may result in a permanent ban from the PowerShell org.
 [coding-guidelines]: ../docs/dev-process/coding-guidelines.md
 [breaking-changes-contract]: ../docs/dev-process/breaking-change-contract.md
 [rfc-process]: https://github.com/PowerShell/PowerShell-RFC
+[ps-committee]: ../docs/community/governance.md#powershell-committee

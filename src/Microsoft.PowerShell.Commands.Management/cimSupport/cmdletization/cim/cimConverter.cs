@@ -51,8 +51,8 @@ namespace Microsoft.PowerShell.Cim
             private unsafe void Copy(char* source, int offset, int charsToCopy)
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(offset);
-                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(_string.Length, offset);
-                ArgumentOutOfRangeException.ThrowIfGreaterThan(_string.Length, offset + charsToCopy, nameof(charsToCopy));
+                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(offset, _string.Length);
+                ArgumentOutOfRangeException.ThrowIfGreaterThan(offset + charsToCopy, _string.Length, nameof(charsToCopy));
 
                 fixed (char* target = _string)
                 {

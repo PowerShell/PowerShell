@@ -147,8 +147,8 @@ namespace Microsoft.PowerShell.Commands
         /// The name of the new NoteProperty member.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = NotePropertySingleMemberSet)]
-        [ValidateNotePropertyNameAttribute()]
-        [NotePropertyTransformationAttribute()]
+        [ValidateNotePropertyNameAttribute]
+        [NotePropertyTransformationAttribute]
         [ValidateNotNullOrEmpty]
         public string NotePropertyName
         {

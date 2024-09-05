@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag.
         /// </summary>
         [Parameter(Position = 1)]
-        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets append parameter.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Append
         {
             get { return _append; }
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets force parameter.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get { return _force; }
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that prevents file overwrite.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [Alias("NoOverwrite")]
         public SwitchParameter NoClobber
         {

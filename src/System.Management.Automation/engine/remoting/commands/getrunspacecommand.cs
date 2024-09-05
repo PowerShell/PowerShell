@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.ContainerIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.VMIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.VMNameParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override string[] Name
         {
             get { return base.Name; }
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.ComputerInstanceIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ConnectionUriParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ConnectionUriInstanceIdParameterSet)]
-        [Credential()]
+        [Credential]
         public PSCredential Credential
         {
             get

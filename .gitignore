@@ -11,6 +11,7 @@ project.lock.json
 # dotnet cli install/uninstall scripts
 dotnet-install.ps1
 dotnet-install.sh
+dotnet-install.sh.*
 dotnet-uninstall-pkgs.sh
 dotnet-uninstall-debian-packages.sh
 
@@ -101,3 +102,9 @@ StartupProfileData-NonInteractive
 
 # Ignore logfiles
 logfile/*
+
+# Ignore nuget.config because it is dynamically generated
+nuget.config
+
+# Ignore MSBuild Binary Logs
+msbuild.binlog

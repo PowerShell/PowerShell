@@ -38,6 +38,7 @@ pr:
     - test/packaging/windows/*
     - tools/ci.psm1
     - tools/packaging/*
+    - tools/wix/*
 
 variables:
   - name: GIT_CONFIG_PARAMETERS
@@ -80,11 +81,6 @@ stages:
     parameters:
       channel: preview
       architecture: x86
-  - template: templates/windows-packaging.yml
-    parameters:
-      channel: preview
-      architecture: arm
-      runtimePrefix: win
   - template: templates/windows-packaging.yml
     parameters:
       channel: preview
