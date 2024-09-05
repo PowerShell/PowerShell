@@ -175,7 +175,7 @@ jobs:
       displayName: 'Publish Build File Hash artifact'
 
     - pwsh: |
-        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose:
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
       displayName: Capture Environment
       condition: succeededOrFailed()
       workingDirectory: '$(repoRoot)'
