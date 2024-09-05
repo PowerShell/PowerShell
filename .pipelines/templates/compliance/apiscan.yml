@@ -100,6 +100,7 @@ jobs:
         workingDirectory: '$(repoRoot)'
         pwsh: true
         inline: |
+          # download smybols for getfilesiginforedist.dll
           $downloadsDirectory = '$(Build.ArtifactStagingDirectory)/downloads'
           $uploadedDirectory = '$(Build.ArtifactStagingDirectory)/uploaded'
           $storageAccountName = "pscoretestdata"
@@ -136,7 +137,7 @@ jobs:
       displayName: 'Build PowerShell Source'
 
     - pwsh: |
-        Get-ChildItem -Path env:
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
       workingDirectory: '$(repoRoot)'
       displayName: Capture Environment
       condition: succeededOrFailed()
@@ -169,15 +170,12 @@ jobs:
       workingDirectory: '$(repoRoot)'
       displayName: 'Create release file hash artifact'
 
-    - task: PublishBuildArtifacts@1
+    - pwsh: |
+        Copy-Item -Path '$(Build.SourcesDirectory)/ReleaseFileHash.csv' -Destination '$(ob_outputDirectory)' -Verbose
       displayName: 'Publish Build File Hash artifact'
-      inputs:
-        pathToPublish: '$(Build.SourcesDirectory)/ReleaseFileHash.csv'
-        artifactName: ReleaseFilesHash
-      retryCountOnTaskFailure: 2
 
     - pwsh: |
-        Get-ChildItem -Path env:
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose:
       displayName: Capture Environment
       condition: succeededOrFailed()
       workingDirectory: '$(repoRoot)'
