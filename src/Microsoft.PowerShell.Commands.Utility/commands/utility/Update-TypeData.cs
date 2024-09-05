@@ -1335,7 +1335,6 @@ namespace Microsoft.PowerShell.Commands
             ValidateTypeName();
 
             Dictionary<string, TypeData> alltypes = Context.TypeTable.GetAllTypeData();
-            Collection<TypeData> typedefs = new();
 
             foreach (string type in alltypes.Keys)
             {
@@ -1343,16 +1342,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (pattern.IsMatch(type))
                     {
-                        typedefs.Add(alltypes[type]);
+                        WriteObject(alltypes[type]);
                         break;
                     }
                 }
-            }
-
-            // write out all the available type definitions
-            foreach (TypeData typedef in typedefs)
-            {
-                WriteObject(typedef);
             }
         }
     }
