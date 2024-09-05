@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 parameters:
   - name: parentJobs
     type: jobList
@@ -13,13 +16,13 @@ jobs:
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/notice'
   - name: ob_sdl_apiscan_enabled
     value: false
-  - name: repoRoot 
+  - name: repoRoot
     value: '$(Build.SourcesDirectory)\PowerShell'
   - name: ob_sdl_tsa_configFile
     value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
   - name: ob_sdl_credscan_suppressionsFile
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-    
+
   displayName: Generate Notice
   dependsOn:
     ${{ parameters.parentJobs }}
@@ -57,7 +60,7 @@ jobs:
   - pwsh: |
       $(repoRoot)/tools/clearlyDefined/ClearlyDefined.ps1 -TestAndHarvest
     displayName: Verify that packages have license data
-    
+
 
   - task: msospo.ospo-extension.8d7f9abb-6896-461d-9e25-4f74ed65ddb2.notice@0
     displayName: 'NOTICE File Generator'
@@ -90,7 +93,7 @@ jobs:
       Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
       Get-PackageProvider -Name NuGet -ForceBootstrap
     displayName: Initalize PowerShellGet
-    
+
   - powershell: |
       $modules = 'Az.Accounts', 'Az.Storage'
       foreach($module in $modules) {
@@ -145,15 +148,7 @@ jobs:
           Write-Verbose -Verbose "Setting blob ($blobName) content ($noticePath) ..."
           $null = Set-AzStorageBlobContent -File $noticePath -Container $containerName -Blob $blobName -Context $context -confirm:$false -force
           Write-Verbose -Verbose "Done"
-        } catch { 
+        } catch {
           Get-Error
           throw
         }
-
-#todo publish artificats
-#  - task: PublishPipelineArtifact@1
-#    inputs:
-#      targetPath: $(System.ArtifactsDirectory)
-#      artifactName: notice
-#    displayName: Publish notice artifacts
-#    retryCountOnTaskFailure: 2

@@ -1,10 +1,13 @@
-trigger: none  
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+trigger: none
 
 variables:
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: CDP_DEFINITION_BUILD_COUNT
-    value: $[counter('', 0)]  
+    value: $[counter('', 0)]
   # Defines the variables AzureFileCopySubscription, StorageAccount, StorageAccountKey, StorageResourceGroup, StorageSubscriptionName
   - group: 'Azure Blob variable group'
   # Defines the variables CgPat, CgOrganization, and CgProject
@@ -23,13 +26,13 @@ resources:
     ref: refs/heads/main
 
 extends:
-  template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates  
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates
   parameters:
     featureFlags:
-      WindowsHostVersion: 
+      WindowsHostVersion:
         Version: 2022
-    globalSdl:  
-      compiled: 
+    globalSdl:
+      compiled:
         enabled: true
       armory:
         enabled: false
@@ -58,7 +61,7 @@ extends:
 #symbolsFolder - relative path to a folder that contains symbols. Default value is root of artifacts folder.
 
       tsaOptionsFile: .config\tsaoptions.json
- 
+
     stages:
       - stage: APIScan
         displayName: 'ApiScan'
@@ -74,5 +77,3 @@ extends:
           - template: /.pipelines/templates/compliance/generateNotice.yml@self
             parameters:
               parentJobs: []
-
-

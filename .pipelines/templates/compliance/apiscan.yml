@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 jobs:
   - job: APIScan
     variables:
@@ -23,7 +26,7 @@ jobs:
         - group: mscodehub-feed-read-akv
         - name: ob_outputDirectory
           value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-        - name: repoRoot 
+        - name: repoRoot
           value: '$(Build.SourcesDirectory)\PowerShell'
         - name: ob_sdl_tsa_configFile
           value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
@@ -45,7 +48,7 @@ jobs:
       retryCountOnTaskFailure: 1
       env:
         ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
-        
+
     - template: ../SetVersionVariables.yml
       parameters:
         ReleaseTagVar: $(ReleaseTagVar)
@@ -74,30 +77,6 @@ jobs:
       displayName: Install dotnet-symbol
       workingDirectory: '$(repoRoot)'
       retryCountOnTaskFailure: 2
-
-#    - pwsh: |
-#        Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
-#        Install-AzCopy
-#      displayName: Install AzCopy
-#      workingDirectory: '$(repoRoot)'
-#      retryCountOnTaskFailure: 2
-
-#    - pwsh: |
-#        Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
-#        $azcopy = Find-AzCopy
-#        Write-Verbose -Verbose "Found AzCopy: $azcopy"
-#
-#        $winverifySymbolsPath = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)/winverify-symbols' -Force
-#        Write-Host "##vso[task.setvariable variable=winverifySymbolsPath]$winverifySymbolsPath"
-
-#        & $azcopy cp https://$(StorageAccount).blob.core.windows.net/winverify-private $winverifySymbolsPath --recursive
-
-#        Get-ChildItem $winverifySymbolsPath -Recurse | Out-String | Write-Verbose -Verbose
-
-#      displayName: Download winverify-private Artifacts
-#      retryCountOnTaskFailure: 2
-#      env:
-#        AZCOPY_AUTO_LOGIN_TYPE: MSI
 
     - pwsh: |
         $modules = 'Az.Accounts', 'Az.Storage'
