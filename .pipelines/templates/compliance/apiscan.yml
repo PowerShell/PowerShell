@@ -86,7 +86,6 @@ jobs:
             Install-Module $module -force -AllowClobber
           } else {
             Write-Verbose "$module already installed." -verbose
-            #Update-Module $module -verbose
           }
         }
       displayName: Install PowerShell modules
