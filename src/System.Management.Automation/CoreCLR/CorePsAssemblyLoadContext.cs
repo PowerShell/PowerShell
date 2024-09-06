@@ -619,7 +619,7 @@ namespace System.Management.Automation
                 result = -1;
             }
 
-            ApplicationInsightsTelemetry.SendUseTelemetry("PowerShellUnsafeAssemblyLoad", result == 0 ? "Success" : "Failure");
+            ApplicationInsightsTelemetry.SendUseTelemetry("PowerShellUnsafeAssemblyLoad", result == 0 ? "1" : "0");
             return result;
         }
     }
