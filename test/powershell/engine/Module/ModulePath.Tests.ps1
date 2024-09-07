@@ -68,7 +68,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     It "validate sxs module path" -Skip:$skipNoPwsh {
 
-        $env:PSModulePath = ""
+        $env:PSModulePath = $null
         $defaultModulePath = & $powershell -nopro -c '$env:PSModulePath'
         $pathSeparator = [System.IO.Path]::PathSeparator
 

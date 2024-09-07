@@ -103,6 +103,10 @@ install(){
                 DistroBasedOn='mandrake'
                 PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mandrake-release )
                 REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mandrake-release )
+            elif [ -f /etc/azurelinux-release ] ; then
+                DistroBasedOn='mariner'
+                PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/azurelinux-release )
+                REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/azurelinux-release )
             elif [ -f /etc/debian_version ] ; then
                 DistroBasedOn='debian'
                 DIST=$(. /etc/os-release && echo $NAME)

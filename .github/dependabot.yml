@@ -58,3 +58,10 @@ updates:
       interval: "daily"
     labels:
       - "CL-BuildPackaging"
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: daily
+    labels:
+      - "CL-BuildPackaging"

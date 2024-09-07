@@ -10,10 +10,14 @@
     <TieredCompilation>true</TieredCompilation>
     <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
     <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+    <TargetPlatformVersion>8.0</TargetPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.0-preview.6.24327.6" />
+    <PackageReference Include="System.Formats.Asn1" Version="9.0.0-preview.6.24327.7" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
   </ItemGroup>
 
 </Project>

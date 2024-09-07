@@ -5,8 +5,12 @@
 $ProgressPreference = "SilentlyContinue"
 
 $RepositoryName = 'PSGallery'
+$ACRRepositoryName = "ACRRepo"
+$ACRRepoUri = "https://psresourcegettest.azurecr.io/"
 $TestModule = 'newTestModule'
 $TestScript = 'TestTestScript'
+$ACRTestModule = 'newTestMod'
+
 $Initialized = $false
 
 #region Install locations for modules and scripts
@@ -76,6 +80,20 @@ function Initialize
     else
     {
         Register-PSResourceRepository -PSGallery -Trusted
+    }
+
+    $acrTests = $env:ACRTESTS -eq 'true'
+
+    if ($acrTests)
+    {
+        if ($null -eq $env:TENANTID)
+        {
+            Write-Error "The TENANTID environment variable must be set for ACR tests."
+            return
+        }
+
+        $psCredInfo = New-Object Microsoft.PowerShell.PSResourceGet.UtilClasses.PSCredentialInfo ("SecretStore", "$env:TENANTID")
+        Register-PSResourceRepository -Name $ACRRepositoryName -ApiVersion 'ContainerRegistry' -Uri $ACRRepoUri -CredentialInfo $psCredInfo -Verbose -Trusted -Force
     }
 }
 
@@ -211,5 +229,70 @@ Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
     AfterAll {
         Remove-InstalledScripts
+    }
+}
+
+Describe "PSResourceGet - ACR tests" -tags "Feature" {
+
+    BeforeAll {
+        if ($env:ACRTESTS -ne 'true') {
+            return
+        }
+
+        if ($script:Initialized -eq $false) {
+            Initialize
+            $script:Initialized = $true
+        }
+    }
+
+    BeforeEach {
+        if ($env:ACRTESTS -ne 'true') {
+            return
+        }
+
+        Remove-InstalledModules
+    }
+
+    It "Should find a module correctly" {
+        $isSkipped = $env:ACRTESTS -ne 'true'
+
+        Write-Verbose -Verbose "Test - Skipping = $isSkipped"
+
+        if ($isSkipped) {
+            Set-ItResult -Skipped -Because "The tests require the ACRTESTS environment variable to be set to 'true' for ACR authentication."
+        }
+
+        $psgetModuleInfo = Find-PSResource -Name $ACRTestModule -Repository $ACRRepositoryName
+        $psgetModuleInfo.Name | Should -Be $ACRTestModule
+        $psgetModuleInfo.Repository | Should -Be $ACRRepositoryName
+    }
+
+    It "Should install a module correctly to the required location with default CurrentUser scope" {
+        $isSkipped = $env:ACRTESTS -ne 'true'
+
+        if ($isSkipped) {
+            Set-ItResult -Skipped:$isSkipped -Because "The tests require the ACRTESTS environment variable to be set to 'true' for ACR authentication."
+        }
+
+        Install-PSResource -Name $ACRTestModule -Repository $ACRRepositoryName
+        $installedModuleInfo = Get-InstalledPSResource -Name $ACRTestModule
+
+        if (!$IsMacOS) {
+            $installedModuleInfo | Should -Not -BeNullOrEmpty
+            $installedModuleInfo.Name | Should -Be $ACRTestModule
+            $installedModuleInfo.InstalledLocation.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+
+            $module = Get-Module $ACRTestModule -ListAvailable
+            $module.Name | Should -Be $ACRTestModule
+            $module.ModuleBase.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
+        }
+    }
+
+    AfterAll {
+        if ($env:ACRTESTS -ne 'true') {
+            return
+        }
+
+        Remove-InstalledModules
     }
 }
