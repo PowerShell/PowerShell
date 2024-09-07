@@ -198,11 +198,22 @@ namespace System.Management.Automation
                     // The Ciminstance type adapter adds the full typename with and without a namespace to the list of type names.
                     // So if we see one with a full typename we need to also get the types for the short version.
                     // For example: "CimInstance#root/standardcimv2/MSFT_NetFirewallRule" and "CimInstance#MSFT_NetFirewallRule"
-                    Match match = Regex.Match(typename.Name, "(Microsoft\\.Management\\.Infrastructure\\.CimInstance#)(.+\\/)(.+$)");
-                    
-                    ConsolidatedString consolidatedString = match.Success
-                        ? new ConsolidatedString(new[] { typename.Name, match.Groups[1].Value + match.Groups[3].Value })
-                        : new ConsolidatedString(new[] { typename.Name });
+                    int namespaceSeparator = typename.Name.LastIndexOf('/');
+                    ConsolidatedString consolidatedString;
+                    if (namespaceSeparator != -1
+                        && typename.Name.StartsWith("Microsoft.Management.Infrastructure.CimInstance#", StringComparison.OrdinalIgnoreCase))
+                    {
+                        consolidatedString = new ConsolidatedString(new[]
+                        {
+                            typename.Name,
+                            string.Concat("Microsoft.Management.Infrastructure.CimInstance#", typename.Name.AsSpan(namespaceSeparator + 1))
+                        });
+                    }
+                    else
+                    {
+                        consolidatedString = new ConsolidatedString(new[] { typename.Name });
+                    }
+
                     results.AddRange(ExecutionContext.TypeTable.GetMembers<PSMemberInfo>(consolidatedString));
                 }
 
