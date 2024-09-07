@@ -1,0 +1,196 @@
+jobs:
+- job: validatePackageNames
+  displayName: Validate Package Names
+  pool:
+    type: windows
+  variables:
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    - group: 'Azure Blob variable group'
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - template: release-SetReleaseTagAndContainerName.yml
+
+  - pwsh: |
+       Get-ChildItem ENV: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: Capture environment
+
+  - pwsh: |
+      $name = "{0}_{1:x}" -f '$(releaseTag)', (Get-Date).Ticks
+      Write-Host $name
+      Write-Host "##vso[build.updatebuildnumber]$name"
+    displayName: Set Release Name
+
+  - pwsh: |
+      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
+      if ($azureRmModule) {
+        Write-Host 'AzureRM module exists. Removing it'
+        Uninstall-AzureRm
+        Write-Host 'AzureRM module removed'
+      }
+
+      Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
+
+    displayName: Remove AzRM modules and install Az.Storage
+
+  - task: AzurePowerShell@5
+    displayName: Upload packages to blob
+    inputs:
+      azureSubscription: az-blob-cicd-infra
+      scriptType: inlineScript
+      azurePowerShellVersion: LatestVersion
+      pwsh: true
+      inline: |
+        $storageAccount = Get-AzStorageAccount -ResourceGroupName '$(StorageResourceGroup)' -Name '$(StorageAccount)'
+        $ctx = $storageAccount.Context
+        $container = '$(AzureVersion)'
+
+        $destinationPath = '$(System.ArtifactsDirectory)'
+        $blobList = Get-AzStorageBlob -Container $container -Context $ctx
+        foreach ($blob in $blobList) {
+          $blobName = $blob.Name
+          $destinationFile = Join-Path -Path $destinationPath -ChildPath $blobName
+          Get-AzStorageBlobContent -Container $container -Blob $blobName -Destination $destinationFile -Context $ctx -Force
+          Write-Output "Downloaded $blobName to $destinationFile"
+        }
+
+  - pwsh: |
+      Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name
+    displayName: Capture Artifact Listing
+
+  - pwsh: |
+      $message = @()
+      Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.rpm | ForEach-Object {
+          if($_.Name -notmatch 'powershell\-(preview-|lts-)?\d+\.\d+\.\d+(_[a-z]*\.\d+)?-1.(rh|cm).(x86_64|aarch64)\.rpm')
+          {
+              $messageInstance = "$($_.Name) is not a valid package name"
+              $message += $messageInstance
+              Write-Warning $messageInstance
+          }
+      }
+      if($message.count -gt 0){throw ($message | out-string)}
+    displayName: Validate RPM package names
+
+  - pwsh: |
+      $message = @()
+      Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.tar.gz | ForEach-Object {
+          if($_.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?(linux|osx|linux-musl)+\-(x64\-fxdependent|x64|arm32|arm64|x64\-musl-noopt\-fxdependent)\.(tar\.gz)')
+          {
+              $messageInstance = "$($_.Name) is not a valid package name"
+              $message += $messageInstance
+              Write-Warning $messageInstance
+          }
+      }
+      if($message.count -gt 0){throw ($message | out-string)}
+    displayName: Validate Tar.Gz Package Names
+
+  - pwsh: |
+      $message = @()
+      Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.pkg | ForEach-Object {
+          if($_.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?osx(\.10\.12)?\-(x64|arm64)\.pkg')
+          {
+              $messageInstance = "$($_.Name) is not a valid package name"
+              $message += $messageInstance
+              Write-Warning $messageInstance
+          }
+      }
+      if($message.count -gt 0){throw ($message | out-string)}
+    displayName: Validate PKG Package Names
+
+  - pwsh: |
+      $message = @()
+      Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
+          if($_.Name -notmatch 'PowerShell-\d+\.\d+\.\d+\-([a-z]*.\d+\-)?win\-(fxdependent|x64|arm64|x86|fxdependentWinDesktop)\.(msi|zip){1}')
+          {
+              $messageInstance = "$($_.Name) is not a valid package name"
+              $message += $messageInstance
+              Write-Warning $messageInstance
+          }
+      }
+
+      if($message.count -gt 0){throw ($message | out-string)}
+    displayName: Validate Zip and MSI Package Names
+
+  - pwsh: |
+      $message = @()
+      Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.deb | ForEach-Object {
+          if($_.Name -notmatch 'powershell(-preview|-lts)?_\d+\.\d+\.\d+([\-~][a-z]*.\d+)?-\d\.deb_amd64\.deb')
+          {
+              $messageInstance = "$($_.Name) is not a valid package name"
+              $message += $messageInstance
+              Write-Warning $messageInstance
+          }
+      }
+      if($message.count -gt 0){throw ($message | out-string)}
+    displayName: Validate Deb Package Names
+
+# Move to 1ES SBOM validation tool
+# - job: validateBOM
+#   displayName: Validate Package Names
+#   pool:
+#     type: windows
+#   variables:
+#     - name: ob_outputDirectory
+#       value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+#     - name: ob_sdl_credscan_suppressionsFile
+#       value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+#     - name: ob_sdl_tsa_configFile
+#       value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+#     - group: 'Azure Blob variable group'
+
+#   steps:
+#   - checkout: self
+#     clean: true
+
+#   - pwsh: |
+#       Get-ChildItem ENV: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+#     displayName: Capture environment
+
+#   - template: release-SetReleaseTagAndContainerName.yml
+
+#   - pwsh: |
+#       $name = "{0}_{1:x}" -f '$(releaseTag)', (Get-Date).Ticks
+#       Write-Host $name
+#       Write-Host "##vso[build.updatebuildnumber]$name"
+#     displayName: Set Release Name
+
+#   - task: DownloadPipelineArtifact@2
+#     inputs:
+#       source: specific
+#       project: PowerShellCore
+#       pipeline: '696'
+#       preferTriggeringPipeline: true
+#       runVersion: latestFromBranch
+#       runBranch: '$(Build.SourceBranch)'
+#       artifact: finalResults
+#       path: $(System.ArtifactsDirectory)
+
+
+#   - pwsh: |
+#       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name
+#     displayName: Capture Artifact Listing
+
+#   - pwsh: |
+#       Install-module Pester -Scope CurrentUser -Force -MaximumVersion 4.99
+#     displayName: Install Pester
+#     condition: succeededOrFailed()
+
+#   - pwsh: |
+#       Import-module './build.psm1'
+#       Import-module './tools/packaging'
+#       $env:PACKAGE_FOLDER = '$(System.ArtifactsDirectory)'
+#       $path = Join-Path -Path $pwd -ChildPath './packageReleaseTests.xml'
+#       $results = invoke-pester -Script './tools/packaging/releaseTests' -OutputFile $path -OutputFormat NUnitXml -PassThru
+#       Write-Host "##vso[results.publish type=NUnit;mergeResults=true;runTitle=Package Release Tests;publishRunAttachments=true;resultFiles=$path;]"
+#       if($results.TotalCount -eq 0 -or $results.FailedCount -gt 0)
+#       {
+#         throw "Package Release Tests failed"
+#       }
+#     displayName: Run packaging release tests

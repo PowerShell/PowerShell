@@ -1,0 +1,393 @@
+jobs:
+- job: upload_packages
+  displayName: Upload packages
+  condition: succeeded()
+  pool:
+    type: windows
+  variables:
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
+  - name: ob_sdl_binskim_enabled
+    value: false
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - name: ob_sdl_codeql_compiled_enabled
+    value: false
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: /.pipelines/templates/SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: yes
+      UseJson: no
+
+  - template: /.pipelines/templates/cloneToOfficialPath.yml@self
+
+  - pwsh: |
+      Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: 'Capture Environment Variables'
+
+  - pwsh: |
+      New-Item -Path '$(Build.ArtifactStagingDirectory)/downloads' -ItemType Directory -Force
+    displayName: Create downloads directory
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_deb
+      itemPattern: '**/*.deb'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download deb package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_fxdependent
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download linux fxd package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_mariner_arm64
+      itemPattern: '**/*.rpm'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download linux mariner arm64 package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_mariner_x64
+      itemPattern: '**/*.rpm'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download linux mariner x64 package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_minSize
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download linux minSize package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_rpm
+      itemPattern: '**/*.rpm'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download linux rpm package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_tar
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download linux tar package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_tar_alpine
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download linux alpine tar package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_tar_alpine_fxd
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download linux alpine fxd tar package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_tar_arm
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download linux arm32 tar package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_linux_package_tar_arm64
+      itemPattern: '**/*.tar.gz'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download linux arm64 tar package
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_nupkg_build_nupkg
+      itemPattern: '**/*.nupkg'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download nupkgs
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_arm64
+      itemPattern: |
+        **/*.msi
+        **/*.msix
+        **/*.zip
+        **/*.exe
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download windows arm64 packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_fxdependent
+      itemPattern: '**/*.zip'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download windows fxdependent packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_fxdependentWinDesktop
+      itemPattern: '**/*.zip'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download windows fxdependentWinDesktop packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_minsize
+      itemPattern: '**/*.zip'
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download windows minsize packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_x64
+      itemPattern: |
+        **/*.msi
+        **/*.msix
+        **/*.zip
+        **/*.exe
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download windows x64 packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_windows_package_package_win_x86
+      itemPattern: |
+        **/*.msi
+        **/*.msix
+        **/*.zip
+        **/*.exe
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download windows x86 packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: macos-pkgs
+      itemPattern: |
+        **/*.tar.gz
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download macos tar packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_mac_package_sign_package_macos_arm64
+      itemPattern: |
+        **/*.pkg
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download macos arm packages
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      artifact: drop_mac_package_sign_package_macos_x64
+      itemPattern: |
+        **/*.pkg
+      targetPath: '$(Build.ArtifactStagingDirectory)/downloads'
+    displayName: Download macos x64 packages
+
+  - pwsh: |
+      Get-ChildItem '$(Build.ArtifactStagingDirectory)/downloads' | Select-Object -ExpandProperty FullName
+    displayName: 'Capture downloads'
+
+  - pwsh: |
+      # Create output directory for packages which have been uploaded to blob storage
+      New-Item -Path $(Build.ArtifactStagingDirectory)/uploaded -ItemType Directory -Force
+    displayName: Create output directory for packages
+
+  - pwsh: |
+      $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
+      if ($azureRmModule) {
+        Write-Host 'AzureRM module exists. Removing it'
+        Uninstall-AzureRm
+        Write-Host 'AzureRM module removed'
+      }
+
+      Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
+
+    displayName: Remove AzRM modules
+
+  - task: AzurePowerShell@5
+    displayName: Upload packages to blob
+    inputs:
+      azureSubscription: az-blob-cicd-infra
+      scriptType: inlineScript
+      azurePowerShellVersion: LatestVersion
+      pwsh: true
+      inline: |
+        $downloadsDirectory = '$(Build.ArtifactStagingDirectory)/downloads'
+        $uploadedDirectory = '$(Build.ArtifactStagingDirectory)/uploaded'
+        $storageAccountName = "pscoretestdata"
+        $containerName = $env:AZUREVERSION
+
+        Write-Verbose -Verbose "Uploading packages to blob storage account: $storageAccountName container: $containerName"
+
+        $context = New-AzStorageContext -StorageAccountName $storageAccountName -UseConnectedAccount
+
+        # Create the blob container if it doesn't exist
+        $containerExists = Get-AzStorageContainer -Name $containerName -Context $context -ErrorAction SilentlyContinue
+        if (-not $containerExists) {
+            $null = New-AzStorageContainer -Name $containerName -Context $context
+            Write-Host "Blob container $containerName created successfully."
+        }
+
+        $gcPackages = Get-ChildItem -Path $downloadsDirectory -Filter "powershell*gc.*"
+        Write-Verbose -Verbose "gc files to upload."
+        $gcPackages | Write-Verbose -Verbose
+        $gcContainerName = "$containerName-gc"
+        # Create the blob container if it doesn't exist
+        $containerExists = Get-AzStorageContainer -Name $gcContainerName -Context $context -ErrorAction SilentlyContinue
+        if (-not $containerExists) {
+            $null = New-AzStorageContainer -Name $gcContainerName -Context $context
+            Write-Host "Blob container $gcContainerName created successfully."
+        }
+
+        $gcPackages | ForEach-Object {
+            $blobName = "${_.Name}"
+            Write-Verbose -Verbose "Uploading $($_.FullName) to $gcContainerName/$blobName"
+            $null = Set-AzStorageBlobContent -File $_.FullName -Container $gcContainerName -Blob $blobName -Context $context
+            # Move to folder to we wont upload again
+            Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force -Verbose
+        }
+
+        $nupkgFiles = Get-ChildItem -Path $downloadsDirectory -Filter "*.nupkg" | Where-Object { $_.Name -notlike "powershell*.nupkg" }
+
+        # create a SHA512 checksum file for each nupkg files
+
+        $checksums = $nupkgFiles |
+          ForEach-Object {
+              Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
+              $packageName = $_.Name
+              $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash.ToLower()
+              # the '*' before the packagename signifies it is a binary
+              "$hash *$packageName"
+          }
+
+        $checksums | Out-File -FilePath "$downloadsDirectory\SHA512SUMS" -Force
+        $fileContent = Get-Content -Path "$downloadsDirectory\SHA512SUMS" -Raw | Out-String
+        Write-Verbose -Verbose -Message $fileContent
+
+        Write-Verbose -Verbose "nupkg files to upload."
+        $nupkgFiles += (Get-Item "$downloadsDirectory\SHA512SUMS")
+        $nupkgFiles | Write-Verbose -Verbose
+        $nugetContainerName = "$containerName-nuget"
+        # Create the blob container if it doesn't exist
+        $containerExists = Get-AzStorageContainer -Name $nugetContainerName -Context $context -ErrorAction SilentlyContinue
+        if (-not $containerExists) {
+            $null = New-AzStorageContainer -Name $nugetContainerName -Context $context
+            Write-Host "Blob container $nugetContainerName created successfully."
+        }
+
+        $nupkgFiles | ForEach-Object {
+            $blobName = $_.Name
+            Write-Verbose -Verbose "Uploading $($_.FullName) to $nugetContainerName/$blobName"
+            $null = Set-AzStorageBlobContent -File $_.FullName -Container $nugetContainerName -Blob $blobName -Context $context
+            # Move to folder to we wont upload again
+            Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force -Verbose
+        }
+
+        $globaltoolFiles = Get-ChildItem -Path $downloadsDirectory -Filter "powershell*.nupkg"
+        # create a SHA512 checksum file for each nupkg files
+
+        $checksums = $globaltoolFiles |
+          ForEach-Object {
+              Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
+              $packageName = $_.Name
+              $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash.ToLower()
+              # the '*' before the packagename signifies it is a binary
+              "$hash *$packageName"
+          }
+
+        New-Item -Path "$downloadsDirectory\globaltool" -ItemType Directory -Force
+        $checksums | Out-File -FilePath "$downloadsDirectory\globaltool\SHA512SUMS" -Force
+        $fileContent = Get-Content -Path "$downloadsDirectory\globaltool\SHA512SUMS" -Raw | Out-String
+        Write-Verbose -Verbose -Message $fileContent
+
+        Write-Verbose -Verbose "globaltool files to upload."
+        $globaltoolFiles += Get-Item ("$downloadsDirectory\globaltool\SHA512SUMS")
+        $globaltoolFiles | Write-Verbose -Verbose
+        $globaltoolContainerName = "$containerName-nuget"
+        $globaltoolFiles | ForEach-Object {
+            $blobName = "globaltool/" + $_.Name
+            $globaltoolContainerName = "$containerName-nuget"
+            Write-Verbose -Verbose "Uploading $($_.FullName) to $globaltoolContainerName/$blobName"
+            $null = Set-AzStorageBlobContent -File $_.FullName -Container $globaltoolContainerName -Blob $blobName -Context $context
+            # Move to folder to we wont upload again
+            Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force
+        }
+
+        # To use -Include parameter, we need to use \* to get all files
+        $privateFiles = Get-ChildItem -Path $downloadsDirectory\* -Include @("*.msix", "*.exe")
+        Write-Verbose -Verbose "private files to upload."
+        $privateFiles | Write-Verbose -Verbose
+        $privateContainerName = "$containerName-private"
+        # Create the blob container if it doesn't exist
+        $containerExists = Get-AzStorageContainer -Name $privateContainerName -Context $context -ErrorAction SilentlyContinue
+        if (-not $containerExists) {
+            $null = New-AzStorageContainer -Name $privateContainerName -Context $context
+            Write-Host "Blob container $privateContainerName created successfully."
+        }
+
+        $privateFiles | ForEach-Object {
+            $blobName = $_.Name
+            Write-Verbose -Verbose "Uploading $($_.FullName) to $privateContainerName/$blobName"
+            $null = Set-AzStorageBlobContent -File $_.FullName -Container $privateContainerName -Blob $blobName -Context $context
+            # Move to folder to we wont upload again
+            Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force -Verbose
+        }
+
+        # To use -Include parameter, we need to use \* to get all files
+        $files = Get-ChildItem -Path $downloadsDirectory\* -Include @("*.deb", "*.tar.gz", "*.rpm", "*.msi", "*.zip", "*.pkg")
+        Write-Verbose -Verbose "files to upload."
+        $files | Write-Verbose -Verbose
+
+        $files | ForEach-Object {
+          $blobName = $_.Name
+          Write-Verbose -Verbose "Uploading $($_.FullName) to $containerName/$blobName"
+          $null = Set-AzStorageBlobContent -File $_.FullName -Container $containerName -Blob $blobName -Context $context
+          Write-Host "File $blobName uploaded to $containerName container."
+          Move-Item -Path $_.FullName -Destination $uploadedDirectory -Force -Verbose
+        }

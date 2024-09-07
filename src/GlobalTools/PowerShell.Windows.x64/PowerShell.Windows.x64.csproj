@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackAsTool>true</PackAsTool>
+    <PackAsToolShimRuntimeIdentifiers>win-x64</PackAsToolShimRuntimeIdentifiers>
+    <ToolCommandName>pwsh</ToolCommandName>
+    <Version>$(PackageVersion)</Version>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>../../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
+    <Content Include="..\..\Modules\Windows\**\*;..\..\Modules\Shared\**\*">
+      <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <None Include="Powershell_64.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Microsoft.PowerShell.SDK\Microsoft.PowerShell.SDK.csproj" />
+    <ProjectReference Include="..\..\Microsoft.PowerShell.Commands.Diagnostics\Microsoft.PowerShell.Commands.Diagnostics.csproj" />
+    <ProjectReference Include="..\..\Microsoft.Management.Infrastructure.CimCmdlets\Microsoft.Management.Infrastructure.CimCmdlets.csproj" />
+    <ProjectReference Include="..\..\Microsoft.WSMan.Management\Microsoft.WSMan.Management.csproj" />
+  </ItemGroup>
+
+</Project>

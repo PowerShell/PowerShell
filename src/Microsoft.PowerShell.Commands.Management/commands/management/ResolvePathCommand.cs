@@ -93,6 +93,16 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Gets or sets the force property.
+        /// </summary>
+        [Parameter]
+        public override SwitchParameter Force
+        {
+            get => base.Force;
+            set => base.Force = value;
+        }
+
         #endregion Parameters
 
         #region parameter data

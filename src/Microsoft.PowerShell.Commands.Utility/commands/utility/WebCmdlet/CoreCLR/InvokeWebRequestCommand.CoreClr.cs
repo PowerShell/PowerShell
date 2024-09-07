@@ -38,6 +38,8 @@ namespace Microsoft.PowerShell.Commands
             ArgumentNullException.ThrowIfNull(response);
             TimeSpan perReadTimeout = ConvertTimeoutSecondsToTimeSpan(OperationTimeoutSeconds);
             Stream responseStream = StreamHelper.GetResponseStream(response, _cancelToken.Token);
+            string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
+
             if (ShouldWriteToPipeline)
             {
                 // Creating a MemoryStream wrapper to response stream here to support IsStopping.
@@ -50,6 +52,7 @@ namespace Microsoft.PowerShell.Commands
                     _cancelToken.Token);
                 WebResponseObject ro = WebResponseHelper.IsText(response) ? new BasicHtmlWebResponseObject(response, responseStream, perReadTimeout, _cancelToken.Token) : new WebResponseObject(response, responseStream, perReadTimeout, _cancelToken.Token);
                 ro.RelationLink = _relationLink;
+                ro.OutFile = outFilePath;
                 WriteObject(ro);
 
                 // Use the rawcontent stream from WebResponseObject for further
@@ -61,9 +64,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldSaveToOutFile)
             {
-                string outFilePath = WebResponseHelper.GetOutFilePath(response, _qualifiedOutFile);
-
-                WriteVerbose(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"File Name: {Path.GetFileName(_qualifiedOutFile)}"));
+                WriteVerbose($"File Name: {Path.GetFileName(outFilePath)}");
 
                 // ContentLength is always the partial length, while ContentRange is the full length
                 // Without Request.Range set, ContentRange is null and partial length (ContentLength) equals to full length

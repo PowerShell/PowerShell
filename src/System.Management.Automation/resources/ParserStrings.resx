@@ -1229,6 +1229,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="UsingStatementNotSupported" xml:space="preserve">
     <value>This syntax of the 'using' statement is not supported.</value>
   </data>
+  <data name="InvalidNamespaceValue" xml:space="preserve">
+    <value>The specified namespace in the 'using' statement contains invalid characters.</value>
+  </data>
   <data name="InformationStream" xml:space="preserve">
     <value>information stream</value>
   </data>
@@ -1366,5 +1369,8 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="WDACGetSteppablePipelineLogMessage" xml:space="preserve">
     <value>Creating a steppable pipeline from a script block may require evaluating some expressions within the script block. The expression evaluation will silently fail and return 'null' in Constrained Language mode, unless the expression represents a constant value.</value>
+  </data>
+  <data name="ConfigurationNotAllowedOnArm64" xml:space="preserve">
+    <value>Configuration keyword is not supported on ARM64 processors.</value>
   </data>
 </root>

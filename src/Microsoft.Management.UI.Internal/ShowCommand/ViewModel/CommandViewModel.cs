@@ -550,8 +550,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             return returnValue;
         }
 
-        #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
-
         /// <summary>
         /// Called to trigger the event fired when help is needed for the command.
         /// </summary>
@@ -626,8 +624,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        #pragma warning restore IDE1005
 
         /// <summary>
         /// Called when the PropertyChanged event is triggered on the SelectedParameterSet.

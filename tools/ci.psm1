@@ -105,7 +105,7 @@ function Invoke-CIBuild
         Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
     }
 
-    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
+    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag -UseNuGetOrg
     Save-PSOptions
 
     $options = (Get-PSOptions)
@@ -128,6 +128,10 @@ function Invoke-CIInstall
         [switch]
         $SkipUser
     )
+
+    # Switch to public sources in CI
+    Switch-PSNugetConfig -Source Public
+
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
 
@@ -480,6 +484,9 @@ function Invoke-CIFinish
         [string[]] $Stage = ('Build','Package')
     )
 
+    # Switch to public sources in CI
+    Switch-PSNugetConfig -Source Public
+
     if ($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS) -and $Stage -contains 'Build') {
         return New-LinuxPackage
     }
@@ -537,13 +544,16 @@ function Invoke-CIFinish
             switch -regex ($Runtime){
                 default {
                     $runPackageTest = $true
-                    $packageTypes = 'msi', 'nupkg', 'zip', 'zip-pdb', 'msix'
+                    $packageTypes = 'msi', 'zip', 'zip-pdb', 'msix'
                 }
                 'win-arm.*' {
                     $runPackageTest = $false
-                    $packageTypes = 'zip', 'zip-pdb', 'msix'
+                    $packageTypes = 'msi', 'zip', 'zip-pdb', 'msix'
                 }
             }
+
+            Import-Module "$PSScriptRoot\wix\wix.psm1"
+            Install-Wix -arm64:$true
             $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
             foreach ($package in $packages) {
@@ -589,14 +599,6 @@ function Invoke-CIFinish
                     throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
                 }
             }
-
-            # only publish assembly nuget packages if it is a daily build and tests passed
-            if (Test-DailyBuild) {
-                $nugetArtifacts = Get-ChildItem $PSScriptRoot\packaging\nugetOutput -ErrorAction SilentlyContinue -Filter *.nupkg | Select-Object -ExpandProperty FullName
-                if ($nugetArtifacts) {
-                    $artifacts.AddRange(@($nugetArtifacts))
-                }
-            }
         }
     } catch {
         Get-Error -InputObject $_
@@ -617,6 +619,35 @@ function Invoke-CIFinish
         if (!$pushedAllArtifacts) {
             throw "Some artifacts did not exist!"
         }
+    }
+}
+
+function Set-Path
+{
+    param
+    (
+        [Parameter(Mandatory)]
+        [string]
+        $Path,
+
+        [Parameter(Mandatory)]
+        [switch]
+        $Append
+    )
+
+    $machinePathString = [System.Environment]::GetEnvironmentVariable('path',[System.EnvironmentVariableTarget]::Machine)
+    $machinePath = $machinePathString -split ';'
+
+    if($machinePath -inotcontains $path)
+    {
+        $newPath = "$machinePathString;$path"
+        Write-Verbose "Adding $path to path..." -Verbose
+        [System.Environment]::SetEnvironmentVariable('path',$newPath,[System.EnvironmentVariableTarget]::Machine)
+        Write-Verbose "Added $path to path." -Verbose
+    }
+    else
+    {
+        Write-Verbose "$path already in path." -Verbose
     }
 }
 
