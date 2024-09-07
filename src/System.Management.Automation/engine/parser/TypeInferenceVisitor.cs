@@ -835,10 +835,14 @@ namespace System.Management.Automation
             for (int index = 0; index < namedBlockAst.Statements.Count; index++)
             {
                 StatementAst ast = namedBlockAst.Statements[index];
-                if (ast is AssignmentStatementAst)
+                if (ast is AssignmentStatementAst
+                    || (ast is PipelineAst pipe && pipe.PipelineElements.Count == 1 && pipe.PipelineElements[0] is CommandExpressionAst cmd
+                    && cmd.Redirections.Count == 0 && cmd.Expression is UnaryExpressionAst unary
+                    && unary.TokenKind is TokenKind.PostfixPlusPlus or TokenKind.PlusPlus or TokenKind.PostfixMinusMinus or TokenKind.MinusMinus))
                 {
-                    // Assignments don't output anything to the named block unless they are wrapped in parentheses
-                    // When they are wrapped in parentheses, they are seen as PipelineAst
+                    // Assignments don't output anything to the named block unless they are wrapped in parentheses.
+                    // When they are wrapped in parentheses, they are seen as PipelineAst.
+                    // Increment/decrement operators like $i++ also don't output anything unless there's a redirection, or they are wrapped in parentheses.
                     continue;
                 }
 
@@ -912,10 +916,14 @@ namespace System.Management.Automation
             var inferredTypes = new List<PSTypeName>();
             foreach (StatementAst ast in statementBlockAst.Statements)
             {
-                if (ast is AssignmentStatementAst)
+                if (ast is AssignmentStatementAst
+                    || (ast is PipelineAst pipe && pipe.PipelineElements.Count == 1 && pipe.PipelineElements[0] is CommandExpressionAst cmd
+                    && cmd.Redirections.Count == 0 && cmd.Expression is UnaryExpressionAst unary
+                    && unary.TokenKind is TokenKind.PostfixPlusPlus or TokenKind.PlusPlus or TokenKind.PostfixMinusMinus or TokenKind.MinusMinus))
                 {
-                    // Assignments don't output anything to the named block unless they are wrapped in parentheses
-                    // When they are wrapped in parentheses, they are seen as PipelineAst
+                    // Assignments don't output anything to the statement block unless they are wrapped in parentheses.
+                    // When they are wrapped in parentheses, they are seen as PipelineAst.
+                    // Increment operators like $i++ also don't output anything unless there's a redirection, or they are wrapped in parentheses.
                     continue;
                 }
 
