@@ -1160,7 +1160,10 @@ namespace System.Management.Automation
                 }
             }
 
-            if (commandInfo.OutputType.Count == 0
+            if ((commandInfo.OutputType.Count == 0
+                || (commandInfo.OutputType.Count == 1
+                && (commandInfo.OutputType[0].Name.EqualsOrdinalIgnoreCase(typeof(PSObject).FullName)
+                || commandInfo.OutputType[0].Name.EqualsOrdinalIgnoreCase(typeof(object).FullName))))
                 && commandInfo is IScriptCommandInfo scriptCommandInfo
                 && scriptCommandInfo.ScriptBlock.Ast is IParameterMetadataProvider scriptBlockWithParams
                 && _context.AnalyzedCommands.Add(scriptBlockWithParams))
