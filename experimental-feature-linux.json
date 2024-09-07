@@ -4,5 +4,6 @@
   "PSFeedbackProvider",
   "PSLoadAssemblyFromNativeCode",
   "PSModuleAutoLoadSkipOfflineFiles",
+  "PSNativeWindowsTildeExpansion",
   "PSSubsystemPluginModel"
 ]
