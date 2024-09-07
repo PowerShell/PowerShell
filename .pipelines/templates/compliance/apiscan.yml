@@ -1,0 +1,181 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+jobs:
+  - job: APIScan
+    variables:
+        - name: runCodesignValidationInjection
+          value : false
+        - name: NugetSecurityAnalysisWarningLevel
+          value: none
+        - name: ReleaseTagVar
+          value: fromBranch
+        # Defines the variables APIScanClient, APIScanTenant and APIScanSecret
+        - group: PS-PS-APIScan
+        # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
+        # A PAT in the wrong org will give a single Error 203. No PAT will give a single Error 401, and individual pdbs may be missing even if permissions are correct.
+        - group: symbols
+        - name: branchCounterKey
+          value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
+        - name: branchCounter
+          value: $[counter(variables['branchCounterKey'], 1)]
+        - group: DotNetPrivateBuildAccess
+        - group: Azure Blob variable group
+        - group: ReleasePipelineSecrets
+        - group: mscodehub-feed-read-general
+        - group: mscodehub-feed-read-akv
+        - name: ob_outputDirectory
+          value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+        - name: repoRoot
+          value: '$(Build.SourcesDirectory)\PowerShell'
+        - name: ob_sdl_tsa_configFile
+          value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+        - name: ob_sdl_credscan_suppressionsFile
+          value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+
+    pool:
+        type: windows
+
+    # APIScan can take a long time
+    timeoutInMinutes: 180
+
+    steps:
+    - checkout: self
+      clean: true
+      fetchTags: true
+      fetchDepth: 1000
+      displayName: Checkout PowerShell
+      retryCountOnTaskFailure: 1
+      env:
+        ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+    - template: ../SetVersionVariables.yml
+      parameters:
+        ReleaseTagVar: $(ReleaseTagVar)
+        CreateJson: yes
+        UseJson: no
+
+    - template: ../insert-nuget-config-azfeed.yml
+      parameters:
+        repoRoot: '$(repoRoot)'
+
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Start-PSBootstrap
+      workingDirectory: '$(repoRoot)'
+      retryCountOnTaskFailure: 2
+      displayName: 'Bootstrap'
+      env:
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Find-DotNet
+        dotnet tool install dotnet-symbol --tool-path $(Agent.ToolsDirectory)\tools\dotnet-symbol
+        $symbolToolPath = Get-ChildItem -Path $(Agent.ToolsDirectory)\tools\dotnet-symbol\dotnet-symbol.exe | Select-Object -First 1 -ExpandProperty FullName
+        Write-Host "##vso[task.setvariable variable=symbolToolPath]$symbolToolPath"
+      displayName: Install dotnet-symbol
+      workingDirectory: '$(repoRoot)'
+      retryCountOnTaskFailure: 2
+
+    - pwsh: |
+        $modules = 'Az.Accounts', 'Az.Storage'
+        foreach($module in $modules) {
+          if(!(get-module $module -listavailable)) {
+            Write-Verbose "installing $module..." -verbose
+            Install-Module $module -force -AllowClobber
+          } else {
+            Write-Verbose "$module already installed." -verbose
+          }
+        }
+      displayName: Install PowerShell modules
+      workingDirectory: '$(repoRoot)'
+
+    - task: AzurePowerShell@5
+      displayName: Download winverify-private Artifacts
+      inputs:
+        azureSubscription: az-blob-cicd-infra
+        scriptType: inlineScript
+        azurePowerShellVersion: LatestVersion
+        workingDirectory: '$(repoRoot)'
+        pwsh: true
+        inline: |
+          # download smybols for getfilesiginforedist.dll
+          $downloadsDirectory = '$(Build.ArtifactStagingDirectory)/downloads'
+          $uploadedDirectory = '$(Build.ArtifactStagingDirectory)/uploaded'
+          $storageAccountName = "pscoretestdata"
+          $containerName = 'winverify-private'
+          $winverifySymbolsPath = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)/winverify-symbols' -Force
+          $dllName = 'getfilesiginforedist.dll'
+          $winverifySymbolsDllPath = Join-Path $winverifySymbolsPath $dllName
+
+          $context = New-AzStorageContext -StorageAccountName $storageAccountName -UseConnectedAccount
+
+          Get-AzStorageBlobContent -Container $containerName -Blob $dllName -Destination $winverifySymbolsDllPath -Context $context
+
+    - pwsh: |
+        Get-ChildItem -Path '$(System.ArtifactsDirectory)/winverify-symbols'
+      displayName: Capture winverify-private Artifacts
+      workingDirectory: '$(repoRoot)'
+      condition: succeededOrFailed()
+
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Find-DotNet
+        Start-PSBuild -Configuration StaticAnalysis -PSModuleRestore -Clean -Runtime fxdependent-win-desktop
+
+        $OutputFolder = Split-Path (Get-PSOutput)
+
+        Write-Verbose -Verbose -Message "Deleting ref folder from output folder"
+        if (Test-Path $OutputFolder/ref) {
+          Remove-Item -Recurse -Force $OutputFolder/ref
+        }
+
+        Copy-Item -Path "$OutputFolder\*" -Destination '$(ob_outputDirectory)' -Recurse -Verbose
+
+      workingDirectory: '$(repoRoot)'
+      displayName: 'Build PowerShell Source'
+
+    - pwsh: |
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      workingDirectory: '$(repoRoot)'
+      displayName: Capture Environment
+      condition: succeededOrFailed()
+
+    # Explicitly download symbols for the drop since the SDL image doesn't have http://SymWeb access and APIScan cannot handle https yet.
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Find-DotNet
+        $pat = '$(SymbolServerPAT)'
+        if ($pat -like '*PAT*' -or $pat -eq '')
+        {
+          throw 'No PAT defined'
+        }
+        $url = 'https://microsoft.artifacts.visualstudio.com/defaultcollection/_apis/symbol/symsrv'
+        $(symbolToolPath) --authenticated-server-path $(SymbolServerPAT) $url --symbols -d "$env:ob_outputDirectory\*" --recurse-subdirectories
+      displayName: 'Download Symbols for binaries'
+      retryCountOnTaskFailure: 2
+      workingDirectory: '$(repoRoot)'
+
+    - pwsh: |
+        Get-ChildItem '$(ob_outputDirectory)' -File -Recurse |
+        Foreach-Object {
+          [pscustomobject]@{
+            Path = $_.FullName
+            Version = $_.VersionInfo.FileVersion
+            Md5Hash = (Get-FileHash -Algorithm MD5 -Path $_.FullName).Hash
+            Sha512Hash = (Get-FileHash -Algorithm SHA512 -Path $_.FullName).Hash
+          }
+        } | Export-Csv -Path '$(Build.SourcesDirectory)/ReleaseFileHash.csv'
+      workingDirectory: '$(repoRoot)'
+      displayName: 'Create release file hash artifact'
+
+    - pwsh: |
+        Copy-Item -Path '$(Build.SourcesDirectory)/ReleaseFileHash.csv' -Destination '$(ob_outputDirectory)' -Verbose
+      displayName: 'Publish Build File Hash artifact'
+
+    - pwsh: |
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      displayName: Capture Environment
+      condition: succeededOrFailed()
+      workingDirectory: '$(repoRoot)'
