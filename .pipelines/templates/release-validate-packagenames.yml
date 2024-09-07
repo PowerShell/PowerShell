@@ -19,7 +19,7 @@ jobs:
   - template: release-SetReleaseTagAndContainerName.yml
 
   - pwsh: |
-       Get-ChildItem ENV:
+       Get-ChildItem ENV: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
 
   - pwsh: |
@@ -150,7 +150,7 @@ jobs:
 #     clean: true
 
 #   - pwsh: |
-#       Get-ChildItem ENV:
+#       Get-ChildItem ENV: | Out-String -width 9999 -Stream | write-Verbose -Verbose
 #     displayName: Capture environment
 
 #   - template: release-SetReleaseTagAndContainerName.yml
