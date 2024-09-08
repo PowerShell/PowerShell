@@ -1030,7 +1030,7 @@ function Install-Dotnet {
     $installObtainUrl = "https://dotnet.microsoft.com/download/dotnet-core/scripts/v1"
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
-    # Install for Linux and OS X
+    # Install for Linux, OS X, and FreeBSD
     if ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
         $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
 
@@ -1047,7 +1047,7 @@ function Install-Dotnet {
                 Invoke-Expression "$sudo bash ./$uninstallScript"
             }
         } else {
-            Write-Warning "This script only removes prior versions of dotnet for Ubunt, OS X, and FreeBSD"
+            Write-Warning "This script only removes prior versions of dotnet for Ubuntu, OS X, and FreeBSD"
         }
 
         # Install new dotnet 1.1.0 preview packages
@@ -1256,7 +1256,7 @@ function Start-PSBootstrap {
                     Invoke-Expression "apk add $Deps"
                 }
             } elseif ($environment.IsFreeBSD) {
-                $Deps += 'libunwind', 'curl', 'bash', 'git', 'curl', 'wget'
+                $Deps += 'libunwind', 'curl', 'bash', 'git'
                 $PackageManager = "pkg install --yes"
                 $baseCommand = "$sudo $PackageManager"
 

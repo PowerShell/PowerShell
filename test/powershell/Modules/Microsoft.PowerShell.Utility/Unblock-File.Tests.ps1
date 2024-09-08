@@ -42,7 +42,7 @@ Describe "Unblock-File" -Tags "CI" {
         }
 
         AfterAll {
-            if ( $IsLinux -or $IsFreeBSD){
+            if ( $IsLinux -or $IsFreeBSD ){
                 $global:PSDefaultParameterValues = $origDefaults
             }
         }
@@ -91,7 +91,7 @@ Describe "Unblock-File" -Tags "CI" {
 
     Context "Linux and FreeBSD" {
         BeforeAll {
-            if ( !$IsLinux -or !$IsFreeBSD)
+            if ( !$IsLinux -or !$IsFreeBSD )
             {
                 $origDefaults = $PSDefaultParameterValues.Clone()
                 $PSDefaultParameterValues['it:skip'] = $true
@@ -103,7 +103,7 @@ Describe "Unblock-File" -Tags "CI" {
         }
 
         AfterAll {
-            if ( !$IsLinux -or !$IsFreeBSD){
+            if ( !$IsLinux -or !$IsFreeBSD ){
                 $global:PSDefaultParameterValues = $origDefaults
             }
         }

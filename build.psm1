@@ -2039,7 +2039,7 @@ function Install-Dotnet {
     $installObtainUrl = "https://dotnet.microsoft.com/download/dotnet/scripts/v1"
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
-    # Install for Linux and OS X
+    # Install for Linux, OS X, and FreeBSD
     if ($environment.IsLinux -or $environment.IsMacOS -or $environment.IsFreeBSD) {
         $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
 
@@ -2339,7 +2339,7 @@ function Start-PSBootstrap {
                     Invoke-Expression "apk add $Deps"
                 }
             } elseif ($environment.IsFreeBSD) {
-                $Deps += 'libunwind', 'curl', 'bash', 'git', 'curl', 'wget'
+                $Deps += 'libunwind', 'curl', 'bash', 'git'
                 $PackageManager = "pkg install --yes"
                 $baseCommand = "$sudo $PackageManager"
 
