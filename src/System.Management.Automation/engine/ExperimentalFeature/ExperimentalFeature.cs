@@ -21,9 +21,7 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
-        internal const string PSModuleAutoLoadSkipOfflineFilesFeatureName = "PSModuleAutoLoadSkipOfflineFiles";
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
-        internal const string PSCommandWithArgs = "PSCommandWithArgs";
         internal const string PSNativeWindowsTildeExpansion = nameof(PSNativeWindowsTildeExpansion);
         internal const string PSRedirectToVariable = "PSRedirectToVariable";
 
@@ -109,23 +107,14 @@ namespace System.Management.Automation
                     description: "Replace the old FileSystemProvider with cleaner design and faster code"),
                 */
                 new ExperimentalFeature(
-                    name: "PSCommandNotFoundSuggestion",
-                    description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
-                new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
                 new ExperimentalFeature(
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
                 new ExperimentalFeature(
-                    name: PSModuleAutoLoadSkipOfflineFilesFeatureName,
-                    description: "Module discovery will skip over files that are marked by cloud providers as not fully on disk."),
-                new ExperimentalFeature(
                     name: PSFeedbackProvider,
                     description: "Replace the hard-coded suggestion framework with the extensible feedback provider"),
-                new ExperimentalFeature(
-                    name: PSCommandWithArgs,
-                    description: "Enable `-CommandWithArgs` parameter for pwsh"),
                 new ExperimentalFeature(
                     name: PSNativeWindowsTildeExpansion,
                     description: "On windows, expand unquoted tilde (`~`) with the user's current home folder."),
