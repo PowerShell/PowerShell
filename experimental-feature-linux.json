@@ -1,9 +1,7 @@
 [
-  "PSCommandNotFoundSuggestion",
-  "PSCommandWithArgs",
   "PSFeedbackProvider",
   "PSLoadAssemblyFromNativeCode",
-  "PSModuleAutoLoadSkipOfflineFiles",
   "PSNativeWindowsTildeExpansion",
+  "PSRedirectToVariable",
   "PSSubsystemPluginModel"
 ]
