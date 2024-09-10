@@ -100,12 +100,16 @@ jobs:
         Get-ChildItem
 
         ## register the packages download directory in the nuget file
-        $nugetConfigContent = Get-Content ./NuGet.Config -Raw
+        $nugetPath = './NuGet.Config'
+        if(!(test-path $nugetPath)) {
+          $nugetPah = "$repoRoot/NuGet.Config"
+        }
+        $nugetConfigContent = Get-Content $nugetPath -Raw
         $updateNugetContent = $nugetConfigContent.Replace("</packageSources>", $xmlElement)
 
-        $updateNugetContent | Out-File ./NuGet.Config -Encoding ascii
+        $updateNugetContent | Out-File $nugetPath -Encoding ascii
 
-        Get-Content ./NuGet.Config
+        Get-Content $nugetPath
 
         # Add workaround to unblock xUnit testing see issue: https://github.com/dotnet/sdk/issues/26462
         $dotnetPath = if ($IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
