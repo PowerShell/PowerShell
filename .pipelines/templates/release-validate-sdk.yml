@@ -102,8 +102,9 @@ jobs:
         ## register the packages download directory in the nuget file
         $nugetPath = './NuGet.Config'
         if(!(test-path $nugetPath)) {
-          $nugetPah = "$repoRoot/NuGet.Config"
+          $nugetPath = "$repoRoot/NuGet.Config"
         }
+        Write-Verbose -Verbose "nugetPath: $nugetPath"
         $nugetConfigContent = Get-Content $nugetPath -Raw
         $updateNugetContent = $nugetConfigContent.Replace("</packageSources>", $xmlElement)
 
