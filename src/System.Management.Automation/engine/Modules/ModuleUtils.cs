@@ -39,18 +39,13 @@ namespace System.Management.Automation.Internal
 
         static ModuleUtils()
         {
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSModuleAutoLoadSkipOfflineFilesFeatureName))
-            {
-                FileAttributesToSkip = FileAttributes.Hidden
-                    // Skip OneDrive files/directories that are not fully on disk.
-                    | FileAttributes.Offline
-                    | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS
-                    | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_OPEN;
+            FileAttributesToSkip = FileAttributes.Hidden
+                // Skip OneDrive files/directories that are not fully on disk.
+                | FileAttributes.Offline
+                | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS
+                | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_OPEN;
 
-                return;
-            }
-
-            FileAttributesToSkip = FileAttributes.Hidden;
+            return;
         }
 
         /// <summary>
