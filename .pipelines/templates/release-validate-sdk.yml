@@ -1,19 +1,22 @@
 parameters:
   jobName: ""
   displayName: ""
-  jobtype: "windows"
+  poolName: "windows"
+  imageName: 'none'
 
 jobs:
 - job: ${{ parameters.jobName }}
   displayName: ${{ parameters.displayName }}
   pool:
-    ${{ if eq(parameters.jobtype, 'macos') }}:
-      type: linux
-      isCustom: true
-      name: Azure Pipelines
-      vmImage: 'macOS-latest'
+    type: linux
+    isCustom: true
+    ${{ if eq( parameters.poolName, 'Azure Pipelines') }}:
+      name: ${{ parameters.poolName }}
+      vmImage: ${{ parameters.imageName }}
     ${{ else }}:
-      type: ${{ parameters.jobtype }}
+      name: ${{ parameters.poolName }}
+      demands:
+        - ImageOverride -equals ${{ parameters.imageName }}
 
   variables:
   - group: mscodehub-feed-read-general

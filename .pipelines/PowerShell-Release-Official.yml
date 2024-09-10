@@ -51,6 +51,7 @@ variables:
     value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
   - name: ReleaseTagVar
     value: ${{ parameters.ReleaseTagVar }}
+  - group: PoolNames
 
 resources:
   repositories:
@@ -111,19 +112,22 @@ extends:
         parameters:
           jobName: "windowsSDK"
           displayName: "Windows SDK Validation"
-          jobtype: windows
+          imageName: PSMMS2019-Secure
+          poolName: $(windowsPool)
 
       - template: /.pipelines/templates/release-validate-sdk.yml@self
         parameters:
           jobName: "MacOSSDK"
           displayName: "MacOS SDK Validation"
-          jobtype: macos
+          imageName: macOS-latest
+          poolName: Azure Pipelines
 
       - template: /.pipelines/templates/release-validate-sdk.yml@self
         parameters:
           jobName: "LinuxSDK"
           displayName: "Linux SDK Validation"
-          jobtype: linux
+          imageName: PSMMSUbuntu20.04-Secure
+          poolName: $(ubuntuPool)
 
     - stage: gbltool
       displayName: 'Validate Global tools'
