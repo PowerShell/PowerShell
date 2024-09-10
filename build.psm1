@@ -587,6 +587,13 @@ Fix steps:
 
             try {
                 Push-Location $globalToolSrcFolder
+
+                if ($Options.Runtime -like 'fxdependent*') {
+                    if ($Arguments -contains '/property:UseAppHost=true') {
+                        $Arguments = @($Arguments | Where-Object { $_ -notlike '/property:UseAppHost=true' })
+                    }
+                }
+
                 if ($Arguments -notcontains '--output') {
                     $Arguments += "--output", $publishPath
                 }
