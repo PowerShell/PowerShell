@@ -28,6 +28,10 @@ jobs:
       clean: true
       lfs: false
 
+    - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+      parameters:
+        repoRoot: "$(Build.SourcesDirectory)"
+
     - template: release-SetReleaseTagandContainerName.yml@self
 
     - download: PSPackagesOfficial
@@ -102,7 +106,7 @@ jobs:
         ## register the packages download directory in the nuget file
         $nugetPath = './NuGet.Config'
         if(!(test-path $nugetPath)) {
-          $nugetPath = "$repoRoot/NuGet.Config"
+          $nugetPath = "$repoRoot/nuget.config"
         }
         Write-Verbose -Verbose "nugetPath: $nugetPath"
         $nugetConfigContent = Get-Content $nugetPath -Raw
