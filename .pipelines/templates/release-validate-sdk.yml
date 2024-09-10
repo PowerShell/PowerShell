@@ -49,7 +49,7 @@ jobs:
       displayName: 'Capture Downloaded Artifacts'
 
     - pwsh: |
-        $repoRoot = $isMacOS ? "$(Build.SourcesDirectory)" : "$(Build.SourcesDirectory)/PowerShell"
+        $repoRoot = "$(Build.SourcesDirectory)"
 
         $dotnetMetadataPath = "$repoRoot/DotnetRuntimeMetadata.json"
         $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
@@ -84,7 +84,7 @@ jobs:
         __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
-        $repoRoot = $isMacOS ? "$(Build.SourcesDirectory)" : "$(Build.SourcesDirectory)/PowerShell"
+        $repoRoot = "$(Build.SourcesDirectory)"
 
         $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
         Import-Module "$repoRoot/build.psm1" -Force
