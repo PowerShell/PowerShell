@@ -118,8 +118,9 @@ jobs:
       azurePowerShellVersion: LatestVersion
       pwsh: true
       inline: |
-        $containerName = "buildinfo"
-        $storageAccount = '$(StorageAccount)'
+        $containerName = '$web'
+        $storageAccount = '$(PSInfraStorageAccount)'
+        $prefix = "buildinfo"
 
         $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
 
@@ -127,20 +128,20 @@ jobs:
           $jsonFile = "$env:BuildInfoJsonFile"
           $blobName = Get-Item $jsonFile | Split-Path -Leaf
           Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$blobName"
-          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext -Force
+          Set-AzStorageBlobContent -File "$prefix/$jsonFile" -Container $containerName -Blob $blobName -Context $storageContext -Force
         }
 
         if ($env:CopyLTSBuildInfo -eq 'YES') {
           $jsonFile = "$env:LtsBuildInfoJsonFile"
           $blobName = Get-Item $jsonFile | Split-Path -Leaf
           Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$blobName"
-          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext -Force
+          Set-AzStorageBlobContent -File "$prefix/$jsonFile" -Container $containerName -Blob $blobName -Context $storageContext -Force
         }
 
         if ($env:CopyVersionBuildInfo -eq 'YES') {
           $jsonFile = "$env:VersionBuildInfoJsonFile"
           $blobName = Get-Item $jsonFile | Split-Path -Leaf
           Write-Verbose -Verbose "Uploading $jsonFile to $containerName/$blobName"
-          Set-AzStorageBlobContent -File $jsonFile -Container $containerName -Blob $blobName -Context $storageContext -Force
+          Set-AzStorageBlobContent -File "$prefix/$jsonFile" -Container $containerName -Blob $blobName -Context $storageContext -Force
         }
     condition: and(succeeded(), eq(variables['CopyMainBuildInfo'], 'YES'))
