@@ -1925,7 +1925,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if ((requiredProcessorArchitecture == ProcessorArchitecture.X86 && currentArchitecture != Architecture.X86) ||
                     (requiredProcessorArchitecture == ProcessorArchitecture.Amd64 && currentArchitecture != Architecture.X64) ||
-                    (requiredProcessorArchitecture == ProcessorArchitecture.Arm && currentArchitecture != Architecture.Arm64) ||
+                    (requiredProcessorArchitecture == ProcessorArchitecture.Arm && (currentArchitecture != Architecture.Arm && currentArchitecture != Architecture.Arm64)) ||
                     requiredProcessorArchitecture == ProcessorArchitecture.IA64)
                 {
                     containedErrors = true;
