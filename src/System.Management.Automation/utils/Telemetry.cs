@@ -85,7 +85,9 @@ namespace Microsoft.PowerShell.Telemetry
         RemoteSessionOpen,
 
         /// <summary>
-        /// Send telemetry for a feature when used.
+        /// Send telemetry for a stable feature when used.
+        /// By making a distinction between this and experimental feature use, it will make
+        /// queries much easier.
         /// </summary>
         FeatureUse,
     }
