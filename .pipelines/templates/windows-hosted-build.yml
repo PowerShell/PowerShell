@@ -55,7 +55,11 @@ jobs:
       repoRoot: $(PowerShellRoot)
 
   - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
-    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/',startsWith(variables['Build.SourceBranch'], 'refs/heads/rebuild/'))
+    condition: or(
+                    eq(variables['Build.SourceBranch'], 'refs/heads/master'),
+                    startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'),
+                    startsWith(variables['Build.SourceBranch'], 'refs/heads/rebuild/')
+                  )
     env:
       ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
     inputs:
@@ -186,7 +190,11 @@ jobs:
       ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
   - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
-    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/',startsWith(variables['Build.SourceBranch'], 'refs/heads/rebuild/'))
+    condition: or(
+                    eq(variables['Build.SourceBranch'], 'refs/heads/master'),
+                    startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'),
+                    startsWith(variables['Build.SourceBranch'], 'refs/heads/rebuild/')
+                  )
     env:
       ob_restore_phase: true # Set ob_restore_phase to run this step before '🔒 Setup Signing' step.
 
