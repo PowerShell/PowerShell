@@ -7292,7 +7292,7 @@ namespace Microsoft.PowerShell
         private static System.Security.Cryptography.X509Certificates.X509Certificate2 RehydrateX509Certificate2(PSObject pso)
         {
             byte[] rawData = GetPropertyValue<byte[]>(pso, "RawData");
-            return new System.Security.Cryptography.X509Certificates.X509Certificate2(rawData);
+            return System.Security.Cryptography.X509Certificates.X509CertificateLoader.LoadCertificate(rawData);
         }
 
         private static System.Security.Cryptography.X509Certificates.X500DistinguishedName RehydrateX500DistinguishedName(PSObject pso)

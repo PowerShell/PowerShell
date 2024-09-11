@@ -1104,7 +1104,7 @@ namespace System.Management.Automation
             var certificatesToProcess = new X509Certificate2Collection();
             try
             {
-                X509Certificate2 newCertificate = new X509Certificate2(messageBytes);
+                X509Certificate2 newCertificate = X509CertificateLoader.LoadCertificate(messageBytes);
                 certificatesToProcess.Add(newCertificate);
             }
             catch (Exception)
@@ -1182,7 +1182,7 @@ namespace System.Management.Automation
 
                     try
                     {
-                        certificate = new X509Certificate2(path);
+                        certificate = X509CertificateLoader.LoadCertificateFromFile(path);
                     }
                     catch (Exception)
                     {
@@ -1337,7 +1337,7 @@ namespace System.Management.Automation
         static AmsiUtils()
         {
 #if !UNIX
-            try 
+            try
             {
                 s_amsiInitFailed = !CheckAmsiInit();
             }
@@ -1347,7 +1347,7 @@ namespace System.Management.Automation
                 s_amsiInitFailed = true;
                 return;
             }
-            
+
             PSEtwLog.LogAmsiUtilStateEvent($"init-{s_amsiInitFailed}", $"{s_amsiContext}-{s_amsiSession}");
 #endif
         }

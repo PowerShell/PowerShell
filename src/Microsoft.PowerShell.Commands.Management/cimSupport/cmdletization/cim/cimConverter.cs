@@ -425,7 +425,7 @@ namespace Microsoft.PowerShell.Cim
                 var cimIntrinsicValue = (byte[])LanguagePrimitives.ConvertTo(cimObject, typeof(byte[]), CultureInfo.InvariantCulture);
                 return exceptionSafeReturn(delegate
                                                {
-                                                   return new X509Certificate2(cimIntrinsicValue);
+                                                   return X509CertificateLoader.LoadCertificate(cimIntrinsicValue);
                                                });
             }
 
