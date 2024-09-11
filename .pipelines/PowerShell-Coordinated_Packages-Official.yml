@@ -26,6 +26,10 @@ parameters:
     displayName: Enable MSBuild Binary Logs
     type: boolean
     default: false
+  - name: FORCE_CODEQL
+    displayName: Enable CodeQL and set cadence to 1 hour
+    type: boolean
+    default: false
 
 resources:
   repositories:
@@ -74,8 +78,12 @@ variables:
   - group: mscodehub-feed-read-akv
   - name: ENABLE_MSBUILD_BINLOGS
     value: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
+  - ${{ if eq(parameters['FORCE_CODEQL'],'true') }}:
+    - name: CodeQL.Cadence
+      value: 1
+  # TODO, this really should only be master
   - name: CODEQL_ENABLED
-    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/rebuild/')) }}:
+    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
       value: true
     ${{ else }}:
       value: false
