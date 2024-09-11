@@ -1104,7 +1104,10 @@ namespace System.Management.Automation
             var certificatesToProcess = new X509Certificate2Collection();
             try
             {
-                X509Certificate2 newCertificate = X509CertificateLoader.LoadCertificate(messageBytes);
+                #pragma warning disable SYSLIB0057
+                X509Certificate2 newCertificate = new X509Certificate2(messageBytes);
+                #pragma warning restore SYSLIB0057
+
                 certificatesToProcess.Add(newCertificate);
             }
             catch (Exception)
@@ -1182,7 +1185,9 @@ namespace System.Management.Automation
 
                     try
                     {
-                        certificate = X509CertificateLoader.LoadCertificateFromFile(path);
+                        #pragma warning disable SYSLIB0057
+                        certificate = new X509Certificate2(path);
+                        #pragma warning restore SYSLIB0057
                     }
                     catch (Exception)
                     {
