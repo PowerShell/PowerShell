@@ -74,6 +74,12 @@ variables:
   - group: mscodehub-feed-read-akv
   - name: ENABLE_MSBUILD_BINLOGS
     value: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
+  - name: CODEQL_ENABLED
+    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/rebuild/')) }}:
+      value: true
+    ${{ else }}:
+      value: false
+
 
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
@@ -91,11 +97,10 @@ extends:
         enabled: false
       sbom:
         enabled: true
-      compiled:
-        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-          enabled: true
-        ${{ else }}:
-          enabled: false
+      codeql:
+        compiled:
+          enabled: $(CODEQL_ENABLED)
+        tsaEnabled: true # This enables TSA bug filing only for CodeQL 3000
       credscan:
         enabled: true
         scanFolder:  $(Build.SourcesDirectory)
