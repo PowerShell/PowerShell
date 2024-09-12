@@ -79,7 +79,7 @@ variables:
   - name: ENABLE_MSBUILD_BINLOGS
     value: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
   - ${{ if eq(parameters['FORCE_CODEQL'],'true') }}:
-   # Cadence is hours before CodeQL will allow a re-upload of the database
+    # Cadence is hours before CodeQL will allow a re-upload of the database
     - name: CodeQL.Cadence
       value: 1
   # TODO, this really should only be master
