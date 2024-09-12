@@ -11,23 +11,23 @@ parameters:
     type: string
     default: 'fromBranch'
   - name: SKIP_SIGNING
-    displayName: Skip Signing
+    displayName: Debugging - Skip Signing
     type: string
     default: 'NO'
   - name: RUN_TEST_AND_RELEASE
-    displayName: Run Test and Release Artifacts Stage
+    displayName: Debugging - Run Test and Release Artifacts Stage
     type: boolean
     default: true
   - name: RUN_WINDOWS
-    displayName: Enable Windows Stage
+    displayName: Debugging - Enable Windows Stage
     type: boolean
     default: true
   - name: ENABLE_MSBUILD_BINLOGS
-    displayName: Enable MSBuild Binary Logs
+    displayName: Debugging - Enable MSBuild Binary Logs
     type: boolean
     default: false
   - name: FORCE_CODEQL
-    displayName: Enable CodeQL and set cadence to 1 hour
+    displayName: Debugging - Enable CodeQL and set cadence to 1 hour
     type: boolean
     default: false
 
