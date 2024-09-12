@@ -45,7 +45,6 @@ namespace System.Management.Automation.Internal
                 | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS
                 | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_OPEN;
 
-			ApplicationInsightsTelemetry.SendUseTelemetry("PSModuleAutoLoadSkipOfflineFiles", "SkipOffLine");
 			return;
         }
 
