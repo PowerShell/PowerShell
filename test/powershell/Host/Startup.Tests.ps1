@@ -20,6 +20,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.ComponentModel.TypeConverter.dll'
             'System.Console.dll'
             'System.Data.Common.dll'
+            'System.Diagnostics.DiagnosticSource.dll'
             'System.Diagnostics.Process.dll'
             'System.Diagnostics.TraceSource.dll'
             'System.Diagnostics.Tracing.dll'
