@@ -32,6 +32,8 @@ variables:
       value: true
     ${{ else }}:
       value: false
+  - name: Codeql.TSAEnabled
+    value: $(CODEQL_ENABLED)
 
 resources:
   repositories:
