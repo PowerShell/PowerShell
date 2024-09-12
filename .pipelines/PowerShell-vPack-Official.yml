@@ -83,7 +83,7 @@ extends:
         scanFolder:  $(Build.SourcesDirectory)
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
       binskim:
-        enabled: false # SDL ignores this currently, as it requires binskim for official runs
+        enabled: false
       # APIScan requires a non-Ready-To-Run build
       apiscan:
         enabled: false
