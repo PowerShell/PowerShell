@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Telemetry
     public static class ApplicationInsightsTelemetry
     {
         // The string for SubsystermRegistration
-        internal static string s_subsystemRegistration = "Subsystem.Registration";
+        internal const string SubsystemRegistration = "Subsystem.Registration";
 
         // If this env var is true, yes, or 1, telemetry will NOT be sent.
         private const string _telemetryOptoutEnvVar = "POWERSHELL_TELEMETRY_OPTOUT";
