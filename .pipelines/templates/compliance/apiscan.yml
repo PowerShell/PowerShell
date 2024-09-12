@@ -119,6 +119,15 @@ jobs:
       workingDirectory: '$(repoRoot)'
       condition: succeededOrFailed()
 
+    - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
+      condition: eq(variables['CODEQL_ENABLED'], 'true')
+      inputs:
+        Enabled: true
+        # AnalyzeInPipeline: false = upload results
+        # AnalyzeInPipeline: true = do not upload results
+        AnalyzeInPipeline: false
+        Language: csharp
+
     - pwsh: |
         Import-Module .\build.psm1 -force
         Find-DotNet
@@ -135,6 +144,9 @@ jobs:
 
       workingDirectory: '$(repoRoot)'
       displayName: 'Build PowerShell Source'
+
+    - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
+      condition: eq(variables['CODEQL_ENABLED'], 'true')
 
     - pwsh: |
         Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
