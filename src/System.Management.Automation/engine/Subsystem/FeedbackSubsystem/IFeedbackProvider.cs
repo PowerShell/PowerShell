@@ -290,7 +290,7 @@ namespace System.Management.Automation.Subsystem.Feedback
 
 			if (results.Count > 0)
 			{
-				ApplicationInsightsTelemetry.SendUseTelemetry("PSCommandNotFoundSuggestion", "CommandNotFound");
+				ApplicationInsightsTelemetry.SendUseTelemetry("FuzzyMatching", "CommandNotFound");
 				return new FeedbackItem(
 					SuggestionStrings.Suggestion_CommandNotFound,
 					new List<string>(results),
