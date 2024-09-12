@@ -82,7 +82,6 @@ variables:
     # Cadence is hours before CodeQL will allow a re-upload of the database
     - name: CodeQL.Cadence
       value: 1
-  # TODO, this really should only be master
   - name: CODEQL_ENABLED
     ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
       value: true
