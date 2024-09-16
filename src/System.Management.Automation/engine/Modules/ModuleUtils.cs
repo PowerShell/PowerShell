@@ -44,8 +44,6 @@ namespace System.Management.Automation.Internal
                 | FileAttributes.Offline
                 | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS
                 | (FileAttributes)FILE_ATTRIBUTE_RECALL_ON_OPEN;
-
-            return;
         }
 
         /// <summary>
