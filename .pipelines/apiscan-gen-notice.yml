@@ -34,6 +34,13 @@ variables:
       value: false
   - name: Codeql.TSAEnabled
     value: $(CODEQL_ENABLED)
+  # AnalyzeInPipeline: false = upload results
+  # AnalyzeInPipeline: true = do not upload results
+  - name: Codeql.AnalyzeInPipeline
+    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
+      value: false
+    ${{ else }}:
+      value: true
 
 resources:
   repositories:
