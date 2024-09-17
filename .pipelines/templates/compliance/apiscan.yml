@@ -119,7 +119,7 @@ jobs:
       workingDirectory: '$(repoRoot)'
       condition: succeededOrFailed()
 
-    - task: CodeQL3000Init@1 # Add CodeQL Init task right before your 'Build' step.
+    - task: CodeQL3000Init@0 # Add CodeQL Init task right before your 'Build' step.
       displayName: 🔏 CodeQL 3000 Init
       condition: eq(variables['CODEQL_ENABLED'], 'true')
       inputs:
@@ -143,7 +143,7 @@ jobs:
       workingDirectory: '$(repoRoot)'
       displayName: 'Build PowerShell Source'
 
-    - task: CodeQL3000Finalize@1 # Add CodeQL Finalize task right after your 'Build' step.
+    - task: CodeQL3000Finalize@0 # Add CodeQL Finalize task right after your 'Build' step.
       displayName: 🔏 CodeQL 3000 Finalize
       condition: eq(variables['CODEQL_ENABLED'], 'true')
 
