@@ -415,7 +415,7 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.Language.NoRunspaceAffinityAttribute]
                 }
                 @{
-                    Accelerator = 'ArgumentTransform'
+                    Accelerator = 'PSTransform'
                     Type        = [System.Management.Automation.PSTransformAttribute]
                 }
             )
