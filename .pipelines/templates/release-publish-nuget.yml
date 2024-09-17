@@ -1,0 +1,71 @@
+parameters:
+  - name: skipPublish
+    default: false
+    type: boolean
+
+jobs:
+- job: NuGetPublish
+  displayName: Publish to NuGet
+  condition: succeeded()
+  pool:
+    type: windows
+  variables:
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - group: 'mscodehub-code-read-akv'
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
+  - name: ob_sdl_binskim_enabled
+    value: false
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: release-SetReleaseTagAndContainerName.yml
+
+  - pwsh: |
+      Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: 'Capture Environment Variables'
+
+  - download: PSPackagesOfficial
+    artifact: drop_nupkg_build_nupkg
+    displayName: Download nuget packages
+
+  - pwsh: |
+      #Exclude all global tool packages. Their names start with 'PowerShell.'
+      $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
+      Copy-Item "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
+
+      $releaseVersion = '$(VERSION)'
+      $globalToolPath = "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg/PowerShell.$releaseVersion.nupkg"
+
+      if ($releaseVersion -notlike '*-*') {
+          # Copy the global tool package for stable releases
+          Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release"
+      }
+
+      Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
+    displayName: Download and capture nupkgs
+    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet push'
+    condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
+    inputs:
+      command: push
+      packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
+      nuGetFeedType: external
+      publishFeedCredentials: PowerShellNuGetOrgPush

@@ -12,7 +12,7 @@ The build module works on a best-effort basis for other distributions.
 
 Using Git requires it to be set up correctly;
 refer to the [Working with the PowerShell Repository](../git/README.md),
-[README](../../README.md), and [Contributing Guidelines](../../.github/CONTRIBUTING.md).
+[Readme](../../README.md), and [Contributing Guidelines](../../.github/CONTRIBUTING.md).
 
 **This guide assumes that you have recursively cloned the PowerShell repository and `cd`ed into it.**
 
@@ -63,7 +63,7 @@ If you have followed the toolchain setup section above, you should have PowerShe
 
 ```powershell
 Import-Module ./build.psm1
-Start-PSBuild
+Start-PSBuild -UseNuGetOrg
 ```
 
 Congratulations! If everything went right, PowerShell is now built.
@@ -72,4 +72,4 @@ The `Start-PSBuild` script will output the location of the executable:
 `./src/powershell-unix/bin/Debug/net6.0/linux-x64/publish/pwsh`.
 
 You should now be running the PowerShell Core that you just built, if you run the above executable.
-You can run our cross-platform Pester tests with `Start-PSPester`, and our xUnit tests with `Start-PSxUnit`.
+You can run our cross-platform Pester tests with `Start-PSPester -UseNuGetOrg`, and our xUnit tests with `Start-PSxUnit`.

@@ -1090,10 +1090,23 @@ namespace System.Management.Automation
         //    dir > out
         internal override void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context)
         {
+            // Check first to see if File is a variable path. If so, we'll not create the FileBytePipe
+            bool redirectToVariable = false;
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSRedirectToVariable))
+            {
+                ProviderInfo p;
+                context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(File, out p, out _);
+                if (p != null && p.NameEquals(context.ProviderNames.Variable))
+                {
+                    redirectToVariable = true;
+                }
+            }
+
             if (commandProcessor is NativeCommandProcessor nativeCommand
                 && nativeCommand.CommandRuntime.ErrorMergeTo is not MshCommandRuntime.MergeDataStream.Output
                 && FromStream is RedirectionStream.Output
-                && !string.IsNullOrWhiteSpace(File))
+                && !string.IsNullOrWhiteSpace(File)
+                && !redirectToVariable)
             {
                 nativeCommand.StdOutDestination = FileBytePipe.Create(File, Appending);
                 return;
@@ -1208,26 +1221,51 @@ namespace System.Management.Automation
                 return new Pipe { NullPipe = true };
             }
 
-            CommandProcessorBase commandProcessor = context.CreateCommand("out-file", false);
-            Diagnostics.Assert(commandProcessor != null, "CreateCommand returned null");
+            // determine whether we're trying to set a variable by inspecting the file path
+            // if we can determine that it's a variable, we'll use Set-Variable rather than Out-File
+            ProviderInfo p;
+            PSDriveInfo d;
+            CommandProcessorBase commandProcessor;
+            var name = context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(File, out p, out d);
 
-            // Previously, we mandated Unicode encoding here
-            // Now, We can take what ever has been set if PSDefaultParameterValues
-            // Unicode is still the default, but now may be overridden
-
-            var cpi = CommandParameterInternal.CreateParameterWithArgument(
-                /*parameterAst*/null, "Filepath", "-Filepath:",
-                /*argumentAst*/null, File,
-                false);
-            commandProcessor.AddParameter(cpi);
-
-            if (this.Appending)
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSRedirectToVariable) && p != null && p.NameEquals(context.ProviderNames.Variable))
             {
-                cpi = CommandParameterInternal.CreateParameterWithArgument(
-                    /*parameterAst*/null, "Append", "-Append:",
-                    /*argumentAst*/null, true,
+                commandProcessor = context.CreateCommand("Set-Variable", false);
+                Diagnostics.Assert(commandProcessor != null, "CreateCommand returned null");
+                var cpi = CommandParameterInternal.CreateParameterWithArgument(
+                    /*parameterAst*/null, "Name", "-Name:",
+                    /*argumentAst*/null, name,
                     false);
                 commandProcessor.AddParameter(cpi);
+
+                if (this.Appending)
+                {
+                    commandProcessor.AddParameter(CommandParameterInternal.CreateParameter("Append", "-Append", null));
+                }
+            }
+            else
+            {
+                commandProcessor = context.CreateCommand("out-file", false);
+                Diagnostics.Assert(commandProcessor != null, "CreateCommand returned null");
+
+                // Previously, we mandated Unicode encoding here
+                // Now, We can take what ever has been set if PSDefaultParameterValues
+                // Unicode is still the default, but now may be overridden
+
+                var cpi = CommandParameterInternal.CreateParameterWithArgument(
+                    /*parameterAst*/null, "Filepath", "-Filepath:",
+                    /*argumentAst*/null, File,
+                    false);
+                commandProcessor.AddParameter(cpi);
+
+                if (this.Appending)
+                {
+                    cpi = CommandParameterInternal.CreateParameterWithArgument(
+                        /*parameterAst*/null, "Append", "-Append:",
+                        /*argumentAst*/null, true,
+                        false);
+                    commandProcessor.AddParameter(cpi);
+                }
             }
 
             PipelineProcessor = new PipelineProcessor();
@@ -1243,9 +1281,15 @@ namespace System.Management.Automation
                 // is more specific tp the redirection operation...
                 if (rte.ErrorRecord.Exception is System.ArgumentException)
                 {
-                    throw InterpreterError.NewInterpreterExceptionWithInnerException(null,
-                        typeof(RuntimeException), null, "RedirectionFailed", ParserStrings.RedirectionFailed,
-                            rte.ErrorRecord.Exception, File, rte.ErrorRecord.Exception.Message);
+                    throw InterpreterError.NewInterpreterExceptionWithInnerException(
+                        null,
+                        typeof(RuntimeException),
+                        null,
+                        "RedirectionFailed",
+                        ParserStrings.RedirectionFailed,
+                        rte.ErrorRecord.Exception,
+                        File,
+                        rte.ErrorRecord.Exception.Message);
                 }
 
                 throw;

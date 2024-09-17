@@ -131,5 +131,5 @@ It should find `PowerShellStandard.Library` package, select it and it will show 
 ![StdImage61](./Images/Std61.png)
 On PowerShell Core on Linux:
 ![StdImage62](./Images/Std62.png)
-On Windows PowerShell on Windows (this requires [.NET Framework 4.7.1](https://github.com/Microsoft/dotnet-framework-early-access/blob/master/instructions.md)):
+On Windows PowerShell on Windows (this requires [.NET Framework 4.7.1](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net471)
 ![StdImage63](./Images/Std63.png)

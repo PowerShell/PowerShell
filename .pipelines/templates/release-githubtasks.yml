@@ -1,0 +1,164 @@
+jobs:
+- job: GithubReleaseDraft
+  displayName: Create GitHub Release Draft
+  condition: succeeded()
+  pool:
+    type: windows
+  variables:
+  - name: runCodesignValidationInjection
+    value: false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - group: 'mscodehub-code-read-akv'
+  - group: 'Azure Blob variable group'
+  - group: 'GitHubTokens'
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_codeSignValidation_enabled
+    value: false
+  - name: ob_sdl_binskim_enabled
+    value: false
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - template: release-SetReleaseTagAndContainerName.yml
+
+  - pwsh: |
+      Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: 'Capture Environment Variables'
+
+  - pwsh: |
+      # Uninstall Azure RM modules
+      $azRmModules = Get-Module -Name AzureRM* -ListAvailable
+      if ($azRmModules) {
+        $azRmModules | Remove-Module -Force
+      }
+
+      # Install Az.Storage module if not already installed
+      if (-not (Get-Module -Name Az.Storage -ListAvailable)) {
+        Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
+      }
+    displayName: Install Az.Storage module
+
+  - task: AzurePowerShell@5
+    displayName: Download packages from Azure Storage
+    inputs:
+      azureSubscription: az-blob-cicd-infra
+      scriptType: inlineScript
+      azurePowerShellVersion: LatestVersion
+      pwsh: true
+      inline: |
+        $storageAccount = "$(StorageAccount)"
+        $containerName = "$(AzureVersion)"
+        $destinationPath = "$(System.ArtifactsDirectory)"
+
+        # Get storage account context
+        $storageContext = New-AzStorageContext -StorageAccountName $storageAccount
+
+        $blobList = Get-AzStorageBlob -Container $containerName -Context $storageContext
+        foreach ($blob in $blobList) {
+          $blobName = $blob.Name
+          $destinationFile = Join-Path -Path $destinationPath -ChildPath $blobName
+          Get-AzStorageBlobContent -Container $containerName -Blob $blobName -Destination $destinationFile -Context $storageContext -Force
+          Write-Output "Downloaded $blobName to $destinationFile"
+        }
+
+        $packagesPath = Get-ChildItem -Path $destinationPath\*.deb -Recurse -File | Select-Object -First 1 -ExpandProperty DirectoryName
+        Write-Host "sending -- vso[task.setvariable variable=PackagesRoot]$packagesPath"
+        Write-Host "##vso[task.setvariable variable=PackagesRoot]$packagesPath"
+
+  - pwsh: |
+      Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty FullName
+    displayName: Capture downloaded artifacts
+
+  - pwsh: |
+      git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
+    displayName: Clone Internal-Tools repository
+
+  - pwsh: |
+      $Path = "$(System.ArtifactsDirectory)"
+      $OutputPath = Join-Path $Path 'hashes.sha256'
+      $srcPaths = @($Path)
+      $packages  = Get-ChildItem -Path $srcPaths -Include * -Recurse -File
+      $checksums = $packages |
+          ForEach-Object {
+              Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
+              $packageName = $_.Name
+              $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash.ToLower()
+              # the '*' before the packagename signifies it is a binary
+              "$hash *$packageName"
+          }
+      $checksums | Out-File -FilePath $OutputPath -Force
+      $fileContent = Get-Content -Path $OutputPath -Raw | Out-String
+      Write-Verbose -Verbose -Message $fileContent
+    displayName: Add sha256 hashes
+
+  - pwsh: |
+      $releaseVersion = '$(ReleaseTag)' -replace '^v',''
+      $vstsCommandString = "vso[task.setvariable variable=ReleaseVersion]$releaseVersion"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: 'Set release version'
+
+  - pwsh: |
+      Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
+      $releaseVersion = '$(ReleaseTag)' -replace '^v',''
+      $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
+
+      $isPreview = $semanticVersion.PreReleaseLabel -ne $null
+
+      $fileName = if ($isPreview) {
+        "preview.md"
+      }
+      else {
+        $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
+      }
+
+      $filePath = "$env:BUILD_SOURCESDIRECTORY/PowerShell/CHANGELOG/$fileName"
+      Write-Verbose -Verbose "Selected Log file: $filePath"
+
+      if (-not (Test-Path $filePath)) {
+        throw "$filePath not found"
+      }
+
+      $changelog = Get-Content -Path $filePath
+
+      $startPattern = "^## \[" + ([regex]::Escape($releaseVersion)) + "\]"
+      $endPattern = "^## \[{0}\.{1}\.{2}*" -f $semanticVersion.Major, $semanticVersion.Minor, $semanticVersion.Patch
+
+      $clContent = $changelog | ForEach-Object {
+          if ($_ -match $startPattern) { $outputLine = $true }
+          elseif ($_ -match $endPattern) { $outputLine = $false }
+          if ($outputLine) { $_}
+        } | Out-String
+
+      Write-Verbose -Verbose "Selected content: `n$clContent"
+
+      Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder $(PackagesRoot) -Token $(GitHubReleasePat)
+    displayName: Publish Release Draft
+
+- template: /.pipelines/templates/approvalJob.yml@self
+  parameters:
+    displayName: Push Git Tag
+    jobName: PushGitTag
+    dependsOnJob: GithubReleaseDraft
+    instructions: |
+      Push the git tag to upstream
+
+- template: /.pipelines/templates/approvalJob.yml@self
+  parameters:
+    displayName: Make Draft Public
+    jobName: DraftPublic
+    dependsOnJob: PushGitTag
+    instructions: |
+      Make the GitHub Release Draft Public

@@ -110,18 +110,15 @@ namespace System.Management.Automation
                         enabled: true)
                 });
 
-            if (ExperimentalFeature.IsEnabled("PSCommandNotFoundSuggestion"))
-            {
-                suggestions.Add(
-                    NewSuggestion(
-                        id: 4,
-                        category: "General",
-                        matchType: SuggestionMatchType.ErrorId,
-                        rule: "CommandNotFoundException",
-                        suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_getFuzzyMatchedCommands, isProductCode: true),
-                        suggestionArgs: new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandNotFound) },
-                        enabled: true));
-            }
+            suggestions.Add(
+                NewSuggestion(
+                    id: 4,
+                    category: "General",
+                    matchType: SuggestionMatchType.ErrorId,
+                    rule: "CommandNotFoundException",
+                    suggestion: ScriptBlock.CreateDelayParsedScriptBlock(s_getFuzzyMatchedCommands, isProductCode: true),
+                    suggestionArgs: new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandNotFound) },
+                    enabled: true));
 
             return suggestions;
         }
