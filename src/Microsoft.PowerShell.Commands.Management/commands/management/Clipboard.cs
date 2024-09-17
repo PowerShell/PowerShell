@@ -76,15 +76,16 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                string sessionType = Environment.GetEnvironmentVariable("XDG_SESSION_TYPE");
+                string waylandEnv = Environment.GetEnvironmentVariable("WAYLAND_DISPLAY");
+                bool isWayland = !(string.IsNullOrEmpty(waylandEnv));
 
-                if (sessionType == "wayland")
+                if (isWayland)
                 {
                     tool = "wl-paste";
                 }
                 else
                 {
-                    // Previous behavior: use xclip regardless of XDG_SESSION_TYPE
+                    // Previous behavior: use xclip regardless of env:WAYLAND_DISPLAY
                     tool = "xclip";
                     args = "-selection clipboard -out";
                 }
@@ -119,15 +120,16 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                string sessionType = Environment.GetEnvironmentVariable("XDG_SESSION_TYPE");
+                string waylandEnv = Environment.GetEnvironmentVariable("WAYLAND_DISPLAY");
+                bool isWayland = !(string.IsNullOrEmpty(waylandEnv));
 
-                if (sessionType == "wayland")
+                if (isWayland)
                 {
                     tool = "wl-copy";
                 }
                 else
                 {
-                    // Previous behavior: use xclip regardless of XDG_SESSION_TYPE
+                    // Previous behavior: use xclip regardless of env:WAYLAND_DISPLAY
                     tool = "xclip";
 
                     if (string.IsNullOrEmpty(text))
