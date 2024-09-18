@@ -103,6 +103,10 @@ install(){
                 DistroBasedOn='mandrake'
                 PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mandrake-release )
                 REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mandrake-release )
+            elif [ -f /etc/mageia-release ] ; then
+                DistroBasedOn='mandriva'
+                PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mandrake-release )
+                REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mandrake-release )
             elif [ -f /etc/azurelinux-release ] ; then
                 DistroBasedOn='mariner'
                 PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/azurelinux-release )
@@ -143,7 +147,7 @@ install(){
 
 
     case "$DistroBasedOn" in
-        redhat|debian|osx|suse|amazonlinux|gentoo|mariner)
+        redhat|debian|osx|suse|amazonlinux|gentoo|mariner|mageia)
             echo "Configuring PowerShell Environment for: $DistroBasedOn $DIST $REV"
             if [ -f "$SCRIPTFOLDER/installpsh-$DistroBasedOn.sh" ]; then
                 #Script files were copied local - use them
