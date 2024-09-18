@@ -61,7 +61,7 @@ Describe 'Basic COM Tests' -Tags "CI" {
         $names | Should -Contain 'INTERACTIVE'
     }
 
-    It "ToString() should return method paramter names" {
+    It "ToString() should return method parameter names" {
         $shell = New-Object -ComObject "Shell.Application"
         $fullSignature = $shell.AddToRecent.ToString()
 
