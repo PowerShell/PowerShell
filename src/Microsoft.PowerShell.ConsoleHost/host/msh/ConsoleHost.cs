@@ -123,11 +123,23 @@ namespace Microsoft.PowerShell
                 throw new ConsoleHostStartupException(ConsoleHostStrings.ShellCannotBeStartedWithConfigConflict);
             }
 
-            // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
+            // Put PSHOME in front of PATH so that calling `pwsh` within `pwsh` always starts the same running version.
             string path = Environment.GetEnvironmentVariable("PATH");
-            string pshome = Utils.DefaultPowerShellAppBase + Path.PathSeparator;
+            string pshome = Utils.DefaultPowerShellAppBase;
+            string dotnetToolsPathSegment = $"{Path.DirectorySeparatorChar}.store{Path.DirectorySeparatorChar}powershell{Path.DirectorySeparatorChar}";
 
-            // to not impact startup perf, we don't remove duplicates, but we avoid adding a duplicate to the front
+            int index = pshome.IndexOf(dotnetToolsPathSegment, StringComparison.Ordinal);
+            if (index > 0)
+            {
+                // We're running PowerShell global tool. In this case the real entry executable should be the 'pwsh'
+                // or 'pwsh.exe' within the tool folder which should be the path right before the '\.store', not what
+                // PSHome is pointing to.
+                pshome = pshome[0..index];
+            }
+
+            pshome += Path.PathSeparator;
+
+            // To not impact startup perf, we don't remove duplicates, but we avoid adding a duplicate to the front
             // we also don't handle the edge case where PATH only contains $PSHOME
             if (string.IsNullOrEmpty(path))
             {

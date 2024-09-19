@@ -587,6 +587,13 @@ Fix steps:
 
             try {
                 Push-Location $globalToolSrcFolder
+
+                if ($Options.Runtime -like 'fxdependent*') {
+                    if ($Arguments -contains '/property:UseAppHost=true') {
+                        $Arguments = @($Arguments | Where-Object { $_ -notlike '/property:UseAppHost=true' })
+                    }
+                }
+
                 if ($Arguments -notcontains '--output') {
                     $Arguments += "--output", $publishPath
                 }
@@ -760,11 +767,13 @@ function Switch-PSNugetConfig {
 
         New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetSdk   -Destination "$PSScriptRoot/" @extraParams
         New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } elseif ( $Source -eq 'Private') {
         $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell-7-5-preview-test-2/nuget/v3/index.json'; Name = 'powershell' }
 
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/" @extraParams
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } else {
         throw "Unknown source: $Source"
     }
