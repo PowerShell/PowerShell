@@ -108,8 +108,8 @@ function Initialize
 
     Register-PSResourceRepository -Name $LocalRepoName -Uri $LocalRepoUri -Trusted -Force
 
-    if (!(Test-Path $TestModule)) {
-        New-Item $TestModule -ItemType Directory
+    if (!(Test-Path $TestPublishModuleLocalPath)) {
+        New-Item $TestPublishModuleLocalPath -ItemType Directory
     }
     New-ModuleManifest "$TestPublishModuleLocalPath\$TestPublishModule.psd1" -Description "Test module for PowerShell CI"
 
