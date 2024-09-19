@@ -6,5 +6,6 @@
   "PSModuleAutoLoadSkipOfflineFiles",
   "PSNativeWindowsTildeExpansion",
   "PSSubsystemPluginModel",
-  "PSRedirectToVariable"
+  "PSRedirectToVariable",
+  "PSSerializeJSONLongEnumAsNumber"
 ]

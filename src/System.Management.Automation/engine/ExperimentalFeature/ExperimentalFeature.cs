@@ -26,6 +26,7 @@ namespace System.Management.Automation
         internal const string PSCommandWithArgs = "PSCommandWithArgs";
         internal const string PSNativeWindowsTildeExpansion = nameof(PSNativeWindowsTildeExpansion);
         internal const string PSRedirectToVariable = "PSRedirectToVariable";
+        internal const string PSSerializeJSONLongEnumAsNumber = nameof(PSSerializeJSONLongEnumAsNumber);
 
         #endregion
 
@@ -132,6 +133,10 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSRedirectToVariable,
                     description: "Add support for redirecting to the variable drive"),
+                new ExperimentalFeature(
+                    name: PSSerializeJSONLongEnumAsNumber,
+                    description: "Serialize enums based on long or ulong as an numeric value rather than the string representation when using ConvertTo-Json."
+                )
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
