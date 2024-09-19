@@ -26,7 +26,7 @@ variables:
   - ${{ if eq(parameters['FORCE_CODEQL'],'true') }}:
     # Cadence is hours before CodeQL will allow a re-upload of the database
     - name: CodeQL.Cadence
-      value: 1
+      value: 0
   - name: CODEQL_ENABLED
     ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
       value: true
