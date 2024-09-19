@@ -13,7 +13,7 @@ $TestModule = 'newTestModule'
 $TestScript = 'TestTestScript'
 $ACRTestModule = 'newTestMod'
 $TestPublishModule = 'TestPublishModule'
-$TestPublishModuleLocalPath = ".\$TestPublishModule"
+$TestPublishModuleLocalPath = ".\tempTestPublishModule\$TestPublishModule"
 $TestPublishScript = 'TestPublishScript'
 $TestPublishScriptPath = ".\$TestPublishScript"
 
