@@ -12,8 +12,10 @@ $LocalRepoUri = '.\temp'
 $TestModule = 'newTestModule'
 $TestScript = 'TestTestScript'
 $ACRTestModule = 'newTestMod'
-$TestPublishModule = 'TestPublishModule'
 $TempTestPublish = 'tempTestPublish'
+$TestPublishModule = 'TestPublishModule'
+$TestPublishModuleNupkgName = "$TestPublishModule.nupkg"
+$testPublishModuleNupkgPath = Join-Path -Path $TempTestPublish -ChildPath $TestPublishModuleNupkgName
 $TestPublishModuleLocalPath =  Microsoft.PowerShell.Management\Join-Path -Path $TempTestPublish -ChildPath $TestPublishModule
 $TestPublishScript = 'TestPublishScript'
 $TestPublishScriptPath = Join-Path -Path $TestPublishScript -ChildPath "$TestPublishScript.ps1"
@@ -164,15 +166,13 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     It "Should publish a module" {
         Publish-PSResource -Path $TestPublishModuleLocalPath -Repository $LocalRepoName -Verbose -Debug
 
-        $modulePublishedNupkgPath = Join-Path (-Path $TestPublishModuleLocalPath -ChildPath "$TestPublishModule.nupkg")
-        $modulePublished = Get-ChildItem $modulePublishedNupkgPath
-        $modulePublished | Should -Not -BeNullOrEmpty
-        $modulePublished.Name | Should -Be $TestPublishModule
+        $foundModuleInfo = Find-PSResource $TestPublishModule -Repository $LocalRepoName
+        $foundModuleInfo | Should -Not -BeNullOrEmpty
+        $foundModuleInfo.Count | Should -Be 1
+        $foundModuleInfo.Name | Should -Be $TestPublishModule
     }
 
-    It "Should compress a module and publish compressed nupkg" {
-        $nupkgName = "$TestPublishModule.nupkg"
-        $testPublishModuleNupkgPath = Join-Path -Path $TempTestPublish -ChildPath $nupkgName
+    It "Should compress a module into a .nupkg" {
         Compress-PSResource -Path $TestPublishModuleLocalPath -DestinationPath $testPublishModuleNupkgPath
 
         $modulePublished = Get-ChildItem $TestPublishModuleNupkgPath
@@ -180,9 +180,7 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
         $modulePublished.Name | Should -Be $nupkgName
     }
 
-    It "Should publish compressed nupkg" {
-        $nupkgName = "$TestPublishModule.nupkg"
-        $testPublishModuleNupkgPath = Join-Path -Path $TempTestPublish -ChildPath $nupkgName
+    It "Should publish compressed .nupkg" {
         Compress-PSResource -Path $TestPublishModuleLocalPath -DestinationPath $testPublishModuleNupkgPath
 
         Publish-PSResource -NupkgPath $testPublishModuleNupkgPath -Repository $LocalRepoName -NupkgPath
@@ -268,13 +266,13 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
     It "Should publish a script" {
         Publish-PSResource -Path $TestPublishScriptPath -Repository $LocalRepoName
 
-        $ScriptPublishedNupkgPath = Join-Path (-Path $LocalRepoUri -ChildPath "$TestPublishScript.nupkg")
-        $scriptPublished = Get-ChildItem $ScriptPublishedNupkgPath
-        $scriptPublished | Should -Not -BeNullOrEmpty
-        $scriptPublished.Name | Should -Be $TestPublishScript
+        $foundScriptInfo = Find-PSResource $TestPublishScript -Repository $LocalRepoName
+        $foundScriptInfo | Should -Not -BeNullOrEmpty
+        $foundScriptInfo.Count | Should -Be 1
+        $foundScriptInfo.Name | Should -Be $TestPublishScript
     }
 
-    It "Should compress a script" {
+    It "Should compress a script into a .nupkg" {
         Compress-PSResource -Path $TestPublishScriptPath -DestinationPath $TestPublishScriptNupkgPath
 
         $scriptPublished = Get-ChildItem $TestPublishScriptNupkgPath
@@ -282,7 +280,7 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
         $scriptPublished.Name | Should -Be $TestPublishScriptNupkgName
     }
 
-    It "Should publish compressed script nupkg" {
+    It "Should publish compressed script .nupkg" {
         Compress-PSResource -Path $TestPublishScriptPath -DestinationPath $TestPublishScriptNupkgPath
 
         Publish-PSResource -NupkgPath $TestPublishScriptNupkgPath -Repository $LocalRepoName -NupkgPath
