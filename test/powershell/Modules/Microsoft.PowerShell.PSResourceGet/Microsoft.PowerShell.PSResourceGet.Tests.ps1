@@ -7,9 +7,15 @@ $ProgressPreference = "SilentlyContinue"
 $RepositoryName = 'PSGallery'
 $ACRRepositoryName = "ACRRepo"
 $ACRRepoUri = "https://psresourcegettest.azurecr.io/"
+$LocalRepoName = 'LocalRepo'
+$LocalRepoUri = '.\temp'
 $TestModule = 'newTestModule'
 $TestScript = 'TestTestScript'
 $ACRTestModule = 'newTestMod'
+$TestPublishModule = 'TestPublishModule'
+$TestPublishModuleLocalPath = ".\$TestPublishModule"
+$TestPublishScript = 'TestPublishScript'
+$TestPublishScriptPath = ".\$TestPublishScript"
 
 $Initialized = $false
 
@@ -95,6 +101,19 @@ function Initialize
         $psCredInfo = New-Object Microsoft.PowerShell.PSResourceGet.UtilClasses.PSCredentialInfo ("SecretStore", "$env:TENANTID")
         Register-PSResourceRepository -Name $ACRRepositoryName -ApiVersion 'ContainerRegistry' -Uri $ACRRepoUri -CredentialInfo $psCredInfo -Verbose -Trusted -Force
     }
+
+    if (!(Test-Path $LocalRepoUri)) {
+        New-Item -Path $LocalRepoUri -ItemType Directory
+    }
+
+    Register-PSResourceRepository -Name $LocalRepoName -Uri $LocalRepoUri -Trusted -Force
+
+    if (!(Test-Path $TestModule)) {
+        New-Item $TestModule -ItemType Directory
+    }
+    New-ModuleManifest "$TestPublishModuleLocalPath\$TestPublishModule.psd1" -Description "Test module for PowerShell CI"
+
+    New-ScriptFileInfo -Path "$TestPublishScript\$TestPublishScript.ps1" -Description "Test script for PowerShell CI"
 }
 
 #endregion
@@ -136,6 +155,26 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
             $module.Name | Should -Be $TestModule
             $module.ModuleBase.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
         }
+    }
+
+    It "Should publish a module" {
+        Publish-PSResource -Path $TestPublishModuleLocalPath -Repository $LocalRepoName
+
+        $installedModuleInfo = Get-InstalledPSResource -Name $TestPublishModule
+        $installedModuleInfo | Should -Not -BeNullOrEmpty
+        $installedModuleInfo.Name | Should -Be $TestPublishModule
+    }
+
+    It "Should compress a module and publish compressed nupkg" {
+        $TestPublishModuleAsNupkg = "$TestPublishModule.nupkg"
+        Compress-PSResource -Path $TestPublishModuleLocalPath -Path $TestPublishModuleAsNupkg
+
+        Publish-PSResource -Path $TestPublishModuleAsNupkg -Repository $LocalRepoName -NupkgPath
+
+        $foundModuleInfo = Find-PSResource $TestPublishModule -Repository $LocalRepoName
+        $foundModuleInfo | Should -Not -BeNullOrEmpty
+        $foundModuleInfo.Count | Should -Be 1
+        $foundModuleInfo.Name | Should -Be $TestPublishModule
     }
 
     AfterAll {
@@ -203,6 +242,26 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
             $installedScriptInfo.Name | Should -Be $TestScript
             $installedScriptInfo.InstalledLocation.StartsWith($script:MyDocumentsScriptsPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
         }
+    }
+
+    It "Should publish a script" {
+        Publish-PSResource -Path "$TestPublishScriptPath\$TestPublishScript.ps1" -Repository $LocalRepoName
+
+        $installedScriptInfo = Get-InstalledPSResource -Name $TestPublishScript
+        $installedScriptInfo | Should -Not -BeNullOrEmpty
+        $installedScriptInfo.Name | Should -Be $TestPublishScript
+    }
+
+    It "Should compress a module and publish compressed nupkg" {
+        $TestPublishScriptAsNupkg = "$TestPublishScript.nupkg"
+        Compress-PSResource -Path $TestPublishScript -Path $TestPublishScriptAsNupkg
+
+        Publish-PSResource -Path $TestPublishScriptPath -Repository $LocalRepoName -NupkgPath
+
+        $foundScriptInfo = Find-PSResource $TestPublishScript -Repository $LocalRepoName
+        $foundScriptInfo | Should -Not -BeNullOrEmpty
+        $foundScriptInfo.Count | Should -Be 1
+        $foundScriptInfo.Name | Should -Be $TestPublishScript
     }
 
     AfterAll {
