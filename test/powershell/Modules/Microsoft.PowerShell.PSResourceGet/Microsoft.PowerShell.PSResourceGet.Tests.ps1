@@ -171,10 +171,13 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     }
 
     BeforeEach {
-        if (Test-Path $TestPublishModuleLocalPath)
+        if (!(Test-Path $TestPublishModuleLocalPath))
         {
             Write-Verbose -Verbose "Creating TestPublishModuleLocalPath:: $TestPublishModuleLocalPath"
             New-Item $TestPublishModuleLocalPath -ItemType Directory
+        }
+        else {
+            Write-Verbose -Verbose "TestPublishModuleLocalPath already exists $TestPublishModuleLocalPath"
         }
 
         Remove-InstalledModules
