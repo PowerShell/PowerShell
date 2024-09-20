@@ -160,12 +160,23 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
 
         Write-Verbose -Verbose "Out of New-TestPackages"
         if (!(Test-Path $TestPublishModuleLocalPath)) {
-            Write-Verbose -Verbose "TestPublishModuleLocalPath is:: $TestPublishModuleLocalPath"
+            Write-Verbose -Verbose "Creating TestPublishModuleLocalPath :: $TestPublishModuleLocalPath"
             New-Item $TestPublishModuleLocalPath -ItemType Directory
+        }
+
+        if (Test-Path $TestPublishModuleLocalPath)
+        {
+            Write-Verbose -Verbose "TestPublishModuleLocalPath exists: $TestPublishModuleLocalPath"
         }
     }
 
     BeforeEach {
+        if (Test-Path $TestPublishModuleLocalPath)
+        {
+            Write-Verbose -Verbose "Creating TestPublishModuleLocalPath:: $TestPublishModuleLocalPath"
+            New-Item $TestPublishModuleLocalPath -ItemType Directory
+        }
+
         Remove-InstalledModules
     }
 
@@ -196,6 +207,10 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
         if (Test-Path  $TestPublishModuleLocalPath)
         {
             Write-Verbose -Verbose "TestPublishModuleLocalPath exists"
+        }
+        else
+        {
+            Write-Verbose -Verbose "TestPublishModuleLocalPath does not exist"
         }
 
         Write-Verbose -Verbose "Publishing $TestPublishModuleLocalPath to $LocalRepoName : $LocalRepoUri"
