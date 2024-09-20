@@ -147,6 +147,7 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
             $script:Initialized = $true
         }
 
+        Write-Verbose -Verbose "Registering local repository"
         Register-LocalRepo
         New-TestPackages
     }
@@ -205,8 +206,14 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     }
 
     AfterEach {
-        Remove-Item -Path $LocalRepoUri -Recurse -Force
-        Remove-Item -Path $TempTestPublish -Recurse -Force
+        if (Test-Path $LocalRepoUri)
+        {
+            Remove-Item -Path $LocalRepoUri -Recurse -Force
+        }
+        if (Test-Path $TempTestPublish)
+        {
+            Remove-Item -Path $TempTestPublish -Recurse -Force
+        }
     }
 
     AfterAll {
@@ -308,8 +315,15 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
     }
 
     AfterEach {
-        Remove-Item -Path $LocalRepoUri -Recurse -Force
-        Remove-Item -Path $TempTestPublish -Recurse -Force
+        if (Test-Path $LocalRepoUri)
+        {
+            Remove-Item -Path $LocalRepoUri -Recurse -Force
+        }
+
+        if (Test-Path $TempTestPublish)
+        {
+            Remove-Item -Path $TempTestPublish -Recurse -Force
+        }
     }
 
     AfterAll {
