@@ -143,6 +143,7 @@ function New-TestPackages
 
     Write-Verbose -Verbose "Generating new test script file"
     New-ScriptFileInfo -Path $TestPublishScriptPath -Description "Test script for PowerShell CI"
+    Write-Verbose -Verbose "Completed New-TestPackages"
 }
 
 Describe "PSResourceGet - Module tests" -tags "Feature" {
@@ -157,6 +158,7 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
         Register-LocalRepo
         New-TestPackages
 
+        Write-Verbose -Verbose "Out of New-TestPackages"
         if (!(Test-Path $TestPublishModuleLocalPath)) {
             Write-Verbose -Verbose "TestPublishModuleLocalPath is:: $TestPublishModuleLocalPath"
             New-Item $TestPublishModuleLocalPath -ItemType Directory
