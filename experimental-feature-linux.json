@@ -3,5 +3,6 @@
   "PSLoadAssemblyFromNativeCode",
   "PSNativeWindowsTildeExpansion",
   "PSRedirectToVariable",
+  "PSSerializeJSONLongEnumAsNumber",
   "PSSubsystemPluginModel"
 ]
