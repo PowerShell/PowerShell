@@ -150,6 +150,11 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
         Write-Verbose -Verbose "Registering local repository"
         Register-LocalRepo
         New-TestPackages
+
+        if (!(Test-Path $TestPublishModuleLocalPath)) {
+            Write-Verbose -Verbose "TestPublishModuleLocalPath is:: $TestPublishModuleLocalPath"
+            New-Item $TestPublishModuleLocalPath -ItemType Directory
+        }
     }
 
     BeforeEach {
