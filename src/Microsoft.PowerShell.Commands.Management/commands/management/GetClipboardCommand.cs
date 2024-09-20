@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation;
 using Microsoft.PowerShell.Commands.Internal;
@@ -55,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                textContent = Clipboard.GetText();
+                textContent = Clipboard.GetText((Hashtable)GetVariableValue("PSClipboardActions"));
             }
             catch (PlatformNotSupportedException)
             {
