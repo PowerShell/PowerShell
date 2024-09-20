@@ -107,19 +107,15 @@ function Initialize
         $psCredInfo = New-Object Microsoft.PowerShell.PSResourceGet.UtilClasses.PSCredentialInfo ("SecretStore", "$env:TENANTID")
         Register-PSResourceRepository -Name $ACRRepositoryName -ApiVersion 'ContainerRegistry' -Uri $ACRRepoUri -CredentialInfo $psCredInfo -Verbose -Trusted -Force
     }
+}
 
+function Register-LocalRepo
+{
     if (!(Test-Path $LocalRepoUri)) {
         New-Item -Path $LocalRepoUri -ItemType Directory
     }
 
     Register-PSResourceRepository -Name $LocalRepoName -Uri $LocalRepoUri -Trusted -Force
-
-    if (!(Test-Path $TestPublishModuleLocalPath)) {
-        New-Item $TestPublishModuleLocalPath -ItemType Directory
-    }
-    New-ModuleManifest (Join-Path $TestPublishModuleLocalPath -ChildPath "$TestPublishModule.psd1") -Description "Test module for PowerShell CI"
-
-    New-ScriptFileInfo -Path $TestPublishScriptPath -Description "Test script for PowerShell CI"
 }
 
 #endregion
@@ -129,6 +125,15 @@ function Remove-InstalledModules
     Get-InstalledPSResource -Name $TestModule -Version '*' -ErrorAction SilentlyContinue | Microsoft.PowerShell.PSResourceGet\Uninstall-PSResource
 }
 
+function New-TestPackages
+{
+    if (!(Test-Path $TestPublishModuleLocalPath)) {
+        New-Item $TestPublishModuleLocalPath -ItemType Directory
+    }
+    New-ModuleManifest (Join-Path $TestPublishModuleLocalPath -ChildPath "$TestPublishModule.psd1") -Description "Test module for PowerShell CI"
+
+    New-ScriptFileInfo -Path $TestPublishScriptPath -Description "Test script for PowerShell CI"
+}
 Describe "PSResourceGet - Module tests" -tags "Feature" {
 
     BeforeAll {
@@ -136,6 +141,9 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
             Initialize
             $script:Initialized = $true
         }
+
+        Register-LocalRepo
+        New-TestPackages
     }
 
     BeforeEach {
@@ -239,6 +247,9 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
             Initialize
             $script:Initialized = $true
         }
+
+        Register-LocalRepo
+        New-TestPackages
     }
 
     BeforeEach {
