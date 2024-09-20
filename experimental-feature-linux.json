@@ -1,11 +1,8 @@
 [
-  "PSCommandNotFoundSuggestion",
-  "PSCommandWithArgs",
   "PSFeedbackProvider",
   "PSLoadAssemblyFromNativeCode",
-  "PSModuleAutoLoadSkipOfflineFiles",
   "PSNativeWindowsTildeExpansion",
-  "PSSubsystemPluginModel",
   "PSRedirectToVariable",
-  "PSSerializeJSONLongEnumAsNumber"
+  "PSSerializeJSONLongEnumAsNumber",
+  "PSSubsystemPluginModel"
 ]

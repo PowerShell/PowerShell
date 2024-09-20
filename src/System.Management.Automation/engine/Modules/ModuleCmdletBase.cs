@@ -16,6 +16,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
 using System.Diagnostics;
@@ -1920,11 +1921,12 @@ namespace Microsoft.PowerShell.Commands
             else if ((requiredProcessorArchitecture != ProcessorArchitecture.None) &&
                      (requiredProcessorArchitecture != ProcessorArchitecture.MSIL))
             {
-                #pragma warning disable SYSLIB0037
-                ProcessorArchitecture currentArchitecture = typeof(object).Assembly.GetName().ProcessorArchitecture;
-                #pragma warning restore SYSLIB0037
+                Architecture currentArchitecture = RuntimeInformation.ProcessArchitecture;
 
-                if (currentArchitecture != requiredProcessorArchitecture)
+                if ((requiredProcessorArchitecture == ProcessorArchitecture.X86 && currentArchitecture != Architecture.X86) ||
+                    (requiredProcessorArchitecture == ProcessorArchitecture.Amd64 && currentArchitecture != Architecture.X64) ||
+                    (requiredProcessorArchitecture == ProcessorArchitecture.Arm && (currentArchitecture != Architecture.Arm && currentArchitecture != Architecture.Arm64)) ||
+                    requiredProcessorArchitecture == ProcessorArchitecture.IA64)
                 {
                     containedErrors = true;
                     if (writingErrors)

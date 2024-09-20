@@ -1,0 +1,79 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+trigger: none
+
+variables:
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)]
+  # Defines the variables AzureFileCopySubscription, StorageAccount, StorageAccountKey, StorageResourceGroup, StorageSubscriptionName
+  - group: 'Azure Blob variable group'
+  # Defines the variables CgPat, CgOrganization, and CgProject
+  - group: 'ComponentGovernance'
+  - group: 'PoolNames'
+  - name: LinuxContainerImage
+    value: onebranch.azurecr.io/linux/ubuntu-2004:latest
+  - name: WindowsContainerImage
+    value: onebranch.azurecr.io/windows/ltsc2022/vse2022:latest
+
+resources:
+  repositories:
+  - repository: templates
+    type: git
+    name: OneBranch.Pipelines/GovernedTemplates
+    ref: refs/heads/main
+
+extends:
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates
+  parameters:
+    featureFlags:
+      WindowsHostVersion:
+        Version: 2022
+    globalSdl:
+      compiled:
+        enabled: true
+      armory:
+        enabled: false
+      sbom:
+        enabled: false
+      cg:
+        enabled: true
+        ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
+      tsa:
+        enabled: true  # onebranch publish all SDL results to TSA. If TSA is disabled all SDL tools will forced into 'break' build mode.
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        break: true  # always break the build on binskim issues in addition to TSA upload
+      policheck:
+        break: true  # always break the build on policheck issues. You can disable it by setting to 'false'
+              # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: true
+        softwareName: "PowerShell" # Default is repo name
+        versionNumber: "7.5" # Default is build number
+        isLargeApp: false # Default: false.
+#softwareFolder - relative path to a folder to be scanned. Default value is root of artifacts folder.
+#symbolsFolder - relative path to a folder that contains symbols. Default value is root of artifacts folder.
+
+      tsaOptionsFile: .config\tsaoptions.json
+
+    stages:
+      - stage: APIScan
+        displayName: 'ApiScan'
+        dependsOn: []
+        jobs:
+          - template: /.pipelines/templates/compliance/apiscan.yml@self
+            parameters:
+              parentJobs: []
+      - stage: notice
+        displayName: Generate Notice File
+        dependsOn: []
+        jobs:
+          - template: /.pipelines/templates/compliance/generateNotice.yml@self
+            parameters:
+              parentJobs: []
