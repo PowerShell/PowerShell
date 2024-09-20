@@ -127,13 +127,18 @@ function Remove-InstalledModules
 
 function New-TestPackages
 {
+    Write-Output "New-TestPackages"
     if (!(Test-Path $TestPublishModuleLocalPath)) {
         New-Item $TestPublishModuleLocalPath -ItemType Directory
     }
+
+    Write-Output "Generating new test module manifest"
     New-ModuleManifest (Join-Path $TestPublishModuleLocalPath -ChildPath "$TestPublishModule.psd1") -Description "Test module for PowerShell CI"
 
+    Write-Output "Generating new test script file"
     New-ScriptFileInfo -Path $TestPublishScriptPath -Description "Test script for PowerShell CI"
 }
+
 Describe "PSResourceGet - Module tests" -tags "Feature" {
 
     BeforeAll {
