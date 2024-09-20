@@ -18,7 +18,7 @@ $TestPublishModuleNupkgName = "$TestPublishModule.nupkg"
 $testPublishModuleNupkgPath = Join-Path -Path $TempTestPublish -ChildPath $TestPublishModuleNupkgName
 $TestPublishModuleLocalPath =  Microsoft.PowerShell.Management\Join-Path -Path $TempTestPublish -ChildPath $TestPublishModule
 $TestPublishScript = 'TestPublishScript'
-$TestPublishScriptPath = Join-Path -Path $TestPublishScript -ChildPath "$TestPublishScript.ps1"
+$TestPublishScriptPath = Microsoft.PowerShell.Management\Join-Path -Path $TestPublishScript -ChildPath "$TestPublishScript.ps1"
 $TestPublishScriptNupkgName = "$TestPublishScript.nupkg"
 $TestPublishScriptNupkgPath = Join-Path -Path $TempTestPublish -ChildPath $TestPublishScriptNupkgName
 
@@ -129,7 +129,13 @@ function New-TestPackages
 {
     Write-Verbose -Verbose "New-TestPackages"
     if (!(Test-Path $TestPublishModuleLocalPath)) {
+        Write-Verbose -Verbose "Creating TestPublishModuleLocalPath"
         New-Item $TestPublishModuleLocalPath -ItemType Directory
+    }
+
+    if (!(Test-Path $TestPublishScript)) {
+        Write-Verbose -Verbose "Creating TestPublishScript"
+        New-Item $TestPublishScript -ItemType Directory
     }
 
     Write-Verbose -Verbose "Generating new test module manifest"
