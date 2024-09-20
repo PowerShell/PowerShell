@@ -127,23 +127,17 @@ function Remove-InstalledModules
 
 function New-TestPackages
 {
-    Write-Verbose -Verbose "New-TestPackages"
     if (!(Test-Path $TestPublishModuleLocalPath)) {
-        Write-Verbose -Verbose "Creating TestPublishModuleLocalPath"
         New-Item $TestPublishModuleLocalPath -ItemType Directory
     }
 
     if (!(Test-Path $TestPublishScript)) {
-        Write-Verbose -Verbose "Creating TestPublishScript"
         New-Item $TestPublishScript -ItemType Directory
     }
 
-    Write-Verbose -Verbose "Generating new test module manifest"
     New-ModuleManifest (Join-Path $TestPublishModuleLocalPath -ChildPath "$TestPublishModule.psd1") -Description "Test module for PowerShell CI" -Author "PSGetAuthor"
 
-    Write-Verbose -Verbose "Generating new test script file"
     New-ScriptFileInfo -Path $TestPublishScriptPath -Description "Test script for PowerShell CI" -Author "PSGetAuthor"
-    Write-Verbose -Verbose "Completed New-TestPackages"
 }
 
 Describe "PSResourceGet - Module tests" -tags "Feature" {
@@ -154,30 +148,14 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
             $script:Initialized = $true
         }
 
-        Write-Verbose -Verbose "Registering local repository"
         Register-LocalRepo
         New-TestPackages
-
-        Write-Verbose -Verbose "Out of New-TestPackages"
-        if (!(Test-Path $TestPublishModuleLocalPath)) {
-            Write-Verbose -Verbose "Creating TestPublishModuleLocalPath :: $TestPublishModuleLocalPath"
-            New-Item $TestPublishModuleLocalPath -ItemType Directory
-        }
-
-        if (Test-Path $TestPublishModuleLocalPath)
-        {
-            Write-Verbose -Verbose "TestPublishModuleLocalPath exists: $TestPublishModuleLocalPath"
-        }
     }
 
     BeforeEach {
         if (!(Test-Path $TestPublishModuleLocalPath))
         {
-            Write-Verbose -Verbose "Creating TestPublishModuleLocalPath:: $TestPublishModuleLocalPath"
             New-Item $TestPublishModuleLocalPath -ItemType Directory
-        }
-        else {
-            Write-Verbose -Verbose "TestPublishModuleLocalPath already exists $TestPublishModuleLocalPath"
         }
 
         Remove-InstalledModules
@@ -205,19 +183,7 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     }
 
     It "Should publish a module" {
-
-        Write-Verbose -Verbose "TestPublishModuleLocalPath is  $TestPublishModuleLocalPath"
-        if (Test-Path  $TestPublishModuleLocalPath)
-        {
-            Write-Verbose -Verbose "TestPublishModuleLocalPath exists"
-        }
-        else
-        {
-            Write-Verbose -Verbose "TestPublishModuleLocalPath does not exist"
-        }
-
-        Write-Verbose -Verbose "Publishing $TestPublishModuleLocalPath to $LocalRepoName : $LocalRepoUri"
-        Publish-PSResource -Path $TestPublishModuleLocalPath -Repository $LocalRepoName -Verbose -Debug
+        Publish-PSResource -Path $TestPublishModuleLocalPath -Repository $LocalRepoName
 
         $foundModuleInfo = Find-PSResource $TestPublishModule -Repository $LocalRepoName
         $foundModuleInfo | Should -Not -BeNullOrEmpty
@@ -247,12 +213,10 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     AfterEach {
         if (Test-Path $LocalRepoUri)
         {
-            Write-Verbose -Verbose "Deleting $LocalRepoUri"
             Remove-Item -Path $LocalRepoUri -Recurse -Force
         }
         if (Test-Path $TempTestPublish)
         {
-            Write-Verbose -Verbose "Deleting $TempTestPublish"
             Remove-Item -Path $TempTestPublish -Recurse -Force
         }
     }
@@ -306,6 +270,11 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
     }
 
     BeforeEach {
+        if (!(Test-Path $TestPublishModuleLocalPath))
+        {
+            New-Item $TestPublishModuleLocalPath -ItemType Directory
+        }
+
         Remove-InstalledScripts
     }
 
