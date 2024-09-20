@@ -121,6 +121,13 @@
           "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
       },
       {
+        "url": "microsoft-ubuntu-noble-prod",
+        "distribution": [
+            "noble"
+        ],
+        "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+    },
+      {
           "url": "microsoft-ubuntu-xenial-prod",
           "distribution": [
               "xenial"
