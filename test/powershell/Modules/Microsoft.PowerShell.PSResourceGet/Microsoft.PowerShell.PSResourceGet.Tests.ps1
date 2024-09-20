@@ -178,6 +178,14 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     }
 
     It "Should publish a module" {
+
+        Write-Verbose -Verbose "TestPublishModuleLocalPath is  $TestPublishModuleLocalPath"
+        if (Test-Path  $TestPublishModuleLocalPath)
+        {
+            Write-Verbose -Verbose "TestPublishModuleLocalPath exists"
+        }
+
+        Write-Verbose "Publishing $TestPublishModuleLocalPath to $LocalRepoName : $LocalRepoUri"
         Publish-PSResource -Path $TestPublishModuleLocalPath -Repository $LocalRepoName -Verbose -Debug
 
         $foundModuleInfo = Find-PSResource $TestPublishModule -Repository $LocalRepoName
