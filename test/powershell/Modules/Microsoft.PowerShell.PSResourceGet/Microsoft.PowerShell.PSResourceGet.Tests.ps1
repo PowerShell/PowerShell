@@ -139,10 +139,10 @@ function New-TestPackages
     }
 
     Write-Verbose -Verbose "Generating new test module manifest"
-    New-ModuleManifest (Join-Path $TestPublishModuleLocalPath -ChildPath "$TestPublishModule.psd1") -Description "Test module for PowerShell CI"
+    New-ModuleManifest (Join-Path $TestPublishModuleLocalPath -ChildPath "$TestPublishModule.psd1") -Description "Test module for PowerShell CI" -Author "PSGetAuthor"
 
     Write-Verbose -Verbose "Generating new test script file"
-    New-ScriptFileInfo -Path $TestPublishScriptPath -Description "Test script for PowerShell CI"
+    New-ScriptFileInfo -Path $TestPublishScriptPath -Description "Test script for PowerShell CI" -Author "PSGetAuthor"
     Write-Verbose -Verbose "Completed New-TestPackages"
 }
 
