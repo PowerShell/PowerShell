@@ -135,9 +135,16 @@ function New-TestPackages
         New-Item $TestPublishScript -ItemType Directory
     }
 
-    New-ModuleManifest (Join-Path $TestPublishModuleLocalPath -ChildPath "$TestPublishModule.psd1") -Description "Test module for PowerShell CI" -Author "PSGetAuthor"
+    $moduleManifestPath = Join-Path $TestPublishModuleLocalPath -ChildPath "$TestPublishModule.psd1"
+    if (!(Test-Path $moduleManifestPath))
+    {
+        New-ModuleManifest $moduleManifestPath -Description "Test module for PowerShell CI" -Author "PSGetAuthor"
+    }
 
-    New-ScriptFileInfo -Path $TestPublishScriptPath -Description "Test script for PowerShell CI" -Author "PSGetAuthor"
+    if (!(Test-Path $TestPublishScriptPath))
+    {
+        New-ScriptFileInfo -Path $TestPublishScriptPath -Description "Test script for PowerShell CI" -Author "PSGetAuthor"
+    }
 }
 
 Describe "PSResourceGet - Module tests" -tags "Feature" {
