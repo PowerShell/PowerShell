@@ -8,12 +8,13 @@ $RepositoryName = 'PSGallery'
 $ACRRepositoryName = "ACRRepo"
 $ACRRepoUri = "https://psresourcegettest.azurecr.io/"
 $LocalRepoName = 'LocalRepo'
-$LocalRepoUri = Microsoft.PowerShell.Management\Join-Path -Path $TestDrive -ChildPath 'TempLocalRepoUri'
+$TempDir = 'TempDir'
+$LocalRepoUri = Microsoft.PowerShell.Management\Join-Path -Path $TempDir -ChildPath 'TempLocalRepoUri'
 $TestModule = 'newTestModule'
 $TestScript = 'TestTestScript'
 $ACRTestModule = 'newTestMod'
 
-$PublishedNupkgs = Microsoft.PowerShell.Management\Join-Path -Path $TestDrive -ChildPath 'PublishedNupkgs'
+$PublishedNupkgs = Microsoft.PowerShell.Management\Join-Path -Path $TempDir -ChildPath 'PublishedNupkgs'
 $TestModuleNupkgName = "$TestModule.nupkg"
 $TestModuleNupkgPath = Microsoft.PowerShell.Management\Join-Path -Path $PublishedNupkgs -ChildPath $TestModuleNupkgName
 $TestScriptPath = "$TestScript.ps1"
@@ -81,6 +82,11 @@ if (!(Test-Path $script:MyDocumentsScriptsPath)) {
 
 function Initialize
 {
+    if(!(Test-Path $TempDir))
+    {
+        New-Item -Path $TempDir -ItemType Directory
+    }
+
     $repo = Get-PSResourceRepository $RepositoryName -ErrorAction SilentlyContinue
     if($repo)
     {
@@ -410,5 +416,15 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
         }
 
         Remove-InstalledModules
+        FinalCleanUp
+    }
+}
+
+
+function FinalCleanUp
+{
+    if(Test-Path $TempDir)
+    {
+        Remove-Item -Path $TempDir -Recurse -Force
     }
 }
