@@ -4,24 +4,22 @@
 # no progress output during these tests
 $ProgressPreference = "SilentlyContinue"
 
+$TestDrive = 'TestDrive:'
 $RepositoryName = 'PSGallery'
 $ACRRepositoryName = "ACRRepo"
 $ACRRepoUri = "https://psresourcegettest.azurecr.io/"
 $LocalRepoName = 'LocalRepo'
-$LocalRepoUri = 'temp'
+$LocalRepoUri = Microsoft.PowerShell.Management\Join-Path -Path $TestDrive -ChildPath 'TempLocalRepoUri'
 $TestModule = 'newTestModule'
 $TestScript = 'TestTestScript'
 $ACRTestModule = 'newTestMod'
-$TempTestPublish = 'tempTestPublish'
-$TestPublishModule = 'TestPublishModule'
-$TestPublishModuleNupkgName = "$TestPublishModule.nupkg"
-$testPublishModuleNupkgPath = Join-Path -Path $TempTestPublish -ChildPath $TestPublishModuleNupkgName
-$TestPublishModuleLocalPath =  Microsoft.PowerShell.Management\Join-Path -Path $TempTestPublish -ChildPath $TestPublishModule
-$TestPublishScript = 'TestPublishScript'
-$TestPublishScriptPath = Microsoft.PowerShell.Management\Join-Path -Path $TestPublishScript -ChildPath "$TestPublishScript.ps1"
-$TestPublishScriptNupkgName = "$TestPublishScript.nupkg"
-$TestPublishScriptNupkgPath = Join-Path -Path $TempTestPublish -ChildPath $TestPublishScriptNupkgName
 
+$PublishedNupkgs = Microsoft.PowerShell.Management\Join-Path -Path $TestDrive -ChildPath 'PublishedNupkgs'
+$TestModuleNupkgName = "$TestModule.nupkg"
+$TestModuleNupkgPath = Microsoft.PowerShell.Management\Join-Path -Path $PublishedNupkgs -ChildPath $TestModuleNupkgName
+$TestScriptPath = "$TestScript.ps1"
+$TestScriptNupkgName = "$TestScript.nupkg"
+$TestScriptNupkgPath = Microsoft.PowerShell.Management\Join-Path -Path $PublishedNupkgs -ChildPath $TestScriptNupkgName
 
 $Initialized = $false
 
@@ -127,23 +125,19 @@ function Remove-InstalledModules
 
 function New-TestPackages
 {
-    if (!(Test-Path $TestPublishModuleLocalPath)) {
-        New-Item $TestPublishModuleLocalPath -ItemType Directory
+    if (!(Test-Path $TestModule)) {
+        New-Item $TestModule -ItemType Directory
     }
 
-    if (!(Test-Path $TestPublishScript)) {
-        New-Item $TestPublishScript -ItemType Directory
-    }
-
-    $moduleManifestPath = Join-Path $TestPublishModuleLocalPath -ChildPath "$TestPublishModule.psd1"
+    $moduleManifestPath = Join-Path $TestModule -ChildPath "$TestModule.psd1"
     if (!(Test-Path $moduleManifestPath))
     {
         New-ModuleManifest $moduleManifestPath -Description "Test module for PowerShell CI" -Author "PSGetAuthor"
     }
 
-    if (!(Test-Path $TestPublishScriptPath))
+    if (!(Test-Path $TestScriptPath))
     {
-        New-ScriptFileInfo -Path $TestPublishScriptPath -Description "Test script for PowerShell CI" -Author "PSGetAuthor"
+        New-ScriptFileInfo -Path $TestScriptPath -Description "Test script for PowerShell CI" -Author "PSGetAuthor"
     }
 }
 
@@ -160,11 +154,6 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     }
 
     BeforeEach {
-        if (!(Test-Path $TestPublishModuleLocalPath))
-        {
-            New-Item $TestPublishModuleLocalPath -ItemType Directory
-        }
-
         Remove-InstalledModules
     }
 
@@ -190,42 +179,40 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     }
 
     It "Should publish a module" {
-        Publish-PSResource -Path $TestPublishModuleLocalPath -Repository $LocalRepoName
+        Publish-PSResource -Path $TestModule -Repository $LocalRepoName
 
-        $foundModuleInfo = Find-PSResource $TestPublishModule -Repository $LocalRepoName
+        $foundModuleInfo = Find-PSResource $TestModule -Repository $LocalRepoName
         $foundModuleInfo | Should -Not -BeNullOrEmpty
         $foundModuleInfo.Count | Should -Be 1
-        $foundModuleInfo.Name | Should -Be $TestPublishModule
+        $foundModuleInfo.Name | Should -Be $TestModule
     }
 
     It "Should compress a module into a .nupkg" {
-        Compress-PSResource -Path $TestPublishModuleLocalPath -DestinationPath $testPublishModuleNupkgPath
+        Compress-PSResource -Path $TestModule -DestinationPath $TestModuleNupkgPath
 
-        $modulePublished = Get-ChildItem $TestPublishModuleNupkgPath
+        $modulePublished = Get-ChildItem $TestModuleNupkgPath
         $modulePublished | Should -Not -BeNullOrEmpty
-        $modulePublished.Name | Should -Be $nupkgName
+        $modulePublished.Name | Should -Be $TestModuleNupkgName
     }
 
     It "Should publish compressed .nupkg" {
-        Compress-PSResource -Path $TestPublishModuleLocalPath -DestinationPath $testPublishModuleNupkgPath
+        Compress-PSResource -Path $TestModule -DestinationPath $TestModuleNupkgPath
 
-        Publish-PSResource -NupkgPath $testPublishModuleNupkgPath -Repository $LocalRepoName -NupkgPath
+        Publish-PSResource -NupkgPath $TestModuleNupkgPath -Repository $LocalRepoName -NupkgPath
 
-        $foundModuleInfo = Find-PSResource $TestPublishModule -Repository $LocalRepoName
+        $foundModuleInfo = Find-PSResource $TestModule -Repository $LocalRepoName
         $foundModuleInfo | Should -Not -BeNullOrEmpty
         $foundModuleInfo.Count | Should -Be 1
-        $foundModuleInfo.Name | Should -Be $TestPublishModule
+        $foundModuleInfo.Name | Should -Be $TestModule
     }
 
     AfterEach {
-        if (Test-Path $LocalRepoUri)
+        if (Test-Path $PublishedNupkgs)
         {
-            Remove-Item -Path $LocalRepoUri -Recurse -Force
+            Remove-Item -Path $PublishedNupkgs -Recurse -Force
         }
-        if (Test-Path $TempTestPublish)
-        {
-            Remove-Item -Path $TempTestPublish -Recurse -Force
-        }
+
+        Get-ChildItem $LocalRepoUri | Remove-Item -Recurse -Force
     }
 
     AfterAll {
@@ -277,11 +264,6 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
     }
 
     BeforeEach {
-        if (!(Test-Path $TestPublishModuleLocalPath))
-        {
-            New-Item $TestPublishModuleLocalPath -ItemType Directory
-        }
-
         Remove-InstalledScripts
     }
 
@@ -304,43 +286,40 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
     }
 
     It "Should publish a script" {
-        Publish-PSResource -Path $TestPublishScriptPath -Repository $LocalRepoName
+        Publish-PSResource -Path $TestScript -Repository $LocalRepoName
 
-        $foundScriptInfo = Find-PSResource $TestPublishScript -Repository $LocalRepoName
+        $foundScriptInfo = Find-PSResource $TestScript -Repository $LocalRepoName
         $foundScriptInfo | Should -Not -BeNullOrEmpty
         $foundScriptInfo.Count | Should -Be 1
-        $foundScriptInfo.Name | Should -Be $TestPublishScript
+        $foundScriptInfo.Name | Should -Be $TestScript
     }
 
     It "Should compress a script into a .nupkg" {
-        Compress-PSResource -Path $TestPublishScriptPath -DestinationPath $TestPublishScriptNupkgPath
+        Compress-PSResource -Path $TestScript -DestinationPath $TestScriptNupkgPath
 
-        $scriptPublished = Get-ChildItem $TestPublishScriptNupkgPath
+        $scriptPublished = Get-ChildItem $TestScriptNupkgPath
         $scriptPublished | Should -Not -BeNullOrEmpty
-        $scriptPublished.Name | Should -Be $TestPublishScriptNupkgName
+        $scriptPublished.Name | Should -Be $TestScriptNupkgName
     }
 
     It "Should publish compressed script .nupkg" {
-        Compress-PSResource -Path $TestPublishScriptPath -DestinationPath $TestPublishScriptNupkgPath
+        Compress-PSResource -Path $TestScript -DestinationPath $TestScriptNupkgPath
 
-        Publish-PSResource -NupkgPath $TestPublishScriptNupkgPath -Repository $LocalRepoName -NupkgPath
+        Publish-PSResource -NupkgPath $TestScriptNupkgPath -Repository $LocalRepoName -NupkgPath
 
-        $foundScriptInfo = Find-PSResource $TestPublishScript -Repository $LocalRepoName
+        $foundScriptInfo = Find-PSResource $TestScript -Repository $LocalRepoName
         $foundScriptInfo | Should -Not -BeNullOrEmpty
         $foundScriptInfo.Count | Should -Be 1
-        $foundScriptInfo.Name | Should -Be $TestPublishScript
+        $foundScriptInfo.Name | Should -Be $TestScript
     }
 
     AfterEach {
-        if (Test-Path $LocalRepoUri)
+        if (Test-Path $PublishedNupkgs)
         {
-            Remove-Item -Path $LocalRepoUri -Recurse -Force
+            Remove-Item -Path $PublishedNupkgs -Recurse -Force
         }
 
-        if (Test-Path $TempTestPublish)
-        {
-            Remove-Item -Path $TempTestPublish -Recurse -Force
-        }
+        Get-ChildItem $LocalRepoUri | Remove-Item -Recurse -Force
     }
 
     AfterAll {
