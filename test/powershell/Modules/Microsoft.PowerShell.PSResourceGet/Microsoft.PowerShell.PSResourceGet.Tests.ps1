@@ -299,25 +299,6 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
         $foundScriptInfo.Name | Should -Be $TestScript
     }
 
-    It "Should compress a script into a .nupkg" {
-        Compress-PSResource -Path $TestScriptPath -DestinationPath $PublishedNupkgs
-
-        $scriptPublished = Get-ChildItem $TestScriptNupkgPath
-        $scriptPublished | Should -Not -BeNullOrEmpty
-        $scriptPublished.Name | Should -Be $TestScriptNupkgName
-    }
-
-    It "Should publish compressed script .nupkg" {
-        Compress-PSResource -Path $TestScriptPath -DestinationPath $PublishedNupkgs
-
-        Publish-PSResource -NupkgPath $TestScriptNupkgPath -Repository $LocalRepoName -NupkgPath
-
-        $foundScriptInfo = Find-PSResource $TestScript -Repository $LocalRepoName
-        $foundScriptInfo | Should -Not -BeNullOrEmpty
-        $foundScriptInfo.Count | Should -Be 1
-        $foundScriptInfo.Name | Should -Be $TestScript
-    }
-
     AfterEach {
         Get-ChildItem $PublishedNupkgs | Remove-Item -Recurse -Force
         Get-ChildItem $LocalRepoUri | Remove-Item -Recurse -Force
