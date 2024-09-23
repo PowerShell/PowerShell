@@ -45,14 +45,14 @@ jobs:
     displayName: Download build info artifact
 
   - pwsh: |
-      Import-Module '$(Build.SourcesDirectory)/tools/ci.psm1'
+      Import-Module '$(Build.SourcesDirectory)/PowerShell/tools/ci.psm1'
       $jsonFile = Get-Item "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/BuildInfoJson/*.json"
       $fileName = Split-Path $jsonFile -Leaf
 
       $dateTime = [datetime]::UtcNow
       $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
-      $metadata = Get-Content ./tools/metadata.json | ConvertFrom-Json
+      $metadata = Get-Content -LiteralPath '$(Build.SourcesDirectory)/PowerShell/tools/metadata.json' -ErrorAction Stop | ConvertFrom-Json
       $stableRelease = $metadata.StableRelease.Latest
       $ltsRelease = $metadata.LTSRelease.Latest
 
