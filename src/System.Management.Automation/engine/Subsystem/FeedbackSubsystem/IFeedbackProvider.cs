@@ -9,6 +9,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Threading;
+using Microsoft.PowerShell.Telemetry;
 
 namespace System.Management.Automation.Subsystem.Feedback
 {
@@ -287,13 +288,14 @@ namespace System.Management.Automation.Subsystem.Feedback
                     .AddParameter("ExpandProperty", "Name")
                 .Invoke<string>();
 
-            if (results.Count > 0)
-            {
-                return new FeedbackItem(
-                    SuggestionStrings.Suggestion_CommandNotFound,
-                    new List<string>(results),
-                    FeedbackDisplayLayout.Landscape);
-            }
+			if (results.Count > 0)
+			{
+				ApplicationInsightsTelemetry.SendUseTelemetry("FuzzyMatching", "CommandNotFound");
+				return new FeedbackItem(
+					SuggestionStrings.Suggestion_CommandNotFound,
+					new List<string>(results),
+					FeedbackDisplayLayout.Landscape);
+			}
 
             return null;
         }
