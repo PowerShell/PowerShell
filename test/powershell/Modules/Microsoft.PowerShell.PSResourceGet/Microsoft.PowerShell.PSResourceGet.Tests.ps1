@@ -4,7 +4,6 @@
 # no progress output during these tests
 $ProgressPreference = "SilentlyContinue"
 
-$TestDrive = 'TestDrive:'
 $RepositoryName = 'PSGallery'
 $ACRRepositoryName = "ACRRepo"
 $ACRRepoUri = "https://psresourcegettest.azurecr.io/"
