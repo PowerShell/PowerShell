@@ -199,6 +199,11 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     It "Should compress a module into a .nupkg" {
         Compress-PSResource -Path $TestModule -DestinationPath $PublishedNupkgs
 
+        Write-Verbose -Verbose "TestModule is: $TestModule"
+        Write-Verbose -Verbose "PublishedNupkgs is: $PublishedNupkgs"
+        $gci = Get-ChildItem $PublishedNupkgs
+        Write-Verbose -Verbose "$gci"
+
         $modulePublished = Get-ChildItem $TestModuleNupkgPath
         $modulePublished | Should -Not -BeNullOrEmpty
         $modulePublished.Name | Should -Be $TestModuleNupkgName
