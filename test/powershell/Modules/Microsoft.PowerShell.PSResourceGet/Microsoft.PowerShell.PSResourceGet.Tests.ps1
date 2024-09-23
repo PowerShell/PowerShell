@@ -197,7 +197,7 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     }
 
     It "Should compress a module into a .nupkg" {
-        Compress-PSResource -Path $TestModule -DestinationPath $TestModuleNupkgPath
+        Compress-PSResource -Path $TestModule -DestinationPath $PublishedNupkgs
 
         $modulePublished = Get-ChildItem $TestModuleNupkgPath
         $modulePublished | Should -Not -BeNullOrEmpty
@@ -205,7 +205,7 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     }
 
     It "Should publish compressed .nupkg" {
-        Compress-PSResource -Path $TestModule -DestinationPath $TestModuleNupkgPath
+        Compress-PSResource -Path $TestModule -DestinationPath $PublishedNupkgs
 
         Publish-PSResource -NupkgPath $TestModuleNupkgPath -Repository $LocalRepoName -NupkgPath
 
