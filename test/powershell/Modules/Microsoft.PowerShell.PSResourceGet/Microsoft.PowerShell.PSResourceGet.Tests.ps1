@@ -130,6 +130,10 @@ function Remove-InstalledModules
 
 function New-TestPackages
 {
+    if (!(Test-Path $PublishedNupkgs)) {
+        New-Item $PublishedNupkgs -ItemType Directory
+    }
+
     if (!(Test-Path $TestModule)) {
         New-Item $TestModule -ItemType Directory
     }
@@ -212,11 +216,7 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     }
 
     AfterEach {
-        if (Test-Path $PublishedNupkgs)
-        {
-            Remove-Item -Path $PublishedNupkgs -Recurse -Force
-        }
-
+        Get-ChildItem $PublishedNupkgs | Remove-Item -Recurse -Force
         Get-ChildItem $LocalRepoUri | Remove-Item -Recurse -Force
     }
 
@@ -319,11 +319,7 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
     }
 
     AfterEach {
-        if (Test-Path $PublishedNupkgs)
-        {
-            Remove-Item -Path $PublishedNupkgs -Recurse -Force
-        }
-
+        Get-ChildItem $PublishedNupkgs | Remove-Item -Recurse -Force
         Get-ChildItem $LocalRepoUri | Remove-Item -Recurse -Force
     }
 
