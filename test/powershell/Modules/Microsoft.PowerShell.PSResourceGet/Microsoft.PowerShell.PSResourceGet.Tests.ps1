@@ -199,11 +199,6 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     It "Should compress a module into a .nupkg" {
         Compress-PSResource -Path $TestModule -DestinationPath $PublishedNupkgs
 
-        Write-Verbose -Verbose "TestModule is: $TestModule"
-        Write-Verbose -Verbose "PublishedNupkgs is: $PublishedNupkgs"
-        $gci = Get-ChildItem $PublishedNupkgs
-        Write-Verbose -Verbose "$gci"
-
         $modulePublished = Get-ChildItem $TestModuleNupkgPath
         $modulePublished | Should -Not -BeNullOrEmpty
         $modulePublished.Name | Should -Be $TestModuleNupkgName
@@ -296,7 +291,7 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
     }
 
     It "Should publish a script" {
-        Publish-PSResource -Path $TestScript -Repository $LocalRepoName
+        Publish-PSResource -Path $TestScriptPath -Repository $LocalRepoName
 
         $foundScriptInfo = Find-PSResource $TestScript -Repository $LocalRepoName
         $foundScriptInfo | Should -Not -BeNullOrEmpty
@@ -305,7 +300,7 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
     }
 
     It "Should compress a script into a .nupkg" {
-        Compress-PSResource -Path $TestScript -DestinationPath $TestScriptNupkgPath
+        Compress-PSResource -Path $TestScriptPath -DestinationPath $TestScriptNupkgPath
 
         $scriptPublished = Get-ChildItem $TestScriptNupkgPath
         $scriptPublished | Should -Not -BeNullOrEmpty
@@ -313,7 +308,7 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
     }
 
     It "Should publish compressed script .nupkg" {
-        Compress-PSResource -Path $TestScript -DestinationPath $TestScriptNupkgPath
+        Compress-PSResource -Path $TestScriptPath -DestinationPath $TestScriptNupkgPath
 
         Publish-PSResource -NupkgPath $TestScriptNupkgPath -Repository $LocalRepoName -NupkgPath
 
