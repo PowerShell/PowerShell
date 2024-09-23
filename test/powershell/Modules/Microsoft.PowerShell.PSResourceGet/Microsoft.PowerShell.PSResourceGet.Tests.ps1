@@ -300,7 +300,7 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
     }
 
     It "Should compress a script into a .nupkg" {
-        Compress-PSResource -Path $TestScriptPath -DestinationPath $TestScriptNupkgPath
+        Compress-PSResource -Path $TestScriptPath -DestinationPath $PublishedNupkgs
 
         $scriptPublished = Get-ChildItem $TestScriptNupkgPath
         $scriptPublished | Should -Not -BeNullOrEmpty
@@ -308,7 +308,7 @@ Describe "PSResourceGet - Script tests" -tags "Feature" {
     }
 
     It "Should publish compressed script .nupkg" {
-        Compress-PSResource -Path $TestScriptPath -DestinationPath $TestScriptNupkgPath
+        Compress-PSResource -Path $TestScriptPath -DestinationPath $PublishedNupkgs
 
         Publish-PSResource -NupkgPath $TestScriptNupkgPath -Repository $LocalRepoName -NupkgPath
 
