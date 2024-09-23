@@ -15,10 +15,10 @@ $TestScript = 'TestTestScript'
 $ACRTestModule = 'newTestMod'
 
 $PublishedNupkgs = Microsoft.PowerShell.Management\Join-Path -Path $TempDir -ChildPath 'PublishedNupkgs'
-$TestModuleNupkgName = "$TestModule.nupkg"
+$TestModuleNupkgName = "$TestModule.0.0.1.nupkg"
 $TestModuleNupkgPath = Microsoft.PowerShell.Management\Join-Path -Path $PublishedNupkgs -ChildPath $TestModuleNupkgName
 $TestScriptPath = "$TestScript.ps1"
-$TestScriptNupkgName = "$TestScript.nupkg"
+$TestScriptNupkgName = "$TestScript.0.0.1.nupkg"
 $TestScriptNupkgPath = Microsoft.PowerShell.Management\Join-Path -Path $PublishedNupkgs -ChildPath $TestScriptNupkgName
 
 $Initialized = $false
@@ -212,7 +212,7 @@ Describe "PSResourceGet - Module tests" -tags "Feature" {
     It "Should publish compressed .nupkg" {
         Compress-PSResource -Path $TestModule -DestinationPath $PublishedNupkgs
 
-        Publish-PSResource -NupkgPath $TestModuleNupkgPath -Repository $LocalRepoName -NupkgPath
+        Publish-PSResource -NupkgPath $TestModuleNupkgPath -Repository $LocalRepoName
 
         $foundModuleInfo = Find-PSResource $TestModule -Repository $LocalRepoName
         $foundModuleInfo | Should -Not -BeNullOrEmpty
