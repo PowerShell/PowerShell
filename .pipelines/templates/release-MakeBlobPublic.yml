@@ -62,7 +62,7 @@ jobs:
           $sourceStorageAccountName = '$(StorageAccount)'
           $destinationStorageAccountName = '$(PSInfraStorageAccount)'
           $destinationContainerName = '$web'
-          $destinationPrefix = '$(ReleaseTagVar)'
+          $destinationPrefix = 'install/$(ReleaseTagVar)'
 
           $sourceContext = New-AzStorageContext -StorageAccountName $sourceStorageAccountName
           Write-Verbose -Verbose "Source context: $($sourceContext.BlobEndPoint)"
