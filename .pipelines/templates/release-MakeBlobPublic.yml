@@ -84,6 +84,11 @@ jobs:
 
               $destinationBlobName = "$destinationPrefix/$sourceBlobName"
               Write-Verbose -Verbose "destinationBlobName = $destinationBlobName"
+              $existingBlob = Get-AzStorageBlob -Blob $destinationBlobName -Container $destinationContainerName -Context $destinationContext -ErrorAction Ignore
+              if ($existingBlob) {
+                Write-Verbose -Verbose "Blob $destinationBlobName already exists in '$destinationStorageAccountName/$destinationContainerName', removing before copy."
+                $existingBlob | Remove-AzStorageBlob -ErrorAction Stop -Verbose
+              }
 
               Copy-AzStorageBlob -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName -Force -Verbose -Confirm:$false
             }
