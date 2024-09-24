@@ -331,6 +331,14 @@ Describe "PSResourceGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 }
 
+function FinalCleanUp
+{
+    if(Test-Path $TempDir)
+    {
+        Remove-Item -Path $TempDir -Recurse -Force
+    }
+}
+
 Describe "PSResourceGet - ACR tests" -tags "Feature" {
 
     BeforeAll {
@@ -394,14 +402,5 @@ Describe "PSResourceGet - ACR tests" -tags "Feature" {
 
         Remove-InstalledModules
         FinalCleanUp
-    }
-}
-
-
-function FinalCleanUp
-{
-    if(Test-Path $TempDir)
-    {
-        Remove-Item -Path $TempDir -Recurse -Force
     }
 }
