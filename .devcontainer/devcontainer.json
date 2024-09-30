@@ -1,15 +1,15 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-	"name": ".NET Core 6.0, including pwsh (Ubuntu 18.04)",
-	"dockerFile": "Dockerfile",
+  "name": ".NET Core 6.0, including pwsh (Ubuntu 18.04)",
+  "dockerFile": "Dockerfile",
 
-	"workspaceMount": "source=${localWorkspaceFolder},target=/PowerShell,type=bind",
-	"workspaceFolder": "/PowerShell",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/PowerShell,type=bind",
+  "workspaceFolder": "/PowerShell",
 
-	// Uncomment the next line to run commands after the container is created.
-	"postCreateCommand": "cd src/powershell-unix && dotnet restore",
+  // Uncomment the next line to run commands after the container is created.
+  "postCreateCommand": "cd src/powershell-unix && dotnet restore",
 
-	"customizations": {
+  "customizations": {
     "vscode": {
       "extensions": [
         "ms-azure-devops.azure-pipelines",
@@ -17,7 +17,7 @@
         "ms-vscode.powershell",
         "DavidAnson.vscode-markdownlint",
         "vitaliymaz.vscode-svg-previewer"
-	    ]
+      ]
     }
   }
 }
