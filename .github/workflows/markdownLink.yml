@@ -2,7 +2,6 @@ on:
   pull_request:
     branches:
       - master
-      - 'release/**'
 
 name: Check modified markdown files
 permissions:
