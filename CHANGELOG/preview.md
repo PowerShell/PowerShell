@@ -538,7 +538,7 @@
 
 ### Documentation and Help Content
 
-- Include information about upgrading in README (#20993)
+- Include information about upgrading in readme (#20993)
 - Expand "iff" to "if-and-only-if" in XML doc content (#20852)
 - Update LTS links in README.md to point to the v7.4 packages (#20839) (Thanks @kilasuit!)
 - Update `README.md` to improve readability (#20553) (Thanks @AnkitaSikdar005!)
@@ -546,7 +546,7 @@
 - Update `ADOPTERS.md` (#20555) (Thanks @AnkitaSikdar005!)
 - Fix a typo in `ADOPTERS.md` (#20504, #20520) (Thanks @shruti-sen2004!)
 - Correct grammatical errors in `README.md` (#20509) (Thanks @alienishi!)
-- Add 7.3 changelog URL to Readme (#20473) (Thanks @Saibamen!)
+- Add 7.3 changelog URL to readme (#20473) (Thanks @Saibamen!)
 - Clarify some comments and documentation (#20462) (Thanks @darkstar!)
 
 [7.5.0-preview.1]: https://github.com/PowerShell/PowerShell/compare/v7.4.1...v7.5.0-preview.1
