@@ -15,6 +15,7 @@ jobs:
 - job: PSInfraReleaseBlobPublic
   displayName: Copy release to PSInfra storage
   dependsOn: CopyReleaseBlobApproval
+  condition: and(succeeded(), ne(variables['SkipPSInfraInstallers'], true))
   pool:
     type: windows
 
@@ -112,7 +113,6 @@ jobs:
 - job: PSInfraBlobPublic
   displayName: Copy global tools to PSInfra storage
   dependsOn: CopyBlobApproval
-  condition: and(succeeded(), ne(variables['SkipPSInfraInstallers'], true))
   pool:
     type: windows
 
