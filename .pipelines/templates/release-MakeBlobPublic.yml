@@ -1,3 +1,9 @@
+parameters:
+  - name: SkipPSInfraInstallers
+    displayName: Skip Copying Archives and Installers to PSInfrastructure Public Location
+    type: boolean
+    default: false
+
 jobs:
 - template: /.pipelines/templates/approvalJob.yml@self
   parameters:
@@ -106,6 +112,7 @@ jobs:
 - job: PSInfraBlobPublic
   displayName: Copy global tools to PSInfra storage
   dependsOn: CopyBlobApproval
+  condition: and(succeeded(), ne(variables['SkipPSInfraInstallers'], true))
   pool:
     type: windows
 
