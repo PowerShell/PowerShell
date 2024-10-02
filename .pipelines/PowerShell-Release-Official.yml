@@ -75,6 +75,12 @@ resources:
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@templates
   parameters:
+    # still using KS2 because we are not yet using a Box Product Deployment
+    featureFlags:
+      LinuxHostVersion:
+          Network: KS2
+      WindowsHostVersion:
+          Network: KS2
     cloudvault:
       enabled: false
     globalSdl:
