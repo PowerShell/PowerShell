@@ -15,7 +15,7 @@ jobs:
 - job: PSInfraReleaseBlobPublic
   displayName: Copy release to PSInfra storage
   dependsOn: CopyReleaseBlobApproval
-  condition: and(succeeded(), ne(variables['SkipPSInfraInstallers'], true))
+  condition: and(succeeded(), ne('${{ parameters.SkipPSInfraInstallers }}', true))
   pool:
     type: windows
 
