@@ -159,7 +159,7 @@ jobs:
           $prefix = 'globaltool'
 
           $destinationStorageAccountName = '$(PSInfraStorageAccount)'
-          $destinationContainerName = "$web"
+          $destinationContainerName = '$web'
           $destinationPrefix = 'tool/$(Version)'
 
           $sourceContext = New-AzStorageContext -StorageAccountName $sourceStorageAccountName
