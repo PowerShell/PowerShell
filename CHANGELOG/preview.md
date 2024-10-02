@@ -1,5 +1,69 @@
 # Preview Changelog
 
+## [7.5.0-preview.5] - 2024-10-01
+
+### Breaking Changes
+
+- Treat large `Enum` values as numbers in `ConvertTo-Json` (#20999) (#24304)
+
+### Engine Updates and Fixes
+
+- Fix how processor architecture is validated in `Import-Module` (#24265) (#24317)
+
+### Experimental Features
+
+### General Cmdlet Updates and Fixes
+
+- Add `-Force` parameter to `Resolve-Path` and `Convert-Path` cmdlets to support wildcard hidden files (#20981) (#24344)
+- Add telemetry to track the use of features (#24247) (#24331)
+- Treat large `Enum` values as numbers in `ConvertTo-Json` (#20999) (#24304)
+- Make features `PSCommandNotFoundSuggestion`, `PSCommandWithArgs`, and `PSModuleAutoLoadSkipOfflineFiles` stable (#24246) (#24310)
+- Handle global tool when prepending `$PSHome` to `PATH` (#24228) (#24307)
+
+### Tests
+
+- Fix cleanup in `PSResourceGet` test (#24339) (#24345)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>Bump .NET SDK to 9.0.100-rc.1.24452.12</p>
+
+</summary>
+
+<ul>
+<li>Fixed Test Scenario for <code>Compress-PSResource</code> (Internal 32696)</li>
+<li>Add back local NuGet source for test packages (Internal 32693)</li>
+<li>Fix typo in <code>release-MakeBlobPublic.yml</code> (Internal 32689)</li>
+<li>Copy to static site instead of making blob public (#24269) (#24343)</li>
+<li>Update <code>Microsoft.PowerShell.PSResourceGet</code> to <code>1.1.0-preview2</code> (#24300) (#24337)</li>
+<li>Remove the MD5 branch in the strong name signing token calculation (#24288) (#24321)</li>
+<li>Update experimental-feature json files (#24271) (#24319)</li>
+<li>Add updated <code>libicu</code> dependency for Debian packages (#24301) (#24324)</li>
+<li>Add mapping to <code>AzureLinux</code> repo (#24290) (#24322)</li>
+<li>Update and add new NuGet package sources for different environments. (#24264) (#24316)</li>
+<li>Bump .NET 9 to <code>9.0.100-rc.1.24452.12</code> (#24273) (#24320)</li>
+<li>Make some release tests run in a hosted pools (#24270) (#24318)</li>
+<li>Do not build the exe for Global tool shim project (#24263) (#24315)</li>
+<li>Delete <code>assets/AppImageThirdPartyNotices.txt</code> (#24256) (#24313)</li>
+<li>Create new pipeline for compliance (#24252) (#24312)</li>
+<li>Add specific path for issues in tsaconfig (#24244) (#24309)</li>
+<li>Use Managed Identity for APIScan authentication (#24243) (#24308)</li>
+<li>Add Windows signing for <code>pwsh.exe</code> (#24219) (#24306)</li>
+<li>Check <code>Create and Submit</code> in vPack build by default (#24181) (#24305)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Delete demos directory (#24258) (#24314)
+
+[7.5.0-preview.5]: https://github.com/PowerShell/PowerShell/compare/v7.5.0-preview.4...v7.5.0-preview.5
+
 ## [7.5.0-preview.4] - 2024-08-28
 
 ### Engine Updates and Fixes
@@ -474,7 +538,7 @@
 
 ### Documentation and Help Content
 
-- Include information about upgrading in README (#20993)
+- Include information about upgrading in readme (#20993)
 - Expand "iff" to "if-and-only-if" in XML doc content (#20852)
 - Update LTS links in README.md to point to the v7.4 packages (#20839) (Thanks @kilasuit!)
 - Update `README.md` to improve readability (#20553) (Thanks @AnkitaSikdar005!)
@@ -482,7 +546,7 @@
 - Update `ADOPTERS.md` (#20555) (Thanks @AnkitaSikdar005!)
 - Fix a typo in `ADOPTERS.md` (#20504, #20520) (Thanks @shruti-sen2004!)
 - Correct grammatical errors in `README.md` (#20509) (Thanks @alienishi!)
-- Add 7.3 changelog URL to Readme (#20473) (Thanks @Saibamen!)
+- Add 7.3 changelog URL to readme (#20473) (Thanks @Saibamen!)
 - Clarify some comments and documentation (#20462) (Thanks @darkstar!)
 
 [7.5.0-preview.1]: https://github.com/PowerShell/PowerShell/compare/v7.4.1...v7.5.0-preview.1
