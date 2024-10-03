@@ -1,3 +1,9 @@
+parameters:
+  - name: SkipPSInfraInstallers
+    displayName: Skip Copying Archives and Installers to PSInfrastructure Public Location
+    type: boolean
+    default: false
+
 jobs:
 - template: /.pipelines/templates/approvalJob.yml@self
   parameters:
@@ -9,6 +15,7 @@ jobs:
 - job: PSInfraReleaseBlobPublic
   displayName: Copy release to PSInfra storage
   dependsOn: CopyReleaseBlobApproval
+  condition: and(succeeded(), ne('${{ parameters.SkipPSInfraInstallers }}', true))
   pool:
     type: windows
 
@@ -36,9 +43,9 @@ jobs:
         CreateJson: yes
         UseJson: no
 
-  - pwsh: |
-      Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
-    displayName: 'Capture Environment Variables'
+    - pwsh: |
+        Get-ChildItem Env:
+      displayName: 'Capture Environment Variables'
 
     - pwsh: |
         $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
@@ -99,7 +106,6 @@ jobs:
   parameters:
     displayName: Approve Copy Global tool packages to PSInfra storage
     jobName: CopyBlobApproval
-    dependsOnJob: PSInfraReleaseBlobPublic
     instructions: |
       Approval for Copy global tool packages to PSInfra storage
 
@@ -110,14 +116,14 @@ jobs:
     type: windows
 
   variables:
-  - group: 'PSInfraStorage'
-  - group: 'Azure Blob variable group'
-  - name: ob_outputDirectory
-    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-  - name: ob_sdl_tsa_configFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
-  - name: ob_sdl_credscan_suppressionsFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - group: 'PSInfraStorage'
+    - group: 'Azure Blob variable group'
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
 
   steps:
     - checkout: self
@@ -156,9 +162,11 @@ jobs:
         inline: |
           $sourceStorageAccountName = '$(StorageAccount)'
           $sourceContainerName = '$(AzureVersion)-nuget'
+          $prefix = 'globaltool'
 
           $destinationStorageAccountName = '$(PSInfraStorageAccount)'
-          $destinationContainerName = "tool"
+          $destinationContainerName = '$web'
+          $destinationPrefix = 'tool/$(Version)'
 
           $sourceContext = New-AzStorageContext -StorageAccountName $sourceStorageAccountName
           Write-Verbose -Verbose "Source context: $($sourceContext.BlobEndPoint)"
@@ -166,19 +174,18 @@ jobs:
           $destinationContext = New-AzStorageContext -StorageAccountName $destinationStorageAccountName
           Write-Verbose -Verbose "Destination context: $($destinationContext.BlobEndPoint)"
 
-          $prefix = 'globaltool'
           $blobs = Get-AzStorageBlob -Context $sourceContext -Container $sourceContainerName -Prefix $prefix
 
           Write-Verbose -Verbose "Blobs found in $sourceContainerName"
           $blobs.Name | Write-Verbose -Verbose
 
-          Write-Verbose -Verbose "Copying blobs from $sourceContainerName to $destinationContainerName"
+          Write-Verbose -Verbose "Copying blobs from $sourceContainerName to $destinationContainerName/$destinationPrefix"
 
           foreach ($blob in $blobs) {
             $sourceBlobName = $blob.Name
             Write-Verbose -Verbose "sourceBlobName = $sourceBlobName"
 
-            $destinationBlobName = $sourceBlobName -replace "$prefix", '$(Version)'
+            $destinationBlobName = $sourceBlobName -replace "$prefix", $destinationPrefix
             Write-Verbose -Verbose "destinationBlobName = $destinationBlobName"
 
             Copy-AzStorageBlob -SourceContext $sourceContext -DestinationContext $destinationContext -SrcContainer $sourceContainerName -SrcBlob $sourceBlobName -DestContainer $destinationContainerName -DestBlob $destinationBlobName -Force -Verbose -Confirm:$false
