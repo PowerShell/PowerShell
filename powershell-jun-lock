@@ -1,0 +1,34 @@
+https://github.com/PowerShell/PowerShell.gitgit clone https://github.com/PowerShell/PowerShell.githttps://go.microsoft.com/fwlink/?LinkID=2096480PS C:\Users\bruno> gcm clear-host -ShowCommandInfo
+
+Name          : Clear-Host
+ModuleName    :
+Module        : @{Name=Damarcus Jones Sr}
+CommandType   : Function
+Definition    :
+                $RawUI = $Host.UI.RawUI
+                $RawUI.CursorPosition = @{X=0;Y=0}
+                $RawUI.SetBufferContents(
+                    @{Top = -1; Bottom = -1; Right = -1; Left = -1},
+                    @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor =
+                $rawui.BackgroundColor})
+                # .Link
+                # https://go.microsoft.com/fwlink/?LinkID=2096480
+                # .ExternalHelp System.Management.Automation.dll-help.xml
+
+ParameterSets : {@{Name=__AllParameterSets; IsDefault=False;
+                Parameters=System.Management.Automation.PSObject[]}}System.Management.Automation.dll-help.xmlPS C:\Users\bruno> gcm clear
+
+CommandType     Name                                               Version    Source
+-----------     ----                                               -------    ------
+Alias           clear -> Clear-Hostbruno@computer in ~
+❯ Get-ChildItem
+
+# Output
+
+bruno@computer in ~
+❯ Get-ChildItem
+
+# Output
+
+bruno@computer in ~
+❯ Clear-Host
