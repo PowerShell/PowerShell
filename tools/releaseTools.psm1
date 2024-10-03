@@ -808,7 +808,7 @@ function Invoke-PRBackport {
         $PrNumber,
 
         [Parameter(Mandatory)]
-        [ValidateScript({$_ -match '^release/v\d+\.\d+\.\d+'})]
+        [ValidateScript({$_ -match '^release/v\d+\.\d+(\.\d+)?'})]
         [string]
         $Target,
 
