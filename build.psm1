@@ -3259,8 +3259,21 @@ function New-TestPackage
     [System.IO.Compression.ZipFile]::CreateFromDirectory($packageRoot, $packagePath)
 }
 
-function New-NugetConfigFile
-{
+class NugetPackageSource {
+    [string] $Url
+    [string] $Name
+}
+
+function New-NugetPackageSource {
+    param(
+        [Parameter(Mandatory = $true)] [string]$Url,
+        [Parameter(Mandatory = $true)] [string] $Name
+    )
+
+    return [NugetPackageSource] @{Url = $Url; Name = $Name }
+}
+
+function New-NugetConfigFile {
     param(
         [Parameter(Mandatory=$true)] [string] $NugetFeedUrl,
         [Parameter(Mandatory=$true)] [string] $FeedName,
