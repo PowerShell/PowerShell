@@ -6,7 +6,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 - name: 'createVPack'
   displayName: 'Create and Submit VPack'
   type: boolean
-  default: false
+  default: true
 - name: 'debug'
   displayName: 'Enable debug output'
   type: boolean
@@ -82,19 +82,14 @@ extends:
         enabled: true
         scanFolder:  $(Build.SourcesDirectory)
         suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
-      asyncSdl:
-        enabled: true
-        forStages: ['main']
-        credscan:
-          enabled: true
-          scanFolder:  $(Build.SourcesDirectory)
-          suppressionsFile: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-        binskim:
-          enabled: false
-        # APIScan requires a non-Ready-To-Run build
-        apiscan:
-          enabled: false
-        tsaOptionsFile: .config/tsaoptions.json
+      binskim:
+        enabled: false
+      # APIScan requires a non-Ready-To-Run build
+      apiscan:
+        enabled: false
+      asyncSDL:
+        enabled: false
+      tsaOptionsFile: .config/tsaoptions.json
     stages:
     - stage: main
       jobs:
