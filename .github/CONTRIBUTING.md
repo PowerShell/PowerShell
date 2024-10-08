@@ -169,7 +169,7 @@ Additional references:
   A better example is: "Add Ensure parameter to New-Item cmdlet", with "Fix #5" in the PR's body.
 * When you create a pull request,
   include a summary about your changes in the PR description.
-  The description is used to create change logs,
+  The description is used to create changelogs,
   so try to have the first sentence explain the benefit to end users.
   If the changes are related to an existing GitHub issue,
   please reference the issue in the PR description (e.g. ```Fix #11```).

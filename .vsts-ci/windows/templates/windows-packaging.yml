@@ -52,6 +52,13 @@ jobs:
 
   - pwsh: |
       Import-Module .\tools\ci.psm1
+      Switch-PSNugetConfig -Source Public
+    displayName: Switch to public feeds
+    condition: succeeded()
+    workingDirectory: $(repoPath)
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
       Invoke-CIInstall -SkipUser
     displayName: Bootstrap
     condition: succeeded()
