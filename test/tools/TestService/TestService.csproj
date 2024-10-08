@@ -13,7 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.7" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.8" />
+    <!-- dependencies below are transitive -->
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="System.IO.Packaging" Version="6.0.1" />
+    <PackageReference Include="System.Security.AccessControl" Version="6.0.1" />
+
   </ItemGroup>
 
 </Project>
