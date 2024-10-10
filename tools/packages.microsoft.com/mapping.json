@@ -140,6 +140,13 @@
               "bullseye"
           ],
           "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-      }
+      },
+      {
+        "url": "microsoft-debian-bookworm-prod",
+        "distribution": [
+            "bookworm"
+        ],
+        "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+    }
   ]
 }
