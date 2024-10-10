@@ -10,7 +10,9 @@ jobs:
     # testing
     vmImage: ${{ parameters.imageName }}
   variables:
-  - group: AzDevOpsArtifacts
+  - group: mscodehub-feed-read-general
+  - group: mscodehub-feed-read-akv
+  - group: DotNetPrivateBuildAccess
   steps:
     - checkout: self
       clean: true
@@ -38,11 +40,13 @@ jobs:
         runBranch: '$(Build.SourceBranch)'
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
-        allowPartiallySucceededBuilds: true
+
+    - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+      parameters:
+        repoRoot: $(Build.SourcesDirectory)
 
     - pwsh:  |
         Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
-        New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination '$(Build.SourcesDirectory)/test/hosting'
 
         Write-Verbose -Verbose "Capture hosting folder files"
         Get-ChildItem '$(Build.SourcesDirectory)/test/hosting'
