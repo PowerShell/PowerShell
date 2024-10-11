@@ -30,6 +30,8 @@ jobs:
     - name: Runtime
       value: ${{ parameters.runtime }}
     - group: msixTools
+    - name: noExeRuntimes
+      value: "['fxdependent', 'fxdependentWinDesktop', 'minsize', 'arm64']"
 
   steps:
   - checkout: self
@@ -195,7 +197,7 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      $noExeRuntimes = @('fxdependent', 'fxdependentWinDesktop', 'minsize', 'arm64')
+      $noExeRuntimes = "$(noExeRuntimes)" | ConvertFrom-Json
 
       if ($runtime -in $noExeRuntimes) {
         Write-Verbose -Verbose "No EXE generated for $runtime"
@@ -233,7 +235,7 @@ jobs:
       Import-Module "$repoRoot\build.psm1"
       Import-Module "$repoRoot\tools\packaging"
 
-      $noExeRuntimes = @('fxdependent', 'fxdependentWinDesktop', 'minsize')
+      $noExeRuntimes = "$(noExeRuntimes)" | ConvertFrom-Json
 
       if ($runtime -in $noExeRuntimes) {
         Write-Verbose -Verbose "No EXE generated for $runtime"
