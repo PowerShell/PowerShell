@@ -127,26 +127,26 @@
         ],
         "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
     },
-      {
-          "url": "microsoft-ubuntu-xenial-prod",
-          "distribution": [
-              "xenial"
-          ],
-          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-      },
-      {
-          "url": "microsoft-debian-bullseye-prod",
-          "distribution": [
-              "bullseye"
-          ],
-          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-      },
-      {
-        "url": "microsoft-debian-bookworm-prod",
+    {
+        "url": "microsoft-ubuntu-xenial-prod",
         "distribution": [
-            "bookworm"
+            "xenial"
         ],
         "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+    },
+    {
+        "url": "microsoft-debian-bullseye-prod",
+        "distribution": [
+            "bullseye"
+        ],
+        "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+    },
+    {
+      "url": "microsoft-debian-bookworm-prod",
+      "distribution": [
+          "bookworm"
+      ],
+      "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
     }
   ]
 }
