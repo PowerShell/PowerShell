@@ -97,6 +97,7 @@ stages:
       pool: macOS-latest
 
 - stage: PackageMac
+  dependsOn: ['BuildMac']
   displayName: Package macOS (bootstrap only)
   jobs:
     - job: macos_packaging
