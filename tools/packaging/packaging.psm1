@@ -1718,8 +1718,7 @@ function New-ManGzip
     # run roff to convert man page to roff
     $RoffFile = "$RepoRoot/assets/manpage/pwsh.1"
 
-    if ($IsPreview.IsPresent -or $IsLTS.IsPresent)
-    {
+    if ($IsPreview.IsPresent -or $IsLTS.IsPresent) {
         $prodName = if ($IsLTS) { 'pwsh-lts' } else { 'pwsh-preview' }
         $newRoffFile = $RoffFile -replace 'pwsh', $prodName
         Copy-Item -Path $RoffFile -Destination $newRoffFile -Force -Verbose
@@ -1730,11 +1729,6 @@ function New-ManGzip
     $GzipFile = "$RoffFile.gz"
     Write-Log "Creating man gz - running gzip..."
     Start-NativeExecution { gzip -f $RoffFile } -VerboseOutputOnError
-
-    if ($IsPreview.IsPresent)
-    {
-        Remove-Item $RoffFile -ErrorAction SilentlyContinue
-    }
 
     if($Environment.IsMacOS) {
         $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
