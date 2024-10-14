@@ -1722,7 +1722,7 @@ function New-ManGzip
     {
         $prodName = if ($IsLTS) { 'pwsh-lts' } else { 'pwsh-preview' }
         $newRoffFile = $RoffFile -replace 'pwsh', $prodName
-        Copy-Item -Path $RoffFile -Destination $newRoffFile -Force
+        Copy-Item -Path $RoffFile -Destination $newRoffFile -Force -Verbose
         $RoffFile = $newRoffFile
     }
 
@@ -1733,7 +1733,7 @@ function New-ManGzip
 
     if ($IsPreview.IsPresent)
     {
-        Remove-Item $RoffFile
+        Remove-Item $RoffFile -ErrorAction SilentlyContinue
     }
 
     if($Environment.IsMacOS) {
