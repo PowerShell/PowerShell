@@ -2275,12 +2275,11 @@ function Start-PSBootstrap {
                 }
             }
 
-            # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
+            # Install [fpm](https://github.com/jordansissel/fpm)
             if ($Package) {
                 Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
                 Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
                 Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
-                Install-GlobalGem -Sudo $sudo -GemName "ronn" -GemVersion "0.7.3"
                 Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
             }
         }
