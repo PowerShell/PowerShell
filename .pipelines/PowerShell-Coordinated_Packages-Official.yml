@@ -68,12 +68,6 @@ extends:
   parameters:
     featureFlags:
       LinuxHostVersion:
-        Network: KS2
-      WindowsHostVersion:
-        Network: KS2
-    customTags: 'ES365AIMigrationTooling'
-    featureFlags:
-      LinuxHostVersion:
           Network: KS3
       WindowsHostVersion:
           Network: KS3
