@@ -5,7 +5,10 @@ steps:
 - pwsh: |
     $configPath = "${env:NugetConfigDir}/nuget.config"
     Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-    New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(mscodehubPackageReadPat) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
+
+    $powerShellPublicPackages = [NugetPackageSource] @{Url = '$(PowerShellCore_PublicPackages)'; Name= 'AzDevOpsFeed'}
+
+    New-NugetConfigFile -NugetPackageSource $powerShellPublicPackages -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(mscodehubPackageReadPat) -Destination "${env:NugetConfigDir}"
     if(-not (Test-Path $configPath))
     {
         throw "nuget.config is not created"
@@ -20,8 +23,11 @@ steps:
 - pwsh: |
     $configPath = "${env:NugetConfigDir}/nuget.config"
     Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-    New-NugetConfigFile -NugetFeedUrl $(PowerShellCore_PublicPackages) -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(mscodehubPackageReadPat) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
-    if(-not (Test-Path $configPath))
+
+    $powerShellPublicPackages = [NugetPackageSource] @{Url = '$(PowerShellCore_PublicPackages)'; Name= 'AzDevOpsFeed'}
+
+    New-NugetConfigFile -NugetPackageSource $powerShellPublicPackages -UserName $(AzDevopsFeedUserNameKVPAT) -ClearTextPAT $(mscodehubPackageReadPat) -Destination "${env:NugetConfigDir}"
+    if (-not (Test-Path $configPath))
     {
         throw "nuget.config is not created"
     }
