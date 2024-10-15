@@ -6,7 +6,7 @@ parameters: # parameters are shown up in ADO UI in a build queue time
 - name: 'createVPack'
   displayName: 'Create and Submit VPack'
   type: boolean
-  default: false
+  default: true
 - name: 'debug'
   displayName: 'Enable debug output'
   type: boolean
