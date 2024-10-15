@@ -19,7 +19,8 @@ jobs:
       - group: DotNetPrivateBuildAccess
       - group: Azure Blob variable group
       - group: ReleasePipelineSecrets
-      - group: AzDevOpsArtifacts
+      - group: mscodehub-feed-read-general
+      - group: mscodehub-feed-read-akv
 
     pool:
       name: PowerShell1ES

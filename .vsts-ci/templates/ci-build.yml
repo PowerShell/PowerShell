@@ -54,7 +54,7 @@ jobs:
     displayName: Set Build Name for Non-PR
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
-  - ${{ if ne(variables['AzDevOpsFeed'], '') }}:
+  - ${{ if ne(variables['UseAzDevOpsFeed'], '') }}:
     - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
 
   - pwsh: |

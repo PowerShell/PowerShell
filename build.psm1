@@ -708,6 +708,8 @@ Fix steps:
     if ($config.Count -gt 0) {
         $configPublishPath = Join-Path -Path $publishPath -ChildPath "powershell.config.json"
         Set-Content -Path $configPublishPath -Value ($config | ConvertTo-Json) -Force -ErrorAction Stop
+    } else {
+        Write-Warning "No powershell.config.json generated for $publishPath"
     }
 
     # Restore the Pester module
@@ -729,24 +731,46 @@ Fix steps:
 
 function Switch-PSNugetConfig {
     param(
+        [Parameter(Mandatory = $true, ParameterSetName = 'user')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'nouser')]
         [ValidateSet('Public', 'Private')]
-        [string] $Source = 'Public'
+        [string] $Source,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'user')]
+        [string] $UserName,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'user')]
+        [string] $ClearTextPAT
     )
+
+    Clear-PipelineNugetAuthentication
+
+    $extraParams = @()
+    if ($UserName) {
+        $extraParams = @{
+            UserName     = $UserName
+            ClearTextPAT = $ClearTextPAT
+        }
+    }
 
     if ( $Source -eq 'Public') {
         $dotnetSdk = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v2'; Name = 'dotnet' }
         $gallery = [NugetPackageSource] @{Url = 'https://www.powershellgallery.com/api/v2/'; Name = 'psgallery' }
         $nugetorg = [NugetPackageSource] @{Url = 'https://api.nuget.org/v3/index.json'; Name = 'nuget.org' }
 
-        New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetSdk   -Destination "$PSScriptRoot/"
-        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/"
+        New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetSdk   -Destination "$PSScriptRoot/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/" @extraParams
     } elseif ( $Source -eq 'Private') {
-        $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/powershell/nuget/v3/index.json'; Name = 'powershell' }
+        $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell-7-5-preview-test-2/nuget/v3/index.json'; Name = 'powershell' }
 
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/"
-        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/"
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
     } else {
         throw "Unknown source: $Source"
+    }
+
+    if ($UserName -or $ClearTextPAT) {
+        Set-PipelineNugetAuthentication
     }
 }
 
@@ -853,6 +877,10 @@ function Restore-PSPackage
             $RestoreArguments += "--interactive"
         }
 
+        if ($env:ENABLE_MSBUILD_BINLOGS -eq 'true') {
+            $RestoreArguments += '-bl'
+        }
+
         $ProjectDirs | ForEach-Object {
             $project = $_
             Write-Log -message "Run dotnet restore $project $RestoreArguments"
@@ -870,6 +898,23 @@ function Restore-PSPackage
                     $retryCount++
                     if($retryCount -ge $maxTries)
                     {
+                        if ($env:ENABLE_MSBUILD_BINLOGS -eq 'true') {
+                            if ( Test-Path ./msbuild.binlog ) {
+                                if (!(Test-Path $env:OB_OUTPUTDIRECTORY -PathType Container)) {
+                                    $null = New-Item -path $env:OB_OUTPUTDIRECTORY -ItemType Directory -Force -Verbose
+                                }
+
+                                $projectName = Split-Path -Leaf -Path $project
+                                $binlogFileName = "${projectName}.msbuild.binlog"
+                                if ($IsMacOS) {
+                                    $resolvedPath = (Resolve-Path -Path ./msbuild.binlog).ProviderPath
+                                    Write-Host "##vso[artifact.upload containerfolder=$binLogFileName;artifactname=$binLogFileName]$resolvedPath"
+                                } else {
+                                    Copy-Item -Path ./msbuild.binlog -Destination "$env:OB_OUTPUTDIRECTORY/${projectName}.msbuild.binlog" -Verbose
+                                }
+                            }
+                        }
+
                         throw
                     }
                     continue
@@ -1210,10 +1255,14 @@ function Publish-PSTestTools {
     $tools = @(
         @{ Path="${PSScriptRoot}/test/tools/TestAlc";     Output="library" }
         @{ Path="${PSScriptRoot}/test/tools/TestExe";     Output="exe" }
-        @{ Path="${PSScriptRoot}/test/tools/TestService"; Output="exe" }
         @{ Path="${PSScriptRoot}/test/tools/UnixSocket";  Output="exe" }
         @{ Path="${PSScriptRoot}/test/tools/WebListener"; Output="exe" }
     )
+
+    # This is a windows service, so it only works on windows
+    if ($environment.IsWindows) {
+        $tools += @{ Path = "${PSScriptRoot}/test/tools/TestService"; Output = "exe" }
+    }
 
     $Options = Get-PSOptions -DefaultToNew
 
@@ -2337,6 +2386,12 @@ function Start-PSBootstrap {
                 Install-Wix -arm64:$isArm64
             }
         }
+
+        if ($env:TF_BUILD) {
+            Write-Verbose -Verbose "--- Start - Capturing nuget sources"
+            dotnet nuget list source --format detailed
+            Write-Verbose -Verbose "--- End   - Capturing nuget sources"
+        }
     } finally {
         Pop-Location
     }
@@ -3444,6 +3499,8 @@ function New-NugetPackageSource {
     return [NugetPackageSource] @{Url = $Url; Name = $Name }
 }
 
+$script:NuGetEndpointCredentials = [System.Collections.Generic.Dictionary[String,System.Object]]::new()
+
 function New-NugetConfigFile {
     param(
         [Parameter(Mandatory = $true, ParameterSetName ='user')]
@@ -3488,20 +3545,51 @@ function New-NugetConfigFile {
 '@
     $content = $nugetConfigHeaderTemplate
 
-    [NugetPackageSource]$source = $null
-    foreach ($source in $NugetPackageSource) {
-        $content += $nugetPackageSourceTemplate.Replace('[FEED]', $source.Url).Replace('[FEEDNAME]', $source.Name)
+    $feedNamePostfix = ''
+    if ($UserName) {
+        $feedNamePostfix += '-' + $UserName.Replace('@', '-').Replace('.', '-')
     }
 
-    $content += $nugetPackageSourceFooterTemplate
+    [NugetPackageSource]$source = $null
+    $newLine = [Environment]::NewLine
+    foreach ($source in $NugetPackageSource) {
+        $content += $newLine + $nugetPackageSourceTemplate.Replace('[FEED]', $source.Url).Replace('[FEEDNAME]', $source.Name + $feedNamePostfix)
+    }
+
+    $content += $newLine + $nugetPackageSourceFooterTemplate
 
     if ($UserName -or $ClearTextPAT) {
-        $content += $nugetCredentialsTemplate.Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
+        foreach ($source in $NugetPackageSource) {
+            if (!$script:NuGetEndpointCredentials.ContainsKey($source.Url)) {
+                $script:NuGetEndpointCredentials.Add($source.Url, @{
+                        endpoint = $source.Url
+                        username = $UserName
+                        password = $ClearTextPAT
+                    })
+            }
+        }
     }
 
-    $content += $nugetConfigFooterTemplate
+    $content += $newLine + $nugetConfigFooterTemplate
 
     Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
+}
+
+function Clear-PipelineNugetAuthentication {
+    $script:NuGetEndpointCredentials.Clear()
+}
+
+function Set-PipelineNugetAuthentication {
+    $endpointcredentials = @()
+
+    foreach ($key in $script:NuGetEndpointCredentials.Keys) {
+        $endpointcredentials += $script:NuGetEndpointCredentials[$key]
+    }
+
+    $json = @{
+        endpointCredentials = $endpointcredentials
+    } | convertto-json -Compress
+    Set-PipelineVariable -Name 'VSS_NUGET_EXTERNAL_FEED_ENDPOINTS' -Value $json
 }
 
 function Set-CorrectLocale
@@ -3636,4 +3724,20 @@ function Update-DotNetSdkVersion {
     $dotnetRuntimeMeta = get-content $dotnetRuntimeMetaPath | convertfrom-json
     $dotnetRuntimeMeta.sdk.sdkImageVersion = $version
     $dotnetRuntimeMeta | ConvertTo-Json | Out-File $dotnetRuntimeMetaPath
+}
+
+function Set-PipelineVariable {
+    param(
+        [parameter(Mandatory)]
+        [string] $Name,
+        [parameter(Mandatory)]
+        [string] $Value
+    )
+
+    $vstsCommandString = "vso[task.setvariable variable=$Name]$Value"
+    Write-Verbose -Verbose -Message ("sending " + $vstsCommandString)
+    Write-Host "##$vstsCommandString"
+
+    # also set in the current session
+    Set-Item -Path "env:$Name" -Value $Value
 }

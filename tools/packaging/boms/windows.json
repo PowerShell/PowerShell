@@ -396,6 +396,10 @@
     "FileType": "NonProduct"
   },
   {
+    "Pattern": "Humanizer.dll",
+    "FileType": "NonProduct"
+  },
+  {
     "Pattern": "it/Microsoft.CodeAnalysis.CSharp.resources.dll",
     "FileType": "NonProduct"
   },
@@ -564,10 +568,6 @@
     "FileType": "NonProduct"
   },
   {
-    "Pattern": "JetBrains.Annotations.dll",
-    "FileType": "NonProduct"
-  },
-  {
     "Pattern": "Json.More.dll",
     "FileType": "NonProduct"
   },
@@ -665,10 +665,6 @@
   },
   {
     "Pattern": "Markdig.Signed.dll",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "mi.dll",
     "FileType": "NonProduct"
   },
   {
@@ -785,10 +781,6 @@
   },
   {
     "Pattern": "Microsoft.WSMan.Runtime.xml",
-    "FileType": "NonProduct"
-  },
-  {
-    "Pattern": "miutils.dll",
     "FileType": "NonProduct"
   },
   {
@@ -2597,6 +2589,10 @@
   },
   {
     "Pattern": "System.Private.Uri.dll",
+    "FileType": "NonProduct"
+  },
+  {
+    "Pattern": "System.Private.Windows.Core.dll",
     "FileType": "NonProduct"
   },
   {
