@@ -108,3 +108,6 @@ nuget.config
 
 # Ignore MSBuild Binary Logs
 msbuild.binlog
+
+# Ignore gzip files in the manpage folder
+assets/manpage/*.gz
