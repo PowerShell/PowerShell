@@ -18,6 +18,7 @@ namespace System.Management.Automation.Remoting
         // OS related 1-9
         DefaultRemotingExceptionMessage = 0,
         OutOfMemory = 1,
+        UnsupportedOSForRemoteEnumeration = 2,
 
         // Pipeline related range: 10-99
         PipelineIdsDoNotMatch = 10,
