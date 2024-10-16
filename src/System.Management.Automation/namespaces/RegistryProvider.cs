@@ -1825,8 +1825,19 @@ namespace Microsoft.PowerShell.Commands
                     notePropertyName = LocalizedDefaultToken;
                 }
 
-                propertyResults.Properties.Add(new PSNoteProperty(notePropertyName, key.GetValue(valueName)));
-                valueAdded = true;
+                try
+                {
+                    propertyResults.Properties.Add(new PSNoteProperty(notePropertyName, key.GetValue(valueName)));
+                    valueAdded = true;
+                }
+                catch (InvalidCastException invalidCast)
+                {
+                    WriteError(new ErrorRecord(
+                        invalidCast,
+                        invalidCast.GetType().FullName,
+                        ErrorCategory.WriteError, 
+                        path));
+                }
             }
 
             key.Close();
