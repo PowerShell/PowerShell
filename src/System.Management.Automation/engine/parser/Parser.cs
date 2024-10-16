@@ -5760,7 +5760,14 @@ namespace System.Management.Automation.Language
 
             if (endErrorStatement != null)
             {
-                return new ErrorStatementAst(ExtentOf(dataToken, endErrorStatement), GetNestedErrorAsts(commands));
+                Dictionary<string, Tuple<Token, Ast>> flags = null;
+                if ((supportedCommandToken is not null && supportedCommandToken.Kind == TokenKind.Minus)
+                    || supportedCommandToken is ParameterToken)
+                {
+                    flags = new Dictionary<string, Tuple<Token, Ast>>(1, StringComparer.OrdinalIgnoreCase);
+                    flags.Add(supportedCommandToken.Text, new Tuple<Token, Ast>(supportedCommandToken, null));
+                }
+                return new ErrorStatementAst(ExtentOf(dataToken, endErrorStatement), dataToken, flags, null, GetNestedErrorAsts(commands));
             }
 
             return new DataStatementAst(ExtentOf(dataToken, body), dataVariableName, commands, body);

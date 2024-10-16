@@ -7659,60 +7659,191 @@ namespace System.Management.Automation
         #endregion Help Topics
 
         #region Statement Parameters
-
-        internal static List<CompletionResult> CompleteStatementFlags(TokenKind kind, string wordToComplete)
+        private static readonly string[] s_SwitchParameters = new string[]
         {
-            switch (kind)
+            "CaseSensitive",
+            "Exact",
+            "File",
+            "Regex",
+            "Wildcard"
+        };
+
+        private static readonly HashSet<string> s_SwitchExclusiveParameters = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Exact",
+            "Regex",
+            "Wildcard"
+        };
+
+        internal static List<CompletionResult> CompleteStatementFlags(CompletionContext context)
+        {
+            if (context.TokenAtCursor is null)
             {
+                return null;
+            }
+
+            string parameterText = context.TokenAtCursor.Text.Substring(1);
+            var usedParameters = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            ErrorStatementAst incompleteStatement = null;
+            TokenKind statementKind = TokenKind.Unknown;
+
+            switch (context.RelatedAsts[^1])
+            {
+                case DataStatementAst:
+                    statementKind = TokenKind.Data;
+                    break;
+
+                case SwitchStatementAst switchStatement:
+                    statementKind = TokenKind.Switch;
+
+                    if (switchStatement.Flags == SwitchFlags.None)
+                    {
+                        break;
+                    }
+
+                    foreach (SwitchFlags item in Enum.GetValues(typeof(SwitchFlags)))
+                    {
+                        string itemAsString = item.ToString();
+                        if ((switchStatement.Flags & item) != 0 && (parameterText.Equals(string.Empty) || !itemAsString.StartsWith(parameterText, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            _ = usedParameters.Add(itemAsString);
+                        }
+                    }
+                    break;
+
+                case ErrorStatementAst errorStatement:
+                    incompleteStatement = errorStatement;
+                    break;
+
+                default:
+                    Ast parent = context.RelatedAsts[^1].Parent;
+                    while (parent is not null)
+                    {
+                        if (parent.Extent.StartOffset < context.TokenAtCursor.Extent.StartOffset && parent is NamedBlockAst namedBlock)
+                        {
+                            for (int i = namedBlock.Statements.Count - 1; i >= 0; i--)
+                            {
+                                if (namedBlock.Statements[i].Extent.StartOffset < context.TokenAtCursor.Extent.StartOffset
+                                    && namedBlock.Statements[i] is ErrorStatementAst errStatement)
+                                {
+                                    incompleteStatement = errStatement;
+                                    break;
+                                }
+                            }
+                            if (incompleteStatement is null)
+                            {
+                                return null;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        parent = parent.Parent;
+                    }
+                    break;
+            }
+
+            if (incompleteStatement is not null)
+            {
+                if (incompleteStatement.Kind is null)
+                {
+                    return null;
+                }
+
+                switch (incompleteStatement.Kind.Kind)
+                {
+                    case TokenKind.Data:
+                        statementKind = TokenKind.Data;
+                        // An ErrorStatement for Data can only have null or 1 flag set, if the cursor is not at that flag then there's no valid completions
+                        if (incompleteStatement.Flags is null
+                            || incompleteStatement.Flags.Values.First().Item1.Extent.StartOffset != context.TokenAtCursor.Extent.StartOffset)
+                        {
+                            return null;
+                        }
+                        break;
+
+                    case TokenKind.Switch:
+                        statementKind = TokenKind.Switch;
+                        if (incompleteStatement.Flags is null)
+                        {
+                            return null;
+                        }
+
+                        int highestStartOffset = 0;
+                        foreach (var key in incompleteStatement.Flags.Keys)
+                        {
+                            var paramToken = incompleteStatement.Flags[key].Item1;
+                            if (paramToken.Extent.StartOffset != context.TokenAtCursor.Extent.StartOffset)
+                            {
+                                _ = usedParameters.Add(key);
+                            }
+
+                            if (paramToken.Extent.StartOffset > highestStartOffset)
+                            {
+                                highestStartOffset = paramToken.Extent.StartOffset;
+                            }
+                        }
+
+                        // The incomplete statement doesn't include parameters after the condition parentheses
+                        // So if the tokenAtCursor is greater than the highest flag parameter then the user pressed tab like: switch () -<Tab>
+                        if (highestStartOffset < context.TokenAtCursor.Extent.StartOffset)
+                        {
+                            return null;
+                        }
+                        break;
+
+                    default:
+                        return null;
+                }
+            }
+            
+            var result = new List<CompletionResult>();
+
+            switch (statementKind)
+            {
+                case TokenKind.Data:
+                    if ("SupportedCommand".StartsWith(parameterText, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(new CompletionResult(
+                            "-SupportedCommand",
+                            "SupportedCommand",
+                            CompletionResultType.ParameterName,
+                            ResourceManagerCache.GetResourceString(
+                                    typeof(CompletionCompleters).Assembly,
+                                    "System.Management.Automation.resources.TabCompletionStrings",
+                                    "dataSupportedCommandParam")));
+                    }
+                    break;
+                
                 case TokenKind.Switch:
-
-                    Diagnostics.Assert(!string.IsNullOrEmpty(wordToComplete) && wordToComplete[0].IsDash(), "the word to complete should start with '-'");
-                    wordToComplete = wordToComplete.Substring(1);
-                    bool withColon = wordToComplete.EndsWith(':');
-                    wordToComplete = withColon ? wordToComplete.Remove(wordToComplete.Length - 1) : wordToComplete;
-
-                    string enumString = LanguagePrimitives.EnumSingleTypeConverter.EnumValues(typeof(SwitchFlags));
-                    string separator = CultureInfo.CurrentUICulture.TextInfo.ListSeparator;
-                    string[] enumArray = enumString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-
-                    var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-                    var enumList = new List<string>();
-                    var result = new List<CompletionResult>();
-                    CompletionResult fullMatch = null;
-
-                    foreach (string value in enumArray)
+                    var exclusiveParameterUsed = usedParameters.Overlaps(s_SwitchExclusiveParameters);
+                    foreach (var parameter in s_SwitchParameters)
                     {
-                        if (value.Equals(SwitchFlags.None.ToString(), StringComparison.OrdinalIgnoreCase)) { continue; }
-
-                        if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
+                        if (parameter.StartsWith(parameterText, StringComparison.OrdinalIgnoreCase)
+                            && !usedParameters.Contains(parameter)
+                            && !(exclusiveParameterUsed && s_SwitchExclusiveParameters.Contains(parameter)))
                         {
-                            string completionText = withColon ? "-" + value + ":" : "-" + value;
-                            fullMatch = new CompletionResult(completionText, value, CompletionResultType.ParameterName, value);
-                            continue;
-                        }
-
-                        if (pattern.IsMatch(value))
-                        {
-                            enumList.Add(value);
+                            result.Add(new CompletionResult(
+                                $"-{parameter}",
+                                parameter,
+                                CompletionResultType.ParameterName,
+                                ResourceManagerCache.GetResourceString(
+                                    typeof(CompletionCompleters).Assembly,
+                                    "System.Management.Automation.resources.TabCompletionStrings",
+                                    $"switch{parameter}Param")));
                         }
                     }
-
-                    if (fullMatch != null)
-                    {
-                        result.Add(fullMatch);
-                    }
-
-                    enumList.Sort();
-                    result.AddRange(from entry in enumList
-                                    let completionText = withColon ? "-" + entry + ":" : "-" + entry
-                                    select new CompletionResult(completionText, entry, CompletionResultType.ParameterName, entry));
-
-                    return result;
+                    break;
 
                 default:
                     break;
             }
-
+            
+            if (result.Count > 0)
+            {
+                return result;
+            }
             return null;
         }
 

@@ -2164,6 +2164,42 @@ dir -Recurse `
         }
     }
 
+    it 'Should complete parameters for Data keyword with incomplete Ast' {
+        $res = TabExpansion2 -inputScript 'data variable -'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "-SupportedCommand"
+    }
+
+    it 'Should complete parameters for Data keyword with complete Ast' {
+        $TestString = 'data -Su^ Get-ChildItem {}'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "-SupportedCommand"
+    }
+
+    it 'Should complete parameters for Switch statement with no cases' {
+        $TestString = 'switch -^ ($true) {}'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "-CaseSensitive"
+    }
+
+    it 'Should complete parameters for Switch statement that contains an empty scriptblock' {
+        $TestString = 'switch -^ ($true) { "true" {} }'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "-CaseSensitive"
+    }
+
+    it 'Should complete parameters for Switch statement without conflicting parameters' {
+        $res = TabExpansion2 -inputScript 'switch -Wildcard -'
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly "-CaseSensitive -File"
+    }
+
+    it 'Should complete parameters for Switch statement without duplicate parameters' {
+        $res = TabExpansion2 -inputScript 'switch -CaseSensitive -'
+        $res.CompletionMatches.CompletionText | should -Not -Contain '-CaseSensitive'
+    }
+
     Context "Module completion for 'using module'" {
         BeforeAll {
             $tempDir = Join-Path -Path $TestDrive -ChildPath "UsingModule"
