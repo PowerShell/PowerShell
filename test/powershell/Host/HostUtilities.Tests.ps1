@@ -81,3 +81,18 @@ Describe 'PromptForCredential' -Tags "CI" {
         $out.UserName | Should -BeExactly 'myDomain\myUser'
     }
 }
+
+Describe 'PushRunspaceLocalFailure' -Tags 'CI' {
+    It 'Should throw an exception when pushing a local runspace' {
+        $runspace = [RunspaceFactory]::CreateRunspace()
+        try {
+            $runspace.Open()
+            $exc = { $Host.PushRunspace($runspace) } | Should -Throw -PassThru
+            $exc.Exception.InnerException | Should -BeOfType ([System.ArgumentException])
+            [string]$exc | Should -BeLike "*PushRunspace can only push a remote runspace. (Parameter 'runspace')*"
+        }
+        finally {
+            $runspace.Dispose()
+        }
+    }
+}
