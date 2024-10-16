@@ -1728,7 +1728,7 @@ function New-ManGzip
     # gzip in assets directory
     $GzipFile = "$RoffFile.gz"
     Write-Log "Creating man gz - running gzip..."
-    Start-NativeExecution { gzip -f $RoffFile } -VerboseOutputOnError
+    Start-NativeExecution { gzip -kf $RoffFile } -VerboseOutputOnError
 
     if($Environment.IsMacOS) {
         $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
