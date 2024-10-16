@@ -718,7 +718,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 {
                     $jsonContent.headers.'Content-Type' | Should -Match "application/x-www-form-urlencoded"
                     # Validate that the response Content.form field is the same as what we sent.
-wait-debugger
                     [string]$jsonContent.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = 'System.Collections.Generic.List`1[System.Object]'})
                     $jsonContent.data | Should -BeNullOrEmpty
                 }
