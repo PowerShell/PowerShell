@@ -8203,8 +8203,7 @@ namespace System.Management.Automation.Internal
                     AlternateStreamData data = new AlternateStreamData();
                     data.Stream = findStreamData.Name;
                     data.Length = findStreamData.Length;
-                    data.FileName = path.Replace(data.Stream, string.Empty);
-                    data.FileName = data.FileName.Trim(':');
+                    data.FileName = path;
 
                     alternateStreams.Add(data);
                     findStreamData = new AlternateStreamNativeData();
