@@ -4527,6 +4527,14 @@ end {
                     ScopedItemOptions.None,
                     new ArgumentTypeConverterAttribute(typeof(System.Text.Encoding))),
 
+                // Variable which controls the encoding for decoding data from a NativeCommand
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSApplicationOutputEncoding,
+                    null,
+                    RunspaceInit.PSApplicationOutputEncodingDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(Encoding))),
+
                 // Preferences
                 //
                 // NTRAID#Windows Out Of Band Releases-931461-2006/03/13
