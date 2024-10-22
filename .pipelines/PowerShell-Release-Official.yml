@@ -75,6 +75,11 @@ resources:
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@templates
   parameters:
+    featureFlags:
+      LinuxHostVersion:
+          Network: Monitor
+      WindowsHostVersion:
+          Network: Monitor
     cloudvault:
       enabled: false
     globalSdl:
