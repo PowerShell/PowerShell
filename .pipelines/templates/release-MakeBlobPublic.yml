@@ -36,9 +36,9 @@ jobs:
         CreateJson: yes
         UseJson: no
 
-  - pwsh: |
-      Get-ChildItem Env:
-    displayName: 'Capture Environment Variables'
+    - pwsh: |
+        Get-ChildItem Env:
+      displayName: 'Capture Environment Variables'
 
     - pwsh: |
         $azureRmModule = Get-InstalledModule AzureRM -ErrorAction SilentlyContinue -Verbose
