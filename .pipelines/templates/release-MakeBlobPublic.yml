@@ -107,7 +107,9 @@ jobs:
   displayName: Copy global tools to PSInfra storage
   dependsOn: CopyBlobApproval
   pool:
-    type: windows
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
 
   variables:
   - group: 'PSInfraStorage'
