@@ -77,7 +77,7 @@ jobs:
       $params = @{
           ReleaseTag = "$(ReleaseTag)"
           AadClientId = "$(PmcCliClientID)"
-          BlobFolderName = "$(AzureVersion)"
+          BlobFolderName = "$(ReleaseTag)"
           LTS = $metadata.LTSRelease.Latest
           ForProduction = $true
           SkipPublish = $${{ parameters.skipPublish }}

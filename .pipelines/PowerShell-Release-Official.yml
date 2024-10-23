@@ -21,6 +21,11 @@ parameters: # parameters are shown up in ADO UI in a build queue time
     displayName: Skip PMC Publish
     type: boolean
     default: false
+  - name: SkipPSInfraInstallers
+    displayName: Skip Copying Archives and Installers to PSInfrastructure Public Location
+    type: boolean
+    default: false
+
 
 variables:
   - name: CDP_DEFINITION_BUILD_COUNT
@@ -262,6 +267,8 @@ extends:
       dependsOn: UpdateChangeLog
       jobs:
       - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
+        parameters:
+          SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
 
     - stage: PublishGitHubRelease
       displayName: Publish GitHub Release
