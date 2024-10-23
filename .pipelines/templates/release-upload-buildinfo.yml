@@ -29,6 +29,11 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
 
   steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
   - template: release-SetReleaseTagAndContainerName.yml
 
   - pwsh: |
