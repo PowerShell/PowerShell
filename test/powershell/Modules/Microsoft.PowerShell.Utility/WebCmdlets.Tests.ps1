@@ -2809,7 +2809,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
                 {
                     $result.Output.headers.'Content-Type' | Should -Match "application/x-www-form-urlencoded"
                     # Validate that the response Content.form field is the same as what we sent.
-                    [string]$result.Output.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = [System.Object[]]})
+                    [string]$result.Output.form | Should -Be ([string][PSCustomObject]@{$body.Split("=")[0] = 'System.Collections.Generic.List`1[System.Object]'})
                     $result.Output.data | Should -BeNullOrEmpty
                 }
                 else
