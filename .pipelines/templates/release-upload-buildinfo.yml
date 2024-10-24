@@ -8,7 +8,11 @@ jobs:
   displayName: Publish BuildInfo
   condition: succeeded()
   pool:
+    name: PowerShell1ES
     type: windows
+    isCustom: true
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
   variables:
   - name: runCodesignValidationInjection
     value: false
