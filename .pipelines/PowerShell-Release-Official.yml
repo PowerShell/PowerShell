@@ -79,12 +79,18 @@ resources:
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@templates
   parameters:
+    release: 
+      category: NonAzure
     # still using KS2 because we are not yet using a Box Product Deployment
+    # featureFlags:
+    #   LinuxHostVersion:
+    #       Network: KS2
+    #   WindowsHostVersion:
+    #       Network: KS2
     featureFlags:
-      LinuxHostVersion:
-          Network: KS2
       WindowsHostVersion:
-          Network: KS2
+        Version: 2022
+        Network: Netlock
     cloudvault:
       enabled: false
     globalSdl:
@@ -112,6 +118,8 @@ extends:
     stages:
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/release-create-msix.yml@self
 
@@ -273,12 +281,38 @@ extends:
     - stage: PublishGitHubRelease
       displayName: Publish GitHub Release
       dependsOn: BlobPublic
+      variables:
+        ob_release_environment: Production
       jobs:
       - template: /.pipelines/templates/release-githubtasks.yml@self
+    
+    - stage: PushGitTag
+      displayName: Push Git Tag
+      dependsOn: PublishGitHubRelease
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Push Git Tag
+          jobName: PushGitTag
+          instructions: |
+            Push the git tag to upstream  
+    
+    - stage: MakeDraftPublic
+      displayName: Make Draft Public
+      dependsOn: PushGitTag
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Make Draft Public
+          jobName: DraftPublic
+          instructions: |
+            Make the GitHub Release Draft Public
 
     - stage: PublishNuGet
       displayName: Publish NuGet
       dependsOn: PublishGitHubRelease
+      variables:
+        ob_release_environment: Production
       jobs:
       - template: /.pipelines/templates/release-publish-nuget.yml@self
         parameters:
