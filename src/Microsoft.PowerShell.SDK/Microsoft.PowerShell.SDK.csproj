@@ -36,7 +36,7 @@
     <PackageReference Include="System.ServiceModel.Security" Version="4.10.3" />
     <PackageReference Include="System.Private.ServiceModel" Version="4.10.3" />
     <!-- the source could not be found for the following package(s) -->
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.0-rc.2.24510.7" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.0-rc.2.24474.4" />
   </ItemGroup>
 
 </Project>
