@@ -275,7 +275,7 @@ extends:
         parameters:
           SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
 
-    - stage: PublishGitHubRelease
+    - stage: PPE_PublishGitHubRelease
       displayName: Publish GitHub Release
       # dependsOn: BlobPublic
       variables:
