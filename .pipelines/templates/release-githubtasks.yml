@@ -147,14 +147,6 @@ jobs:
       Get-ChildItem $(Pipeline.Workspace) -recurse | Select-Object -ExpandProperty FullName
     displayName: Capture downloaded artifacts
 
-  - template: /.pipelines/templates/approvalJob.yml@self
-    parameters:
-      displayName: Check Pipeline.Workspace
-      jobName: CheckPipelineWorkspace
-      dependsOnJob: GithubReleaseDraft
-      instructions: |
-        Check the Pipeline.Workspace for the downloaded artifacts
-
   - pwsh: |
       git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
     displayName: Clone Internal-Tools repository
