@@ -283,6 +283,8 @@ extends:
         ob_release_environment: PPE
       jobs:
       - template: /.pipelines/templates/release-githubtasks.yml@self
+        parameters:
+          ob_release_environemnt: $(ob_release_environment)
 
     - stage: PublishNuGet
       displayName: Publish NuGet
