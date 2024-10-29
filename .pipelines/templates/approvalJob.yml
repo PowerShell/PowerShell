@@ -25,7 +25,7 @@ jobs:
     dependsOn: ${{ parameters.dependsOnJob }}
     displayName: ${{ parameters.displayName }}
     pool:
-      type: agentless
+      type: server
     timeoutInMinutes: 4320 # job times out in 3 days
     steps:
     - task: ManualValidation@0
