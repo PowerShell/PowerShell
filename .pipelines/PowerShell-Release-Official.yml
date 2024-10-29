@@ -205,6 +205,8 @@ extends:
     - stage: ManualValidation
       dependsOn: []
       displayName: Manual Validation
+      pool:
+        type: server
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
