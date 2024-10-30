@@ -276,11 +276,10 @@ extends:
         parameters:
           SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
 
-    - stage: PPE_PublishGitHubRelease
-      displayName: PPE:Publish GitHub Release
+    - stage: PublishGitHubRelease
+      displayName: Publish GitHub Release
       variables:
-        name: ob_release_environment
-        value: PPE
+        ob_release_environment: Test
       # dependsOn: BlobPublic
       jobs:
       - template: /.pipelines/templates/release-githubtasks.yml@self
@@ -306,6 +305,8 @@ extends:
     - stage: ReleaseDocker
       dependsOn: PublishGitHubRelease
       displayName: 'Docker Release'
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -325,6 +326,8 @@ extends:
     - stage: UpdateDotnetDocker
       dependsOn: PublishGitHubRelease
       displayName: Update DotNet SDK Docker images
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -340,6 +343,8 @@ extends:
     - stage: UpdateWinGet
       dependsOn: PublishGitHubRelease
       displayName: Add manifest entry to winget
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -351,6 +356,8 @@ extends:
     - stage: PublishMsix
       dependsOn: PublishGitHubRelease
       displayName: Publish MSIX to store
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -362,6 +369,8 @@ extends:
     - stage: PublishVPack
       dependsOn: PublishGitHubRelease
       displayName: Release vPack
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -392,6 +401,8 @@ extends:
     - stage: ChangesToMaster
       displayName: Ensure changes are in GH master
       dependsOn: ['PublishNuGet', 'PublishPMC']
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -403,6 +414,8 @@ extends:
     - stage: ReleaseSnap
       displayName: Release Snap
       dependsOn: 'ChangesToMaster'
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -414,6 +427,8 @@ extends:
     - stage: ReleaseToMU
       displayName: Release to MU
       dependsOn: ['PublishNuGet', 'PublishPMC', 'ChangesToMaster']
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -424,6 +439,8 @@ extends:
     - stage: ReleaseClose
       displayName: Finish Release
       dependsOn: ['ReleaseToMU', 'ReleaseSymbols', 'ReleaseSnap']
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
