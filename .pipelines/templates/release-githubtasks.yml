@@ -1,8 +1,3 @@
-parameters:
-  - name: ob_release_environemnt
-    type: string
-    default: PPE
-
 jobs:
 - job: GithubReleaseDraft
   displayName: Create GitHub Release Draft

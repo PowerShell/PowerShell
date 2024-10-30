@@ -26,6 +26,7 @@ jobs:
     displayName: ${{ parameters.displayName }}
     pool:
       type: server
+      os: windows
     timeoutInMinutes: 4320 # job times out in 3 days
     steps:
     - task: ManualValidation@0
