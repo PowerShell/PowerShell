@@ -206,6 +206,8 @@ extends:
     - stage: ManualValidation
       dependsOn: []
       displayName: Manual Validation
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -224,6 +226,8 @@ extends:
     - stage: ReleaseAutomation
       dependsOn: []
       displayName: 'Release Automation'
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -250,6 +254,8 @@ extends:
 
     - stage: UpdateChangeLog
       displayName: Update the changelog
+      variables:
+        ob_release_environment: Test
       dependsOn:
         - ManualValidation
         - ReleaseAutomation
