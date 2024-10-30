@@ -278,9 +278,9 @@ extends:
 
     - stage: PPE_PublishGitHubRelease
       displayName: PPE:Publish GitHub Release
-      # dependsOn: BlobPublic
       variables:
         ob_release_environment: Test
+      # dependsOn: BlobPublic
       jobs:
       - template: /.pipelines/templates/release-githubtasks.yml@self
         parameters:
