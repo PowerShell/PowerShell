@@ -77,7 +77,7 @@ resources:
             - releases/*
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@templates
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates
   parameters:
     release: 
       category: NonAzure
