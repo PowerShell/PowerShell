@@ -26,7 +26,9 @@ $existingRegistrationsJson.Registrations | ForEach-Object {
     $registration = [Registration]$_
     if ($registration.Component) {
         $name = $registration.Component.Name()
-        $existingRegistrationTable.Add($name, $registration)
+        if (!$existingRegistrationTable.ContainsKey($name)) {
+            $existingRegistrationTable.Add($name, $registration)
+        }
     }
 }
 
@@ -86,6 +88,28 @@ $winDesktopSdk = 'Microsoft.NET.Sdk.WindowsDesktop'
 if (!$IsWindows) {
     $winDesktopSdk = 'Microsoft.NET.Sdk'
     Write-Warning "Always using $winDesktopSdk since this is not windows!!!"
+}
+
+function ConvertTo-SemVer {
+    param(
+        [String] $Version
+    )
+
+    [System.Management.Automation.SemanticVersion]$desiredVersion = [System.Management.Automation.SemanticVersion]::Empty
+
+    try {
+        $desiredVersion = $Version
+    } catch {
+        <#
+            Json.More.Net broke the rules and published 2.0.1.2 as 2.0.1.
+            So, I'm making the logic work for that scenario by
+            thorwing away any part that doesn't match non-pre-release semver portion
+        #>
+        $null = $Version -match '^(\d+\.\d+\.\d+).*'
+        $desiredVersion = $matches[1]
+    }
+
+    return $desiredVersion
 }
 
 function New-NugetComponent {
