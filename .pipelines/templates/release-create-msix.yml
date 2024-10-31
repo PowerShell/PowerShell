@@ -7,8 +7,10 @@ jobs:
   variables:
     - group: msixTools
     - group: 'Azure Blob variable group'
-    # - name: ob_outputDirectory
-    #   value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: ob_release_environment
+      value: Test
 
   steps:
     - template: release-SetReleaseTagandContainerName.yml@self
