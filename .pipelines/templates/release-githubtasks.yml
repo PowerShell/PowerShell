@@ -102,7 +102,7 @@ stages:
       env:
         ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
   
-    - template: release-SetReleaseTagAndContainerName.yml
+    - template: /.pipelines/templates/release-SetReleaseTagAndContainerName.yml
   
     - pwsh: |
         Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
