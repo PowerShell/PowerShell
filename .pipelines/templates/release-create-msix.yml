@@ -2,13 +2,13 @@ jobs:
 - job: CreateMSIXBundle
   displayName: Create .msixbundle file
   pool:
-    type: server
+    type: windows
 
   variables:
     - group: msixTools
     - group: 'Azure Blob variable group'
-    - name: ob_outputDirectory
-      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    # - name: ob_outputDirectory
+    #   value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
 
   steps:
     - template: release-SetReleaseTagandContainerName.yml@self
