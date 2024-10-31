@@ -2,7 +2,7 @@ jobs:
 - job: CreateMSIXBundle
   displayName: Create .msixbundle file
   pool:
-    type: windows
+    type: server
 
   variables:
     - group: msixTools
