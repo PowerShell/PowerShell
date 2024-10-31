@@ -35,7 +35,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Json.More.Net",
-          "Version": "2.0.1.2"
+          "Version": "2.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -45,7 +45,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonPointer.Net",
-          "Version": "5.0.0"
+          "Version": "5.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -55,7 +55,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "JsonSchema.Net",
-          "Version": "7.0.1"
+          "Version": "7.2.3"
         }
       },
       "DevelopmentDependency": false
@@ -65,7 +65,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Markdig.Signed",
-          "Version": "0.37.0"
+          "Version": "0.38.0"
         }
       },
       "DevelopmentDependency": false
@@ -94,18 +94,8 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "Microsoft.CodeAnalysis.Analyzers",
-          "Version": "3.3.4"
-        }
-      },
-      "DevelopmentDependency": true
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.9.2"
+          "Version": "4.11.0"
         }
       },
       "DevelopmentDependency": false
@@ -115,7 +105,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.9.2"
+          "Version": "4.11.0"
         }
       },
       "DevelopmentDependency": false
@@ -125,7 +115,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Extensions.ObjectPool",
-          "Version": "8.0.4"
+          "Version": "8.0.10"
         }
       },
       "DevelopmentDependency": false
@@ -205,7 +195,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Win32.Registry",
-          "Version": "4.7.0"
+          "Version": "5.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -225,7 +215,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Windows.Compatibility",
-          "Version": "8.0.8"
+          "Version": "8.0.10"
         }
       },
       "DevelopmentDependency": false
@@ -245,7 +235,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.android-arm.runtime.native.System.IO.Ports",
-          "Version": "9.0.0-preview.3.24172.9"
+          "Version": "9.0.0-rc.2.24473.5"
         }
       },
       "DevelopmentDependency": false
@@ -255,7 +245,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.android-arm64.runtime.native.System.IO.Ports",
-          "Version": "9.0.0-preview.3.24172.9"
+          "Version": "9.0.0-rc.2.24473.5"
         }
       },
       "DevelopmentDependency": false
@@ -265,7 +255,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.android-x64.runtime.native.System.IO.Ports",
-          "Version": "9.0.0-preview.3.24172.9"
+          "Version": "9.0.0-rc.2.24473.5"
         }
       },
       "DevelopmentDependency": false
@@ -275,7 +265,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.android-x86.runtime.native.System.IO.Ports",
-          "Version": "9.0.0-preview.3.24172.9"
+          "Version": "9.0.0-rc.2.24473.5"
         }
       },
       "DevelopmentDependency": false
@@ -305,7 +295,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.linux-bionic-arm64.runtime.native.System.IO.Ports",
-          "Version": "9.0.0-preview.3.24172.9"
+          "Version": "9.0.0-rc.2.24473.5"
         }
       },
       "DevelopmentDependency": false
@@ -315,7 +305,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.linux-bionic-x64.runtime.native.System.IO.Ports",
-          "Version": "9.0.0-preview.3.24172.9"
+          "Version": "9.0.0-rc.2.24473.5"
         }
       },
       "DevelopmentDependency": false
@@ -325,7 +315,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.linux-musl-arm.runtime.native.System.IO.Ports",
-          "Version": "9.0.0-preview.3.24172.9"
+          "Version": "9.0.0-rc.2.24473.5"
         }
       },
       "DevelopmentDependency": false
@@ -335,7 +325,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.linux-musl-arm64.runtime.native.System.IO.Ports",
-          "Version": "9.0.0-preview.3.24172.9"
+          "Version": "9.0.0-rc.2.24473.5"
         }
       },
       "DevelopmentDependency": false
@@ -345,7 +335,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.linux-musl-x64.runtime.native.System.IO.Ports",
-          "Version": "9.0.0-preview.3.24172.9"
+          "Version": "9.0.0-rc.2.24473.5"
         }
       },
       "DevelopmentDependency": false
@@ -365,7 +355,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.maccatalyst-arm64.runtime.native.System.IO.Ports",
-          "Version": "9.0.0-preview.3.24172.9"
+          "Version": "9.0.0-rc.2.24473.5"
         }
       },
       "DevelopmentDependency": false
@@ -375,7 +365,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.maccatalyst-x64.runtime.native.System.IO.Ports",
-          "Version": "9.0.0-preview.3.24172.9"
+          "Version": "9.0.0-rc.2.24473.5"
         }
       },
       "DevelopmentDependency": false
@@ -515,7 +505,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Configuration.ConfigurationManager",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -525,7 +515,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Data.Odbc",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -535,7 +525,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Data.OleDb",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -565,7 +555,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Diagnostics.EventLog",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -575,17 +565,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Diagnostics.PerformanceCounter",
-          "Version": "8.0.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Diagnostics.PerformanceCounter",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -595,7 +575,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.AccountManagement",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -625,17 +605,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "8.0.8"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Formats.Asn1",
-          "Version": "8.0.1"
+          "Version": "8.0.10"
         }
       },
       "DevelopmentDependency": false
@@ -645,7 +615,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.IO.Packaging",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -725,7 +695,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Reflection.Metadata",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -735,17 +705,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Runtime.Caching",
-          "Version": "8.0.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "System.Runtime.CompilerServices.Unsafe",
-          "Version": "6.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -765,7 +725,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Pkcs",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -785,7 +745,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Xml",
-          "Version": "8.0.1"
+          "Version": "8.0.2"
         }
       },
       "DevelopmentDependency": false
@@ -875,7 +835,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.ServiceProcess.ServiceController",
-          "Version": "8.0.0"
+          "Version": "8.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -925,7 +885,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Web.Services.Description",
-          "Version": "4.10.0"
+          "Version": "8.0.0"
         }
       },
       "DevelopmentDependency": false

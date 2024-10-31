@@ -7,8 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Json.More.Net" Version="2.0.2" />
+    <PackageReference Include="JsonPointer.Net" Version="5.0.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="9.0.0-rc.2.24473.5" />
+    <PackageReference Include="System.Reflection.Metadata" Version="8.0.1" />
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-    <PackageReference Include="Markdig.Signed" Version="0.37.0" />
+    <PackageReference Include="Markdig.Signed" Version="0.38.0" />
     <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.1" />
   </ItemGroup>
 
@@ -32,10 +40,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.9.2" />
-    <PackageReference Include="System.Threading.AccessControl" Version="9.0.0-rc.1.24431.7" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.0-rc.1.24451.1" />
-    <PackageReference Include="JsonSchema.Net" Version="7.0.4" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" />
+    <PackageReference Include="System.Threading.AccessControl" Version="9.0.0-rc.2.24473.5" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0-rc.2.24474.1" />
+    <PackageReference Include="JsonSchema.Net" Version="7.2.3" />
   </ItemGroup>
 
 </Project>
