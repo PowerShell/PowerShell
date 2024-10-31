@@ -26,7 +26,9 @@ $existingRegistrationsJson.Registrations | ForEach-Object {
     $registration = [Registration]$_
     if ($registration.Component) {
         $name = $registration.Component.Name()
-        $existingRegistrationTable.Add($name, $registration)
+        if (!$existingRegistrationTable.ContainsKey($name)) {
+            $existingRegistrationTable.Add($name, $registration)
+        }
     }
 }
 
