@@ -102,7 +102,31 @@ stages:
       env:
         ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
   
-    - template: /.pipelines/templates/release-SetReleaseTagAndContainerName.yml
+    - pwsh: |
+        $variable = 'releaseTag'
+        $branch = $ENV:BUILD_SOURCEBRANCH
+        if($branch -notmatch  '^.*((release/|rebuild/.*rebuild))')
+        {
+            throw "Branch name is not in release format: '$branch'"
+        }
+    
+        $releaseTag = $Branch -replace '^.*((release|rebuild)/)'
+        $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
+        Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
+        Write-Host -Object "##$vstsCommandString"
+      displayName: Set Release Tag
+    
+    - pwsh: |
+        $azureVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '\.', '-'
+        $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+    
+        $version = '$(ReleaseTag)'.ToLowerInvariant().Substring(1)
+        $vstsCommandString = "vso[task.setvariable variable=Version]$version"
+        Write-Host ("sending " + $vstsCommandString)
+        Write-Host "##$vstsCommandString"
+      displayName: Set container name
   
     - pwsh: |
         Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
