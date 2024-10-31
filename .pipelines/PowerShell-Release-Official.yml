@@ -118,8 +118,6 @@ extends:
     stages:
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/release-create-msix.yml@self
 
@@ -208,8 +206,6 @@ extends:
     - stage: ManualValidation
       dependsOn: []
       displayName: Manual Validation
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -228,8 +224,6 @@ extends:
     - stage: ReleaseAutomation
       dependsOn: []
       displayName: 'Release Automation'
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -256,8 +250,6 @@ extends:
 
     - stage: UpdateChangeLog
       displayName: Update the changelog
-      variables:
-        ob_release_environment: Test
       dependsOn:
         - ManualValidation
         - ReleaseAutomation
@@ -284,13 +276,9 @@ extends:
         parameters:
           SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
 
-    - stage: PublishGitHubRelease
-      displayName: Publish GitHub Release
-      variables:
-        ob_release_environment: Test
+    
+    - template: /.pipelines/templates/release-githubtasks.yml@self
       # dependsOn: BlobPublic
-      jobs:
-      - template: /.pipelines/templates/release-githubtasks.yml@self
 
     - stage: PublishNuGet
       displayName: Publish NuGet
@@ -311,8 +299,6 @@ extends:
     - stage: ReleaseDocker
       dependsOn: PublishGitHubRelease
       displayName: 'Docker Release'
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -332,8 +318,6 @@ extends:
     - stage: UpdateDotnetDocker
       dependsOn: PublishGitHubRelease
       displayName: Update DotNet SDK Docker images
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -349,8 +333,6 @@ extends:
     - stage: UpdateWinGet
       dependsOn: PublishGitHubRelease
       displayName: Add manifest entry to winget
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -362,8 +344,6 @@ extends:
     - stage: PublishMsix
       dependsOn: PublishGitHubRelease
       displayName: Publish MSIX to store
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -375,8 +355,6 @@ extends:
     - stage: PublishVPack
       dependsOn: PublishGitHubRelease
       displayName: Release vPack
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -407,8 +385,6 @@ extends:
     - stage: ChangesToMaster
       displayName: Ensure changes are in GH master
       dependsOn: ['PublishNuGet', 'PublishPMC']
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -420,8 +396,6 @@ extends:
     - stage: ReleaseSnap
       displayName: Release Snap
       dependsOn: 'ChangesToMaster'
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -433,8 +407,6 @@ extends:
     - stage: ReleaseToMU
       displayName: Release to MU
       dependsOn: ['PublishNuGet', 'PublishPMC', 'ChangesToMaster']
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -445,8 +417,6 @@ extends:
     - stage: ReleaseClose
       displayName: Finish Release
       dependsOn: ['ReleaseToMU', 'ReleaseSymbols', 'ReleaseSnap']
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
