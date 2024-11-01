@@ -283,7 +283,7 @@ extends:
 
     - stage: PublishNuGet
       displayName: Publish NuGet
-      dependsOn: PublishGitHubRelease
+      # dependsOn: PublishGitHubRelease
       jobs:
       - template: /.pipelines/templates/release-publish-nuget.yml@self
         parameters:
@@ -291,14 +291,14 @@ extends:
 
     - stage: PublishPMC
       displayName: Publish PMC
-      dependsOn: PublishGitHubRelease
+      # dependsOn: PublishGitHubRelease
       jobs:
       - template: /.pipelines/templates/release-publish-pmc.yml@self
         parameters:
           skipPublish: ${{ parameters.SkipPMCPublish }}
 
     - stage: ReleaseDocker
-      dependsOn: PublishGitHubRelease
+      # dependsOn: PublishGitHubRelease
       displayName: 'Docker Release'
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -317,7 +317,7 @@ extends:
             Kickoff docker release
 
     - stage: UpdateDotnetDocker
-      dependsOn: PublishGitHubRelease
+      # dependsOn: PublishGitHubRelease
       displayName: Update DotNet SDK Docker images
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -332,7 +332,7 @@ extends:
             4. create PR targeting nightly branch
 
     - stage: UpdateWinGet
-      dependsOn: PublishGitHubRelease
+      # dependsOn: PublishGitHubRelease
       displayName: Add manifest entry to winget
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -343,7 +343,7 @@ extends:
             This is typically done by the community 1-2 days after the release.
 
     - stage: PublishMsix
-      dependsOn: PublishGitHubRelease
+      # dependsOn: PublishGitHubRelease
       displayName: Publish MSIX to store
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -354,7 +354,7 @@ extends:
             Ask Steve to release MSIX bundle package to Store
 
     - stage: PublishVPack
-      dependsOn: PublishGitHubRelease
+      # dependsOn: PublishGitHubRelease
       displayName: Release vPack
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -372,13 +372,13 @@ extends:
     #   - template: templates/release-UpdateDepsJson.yml
 
     - stage: UploadBuildInfoJson
-      dependsOn: PublishGitHubRelease
+      # dependsOn: PublishGitHubRelease
       displayName: Upload BuildInfo.json
       jobs:
       - template: /.pipelines/templates/release-upload-buildinfo.yml@self
 
     - stage: ReleaseSymbols
-      dependsOn: PublishGitHubRelease
+      # dependsOn: PublishGitHubRelease
       displayName: Release Symbols
       jobs:
       - template: /.pipelines/templates/release-symbols.yml@self
