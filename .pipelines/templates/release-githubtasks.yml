@@ -56,7 +56,7 @@ stages:
           artifactName: drop_windows_package_package_win_arm64
         - input: pipelineArtifact
           pipeline: PSPackagesOfficial
-          artifactName: drop_windows_package_package_win_fxdendent
+          artifactName: drop_windows_package_package_win_fxdependent
         - input: pipelineArtifact
           pipeline: PSPackagesOfficial
           artifactName: drop_windows_package_package_win_fxdependentWinDesktop
