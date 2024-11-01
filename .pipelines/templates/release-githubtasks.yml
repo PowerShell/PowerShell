@@ -242,33 +242,33 @@ stages:
         Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder $(PackagesRoot) -Token $(GitHubReleasePat)
       displayName: Publish Release Draft
   
-  - job: PushGitTag
-    displayName: Push Git Tag
-    pool:
-      type: server
-    timeoutInMinutes: 4320 # job times out in 3 days
-    steps:
-    - task: ManualValidation@0
-      displayName: Push Git Tag
-      timeoutInMinutes: 2880
-      inputs:
-        instructions: Push the git tag to upstream
-        onTimeout: reject
-        notifyUsers: ''
-
-  - job: DraftPublic
-    displayName: Make Draft Public
-    pool:
-      type: server
-    timeoutInMinutes: 4320 # job times out in 3 days
-    steps:
-    - task: ManualValidation@0
-      displayName: Make Draft Public
-      timeoutInMinutes: 2880
-      inputs:
-        instructions: Make the GitHub Release Draft Public
-        onTimeout: reject
-        notifyUsers: ''
+  # - job: PushGitTag
+  #   displayName: Push Git Tag
+  #   pool:
+  #     type: server
+  #   timeoutInMinutes: 4320 # job times out in 3 days
+  #   steps:
+  #   - task: ManualValidation@0
+  #     displayName: Push Git Tag
+  #     timeoutInMinutes: 2880
+  #     inputs:
+  #       instructions: Push the git tag to upstream
+  #       onTimeout: reject
+  #       notifyUsers: ''
+# 
+  # - job: DraftPublic
+  #   displayName: Make Draft Public
+  #   pool:
+  #     type: server
+  #   timeoutInMinutes: 4320 # job times out in 3 days
+  #   steps:
+  #   - task: ManualValidation@0
+  #     displayName: Make Draft Public
+  #     timeoutInMinutes: 2880
+  #     inputs:
+  #       instructions: Make the GitHub Release Draft Public
+  #       onTimeout: reject
+  #       notifyUsers: ''
 
   # - template: /.pipelines/templates/approvalJob.yml@self
   #   parameters:

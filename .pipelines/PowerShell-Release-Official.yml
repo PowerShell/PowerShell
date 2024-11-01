@@ -279,7 +279,7 @@ extends:
           SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
 
     - template: /.pipelines/templates/release-githubtasks.yml@self
-      # dependsOn: BlobPublic
+     # dependsOn: BlobPublic
 
     - stage: PublishNuGet
       displayName: Publish NuGet
