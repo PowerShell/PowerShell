@@ -53,9 +53,6 @@ stages:
           artifactName: drop_mac_package_sign_package_macOS_x64
         - input: pipelineArtifact
           pipeline: PSPackagesOfficial
-          artifactName: drop_mac_package_sign_package_windows_x64
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
           artifactName: drop_windows_package_package_win_arm64
         - input: pipelineArtifact
           pipeline: PSPackagesOfficial
