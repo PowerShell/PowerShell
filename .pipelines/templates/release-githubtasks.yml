@@ -243,7 +243,6 @@ stages:
       displayName: Publish Release Draft
   
   - job: PushGitTag
-    dependsOn: GitHubReleaseDraft
     displayName: Push Git Tag
     pool:
       type: server
@@ -258,7 +257,6 @@ stages:
         notifyUsers: ''
 
   - job: DraftPublic
-    dependsOn: PushGitTag
     displayName: Make Draft Public
     pool:
       type: server
