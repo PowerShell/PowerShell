@@ -225,6 +225,7 @@ stages:
   
     - task: PowerShell@2
       inputs:
+        pwsh: true
         targetType: inline
         script: |
           Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
