@@ -118,6 +118,8 @@ extends:
     stages:
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
+      variables:
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/release-create-msix.yml@self
 
@@ -276,7 +278,6 @@ extends:
         parameters:
           SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
 
-    
     - template: /.pipelines/templates/release-githubtasks.yml@self
       # dependsOn: BlobPublic
 
