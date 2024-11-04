@@ -889,9 +889,15 @@ function Invoke-InitializeContainerStage {
 
     # For PRs set the seed to the PR number so that the image is always the same
     $seed = $env:SYSTEM_PULLREQUEST_PULLREQUESTID
+
     if(!$seed) {
       # for non-PRs use the integer identifier of the build as the seed.
       $seed = $fallbackSeed
+    }
+
+    # cut down to 32 bits and keep the most varying parts, which are lower bits
+    if ($seed -ge [Int32]::MaxValue) {
+        $seed = [int]($seed -band [int]::MaxValue)
     }
 
     Write-Verbose "Seed: $seed" -Verbose
