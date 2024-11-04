@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Json.More.Net" Version="2.0.2" />
+    <PackageReference Include="JsonPointer.Net" Version="5.0.2" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="9.0.0-preview.7.24405.7" />
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
     <PackageReference Include="Markdig.Signed" Version="0.33.0" />
     <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.1" />
@@ -33,8 +36,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.9.2" />
-    <PackageReference Include="System.Threading.AccessControl" Version="9.0.0-preview.6.24327.7" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.0-preview.6.24327.6" />
+    <PackageReference Include="System.Threading.AccessControl" Version="9.0.0-preview.7.24405.7" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0-preview.7.24405.4" />
     <PackageReference Include="JsonSchema.Net" Version="7.0.4" />
   </ItemGroup>
 

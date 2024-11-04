@@ -6,10 +6,13 @@
     <LangVersion>11.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet.Annotations" Version="0.13.12" />
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="MarkdownLog.NS20" Version="0.10.1" />
+    <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="2.2.343001" />
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.9" />
-    <PackageReference Include="Perfolizer" Version="0.3.5" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+    <PackageReference Include="Perfolizer" Version="0.3.17" />
   </ItemGroup>
 </Project>
