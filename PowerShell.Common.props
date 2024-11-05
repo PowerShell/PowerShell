@@ -14,13 +14,37 @@
   <Target Name="GetPSCoreVersionFromGit"
     BeforeTargets="_GenerateRestoreProjectSpec;GenerateNuspec;BeforeBuild"
   >
-
-    <Exec Command='git describe --abbrev=60 --long'
+    <ConvertToAbsolutePath Paths="$(MSBuildThisFileDirectory)tools\metadata.json">
+      <Output TaskParameter="AbsolutePaths" PropertyName="metadataPath"/>
+    </ConvertToAbsolutePath>
+    <Message Text='Getting NextReleaseTag from "$(metadataPath)".' />
+    <Exec Command='pwsh -noprofile -nologo -c "Get-Content $(metadataPath) | ConvertFrom-Json | Select-Object -ExpandProperty nextreleasetag"'
           WorkingDirectory="$(MSBuildProjectDirectory)"
           ConsoleToMSBuild="true"
           StandardOutputImportance="Low">
-      <Output TaskParameter="ConsoleOutput" PropertyName="PowerShellVersion" />
+      <Output TaskParameter="ConsoleOutput" PropertyName="PowerShellTag" />
     </Exec>
+    <Message Text='PowerShellTag: $(PowerShellTag)' />
+    <Exec Command='git rev-parse HEAD'
+          WorkingDirectory="$(MSBuildProjectDirectory)"
+          ConsoleToMSBuild="false"
+          StandardOutputImportance="Low"
+          StandardErrorImportance="Low"
+          IgnoreExitCode="true"
+          IgnoreStandardErrorWarningFormat="true"
+          EchoOff="true"
+          >
+      <Output TaskParameter="ConsoleOutput" PropertyName="PowerShellCommitId" />
+    </Exec>
+    <Message Text='PowerShellCommitId: $(PowerShellCommitId)' />
+    <PropertyGroup>
+      <FakeCommitId >547a782e838b1902c5d81b4ad958f471ded58ea8</FakeCommitId>
+      <PowerShellVersion Condition = "'$(PowerShellCommitId)' != ''">$(PowerShellTag)-1-g$(PowerShellCommitId)</PowerShellVersion>
+      <PowerShellVersion Condition = "'$(PowerShellCommitId)' == ''">$(PowerShellTag)-1-g$(FakeCommitId)</PowerShellVersion>
+    </PropertyGroup>
+    <!-- v7.4.5-47-gfa90c8109030f4bb489e3a020217e75f30b5bb02 -->
+     <!-- <tag>-<commits>-g<hash> -->
+    <Message Text='PowerShellVersion: $(PowerShellVersion)' />
 
     <PropertyGroup Condition = "'$(ReleaseTag)' != ''">
       <!--

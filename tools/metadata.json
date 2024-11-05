@@ -4,7 +4,7 @@
   "ServicingReleaseTag": "v7.0.13",
   "ReleaseTag": "v7.4.0",
   "LTSReleaseTag" : ["v7.2.13"],
-  "NextReleaseTag": "v7.4.0-preview.5",
+  "NextReleaseTag": "v7.4.99-preview.1",
   "LTSRelease": { "Latest": true, "Package": true },
   "StableRelease":  { "Latest": true, "Package": true }
 }
