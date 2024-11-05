@@ -42,8 +42,6 @@
       <PowerShellVersion Condition = "'$(PowerShellCommitId)' != ''">$(PowerShellTag)-1-g$(PowerShellCommitId)</PowerShellVersion>
       <PowerShellVersion Condition = "'$(PowerShellCommitId)' == ''">$(PowerShellTag)-1-g$(FakeCommitId)</PowerShellVersion>
     </PropertyGroup>
-    <!-- v7.4.5-47-gfa90c8109030f4bb489e3a020217e75f30b5bb02 -->
-     <!-- <tag>-<commits>-g<hash> -->
     <Message Text='PowerShellVersion: $(PowerShellVersion)' />
 
     <PropertyGroup Condition = "'$(ReleaseTag)' != ''">
