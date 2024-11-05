@@ -763,7 +763,7 @@ function Switch-PSNugetConfig {
     } elseif ( $Source -eq 'NuGetOnly') {
         New-NugetConfigFile -NugetPackageSource $nugetorg   -Destination "$PSScriptRoot/" @extraParams
         New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/" @extraParams
-        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams        
+        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } elseif ( $Source -eq 'Private') {
         $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'; Name = 'powershell' }
 
@@ -1450,6 +1450,7 @@ function Start-PSPester {
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
 
+    $command = "Write-Verbose `"PowerShell Version under test: `$(`$PSVersionTable.PSVersion)`" -Verbose;"
     # Disable telemetry for all startups of pwsh in tests
     $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 'yes';"
     if ($Terse)
