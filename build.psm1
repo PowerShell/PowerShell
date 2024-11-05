@@ -1451,7 +1451,7 @@ function Start-PSPester {
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
 
-    $command = "Write-Verbose `"PowerShell Version under test: `$($PSVersionTable.PSVersion)`" -Verbose;"
+    $command = "Write-Verbose `"PowerShell Version under test: `$(`$PSVersionTable.PSVersion)`" -Verbose;"
     # Disable telemetry for all startups of pwsh in tests
     $command += "`$env:POWERSHELL_TELEMETRY_OPTOUT = 'yes';"
     if ($Terse)
