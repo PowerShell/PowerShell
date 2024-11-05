@@ -9,7 +9,7 @@ stages:
     condition: succeeded()
     pool:
       type: release
-      os: linux
+      os: windows
     templateContext:
       inputs:
         - input: pipelineArtifact
@@ -98,12 +98,13 @@ stages:
     #   clean: true
     #   env:
     #     ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
-    - task: Bash@3
-      inputs:
-        targetType: inline
-        script: |
-          sudo tdnf install -y powershell
-      displayName: Install PowerShell
+    # - task: Bash@3
+    #   inputs:
+    #     targetType: inline
+    #     script: |
+    #       sudo tdnf install -y powershell
+    #   displayName: Install PowerShell
+
     - task: PowerShell@2
       inputs:
         targetType: inline
