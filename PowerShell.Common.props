@@ -38,7 +38,7 @@
     </Exec>
     <Message Text='PowerShellCommitId: $(PowerShellCommitId)' />
     <PropertyGroup>
-      <FakeCommitId >547a782e838b1902c5d81b4ad958f471ded58ea8</FakeCommitId>
+      <FakeCommitId>547a782e838b1902c5d81b4ad958f471ded58ea8</FakeCommitId>
       <PowerShellVersion Condition = "'$(PowerShellCommitId)' != ''">$(PowerShellTag)-1-g$(PowerShellCommitId)</PowerShellVersion>
       <PowerShellVersion Condition = "'$(PowerShellCommitId)' == ''">$(PowerShellTag)-1-g$(FakeCommitId)</PowerShellVersion>
     </PropertyGroup>
