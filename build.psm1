@@ -1433,6 +1433,7 @@ function Start-PSPester {
         }
     }
 
+    Write-Verbose "Host PowerShell Version: $($PSVersionTable.PSVersion)" -Verbose
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
     if(!$SkipTestToolBuild.IsPresent)
     {
