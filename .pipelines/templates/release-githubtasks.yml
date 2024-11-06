@@ -108,7 +108,7 @@ stages:
       inputs:
         targetType: inline
         script: |
-          git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShell/_git/PowerShell '$(Pipeline.Workspace)/PowerShell'
+          git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/PowerShell '$(Pipeline.Workspace)/PowerShell'
           cd $(Pipeline.Workspace)/PowerShell
           git checkout $ENV:BUILD_SOURCEBRANCH
       displayName: checkout
