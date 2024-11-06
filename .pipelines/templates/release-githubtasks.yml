@@ -104,6 +104,7 @@ stages:
     #     script: |
     #       sudo tdnf install -y powershell
     #   displayName: Install PowerShell
+
     - task: PowerShell@2
       inputs:
         targetType: inline
@@ -245,7 +246,21 @@ stages:
         script: |
           Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
           $releaseVersion = '$(ReleaseTag)' -replace '^v',''
+          Write-Verbose -Verbose "Release Version: $releaseVersion"
+          
+          Write-Verbose -Verbose "Moving packages to staging directory"
+          $packagesRoot = "$(Pipeline.Workspace)/PSPackagesOfficial"
+          New-Item -Path $packagesRoot -ItemType Directory -Force > $null
+          Get-ChildItem -Path $(Pipeline.Workspace) | 
+            Where-Object { $_.Name -math "powershell-$(releaseVersion)-*" }
+            ForEach-Object {
+              Move-Item -Path $_.FullName -Destination $packagesRoot
+            }
 
+          Write-Verbose -Verbose "List all packages in the staging directory"
+          Get-ChildItem -Path $packagesRoot -Recurse | Select-Object -ExpandProperty FullName
+
+          Write-Verbose -Verbose "Added Class SemanticVersion because pwsh 7+ is not available"
           class SemanticVersion {
             [int]$Major
             [int]$Minor
@@ -306,7 +321,7 @@ stages:
         
           Write-Verbose -Verbose "Selected content: `n$clContent"
         
-          Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder $(PackagesRoot) -Token $(GitHubReleasePat)
+          Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder $packagesRoot -Token $(GitHubReleasePat)
       displayName: Publish Release Draft
   
   # - job: PushGitTag
