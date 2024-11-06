@@ -256,6 +256,7 @@ stages:
             ForEach-Object {
               Move-Item -Path $_.FullName -Destination $packagesRoot
             }
+          Move-Item -Path $(Pipeline.Workspace)/hashes.sha256 -Destination $packagesRoot
 
           Write-Verbose -Verbose "List all packages in the staging directory"
           Get-ChildItem -Path $packagesRoot -Recurse | Select-Object -ExpandProperty FullName
@@ -320,6 +321,8 @@ stages:
             } | Out-String
         
           Write-Verbose -Verbose "Selected content: `n$clContent"
+
+          $clContent = "Testing... DeployBox... `n`n" + $clContent
         
           Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder $packagesRoot -Token $(GitHubReleasePat)
       displayName: Publish Release Draft
