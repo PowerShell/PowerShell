@@ -212,7 +212,7 @@ stages:
           New-Item -Path $packagesRoot -ItemType Directory -Force > $null
 
           Get-ChildItem -Path $(Pipeline.Workspace) | 
-            Where-Object { $_.Name -match "powershell-$(releaseVersion)-*" } |
+            Where-Object { $_.Name -match "powershell-$releaseVersion-*" } |
             ForEach-Object {
               Move-Item -Path $_.FullName -Destination $packagesRoot
             }
