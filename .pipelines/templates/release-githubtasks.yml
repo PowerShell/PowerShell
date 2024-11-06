@@ -329,6 +329,251 @@ stages:
           Write-Verbose -Verbose "Selected content: `n$clContent"
 
           $clContent = "Testing... DeployBox... `n`n" + $clContent
+          
+          function Find-Release {
+            [CmdletBinding(DefaultParameterSetName="Default")]
+            param(
+              [Parameter(Mandatory)]
+              [string]$Tag
+            )
+
+            DynamicParam {
+              Get-CommonParameters
+            }
+
+            Begin {
+              $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
+            }
+
+            End {
+              $maxRetries = 10
+              $retryIntervalSec = 5
+              $attempt = 0
+              $success = $false
+              while (-not $success -and $attempt -lt $maxRetries) {
+                try {
+                  $Result = Invoke-RestMethod -Headers $AuthHeader -Uri "https://api.github.com/repos/$User/$Repository/releases"
+                  $success = $true
+                } catch {
+                  $attempt++
+                  if ($attempt -lt $maxRetries) {
+                    Start-Sleep -Seconds $retryIntervalSec
+                  } else {
+                    throw "Failed to retrieve releases after $maxRetries attempts."
+                  }
+                }
+              }
+
+              $Releases = $Result | ConvertFrom-Json
+              foreach ($Item in $Releases) {
+                if ($Item.tag_name -eq $Tag) {
+                  Write-Verbose ("Release $Tag is found, upload_url=" + $Item.upload_url) -Verbose
+                  return $Item.id
+                }
+              }
+            }
+          }
+
+          function New-Release {
+            [CmdletBinding(DefaultParameterSetName="Default")]
+            param(
+              [Parameter(Mandatory)]
+              [string]$Tag,
+      
+              [Parameter(Mandatory)]
+              [string]$Name,
+      
+              [Parameter(Mandatory)]
+              [string]$Description
+            )
+        
+            DynamicParam {
+              Get-CommonParameters
+            }
+        
+            Begin {
+              $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
+            }
+
+            End {
+              $maxRetries = 10
+              $retryIntervalSec = 5
+              $attempt = 0
+              $success = $false
+      
+              $Body = @{
+                tag_name = $Tag
+                name = $Name
+                body = $Description
+                draft = $true
+                prerelease = $false
+              }
+      
+              $BodyInJson = $Body | ConvertTo-Json
+      
+              while (-not $success -and $attempt -lt $maxRetries) {
+                try {
+                  $Result = Invoke-RestMethod -Headers $AuthHeader -Method Post -Body $BodyInJson -Uri "https://api.github.com/repos/$User/$Repository/releases"
+                  $success = $true
+                } catch {
+                  $attempt++
+                  if ($attempt -lt $maxRetries) {
+                    Start-Sleep -Seconds $retryIntervalSec
+                  } else {
+                    throw "Failed to create release after $maxRetries attempts."
+                  }
+                }
+              }
+      
+              $Release = $Result | ConvertFrom-Json
+              return $Release.id
+            }
+          }
+
+          function Find-ReleaseAsset {
+            [CmdletBinding(DefaultParameterSetName="Default")]
+            param(
+              [Parameter(Mandatory)]
+              [int]$ReleaseId,
+      
+              [Parameter(Mandatory)]
+              [string]$AssetName
+            )
+        
+            DynamicParam {
+              Get-CommonParameters
+            }
+        
+            Begin {
+              $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
+            }
+
+            End {
+              $maxRetries = 10
+              $retryIntervalSec = 5
+              $attempt = 0
+              $success = $false
+      
+              while (-not $success -and $attempt -lt $maxRetries) {
+                try {
+                  $Result = Invoke-RestMethod -Headers $AuthHeader -Uri "https://api.github.com/repos/$User/$Repository/releases/$ReleaseId/assets"
+                  $success = $true
+                } catch {
+                  $attempt++
+                  if ($attempt -lt $maxRetries) {
+                      Start-Sleep -Seconds $retryIntervalSec
+                  } else {
+                      throw "Failed to retrieve assets after $maxRetries attempts."
+                  }
+                }
+              }
+      
+              $Assets = $Result | ConvertFrom-Json
+              foreach ($Item in $Assets) {
+                if ($Item.name -eq $AssetName) {
+                  Write-Verbose "Asset $AssetName was already uploaded, id: $($Item.id)" -Verbose
+                  Write-Verbose ("  Asset is ready for download: " + $Item.browser_download_url) -Verbose
+                  return $Item.id
+                }
+              }
+            }
+          }
+
+          function Push-ReleaseAsset {
+            [CmdletBinding(DefaultParameterSetName="Default")]
+            param(
+              [Parameter(Mandatory)]
+              [int]$ReleaseId,
+      
+              [Parameter(Mandatory)]
+              [string]$AssetPath,
+      
+              [switch]$PassThru
+            )
+        
+            DynamicParam {
+              Get-CommonParameters
+            }
+        
+            Begin {
+              $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
+            }
+        
+            End {
+              $maxRetries = 10
+              $retryIntervalSec = 5
+              $attempt = 0
+              $success = $false
+      
+              $type_7z  = "application/octet-stream"
+              $type_exe = "application/x-msdownload"
+      
+              $AssetName = Split-Path $AssetPath -Leaf
+      
+              if ([System.IO.Path]::GetExtension($AssetName) -eq ".7z") {
+                $content_type = $type_7z
+              } else {
+                $content_type = $type_exe
+              }
+      
+              $Header = $AuthHeader + @{"Content-Type"=$content_type; "name"=$AssetName;}
+              $Uri = "https://uploads.github.com/repos/$User/$Repository/releases/$ReleaseId/assets?name=$AssetName"
+      
+              $Body = [System.IO.File]::ReadAllBytes($AssetPath)
+      
+              while (-not $success -and $attempt -lt $maxRetries) {
+                try {
+                  $Result = Invoke-RestMethod -Headers $Header -Method Post -Body $Body -Uri $Uri
+                  $success = $true
+                } catch {
+                  $attempt++
+                  if ($attempt -lt $maxRetries) {
+                      Start-Sleep -Seconds $retryIntervalSec
+                  } else {
+                      throw "Failed to upload asset after $maxRetries attempts."
+                  }
+                }
+              }
+      
+              if ($Result.StatusCode -eq 201) {
+                $Content = $Result | ConvertFrom-Json
+                Write-Host "'$AssetName' -- Upload succeeded" -ForegroundColor Green
+                Write-Verbose -Message "   Download URL: $($Content.browser_download_url)"
+              } else {
+                Write-Host "'$AssetName' -- Upload failed with StatusCode $($Result.StatusCode)" -ForegroundColor Red
+              }
+      
+              ## Pass through the HTTP result if '-PassThru' is specified
+              if ($PassThru) { return $Result }
+            }
+          }
+
+          function Get-CommonParameters {
+            $ParamDict = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
+
+            ## Add the '-User' parameter
+            ## [Parameter(Mandatory)]
+            ## [string]$User
+            $UserAtts = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
+            $UserAtts.Add([System.Management.Automation.Parameter]@{Mandatory = $true}) > $null
+            $ParamDict.Add("User", [System.Management.Automation.RuntimeDefinedParameter]::new("User", [string], $UserAtts)) > $null
+
+            ## Add the '-Repository' parameter
+            ## [Parameter(Mandatory)]
+            ## [string]$Repository
+            $RepositoryAtts = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
+            $RepositoryAtts.Add([System.Management.Automation.Parameter]@{Mandatory = $true}) > $null
+            $ParamDict.Add("Repository", [System.Management.Automation.RuntimeDefinedParameter]::new("Repository", [string], $RepositoryAtts)) > $null
+
+            ## Add the '-Token' parameter
+            ## [Parameter(Mandatory, ParameterSetName="UseSpecifiedToken")]
+            ## [string]$Token
+            $TokenAtts = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
+            $TokenAtts.Add([System.Management.Automation.Parameter]@{Mandatory = $true; ParameterSetName="UseSpecifiedToken"}) > $null
+            $ParamDict.Add("Token", [System.Management.Automation.RuntimeDefinedParameter]::new("Token", [string], $TokenAtts)) > $null
+
+            return $ParamDict
+          }
         
           Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder "$(Pipeline.Workspace)/PSPackagesOfficial" -Token $(GitHubReleasePat)
       displayName: Publish Release Draft
