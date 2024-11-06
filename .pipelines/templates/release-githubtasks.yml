@@ -235,8 +235,38 @@ stages:
         script: |
           Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
           $releaseVersion = '$(ReleaseTag)' -replace '^v',''
-          $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
+
+          class SemanticVersion {
+            [int]$Major
+            [int]$Minor
+            [int]$Patch
+            [string]$PreReleaseLabel
+
+            SemanticVersion([string]$releaseVersion) {
+              $versionParts = $releaseVersion -split '[.-]'
+              for($i = 0; $i -lt $versionParts.Count; $i++) {
+                if ($i -eq 0) {
+                    $this.Major = [int]$versionParts[$i]
+                } elseif ($i -eq 1) {
+                    $this.Minor = [int]$versionParts[$i]
+                } elseif ($i -eq 2) {
+                  $this.Patch = [int]$versionParts[$i]
+                } elseif ($i -eq 3) {
+                  $this.PreReleaseLabel = $versionParts[$i..($versionParts.Count - 1)] -join '.'
+                }
+              }
+            }
         
+            [string] ToString() {
+                $version = "$($this.Major).$($this.Minor).$($this.Patch)"
+                if ($this.PreReleaseLabel) {
+                    $version += "-$($this.PreReleaseLabel)"
+                }
+                return $version
+            }
+          }
+
+          $semanticVersion = [SemanticVersion]::new($releaseVersion)
           $isPreview = $semanticVersion.PreReleaseLabel -ne $null
         
           $fileName = if ($isPreview) {
