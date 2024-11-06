@@ -201,12 +201,31 @@ stages:
         script: |
           git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
       displayName: Clone Internal-Tools repository
-  
+
     - task: PowerShell@2
       inputs:
         targetType: inline
         script: |
-          $Path = "$(System.ArtifactsDirectory)"
+          $releaseVersion = '$(ReleaseTag)' -replace '^v',''
+          Write-Verbose -Verbose "Moving packages to staging directory"
+          $packagesRoot = "$(Pipeline.Workspace)/PSPackagesOfficial"
+          New-Item -Path $packagesRoot -ItemType Directory -Force > $null
+
+          Get-ChildItem -Path $(Pipeline.Workspace) | 
+            Where-Object { $_.Name -match "powershell-$(releaseVersion)-*" } |
+            ForEach-Object {
+              Move-Item -Path $_.FullName -Destination $packagesRoot
+            }
+
+          Write-Verbose -Verbose "List all packages in the staging directory"
+          Get-ChildItem -Path $packagesRoot -Recurse | Select-Object -ExpandProperty FullName
+      displayName: Move packages to staging directory
+
+    - task: PowerShell@2
+      inputs:
+        targetType: inline
+        script: |
+          $Path = "$(Pipeline.Workspace)/PSPackagesOfficial"
           $OutputPath = Join-Path $Path 'hashes.sha256'
           $srcPaths = @($Path)
           $packages  = Get-ChildItem -Path $srcPaths -Include * -Recurse -File
@@ -247,19 +266,6 @@ stages:
           Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
           $releaseVersion = '$(ReleaseTag)' -replace '^v',''
           Write-Verbose -Verbose "Release Version: $releaseVersion"
-          
-          Write-Verbose -Verbose "Moving packages to staging directory"
-          $packagesRoot = "$(Pipeline.Workspace)/PSPackagesOfficial"
-          New-Item -Path $packagesRoot -ItemType Directory -Force > $null
-          Get-ChildItem -Path $(Pipeline.Workspace) | 
-            Where-Object { $_.Name -match "powershell-$(releaseVersion)-*" } |
-            ForEach-Object {
-              Move-Item -Path $_.FullName -Destination $packagesRoot
-            }
-          Move-Item -Path $(Pipeline.Workspace)/hashes.sha256 -Destination $packagesRoot
-
-          Write-Verbose -Verbose "List all packages in the staging directory"
-          Get-ChildItem -Path $packagesRoot -Recurse | Select-Object -ExpandProperty FullName
 
           Write-Verbose -Verbose "Added Class SemanticVersion because pwsh 7+ is not available"
           class SemanticVersion {
