@@ -104,6 +104,14 @@ stages:
     #     script: |
     #       sudo tdnf install -y powershell
     #   displayName: Install PowerShell
+    - task: PowerShell@2
+      inputs:
+        targetType: inline
+        script: |
+          git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShell/_git/PowerShell '$(Pipeline.Workspace)/PowerShell'
+          cd $(Pipeline.Workspace)/PowerShell
+          git checkout $ENV:BUILD_SOURCEBRANCH
+      displayName: checkout
 
     - task: PowerShell@2
       inputs:
@@ -188,13 +196,6 @@ stages:
       inputs:
         targetType: inline
         script: |
-          Get-ChildItem $(Pipeline.Workspace) -recurse | Select-Object -ExpandProperty FullName
-      displayName: Capture downloaded artifacts
-  
-    - task: PowerShell@2
-      inputs:
-        targetType: inline
-        script: |
           git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
       displayName: Clone Internal-Tools repository
   
@@ -228,6 +229,13 @@ stages:
           Write-Host "sending " + $vstsCommandString
           Write-Host "##$vstsCommandString"
       displayName: 'Set release version'
+
+    - task: PowerShell@2
+      inputs:
+        targetType: inline
+        script: |
+          Get-ChildItem $(Pipeline.Workspace) -recurse | Select-Object -ExpandProperty FullName
+      displayName: List all files in the workspace
   
     - task: PowerShell@2
       inputs:
