@@ -110,8 +110,10 @@ stages:
         script: |
           git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/PowerShell '$(Pipeline.Workspace)/PowerShell'
           cd $(Pipeline.Workspace)/PowerShell
-          git checkout $ENV:BUILD_SOURCEBRANCH
-      displayName: checkout
+          $branchParts = $ENV:BUILD_SOURCEBRANCH -split '/'
+          $branchName = "$($branchParts[-2])/$($branchParts[-1])"
+          git checkout $branchName
+      displayName: Checkout repository
 
     - task: PowerShell@2
       inputs:
