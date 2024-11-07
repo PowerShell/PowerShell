@@ -353,7 +353,9 @@ stages:
 
               while (-not $success -and $attempt -lt $maxRetries) {
                 try {
+                  Write-Verbose -Message "Using AuthHeader: $AuthHeader" -Verbose
                   $Result = Invoke-RestMethod -Headers $AuthHeader -Uri "https://api.github.com/repos/$User/$Repository/releases"
+                  Write-Verbose -Message "Result from Invoke-RestMethod: $Result" -Verbose
                   $success = $true
                 } catch {
                   $attempt++
@@ -365,9 +367,9 @@ stages:
                 }
               }
 
-              if ($Result -and $Result.Content) {
+              if (-not [string]::IsNullOrWhiteSpace($Result.Content)) {
                 try {
-                  Write-Verbose -Message "This is the Response Content: $Result.Content" -Verbose
+                  Write-Verbose -Message "This is the Response Content: $($Result.Content)" -Verbose
                   $Releases = $Result.Content | ConvertFrom-Json
                 } catch {
                   Write-Verbose -Message "This was the Response: $Result" -Verbose
@@ -438,9 +440,9 @@ stages:
                 }
               }
               
-              if ($Result -and $Result.Content) {
+              if (-not [string]::IsNullOrWhiteSpace($Result.Content)) {
                 try {
-                  Write-Verbose -Message "This is the Response Content: $Result.Content" -Verbose
+                  Write-Verbose -Message "This is the Response Content: $($Result.Content)" -Verbose
                   $Release = $Result | ConvertFrom-Json
                 } catch {
                   Write-Verbose -Message "This was the Response: $Result" -Verbose
@@ -494,9 +496,9 @@ stages:
                 }
               }
 
-              if ($Result -and $Result.Content) {
+              if (-not [string]::IsNullOrWhiteSpace($Result.Content)) {
                 try {
-                  Write-Verbose -Message "This is the Response Content: $Result.Content" -Verbose
+                  Write-Verbose -Message "This is the Response Content: $($Result.Content)" -Verbose
                   $Assets = $Result | ConvertFrom-Json
                   foreach ($Item in $Assets) {
                     if ($Item.name -eq $AssetName) {
@@ -573,7 +575,7 @@ stages:
               }
       
               if ($Result.StatusCode -eq 201) {
-                Write-Verbose -Message "This is the Response Content: $Result.Content" -Verbose
+                Write-Verbose -Message "This is the Response Content: $($Result.Content)" -Verbose
                 $Content = $Result | ConvertFrom-Json
                 Write-Host "'$AssetName' -- Upload succeeded" -ForegroundColor Green
                 Write-Verbose -Message "   Download URL: $($Content.browser_download_url)" -Verbose
