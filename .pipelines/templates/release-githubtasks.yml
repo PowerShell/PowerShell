@@ -368,6 +368,7 @@ stages:
 
               if ($Result -and $Result.Content) {
                 try {
+                  Write-Verbose -Message "This is the Response Content: $($Result.Content)"
                   $Releases = $Result.Content | ConvertFrom-Json
                 } catch {
                   Write-Verbose -Message "This was the Response: $Result"
