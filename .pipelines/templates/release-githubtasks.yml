@@ -569,6 +569,7 @@ stages:
               }
       
               if ($Result.StatusCode -eq 201) {
+                Write-Verbose -Message "This is the Response Content: $($Result.Content)"
                 $Content = $Result | ConvertFrom-Json
                 Write-Host "'$AssetName' -- Upload succeeded" -ForegroundColor Green
                 Write-Verbose -Message "   Download URL: $($Content.browser_download_url)"
