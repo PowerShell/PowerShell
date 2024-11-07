@@ -555,21 +555,21 @@ stages:
             ## [Parameter(Mandatory)]
             ## [string]$User
             $UserAtts = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
-            $UserAtts.Add([System.Management.Automation.Parameter]@{Mandatory = $true}) > $null
+            $UserAtts.Add([System.Management.Automation.ParameterAttribute]@{Mandatory = $true}) > $null
             $ParamDict.Add("User", [System.Management.Automation.RuntimeDefinedParameter]::new("User", [string], $UserAtts)) > $null
 
             ## Add the '-Repository' parameter
             ## [Parameter(Mandatory)]
             ## [string]$Repository
             $RepositoryAtts = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
-            $RepositoryAtts.Add([System.Management.Automation.Parameter]@{Mandatory = $true}) > $null
+            $RepositoryAtts.Add([System.Management.Automation.ParameterAttribute]@{Mandatory = $true}) > $null
             $ParamDict.Add("Repository", [System.Management.Automation.RuntimeDefinedParameter]::new("Repository", [string], $RepositoryAtts)) > $null
 
             ## Add the '-Token' parameter
             ## [Parameter(Mandatory, ParameterSetName="UseSpecifiedToken")]
             ## [string]$Token
             $TokenAtts = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
-            $TokenAtts.Add([System.Management.Automation.Parameter]@{Mandatory = $true; ParameterSetName="UseSpecifiedToken"}) > $null
+            $TokenAtts.Add([System.Management.Automation.ParameterAttribute]@{Mandatory = $true; ParameterSetName="UseSpecifiedToken"}) > $null
             $ParamDict.Add("Token", [System.Management.Automation.RuntimeDefinedParameter]::new("Token", [string], $TokenAtts)) > $null
 
             return $ParamDict
