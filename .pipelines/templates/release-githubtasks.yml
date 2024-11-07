@@ -577,7 +577,7 @@ stages:
             return $ParamDict
           }
 
-          function Get-CommonParamValues([PSCmdlet]$Cmdlet) {
+          function Get-CommonParamValues([System.Management.Automation.PSCmdlet]$Cmdlet) {
             $AuthHeader = $Script:Auth
             if ($Cmdlet.ParameterSetName -eq "UseSpecifiedToken") {
               $Token = $Cmdlet.MyInvocation.BoundParameters["Token"]
