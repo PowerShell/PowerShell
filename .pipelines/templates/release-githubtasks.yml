@@ -263,10 +263,10 @@ stages:
       inputs:
         targetType: inline
         script: |
-          Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
+          # Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
           $releaseVersion = '$(ReleaseTag)' -replace '^v',''
           Write-Verbose -Verbose "Release Version: $releaseVersion"
-
+          # $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
           Write-Verbose -Verbose "Added Class SemanticVersion because pwsh 7+ is not available"
           class SemanticVersion {
             [int]$Major
@@ -573,6 +573,59 @@ stages:
             $ParamDict.Add("Token", [System.Management.Automation.RuntimeDefinedParameter]::new("Token", [string], $TokenAtts)) > $null
 
             return $ParamDict
+          }
+
+          function Publish-ReleaseDraft {
+            [CmdletBinding(DefaultParameterSetName="Default")]
+            param(
+              [Parameter(Mandatory)]
+              [string]$Tag,
+      
+              [Parameter(Mandatory)]
+              [string]$Name,
+      
+              [Parameter(Mandatory)]
+              [string]$Description,
+      
+              [Parameter(Mandatory)]
+              [string]$PackageFolder
+            )
+        
+            DynamicParam { Get-CommonParameters }
+        
+            Begin {
+              $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
+              $Script:Auth = $AuthHeader
+              $CommonParams = @{User=$User; Repository=$Repository}
+            }
+        
+            End {
+              $ReleaseId = Find-Release -Tag $Tag @CommonParams
+              if ($ReleaseId) {
+                Write-Host "Release for $Tag already created, Release-Id: $ReleaseId" -ForegroundColor Green
+              } else {
+                $StringBuilder = [System.Text.StringBuilder]::new($Description, $Description.Length + 2kb)
+                $StringBuilder.AppendLine().AppendLine() > $null
+                $StringBuilder.AppendLine("### SHA256 Hashes of the release artifacts").AppendLine() > $null
+                Get-ChildItem -Path $PackageFolder -File | ForEach-Object {
+                  $PackageName = $_.Name
+                  $SHA256 = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash
+                  $StringBuilder.AppendLine("- $PackageName").AppendLine("  - $SHA256") > $null
+                }
+    
+                $Description = $StringBuilder.ToString()
+                $ReleaseId = New-Release -Tag $Tag -Name $Name -Description $Description @CommonParams
+                Write-Host "Release for $Tag created, Release-Id: $ReleaseId" -ForegroundColor Green
+              }
+      
+              Get-ChildItem -Path $PackageFolder -File | ForEach-Object {
+                $PackageName = $_.Name
+                $PackageId = Find-ReleaseAsset -ReleaseId $ReleaseId -AssetName $PackageName @CommonParams
+                if (-not $PackageId) {
+                  Push-ReleaseAsset -ReleaseId $ReleaseId -AssetPath $_.FullName @CommonParams
+                }
+              }
+            }
           }
         
           Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder "$(Pipeline.Workspace)/PSPackagesOfficial" -Token $(GitHubReleasePat)
