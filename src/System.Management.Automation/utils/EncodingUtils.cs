@@ -115,10 +115,7 @@ namespace System.Management.Automation
     {
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
-            if (inputData is PSObject inputPSObject)
-            {
-                inputData = inputPSObject.BaseObject;
-            }
+            inputData = PSObject.Base(inputData);
 
             switch (inputData)
             {
