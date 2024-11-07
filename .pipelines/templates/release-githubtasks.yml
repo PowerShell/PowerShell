@@ -447,7 +447,6 @@ stages:
                   throw "Failed to convert response to JSON: $_"
                 }
                 return $Release.id
-                }
               } else {
                 throw "Response content is empty or invalid."
               }
