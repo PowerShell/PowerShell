@@ -340,7 +340,7 @@ stages:
             }
 
             Begin {
-              Write-Verbose -Message "Finding release for tag '$Tag'"
+              Write-Verbose -Message "Finding release for tag '$Tag'" -Verbose
               $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
             }
 
@@ -367,11 +367,11 @@ stages:
 
               if ($Result -and $Result.Content) {
                 try {
-                  Write-Verbose -Message "This is the Response Content: $($Result.Content)"
+                  Write-Verbose -Message "This is the Response Content: $($Result.Content)" -Verbose
                   $Releases = $Result.Content | ConvertFrom-Json
                 } catch {
-                  Write-Verbose -Message "This was the Response: $Result"
-                  throw "Failed to convert response to JSON: $_"
+                  Write-Verbose -Message "This was the Response: $Result" -Verbose
+                  throw "Failed to convert response from JSON: $_"
                 }
     
                 foreach ($Item in $Releases) {
@@ -404,7 +404,7 @@ stages:
             }
         
             Begin {
-              Write-Verbose -Message "Creating a new release draft for $Tag"
+              Write-Verbose -Message "Creating a new release draft for $Tag" -Verbose
               $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
             }
 
@@ -440,11 +440,11 @@ stages:
               
               if ($Result -and $Result.Content) {
                 try {
-                  Write-Verbose -Message "This is the Response Content: $($Result.Content)"
+                  Write-Verbose -Message "This is the Response Content: $($Result.Content)" -Verbose
                   $Release = $Result | ConvertFrom-Json
                 } catch {
-                  Write-Verbose -Message "This was the Response: $Result"
-                  throw "Failed to convert response to JSON: $_"
+                  Write-Verbose -Message "This was the Response: $Result" -Verbose
+                  throw "Failed to convert response from JSON: $_"
                 }
                 return $Release.id
               } else {
@@ -468,7 +468,7 @@ stages:
             }
         
             Begin {
-              Write-Verbose -Message "Searching for asset '$AssetName' in release $ReleaseId"
+              Write-Verbose -Message "Searching for asset '$AssetName' in release $ReleaseId" -Verbose
               $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
             }
 
@@ -494,7 +494,7 @@ stages:
 
               if ($Result -and $Result.Content) {
                 try {
-                  Write-Verbose -Message "This is the Response Content: $($Result.Content)"
+                  Write-Verbose -Message "This is the Response Content: $($Result.Content)" -Verbose
                   $Assets = $Result | ConvertFrom-Json
                   foreach ($Item in $Assets) {
                     if ($Item.name -eq $AssetName) {
@@ -504,8 +504,8 @@ stages:
                     }
                   }
                 } catch {
-                  Write-Verbose -Message "This was the Response: $Result"
-                  throw "Failed to convert response to JSON: $_"
+                  Write-Verbose -Message "This was the Response: $Result" -Verbose
+                  throw "Failed to convert response from JSON: $_"
                 }
               } else {
                 throw "Response content is empty or invalid."
@@ -530,7 +530,7 @@ stages:
             }
         
             Begin {
-              Write-Verbose -Message "Pushing asset '$AssetPath' to release $ReleaseId"
+              Write-Verbose -Message "Pushing asset '$AssetPath' to release $ReleaseId" -Verbose
               $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
             }
         
@@ -571,10 +571,10 @@ stages:
               }
       
               if ($Result.StatusCode -eq 201) {
-                Write-Verbose -Message "This is the Response Content: $($Result.Content)"
+                Write-Verbose -Message "This is the Response Content: $($Result.Content)" -Verbose
                 $Content = $Result | ConvertFrom-Json
                 Write-Host "'$AssetName' -- Upload succeeded" -ForegroundColor Green
-                Write-Verbose -Message "   Download URL: $($Content.browser_download_url)"
+                Write-Verbose -Message "   Download URL: $($Content.browser_download_url)" -Verbose
               } else {
                 Write-Host "'$AssetName' -- Upload failed with StatusCode $($Result.StatusCode)" -ForegroundColor Red
               }
@@ -647,7 +647,7 @@ stages:
             DynamicParam { Get-CommonParameters }
         
             Begin {
-              Write-Verbose -Message "Publishing release draft for $Tag"
+              Write-Verbose -Message "Publishing release draft for $Tag" -Verbose
               $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
               $Script:Auth = $AuthHeader
               $CommonParams = @{User=$User; Repository=$Repository}
