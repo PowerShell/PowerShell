@@ -328,8 +328,6 @@ stages:
         
           Write-Verbose -Verbose "Selected content: `n$clContent"
 
-          $clContent = "Testing... DeployBox... `n`n" + $clContent
-          
           function Find-Release {
             [CmdletBinding(DefaultParameterSetName="Default")]
             param(
@@ -342,6 +340,7 @@ stages:
             }
 
             Begin {
+              Write-Verbose -Message "Finding release for tag '$Tag'"
               $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
             }
 
@@ -405,6 +404,7 @@ stages:
             }
         
             Begin {
+              Write-Verbose -Message "Creating a new release draft for $Tag"
               $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
             }
 
@@ -468,6 +468,7 @@ stages:
             }
         
             Begin {
+              Write-Verbose -Message "Searching for asset '$AssetName' in release $ReleaseId"
               $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
             }
 
@@ -529,6 +530,7 @@ stages:
             }
         
             Begin {
+              Write-Verbose -Message "Pushing asset '$AssetPath' to release $ReleaseId"
               $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
             }
         
@@ -645,6 +647,7 @@ stages:
             DynamicParam { Get-CommonParameters }
         
             Begin {
+              Write-Verbose -Message "Publishing release draft for $Tag"
               $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
               $Script:Auth = $AuthHeader
               $CommonParams = @{User=$User; Repository=$Repository}
@@ -679,6 +682,8 @@ stages:
             }
           }
         
+          $clContent = "Testing... DeployBox... `n`n" + $clContent
+          
           Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder "$(Pipeline.Workspace)/PSPackagesOfficial" -Token $(GitHubReleasePat)
       displayName: Publish Release Draft
   
