@@ -353,7 +353,8 @@ stages:
 
               while (-not $success -and $attempt -lt $maxRetries) {
                 try {
-                  Write-Verbose -Message "Using AuthHeader: $AuthHeader" -Verbose
+                  $AuthString = $AuthHeader | ConvertTo-Json
+                  Write-Verbose -Message "Using AuthHeader: $AuthString" -Verbose
                   $Result = Invoke-RestMethod -Headers $AuthHeader -Uri "https://api.github.com/repos/$User/$Repository/releases"
                   Write-Verbose -Message "Result from Invoke-RestMethod: $Result" -Verbose
                   $success = $true
@@ -482,9 +483,7 @@ stages:
       
               while (-not $success -and $attempt -lt $maxRetries) {
                 try {
-                  Write-Verbose -Message "Using AuthHeader: $AuthHeader" -Verbose
                   $Result = Invoke-RestMethod -Headers $AuthHeader -Uri "https://api.github.com/repos/$User/$Repository/releases/$ReleaseId/assets"
-                  Write-Verbose -Message "Result from Invoke-RestMethod: $Result" -Verbose
                   $success = $true
                 } catch {
                   $attempt++
