@@ -350,6 +350,8 @@ stages:
               $retryIntervalSec = 5
               $attempt = 0
               $success = $false
+              $Result = $null
+
               while (-not $success -and $attempt -lt $maxRetries) {
                 try {
                   $Result = Invoke-RestMethod -Headers $AuthHeader -Uri "https://api.github.com/repos/$User/$Repository/releases"
@@ -364,12 +366,22 @@ stages:
                 }
               }
 
-              $Releases = $Result | ConvertFrom-Json
-              foreach ($Item in $Releases) {
-                if ($Item.tag_name -eq $Tag) {
-                  Write-Verbose ("Release $Tag is found, upload_url=" + $Item.upload_url) -Verbose
-                  return $Item.id
+              if ($Result -and $Result.Content) {
+                try {
+                  $Releases = $Result.Content | ConvertFrom-Json
+                } catch {
+                  Write-Verbose -Message "This was the Response: $Result"
+                  throw "Failed to convert response to JSON: $_"
                 }
+    
+                foreach ($Item in $Releases) {
+                  if ($Item.tag_name -eq $Tag) {
+                    Write-Verbose ("Release $Tag is found, upload_url=" + $Item.upload_url) -Verbose
+                    return $Item.id
+                  }
+                }
+              } else {
+                throw "Response content is empty or invalid."
               }
             }
           }
