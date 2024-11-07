@@ -537,12 +537,12 @@ stages:
                   }
                 }
               }
-      
-              if ($Result.StatusCode -eq 201) {
-                Write-Verbose -Message "This is the Response Content: $($Result.Content)" -Verbose
-                $Content = $Result | ConvertFrom-Json
+
+              Write-Verbose -Message "$($Result.state)" -Verbose
+
+              if ($Result.state -eq "uploaded") {
                 Write-Host "'$AssetName' -- Upload succeeded" -ForegroundColor Green
-                Write-Verbose -Message "   Download URL: $($Content.browser_download_url)" -Verbose
+                Write-Verbose -Message "   Download URL: $($Result.browser_download_url)" -Verbose
               } else {
                 Write-Host "'$AssetName' -- Upload failed with StatusCode $($Result.StatusCode)" -ForegroundColor Red
               }
