@@ -496,10 +496,11 @@ stages:
                   Write-Verbose -Message "This is the Response Content: $($Result.Content)"
                   $Assets = $Result | ConvertFrom-Json
                   foreach ($Item in $Assets) {
-                  if ($Item.name -eq $AssetName) {
-                    Write-Verbose "Asset $AssetName was already uploaded, id: $($Item.id)" -Verbose
-                    Write-Verbose ("  Asset is ready for download: " + $Item.browser_download_url) -Verbose
-                    return $Item.id
+                    if ($Item.name -eq $AssetName) {
+                      Write-Verbose "Asset $AssetName was already uploaded, id: $($Item.id)" -Verbose
+                      Write-Verbose ("  Asset is ready for download: " + $Item.browser_download_url) -Verbose
+                      return $Item.id
+                    }
                   }
                 } catch {
                   Write-Verbose -Message "This was the Response: $Result"
