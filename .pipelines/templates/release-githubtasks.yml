@@ -547,6 +547,8 @@ stages:
               if ($PassThru) { return $Result }
             }
           }
+          
+          $Script:Auth = $null
 
           function Get-CommonParameters {
             $ParamDict = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
@@ -573,6 +575,21 @@ stages:
             $ParamDict.Add("Token", [System.Management.Automation.RuntimeDefinedParameter]::new("Token", [string], $TokenAtts)) > $null
 
             return $ParamDict
+          }
+
+          function Get-CommonParamValues([PSCmdlet]$Cmdlet) {
+            $AuthHeader = $Script:Auth
+            if ($Cmdlet.ParameterSetName -eq "UseSpecifiedToken") {
+              $Token = $Cmdlet.MyInvocation.BoundParameters["Token"]
+              $AuthHeader = @{"Authorization"="token $Token"}
+            }
+            if (-not $AuthHeader) {
+              throw "Authentication token is not specified."
+            }
+          
+            $User = $Cmdlet.MyInvocation.BoundParameters["User"]
+            $Repository = $Cmdlet.MyInvocation.BoundParameters["Repository"]
+            return $User, $Repository, $AuthHeader
           }
 
           function Publish-ReleaseDraft {
