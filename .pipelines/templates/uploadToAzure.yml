@@ -234,6 +234,11 @@ jobs:
     displayName: 'Capture downloads'
 
   - pwsh: |
+      Write-Verbose -Message "Copying all files in $(Build.ArtifactStagingDirectory)/downloads to use in Release Pipeline"
+      Copy-Item -Path $(Build.SourcesDirectory)\downloads -Destination $(ob_outputDirectory)
+    displayName: Copy downloads to Artifacts
+
+  - pwsh: |
       # Create output directory for packages which have been uploaded to blob storage
       New-Item -Path $(Build.ArtifactStagingDirectory)/uploaded -ItemType Directory -Force
     displayName: Create output directory for packages

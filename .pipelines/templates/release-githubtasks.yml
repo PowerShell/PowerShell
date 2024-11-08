@@ -105,40 +105,13 @@ stages:
     #       sudo tdnf install -y powershell
     #   displayName: Install PowerShell
 
+    # Get-ChildItem -Directory -Path 'C:\Program Files\PowerShell\7*' | Select-Object -First 1 -ExpandProperty FullName
+    # x64 msi installer
     - task: PowerShell@2
       inputs:
         targetType: inline
         script: |
-          $pwshRegPath = "HKLM:\SOFTWARE\Microsoft\PowerShellCore"
-          $previewPath = Join-Path -Path $pwshRegPath -ChildPath "InstalledVersions\31ab5147-9a97-4452-8443-d9709f0516e1"
-          
-          if (!(Test-Path -Path $previewPath)) {
-            Write-Verbose -Message "Creating preview path: $previewPath" -Verbose
-            $null = New-Item -Path $previewPath -ItemType Directory -Force
-          } else {
-            Write-Verbose -Message "Preview path already exists: $previewPath" -Verbose
-          }
-
-          Set-ItemProperty -Path $pwshRegPath -Name UseMU -Value 1 -Type DWord
-          Set-ItemProperty -Path $previewPath -Name Install -Value 1 -Type DWord
-
-          $useMUValue = Get-ItemProperty -Path $pwshRegPath -Name UseMU
-          Write-Verbose -Message "UseMU is set to: $($useMUValue.UseMU)" -Verbose
-          $installValue = Get-ItemProperty -Path $previewPath -Name Install
-          Write-Verbose -Message "Install is set to: $($installValue.Install)" -Verbose
-
-          $usoClientCommands = "USOClient StartInteractiveScan; USOClient ScanInstallWait; USOClient StartInstall"
-
-          Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"$usoClientCommands`"" -Verb RunAs
-
-          # Verify installation
-          $previewPath = "C:\Program Files\PowerShell\7-preview\pwsh.exe"
-          while (-not (Test-Path -Path $previewPath)) {
-              Write-Verbose -Message "PowerShell Preview is still installing..." -Verbose
-              Start-Sleep -Seconds 10
-          }
-
-          Write-Verbose -Message "PowerShell Preview is installed." -Verbose
+          Start-Process -FilePath msiexec -ArgumentList "/package $localInstallerPath /quiet REGISTER_MANIFEST=1" -Wait -NoNewWindow
       displayName: Install pwsh 7
 
     - task: PowerShell@2
