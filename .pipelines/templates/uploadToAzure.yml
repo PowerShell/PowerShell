@@ -235,7 +235,7 @@ jobs:
 
   - pwsh: |
       Write-Verbose -Verbose "Copying all files in $(Build.ArtifactStagingDirectory)/downloads to use in Release Pipeline"
-      Copy-Item -Path $(Build.ArtifactStagingDirectory)/downloads -Destination $(ob_outputDirectory)
+      Copy-Item -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Destination $(ob_outputDirectory) -Recurse
     displayName: Copy downloads to Artifacts
 
   - pwsh: |
