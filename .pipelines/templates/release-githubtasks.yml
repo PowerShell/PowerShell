@@ -14,64 +14,7 @@ stages:
       inputs:
         - input: pipelineArtifact
           pipeline: PSPackagesOfficial
-          artifactName: drop_linux_package_deb
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_linux_package_fxdependent
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_linux_package_mariner_arm64
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_linux_package_mariner_x64
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_linux_package_minSize
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_linux_package_rpm
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_linux_package_tar
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_linux_package_tar_alpine
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_linux_package_tar_alpine_fxd
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_linux_package_tar_arm
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_linux_package_tar_arm64
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_mac_package_sign_package_macOS_arm64
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_mac_package_sign_package_macOS_x64
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_windows_package_package_win_arm64
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_windows_package_package_win_fxdependent
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_windows_package_package_win_fxdependentWinDesktop
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_windows_package_package_win_minsize
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_windows_package_package_win_x64
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: drop_windows_package_package_win_x86
-        - input: pipelineArtifact
-          pipeline: PSPackagesOfficial
-          artifactName: macos-pkgs
+          artifactName: drop_upload_upload_packages
     variables:
     - name: runCodesignValidationInjection
       value: false
@@ -111,6 +54,7 @@ stages:
       inputs:
         targetType: inline
         script: |
+          $localInstallerPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter '*win-x64.msi' | Select-Object -First 1 -ExpandProperty FullName
           Start-Process -FilePath msiexec -ArgumentList "/package $localInstallerPath /quiet REGISTER_MANIFEST=1" -Wait -NoNewWindow
       displayName: Install pwsh 7
 
