@@ -237,7 +237,7 @@ jobs:
       Write-Verbose -Verbose "Copying Github Release files in $(Build.ArtifactStagingDirectory)/downloads to use in Release Pipeline"
       Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
         Where-Object { $_.Extension -notin '.msix', '.nupkg' } | 
-        Where-Object { Write-Verbose -Verbose "$_.Name" } |
+        ForEach-Object { Write-Verbose -Verbose $_.FullName ; $_  } |
         Copy-Item -Destination $(ob_outputDirectory) -Recurse
     displayName: Copy downloads to Artifacts
 
