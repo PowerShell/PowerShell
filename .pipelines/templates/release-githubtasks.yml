@@ -85,6 +85,8 @@ stages:
         script: |
           Write-Verbose -Verbose $env:PATH
           Get-ChildItem -Directory -Path $pwsh_Path
+          pwsh.exe -c { $PSVersionTable }
+
       displayName: Check pwsh 7 installation
 
     - task: PowerShell@2
