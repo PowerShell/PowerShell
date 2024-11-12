@@ -8,7 +8,8 @@ using System.Linq;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-using System.Text;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 using Microsoft.PowerShell.Commands;
@@ -28,6 +29,35 @@ namespace System.Management.Automation
     /// </summary>
     public class ModuleIntrinsics
     {
+#if !UNIX
+        /// <summary>
+        /// Compares a PATH entry on Windows. Treats / and \ as the same and
+        /// compares using OrdinalIgnoreCase.
+        /// </summary>
+        private class WindowsPathEnvComparer : IEqualityComparer<char>
+        {
+            public bool Equals(char x, char y)
+            {
+                if (x == y)
+                {
+                    return true;
+                }
+                // x is always canonicalised so we only need to compare if y is /.
+                else if (x == Path.DirectorySeparatorChar && y == Path.AltDirectorySeparatorChar)
+                {
+                    return true;
+                }
+
+                return MemoryMarshal.CreateReadOnlySpan(ref x, 1).CompareTo(
+                    MemoryMarshal.CreateReadOnlySpan(ref y, 1),
+                    StringComparison.OrdinalIgnoreCase) == 0;
+            }
+
+            public int GetHashCode(char c)
+                => c.GetHashCode();
+        }
+#endif
+
         /// <summary>
         /// Tracer for module analysis.
         /// </summary>
@@ -1045,32 +1075,6 @@ namespace System.Management.Automation
         }
 #endif
 
-        /// <summary>
-        /// Combine the PS system-wide module path and the DSC module path
-        /// to get the system module paths.
-        /// </summary>
-        /// <returns></returns>
-        private static string CombineSystemModulePaths()
-        {
-            string psHomeModulePath = GetPSHomeModulePath();
-            string sharedModulePath = GetSharedModulePath();
-
-            bool isPSHomePathNullOrEmpty = string.IsNullOrEmpty(psHomeModulePath);
-            bool isSharedPathNullOrEmpty = string.IsNullOrEmpty(sharedModulePath);
-
-            if (!isPSHomePathNullOrEmpty && !isSharedPathNullOrEmpty)
-            {
-                return (sharedModulePath + Path.PathSeparator + psHomeModulePath);
-            }
-
-            if (!isPSHomePathNullOrEmpty || !isSharedPathNullOrEmpty)
-            {
-                return isPSHomePathNullOrEmpty ? sharedModulePath : psHomeModulePath;
-            }
-
-            return null;
-        }
-
         internal static string GetExpandedEnvironmentVariable(string name, EnvironmentVariableTarget target)
         {
             string result = Environment.GetEnvironmentVariable(name, target);
@@ -1080,96 +1084,6 @@ namespace System.Management.Automation
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Checks if a particular string (path) is a member of 'combined path' string (like %Path% or %PSModulePath%)
-        /// </summary>
-        /// <param name="pathToScan">'Combined path' string to analyze; can not be null.</param>
-        /// <param name="pathToLookFor">Path to search for; can not be another 'combined path' (semicolon-separated); can not be null.</param>
-        /// <returns>Index of pathToLookFor in pathToScan; -1 if not found.</returns>
-        private static int PathContainsSubstring(string pathToScan, string pathToLookFor)
-        {
-            // we don't support if any of the args are null - parent function should ensure this; empty values are ok
-            Diagnostics.Assert(pathToScan != null, "pathToScan should not be null according to contract of the function");
-            Diagnostics.Assert(pathToLookFor != null, "pathToLookFor should not be null according to contract of the function");
-
-            int pos = 0; // position of the current substring in pathToScan
-            string[] substrings = pathToScan.Split(Path.PathSeparator, StringSplitOptions.None); // we want to process empty entries
-            string goodPathToLookFor = pathToLookFor.Trim().TrimEnd(Path.DirectorySeparatorChar); // trailing backslashes and white-spaces will mess up equality comparison
-            foreach (string substring in substrings)
-            {
-                string goodSubstring = substring.Trim().TrimEnd(Path.DirectorySeparatorChar);  // trailing backslashes and white-spaces will mess up equality comparison
-
-                // We have to use equality comparison on individual substrings (as opposed to simple 'string.IndexOf' or 'string.Contains')
-                // because of cases like { pathToScan="C:\Temp\MyDir\MyModuleDir", pathToLookFor="C:\Temp" }
-
-                if (string.Equals(goodSubstring, goodPathToLookFor, StringComparison.OrdinalIgnoreCase))
-                {
-                    return pos; // match found - return index of it in the 'pathToScan' string
-                }
-                else
-                {
-                    pos += substring.Length + 1; // '1' is for trailing semicolon
-                }
-            }
-            // if we are here, that means a match was not found
-            return -1;
-        }
-
-        /// <summary>
-        /// Adds paths to a 'combined path' string (like %Path% or %PSModulePath%) if they are not already there.
-        /// </summary>
-        /// <param name="basePath">Path string (like %Path% or %PSModulePath%).</param>
-        /// <param name="pathToAdd">Collection of individual paths to add.</param>
-        /// <param name="insertPosition">-1 to append to the end; 0 to insert in the beginning of the string; etc...</param>
-        /// <returns>Result string.</returns>
-        private static string AddToPath(string basePath, string pathToAdd, int insertPosition)
-        {
-            // we don't support if any of the args are null - parent function should ensure this; empty values are ok
-            Diagnostics.Assert(basePath != null, "basePath should not be null according to contract of the function");
-            Diagnostics.Assert(pathToAdd != null, "pathToAdd should not be null according to contract of the function");
-
-            StringBuilder result = new StringBuilder(basePath);
-
-            if (!string.IsNullOrEmpty(pathToAdd)) // we don't want to append empty paths
-            {
-                foreach (string subPathToAdd in pathToAdd.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)) // in case pathToAdd is a 'combined path' (semicolon-separated)
-                {
-                    int position = PathContainsSubstring(result.ToString(), subPathToAdd); // searching in effective 'result' value ensures that possible duplicates in pathsToAdd are handled correctly
-                    if (position == -1) // subPathToAdd not found - add it
-                    {
-                        if (insertPosition == -1 || insertPosition > basePath.Length) // append subPathToAdd to the end
-                        {
-                            bool endsWithPathSeparator = false;
-                            if (result.Length > 0)
-                            {
-                                endsWithPathSeparator = (result[result.Length - 1] == Path.PathSeparator);
-                            }
-
-                            if (endsWithPathSeparator)
-                            {
-                                result.Append(subPathToAdd);
-                            }
-                            else
-                            {
-                                result.Append(Path.PathSeparator + subPathToAdd);
-                            }
-                        }
-                        else if (insertPosition > result.Length)
-                        {
-                            // handle case where path is a singleton with no path separator already
-                            result.Append(Path.PathSeparator).Append(subPathToAdd);
-                        }
-                        else // insert at the requested location (this is used by DSC (<Program Files> location) and by 'user-specific location' (SpecialFolder.MyDocuments or EVT.User))
-                        {
-                            result.Insert(insertPosition, subPathToAdd + Path.PathSeparator);
-                        }
-                    }
-                }
-            }
-
-            return result.ToString();
         }
 
         /// <summary>
@@ -1208,82 +1122,126 @@ namespace System.Management.Automation
             }
         }
 
+#nullable enable
         /// <summary>
         /// Checks the various PSModulePath environment string and returns PSModulePath string as appropriate.
+        /// The PSModulePath is built in the following order:
+        /// 1. PersonalModulePath - Can be overriden by the profile config file.
+        /// 2. SharedModulePath
+        /// 3. SystemModulePath - Can be overriden by the pwsh config file.
         /// </summary>
-        public static string GetModulePath(string currentProcessModulePath, string hklmMachineModulePath, string hkcuUserModulePath)
+        /// <param name="currentProcessModulePath">The current process module path to append to the end of the env var list.</param>
+        /// <param name="hklmMachineModulePath">The system module path from the system pwsh config.</param>
+        /// <param name="hkcuUserModulePath">The personal module path from the user pwsh config.</param>
+        /// <returns>The final PSModulePath string.</returns>
+        public static string GetModulePath(string? currentProcessModulePath, string? hklmMachineModulePath, string? hkcuUserModulePath)
         {
-            string personalModulePath = GetPersonalModulePath();
-            string sharedModulePath = GetSharedModulePath(); // aka <Program Files> location
-            string psHomeModulePath = GetPSHomeModulePath(); // $PSHome\Modules location
+            string? personalModulePathToUse = string.IsNullOrEmpty(hkcuUserModulePath) ? GetPersonalModulePath() : hkcuUserModulePath;
+            string? sharedModulePath = GetSharedModulePath(); // aka <Program Files> location
+            string? systemModulePathToUse = string.IsNullOrEmpty(hklmMachineModulePath) ? GetPSHomeModulePath() : hklmMachineModulePath;
 
-            // If the variable isn't set, then set it to the default value
-            if (currentProcessModulePath == null)  // EVT.Process does Not exist - really corner case
+            List<string> finalModulePath = new List<string>();
+            AddPath(finalModulePath, personalModulePathToUse);
+            AddPath(finalModulePath, sharedModulePath);
+            AddPath(finalModulePath, systemModulePathToUse);
+
+            // If the existing module path if provided, we add it to the end of the list.
+            if (currentProcessModulePath != null)
             {
-                // Handle the default case...
-                if (string.IsNullOrEmpty(hkcuUserModulePath)) // EVT.User does Not exist -> set to <SpecialFolder.MyDocuments> location
-                {
-                    currentProcessModulePath = personalModulePath; // = SpecialFolder.MyDocuments + Utils.ProductNameForDirectory + Utils.ModuleDirectory
-                }
-                else // EVT.User exists -> set to EVT.User
-                {
-                    currentProcessModulePath = hkcuUserModulePath; // = EVT.User
-                }
-
-                if (string.IsNullOrEmpty(currentProcessModulePath))
-                {
-                    currentProcessModulePath ??= string.Empty;
-                }
-                else
-                {
-                    currentProcessModulePath += Path.PathSeparator;
-                }
-
-                if (string.IsNullOrEmpty(hklmMachineModulePath)) // EVT.Machine does Not exist
-                {
-                    currentProcessModulePath += CombineSystemModulePaths(); // += (SharedModulePath + $PSHome\Modules)
-                }
-                else
-                {
-                    currentProcessModulePath += hklmMachineModulePath; // += EVT.Machine
-                }
-            }
-            // EVT.Process exists
-            // Now handle the case where the environment variable is already set.
-            else
-            {
-                string personalModulePathToUse = string.IsNullOrEmpty(hkcuUserModulePath) ? personalModulePath : hkcuUserModulePath;
-                string systemModulePathToUse = string.IsNullOrEmpty(hklmMachineModulePath) ? psHomeModulePath : hklmMachineModulePath;
-
-                // Maintain order of the paths, but ahead of any existing paths:
-                // personalModulePath
-                // sharedModulePath
-                // systemModulePath
-
-                int insertIndex = 0;
-
-                currentProcessModulePath = UpdatePath(currentProcessModulePath, personalModulePathToUse, ref insertIndex);
-                currentProcessModulePath = UpdatePath(currentProcessModulePath, sharedModulePath, ref insertIndex);
-                currentProcessModulePath = UpdatePath(currentProcessModulePath, systemModulePathToUse, ref insertIndex);
+                AddPath(finalModulePath, currentProcessModulePath);
             }
 
-            return currentProcessModulePath;
+            return string.Join(Path.PathSeparator, finalModulePath);
         }
 
-        private static string UpdatePath(string path, string pathToAdd, ref int insertIndex)
+        /// <summary>
+        /// Adds the path if not present to the final module path list. Each
+        /// path is split by the path separator and added to the final list.
+        /// </summary>
+        /// <param name="finalModulePath">The final module path list.</param>
+        /// <param name="path">The path to add.</param>
+        private static void AddPath(List<string> finalModulePath, ReadOnlySpan<char> path)
         {
-            if (!string.IsNullOrEmpty(pathToAdd))
+            ReadOnlySpan<char> dirSeparatorChars = stackalloc char[] {
+                Path.DirectorySeparatorChar,
+                Path.AltDirectorySeparatorChar
+            };
+
+#if UNIX
+            IEqualityComparer<char>? valueComparer = null;
+#else
+            IEqualityComparer<char> valueComparer = new WindowsPathEnvComparer();
+#endif
+
+            foreach (Range segment in path.Split(Path.PathSeparator))
             {
-                path = AddToPath(path, pathToAdd, insertIndex);
-                insertIndex = path.IndexOf(Path.PathSeparator, PathContainsSubstring(path, pathToAdd));
-                if (insertIndex != -1)
+                // We trim any surrounding whitespace and trailing directory separators
+                // to canonicalize the path. The comparer on Windows will also treat
+                // '/' and '\' as the same and in a case insensitive operation.
+                scoped ReadOnlySpan<char> entry = path[segment].Trim();
+                if (entry.Length == 0)
                 {
-                    // advance past the path separator
-                    insertIndex++;
+                    continue;
+                }
+#if UNIX
+                // Don't trim if it's just '/' as that's a valid entry on *nix.
+                else if (!(entry.Length == 1 && entry[0] == Path.DirectorySeparatorChar))
+#else
+                else
+#endif
+                {
+                    entry = entry.TrimEnd(dirSeparatorChars);
+                }
+
+                // If after trimming we don't have a path value we ignore it.
+                if (entry.Length == 0)
+                {
+                    continue;
+                }
+
+                bool add = true;
+                foreach (ReadOnlySpan<char> listEntry in finalModulePath)
+                {
+                    if (listEntry.SequenceEqual(entry, valueComparer))
+                    {
+                        add = false;
+                        break;
+                    }
+                }
+
+                if (add)
+                {
+#if UNIX
+                    string pathEntry = entry.ToString();
+#else
+                    string pathEntry;
+                    unsafe
+                    {
+                        // Weird code avoids multiple allocations to replace / with \.
+                        pathEntry = string.Create(
+                            entry.Length,
+                            ((nint)Unsafe.AsPointer(ref MemoryMarshal.GetReference(entry)), entry.Length),
+                            static (span, state) =>
+                            {
+                                (nint ptr, int length) = state;
+                                ReadOnlySpan<char> value = new((void*)ptr, length);
+                                for (int i = 0; i < value.Length; i++)
+                                {
+                                    char c = value[i];
+                                    if (c == Path.AltDirectorySeparatorChar)
+                                    {
+                                        c = Path.DirectorySeparatorChar;
+                                    }
+                                    span[i] = c;
+                                }
+                            });
+                    }
+#endif
+                    finalModulePath.Add(pathEntry);
                 }
             }
-            return path;
         }
+#nullable disable
 
         /// <summary>
         /// Checks if $env:PSModulePath is not set and sets it as appropriate. Note - because these
