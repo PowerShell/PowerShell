@@ -82,7 +82,9 @@ stages:
     - task: PowerShell@2
       inputs:
         targetType: inline
+        pwsh: true
         script: |
+          Write-Verbose -Verbose "Pwsh 7 Installed"
           Write-Verbose -Verbose $env:PATH
           Get-ChildItem -Directory -Path "$(pwsh_Path)" | ForEach-Object {
             Write-Verbose -Verbose $_.FullName
