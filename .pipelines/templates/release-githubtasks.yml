@@ -84,7 +84,7 @@ stages:
         targetType: inline
         script: |
           Write-Verbose -Verbose $env:PATH
-          Get-ChildItem -Directory -Path $pwsh_Path | ForEach-Object {
+          Get-ChildItem -Directory -Path $(pwsh_Path) | ForEach-Object {
             Write-Verbose -Verbose $_.FullName
           }
           pwsh.exe -c { $PSVersionTable }
