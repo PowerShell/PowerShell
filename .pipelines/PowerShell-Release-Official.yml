@@ -278,8 +278,28 @@ extends:
         parameters:
           SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
 
-    - template: /.pipelines/templates/release-githubtasks.yml@self
-     # dependsOn: BlobPublic
+    - stage: PublishGitHubRelease
+      displayName: Publish GitHub Release
+      dependsOn: BlobPublic
+      variables:
+        ob_release_environment: Test
+      template: /.pipelines/templates/release-githubtasks.yml@self
+
+    - template: /.pipelines/templates/approvalJob.yml@self
+      parameters:
+        displayName: Push Git Tag
+        jobName: PushGitTag
+        dependsOnJob: GithubReleaseDraft
+        instructions: |
+          Push the git tag to upstream  
+
+    - template: /.pipelines/templates/approvalJob.yml@self
+      parameters:
+        displayName: Make Draft Public
+        jobName: DraftPublic
+        dependsOnJob: PushGitTag
+        instructions: |
+          Make the GitHub Release Draft Public
 
     - stage: PublishNuGet
       displayName: Publish NuGet
