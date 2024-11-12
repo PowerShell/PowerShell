@@ -67,13 +67,8 @@ stages:
 
           if (Test-Path -Path $pwshPath) {
             Write-Verbose -Verbose "PowerShell installed at $pwshPath"
-            Get-ChildItem -Path $pwshPath -Recurse | 
-              Where-Object { $_.Name -eq 'pwsh.exe' } |
-              Select-Object -ExpandProperty FullName
-            Write-Host "##vso[task.setvariable variable=pwsh_path;]$pwshPath"
             Write-Verbose -Verbose "Adding pwsh to env:PATH"
             Write-Host "##vso[task.prependpath]$pwshPath"
-            Write-Verbose -Verbose $env:PATH
           } else {
             throw "PowerShell not installed"
           }
@@ -85,17 +80,16 @@ stages:
         pwsh: true
         script: |
           Write-Verbose -Verbose "Pwsh 7 Installed"
-          Write-Verbose -Verbose $env:PATH
-          Get-ChildItem -Directory -Path "$(pwsh_Path)" | ForEach-Object {
-            Write-Verbose -Verbose $_.FullName
+          Write-Verbose -Verbose "env:Path: "
+          $env:PATH -split ';' | ForEach-Object {
+            Write-Verbose -Verbose $_
           }
-          pwsh.exe -c { $PSVersionTable }
-
       displayName: Check pwsh 7 installation
 
     - task: PowerShell@2
       inputs:
         targetType: inline
+        pwsh: true
         script: |
           git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/PowerShell '$(Pipeline.Workspace)/PowerShell'
           cd $(Pipeline.Workspace)/PowerShell
@@ -107,6 +101,7 @@ stages:
     - task: PowerShell@2
       inputs:
         targetType: inline
+        pwsh: true
         script: |
           $variable = 'releaseTag'
           $branch = $ENV:BUILD_SOURCEBRANCH
@@ -124,6 +119,7 @@ stages:
     - task: PowerShell@2
       inputs:
         targetType: inline
+        pwsh: true
         script: |
           $azureVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '\.', '-'
           $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
@@ -139,53 +135,15 @@ stages:
     - task: PowerShell@2
       inputs:
         targetType: inline
+        pwsh: true
         script: |
           Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
       displayName: 'Capture Environment Variables'
-  
-    # - pwsh: |
-    #     # Uninstall Azure RM modules
-    #     $azRmModules = Get-Module -Name AzureRM* -ListAvailable
-    #     if ($azRmModules) {
-    #       $azRmModules | Remove-Module -Force
-    #     }
-    # 
-    #     # Install Az.Storage module if not already installed
-    #     if (-not (Get-Module -Name Az.Storage -ListAvailable)) {
-    #       Install-Module -Name Az.Storage -Force -AllowClobber -Scope CurrentUser -Verbose
-    #     }
-    #   displayName: Install Az.Storage module
-  
-    # - task: AzurePowerShell@5
-    #   displayName: Download packages from Azure Storage
-    #   inputs:
-    #     azureSubscription: az-blob-cicd-infra
-    #     scriptType: inlineScript
-    #     azurePowerShellVersion: LatestVersion
-    #     pwsh: true
-    #     inline: |
-    #       $storageAccount = "$(StorageAccount)"
-    #       $containerName = "$(AzureVersion)"
-    #       $destinationPath = "$(System.ArtifactsDirectory)"
-    # 
-    #       # Get storage account context
-    #       $storageContext = New-AzStorageContext -StorageAccountName $storageAccount
-    # 
-    #       $blobList = Get-AzStorageBlob -Container $containerName -Context $storageContext
-    #       foreach ($blob in $blobList) {
-    #         $blobName = $blob.Name
-    #         $destinationFile = Join-Path -Path $destinationPath -ChildPath $blobName
-    #         Get-AzStorageBlobContent -Container $containerName -Blob $blobName -Destination $destinationFile -Context $storageContext -Force
-    #         Write-Output "Downloaded $blobName to $destinationFile"
-    #       }
-    # 
-    #       $packagesPath = Get-ChildItem -Path $destinationPath\*.deb -Recurse -File | Select-Object -First 1 -ExpandProperty DirectoryName
-    #       Write-Host "sending -- vso[task.setvariable variable=PackagesRoot]$packagesPath"
-    #       Write-Host "##vso[task.setvariable variable=PackagesRoot]$packagesPath"
-  
+
     - task: PowerShell@2
       inputs:
         targetType: inline
+        pwsh: true
         script: |
           git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
       displayName: Clone Internal-Tools repository
@@ -193,6 +151,7 @@ stages:
     - task: PowerShell@2
       inputs:
         targetType: inline
+        pwsh: true
         script: |
           $releaseVersion = '$(ReleaseTag)' -replace '^v',''
           Write-Verbose -Verbose "Moving packages to staging directory"
@@ -212,6 +171,7 @@ stages:
     - task: PowerShell@2
       inputs:
         targetType: inline
+        pwsh: true
         script: |
           $Path = "$(Pipeline.Workspace)/PSPackagesOfficial"
           $OutputPath = Join-Path $Path 'hashes.sha256'
@@ -233,6 +193,7 @@ stages:
     - task: PowerShell@2
       inputs:
         targetType: inline
+        pwsh: true
         script: |
           $releaseVersion = '$(ReleaseTag)' -replace '^v',''
           $vstsCommandString = "vso[task.setvariable variable=ReleaseVersion]$releaseVersion"
@@ -243,6 +204,7 @@ stages:
     - task: PowerShell@2
       inputs:
         targetType: inline
+        pwsh: true
         script: |
           Get-ChildItem $(Pipeline.Workspace) -recurse | Select-Object -ExpandProperty FullName
       displayName: List all files in the workspace
@@ -250,396 +212,43 @@ stages:
     - task: PowerShell@2
       inputs:
         targetType: inline
+        pwsh: true
         script: |
-          # Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
+          Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
           $releaseVersion = '$(ReleaseTag)' -replace '^v',''
-          Write-Verbose -Verbose "Release Version: $releaseVersion"
-          # $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
-          Write-Verbose -Verbose "Added Class SemanticVersion because pwsh 7+ is not available"
-          class SemanticVersion {
-            [int]$Major
-            [int]$Minor
-            [int]$Patch
-            [string]$PreReleaseLabel
-
-            SemanticVersion([string]$releaseVersion) {
-              $versionParts = $releaseVersion -split '[.-]'
-              for($i = 0; $i -lt $versionParts.Count; $i++) {
-                if ($i -eq 0) {
-                    $this.Major = [int]$versionParts[$i]
-                } elseif ($i -eq 1) {
-                    $this.Minor = [int]$versionParts[$i]
-                } elseif ($i -eq 2) {
-                  $this.Patch = [int]$versionParts[$i]
-                } elseif ($i -eq 3) {
-                  $this.PreReleaseLabel = $versionParts[$i..($versionParts.Count - 1)] -join '.'
-                }
-              }
-            }
-        
-            [string] ToString() {
-                $version = "$($this.Major).$($this.Minor).$($this.Patch)"
-                if ($this.PreReleaseLabel) {
-                    $version += "-$($this.PreReleaseLabel)"
-                }
-                return $version
-            }
-          }
-
-          $semanticVersion = [SemanticVersion]::new($releaseVersion)
+          $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
+    
           $isPreview = $semanticVersion.PreReleaseLabel -ne $null
-        
+    
           $fileName = if ($isPreview) {
             "preview.md"
           }
           else {
             $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
           }
-        
-          $filePath = "$(Pipeline.Workspace)/PowerShell/CHANGELOG/$fileName"
+    
+          $filePath = "$env:BUILD_SOURCESDIRECTORY/PowerShell/CHANGELOG/$fileName"
           Write-Verbose -Verbose "Selected Log file: $filePath"
-        
+    
           if (-not (Test-Path $filePath)) {
             throw "$filePath not found"
           }
-        
+    
           $changelog = Get-Content -Path $filePath
-        
+    
           $startPattern = "^## \[" + ([regex]::Escape($releaseVersion)) + "\]"
           $endPattern = "^## \[{0}\.{1}\.{2}*" -f $semanticVersion.Major, $semanticVersion.Minor, $semanticVersion.Patch
-        
+    
           $clContent = $changelog | ForEach-Object {
               if ($_ -match $startPattern) { $outputLine = $true }
               elseif ($_ -match $endPattern) { $outputLine = $false }
               if ($outputLine) { $_}
             } | Out-String
-        
+    
           Write-Verbose -Verbose "Selected content: `n$clContent"
 
-          function Find-Release {
-            [CmdletBinding(DefaultParameterSetName="Default")]
-            param(
-              [Parameter(Mandatory)]
-              [string]$Tag
-            )
-
-            DynamicParam {
-              Get-CommonParameters
-            }
-
-            Begin {
-              Write-Verbose -Message "Finding release for tag '$Tag'" -Verbose
-              $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
-            }
-
-            End {
-              $maxRetries = 10
-              $retryIntervalSec = 5
-              $attempt = 0
-              $success = $false
-              $Result = $null
-
-              while (-not $success -and $attempt -lt $maxRetries) {
-                try {
-                  Write-Verbose -Message "Retrieving releases for $User/$Repository" -Verbose
-                  $Result = Invoke-RestMethod -Uri "https://api.github.com/repos/$User/$Repository/releases" -Headers $AuthHeader
-                  Write-Verbose -Message "Result from Invoke-RestMethod: $Result" -Verbose
-                  $success = $true
-                } catch {
-                  $attempt++
-                  if ($attempt -lt $maxRetries) {
-                    Start-Sleep -Seconds $retryIntervalSec
-                  } else {
-                    throw "Failed to retrieve releases after $maxRetries attempts."
-                  }
-                }
-              }
-
-              foreach ($Item in $Result) {
-                if ($Item.tag_name -eq $Tag) {
-                  Write-Verbose ("Release $Tag is found, upload_url=" + $Item.upload_url) -Verbose
-                  return $Item.id
-                }
-              }
-            }
-          }
-
-          function New-Release {
-            [CmdletBinding(DefaultParameterSetName="Default")]
-            param(
-              [Parameter(Mandatory)]
-              [string]$Tag,
-      
-              [Parameter(Mandatory)]
-              [string]$Name,
-      
-              [Parameter(Mandatory)]
-              [string]$Description
-            )
-        
-            DynamicParam {
-              Get-CommonParameters
-            }
-        
-            Begin {
-              Write-Verbose -Message "Creating a new release draft for $Tag" -Verbose
-              $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
-            }
-
-            End {
-              $maxRetries = 10
-              $retryIntervalSec = 5
-              $attempt = 0
-              $success = $false
-      
-              $Body = @{
-                tag_name = $Tag
-                name = $Name
-                body = $Description
-                draft = $true
-                prerelease = $false
-              }
-      
-              $BodyInJson = $Body | ConvertTo-Json
-      
-              while (-not $success -and $attempt -lt $maxRetries) {
-                try {
-                  $Result = Invoke-RestMethod -Headers $AuthHeader -Method Post -Body $BodyInJson -Uri "https://api.github.com/repos/$User/$Repository/releases"
-                  $success = $true
-                } catch {
-                  $attempt++
-                  if ($attempt -lt $maxRetries) {
-                    Start-Sleep -Seconds $retryIntervalSec
-                  } else {
-                    throw "Failed to create release after $maxRetries attempts."
-                  }
-                }
-              }
-              
-                return $Result.id
-            }
-          }
-
-          function Find-ReleaseAsset {
-            [CmdletBinding(DefaultParameterSetName="Default")]
-            param(
-              [Parameter(Mandatory)]
-              [int]$ReleaseId,
-      
-              [Parameter(Mandatory)]
-              [string]$AssetName
-            )
-        
-            DynamicParam {
-              Get-CommonParameters
-            }
-        
-            Begin {
-              Write-Verbose -Message "Searching for asset '$AssetName' in release $ReleaseId" -Verbose
-              $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
-            }
-
-            End {
-              $maxRetries = 10
-              $retryIntervalSec = 5
-              $attempt = 0
-              $success = $false
-      
-              while (-not $success -and $attempt -lt $maxRetries) {
-                try {
-                  $Result = Invoke-RestMethod -Headers $AuthHeader -Uri "https://api.github.com/repos/$User/$Repository/releases/$ReleaseId/assets"
-                  $success = $true
-                } catch {
-                  $attempt++
-                  if ($attempt -lt $maxRetries) {
-                      Start-Sleep -Seconds $retryIntervalSec
-                  } else {
-                      throw "Failed to retrieve assets after $maxRetries attempts."
-                  }
-                }
-              }
-
-              foreach ($Item in $Result) {
-                if ($Item.name -eq $AssetName) {
-                  Write-Verbose "Asset $AssetName was already uploaded, id: $($Item.id)" -Verbose
-                  Write-Verbose ("  Asset is ready for download: " + $Item.browser_download_url) -Verbose
-                  return $Item.id
-                }
-              }    
-            }
-          }
-
-          function Push-ReleaseAsset {
-            [CmdletBinding(DefaultParameterSetName="Default")]
-            param(
-              [Parameter(Mandatory)]
-              [int]$ReleaseId,
-      
-              [Parameter(Mandatory)]
-              [string]$AssetPath,
-      
-              [switch]$PassThru
-            )
-        
-            DynamicParam {
-              Get-CommonParameters
-            }
-        
-            Begin {
-              Write-Verbose -Message "Pushing asset '$AssetPath' to release $ReleaseId" -Verbose
-              $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
-            }
-        
-            End {
-              $maxRetries = 10
-              $retryIntervalSec = 5
-              $attempt = 0
-              $success = $false
-      
-              $type_7z  = "application/octet-stream"
-              $type_exe = "application/x-msdownload"
-      
-              $AssetName = Split-Path $AssetPath -Leaf
-      
-              if ([System.IO.Path]::GetExtension($AssetName) -eq ".7z") {
-                $content_type = $type_7z
-              } else {
-                $content_type = $type_exe
-              }
-      
-              $Header = $AuthHeader + @{"Content-Type"=$content_type; "name"=$AssetName;}
-              $Uri = "https://uploads.github.com/repos/$User/$Repository/releases/$ReleaseId/assets?name=$AssetName"
-      
-              $Body = [System.IO.File]::ReadAllBytes($AssetPath)
-      
-              while (-not $success -and $attempt -lt $maxRetries) {
-                try {
-                  $Result = Invoke-RestMethod -Headers $Header -Method Post -Body $Body -Uri $Uri
-                  $success = $true
-                } catch {
-                  $attempt++
-                  if ($attempt -lt $maxRetries) {
-                      Start-Sleep -Seconds $retryIntervalSec
-                  } else {
-                      throw "Failed to upload asset after $maxRetries attempts."
-                  }
-                }
-              }
-
-              Write-Verbose -Message "$($Result.state)" -Verbose
-
-              if ($Result.state -eq "uploaded") {
-                Write-Host "'$AssetName' -- Upload succeeded" -ForegroundColor Green
-                Write-Verbose -Message "   Download URL: $($Result.browser_download_url)" -Verbose
-              } else {
-                Write-Host "'$AssetName' -- Upload failed with StatusCode $($Result.StatusCode)" -ForegroundColor Red
-              }
-      
-              ## Pass through the HTTP result if '-PassThru' is specified
-              if ($PassThru) { return $Result }
-            }
-          }
-          
-          $Script:Auth = $null
-
-          function Get-CommonParameters {
-            $ParamDict = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
-
-            ## Add the '-User' parameter
-            ## [Parameter(Mandatory)]
-            ## [string]$User
-            $UserAtts = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
-            $UserAtts.Add([System.Management.Automation.ParameterAttribute]@{Mandatory = $true}) > $null
-            $ParamDict.Add("User", [System.Management.Automation.RuntimeDefinedParameter]::new("User", [string], $UserAtts)) > $null
-
-            ## Add the '-Repository' parameter
-            ## [Parameter(Mandatory)]
-            ## [string]$Repository
-            $RepositoryAtts = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
-            $RepositoryAtts.Add([System.Management.Automation.ParameterAttribute]@{Mandatory = $true}) > $null
-            $ParamDict.Add("Repository", [System.Management.Automation.RuntimeDefinedParameter]::new("Repository", [string], $RepositoryAtts)) > $null
-
-            ## Add the '-Token' parameter
-            ## [Parameter(Mandatory, ParameterSetName="UseSpecifiedToken")]
-            ## [string]$Token
-            $TokenAtts = [System.Collections.ObjectModel.Collection[System.Attribute]]::new()
-            $TokenAtts.Add([System.Management.Automation.ParameterAttribute]@{Mandatory = $true; ParameterSetName="UseSpecifiedToken"}) > $null
-            $ParamDict.Add("Token", [System.Management.Automation.RuntimeDefinedParameter]::new("Token", [string], $TokenAtts)) > $null
-
-            return $ParamDict
-          }
-
-          function Get-CommonParamValues([System.Management.Automation.PSCmdlet]$Cmdlet) {
-            $AuthHeader = $Script:Auth
-            if ($Cmdlet.ParameterSetName -eq "UseSpecifiedToken") {
-              $Token = $Cmdlet.MyInvocation.BoundParameters["Token"]
-              $AuthHeader = @{"Authorization"="token $Token"}
-            }
-            if (-not $AuthHeader) {
-              throw "Authentication token is not specified."
-            }
-          
-            $User = $Cmdlet.MyInvocation.BoundParameters["User"]
-            $Repository = $Cmdlet.MyInvocation.BoundParameters["Repository"]
-            return $User, $Repository, $AuthHeader
-          }
-
-          function Publish-ReleaseDraft {
-            [CmdletBinding(DefaultParameterSetName="Default")]
-            param(
-              [Parameter(Mandatory)]
-              [string]$Tag,
-      
-              [Parameter(Mandatory)]
-              [string]$Name,
-      
-              [Parameter(Mandatory)]
-              [string]$Description,
-      
-              [Parameter(Mandatory)]
-              [string]$PackageFolder
-            )
-        
-            DynamicParam { Get-CommonParameters }
-        
-            Begin {
-              Write-Verbose -Message "Publishing release draft for $Tag" -Verbose
-              $User, $Repository, $AuthHeader = Get-CommonParamValues -Cmdlet $PSCmdlet
-              $Script:Auth = $AuthHeader
-              $CommonParams = @{User=$User; Repository=$Repository}
-            }
-        
-            End {
-              $ReleaseId = Find-Release -Tag $Tag @CommonParams
-              if ($ReleaseId) {
-                Write-Host "Release for $Tag already created, Release-Id: $ReleaseId" -ForegroundColor Green
-              } else {
-                $StringBuilder = [System.Text.StringBuilder]::new($Description, $Description.Length + 2kb)
-                $StringBuilder.AppendLine().AppendLine() > $null
-                $StringBuilder.AppendLine("### SHA256 Hashes of the release artifacts").AppendLine() > $null
-                Get-ChildItem -Path $PackageFolder -File | ForEach-Object {
-                  $PackageName = $_.Name
-                  $SHA256 = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash
-                  $StringBuilder.AppendLine("- $PackageName").AppendLine("  - $SHA256") > $null
-                }
-    
-                $Description = $StringBuilder.ToString()
-                $ReleaseId = New-Release -Tag $Tag -Name $Name -Description $Description @CommonParams
-                Write-Host "Release for $Tag created, Release-Id: $ReleaseId" -ForegroundColor Green
-              }
-      
-              Get-ChildItem -Path $PackageFolder -File | ForEach-Object {
-                $PackageName = $_.Name
-                $PackageId = Find-ReleaseAsset -ReleaseId $ReleaseId -AssetName $PackageName @CommonParams
-                if (-not $PackageId) {
-                  Push-ReleaseAsset -ReleaseId $ReleaseId -AssetPath $_.FullName @CommonParams
-                }
-              }
-            }
-          }
-        
           $clContent = "Testing... DeployBox... `n`n" + $clContent
-          
+    
           Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder "$(Pipeline.Workspace)/PSPackagesOfficial" -Token $(GitHubReleasePat)
       displayName: Publish Release Draft
   
