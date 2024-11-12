@@ -70,9 +70,10 @@ stages:
             Get-ChildItem -Path $pwshPath -Recurse | 
               Where-Object { $_.Name -eq 'pwsh.exe' } |
               Select-Object -ExpandProperty FullName
-            Write-Host "vso[task.setvariable variable=$pwsh_path]$pwshPath"
+            Write-Host "##vso[task.setvariable variable=$pwsh_path]$pwshPath"
             $env:PATH += ";$pwshPath\"
-            Write-Host "vso[task.setvariable variable=PATH]$env:PATH"
+            Write-Verbose -Verbose "Adding pwsh to env:PATH"
+            Write-Host "##vso[task.setvariable variable=PATH]$env:PATH"
             Write-Verbose -Verbose $env:PATH
           } else {
             throw "PowerShell not installed"
@@ -84,7 +85,9 @@ stages:
         targetType: inline
         script: |
           Write-Verbose -Verbose $env:PATH
-          Get-ChildItem -Directory -Path $pwsh_Path
+          Get-ChildItem -Directory -Path $pwsh_Path | ForEach-Object {
+            Write-Verbose -Verbose $_.FullName
+          }
           pwsh.exe -c { $PSVersionTable }
 
       displayName: Check pwsh 7 installation
