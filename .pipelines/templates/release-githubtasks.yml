@@ -70,7 +70,7 @@ stages:
             Get-ChildItem -Path $pwshPath -Recurse | 
               Where-Object { $_.Name -eq 'pwsh.exe' } |
               Select-Object -ExpandProperty FullName
-            Write-Host "##vso[task.setvariable variable=$pwsh_path]$pwshPath"
+            Write-Host "##vso[task.setvariable variable=pwsh_path;]$pwshPath"
             Write-Verbose -Verbose "Adding pwsh to env:PATH"
             Write-Host "##vso[task.prependpath]$env:PATH"
             Write-Verbose -Verbose $env:PATH
