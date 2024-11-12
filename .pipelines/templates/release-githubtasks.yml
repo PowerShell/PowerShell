@@ -71,7 +71,7 @@ stages:
               Where-Object { $_.Name -eq 'pwsh.exe' } |
               Select-Object -ExpandProperty FullName
             Write-Host "vso[task.setvariable variable=$pwsh_path]$pwshPath"
-            $env:PATH += ";$pwshPath"
+            $env:PATH += ";$pwshPath\"
             Write-Host "vso[task.setvariable variable=PATH]$env:PATH"
             Write-Verbose -Verbose $env:PATH
           } else {
