@@ -290,7 +290,7 @@ extends:
       displayName: Push Git Tag
       dependsOn: PublishGitHubRelease
       jobs:
-      - template: /.pipelines/templates/release-push-git-tag.yml@self
+      - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
           displayName: Push Git Tag
           jobName: PushGitTag
