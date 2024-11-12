@@ -227,7 +227,7 @@ stages:
             $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
           }
     
-          $filePath = "$env:BUILD_SOURCESDIRECTORY/PowerShell/CHANGELOG/$fileName"
+          $filePath = "$(Pipeline.Workspace)/PowerShell/CHANGELOG/$fileName"
           Write-Verbose -Verbose "Selected Log file: $filePath"
     
           if (-not (Test-Path $filePath)) {
