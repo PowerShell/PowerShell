@@ -64,9 +64,12 @@ stages:
           Start-Process -FilePath msiexec -ArgumentList "/package $localInstallerPath /quiet REGISTER_MANIFEST=1" -Wait -NoNewWindow
 
           $pwshPath = Get-ChildItem -Directory -Path 'C:\Program Files\PowerShell\7*' | Select-Object -First 1 -ExpandProperty FullName
-          
+
           if (Test-Path -Path $pwshPath) {
             Write-Verbose -Verbose "PowerShell installed at $pwshPath"
+            Get-ChildItem -Path $pwshPath -Recurse | 
+              Where-Object { $_.Name -eq 'pwsh.exe' } |
+              Select-Object -ExpandProperty FullName
             Write-Host "vso[task.setvariable variable=$pwsh_path]$pwshPath"
             $env:PATH += ";$pwshPath"
             Write-Host "vso[task.setvariable variable=PATH]$env:PATH"
