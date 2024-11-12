@@ -147,6 +147,40 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
         }
     }
 
+    Context "ProgressAction" {
+        It "Silences with no parameters/variables" {
+            $ps = [Powershell]::Create()
+            $ps.AddScript(@'
+                function test-function {
+                    [CmdletBinding()]param()
+                }
+                test-function -ProgressAction Ignore
+'@).Invoke()
+
+            $ps.Streams.Progress.Count | Should -Be 0
+            $ps.Streams.Error | ForEach-Object {
+                Write-Error -ErrorRecord $_ -ErrorAction Stop
+            }
+        }
+
+        It "Silences with variable defined" {
+            $ps = [Powershell]::Create()
+            $ps.AddScript(@'
+                function test-function {
+                    [CmdletBinding()]param()
+
+                    switch($false) { default {} }
+                }
+                test-function -ProgressAction Ignore
+'@).Invoke()
+
+            $ps.Streams.Progress.Count | Should -Be 0
+            $ps.Streams.Error | ForEach-Object {
+                Write-Error -ErrorRecord $_ -ErrorAction Stop
+            }
+        }
+    }
+
     Context "SupportShouldprocess" {
         $script = '
                 function get-foo
