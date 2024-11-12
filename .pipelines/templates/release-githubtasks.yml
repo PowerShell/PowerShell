@@ -82,9 +82,9 @@ stages:
     - task: PowerShell@2
       inputs:
         targetType: inline
-        pwsh: true
         script: |
-          Write-Verbose -Message "PowerShell 7 installed" -Verbose
+          Write-Verbose -Verbose $env:PATH
+          Get-ChildItem -Directory -Path $pwsh_Path
       displayName: Check pwsh 7 installation
 
     - task: PowerShell@2
