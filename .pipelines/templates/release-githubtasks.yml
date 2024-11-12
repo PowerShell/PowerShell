@@ -67,9 +67,8 @@ stages:
           
           if (Test-Path -Path $pwshPath) {
             Write-Verbose -Verbose "PowerShell installed at $pwshPath"
-            $setPwshPath = "vso[task.setvariable variable=PATH]${env:PATH}:$pwshPath"
-            Write-Host "sending " + $setPwshPath
-            Write-Host "##$setPwshPath"
+            Write-Host "vso[task.setvariable variable=$pwsh_path]$pwshPath"
+            Write-Host "vso[task.setvariable variable=PATH]${env:PATH}:$pwshPath"
             Write-Verbose -Verbose $env:PATH
           } else {
             throw "PowerShell not installed"
