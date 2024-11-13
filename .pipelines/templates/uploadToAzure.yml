@@ -235,10 +235,20 @@ jobs:
 
   - pwsh: |
       Write-Verbose -Verbose "Copying Github Release files in $(Build.ArtifactStagingDirectory)/downloads to use in Release Pipeline"
+      
+      Write-Verbose -Verbose "Creating output directory for GitHub Release files: $(ob_outputDirectory)/GitHubPackages"
+      New-Item -Path $(ob_outputDirectory)/GitHubPackages -ItemType Directory -Force
       Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
         Where-Object { $_.Extension -notin '.msix', '.nupkg' } | 
         ForEach-Object { Write-Verbose -Verbose $_.FullName ; $_  } |
-        Copy-Item -Destination $(ob_outputDirectory) -Recurse
+        Copy-Item -Destination $(ob_outputDirectory)/GitHubPackages -Recurse
+      
+      Write-Verbose -Verbose "Creating output directory for NuGet packages: $(ob_outputDirectory)/NuGetPackages"
+      New-Item -Path $(ob_outputDirectory)/NuGetPackages -ItemType Directory -Force
+      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/downloads/*" -Recurse | 
+        Where-Object { $_.Extension -eq '.nupkg' } | 
+        ForEach-Object { Write-Verbose -Verbose $_.FullName ; $_  } |
+        Copy-Item -Destination $(ob_outputDirectory)/NuGetPackages -Recurse
     displayName: Copy downloads to Artifacts
 
   - pwsh: |

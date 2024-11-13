@@ -9,7 +9,7 @@ jobs:
     inputs:
       - input: pipelineArtifact
         pipeline: PSPackagesOfficial
-        artifactName: drop_upload_upload_packages
+        artifactName: GitHubPackages
   variables:
   - name: runCodesignValidationInjection
     value: false
