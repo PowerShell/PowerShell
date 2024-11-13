@@ -9,7 +9,7 @@ jobs:
     inputs:
       - input: pipelineArtifact
         pipeline: PSPackagesOfficial
-        artifactName: GitHubPackages
+        artifactName: drop_upload_upload_packages
   variables:
   - name: runCodesignValidationInjection
     value: false
@@ -36,7 +36,7 @@ jobs:
     inputs:
       targetType: inline
       script: |
-        $localInstallerPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter '*win-x64.msi' | Select-Object -First 1 -ExpandProperty FullName
+        $localInstallerPath = Get-ChildItem -Path "$(Pipeline.Workspace)/GitHubPackages" -Filter '*win-x64.msi' | Select-Object -First 1 -ExpandProperty FullName
         if (Test-Path -Path $localInstallerPath) {
           Write-Verbose -Verbose "Installer found at $localInstallerPath"
         } else {
@@ -79,39 +79,7 @@ jobs:
         git checkout $branchName
     displayName: Checkout repository
 
-  - task: PowerShell@2
-    inputs:
-      targetType: inline
-      pwsh: true
-      script: |
-        $variable = 'releaseTag'
-        $branch = $ENV:BUILD_SOURCEBRANCH
-        if($branch -notmatch  '^.*((release/|rebuild/.*rebuild))')
-        {
-            throw "Branch name is not in release format: '$branch'"
-        }
-
-        $releaseTag = $Branch -replace '^.*((release|rebuild)/)'
-        $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
-        Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
-        Write-Host -Object "##$vstsCommandString"
-    displayName: Set Release Tag
-  
-  - task: PowerShell@2
-    inputs:
-      targetType: inline
-      pwsh: true
-      script: |
-        $azureVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '\.', '-'
-        $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
-        Write-Host "sending " + $vstsCommandString
-        Write-Host "##$vstsCommandString"
-      
-        $version = '$(ReleaseTag)'.ToLowerInvariant().Substring(1)
-        $vstsCommandString = "vso[task.setvariable variable=Version]$version"
-        Write-Host ("sending " + $vstsCommandString)
-        Write-Host "##$vstsCommandString"
-    displayName: Set container name
+  - template: release-SetReleaseTagAndContainerName.yml
 
   - task: PowerShell@2
     inputs:
@@ -128,31 +96,13 @@ jobs:
       script: |
         git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
     displayName: Clone Internal-Tools repository
-  
+
   - task: PowerShell@2
     inputs:
       targetType: inline
       pwsh: true
       script: |
-        $releaseVersion = '$(ReleaseTag)' -replace '^v',''
-        Write-Verbose -Verbose "Moving packages to staging directory"
-        $packagesRoot = "$(Pipeline.Workspace)/PSPackagesOfficial"
-        New-Item -Path $packagesRoot -ItemType Directory -Force > $null
-        Get-ChildItem -Path $(Pipeline.Workspace) | 
-          Where-Object { $_.Name -match "powershell-*" -or $_.Name -match "powershell_*" -and -not $_.PSIsContainer } |
-          ForEach-Object {
-            Move-Item -Path $_.FullName -Destination $packagesRoot
-          }
-        Write-Verbose -Verbose "List all packages in the staging directory"
-        Get-ChildItem -Path $packagesRoot -Recurse | Select-Object -ExpandProperty FullName
-    displayName: Move packages to staging directory
-  
-  - task: PowerShell@2
-    inputs:
-      targetType: inline
-      pwsh: true
-      script: |
-        $Path = "$(Pipeline.Workspace)/PSPackagesOfficial"
+        $Path = "$(Pipeline.Workspace)/GitHubPackages"
         $OutputPath = Join-Path $Path 'hashes.sha256'
         $srcPaths = @($Path)
         $packages  = Get-ChildItem -Path $srcPaths -Include * -Recurse -File
@@ -227,5 +177,5 @@ jobs:
         Write-Verbose -Verbose "Selected content: `n$clContent"
         $clContent = "Testing... DeployBox... `n`n" + $clContent
   
-        Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder "$(Pipeline.Workspace)/PSPackagesOfficial" -Token $(GitHubReleasePat)
+        Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder "$(Pipeline.Workspace)/GitHubPackages" -Token $(GitHubReleasePat)
     displayName: Publish Release Draft

@@ -10,6 +10,11 @@ jobs:
   pool:
     type: release
     os: windows
+  templateContext:
+    inputs:
+      - input: pipelineArtifact
+        pipeline: PSPackagesOfficial
+        artifactName: drop_upload_upload_packages
   variables:
   - name: runCodesignValidationInjection
     value: false
@@ -30,10 +35,52 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
 
   steps:
-  - checkout: self
-    clean: true
-    env:
-      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        $localInstallerPath = Get-ChildItem -Path "$(Pipeline.Workspace)/GitHubPackages" -Filter '*win-x64.msi' | Select-Object -First 1 -ExpandProperty FullName
+        if (Test-Path -Path $localInstallerPath) {
+          Write-Verbose -Verbose "Installer found at $localInstallerPath"
+        } else {
+          throw "Installer not found"
+        }
+        Write-Verbose -Verbose "Installing PowerShell via msiexec"
+        Start-Process -FilePath msiexec -ArgumentList "/package $localInstallerPath /quiet REGISTER_MANIFEST=1" -Wait -NoNewWindow
+        $pwshPath = Get-ChildItem -Directory -Path 'C:\Program Files\PowerShell\7*' | Select-Object -First 1 -ExpandProperty FullName
+        if (Test-Path -Path $pwshPath) {
+          Write-Verbose -Verbose "PowerShell installed at $pwshPath"
+          Write-Verbose -Verbose "Adding pwsh to env:PATH"
+          Write-Host "##vso[task.prependpath]$pwshPath"
+        } else {
+          throw "PowerShell not installed"
+        }
+    displayName: Install pwsh 7
+
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      pwsh: true
+      script: |
+        Write-Verbose -Verbose "Pwsh 7 Installed"
+        Write-Verbose -Verbose "env:Path: "
+        $env:PATH -split ';' | ForEach-Object {
+          Write-Verbose -Verbose $_
+        }
+    displayName: Check pwsh 7 installation
+
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      pwsh: true
+      script: |
+        Write-Verbose -Verbose "Deploy Box Product Pathway Does Not Support the `"checkout`" task"
+        git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/PowerShell '$(Pipeline.Workspace)/PowerShell'
+        cd $(Pipeline.Workspace)/PowerShell
+        $branchParts = $ENV:BUILD_SOURCEBRANCH -split '/'
+        $branchName = "$($branchParts[-2])/$($branchParts[-1])"
+        git checkout $branchName
+    displayName: Checkout repository
 
   - template: release-SetReleaseTagAndContainerName.yml
 
@@ -41,26 +88,27 @@ jobs:
       Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: 'Capture Environment Variables'
 
-  - download: PSPackagesOfficial
-    artifact: drop_nupkg_build_nupkg
-    displayName: Download nuget packages
-
   - pwsh: |
       #Exclude all global tool packages. Their names start with 'PowerShell.'
       $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
-      Copy-Item "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
+      Copy-Item "$(Pipeline.Workspace)/NuGetPackages/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
 
       $releaseVersion = '$(VERSION)'
-      $globalToolPath = "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg/PowerShell.$releaseVersion.nupkg"
+      $globalToolPath = "$(Pipeline.Workspace)/NuGetPackages/PowerShell.$releaseVersion.nupkg"
 
       if ($releaseVersion -notlike '*-*') {
           # Copy the global tool package for stable releases
           Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release"
       }
 
+      Write-Verbose -Verbose "The .nupkgs below will be pushed:"
       Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
     displayName: Download and capture nupkgs
     condition: and(ne('${{ parameters.skipPublish }}', 'false'), succeeded())
+
+  - task: ManualValidation@0
+    displayName: 'Manual validation'
+    
 
   - task: NuGetCommand@2
     displayName: 'NuGet push'

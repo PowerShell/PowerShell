@@ -5,6 +5,8 @@ jobs:
   pool:
     type: windows
   variables:
+  - name: ob_sdl_sbom_enabled
+    value: false
   - name: runCodesignValidationInjection
     value: false
   - name: NugetSecurityAnalysisWarningLevel
