@@ -3,6 +3,9 @@
 
 Describe "Isolated module scenario - load the whole module in custom ALC" -Tag 'CI' {
     It "Loading 'IsolatedModule' should work as expected" {
+
+        Set-ItResult -Pending -Because "The test is failing as we cannot depend on Newtonsoft.Json v10.0.0 as it has security vulnerabilities."
+        
         ## The 'IsolatedModule' module can be found at '<repo-root>\test\tools\Modules'.
         ## The module assemblies are created and deployed by '<repo-root>\test\tools\TestAlc'.
         ## The module defines its own custom ALC and has its module structure organized in a special way that allows the module to be loaded in that custom ALC.
