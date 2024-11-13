@@ -81,12 +81,6 @@ extends:
   parameters:
     release: 
       category: NonAzure
-    # still using KS2 because we are not yet using a Box Product Deployment
-    # featureFlags:
-    #   LinuxHostVersion:
-    #       Network: KS2
-    #   WindowsHostVersion:
-    #       Network: KS2
     featureFlags:
       WindowsHostVersion:
         Version: 2022
