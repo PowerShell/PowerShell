@@ -11,10 +11,12 @@
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.14.0" />
     <PackageReference Include="Iced" Version="1.21.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" />
+    <PackageReference Include="Microsoft.Diagnostics.NETCore.Client" Version="0.2.553101" />
     <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="3.1.512801" />
-    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.16" />
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.17" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
     <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="System.Reflection.Metadata" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
