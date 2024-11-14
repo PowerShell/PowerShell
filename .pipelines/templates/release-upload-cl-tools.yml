@@ -10,6 +10,7 @@ jobs:
   pool:
     type: windows
   variables:
+  - group: 'mscodehub-code-read-akv'
   - name: ob_sdl_sbom_enabled
     value: false
   - name: runCodesignValidationInjection
