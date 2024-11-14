@@ -81,12 +81,6 @@ extends:
   parameters:
     release: 
       category: NonAzure
-    # still using KS2 because we are not yet using a Box Product Deployment
-    # featureFlags:
-    #   LinuxHostVersion:
-    #       Network: KS2
-    #   WindowsHostVersion:
-    #       Network: KS2
     featureFlags:
       WindowsHostVersion:
         Version: 2022
@@ -277,6 +271,14 @@ extends:
       - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
         parameters:
           SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
+
+    - stage: UploadChangelogAndTools
+      displayName: Upload Changelog and Tools
+      dependsOn: BlobPublic
+      jobs:
+      - template: /.pipelines/templates/release-upload-cl-tools.yml@self
+        parameters:
+          depth: 1
 
     - stage: PublishGitHubRelease
       displayName: Publish GitHub Release

@@ -32,52 +32,9 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
 
   steps:
-  - task: PowerShell@2
-    inputs:
-      targetType: inline
-      script: |
-        $localInstallerPath = Get-ChildItem -Path "$(Pipeline.Workspace)/GitHubPackages" -Filter '*win-x64.msi' | Select-Object -First 1 -ExpandProperty FullName
-        if (Test-Path -Path $localInstallerPath) {
-          Write-Verbose -Verbose "Installer found at $localInstallerPath"
-        } else {
-          throw "Installer not found"
-        }
-        Write-Verbose -Verbose "Installing PowerShell via msiexec"
-        Start-Process -FilePath msiexec -ArgumentList "/package $localInstallerPath /quiet REGISTER_MANIFEST=1" -Wait -NoNewWindow
-        $pwshPath = Get-ChildItem -Directory -Path 'C:\Program Files\PowerShell\7*' | Select-Object -First 1 -ExpandProperty FullName
-        if (Test-Path -Path $pwshPath) {
-          Write-Verbose -Verbose "PowerShell installed at $pwshPath"
-          Write-Verbose -Verbose "Adding pwsh to env:PATH"
-          Write-Host "##vso[task.prependpath]$pwshPath"
-        } else {
-          throw "PowerShell not installed"
-        }
-    displayName: Install pwsh 7
+  - template: release-install-pwsh.yml
 
-  - task: PowerShell@2
-    inputs:
-      targetType: inline
-      pwsh: true
-      script: |
-        Write-Verbose -Verbose "Pwsh 7 Installed"
-        Write-Verbose -Verbose "env:Path: "
-        $env:PATH -split ';' | ForEach-Object {
-          Write-Verbose -Verbose $_
-        }
-    displayName: Check pwsh 7 installation
-
-  - task: PowerShell@2
-    inputs:
-      targetType: inline
-      pwsh: true
-      script: |
-        Write-Verbose -Verbose "Deploy Box Product Pathway Does Not Support the `"checkout`" task"
-        git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/PowerShell '$(Pipeline.Workspace)/PowerShell'
-        cd $(Pipeline.Workspace)/PowerShell
-        $branchParts = $ENV:BUILD_SOURCEBRANCH -split '/'
-        $branchName = "$($branchParts[-2])/$($branchParts[-1])"
-        git checkout $branchName
-    displayName: Checkout repository
+  - template: release-checkout-pwsh-repo.yml
 
   - template: release-SetReleaseTagAndContainerName.yml
 
@@ -94,7 +51,7 @@ jobs:
       targetType: inline
       pwsh: true
       script: |
-        git clone https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
+        git clone --depth 1 https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
     displayName: Clone Internal-Tools repository
 
   - task: PowerShell@2
@@ -175,7 +132,6 @@ jobs:
           } | Out-String
   
         Write-Verbose -Verbose "Selected content: `n$clContent"
-        $clContent = "Testing... DeployBox... `n`n" + $clContent
   
         Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder "$(Pipeline.Workspace)/GitHubPackages" -Token $(GitHubReleasePat)
     displayName: Publish Release Draft

@@ -1,0 +1,9 @@
+steps:
+  - pwsh: |
+      Write-Verbose -Verbose "Deploy Box Product Pathway Does Not Support the `"checkout`" task"
+      git clone --depth 1 https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/PowerShell '$(Pipeline.Workspace)/PowerShell'
+      cd $(Pipeline.Workspace)/PowerShell
+      $branchParts = $ENV:BUILD_SOURCEBRANCH -split '/'
+      $branchName = "$($branchParts[-2])/$($branchParts[-1])"
+      git checkout $branchName
+    displayName: Checkout Powershell Repository
