@@ -274,7 +274,6 @@ extends:
 
     - stage: UploadChangelogAndTools
       displayName: Upload Changelog and Tools
-      dependsOn: BlobPublic
       jobs:
       - template: /.pipelines/templates/release-upload-cl-tools.yml@self
         parameters:
