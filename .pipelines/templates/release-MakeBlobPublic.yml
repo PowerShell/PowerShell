@@ -17,7 +17,12 @@ jobs:
   dependsOn: CopyReleaseBlobApproval
   condition: and(succeeded(), ne('${{ parameters.SkipPSInfraInstallers }}', true))
   pool:
+    name: PowerShell1ES
     type: windows
+    isCustom: true
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
+
 
   variables:
   - group: 'PSInfraStorage'
@@ -113,7 +118,11 @@ jobs:
   displayName: Copy global tools to PSInfra storage
   dependsOn: CopyBlobApproval
   pool:
+    name: PowerShell1ES
     type: windows
+    isCustom: true
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
 
   variables:
     - group: 'PSInfraStorage'
