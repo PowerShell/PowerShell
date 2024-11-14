@@ -42,17 +42,13 @@ jobs:
     - pwsh: |
         git clone --depth ${{ parameters.depth }} https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
       displayName: 'Clone tools repository'
+    
+    - pwsh: |
+        New-Item -ItemType Directory -Path "$(ob_outputDirectory)/tools"
+        Copy-Item "$(Pipeline.Workspace)/tools/*" -Destination "$(ob_outputDirectory)/tools" -Force -Verbose
+      displayName: 'Upload tools to artifacts'
 
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: '$(Pipeline.Workspace)/tools/*'
-        artifact: 'tools'
-        publishLocation: 'pipeline'
-      displayName: 'Publish tools artifact'
-
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: '$(Pipeline.Workspace)/PowerShell/CHANGELOG/*'
-        artifact: 'changelog'
-        publishLocation: 'pipeline'
-      displayName: 'Publish PowerShell artifact'
+    - pwsh: |
+        New-Item -ItemType Directory -Path "$(ob_outputDirectory)/CHANGELOG"
+        Copy-Item "$(Pipeline.Workspace)/PowerShell/CHANGELOG/*" -Destination "$(ob_outputDirectory)/CHANGELOG" -Force -Verbose
+      displayName: 'Upload changelog to artifacts'
