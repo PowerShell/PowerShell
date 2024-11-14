@@ -27,23 +27,16 @@ jobs:
     value: false
 
   steps:
-    - checkout: self
-      clean: true
-      fetchDepth: ${{ parameters.depth }}
-      env:
-        ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
-      displayName: 'Checkout PowerShell Repo'
-    
     - pwsh: |
         git clone --depth ${{ parameters.depth }} https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
       displayName: 'Clone tools repository'
     
     - pwsh: |
         New-Item -ItemType Directory -Path "$(ob_outputDirectory)/tools"
-        Copy-Item "$(Pipeline.Workspace)/tools/*" -Destination "$(ob_outputDirectory)/tools" -Force -Verbose
+        Copy-Item "$(Pipeline.Workspace)/tools/*" -Destination "$(ob_outputDirectory)/tools" -Recurse -Force -Verbose
       displayName: 'Upload tools to artifacts'
 
     - pwsh: |
         New-Item -ItemType Directory -Path "$(ob_outputDirectory)/CHANGELOG"
-        Copy-Item "$(Pipeline.Workspace)/PowerShell/CHANGELOG/*" -Destination "$(ob_outputDirectory)/CHANGELOG" -Force -Verbose
+        Copy-Item "$(REPOROOT)/CHANGELOG/*" -Destination "$(ob_outputDirectory)/CHANGELOG" -Force -Verbose
       displayName: 'Upload changelog to artifacts'
