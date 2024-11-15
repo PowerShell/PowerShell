@@ -5,27 +5,27 @@ jobs:
   pool:
     type: release
     os: windows
-  # templateContext:
-  #   inputs:
-  #     - input: pipelineArtifact
-  #       artifactName: drop_DownloadPackages_upload_packages
+  templateContext:
+    inputs:
+      - input: pipelineArtifact
+        pipeline: PSPackagesOfficial # temporary need to remove later
+        artifactName: drop_DownloadPackages_upload_packages
   variables:
   - template: ./variable/release-shared.yml@self
 
   steps:
+  - task: PowerShell@2
+    inputs:
+      targetType: inline
+      script: |
+        Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
+    displayName: 'Capture Environment Variables'
+
   - template: release-install-pwsh.yml
 
   - template: release-checkout-pwsh-repo.yml
 
   - template: release-SetReleaseTagAndContainerName.yml
-
-  - task: PowerShell@2
-    inputs:
-      targetType: inline
-      pwsh: true
-      script: |
-        Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
-    displayName: 'Capture Environment Variables'
 
   - task: PowerShell@2
     inputs:
