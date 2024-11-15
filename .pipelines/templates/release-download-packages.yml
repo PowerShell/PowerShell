@@ -8,8 +8,13 @@ jobs:
   - template: ./variable/release-shared.yml@self
     parameters:
       REPOROOT: $(Build.SourcesDirectory)
+      SBOM: true
 
   steps:
+  - pwsh: |
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: Capture environment variables
+  
   - download: PSPackagesOfficial
     artifact: drop_linux_package_deb
     displayName: Download linux deb packages
