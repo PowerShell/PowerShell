@@ -2,7 +2,7 @@ steps:
   - pwsh: |
       Write-Verbose -Verbose "Deploy Box Product Pathway Does Not Support the `"checkout`" task"
       if ($ENV:BUILD_REASON -eq 'PullRequest') {
-        throw 'We don't support PRs'
+        throw 'We dont support PRs'
       }
       
       $branchParts = $ENV:BUILD_SOURCEBRANCH -replace '^refs/head/'
