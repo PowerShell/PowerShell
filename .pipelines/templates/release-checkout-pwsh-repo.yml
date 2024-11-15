@@ -6,7 +6,7 @@ steps:
       }
       
       Write-Verbose -Verbose $ENV:BUILD_SOURCEBRANCH
-      $branchParts = $ENV:BUILD_SOURCEBRANCH -replace '^refs/head/'
+      $branchName = $ENV:BUILD_SOURCEBRANCH -replace '^refs/head/'
       Write-Verbose -Verbose "Branch Name: $branchName"
       git clone --depth 1 --branch $branchName https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/PowerShell '$(Pipeline.Workspace)/PowerShell'
       cd $(Pipeline.Workspace)/PowerShell
