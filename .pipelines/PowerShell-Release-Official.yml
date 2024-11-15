@@ -275,14 +275,6 @@ extends:
             Update and merge the changelog for the release.
             This step is required for creating GitHub draft release.
 
-    - stage: BlobPublic
-      displayName: Make Blob Public
-      dependsOn: UpdateChangeLog
-      jobs:
-      - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
-        parameters:
-          SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
-
     - stage: PublishGitHubRelease
       displayName: Publish GitHub Release
       dependsOn: 
@@ -311,7 +303,17 @@ extends:
           jobName: DraftPublic
           instructions: |
             Make the GitHub Release Draft Public
-
+  
+    - stage: BlobPublic
+      displayName: Make Blob Public
+      dependsOn: 
+        - UpdateChangeLog
+        - PushGitTagAndMakeDraftPublic
+      jobs:
+      - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
+        parameters:
+          SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}         
+  
     - stage: PublishNuGet
       displayName: Publish NuGet
       dependsOn: PushGitTagAndMakeDraftPublic
