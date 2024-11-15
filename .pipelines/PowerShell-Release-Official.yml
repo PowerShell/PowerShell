@@ -285,7 +285,9 @@ extends:
 
     - stage: PublishGitHubRelease
       displayName: Publish GitHub Release
-      dependsOn: DownloadPackages
+      dependsOn: 
+        - DownloadPackages
+        - UpdateChangeLog
       variables:
         ob_release_environment: Production
       jobs:
