@@ -5,26 +5,7 @@ jobs:
   pool:
     type: windows
   variables:
-  - name: ob_sdl_sbom_enabled
-    value: false
-  - name: runCodesignValidationInjection
-    value: false
-  - name: NugetSecurityAnalysisWarningLevel
-    value: none
-  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
-    value: 1
-  - name: ob_outputDirectory
-    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-  - name: ob_sdl_codeSignValidation_enabled
-    value: false
-  - name: ob_sdl_binskim_enabled
-    value: false
-  - name: ob_sdl_tsa_configFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
-  - name: ob_sdl_credscan_suppressionsFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-  - name: ob_sdl_codeql_compiled_enabled
-    value: false
+  - template: ./variable/release-shared.yml@self
 
   steps:
   - pwsh: |
