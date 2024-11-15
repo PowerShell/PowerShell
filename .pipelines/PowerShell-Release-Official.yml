@@ -112,6 +112,7 @@ extends:
     stages:
     - stage: DownloadPackages
       displayName: 'Download Packages'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/release-download-packages.yml@self
 
@@ -279,7 +280,7 @@ extends:
 
     - stage: PublishGitHubRelease
       displayName: Publish GitHub Release
-      dependsOn: BlobPublic
+      dependsOn: BlobPublic, DownloadPackages
       variables:
         ob_release_environment: Production
       jobs:
