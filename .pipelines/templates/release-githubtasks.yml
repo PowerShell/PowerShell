@@ -61,8 +61,7 @@ jobs:
       script: |
         $Path = "$(Pipeline.Workspace)/GitHubPackages"
         $OutputPath = Join-Path $Path 'hashes.sha256'
-        $srcPaths = @($Path)
-        $packages  = Get-ChildItem -Path $srcPaths -Include * -Recurse -File
+        $packages  = Get-ChildItem -Path $Path -Include * -Recurse -File
         $checksums = $packages |
             ForEach-Object {
                 Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
