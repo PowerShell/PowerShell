@@ -278,8 +278,8 @@ extends:
       jobs:
       - template: /.pipelines/templates/release-githubtasks.yml@self
     
-    - stage: PushGitTag
-      displayName: Push Git Tag
+    - stage: PushGitTagAndMakeDraftPublic
+      displayName: Push Git Tag and Make Draft Public
       dependsOn: PublishGitHubRelease
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -289,11 +289,8 @@ extends:
           instructions: |
             Push the git tag to upstream  
     
-    - stage: MakeDraftPublic
-      displayName: Make Draft Public
-      dependsOn: PushGitTag
-      jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
+        dependsOnJob: PushGitTag
         parameters:
           displayName: Make Draft Public
           jobName: DraftPublic
