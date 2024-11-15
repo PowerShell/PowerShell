@@ -148,11 +148,13 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
     }
 
     Context "ProgressAction" {
-        It "Silences with no parameters/variables" {
+        It "Ignores progress actions on advanced script function with no variables" {
             $ps = [Powershell]::Create()
             $ps.AddScript(@'
                 function test-function {
                     [CmdletBinding()]param()
+
+                    Write-Progress "progress foo"
                 }
                 test-function -ProgressAction Ignore
 '@).Invoke()
@@ -163,13 +165,15 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
             }
         }
 
-        It "Silences with variable defined" {
+        It "Ignores progress actions on advanced script function with variables" {
             $ps = [Powershell]::Create()
             $ps.AddScript(@'
                 function test-function {
                     [CmdletBinding()]param()
 
                     switch($false) { default {} }
+
+                    Write-Progress "progress foo"
                 }
                 test-function -ProgressAction Ignore
 '@).Invoke()
