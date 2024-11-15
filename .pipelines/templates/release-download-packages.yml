@@ -6,12 +6,10 @@ jobs:
     type: windows
   variables:
   - template: ./variable/release-shared.yml@self
+    parameters:
+      REPOROOT: $(Build.SourcesDirectory)
 
   steps:
-  - pwsh: |
-      New-Item -Path '$(Build.ArtifactStagingDirectory)/downloads' -ItemType Directory -Force
-    displayName: Create downloads directory
-
   - download: PSPackagesOfficial
     artifact: drop_linux_package_deb
     displayName: Download linux deb packages
@@ -109,13 +107,11 @@ jobs:
       Get-ChildItem -Path "$PackagesPath/*" -Recurse | 
         Where-Object { $_.Extension -notin '.msix', '.nupkg' } |
         Where-Object { $_.Extension -in '.gz', '.pkg', '.msi', '.zip', '.deb', '.rpm', '.zip' } |
-        ForEach-Object { Write-Verbose -Verbose $_.FullName ; $_  } |
-        Copy-Item -Destination $(ob_outputDirectory)/GitHubPackages -Recurse
+        Copy-Item -Destination $(ob_outputDirectory)/GitHubPackages -Recurse -Verbose
       
       Write-Verbose -Verbose "Creating output directory for NuGet packages: $(ob_outputDirectory)/NuGetPackages"
       New-Item -Path $(ob_outputDirectory)/NuGetPackages -ItemType Directory -Force
       Get-ChildItem -Path "$PackagesPath/*" -Recurse | 
         Where-Object { $_.Extension -eq '.nupkg' } | 
-        ForEach-Object { Write-Verbose -Verbose $_.FullName ; $_  } |
-        Copy-Item -Destination $(ob_outputDirectory)/NuGetPackages -Recurse
+        Copy-Item -Destination $(ob_outputDirectory)/NuGetPackages -Recurse -Verbose
     displayName: Copy downloads to Artifacts

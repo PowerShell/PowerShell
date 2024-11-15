@@ -1,3 +1,8 @@
+parameters:
+  - name: REPOROOT
+    type: string
+    default: $(Build.SourcesDirectory)\PowerShell
+
 variables:
   - name: ob_sdl_sbom_enabled
     value: false
@@ -15,8 +20,8 @@ variables:
   - name: ob_sdl_binskim_enabled
     value: false
   - name: ob_sdl_tsa_configFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+    value: $(REPOROOT)\.config\tsaoptions.json
   - name: ob_sdl_credscan_suppressionsFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    value: $(REPOROOT)\.config\suppress.json
   - name: ob_sdl_codeql_compiled_enabled
     value: false
