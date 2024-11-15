@@ -110,6 +110,11 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
+    - stage: DownloadPackages
+      displayName: 'Download Packages'
+      jobs:
+      - template: /.pipelines/templates/release-download-packages.yml@self
+
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
       jobs:
