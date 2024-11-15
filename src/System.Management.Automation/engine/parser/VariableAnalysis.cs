@@ -720,6 +720,14 @@ namespace System.Management.Automation.Language
                         (scriptCmdlet ? SpecialVariables.PreferenceVariables.Length : 0),
                 "analysis is incorrectly allocating number of locals when optimizations are disabled.");
 
+            Diagnostics.Assert(SpecialVariables.AutomaticVariables.Length == (int)AutomaticVariable.NumberOfAutomaticVariables
+                && SpecialVariables.AutomaticVariableTypes.Length == (int)AutomaticVariable.NumberOfAutomaticVariables,
+                "automatic variable enum length does not match both automatic variable and automatic variable types length.");
+            
+            Diagnostics.Assert(Enum.GetNames(typeof(PreferenceVariable)).Length == SpecialVariables.PreferenceVariables.Length
+                && Enum.GetNames(typeof(PreferenceVariable)).Length == SpecialVariables.PreferenceVariableTypes.Length,
+                "preference variable enum length does not match both preference variable and preference variable types length.");
+
             var nameToIndexMap = new Dictionary<string, int>(0, StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < orderedLocals.Length; ++i)
             {
