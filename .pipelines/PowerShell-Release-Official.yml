@@ -118,6 +118,7 @@ extends:
 
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
+      dependsOn: []
       variables:
         ob_release_environment: Test
       jobs:
@@ -125,6 +126,7 @@ extends:
 
     - stage: validateSdk
       displayName: 'Validate SDK'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/release-validate-sdk.yml@self
         parameters:
@@ -149,6 +151,7 @@ extends:
 
     - stage: gbltool
       displayName: 'Validate Global tools'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/release-validate-globaltools.yml@self
         parameters:
@@ -166,6 +169,7 @@ extends:
 
     - stage: fxdpackages
       displayName: 'Validate FXD Packages'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/release-validate-fxdpackages.yml@self
         parameters:
@@ -202,6 +206,7 @@ extends:
 
     - stage: validatePackages
       displayName: 'Validate Packages'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/release-validate-packagenames.yml@self
 
@@ -280,7 +285,7 @@ extends:
 
     - stage: PublishGitHubRelease
       displayName: Publish GitHub Release
-      dependsOn: BlobPublic, DownloadPackages
+      dependsOn: DownloadPackages
       variables:
         ob_release_environment: Production
       jobs:
@@ -307,7 +312,7 @@ extends:
 
     - stage: PublishNuGet
       displayName: Publish NuGet
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       variables:
         ob_release_environment: Production
       jobs:
@@ -317,14 +322,14 @@ extends:
 
     - stage: PublishPMC
       displayName: Publish PMC
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       jobs:
       - template: /.pipelines/templates/release-publish-pmc.yml@self
         parameters:
           skipPublish: ${{ parameters.SkipPMCPublish }}
 
     - stage: ReleaseDocker
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: 'Docker Release'
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -343,7 +348,7 @@ extends:
             Kickoff docker release
 
     - stage: UpdateDotnetDocker
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Update DotNet SDK Docker images
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -358,7 +363,7 @@ extends:
             4. create PR targeting nightly branch
 
     - stage: UpdateWinGet
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Add manifest entry to winget
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -369,7 +374,7 @@ extends:
             This is typically done by the community 1-2 days after the release.
 
     - stage: PublishMsix
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Publish MSIX to store
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -380,7 +385,7 @@ extends:
             Ask Steve to release MSIX bundle package to Store
 
     - stage: PublishVPack
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Release vPack
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
@@ -398,20 +403,22 @@ extends:
     #   - template: templates/release-UpdateDepsJson.yml
 
     - stage: UploadBuildInfoJson
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Upload BuildInfo.json
       jobs:
       - template: /.pipelines/templates/release-upload-buildinfo.yml@self
 
     - stage: ReleaseSymbols
-      dependsOn: PublishGitHubRelease
+      dependsOn: PushGitTagAndMakeDraftPublic
       displayName: Release Symbols
       jobs:
       - template: /.pipelines/templates/release-symbols.yml@self
 
     - stage: ChangesToMaster
       displayName: Ensure changes are in GH master
-      dependsOn: ['PublishNuGet', 'PublishPMC']
+      dependsOn: 
+        - PublishNuGet 
+        - PublishPMC
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -422,7 +429,7 @@ extends:
 
     - stage: ReleaseSnap
       displayName: Release Snap
-      dependsOn: 'ChangesToMaster'
+      dependsOn: ChangesToMaster
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -433,7 +440,7 @@ extends:
 
     - stage: ReleaseToMU
       displayName: Release to MU
-      dependsOn: ['PublishNuGet', 'PublishPMC', 'ChangesToMaster']
+      dependsOn: PushGitTagAndMakeDraftPublic # This only needs the blob to be available
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
@@ -443,7 +450,10 @@ extends:
 
     - stage: ReleaseClose
       displayName: Finish Release
-      dependsOn: ['ReleaseToMU', 'ReleaseSymbols', 'ReleaseSnap']
+      dependsOn: 
+        - ReleaseToMU
+        - ReleaseSymbols
+        - ReleaseSnap
       jobs:
       - template: /.pipelines/templates/approvalJob.yml@self
         parameters:
