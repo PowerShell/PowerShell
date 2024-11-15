@@ -111,3 +111,6 @@ msbuild.binlog
 
 # Ignore gzip files in the manpage folder
 assets/manpage/*.gz
+test/tools/Modules/nuget.config
+src/Modules/nuget.config
+nuget.config
