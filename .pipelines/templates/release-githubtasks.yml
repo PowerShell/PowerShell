@@ -9,7 +9,8 @@ jobs:
     inputs:
       - input: pipelineArtifact
         pipeline: PSPackagesOfficial # temporary need to remove later
-        artifactName: drop_DownloadPackages_upload_packages
+        artifactName: drop_upload_upload_packages
+        # artifactName: drop_DownloadPackages_upload_packages
   variables:
   - template: ./variable/release-shared.yml@self
 
