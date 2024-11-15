@@ -270,14 +270,6 @@ extends:
         parameters:
           SkipPSInfraInstallers: ${{ parameters.SkipPSInfraInstallers }}
 
-    - stage: UploadChangelogAndTools
-      displayName: Upload Changelog and Tools
-      dependsOn: BlobPublic
-      jobs:
-      - template: /.pipelines/templates/release-upload-cl-tools.yml@self
-        parameters:
-          depth: 1
-
     - stage: PublishGitHubRelease
       displayName: Publish GitHub Release
       dependsOn: BlobPublic
