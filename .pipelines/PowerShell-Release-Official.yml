@@ -297,9 +297,9 @@ extends:
             Push the git tag to upstream  
     
       - template: /.pipelines/templates/approvalJob.yml@self
-        dependsOnJob: PushGitTag
         parameters:
           displayName: Make Draft Public
+          dependsOnJob: PushGitTag
           jobName: DraftPublic
           instructions: |
             Make the GitHub Release Draft Public
