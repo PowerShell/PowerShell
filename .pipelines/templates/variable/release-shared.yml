@@ -7,6 +7,8 @@ parameters:
     default: false
 
 variables:
+  - name: ob_signing_setup_enabled            
+    value: false
   - name: ob_sdl_sbom_enabled
     value: ${{ parameters.SBOM }}
   - name: runCodesignValidationInjection
