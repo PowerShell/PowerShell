@@ -5,10 +5,10 @@ jobs:
   pool:
     type: release
     os: windows
-  templateContext:
-    inputs:
-      - input: pipelineArtifact
-        artifactName: drop_DownloadPackages_upload_packages
+  # templateContext:
+  #   inputs:
+  #     - input: pipelineArtifact
+  #       artifactName: drop_DownloadPackages_upload_packages
   variables:
   - template: ./variable/release-shared.yml@self
 

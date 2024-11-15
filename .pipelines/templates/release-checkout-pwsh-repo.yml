@@ -5,6 +5,7 @@ steps:
         throw 'We dont support PRs'
       }
       
+      Write-Verbose -Verbose $ENV:BUILD_SOURCEBRANCH
       $branchParts = $ENV:BUILD_SOURCEBRANCH -replace '^refs/head/'
       $branchName = "$($branchParts[-2])/$($branchParts[-1])"
       Write-Verbose -Verbose "Branch Name: $branchName"
