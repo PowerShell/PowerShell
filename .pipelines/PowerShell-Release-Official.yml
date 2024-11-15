@@ -279,7 +279,7 @@ extends:
 
     - stage: PublishGitHubRelease
       displayName: Publish GitHub Release
-      dependsOn: BlobPublic, DownloadPackages
+      dependsOn: BlobPublic
       variables:
         ob_release_environment: Production
       jobs:
