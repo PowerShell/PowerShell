@@ -726,7 +726,7 @@ namespace System.Management.Automation.Language
             
             Diagnostics.Assert(SpecialVariables.PreferenceVariable.Length == SpecialVariables.PreferenceVariables.Length
                 && SpecialVariables.PreferenceVariable.Length == SpecialVariables.PreferenceVariableTypes.Length,
-                "preference variable enum length does not match both preference variable and preference variable types length.").
+                "preference variable enum length does not match both preference variable and preference variable types length.");
 
             var nameToIndexMap = new Dictionary<string, int>(0, StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < orderedLocals.Length; ++i)
