@@ -108,7 +108,7 @@ jobs:
       New-Item -Path $(ob_outputDirectory)/GitHubPackages -ItemType Directory -Force
       Get-ChildItem -Path "$PackagesPath/*" -Recurse | 
         Where-Object { $_.Extension -notin '.msix', '.nupkg' } |
-        Where-Object { $_.Extension -in '.tar.gz', '.pkg', '.msi', '.zip', '.deb', '.rpm', '.zip' } |
+        Where-Object { $_.Extension -in '.gz', '.pkg', '.msi', '.zip', '.deb', '.rpm', '.zip' } |
         ForEach-Object { Write-Verbose -Verbose $_.FullName ; $_  } |
         Copy-Item -Destination $(ob_outputDirectory)/GitHubPackages -Recurse
       
