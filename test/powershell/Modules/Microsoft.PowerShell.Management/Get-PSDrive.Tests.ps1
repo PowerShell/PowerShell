@@ -79,7 +79,7 @@ Describe "Get-PSDrive for network path" -Tags "CI","RequireAdminOnWindows" {
         subst "$($PSDriveName):" /D
     }
 
-    It 'Check P/Invoke for WNetGetConnection with small buffer <SmallBuffer>' -Skip:(-not $IsWindows) -TestCases @(
+    It 'Check P/Invoke for WNetGetConnection with small buffer: <SmallBuffer>' -Skip:(-not $IsWindows) -TestCases @(
         @{ SmallBuffer = $false }
         @{ SmallBuffer = $true }
     ) {
