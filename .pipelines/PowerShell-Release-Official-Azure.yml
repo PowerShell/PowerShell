@@ -102,8 +102,6 @@ extends:
       - stage: PrepForEV2
         displayName: Prep for EV2
         dependsOn: []
-        variables:
-          ob_release_environment: Test
         jobs:
         - template: /.pipelines/templates/release-prep-for-ev2.yml@self
       
