@@ -118,6 +118,8 @@ extends:
         dependsOn: 
           - PrepForEV2
           - BlobPublic
+        variables:
+          ob_release_environment: Test
         jobs:
         - template: /.pipelines/templates/release-publish-pmc.yml@self
 
