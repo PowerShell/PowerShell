@@ -6,6 +6,7 @@
 using System;
 using System.Buffers;
 using System.Runtime.InteropServices;
+using System.Management.Automation.Internal;
 
 internal static partial class Interop
 {
@@ -24,15 +25,14 @@ internal static partial class Interop
                 return ERROR_NOT_SUPPORTED;
             }
 
-#if DEBUG
-            int testBufferSize = System.Management.Automation.Internal.InternalTestHooks.WNetGetConnectionBufferSize;
-            int bufferSize = testBufferSize == 0 ? MAX_PATH : testBufferSize;
-#else
-            int bufferSize = MAX_PATH;
-#endif
-
             ReadOnlySpan<char> driveName = stackalloc char[] { drive, ':', '\0' };
+            int bufferSize = MAX_PATH;
             Span<char> uncBuffer = stackalloc char[bufferSize];
+            if (InternalTestHooks.WNetGetConnectionBufferSize > 0)
+            {
+                bufferSize = InternalTestHooks.WNetGetConnectionBufferSize;
+                uncBuffer = uncBuffer.Slice(0, bufferSize);
+            }
 
             char[]? rentedArray = null;
             while (true)

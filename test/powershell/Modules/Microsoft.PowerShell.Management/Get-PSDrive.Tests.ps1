@@ -109,7 +109,7 @@ Describe "Get-PSDrive for network path" -Tags "CI","RequireAdminOnWindows" {
             $drive | Remove-PSDrive
 
             if ($SmallBuffer) {
-                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('WNetGetConnectionBufferSize', 0)
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('WNetGetConnectionBufferSize', -1)
             }
         }
     }
