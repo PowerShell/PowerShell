@@ -1,0 +1,130 @@
+trigger: none
+
+parameters: # parameters are shown up in ADO UI in a build queue time
+  - name: 'debug'
+    displayName: 'Enable debug output'
+    type: boolean
+    default: false
+  - name: InternalSDKBlobURL
+    displayName: URL to the blob having internal .NET SDK
+    type: string
+    default: ' '
+  - name: ReleaseTagVar
+    displayName: Release Tag
+    type: string
+    default: 'fromBranch'
+  - name: SKIP_SIGNING
+    displayName: Skip Signing
+    type: string
+    default: 'NO'
+
+variables:
+  - name: CDP_DEFINITION_BUILD_COUNT
+    value: $[counter('', 0)]
+  - name: system.debug
+    value: ${{ parameters.debug }}
+  - name: ENABLE_PRS_DELAYSIGN
+    value: 1
+  - name: ROOT
+    value: $(Build.SourcesDirectory)
+  - name: REPOROOT
+    value: $(Build.SourcesDirectory)
+  - name: OUTPUTROOT
+    value: $(REPOROOT)\out
+  - name: NUGET_XMLDOC_MODE
+    value: none
+  - name: nugetMultiFeedWarnLevel
+    value: none
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: skipNugetSecurityAnalysis
+    value: true
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: WindowsContainerImage
+    value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
+  - name: LinuxContainerImage
+    value: mcr.microsoft.com/onebranch/cbl-mariner/build:2.0
+  - name: ReleaseTagVar
+    value: ${{ parameters.ReleaseTagVar }}
+  - group: PoolNames
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: OneBranch.Pipelines/GovernedTemplates
+      ref: refs/heads/main
+
+  pipelines:
+    - pipeline: CoOrdinatedBuildPipeline
+      source: 'PowerShell-Coordinated Packages-Official'
+
+    - pipeline: PSPackagesOfficial
+      source: 'PowerShell-Packages-Official'
+      trigger:
+        branches:
+          include:
+            - master
+            - releases/*
+
+extends:
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates
+  parameters:
+    featureFlags:
+      WindowsHostVersion:
+        Version: 2022
+        Network: Netlock
+    cloudvault:
+      enabled: false
+    globalSdl:
+      disableLegacyManifest: true
+      # disabled Armory as we dont have any ARM templates to scan. It fails on some sample ARM templates.
+      armory:
+        enabled: false
+      asyncSdl:
+        enabled: true
+        tsaOptionsFile: .config/tsaoptions.json
+      tsa:
+        enabled: true
+      credscan:
+        enabled: true
+        scanFolder:  $(Build.SourcesDirectory)
+        suppressionsFile: $(Build.SourcesDirectory)\.config\suppress.json
+      binskim:
+        break: false # always break the build on binskim issues in addition to TSA upload
+      policheck:
+        break: true # always break the build on policheck issues. You can disable it by setting to 'false'
+      # suppression:
+      #   suppressionFile: $(Build.SourcesDirectory)\.gdn\global.gdnsuppress
+      tsaOptionsFile: .config\tsaoptions.json
+    stages:
+      - stage: PrepForEV2
+        displayName: Prep for EV2
+        dependsOn: []
+        variables:
+          ob_release_environment: Test
+        jobs:
+        - template: /.pipelines/templates/release-prep-for-ev2.yml@self
+      
+      # - stage: BlobPublic
+      #   displayName: Make Blob Public
+      #   dependsOn: PrepForEV2
+      #   jobs:
+      #   - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
+
+      - stage: PublishPMC
+        displayName: Publish PMC
+        dependsOn: 
+          - PrepForEV2
+          - BlobPublic
+        jobs:
+        - template: /.pipelines/templates/release-publish-pmc.yml@self
+
+      # - stage: UploadBuildInfoJson
+      #   dependsOn:
+      #     - PrepForEV2
+      #     - BlobPublic
+      #   displayName: Upload BuildInfo.json
+      #   jobs:
+      #   - template: /.pipelines/templates/release-upload-buildinfo.yml@self

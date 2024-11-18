@@ -1,18 +1,9 @@
-parameters:
-  - name: skipPublish
-    default: false
-    type: boolean
-
 jobs:
 - job: PMCPublish
   displayName: Publish to PMC
   condition: succeeded()
   pool:
-    type: linux
-    isCustom: true
-    name: PowerShell1ES
-    demands:
-    - ImageOverride -equals PSMMSUbuntu20.04-Secure
+    type: release
   variables:
   - name: runCodesignValidationInjection
     value: false

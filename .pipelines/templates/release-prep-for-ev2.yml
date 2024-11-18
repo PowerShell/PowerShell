@@ -1,0 +1,8 @@
+jobs:
+- job: PrepForEV2
+  pool:
+    type: release
+  steps:
+    - pwsh: |
+        Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
+      displayName: 'Capture Environment Variables'
