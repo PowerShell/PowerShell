@@ -76,5 +76,6 @@ jobs:
       ValidateOnly: false
       ConnectedServiceName: 'Onebranch Release EV2'            
       ServiceRootLocation: 'LinkedArtifact'
+      RolloutSpecType: 'RSPath'
       ServiceRootPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEv2FilesToArtifact/EV2Specs/ServiceGroupRoot'
       RolloutSpecPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEv2FilesToArtifact/EV2Specs/ServiceGroupRoot/RolloutSpec.json'
