@@ -115,7 +115,7 @@ extends:
         displayName: Publish PMC
         dependsOn: 
           - PrepForEV2
-          - BlobPublic
+          # - BlobPublic
         variables:
           ob_release_environment: Test
         jobs:
