@@ -28,7 +28,7 @@ jobs:
   - checkout: self ## the global setting on lfs didn't work
     lfs: false
 
-  - template: release-SetReleaseTagAndContainerName.yml
+  - template: release-SetReleaseTagandContainerName.yml
 
   - pwsh: |
       $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
