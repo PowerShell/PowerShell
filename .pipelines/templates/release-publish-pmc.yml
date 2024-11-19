@@ -73,7 +73,7 @@ jobs:
     displayName: 'Ev2: Push to ACR'
     inputs:
       UseServerMonitorTask: true
-      EndpointProviderType: ApprovalService
+      # EndpointProviderType: ApprovalService
       ApprovalServiceEnvironment: Test
       ServiceRootPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEv2FilesToArtifact/EV2Specs/ServiceGroupRoot'
       RolloutSpecPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEv2FilesToArtifact/EV2Specs/ServiceGroupRoot/RolloutSpec.json'
