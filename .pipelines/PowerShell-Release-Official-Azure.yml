@@ -111,7 +111,7 @@ extends:
       #   jobs:
       #   - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
 
-      - stage: PublishPMC
+      - stage: Test_PublishPMC
         displayName: Publish PMC
         dependsOn: 
           - PrepForEV2
