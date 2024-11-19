@@ -1,11 +1,135 @@
 jobs:
-- job: PrepForEV2
+- job: CopyEV2FilesToArtifact
+  displayName: Copy EV2 Files to Artifact
   pool:
-    type: linux
+    type: windows
   variables:
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   steps:
+    - checkout: self ## the global setting on lfs didn't work
+      lfs: false
+
+    - template: release-SetReleaseTagandContainerName.yml
+  
+    - pwsh: |
+        $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
+        $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
+        Write-Host "sending " + $vstsCommandString
+        Write-Host "##$vstsCommandString"
+      displayName: Set Package version
+  
+    - pwsh: |
+        $branch = 'mirror-target'
+        $gitArgs = "clone",
+        "--verbose",
+        "--branch",
+        "$branch",
+        "https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools",
+        '$(Pipeline.Workspace)/tools'
+        $gitArgs | Write-Verbose -Verbose
+        git $gitArgs
+      displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
+    
     - pwsh: |
         Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
       displayName: 'Capture Environment Variables'
+
+    - task: onebranch.pipeline.signing@1
+      displayName: Sign 1st party files
+      inputs:
+        command: 'sign'
+        signing_profile: external_distribution
+        files_to_sign: '**\*.ps1'
+        search_root: '$(Build.SourcesDirectory)/EV2Specs/ServiceGroupRoot/Shell'
+
+    - pwsh: |
+        $srcPath = Join-Path '$(Build.SourcesDirectory)/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
+        $pathToRunTarFile = Join-Path '$(Build.SourcesDirectory)/EV2Specs/ServiceGroupRoot/Shell' -ChildPath "Run.tar"
+        tar -cvf $pathToRunTarFile -C $srcPath ./Run
+      displayName: Compress Run script into tar file as needed for EV2 Shell extension
+
+    - pwsh: |
+        $pathToEV2Folder = Join-Path -Path '$(Build.SourcesDirectory)' -ChildPath 'EV2Specs'
+        $pathToServiceGroupRootFolder = Join-Path $pathToEV2Folder -ChildPath 'ServiceGroupRoot'
+        $pathToParametersFolder = Join-Path -Path $pathToServiceGroupRootFolder -ChildPath 'Parameters'
+        New-Item -Path $pathToParametersFolder -ItemType Directory
+        $pathToImageMetadataFile = Join-Path -Path $pathToParametersFolder -ChildPath 'ImageMetadata.json'
+        $pathToChannelJsonFile = Join-Path -Path $pathToParametersFolder -ChildPath 'ChannelInfo.json'
+        $currentChannel = '$(channel)'
+  
+        $channelHash = @{channel=$currentChannel}
+        $channelHash | ConvertTo-Json | Out-File $pathToChannelJsonFile
+  
+        $toolsFolderPath = Join-Path -Path '$(Build.SourcesDirectory)' -ChildPath 'tools'
+        $buildHelperFolderPath = Join-Path -Path $toolsFolderPath -ChildPath 'buildHelper'
+        $buildHelperModulePath = Join-Path -Path $buildHelperFolderPath -ChildPath 'buildHelper.psm1'
+        Write-Verbose -Verbose "ipmo path: $buildHelperModulePath"
+        Import-Module $buildHelperModulePath
+        if ($currentChannel -eq "stable")
+        {
+          .\build.ps1 -UpdateImageMetadata -Channel $currentChannel -StableVersion '$(version)' -MetadataFilePath $pathToImageMetadataFile
+        }
+        elseif ($currentChannel -eq "preview")
+        {
+          .\build.ps1 -UpdateImageMetadata -Channel $currentChannel -PreviewVersion '$(version)' -MetadataFilePath $pathToImageMetadataFile
+        }
+        elseif ($currentChannel -eq "lts")
+        {
+          .\build.ps1 -UpdateImageMetadata -Channel $currentChannel -LtsVersion '$(version)' -MetadataFilePath $pathToImageMetadataFile
+        }
+  
+        $imgMetaJsonPathExists = Test-Path -Path $pathToImageMetadataFile
+        $channelJsonPathExists = Test-Path -Path $pathToChannelJsonFile
+      displayName: 'Create image metadata json needed for EV2 Shell Extension script'
+
+    - pwsh: |
+        $pathToJsonFile = Join-Path -Path '$(Build.SourcesDirectory)/EV2Specs/ServiceGroupRoot' -ChildPath 'UploadLinux.Rollout.json'
+        $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
+        $envVarArrayLen = $content.shellExtensions.launch.environmentVariables.Length
+        for ($i=0; $i -lt $envVarArrayLen; $i++)
+        {
+          $name = $($content.shellExtensions.launch.environmentVariables[$i].name)
+          if ($name -eq "DESTINATION_ACR_NAME")
+          {
+            $content.shellExtensions.launch.environmentVariables[$i].value = '$(acr_name)'
+          }
+          elseif ($name -eq "MI_NAME"){
+            $content.shellExtensions.launch.environmentVariables[$i].value = '$(managed_identity_name)'
+          }
+          elseif ($name -eq "MI_CLIENTID")
+          {
+            $content.shellExtensions.launch.environmentVariables[$i].value = '$(managed_identity_clientid)'
+          } 
+        }
+
+        $identityString = "/subscriptions/$(acr_subscription)/resourcegroups/$(acr_resource_group)/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$(managed_identity_name)"
+        $content.shellExtensions.launch.identity.userAssignedIdentities[0] = $identityString
+
+        Remove-Item -Path $pathToJsonFile
+        $content | ConvertTo-Json -Depth 6 | Out-File $pathToJsonFile
+      displayName: 'Replace values in UploadLinux.Rollout.json file'
+
+    - pwsh: |
+        $pathToJsonFile = Join-Path -Path '$(Build.SourcesDirectory)/EV2Specs/ServiceGroupRoot' -ChildPath 'RolloutSpec.json'
+        $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
+        $content.RolloutMetadata.Notification.Email.To = '$(email_address)'
+
+        Remove-Item -Path $pathToJsonFile
+        $content | ConvertTo-Json -Depth 4 | Out-File $pathToJsonFile
+      displayName: 'Replace values in RolloutSpecPath.json'
+
+    - pwsh: |
+        $pathToJsonFile = Join-Path -Path '$(Build.SourcesDirectory)/EV2Specs/ServiceGroupRoot' -ChildPath 'ServiceModel.json'
+        $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
+        $content.ServiceResourceGroups[0].AzureResourceGroupName = '$(acr_resource_group)'
+        $content.ServiceResourceGroups[0].AzureSubscriptionId = '$(acr_subscription)'
+        
+        Remove-Item -Path $pathToJsonFile
+        $content | ConvertTo-Json -Depth 9 | Out-File $pathToJsonFile
+      displayName: 'Replace values in ServiceModel.json'
+
+    - task: CopyFiles@2
+      inputs:
+        Contents: 'EV2Specs/**'
+        TargetFolder: $(ob_outputDirectory)

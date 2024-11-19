@@ -1,0 +1,61 @@
+{
+  "$schema": "https://ev2schema.azure.net/schemas/2020-01-01/rolloutParameters.json",
+  "contentVersion": "1.0.0.0",
+  "shellExtensions": [
+    {
+      "name": "Run",
+      "type": "Run",
+      "properties": {
+        "maxExecutionTime": "PT2H"
+      },
+      "package": {
+        "reference": {
+          "path": "Shell/Run.tar"
+        }
+      },
+      "launch": {
+        "command": [
+          "/bin/bash",
+          "-c",
+          "pwsh ./Run/Run.ps1"
+        ],
+        "environmentVariables": [
+          {
+            "name": "RELEASE_TAG",
+            "value": "default"
+          },
+          {
+            "name": "AAD_CLIENT_ID",
+            "value" : "default"
+          },
+          {
+            "name": "BLOB_FOLDER_NAME",
+            "value": "default"
+          },
+          {
+            "name": "LTS",
+            "value": "default"
+          },
+          {
+            "name": "FOR_PRODUCTION",
+            "value": "true"
+          },
+          {
+            "name": "SKIP_PUBLISH",
+            "value": "true"
+          },
+          {
+            "name": "MAPPING_FILE_PATH",
+            "default": "default"
+          }
+        ],
+        "identity": {
+          "type": "userAssigned",
+          "userAssignedIdentities": [
+            "default"
+          ]
+        }
+      }
+    }
+  ]
+}
