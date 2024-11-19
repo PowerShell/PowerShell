@@ -74,7 +74,7 @@ jobs:
       UseServerMonitorTask: true
       EnableStrictValidation: false
       ValidateOnly: false
-      ConnectedServiceName: 'Onebranch Release EV2'            
+      ConnectedServiceName: 'docker-deployement-test'            
       ServiceRootLocation: 'LinkedArtifact'
       RolloutSpecType: 'RSPath'
       ServiceRootPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEv2FilesToArtifact/EV2Specs/ServiceGroupRoot'
