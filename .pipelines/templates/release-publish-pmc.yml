@@ -50,9 +50,9 @@ jobs:
   #         SkipPublish = $${{ parameters.skipPublish }}
   #         MappingFilePath = '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'
   #     }
-# 
+  # 
   #     $params | Out-String -width 9999 -Stream | write-Verbose -Verbose
-# 
+  # 
   #     & '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/releaseLinuxPackages.ps1' @params
   #   displayName: Run release script
 
@@ -75,7 +75,5 @@ jobs:
       UseServerMonitorTask: true
       EnableStrictValidation: false
       ValidateOnly: false
-      # EndpointProviderType: ApprovalService
-      # ApprovalServiceEnvironment: Test
       ServiceRootPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEv2FilesToArtifact/EV2Specs/ServiceGroupRoot'
       RolloutSpecPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEv2FilesToArtifact/EV2Specs/ServiceGroupRoot/RolloutSpec.json'
