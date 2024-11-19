@@ -30,13 +30,21 @@ jobs:
         $gitArgs | Write-Verbose -Verbose
         git $gitArgs
       displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
-    
+
     - pwsh: |
         Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
       displayName: 'Capture Environment Variables'
 
     - task: onebranch.pipeline.signing@1
-      displayName: Sign 1st party files
+      displayName: Sign Release Tools
+      inputs:
+        command: 'sign'
+        signing_profile: external_distribution
+        files_to_sign: '**\*.ps1'
+        search_root: '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4'
+
+    - task: onebranch.pipeline.signing@1
+      displayName: Sign Run.ps1
       inputs:
         command: 'sign'
         signing_profile: external_distribution
@@ -128,6 +136,11 @@ jobs:
         Remove-Item -Path $pathToJsonFile
         $content | ConvertTo-Json -Depth 9 | Out-File $pathToJsonFile
       displayName: 'Replace values in ServiceModel.json'
+
+    - task: CopyFiles@2
+      inputs:
+        Contents: '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/**' 
+        TargetFolder: 'EV2Specs/ServiceGroupRoot/tools'
 
     - task: CopyFiles@2
       inputs:
