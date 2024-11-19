@@ -13,6 +13,8 @@ jobs:
     value: 1
   - group: 'mscodehub-code-read-akv'
   - group: 'packages.microsoft.com'
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: ob_sdl_codeSignValidation_enabled
     value: false
   - name: ob_sdl_binskim_enabled

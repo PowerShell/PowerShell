@@ -2,6 +2,9 @@ jobs:
 - job: PrepForEV2
   pool:
     type: linux
+  variables:
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   steps:
     - pwsh: |
         Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
