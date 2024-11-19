@@ -39,8 +39,6 @@ variables:
     value: none
   - name: skipNugetSecurityAnalysis
     value: true
-  - name: ob_outputDirectory
-    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: WindowsContainerImage
     value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
   - name: LinuxContainerImage
