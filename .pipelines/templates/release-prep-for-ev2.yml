@@ -6,6 +6,7 @@ jobs:
   variables:
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - group: 'mscodehub-code-read-akv'
   steps:
     - checkout: self ## the global setting on lfs didn't work
       lfs: false
