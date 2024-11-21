@@ -1,0 +1,4 @@
+[default]
+base_url = "https://pmc-ingest.trafficmanager.net/api/v4"
+auth_type = "msi"
+client_id = "..."   # Client ID of your User-Assigned Managed Identity

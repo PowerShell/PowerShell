@@ -40,13 +40,13 @@ jobs:
         Get-ChildItem '$(Pipeline.Workspace)' -Recurse | Out-String -Stream | write-Verbose -Verbose
       displayName: 'Capture Workspace'
 
-    - task: onebranch.pipeline.signing@1
-      displayName: Sign Release Tools
-      inputs:
-        command: 'sign'
-        signing_profile: internal_azure_service
-        files_to_sign: '**\*.ps1'
-        search_root: '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4'
+    # - task: onebranch.pipeline.signing@1
+    #   displayName: Sign Release Tools
+    #   inputs:
+    #     command: 'sign'
+    #     signing_profile: internal_azure_service
+    #     files_to_sign: '**\*.ps1'
+    #     search_root: '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4'
 
     - task: onebranch.pipeline.signing@1
       displayName: Sign Run.ps1
