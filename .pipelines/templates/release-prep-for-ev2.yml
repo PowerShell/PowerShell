@@ -44,7 +44,7 @@ jobs:
       displayName: 'Capture Workspace'
 
     - pwsh: |
-        $pathToRunFolder = Join-Path -Path "$(Build.SourcesDirectory)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run" -ChildPath '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/releaseLinuxPackages.ps1'
+        $pathToRunFolder = Join-Path -Path "$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run" -ChildPath '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/releaseLinuxPackages.ps1'
         $pathExists = Test-Path $pathToRunFolder
         Write-Verbose -Verbose "path exists: $pathExists"
       displayName: 'Test if Run.ps1 path exists/can be found'
@@ -57,22 +57,22 @@ jobs:
     #     files_to_sign: '**\*.ps1'
     #     search_root: '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4'
 
-    - task: onebranch.pipeline.signing@1
-      displayName: Sign Run.ps1
-      inputs:
-        command: 'sign'
-        signing_profile: external_distribution
-        files_to_sign: '*.ps1'
-        search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
+    # - task: onebranch.pipeline.signing@1
+    #   displayName: Sign Run.ps1
+    #   inputs:
+    #     command: 'sign'
+    #     signing_profile: external_distribution
+    #     files_to_sign: '*.ps1'
+    #     search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
 
     - pwsh: |
-        $srcPath = Join-Path '$(Build.SourcesDirectory)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
-        $pathToRunTarFile = Join-Path '$(Build.SourcesDirectory)/.pipelines/EV2Specs/ServiceGroupRoot/Shell' -ChildPath "Run.tar"
+        $srcPath = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
+        $pathToRunTarFile = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell' -ChildPath "Run.tar"
         tar -cvf $pathToRunTarFile -C $srcPath ./Run
       displayName: Compress Run script into tar file as needed for EV2 Shell extension
 
     - pwsh: |
-        $pathToEV2Folder = Join-Path -Path '$(Build.SourcesDirectory)/.pipelines' -ChildPath 'EV2Specs'
+        $pathToEV2Folder = Join-Path -Path '$(repoRoot)/.pipelines' -ChildPath 'EV2Specs'
         $pathToServiceGroupRootFolder = Join-Path $pathToEV2Folder -ChildPath 'ServiceGroupRoot'
         $pathToParametersFolder = Join-Path -Path $pathToServiceGroupRootFolder -ChildPath 'Parameters'
         New-Item -Path $pathToParametersFolder -ItemType Directory
