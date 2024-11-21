@@ -40,7 +40,7 @@ jobs:
       displayName: Sign Release Tools
       inputs:
         command: 'sign'
-        signing_profile: external_distribution
+        signing_profile: internal_azure_service
         files_to_sign: '**\*.ps1'
         search_root: '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4'
 
