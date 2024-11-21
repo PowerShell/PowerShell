@@ -7,7 +7,7 @@ jobs:
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: repoRoot
-    value: $(Build.SourcesDirectory)
+    value: '$(Build.SourcesDirectory)/PowerShell'
   - group: 'mscodehub-code-read-akv'
   steps:
     - checkout: self ## the global setting on lfs didn't work
@@ -63,7 +63,7 @@ jobs:
         command: 'sign'
         signing_profile: external_distribution
         files_to_sign: '*.ps1'
-        search_root: '$(Build.SourcesDirectory)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
+        search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
 
     - pwsh: |
         $srcPath = Join-Path '$(Build.SourcesDirectory)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
