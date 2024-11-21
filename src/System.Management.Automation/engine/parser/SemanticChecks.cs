@@ -90,16 +90,12 @@ namespace System.Management.Automation.Language
                 foreach (var parameter in parameters)
                 {
                     string parameterName = parameter.Name.VariablePath.UserPath;
-                    if (parametersSet.Contains(parameterName))
+                    if (!parametersSet.Add(parameterName))
                     {
                         _parser.ReportError(parameter.Name.Extent,
                             nameof(ParserStrings.DuplicateFormalParameter),
                             ParserStrings.DuplicateFormalParameter,
                             parameterName);
-                    }
-                    else
-                    {
-                        parametersSet.Add(parameterName);
                     }
 
                     var voidConstraint =
@@ -242,7 +238,7 @@ namespace System.Management.Automation.Language
             foreach (var namedArg in attributeAst.NamedArguments)
             {
                 string name = namedArg.ArgumentName;
-                if (names.Contains(name))
+                if (!names.Add(name))
                 {
                     _parser.ReportError(namedArg.Extent,
                         nameof(ParserStrings.DuplicateNamedArgument),
@@ -251,8 +247,6 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    names.Add(name);
-
                     if (!namedArg.ExpressionOmitted && !IsValidAttributeArgument(namedArg.Argument, constantValueVisitor))
                     {
                         var error = GetNonConstantAttributeArgErrorExpr(constantValueVisitor);
@@ -1124,7 +1118,7 @@ namespace System.Management.Automation.Language
                 if (keyStrAst != null)
                 {
                     var keyStr = keyStrAst.Value.ToString();
-                    if (keys.Contains(keyStr))
+                    if (!keys.Add(keyStr))
                     {
                         string errorId;
                         string errorMsg;
@@ -1140,10 +1134,6 @@ namespace System.Management.Automation.Language
                         }
 
                         _parser.ReportError(entry.Item1.Extent, errorId, errorMsg, keyStr);
-                    }
-                    else
-                    {
-                        keys.Add(keyStr);
                     }
                 }
             }

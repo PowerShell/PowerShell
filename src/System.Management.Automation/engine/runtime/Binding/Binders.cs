@@ -2717,6 +2717,14 @@ namespace System.Management.Automation.Language
                                            lhsEnumerator.Expression.Cast(typeof(IEnumerator)),
                                            rhsEnumerator.Expression.Cast(typeof(IEnumerator)));
                 }
+                else if (target.Value is object[] targetArray)
+                {
+                    // Adding 1 item to an object[]
+                    // This is an optimisation over the default EnumerableOps_AddObject.
+                    call = Expression.Call(CachedReflectionInfo.ArrayOps_AddObject,
+                                           target.Expression.Cast(typeof(object[])),
+                                           arg.Expression.Cast(typeof(object)));
+                }
                 else
                 {
                     // Adding 1 item to a list
@@ -7165,6 +7173,13 @@ namespace System.Management.Automation.Language
                     var argValue = parameters[i].DefaultValue;
                     if (argValue == null)
                     {
+                        argExprs[i] = Expression.Default(parameterType);
+                    }
+                    else if (!parameters[i].HasDefaultValue && parameterType != typeof(object) && argValue == Type.Missing)
+                    {
+                        // If the method contains just [Optional] without a default value set then we cannot use
+                        // Type.Missing as a placeholder. Instead we use the default value for that type. Only
+                        // exception to this rule is when the parameter type is object.
                         argExprs[i] = Expression.Default(parameterType);
                     }
                     else

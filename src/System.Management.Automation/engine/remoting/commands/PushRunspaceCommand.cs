@@ -1025,7 +1025,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // VM should be in running state.
             //
-            if ((VMState)results[0].Properties["State"].Value != VMState.Running)
+            if (GetVMStateProperty(results[0]) != VMState.Running)
             {
                 WriteError(
                     new ErrorRecord(
