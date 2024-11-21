@@ -14,5 +14,5 @@ NestedModules = "Microsoft.PowerShell.Security.dll"
 # We declare 'Microsoft.PowerShell.Security.dll' in 'RequiredAssemblies' so as to make sure it's loaded before the type file processing.
 RequiredAssemblies = "Microsoft.PowerShell.Security.dll"
 TypesToProcess = "Security.types.ps1xml"
-HelpInfoURI = 'https://https://aka.ms/powershell75-help'
+HelpInfoURI = 'https://aka.ms/powershell75-help'
 }
