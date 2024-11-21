@@ -3,6 +3,7 @@
 
 using System.IO;
 using System.Management.Automation;
+using System.Runtime;
 using Xunit;
 
 namespace PSTests.Parallel
@@ -145,12 +146,11 @@ namespace PSTests.Parallel
         [Fact]
         public static void AddsRootPathToModulePath()
         {
-            string expected = $"{personalModulePath}{Path.PathSeparator}" +
+            string expected = $"/{Path.PathSeparator}" +
                 $"{sharedModulePath}{Path.PathSeparator}" +
-                $"/{Path.PathSeparator}" +
                 "/foo/bar";
 
-            string actual = ModuleIntrinsics.GetModulePath("/foo/bar", "/", null);
+            string actual = ModuleIntrinsics.GetModulePath("/foo/bar", "/", "//");
 
             Assert.Equal(expected, actual);
         }
@@ -195,6 +195,26 @@ namespace PSTests.Parallel
 
             string actual = ModuleIntrinsics.GetModulePath(
                 $"C:/folder;C:\\folder;C:/folder/;C:\\folder\\;C:/other1/\\;C:/other2\\/;c:/dir1\\dir2",
+                null,
+                null);
+
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData("C:\\")]
+        [InlineData("C:/")]
+        [InlineData("C:\\\\")]
+        [InlineData("C://")]
+        public static void AddsDriveRootToModulePath(string pathEntry)
+        {
+            string expected = $"{personalModulePath}{Path.PathSeparator}" +
+                $"{sharedModulePath}{Path.PathSeparator}" +
+                $"{allUsersModulePath}{Path.PathSeparator}" +
+                "C:\\";
+
+            string actual = ModuleIntrinsics.GetModulePath(
+                pathEntry,
                 null,
                 null);
 

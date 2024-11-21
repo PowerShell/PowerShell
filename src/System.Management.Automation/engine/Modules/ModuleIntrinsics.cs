@@ -34,7 +34,7 @@ namespace System.Management.Automation
         /// Compares a PATH entry on Windows. Treats / and \ as the same and
         /// compares using OrdinalIgnoreCase.
         /// </summary>
-        private class WindowsPathEnvComparer : IEqualityComparer<char>
+        private readonly struct WindowsPathEnvComparer : IEqualityComparer<char>
         {
             public bool Equals(char x, char y)
             {
@@ -1140,7 +1140,11 @@ namespace System.Management.Automation
             string? sharedModulePath = GetSharedModulePath(); // aka <Program Files> location
             string? systemModulePathToUse = string.IsNullOrEmpty(hklmMachineModulePath) ? GetPSHomeModulePath() : hklmMachineModulePath;
 
-            List<string> finalModulePath = new List<string>();
+            // Use an initial capacity of 8 to cover default use cases
+            // 3 for personal, shared, system, then Windows typically has 3
+            // entries in the currentProcessModulePath by default.
+            List<string> finalModulePath = new List<string>(8);
+
             AddPath(finalModulePath, personalModulePathToUse);
             AddPath(finalModulePath, sharedModulePath);
             AddPath(finalModulePath, systemModulePathToUse);
@@ -1167,6 +1171,10 @@ namespace System.Management.Automation
                 Path.AltDirectorySeparatorChar
             };
 
+            // We treat paths as case sensitive on non-Windows. While case
+            // sensitivity is based on the filesystem we treat non-Windows
+            // as always case sensitive just in case it is needed. Worst
+            // case scenario is that there is a duplicate entry.
 #if UNIX
             IEqualityComparer<char>? valueComparer = null;
 #else
@@ -1183,15 +1191,22 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
+                ReadOnlySpan<char> trimmedEntry = entry.TrimEnd(dirSeparatorChars);
 #if UNIX
-                // Don't trim if it's just '/' as that's a valid entry on *nix.
-                else if (!(entry.Length == 1 && entry[0] == Path.DirectorySeparatorChar))
+                // On *nix we always want to trim '/' but we need to ensure if
+                // the entry was '/+' we keep 1 to represent the root '/'.
+                entry = entry[0] == Path.DirectorySeparatorChar && trimmedEntry.Length == 0
+                    ? entry.Slice(0, 1)
+                    : trimmedEntry;
 #else
-                else
+                // On Windows we always want to trim '/' or '\'. Only exception
+                // is to keep one trailing char if the path is the drive root
+                // 'C:\+'.
+                entry = entry.Length > 1 && entry[1] == Path.VolumeSeparatorChar && trimmedEntry.Length == 2
+                    ? entry.Slice(0, 3)
+                    : trimmedEntry;
 #endif
-                {
-                    entry = entry.TrimEnd(dirSeparatorChars);
-                }
 
                 // If after trimming we don't have a path value we ignore it.
                 if (entry.Length == 0)
@@ -1218,6 +1233,8 @@ namespace System.Management.Automation
                     unsafe
                     {
                         // Weird code avoids multiple allocations to replace / with \.
+                        // We can pass entry and remove the Unsafe code can be
+                        // removed once project's LangVersion is at 13.0+.
                         pathEntry = string.Create(
                             entry.Length,
                             ((nint)Unsafe.AsPointer(ref MemoryMarshal.GetReference(entry)), entry.Length),
@@ -1225,15 +1242,7 @@ namespace System.Management.Automation
                             {
                                 (nint ptr, int length) = state;
                                 ReadOnlySpan<char> value = new((void*)ptr, length);
-                                for (int i = 0; i < value.Length; i++)
-                                {
-                                    char c = value[i];
-                                    if (c == Path.AltDirectorySeparatorChar)
-                                    {
-                                        c = Path.DirectorySeparatorChar;
-                                    }
-                                    span[i] = c;
-                                }
+                                value.Replace(span, Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
                             });
                     }
 #endif
