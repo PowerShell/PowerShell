@@ -36,6 +36,10 @@ jobs:
         Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
       displayName: 'Capture Environment Variables'
 
+    - pwsh: |
+        Get-ChildItem '$(Pipeline.Workspace)' -Recurse | Out-String -Stream | write-Verbose -Verbose
+      displayName: 'Capture Workspace'
+
     - task: onebranch.pipeline.signing@1
       displayName: Sign Release Tools
       inputs:
