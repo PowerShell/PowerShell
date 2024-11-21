@@ -9,6 +9,8 @@ jobs:
   - name: repoRoot
     value: '$(Build.SourcesDirectory)/PowerShell'
   - group: 'mscodehub-code-read-akv'
+  - name: ob_tipsign_enabled
+    value: true # Enable TiP sign
   steps:
     - checkout: self ## the global setting on lfs didn't work
       lfs: false
@@ -44,7 +46,7 @@ jobs:
       displayName: 'Capture Workspace'
 
     - pwsh: |
-        $pathToRunFolder = Join-Path -Path "$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run" -ChildPath '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/releaseLinuxPackages.ps1'
+        $pathToRunFolder = Join-Path -Path "$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run" -ChildPath 'Run.ps1'
         $pathExists = Test-Path $pathToRunFolder
         Write-Verbose -Verbose "path exists: $pathExists"
       displayName: 'Test if Run.ps1 path exists/can be found'
@@ -57,13 +59,13 @@ jobs:
     #     files_to_sign: '**\*.ps1'
     #     search_root: '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4'
 
-    # - task: onebranch.pipeline.signing@1
-    #   displayName: Sign Run.ps1
-    #   inputs:
-    #     command: 'sign'
-    #     signing_profile: external_distribution
-    #     files_to_sign: '*.ps1'
-    #     search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
+    - task: onebranch.pipeline.signing@1
+      displayName: Sign Run.ps1
+      inputs:
+        command: 'sign'
+        signing_profile: 'tipsign' # external_distribution
+        files_to_sign: '*.ps1'
+        search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
 
     - pwsh: |
         $srcPath = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
