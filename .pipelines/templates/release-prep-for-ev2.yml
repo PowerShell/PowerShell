@@ -63,7 +63,9 @@ jobs:
       Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
       $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
       New-Item -Path $pythonDlFolderPath
-      pip3 download -d pythonDlFolderPath pmc-cli
+      pip3 download -d pythonDlFolderPath pmc-cli -v 2> error.txt
+      cat error.txt
+      Write-Verbose -Verbose "done pip download"
     displayName: 'Download pmc-cli package'
 
   - pwsh: |
