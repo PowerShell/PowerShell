@@ -754,7 +754,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         }
 
         It "Get-ChildItem gets content of linked-to directory" {
-            $script:filenamePattern = "AlphaFile[12]\.txt"
+            $filenamePattern = "AlphaFile[12]\.txt"
             New-Item -ItemType SymbolicLink -Path $alphaLink -Value $alphaDir
             $ci = Get-ChildItem $alphaLink
             $ci.Count | Should -Be 3
@@ -762,7 +762,9 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $ci[2].Name | Should -MatchExactly $filenamePattern
         }
         It "Get-ChildItem -Name gets content of linked-to directory" {
-            # The test depends on the files created in previous test
+            # The test depends on the files created in previous test:
+            #$filenamePattern = "AlphaFile[12]\.txt"
+            #New-Item -ItemType SymbolicLink -Path $alphaLink -Value $alphaDir
             $ci = Get-ChildItem $alphaLink -Name
             $ci.Count | Should -Be 3
             $ci[1] | Should -MatchExactly $filenamePattern
@@ -896,8 +898,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $childA = Get-ChildItem $folder
             Remove-Item -Path $link -Recurse
             $childB = Get-ChildItem $folder
-            @($childB).Count | Should -Be 1
-            @($childB).Count | Should -BeExactly @($childA).Count
+            $childB.Count | Should -Be 1
+            $childB.Count | Should -BeExactly $childA.Count
             $childB.Name | Should -BeExactly $childA.Name
         }
     }
