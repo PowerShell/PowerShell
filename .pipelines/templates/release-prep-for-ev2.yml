@@ -57,7 +57,7 @@ jobs:
     displayName: 'Pip Authenticate'
 
   - pwsh: |
-      $ev2SpecsFolder = "$(Build.SourcesDirectory)/.pipelines/EV2Specs"
+      $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
       $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
 
       Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
@@ -74,13 +74,13 @@ jobs:
     displayName: 'Copy signed .deb packages - probably to a .tar.gz to pass as a file var'
 
   - pwsh: |
-      $pathToEV2Folder = Join-Path -Path '$(Build.SourcesDirectory)/.pipelines' -ChildPath 'EV2Specs'
+      $pathToEV2Folder = Join-Path -Path '$(repoRoot)/.pipelines' -ChildPath 'EV2Specs'
       $pathToServiceGroupRootFolder = Join-Path $pathToEV2Folder -ChildPath 'ServiceGroupRoot'
       $pathToParametersFolder = Join-Path -Path $pathToServiceGroupRootFolder -ChildPath 'Parameters'
       New-Item -Path $pathToParametersFolder -ItemType Directory
       $pathToPMCMetadataFile = Join-Path -Path $pathToParametersFolder -ChildPath 'PmcMetadata.json'
 
-      $metadata = Get-Content -Path "$(Build.SourcesDirectory)/PowerShell/tools/metadata.json" -Raw | ConvertFrom-Json
+      $metadata = Get-Content -Path "$(repoRoot)/tools/metadata.json" -Raw | ConvertFrom-Json
       $skipPublishVar = '${{ parameters.skipPublish }}'
       $metadataHash = @{}
       $metadataHash["ReleaseTag"] = "$(ReleaseTag)"
