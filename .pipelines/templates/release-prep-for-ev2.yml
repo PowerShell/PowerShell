@@ -12,73 +12,121 @@ jobs:
   - name: ob_tipsign_enabled
     value: true # Enable TiP sign
   steps:
-    - checkout: self ## the global setting on lfs didn't work
-      lfs: false
+  - checkout: self ## the global setting on lfs didn't work
+    lfs: false
 
-    - template: release-SetReleaseTagandContainerName.yml
+  - template: release-SetReleaseTagandContainerName.yml
   
-    - pwsh: |
-        $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
-        $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
-        Write-Host "sending " + $vstsCommandString
-        Write-Host "##$vstsCommandString"
-      displayName: Set Package version
+  - pwsh: |
+      $packageVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '^v',''
+      $vstsCommandString = "vso[task.setvariable variable=packageVersion]$packageVersion"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: Set Package version
   
-    - pwsh: |
-        $branch = 'mirror-target'
-        $gitArgs = "clone",
-        "--verbose",
-        "--branch",
-        "$branch",
-        "https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools",
-        '$(Pipeline.Workspace)/tools'
-        $gitArgs | Write-Verbose -Verbose
-        git $gitArgs
-      displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
+  - pwsh: |
+      $branch = 'mirror-target'
+      $gitArgs = "clone",
+      "--verbose",
+      "--branch",
+      "$branch",
+      "https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools",
+      '$(Pipeline.Workspace)/tools'
+      $gitArgs | Write-Verbose -Verbose
+      git $gitArgs
+    displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
 
-    - pwsh: |
-        Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
-      displayName: 'Capture Environment Variables'
+  - pwsh: |
+      Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
+    displayName: 'Capture Environment Variables'
 
-    - pwsh: |
-        Get-ChildItem '$(Pipeline.Workspace)' -Recurse | Out-String -Stream | write-Verbose -Verbose
-        Get-ChildItem '$(Build.SourcesDirectory)'
-      displayName: 'Capture Workspace'
+  - pwsh: |
+      Get-ChildItem '$(Pipeline.Workspace)' -Recurse | Out-String -Stream | write-Verbose -Verbose
+      Get-ChildItem '$(Build.SourcesDirectory)'
+    displayName: 'Capture Workspace'
 
-    - pwsh: |
-        $pathToRunFolder = Join-Path -Path "$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run" -ChildPath 'Run.ps1'
-        $pathExists = Test-Path $pathToRunFolder
-        Write-Verbose -Verbose "path exists: $pathExists"
-      displayName: 'Test if Run.ps1 path exists/can be found'
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.9'
+    inputs:
+      versionSpec: 3.9
 
-    # - task: onebranch.pipeline.signing@1
-    #   displayName: Sign Release Tools
-    #   inputs:
-    #     command: 'sign'
-    #     signing_profile: internal_azure_service
-    #     files_to_sign: '**\*.ps1'
-    #     search_root: '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4'
+  - task: PipAuthenticate@1
+    inputs:
+      artifactFeeds: 'pmc'
+      pythonDownloadServiceConnections: pmcDownload
+    displayName: 'Pip Authenticate'
 
-    - task: onebranch.pipeline.signing@1
-      displayName: Sign Run.ps1
-      inputs:
-        command: 'sign'
-        signing_profile: 'tipsign' # external_distribution
-        files_to_sign: '*.ps1'
-        search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
+  - pwsh: |
+      $ev2SpecsFolder = "$(Build.SourcesDirectory)/.pipelines/EV2Specs"
+      $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
 
-    - pwsh: |
-        $srcPath = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
-        $pathToRunTarFile = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell' -ChildPath "Run.tar"
-        tar -cvf $pathToRunTarFile -C $srcPath ./Run
-      displayName: Compress Run script into tar file as needed for EV2 Shell extension
+      Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
+      $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
+      New-Item -Path $pythonDlFolderPath
+      pip3 download -d pythonDlFolderPath pmc-cli
+    displayName: 'Download pmc-cli package'
 
-    # - task: CopyFiles@2
-    #   inputs:
-    #     Contents: '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/**' 
-    #     TargetFolder: 'EV2Specs/ServiceGroupRoot/tools'
+  - pwsh: |
+      Write-Verbose -Verbose "Copy built .deb packages"
+      # assuming ESRP signed packages are here
+      # TODO: either copy packages to a folder and .tar it all up- i believe there's a size limit
+      # so option 2: make a .tar.gz file and pass it the way I do for images
+    displayName: 'Copy signed .deb packages - probably to a .tar.gz to pass as a file var'
 
-    - task: CopyFiles@2
-      inputs:
-        Contents: 'EV2Specs/**'
-        TargetFolder: $(ob_outputDirectory)
+  - pwsh: |
+      $pathToEV2Folder = Join-Path -Path '$(Build.SourcesDirectory)/.pipelines' -ChildPath 'EV2Specs'
+      $pathToServiceGroupRootFolder = Join-Path $pathToEV2Folder -ChildPath 'ServiceGroupRoot'
+      $pathToParametersFolder = Join-Path -Path $pathToServiceGroupRootFolder -ChildPath 'Parameters'
+      New-Item -Path $pathToParametersFolder -ItemType Directory
+      $pathToPMCMetadataFile = Join-Path -Path $pathToParametersFolder -ChildPath 'PmcMetadata.json'
+
+      $metadata = Get-Content -Path "$(Build.SourcesDirectory)/PowerShell/tools/metadata.json" -Raw | ConvertFrom-Json
+      $skipPublishVar = '${{ parameters.skipPublish }}'
+      $metadataHash = @{}
+      $metadataHash["ReleaseTag"] = "$(ReleaseTag)"
+      $metadataHash["AadClientId"] = "$(PmcCliClientID)"
+      $metadataHash["BlobFolderName"] = "$(ReleaseTag)"
+      $metadataHash["LTS"] = $metadata.LTSRelease.Latest
+      $metadataHash["ForProduction"] = $true
+      $metadataHash["SkipPublish"] = $skipPublishVar
+
+      $metadataHash | ConvertTo-Json | Out-File $pathToPMCMetadataFile
+
+      Write-Verbose -Verbose "Copy mapping.json file to EV2Specs folder. file path at path $mappingFilePath exists: $mappingFilePathExists"
+      $mappingFilePath = Join-Path -Path '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com' -ChildPath 'mapping.json'
+      $mappingFilePathExists = Test-Path $mappingFilePath
+      $mappingFileEV2Path = Join-Path -Path $pathToParametersFolder -ChildPath "mapping.json"
+      Copy-Item -Path $mappingFilePath -Destination $mappingFileEV2Path
+    displayName: 'Create pmcScriptMetadata.json and mapping.json file'
+
+  - pwsh: |
+      $srcPath = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
+      $pathToRunTarFile = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell' -ChildPath "Run.tar"
+      tar -cvf $pathToRunTarFile -C $srcPath ./Run
+      # TODO: ensure this has: Run.ps1, settings.toml, python_dl
+      # tar cvf pmc_packages.tar start.sh settings.toml packages python_dl
+    displayName: 'Create archive for the shell extension'
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign Run.ps1
+    inputs:
+      command: 'sign'
+      signing_profile: 'tipsign' # external_distribution
+      files_to_sign: '*.ps1'
+      search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
+
+  - pwsh: |
+      $srcPath = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
+      $pathToRunTarFile = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell' -ChildPath "Run.tar"
+      tar -cvf $pathToRunTarFile -C $srcPath ./Run
+    displayName: 'Compress Run script into tar file as needed for EV2 Shell extension'
+
+  # - task: CopyFiles@2
+  #   inputs:
+  #     Contents: '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/**' 
+  #     TargetFolder: 'EV2Specs/ServiceGroupRoot/tools'
+
+  - task: CopyFiles@2
+    inputs:
+      Contents: 'EV2Specs/**'
+      TargetFolder: $(ob_outputDirectory)
