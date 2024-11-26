@@ -13,19 +13,17 @@ jobs:
   templateContext:
     inputs:
       - input: pipelineArtifact
-        artifactName: drop_DownloadPackages_upload_packages
-
+        artifactName: drop_upload_upload_packages
   variables:
   - template: ./variable/release-shared.yml@self
+    parameters:
+      VERSION: $[ stageDependencies.setReleaseTagAndUploadTools.SetTagAndTools.outputs['OutputVersion.Version'] ]
 
   steps:
   - template: release-install-pwsh.yml
 
-  - template: release-checkout-pwsh-repo.yml
-
-  - template: release-SetReleaseTagAndContainerName.yml
-
   - pwsh: |
+      Write-Verbose -Verbose "Version: $(Version)"
       Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: 'Capture Environment Variables'
 
@@ -34,7 +32,7 @@ jobs:
       $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
       Copy-Item "$(Pipeline.Workspace)/NuGetPackages/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
 
-      $releaseVersion = '$(VERSION)'
+      $releaseVersion = '$(Version)'
       $globalToolPath = "$(Pipeline.Workspace)/NuGetPackages/PowerShell.$releaseVersion.nupkg"
 
       if ($releaseVersion -notlike '*-*') {

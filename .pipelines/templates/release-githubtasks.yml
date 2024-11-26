@@ -8,23 +8,22 @@ jobs:
   templateContext:
     inputs:
       - input: pipelineArtifact
-        artifactName: drop_DownloadPackages_upload_packages
+        artifactName: drop_upload_upload_packages
   variables:
-  - template: ./variable/release-shared.yml@self
+    - template: ./variable/release-shared.yml@self
+      parameters:
+        RELEASETAG: $[ stageDependencies.setReleaseTagAndUploadTools.SetTagAndTools.outputs['OutputReleaseTag.releaseTag'] ]
 
   steps:
   - task: PowerShell@2
     inputs:
       targetType: inline
       script: |
+        Write-Verbose -Verbose "Release Tag: $(ReleaseTag)"
         Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
     displayName: 'Capture Environment Variables'
 
   - template: release-install-pwsh.yml
-
-  - template: release-checkout-pwsh-repo.yml
-
-  - template: release-SetReleaseTagAndContainerName.yml
 
   - task: PowerShell@2
     inputs:
@@ -54,17 +53,6 @@ jobs:
         $fileContent = Get-Content -Path $OutputPath -Raw | Out-String
         Write-Verbose -Verbose -Message $fileContent
     displayName: Add sha256 hashes
-
-  - task: PowerShell@2
-    inputs:
-      targetType: inline
-      pwsh: true
-      script: |
-        $releaseVersion = '$(ReleaseTag)' -replace '^v',''
-        $vstsCommandString = "vso[task.setvariable variable=ReleaseVersion]$releaseVersion"
-        Write-Host "sending " + $vstsCommandString
-        Write-Host "##$vstsCommandString"
-    displayName: 'Set release version'
   
   - task: PowerShell@2
     inputs:

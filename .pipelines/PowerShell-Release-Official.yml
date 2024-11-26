@@ -77,7 +77,7 @@ resources:
             - releases/*
 
 extends:
-  template: v2/OneBranch.Official.CrossPlat.yml@templates
+  template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates
   parameters:
     release: 
       category: NonAzure
@@ -110,17 +110,14 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
-    - stage: DownloadPackages
-      displayName: 'Download Packages'
-      dependsOn: []
+    - stage: setReleaseTagAndUploadTools
+      displayName: 'Set Release Tag and Upload Tools'
       jobs:
-      - template: /.pipelines/templates/release-download-packages.yml@self
+      - template: /.pipelines/templates/release-SetTagAndTools.yml@self
 
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
       dependsOn: []
-      variables:
-        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/release-create-msix.yml@self
 
@@ -278,10 +275,10 @@ extends:
     - stage: PublishGitHubRelease
       displayName: Publish GitHub Release
       dependsOn: 
-        - DownloadPackages
+        - setReleaseTagAndUploadTools
         - UpdateChangeLog
       variables:
-        ob_release_environment: Production
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/release-githubtasks.yml@self
     
@@ -316,9 +313,11 @@ extends:
   
     - stage: PublishNuGet
       displayName: Publish NuGet
-      dependsOn: PushGitTagAndMakeDraftPublic
+      dependsOn:
+        - setReleaseTagAndUploadTools
+        - PushGitTagAndMakeDraftPublic
       variables:
-        ob_release_environment: Production
+        ob_release_environment: Test
       jobs:
       - template: /.pipelines/templates/release-publish-nuget.yml@self
         parameters:

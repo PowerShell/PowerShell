@@ -1,0 +1,37 @@
+jobs:
+- job: SetTagAndTools
+  displayName: Set Tag and Tools
+  condition: succeeded()
+  pool:
+    type: windows
+  steps:
+  - template: release-SetReleaseTagandContainerName.yml@self
+
+  - pwsh: |
+      git clone --depth 1 https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
+    displayName: Clone Internal-Tools repository
+
+  - pwsh: |
+      New-Item -ItemType Directory -Path '$(Pipeline.Workspace)/ToolArtifact'
+      Get-ChildItem -Path '$(Pipeline.Workspace)/tools/Scripts' -Recurse -Filter 'GitHubRelease.psm1' -ErrorAction SilentlyContinue |
+        Copy-Item -Destination '$(Pipeline.Workspace)'
+      
+      Write-Verbose -Verbose "The tools will be signed and uploaded to artifacts: "
+      Get-ChildItem -Path '$(Pipeline.Workspace)/ToolArtifact' -Recurse |
+        ForEach-Object {
+          Write-Verbose -Verbose $_.FullName
+        }
+    displayName: Move GitHub Tool
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign Tools
+    inputs:
+      command: 'sign'
+      signing_profile: internal_azure_service
+      files_to_sign: '*.ps1;*.psm1'
+      search_root: '$(Pipeline.Workspace)/ToolArtifact'
+
+  - pwsh: | 
+      Write-Verbose -Verbose "Uploading signed tools to $(ob_outputDirectory)"
+      Copy-Item -Path '$(Pipeline.Workspace)/ToolArtifact' -Destination '$(ob_outputDirectory)' -Force -Verbose
+    displayName: Upload Tools
