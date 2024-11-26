@@ -1241,28 +1241,20 @@ namespace System.Management.Automation
 #if UNIX
                     string pathEntry = entry.ToString();
 #else
-                    string pathEntry;
-                    unsafe
-                    {
-                        // Weird code avoids multiple allocations to replace / with \.
-                        // We can pass entry and remove the Unsafe code can be
-                        // removed once project's LangVersion is at 13.0+.
-                        pathEntry = string.Create(
-                            entry.Length + trailingSlashCount,
-                            ((nint)Unsafe.AsPointer(ref MemoryMarshal.GetReference(entry)), entry.Length),
-                            static (span, state) =>
-                            {
-                                (nint ptr, int length) = state;
-                                ReadOnlySpan<char> value = new((void*)ptr, length);
-                                value.Replace(span, Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+                    // Weird code avoids multiple allocations to replace / with \
+                    // and adds \ to the end if needed.
+                    string pathEntry = string.Create(
+                        entry.Length + trailingSlashCount,
+                        entry,
+                        static (destStr, srcStr) =>
+                        {
+                            srcStr.Replace(destStr, Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 
-                                // Adds the trailing \ if needed for a root PATH entry.
-                                if (span.Length > length)
-                                {
-                                    span[length] = Path.DirectorySeparatorChar;
-                                }
-                            });
-                    }
+                            if (destStr.Length > srcStr.Length)
+                            {
+                                destStr[srcStr.Length] = Path.DirectorySeparatorChar;
+                            }
+                        });
 #endif
                     finalModulePath.Add(pathEntry);
                 }
