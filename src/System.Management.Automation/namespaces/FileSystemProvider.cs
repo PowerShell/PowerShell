@@ -2258,11 +2258,14 @@ namespace Microsoft.PowerShell.Commands
                         {
                             exists = true;
 
-                            // check if the target is a file or directory
-                            var normalizedTargetPath = Path.Combine(Path.GetDirectoryName(path), strTargetPath);
-                            GetFileSystemInfo(normalizedTargetPath, out isDirectory);
-
+                            // unify directory separators to be consistent with the rest of PowerShell even on non-Windows platforms;
+                            // do this before resolving the target, otherwise e.g. `.\test` would break on Linux, since the combined
+                            // path below would be something like `/path/to/cwd/.\test`
                             strTargetPath = strTargetPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+
+                            // check if the target is a file or directory
+                            var normalizedTargetPath = Path.Combine(Path.GetDirectoryName(path)!, strTargetPath);
+                            GetFileSystemInfo(normalizedTargetPath, out isDirectory);
                         }
                         else
                         {
