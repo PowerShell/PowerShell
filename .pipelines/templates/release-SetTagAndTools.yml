@@ -18,7 +18,7 @@ jobs:
   - pwsh: |
       New-Item -ItemType Directory -Path '$(Pipeline.Workspace)/ToolArtifact'
       Get-ChildItem -Path '$(Pipeline.Workspace)/tools/Scripts' -Recurse -Filter 'GitHubRelease.psm1' -ErrorAction SilentlyContinue |
-        Copy-Item -Destination '$(Pipeline.Workspace)'
+        Copy-Item -Destination '$(Pipeline.Workspace)/ToolArtifact'
       
       Write-Verbose -Verbose "The tools will be signed and uploaded to artifacts: "
       Get-ChildItem -Path '$(Pipeline.Workspace)/ToolArtifact' -Recurse |
