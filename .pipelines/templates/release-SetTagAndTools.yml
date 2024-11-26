@@ -5,6 +5,7 @@ jobs:
   pool:
     type: windows
   variables:
+  - group: 'mscodehub-code-read-akv'
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   steps:
