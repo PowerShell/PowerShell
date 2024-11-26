@@ -8,6 +8,9 @@ jobs:
   templateContext:
     inputs:
       - input: pipelineArtifact
+        artifactName: drop_setReleaseTagAndUploadTools_SetTagAndTools
+      - input: pipelineArtifact
+        pipeline: 'PowerShell-Packages-Official'
         artifactName: drop_upload_upload_packages
   variables:
     - template: ./variable/release-shared.yml@self
@@ -67,7 +70,7 @@ jobs:
       targetType: inline
       pwsh: true
       script: |
-        Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
+        Import-module '$(Pipeline.Workspace)/ToolArtifact/GitHubRelease.psm1'
         $releaseVersion = '$(ReleaseTag)' -replace '^v',''
         $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
   
