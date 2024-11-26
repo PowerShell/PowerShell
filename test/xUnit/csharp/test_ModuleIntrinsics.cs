@@ -206,16 +206,17 @@ namespace PSTests.Parallel
         [InlineData("C:/")]
         [InlineData("C:\\\\")]
         [InlineData("C://")]
+        [InlineData("C:")]
+        [InlineData("C: ")]
         public static void AddsDriveRootToModulePath(string pathEntry)
         {
             string expected = $"{personalModulePath}{Path.PathSeparator}" +
                 $"{sharedModulePath}{Path.PathSeparator}" +
-                $"{allUsersModulePath}{Path.PathSeparator}" +
                 "C:\\";
 
             string actual = ModuleIntrinsics.GetModulePath(
                 pathEntry,
-                null,
+                pathEntry,
                 null);
 
             Assert.Equal(expected, actual);

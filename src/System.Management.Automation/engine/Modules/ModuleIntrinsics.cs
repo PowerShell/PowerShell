@@ -1200,12 +1200,13 @@ namespace System.Management.Automation
                     ? entry.Slice(0, 1)
                     : trimmedEntry;
 #else
-                // On Windows we always want to trim '/' or '\'. Only exception
-                // is to keep one trailing char if the path is the drive root
-                // 'C:\+'.
-                entry = entry.Length > 1 && entry[1] == Path.VolumeSeparatorChar && trimmedEntry.Length == 2
-                    ? entry.Slice(0, 3)
-                    : trimmedEntry;
+                // On Windows we always want to trim '/' or '\'. We still need
+                // to preserve the '\' on a drive absolute path 'C:\' but to
+                // simplify the comparison we trim it here and add it back in
+                // when building the final entry.
+                entry = trimmedEntry;
+                int trailingSlashCount = entry.Length > 1 && entry[1] == Path.VolumeSeparatorChar && trimmedEntry.Length == 2
+                    ? 1 : 0;
 #endif
 
                 // If after trimming we don't have a path value we ignore it.
@@ -1217,6 +1218,17 @@ namespace System.Management.Automation
                 bool add = true;
                 foreach (ReadOnlySpan<char> listEntry in finalModulePath)
                 {
+#if !UNIX
+                    // Special case to match C: with C:\ on Windows.
+                    if (
+                        trailingSlashCount == 1 && listEntry.Length == 3 &&
+                        listEntry[2] == Path.DirectorySeparatorChar &&
+                        listEntry.Slice(0, 2).SequenceEqual(entry, valueComparer))
+                    {
+                        add = false;
+                        break;
+                    }
+#endif
                     if (listEntry.SequenceEqual(entry, valueComparer))
                     {
                         add = false;
@@ -1236,13 +1248,19 @@ namespace System.Management.Automation
                         // We can pass entry and remove the Unsafe code can be
                         // removed once project's LangVersion is at 13.0+.
                         pathEntry = string.Create(
-                            entry.Length,
+                            entry.Length + trailingSlashCount,
                             ((nint)Unsafe.AsPointer(ref MemoryMarshal.GetReference(entry)), entry.Length),
                             static (span, state) =>
                             {
                                 (nint ptr, int length) = state;
                                 ReadOnlySpan<char> value = new((void*)ptr, length);
                                 value.Replace(span, Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+
+                                // Adds the trailing \ if needed for a root PATH entry.
+                                if (span.Length > length)
+                                {
+                                    span[length] = Path.DirectorySeparatorChar;
+                                }
                             });
                     }
 #endif
