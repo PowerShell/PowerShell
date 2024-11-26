@@ -8,7 +8,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal
@@ -265,7 +265,7 @@ namespace System.Management.Automation.Internal
         /// party cmdlets do not call base.Dispose (which is the case), we
         /// will still end up having this leak.
         /// </remarks>
-        internal void InternalDispose(bool isDisposing)
+        internal virtual void InternalDispose(bool isDisposing)
         {
             _myInvocation = null;
             _state = null;
@@ -411,6 +411,9 @@ namespace System.Management.Automation
         #region private_members
 
         private ProviderIntrinsics _invokeProvider = null;
+#nullable enable
+        private CancellationTokenSource? _pipelineStopTokenSource;
+#nullable disable
 
         #endregion private_members
 
@@ -511,6 +514,11 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Gets the CancellationToken that is signaled when the pipeline is stopping.
+        /// </summary>
+        public CancellationToken PipelineStopToken => (_pipelineStopTokenSource ??= new CancellationTokenSource()).Token;
+
         #region Provider wrappers
 
         /// <Content contentref="System.Management.Automation.PathIntrinsics.CurrentProviderLocation" />
@@ -594,5 +602,22 @@ namespace System.Management.Automation
         #endregion Parameter methods
 
         #endregion public_methods
+
+        internal override void DoStopProcessing()
+        {
+            _pipelineStopTokenSource?.Cancel();
+            base.DoStopProcessing();
+        }
+
+        internal override void InternalDispose(bool isDisposing)
+        {
+            if (isDisposing)
+            {
+                _pipelineStopTokenSource?.Dispose();
+                _pipelineStopTokenSource = null;
+            }
+
+            base.InternalDispose(isDisposing);
+        }
     }
 }
