@@ -27,8 +27,8 @@ internal static partial class Interop
 
             ReadOnlySpan<char> driveName = stackalloc char[] { drive, ':', '\0' };
             int bufferSize = MAX_PATH;
-            Span<char> uncBuffer = stackalloc char[bufferSize];
-            if (InternalTestHooks.WNetGetConnectionBufferSize > 0)
+            Span<char> uncBuffer = stackalloc char[MAX_PATH];
+            if (InternalTestHooks.WNetGetConnectionBufferSize > 0 && InternalTestHooks.WNetGetConnectionBufferSize <= MAX_PATH)
             {
                 bufferSize = InternalTestHooks.WNetGetConnectionBufferSize;
                 uncBuffer = uncBuffer.Slice(0, bufferSize);
