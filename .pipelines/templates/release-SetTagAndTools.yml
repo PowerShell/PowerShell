@@ -4,6 +4,9 @@ jobs:
   condition: succeeded()
   pool:
     type: windows
+  variables:
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   steps:
   - template: release-SetReleaseTagandContainerName.yml@self
 
