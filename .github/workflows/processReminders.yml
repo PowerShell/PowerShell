@@ -17,4 +17,4 @@ jobs:
 
     steps:
       - name: check reminders and notify
-        uses: agrc/reminder-action@b5cc06580b6a711baddf6a947131f85a422fa263 # v1.0.14
+        uses: agrc/reminder-action@45201302ec0071cce809a483111bda4cdc7d10f2 # v1.0.15

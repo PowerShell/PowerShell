@@ -1,34 +1,36 @@
 parameters:
   jobName: ""
   displayName: ""
-  jobtype: "windows"
+  poolName: "windows"
+  imageName: 'none'
 
 jobs:
 - job: ${{ parameters.jobName }}
   displayName: ${{ parameters.displayName }}
   pool:
-    ${{ if eq(parameters.jobtype, 'macos') }}:
-      type: linux
-      isCustom: true
-      name: Azure Pipelines
-      vmImage: 'macOS-latest'
+    type: linux
+    isCustom: true
+    ${{ if eq( parameters.poolName, 'Azure Pipelines') }}:
+      name: ${{ parameters.poolName }}
+      vmImage: ${{ parameters.imageName }}
     ${{ else }}:
-      type: ${{ parameters.jobtype }}
+      name: ${{ parameters.poolName }}
+      demands:
+        - ImageOverride -equals ${{ parameters.imageName }}
 
   variables:
   - group: mscodehub-feed-read-general
   - group: mscodehub-feed-read-akv
   - group: DotNetPrivateBuildAccess
-  - name: ob_outputDirectory
-    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
-  - name: ob_sdl_credscan_suppressionsFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-  - name: ob_sdl_tsa_configFile
-    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
 
   steps:
     - checkout: self
       clean: true
+      lfs: false
+
+    - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+      parameters:
+        repoRoot: "$(Build.SourcesDirectory)"
 
     - template: release-SetReleaseTagandContainerName.yml@self
 
@@ -37,7 +39,7 @@ jobs:
       displayName: Download nupkgs
 
     - pwsh: |
-        Get-ChildItem -Path env:
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
       displayName: Capture environment
 
     - pwsh: |
@@ -45,7 +47,7 @@ jobs:
       displayName: 'Capture Downloaded Artifacts'
 
     - pwsh: |
-        $repoRoot = $isMacOS ? "$(Build.SourcesDirectory)" : "$(Build.SourcesDirectory)/PowerShell"
+        $repoRoot = "$(Build.SourcesDirectory)"
 
         $dotnetMetadataPath = "$repoRoot/DotnetRuntimeMetadata.json"
         $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
@@ -80,7 +82,7 @@ jobs:
         __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
     - pwsh: |
-        $repoRoot = $isMacOS ? "$(Build.SourcesDirectory)" : "$(Build.SourcesDirectory)/PowerShell"
+        $repoRoot = "$(Build.SourcesDirectory)"
 
         $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
         Import-Module "$repoRoot/build.psm1" -Force
@@ -102,12 +104,17 @@ jobs:
         Get-ChildItem
 
         ## register the packages download directory in the nuget file
-        $nugetConfigContent = Get-Content ./NuGet.Config -Raw
+        $nugetPath = './NuGet.Config'
+        if(!(test-path $nugetPath)) {
+          $nugetPath = "$repoRoot/nuget.config"
+        }
+        Write-Verbose -Verbose "nugetPath: $nugetPath"
+        $nugetConfigContent = Get-Content $nugetPath -Raw
         $updateNugetContent = $nugetConfigContent.Replace("</packageSources>", $xmlElement)
 
-        $updateNugetContent | Out-File ./NuGet.Config -Encoding ascii
+        $updateNugetContent | Out-File $nugetPath -Encoding ascii
 
-        Get-Content ./NuGet.Config
+        Get-Content $nugetPath
 
         # Add workaround to unblock xUnit testing see issue: https://github.com/dotnet/sdk/issues/26462
         $dotnetPath = if ($IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
@@ -116,7 +123,6 @@ jobs:
         dotnet --info
         dotnet restore
         dotnet test /property:RELEASE_VERSION=$releaseVersion --test-adapter-path:. "--logger:xunit;LogFilePath=$(System.DefaultWorkingDirectory)/test-hosting.xml"
-
       displayName: Restore and execute tests
       env:
         __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)

@@ -1604,7 +1604,7 @@ function Get-PackageDependencies
                 "libgssapi-krb5-2",
                 "libstdc++6",
                 "zlib1g",
-                "libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
+                "libicu74|libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
                 "libssl3|libssl1.1|libssl1.0.2|libssl1.0.0"
             )
 
@@ -1642,7 +1642,7 @@ function Get-PackageDependencies
 
 function Test-Dependencies
 {
-    foreach ($Dependency in "fpm", "ronn") {
+    foreach ($Dependency in "fpm") {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
             # These tools are not added to the path automatically on OpenSUSE 13.2
             # try adding them to the path and re-tesing first
@@ -1720,32 +1720,21 @@ function New-ManGzip
     )
 
     Write-Log "Creating man gz..."
-    # run ronn to convert man page to roff
-    $RonnFile = "$RepoRoot/assets/pwsh.1.ronn"
 
-    if ($IsPreview.IsPresent -or $IsLTS.IsPresent)
-    {
+    # run roff to convert man page to roff
+    $RoffFile = "$RepoRoot/assets/manpage/pwsh.1"
+
+    if ($IsPreview.IsPresent -or $IsLTS.IsPresent) {
         $prodName = if ($IsLTS) { 'pwsh-lts' } else { 'pwsh-preview' }
-        $newRonnFile = $RonnFile -replace 'pwsh', $prodName
-        Copy-Item -Path $RonnFile -Destination $newRonnFile -Force
-        $RonnFile = $newRonnFile
-    }
-
-    $RoffFile = $RonnFile -replace "\.ronn$"
-
-    # Run ronn on assets file
-    Write-Log "Creating man gz - running ronn..."
-    Start-NativeExecution { ronn --roff $RonnFile }
-
-    if ($IsPreview.IsPresent)
-    {
-        Remove-Item $RonnFile
+        $newRoffFile = $RoffFile -replace 'pwsh', $prodName
+        Copy-Item -Path $RoffFile -Destination $newRoffFile -Force -Verbose
+        $RoffFile = $newRoffFile
     }
 
     # gzip in assets directory
     $GzipFile = "$RoffFile.gz"
     Write-Log "Creating man gz - running gzip..."
-    Start-NativeExecution { gzip -f $RoffFile } -VerboseOutputOnError
+    Start-NativeExecution { gzip -kf $RoffFile } -VerboseOutputOnError
 
     if($Environment.IsMacOS) {
         $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)

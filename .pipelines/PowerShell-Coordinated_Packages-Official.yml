@@ -1,4 +1,4 @@
-name: UnifiedPackageBuild-$(Build.BuildId)
+name: UnifiedPackageBuild-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 trigger: none
 
 parameters:
@@ -11,19 +11,23 @@ parameters:
     type: string
     default: 'fromBranch'
   - name: SKIP_SIGNING
-    displayName: Skip Signing
+    displayName: Debugging - Skip Signing
     type: string
     default: 'NO'
   - name: RUN_TEST_AND_RELEASE
-    displayName: Run Test and Release Artifacts Stage
+    displayName: Debugging - Run Test and Release Artifacts Stage
     type: boolean
     default: true
   - name: RUN_WINDOWS
-    displayName: Enable Windows Stage
+    displayName: Debugging - Enable Windows Stage
     type: boolean
     default: true
   - name: ENABLE_MSBUILD_BINLOGS
-    displayName: Enable MSBuild Binary Logs
+    displayName: Debugging - Enable MSBuild Binary Logs
+    type: boolean
+    default: false
+  - name: FORCE_CODEQL
+    displayName: Debugging - Enable CodeQL and set cadence to 1 hour
     type: boolean
     default: false
 
@@ -74,6 +78,16 @@ variables:
   - group: mscodehub-feed-read-akv
   - name: ENABLE_MSBUILD_BINLOGS
     value: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
+  - ${{ if eq(parameters['FORCE_CODEQL'],'true') }}:
+    # Cadence is hours before CodeQL will allow a re-upload of the database
+    - name: CodeQL.Cadence
+      value: 1
+  - name: CODEQL_ENABLED
+    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
+      value: true
+    ${{ else }}:
+      value: false
+
 
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
@@ -91,11 +105,10 @@ extends:
         enabled: false
       sbom:
         enabled: true
-      compiled:
-        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-          enabled: true
-        ${{ else }}:
-          enabled: false
+      codeql:
+        compiled:
+          enabled: $(CODEQL_ENABLED)
+        tsaEnabled: true # This enables TSA bug filing only for CodeQL 3000
       credscan:
         enabled: true
         scanFolder:  $(Build.SourcesDirectory)
@@ -146,7 +159,7 @@ extends:
             ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
         - pwsh: |
-            Get-ChildItem Env:
+            Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
           displayName: Capture environment variables
           env:
             ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
