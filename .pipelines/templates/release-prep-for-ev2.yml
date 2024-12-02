@@ -64,6 +64,7 @@ jobs:
       New-Item -Path $pythonDlFolderPath
       pip3 --version
       pip3 download -d $pythonDlFolderPath pmc-cli -v
+      pip3 install -vvv pmc-cli
       $pipExePath = Join-Path -Path "C:\__t\Python\3.12.7\x64\Scripts" -ChildPath "pip3.exe"
       $pipExePathExists = Test-Path $pipExePath
       Write-Verbose -Verbose "pip3 path exists: $pipExePathExists"
