@@ -23,7 +23,7 @@ jobs:
       targetType: inline
       script: |
         Write-Verbose -Verbose "Release Tag: $(ReleaseTag)"
-        Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
+        Get-ChildItem Env: | Out-String -Stream | Write-Verbose -Verbose
     displayName: 'Capture Environment Variables'
 
   - template: release-install-pwsh.yml
