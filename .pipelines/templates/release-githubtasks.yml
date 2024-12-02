@@ -33,14 +33,6 @@ jobs:
       targetType: inline
       pwsh: true
       script: |
-        git clone --depth 1 https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
-    displayName: Clone Internal-Tools repository
-
-  - task: PowerShell@2
-    inputs:
-      targetType: inline
-      pwsh: true
-      script: |
         $Path = "$(Pipeline.Workspace)/GitHubPackages"
         $OutputPath = Join-Path $Path 'hashes.sha256'
         $packages  = Get-ChildItem -Path $Path -Include * -Recurse -File
