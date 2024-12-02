@@ -69,7 +69,8 @@ jobs:
       $pipExePathExists = Test-Path $pipExePath
       Write-Verbose -Verbose "pip3 path exists: $pipExePathExists"
       Get-ChildItem "C:\__t\Python\3.12.7\x64\Scripts"
-      & 'C:\__t\Python\3.12.7\x64\Scripts\pip3.exe' download -d $pythonDlFolderPath pmc-cli
+      New-Item -Path "myPythonPkg"
+      & 'C:\__t\Python\3.12.7\x64\Scripts\pip3.exe' download pmc-cli -d myPythonPkg 
       Write-Verbose -Verbose "trying gci"
       Get-ChildItem $pythonDlFolderPath
       Write-Verbose -Verbose "done pip download"
