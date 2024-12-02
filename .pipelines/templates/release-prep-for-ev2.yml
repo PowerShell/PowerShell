@@ -65,6 +65,7 @@ jobs:
       New-Item -Path $pythonDlFolderPath
       pip3 --version
       pip3 download -d $pythonDlFolderPath pmc-cli -v
+      & 'C:\__t\Python\3.12.7\x64\Scripts\pip3.exe' download -d $pythonDlFolderPath pmc-cli
       Write-Verbose -Verbose "trying gci"
       Get-ChildItem $pythonDlFolderPath
       Write-Verbose -Verbose "done pip download"
