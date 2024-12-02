@@ -17,7 +17,7 @@ jobs:
 
   - pwsh: |
       New-Item -ItemType Directory -Path '$(Pipeline.Workspace)/ToolArtifact'
-      Get-ChildItem -Path '$(Pipeline.Workspace)/tools/Scripts' -Recurse -Filter 'GitHubRelease.psm1' -ErrorAction SilentlyContinue |
+      Get-ChildItem -Path '$(Pipeline.Workspace)/tools/Scripts' -Filter 'GitHubRelease.psm1' -ErrorAction SilentlyContinue |
         Copy-Item -Destination '$(Pipeline.Workspace)/ToolArtifact'
       
       Write-Verbose -Verbose "The tools will be signed and uploaded to artifacts: "
@@ -36,6 +36,9 @@ jobs:
       search_root: '$(Pipeline.Workspace)/ToolArtifact'
 
   - pwsh: | 
-      Write-Verbose -Verbose "Uploading signed tools to $(ob_outputDirectory)"
-      Copy-Item -Path '$(Pipeline.Workspace)/ToolArtifact' -Destination '$(ob_outputDirectory)' -Force -Verbose
+      Write-Verbose -Verbose "Creating output directory for release tools: $(ob_outputDirectory)/ToolArtifact"
+      New-Item -Path $(ob_outputDirectory)/ToolArtifact -ItemType Directory -Force
+      Get-ChildItem -Path "$(Pipeline.Workspace)/ToolArtifact/*" -Recurse | 
+        ForEach-Object { Write-Verbose -Verbose $_.FullName ; $_  } |
+        Copy-Item -Destination $(ob_outputDirectory)/ToolArtifact -Recurse
     displayName: Upload Tools
