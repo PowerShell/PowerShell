@@ -52,7 +52,7 @@ jobs:
 
   - task: PipAuthenticate@1
     inputs:
-      artifactFeeds: 'msazure-Compute-PMC@Release'
+      artifactFeeds: 'PowerShellCore/msazure-Compute-PMC@Release'
       pythonDownloadServiceConnections: pmcDownload
     displayName: 'Pip Authenticate'
 
