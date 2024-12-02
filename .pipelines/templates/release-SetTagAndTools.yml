@@ -42,3 +42,24 @@ jobs:
         ForEach-Object { Write-Verbose -Verbose $_.FullName ; $_  } |
         Copy-Item -Destination $(ob_outputDirectory)/ToolArtifact -Recurse
     displayName: Upload Tools
+  
+  - pwsh: |
+      $releaseVersion = '$(ReleaseTag)' -replace '^v',''
+      $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
+
+      $isPreview = $semanticVersion.PreReleaseLabel -ne $null
+
+      $fileName = if ($isPreview) {
+        "preview.md"
+      }
+      else {
+        $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
+      }
+
+      $filePath = "$(REPOROOT)/PowerShell/CHANGELOG/$fileName"
+      Write-Verbose -Verbose "Selected Log file: $filePath"
+      
+      Write-Verbose -Verbose "Creating output directory for CHANGELOG: $(ob_outputDirectory)/CHANGELOG"
+      New-Item -Path $(ob_outputDirectory)/CHANGELOG -ItemType Directory -Force
+      Copy-Item -Path $filePath -Destination $(ob_outputDirectory)/CHANGELOG
+    displayName: Upload Changelog

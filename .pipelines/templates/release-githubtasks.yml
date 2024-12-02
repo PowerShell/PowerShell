@@ -63,20 +63,10 @@ jobs:
       pwsh: true
       script: |
         Import-module '$(Pipeline.Workspace)/ToolArtifact/GitHubRelease.psm1'
-        $releaseVersion = '$(ReleaseTag)' -replace '^v',''
-        $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
-  
-        $isPreview = $semanticVersion.PreReleaseLabel -ne $null
-  
-        $fileName = if ($isPreview) {
-          "preview.md"
-        }
-        else {
-          $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
-        }
-  
-        $filePath = "$(Pipeline.Workspace)/PowerShell/CHANGELOG/$fileName"
-        Write-Verbose -Verbose "Selected Log file: $filePath"
+        Write-Verbose -Verbose "Available modules: "
+        Get-Module | Write-Verbose -Verbose
+
+        $filePath = Get-ChildItem -Path "$(Pipeline.Workspace)/CHANGELOG" -Filter '*.md' | Select-Object -First 1 -ExpandProperty FullName
   
         if (-not (Test-Path $filePath)) {
           throw "$filePath not found"
