@@ -55,6 +55,15 @@ jobs:
       artifactFeeds: 'pmc'
       pythonDownloadServiceConnections: pmcDownload
     displayName: 'Pip Authenticate'
+  
+  - bash: |
+      EV2_DIR="$(Build.SourcesDirectory)/.pipelines/EV2Specs"
+      SHEXT_BUNDLE_DIR="$EV2_DIR/ServiceGroupRoot/Shell/Run"
+
+      echo "1) Get pmc-cli"
+      cd "$SHEXT_BUNDLE_DIR"
+      mkdir python_dl
+      pip3 download -d python_dl pmc-cli
 
   - pwsh: |
       $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
