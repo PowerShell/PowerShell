@@ -44,7 +44,9 @@ jobs:
     displayName: Upload Tools
   
   - pwsh: |
+      Write-Verbose -Verbose "Release Tag: $(ReleaseTag)"
       $releaseVersion = '$(ReleaseTag)' -replace '^v',''
+      Write-Verbose -Verbose "Release Version: $releaseVersion"
       $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
 
       $isPreview = $semanticVersion.PreReleaseLabel -ne $null
