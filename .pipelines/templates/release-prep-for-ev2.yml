@@ -58,6 +58,7 @@ jobs:
     displayName: 'Pip Authenticate'
 
   - pwsh: |
+      python -m pip install --upgrade pip
       $versionInfo = pip --version --verbose
       Write-Verbose -Verbose "version info is: $versionInfo"
       & 'C:\__t\Python\3.12.7\x64\Scripts\pip.exe' --version --verbose
