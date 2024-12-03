@@ -59,43 +59,53 @@ jobs:
 
   - pwsh: |
       python -m pip install --upgrade pip
-      $versionInfo = pip --version --verbose
-      Write-Verbose -Verbose "version info is: $versionInfo"
-
-      $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
-      $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
+      pip --version --verbose
 
       Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
+      $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
+      $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
       $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
       pip download -d $pythonDlFolderPath pmc-cli --verbose
-
-
-      # $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
-      # $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
-
-      # Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
-      # $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
-      # New-Item -Path $pythonDlFolderPath
-      # pip3 --version --verbose
-      # pip3 download -d $pythonDlFolderPath pmc-cli --verbose
-      # $pipExePath = Join-Path -Path "C:\__t\Python\3.12.7\x64\Scripts" -ChildPath "pip3.exe"
-      # $pipExePathExists = Test-Path $pipExePath
-      # Write-Verbose -Verbose "pip3 path exists: $pipExePathExists"
-      # Get-ChildItem "C:\__t\Python\3.12.7\x64\Scripts"
-
-      # New-Item -Path "myPythonPkg"
-      # & 'C:\__t\Python\3.12.7\x64\Scripts\pip3.exe' download pmc-cli -d myPythonPkg 
-      # Write-Verbose -Verbose "trying gci"
-      # Get-ChildItem $pythonDlFolderPath
-      # Write-Verbose -Verbose "done pip download"
     displayName: 'Download pmc-cli package'
 
+  - download: PSPackagesOfficial
+    artifact: 'drop_linux_package_deb'
+    displayName: 'Download artifact containing .deb_amd64.deb file from PSPackagesOfficial triggering pipeline'
+
+  - download: PSPackagesOfficial
+    artifact: 'drop_linux_package_rpm'
+    displayName: 'Download artifact containing .rh.x64_86.rpm file from PSPackagesOfficial triggering pipeline'
+
+  - download: PSPackagesOfficial
+    artifact: 'drop_linux_package_mariner_x64'
+    displayName: 'Download artifact containing .cm.x86_64.rpm file from PSPackagesOfficial triggering pipeline'
+
+  - download: PSPackagesOfficial
+    artifact: 'drop_linux_package_mariner_arm64'
+    displayName: 'Download artifact containing .cm.aarch64.rpm file from PSPackagesOfficial triggering pipeline'
+
   - pwsh: |
-      Write-Verbose -Verbose "Copy built .deb packages"
-      # assuming ESRP signed packages are here
-      # TODO: either copy packages to a folder and .tar it all up- i believe there's a size limit
-      # so option 2: make a .tar.gz file and pass it the way I do for images
-    displayName: 'Copy signed .deb packages - probably to a .tar.gz to pass as a file var'
+      Write-Verbose -Verbose "Copy ESRP signed .deb and .rpm packages"
+      $downloadedPipelineFolder = Join-Path '$(Pipeline.Workspace)' -ChildPath 'PSPackagesOfficial'
+      $packagesFolder = Join-Path '$(Pipeline.Workspace)' -ChildPath 'packages'
+      New-Item -Path $packagesFolder
+
+      $packageFiles = Get-ChildItem -Path $downloadedPipelineFolder -Recurse -Directory -Filter "drop_*" | Get-ChildItem -File -Include *.deb, *.rpm
+      foreach ($file in $packageFiles)
+      {
+        Copy-Item -Path $($file.FullName) -Destination $packagesFolder
+      }
+
+      $packagesTarGzDestination = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'packages.tar.gz'
+      tar -czvf $packagesTarGzDestination -C $packagesFolder .
+    displayName: 'Copy signed .deb and .rpm packages to .tar.gz to pass as a file var to shell extension'
+
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: '$(Pipeline.Workspace)'
+      Contents: '*packages.tar.gz'
+      TargetFolder: $(ob_outputDirectory)
+    displayName: Copy packages.tar.gz file to $(ob_outputDirectory)
 
   - pwsh: |
       $pathToEV2Folder = Join-Path -Path '$(repoRoot)/.pipelines' -ChildPath 'EV2Specs'
