@@ -58,24 +58,31 @@ jobs:
     displayName: 'Pip Authenticate'
 
   - pwsh: |
-      $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
-      $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
-
-      Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
-      $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
-      New-Item -Path $pythonDlFolderPath
       pip3 --version --verbose
-      pip3 download -d $pythonDlFolderPath pmc-cli --verbose
-      $pipExePath = Join-Path -Path "C:\__t\Python\3.12.7\x64\Scripts" -ChildPath "pip3.exe"
-      $pipExePathExists = Test-Path $pipExePath
-      Write-Verbose -Verbose "pip3 path exists: $pipExePathExists"
-      Get-ChildItem "C:\__t\Python\3.12.7\x64\Scripts"
+      & 'C:\__t\Python\3.12.7\x64\Scripts\pip3.exe' --version --verbose
+      Push-Location 'C:\__t\Python\3.12.7\x64\Scripts\pip3.exe'
+      Write-Verbose -Verbose "trying push pop"
+      pip3 --version --verbose
+      Pop-Location
 
-      New-Item -Path "myPythonPkg"
-      & 'C:\__t\Python\3.12.7\x64\Scripts\pip3.exe' download pmc-cli -d myPythonPkg 
-      Write-Verbose -Verbose "trying gci"
-      Get-ChildItem $pythonDlFolderPath
-      Write-Verbose -Verbose "done pip download"
+      # $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
+      # $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
+
+      # Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
+      # $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
+      # New-Item -Path $pythonDlFolderPath
+      # pip3 --version --verbose
+      # pip3 download -d $pythonDlFolderPath pmc-cli --verbose
+      # $pipExePath = Join-Path -Path "C:\__t\Python\3.12.7\x64\Scripts" -ChildPath "pip3.exe"
+      # $pipExePathExists = Test-Path $pipExePath
+      # Write-Verbose -Verbose "pip3 path exists: $pipExePathExists"
+      # Get-ChildItem "C:\__t\Python\3.12.7\x64\Scripts"
+
+      # New-Item -Path "myPythonPkg"
+      # & 'C:\__t\Python\3.12.7\x64\Scripts\pip3.exe' download pmc-cli -d myPythonPkg 
+      # Write-Verbose -Verbose "trying gci"
+      # Get-ChildItem $pythonDlFolderPath
+      # Write-Verbose -Verbose "done pip download"
     displayName: 'Download pmc-cli package'
 
   - pwsh: |
