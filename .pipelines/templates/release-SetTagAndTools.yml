@@ -58,9 +58,8 @@ jobs:
         $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
       }
 
-      $filePath = "$(REPOROOT)/PowerShell/CHANGELOG/$fileName"
+      $filePath = "$(REPOROOT)/CHANGELOG/$fileName"
       Write-Verbose -Verbose "Selected Log file: $filePath"
-      Get-ChildItem -Path $(REPOROOT) -Recurse | Out-String -Stream | Write-Verbose -Verbose
       
       Write-Verbose -Verbose "Creating output directory for CHANGELOG: $(ob_outputDirectory)/CHANGELOG"
       New-Item -Path $(ob_outputDirectory)/CHANGELOG -ItemType Directory -Force
