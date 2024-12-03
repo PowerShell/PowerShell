@@ -93,7 +93,8 @@ jobs:
       $packageFiles = Get-ChildItem -Path $downloadedPipelineFolder -Recurse -Directory -Filter "drop_*" | Get-ChildItem -File -Include *.deb, *.rpm
       foreach ($file in $packageFiles)
       {
-        Copy-Item -Path $($file.FullName) -Destination $packagesFolder
+        Write-Verbose -Verbose "copying file: $($file.FullName)"
+        Copy-Item -Path $($file.FullName) -Destination $packagesFolder -Verbose
       }
 
       $packagesTarGzDestination = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'packages.tar.gz'
