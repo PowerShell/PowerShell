@@ -61,12 +61,14 @@ jobs:
       python -m pip install --upgrade pip
       $versionInfo = pip --version --verbose
       Write-Verbose -Verbose "version info is: $versionInfo"
-      & 'C:\__t\Python\3.12.7\x64\Scripts\pip.exe' --version --verbose
-      Push-Location 'C:\__t\Python\3.12.7\x64\Scripts'
-      Write-Verbose -Verbose "trying push pop"
-      $pushedVersionInfo = ./pip.exe --version --verbose
-      Write-Verbose -Verbose "p version info: $pushedVersionInfo"
-      Pop-Location
+
+      $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
+      $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
+
+      Write-Verbose -Verbose "Download pmc-cli to folder without installing it"
+      $pythonDlFolderPath = Join-Path -Path $shellExtensionBundleDir -ChildPath "python_dl"
+      pip download -d $pythonDlFolderPath pmc-cli --verbose
+
 
       # $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
       # $shellExtensionBundleDir = "$ev2SpecsFolder/ServiceGroupRoot/Shell/Run"
