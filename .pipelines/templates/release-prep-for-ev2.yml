@@ -88,8 +88,9 @@ jobs:
       Write-Verbose -Verbose "Copy ESRP signed .deb and .rpm packages"
       $downloadedPipelineFolder = Join-Path '$(Pipeline.Workspace)' -ChildPath 'PSPackagesOfficial'
       $srcFilesFolder = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'SourceFiles'
+      New-Item -Path $srcFilesFolder -ItemType Directory
       $packagesFolder = Join-Path -Path $srcFilesFolder -ChildPath 'packages'
-      New-Item -Path $packagesFolder
+      New-Item -Path $packagesFolder -ItemType Directory
 
       $packageFiles = Get-ChildItem -Path $downloadedPipelineFolder -Recurse -Directory -Filter "drop_*" | Get-ChildItem -File -Include *.deb, *.rpm
       foreach ($file in $packageFiles)
