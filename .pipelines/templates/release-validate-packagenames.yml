@@ -23,7 +23,7 @@ jobs:
     displayName: Capture environment
 
   - pwsh: |
-      $name = "{0}_{1:x}" -f '$(releaseTag)', (Get-Date).Ticks
+      $name = "{0}_{1:x}" -f '$(OutputReleaseTag.releaseTag)', (Get-Date).Ticks
       Write-Host $name
       Write-Host "##vso[build.updatebuildnumber]$name"
     displayName: Set Release Name
