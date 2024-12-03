@@ -2264,7 +2264,7 @@ namespace Microsoft.PowerShell.Commands
                             strTargetPath = strTargetPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
                             // check if the target is a file or directory
-                            var normalizedTargetPath = Path.Combine(Path.GetDirectoryName(path)!, strTargetPath);
+                            var normalizedTargetPath = Path.Combine(Path.GetDirectoryName(path), strTargetPath);
                             GetFileSystemInfo(normalizedTargetPath, out isDirectory);
                         }
                         else
