@@ -58,12 +58,13 @@ jobs:
     displayName: 'Pip Authenticate'
 
   - pwsh: |
-      $versionInfo = pip3 --version --verbose
+      $versionInfo = pip --version --verbose
       Write-Verbose -Verbose "version info is: $versionInfo"
-      & 'C:\__t\Python\3.12.7\x64\Scripts\pip3.exe' --version --verbose
+      & 'C:\__t\Python\3.12.7\x64\Scripts\pip.exe' --version --verbose
       Push-Location 'C:\__t\Python\3.12.7\x64\Scripts'
       Write-Verbose -Verbose "trying push pop"
-      pip3 --version --verbose
+      $pushedVersionInfo = ./pip.exe --version --verbose
+      Write-Verbose -Verbose "p version info: $pushedVersionInfo"
       Pop-Location
 
       # $ev2SpecsFolder = "$(repoRoot)/.pipelines/EV2Specs"
