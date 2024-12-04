@@ -1649,6 +1649,11 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
         }
 
+        It "Tab completion UNC path with filesystem provider" -Skip:(!$IsWindows) {
+            $res = TabExpansion2 -inputScript 'Filesystem::\\localhost\admin'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Filesystem::\\localhost\ADMIN$'
+        }
+
 
         It "Tab completion for registry" -Skip:(!$IsWindows) {
             $beforeTab = 'registry::HKEY_l'
