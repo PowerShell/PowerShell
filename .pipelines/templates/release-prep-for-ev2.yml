@@ -101,14 +101,12 @@ jobs:
 
       $packagesTarGzDestination = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'packages.tar.gz'
       tar -czvf $packagesTarGzDestination -C $packagesFolder .
-    displayName: 'Copy signed .deb and .rpm packages to .tar.gz to pass as a file var to shell extension'
 
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: '$(Pipeline.Workspace)'
-      Contents: '*packages.tar.gz'
-      TargetFolder: $(ob_outputDirectory)
-    displayName: Copy packages.tar.gz file to $(ob_outputDirectory)
+      $pathToEV2Folder = Join-Path -Path '$(repoRoot)/.pipelines' -ChildPath 'EV2Specs'
+      $pathToServiceGroupRootFolder = Join-Path $pathToEV2Folder -ChildPath 'ServiceGroupRoot'
+      $pathToParametersFolder = Join-Path -Path $pathToServiceGroupRootFolder -ChildPath 'Parameters'
+      Copy-Item $packagesTarGzDestination -Destination $pathToParametersFolder
+    displayName: 'Copy signed .deb and .rpm packages to .tar.gz to pass as a file var to shell extension'
 
   - pwsh: |
       $pathToEV2Folder = Join-Path -Path '$(repoRoot)/.pipelines' -ChildPath 'EV2Specs'
