@@ -9,7 +9,6 @@ jobs:
   - name: repoRoot
     value: '$(Build.SourcesDirectory)/PowerShell'
   - group: 'mscodehub-code-read-akv'
-  - group: 'packages.microsoft.com'
   - name: ob_tipsign_enabled
     value: true # Enable TiP sign
   steps:
@@ -53,9 +52,7 @@ jobs:
 
   - task: PipAuthenticate@1
     inputs:
-      # artifactFeeds: 'PowerShellCore/msazure-Compute-PMC@Release'
       artifactFeeds: 'PowerShellCore/PowerShellCore_PublicPackages'
-      # pythonDownloadServiceConnections: pmcDownload
     displayName: 'Pip Authenticate'
 
   - pwsh: |
@@ -122,7 +119,7 @@ jobs:
       $skipPublishVar = '${{ parameters.skipPublish }}'
       $metadataHash = @{}
       $metadataHash["ReleaseTag"] = "$(ReleaseTag)"
-      $metadataHash["AadClientId"] = '$(PmcCliClientID)'
+      # $metadataHash["AadClientId"] = '$(PmcCliClientID)'
       $metadataHash["BlobFolderName"] = "$(ReleaseTag)"
       $metadataHash["LTS"] = $metadata.LTSRelease.Latest
       $metadataHash["ForProduction"] = $true
@@ -137,6 +134,14 @@ jobs:
       Copy-Item -Path $mappingFilePath -Destination $mappingFileEV2Path
     displayName: 'Create pmcScriptMetadata.json and mapping.json file'
 
+  - task: onebranch.pipeline.signing@1
+    inputs:
+      command: 'sign'
+      signing_profile: 'tipsign' # external_distribution
+      files_to_sign: '*.ps1'
+      search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
+    displayName: Sign Run.ps1
+
   - pwsh: |
       $srcPath = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
       $pathToRunTarFile = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell' -ChildPath "Run.tar"
@@ -144,25 +149,6 @@ jobs:
       # TODO: ensure this has: Run.ps1, settings.toml, python_dl
       # tar cvf pmc_packages.tar start.sh settings.toml packages python_dl
     displayName: 'Create archive for the shell extension'
-
-  - task: onebranch.pipeline.signing@1
-    displayName: Sign Run.ps1
-    inputs:
-      command: 'sign'
-      signing_profile: 'tipsign' # external_distribution
-      files_to_sign: '*.ps1'
-      search_root: '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell/Run'
-
-  - pwsh: |
-      $srcPath = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot' -ChildPath 'Shell'
-      $pathToRunTarFile = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell' -ChildPath "Run.tar"
-      tar -cvf $pathToRunTarFile -C $srcPath ./Run
-    displayName: 'Compress Run script into tar file as needed for EV2 Shell extension'
-
-  # - task: CopyFiles@2
-  #   inputs:
-  #     Contents: '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/**' 
-  #     TargetFolder: 'EV2Specs/ServiceGroupRoot/tools'
 
   - task: CopyFiles@2
     inputs:
