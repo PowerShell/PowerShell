@@ -11,6 +11,7 @@ jobs:
   - name: ev2ParametersFolder
     value: '$(Build.SourcesDirectory)/PowerShell/.pipelines/EV2Specs/ServiceGroupRoot/Paramters'
   - group: 'mscodehub-code-read-akv'
+  - group: 'packages.microsoft.com'
   - name: ob_tipsign_enabled
     value: true # Enable TiP sign
   - name: ob_sdl_credscan_suppressionsFile
