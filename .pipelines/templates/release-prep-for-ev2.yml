@@ -128,7 +128,7 @@ jobs:
       $metadataHash | ConvertTo-Json | Out-File $pathToPMCMetadataFile
 
       Write-Verbose -Verbose "Copy mapping.json file to EV2Specs folder. file path at path $mappingFilePath exists: $mappingFilePathExists"
-      $mappingFilePath = Join-Path -Path '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com' -ChildPath 'mapping.json'
+      $mappingFilePath = Join-Path -Path '$(repoRoot)/tools/packages.microsoft.com' -ChildPath 'mapping.json'
       $mappingFilePathExists = Test-Path $mappingFilePath
       $mappingFileEV2Path = Join-Path -Path $pathToParametersFolder -ChildPath "mapping.json"
       Copy-Item -Path $mappingFilePath -Destination $mappingFileEV2Path
