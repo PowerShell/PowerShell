@@ -9,6 +9,7 @@ jobs:
   - name: repoRoot
     value: '$(Build.SourcesDirectory)/PowerShell'
   - group: 'mscodehub-code-read-akv'
+  - group: 'packages.microsoft.com'
   - name: ob_tipsign_enabled
     value: true # Enable TiP sign
   steps:
@@ -121,7 +122,7 @@ jobs:
       $skipPublishVar = '${{ parameters.skipPublish }}'
       $metadataHash = @{}
       $metadataHash["ReleaseTag"] = "$(ReleaseTag)"
-      $metadataHash["AadClientId"] = "$(PmcCliClientID)"
+      $metadataHash["AadClientId"] = '$(PmcCliClientID)'
       $metadataHash["BlobFolderName"] = "$(ReleaseTag)"
       $metadataHash["LTS"] = $metadata.LTSRelease.Latest
       $metadataHash["ForProduction"] = $true
