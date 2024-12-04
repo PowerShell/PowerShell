@@ -8,6 +8,8 @@ jobs:
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: repoRoot
     value: '$(Build.SourcesDirectory)/PowerShell'
+  - name: ev2ParametersFolder
+    value: '$(Build.SourcesDirectory)/PowerShell/.pipelines/EV2Specs/ServiceGroupRoot/Paramters'
   - group: 'mscodehub-code-read-akv'
   - name: ob_tipsign_enabled
     value: true # Enable TiP sign
@@ -46,6 +48,10 @@ jobs:
       Get-ChildItem '$(Pipeline.Workspace)' -Recurse | Out-String -Stream | write-Verbose -Verbose
       Get-ChildItem '$(Build.SourcesDirectory)'
     displayName: 'Capture Workspace'
+
+  - pwsh: |
+      New-Item -Path '$(ev2ParametersFolder)' -ItemType Directory
+    displayName: 'Create Parameters folder under EV2Specs folder'
 
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.12.7'
@@ -99,21 +105,23 @@ jobs:
         Copy-Item -Path $($file.FullName) -Destination $packagesFolder -Verbose
       }
 
-      $packagesTarGzDestination = Join-Path -Path '$(Pipeline.Workspace)' -ChildPath 'packages.tar.gz'
+      $packagesTarGzDestination = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'packages.tar.gz'
       tar -czvf $packagesTarGzDestination -C $packagesFolder .
-
-      $pathToEV2Folder = Join-Path -Path '$(repoRoot)/.pipelines' -ChildPath 'EV2Specs'
-      $pathToServiceGroupRootFolder = Join-Path $pathToEV2Folder -ChildPath 'ServiceGroupRoot'
-      $pathToParametersFolder = Join-Path -Path $pathToServiceGroupRootFolder -ChildPath 'Parameters'
-      Copy-Item $packagesTarGzDestination -Destination $pathToParametersFolder
     displayName: 'Copy signed .deb and .rpm packages to .tar.gz to pass as a file var to shell extension'
 
   - pwsh: |
-      $pathToEV2Folder = Join-Path -Path '$(repoRoot)/.pipelines' -ChildPath 'EV2Specs'
-      $pathToServiceGroupRootFolder = Join-Path $pathToEV2Folder -ChildPath 'ServiceGroupRoot'
-      $pathToParametersFolder = Join-Path -Path $pathToServiceGroupRootFolder -ChildPath 'Parameters'
-      New-Item -Path $pathToParametersFolder -ItemType Directory
-      $pathToPMCMetadataFile = Join-Path -Path $pathToParametersFolder -ChildPath 'PmcMetadata.json'
+      $settingFilePath = Join-Path '$(ev2ParametersFolder)' -ChildPath 'settings.toml'
+      New-Item -Path $settingFilePath -ItemType File
+      $pmcMIClientID = '$(PmcMIClientID)'
+
+      Add-Content -Path $settingFilePath -Value "[default]"
+      Add-Content -Path $settingFilePath -Value "base_url = `"https://pmc-ingest.trafficmanager.net/api/v4`""
+      Add-Content -Path $settingFilePath -Value "auth_type = `"msi`""
+      Add-Content -Path $settingFilePath -Value "client_id = `"$pmcMIClientID`""
+    displayName: 'Create settings.toml file with MI clientId populated'
+
+  - pwsh: |
+      $pathToPMCMetadataFile = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'pmcMetadata.json'
 
       $metadata = Get-Content -Path "$(repoRoot)/tools/metadata.json" -Raw | ConvertFrom-Json
       $skipPublishVar = '${{ parameters.skipPublish }}'
@@ -130,7 +138,7 @@ jobs:
       Write-Verbose -Verbose "Copy mapping.json file to EV2Specs folder. file path at path $mappingFilePath exists: $mappingFilePathExists"
       $mappingFilePath = Join-Path -Path '$(repoRoot)/tools/packages.microsoft.com' -ChildPath 'mapping.json'
       $mappingFilePathExists = Test-Path $mappingFilePath
-      $mappingFileEV2Path = Join-Path -Path $pathToParametersFolder -ChildPath "mapping.json"
+      $mappingFileEV2Path = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath "mapping.json"
       Copy-Item -Path $mappingFilePath -Destination $mappingFileEV2Path
     displayName: 'Create pmcScriptMetadata.json and mapping.json file'
 
