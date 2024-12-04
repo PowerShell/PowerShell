@@ -11,6 +11,8 @@ jobs:
   - group: 'mscodehub-code-read-akv'
   - name: ob_tipsign_enabled
     value: true # Enable TiP sign
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
   steps:
   - checkout: self ## the global setting on lfs didn't work
     lfs: false
