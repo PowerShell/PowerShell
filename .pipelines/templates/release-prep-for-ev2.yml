@@ -154,5 +154,5 @@ jobs:
 
   - task: CopyFiles@2
     inputs:
-      Contents: 'EV2Specs/**'
+      Contents: '$(repoRoot)/.pipelines/EV2Specs/**'
       TargetFolder: $(ob_outputDirectory)

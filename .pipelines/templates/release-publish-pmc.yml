@@ -25,37 +25,6 @@ jobs:
     value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
 
   steps:
-  # - task: PipAuthenticate@1
-  #   inputs:
-  #     artifactFeeds: 'pmc'
-  #     pythonDownloadServiceConnections: pmcDownload
-
-  # - pwsh: |
-  #     pip install pmc-cli==1.12.0
-  # 
-  #     $newPath = (resolve-path '~/.local/bin').providerpath
-  #     $vstsCommandString = "vso[task.setvariable variable=PATH]${env:PATH}:$newPath"
-  #     Write-Host "sending " + $vstsCommandString
-  #     Write-Host "##$vstsCommandString"
-  #   displayName: Install pmc cli
-  
-  # - pwsh: |
-  #     $metadata = Get-Content -Path "$(Build.SourcesDirectory)/tools/metadata.json" -Raw | ConvertFrom-Json
-  #     $params = @{
-  #         ReleaseTag = "$(ReleaseTag)"
-  #         AadClientId = "$(PmcCliClientID)"
-  #         BlobFolderName = "$(ReleaseTag)"
-  #         LTS = $metadata.LTSRelease.Latest
-  #         ForProduction = $true
-  #         SkipPublish = $${{ parameters.skipPublish }}
-  #         MappingFilePath = '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'
-  #     }
-  # 
-  #     $params | Out-String -width 9999 -Stream | write-Verbose -Verbose
-  # 
-  #     & '$(Pipeline.Workspace)/tools/packages.microsoft.com-v4/releaseLinuxPackages.ps1' @params
-  #   displayName: Run release script
-
   - task: DownloadPipelineArtifact@2
     inputs:
       targetPath: '$(Pipeline.Workspace)'
@@ -77,5 +46,5 @@ jobs:
       ConnectedServiceName: 'docker-deployement-test'            
       ServiceRootLocation: 'LinkedArtifact'
       RolloutSpecType: 'RSPath'
-      ServiceRootPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEv2FilesToArtifact/EV2Specs/ServiceGroupRoot'
-      RolloutSpecPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEv2FilesToArtifact/EV2Specs/ServiceGroupRoot/RolloutSpec.json'
+      ServiceRootPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEV2FilesToArtifact/EV2Specs/ServiceGroupRoot'
+      RolloutSpecPath: '$(Pipeline.Workspace)/drop_PrepForEV2_CopyEV2FilesToArtifact/EV2Specs/ServiceGroupRoot/RolloutSpec.json'
