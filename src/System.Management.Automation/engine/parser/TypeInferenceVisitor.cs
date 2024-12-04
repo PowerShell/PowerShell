@@ -150,6 +150,8 @@ namespace System.Management.Automation
 
         public TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
 
+        public HashSet<IParameterMetadataProvider> AnalyzedCommands { get; } = new HashSet<IParameterMetadataProvider>();
+
         public TypeInferenceRuntimePermissions RuntimePermissions { get; set; }
 
         internal PowerShellExecutionHelper Helper { get; }
@@ -1070,6 +1072,12 @@ namespace System.Management.Automation
 
         private void InferTypesFrom(CommandAst commandAst, List<PSTypeName> inferredTypes)
         {
+            if (commandAst.CommandElements[0] is ScriptBlockExpressionAst scriptBlock)
+            {
+                inferredTypes.AddRange(InferTypes(scriptBlock.ScriptBlock));
+                return;
+            }
+
             PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
             .DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ParameterCompletion);
 
@@ -1150,6 +1158,18 @@ namespace System.Management.Automation
 
                     return;
                 }
+            }
+
+            if ((commandInfo.OutputType.Count == 0
+                || (commandInfo.OutputType.Count == 1
+                && (commandInfo.OutputType[0].Name.EqualsOrdinalIgnoreCase(typeof(PSObject).FullName)
+                || commandInfo.OutputType[0].Name.EqualsOrdinalIgnoreCase(typeof(object).FullName))))
+                && commandInfo is IScriptCommandInfo scriptCommandInfo
+                && scriptCommandInfo.ScriptBlock.Ast is IParameterMetadataProvider scriptBlockWithParams
+                && _context.AnalyzedCommands.Add(scriptBlockWithParams))
+            {
+                inferredTypes.AddRange(InferTypes(scriptBlockWithParams.Body));
+                return;
             }
 
             // The OutputType property ignores the parameter set specified in the OutputTypeAttribute.
