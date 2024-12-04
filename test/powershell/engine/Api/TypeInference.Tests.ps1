@@ -361,10 +361,8 @@ Describe "Type inference Tests" -tags "CI" {
 
     It "Infers type from foreach-object of integer" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | ForEach-Object {$_ * 10} }.Ast)
-        $res.Count | Should -Be 2
-        foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.Int32[]' | Should -BeTrue
-        }
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Int32'
     }
 
     It "Infers type from generic new" {
@@ -386,9 +384,9 @@ Describe "Type inference Tests" -tags "CI" {
 
     It "Infers type from foreach-object with begin/end" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | ForEach-Object -Begin {"Hi"} {$_ * 10} -End {[int]} }.Ast)
-        $res.Count | Should -Be 4
+        $res.Count | Should -Be 3
         foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.Int32[]', 'System.String', 'System.Type' | Should -BeTrue
+            $r.Name -In 'System.Int32', 'System.String', 'System.Type' | Should -BeTrue
         }
     }
 
@@ -616,16 +614,6 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res = [AstTypeInference]::InferTypeOf( $ast.EndBlock.Statements[0])
         $res.Name | Should -Be 'System.Int32'
-    }
-
-    It 'Infers type from attributed expession' {
-        $res = [AstTypeInference]::InferTypeOf( {
-                [ValidateRange(1, 2)]
-                [int]$i = 1
-            }.Ast)
-
-        $res.Count | Should -Be 1
-        $res.Name | Should -Be System.Int32
     }
 
     It 'Infers type from if statement' {
@@ -1399,7 +1387,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Infers closest variable type' {
         $res = [AstTypeInference]::InferTypeOf( { [string]$TestVar = "";[hashtable]$TestVar = @{};$TestVar }.Ast)
-        $res.Name | Select-Object -Last 1 | Should -Be "System.Collections.Hashtable"
+        $res.Name | Should -Be "System.Collections.Hashtable"
     }
 
     It 'Infers closest variable type and ignores unrelated param blocks' {
@@ -1443,6 +1431,52 @@ Describe "Type inference Tests" -tags "CI" {
             $true
         )
         $null = [AstTypeInference]::InferTypeOf($FoundAst)
+    }
+
+    It 'Should only consider assignments wrapped in parentheses to be a part of the output in a Named block' {
+        $res = [AstTypeInference]::InferTypeOf( { [string]$Assignment1 = "Hello"; ([int]$Assignment2 = 42) }.Ast)
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Should only consider assignments wrapped in parentheses to be a part of the output in a Statement block' {
+        $res = [AstTypeInference]::InferTypeOf( { if ($true){ [string]$Assignment1 = "Hello"; ([int]$Assignment2 = 42) }}.Ast)
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Should only consider increments/decrements wrapped in parentheses to be a part of the output in a Named block' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+            [UInt16]$Uint16 = 1; [UInt32]$Uint32 = 1; [UInt64]$Uint64 = 1; [System.UInt128]$Uint128 = 1
+
+            $Int16++; $Int32--; ++$Int64; --$Int128
+            ($Uint16++); ($Uint32--); (++$Uint64); (--$Uint128) }.Ast)
+        $res.Name -join ',' | Should -Be ('System.UInt16', 'System.UInt32', 'System.UInt64', 'System.UInt128' -join ',')
+    }
+
+    It 'Should only consider increments/decrements wrapped in parentheses to be a part of the output in a Statement block' {
+        $res = [AstTypeInference]::InferTypeOf( {if ($true){
+            [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+            [UInt16]$Uint16 = 1; [UInt32]$Uint32 = 1; [UInt64]$Uint64 = 1; [System.UInt128]$Uint128 = 1
+
+            $Int16++; $Int32--; ++$Int64; --$Int128
+            ($Uint16++); ($Uint32--); (++$Uint64); (--$Uint128) }}.Ast)
+        $res.Name -join ',' | Should -Be ('System.UInt16', 'System.UInt32', 'System.UInt64', 'System.UInt128' -join ',')
+    }
+
+    It 'Redirected increments/decrements should be considered part of the output in a Named block' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+
+            $Int16++ *>&1; $Int32-- *>&1; ++$Int64 *>&1; --$Int128 *>&1}.Ast)
+        $res.Name -join ',' | Should -Be ('System.Int16', 'System.Int32', 'System.Int64', 'System.Int128' -join ',')
+    }
+
+    It 'Redirected increments/decrements should be considered part of the output in a Statement block' {
+        $res = [AstTypeInference]::InferTypeOf( {if ($true){
+            [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+
+            $Int16++ *>&1; $Int32-- *>&1; ++$Int64 *>&1; --$Int128 *>&1}}.Ast)
+        $res.Name -join ',' | Should -Be ('System.Int16', 'System.Int32', 'System.Int64', 'System.Int128' -join ',')
     }
 }
 
