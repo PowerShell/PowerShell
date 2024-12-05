@@ -80,6 +80,49 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual | Should -Be ([System.Reflection.MethodAttributes]::Virtual)
     }
 
+    It 'can implement .NET interface static properties' {
+        Add-Type -TypeDefinition @'
+public interface IInterfaceWithStaticAbstractProperty
+{
+    static abstract int Getter { get; }
+    static abstract int Setter { get; set; }
+}
+
+public static class InterfaceStaticAbstractPropertyTest
+{
+    public static int GetGetter<T>() where T : IInterfaceWithStaticAbstractProperty
+        => T.Getter;
+
+    public static int GetSetter<T>() where T : IInterfaceWithStaticAbstractProperty
+        => T.Setter;
+
+    public static int SetSetter<T>(int value) where T : IInterfaceWithStaticAbstractProperty
+        => T.Setter = value;
+}
+'@
+
+        $C1 = Invoke-Expression @'
+class ClassWithStaticAbstractInterface : IInterfaceWithStaticAbstractProperty {
+    static [int]$Getter = 1
+    static [int]$Setter = 2
+}
+
+[ClassWithStaticAbstractInterface]
+'@
+
+        $C1::Getter | Should -Be 1
+        $C1::Getter | Should -BeOfType ([int])
+        $C1::Setter | Should -Be 2
+        $C1::Setter | Should -BeOfType ([int])
+        $C1::Setter = 3
+        $C1::Setter | Should -Be 3
+
+        [InterfaceStaticAbstractPropertyTest]::GetGetter[ClassWithStaticAbstractInterface]() | Should -Be 1
+        [InterfaceStaticAbstractPropertyTest]::GetSetter[ClassWithStaticAbstractInterface]() | Should -Be 3
+        [InterfaceStaticAbstractPropertyTest]::SetSetter[ClassWithStaticAbstractInterface](4)
+        [InterfaceStaticAbstractPropertyTest]::GetSetter[ClassWithStaticAbstractInterface]() | Should -Be 4
+    }
+
     It 'allows use of defined later type as a property type' {
         class A { static [B]$b }
         class B : A {}
