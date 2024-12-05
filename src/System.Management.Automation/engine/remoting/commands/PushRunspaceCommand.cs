@@ -106,6 +106,12 @@ namespace Microsoft.PowerShell.Commands
         public new Uri ConnectionUri { get; set; }
 
         /// <summary>
+        /// When set the target computer's name [computerName] will be omitted from the prompt
+        /// </summary>
+        [Parameter(Position = 0)]
+        public new string HideRemoteComputerName { get; set; }
+
+        /// <summary>
         /// RemoteRunspaceId of the remote runspace info object.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
