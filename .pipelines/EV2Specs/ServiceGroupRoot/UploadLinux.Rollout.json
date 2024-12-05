@@ -21,32 +21,25 @@
         ],
         "environmentVariables": [
           {
-            "name": "RELEASE_TAG",
-            "value": "default"
+            "name": "MAPPING_FILE",
+            "reference":
+            {
+                "path": "Parameters\\mapping.json"
+            }
           },
           {
-            "name": "AAD_CLIENT_ID",
-            "value" : "default"
+            "name": "PWSH_PACKAGES_TARGZIP",
+            "reference":
+            {
+                "path": "Parameters\\packages.tar.gz"
+            }
           },
           {
-            "name": "BLOB_FOLDER_NAME",
-            "value": "default"
-          },
-          {
-            "name": "LTS",
-            "value": "default"
-          },
-          {
-            "name": "FOR_PRODUCTION",
-            "value": "true"
-          },
-          {
-            "name": "SKIP_PUBLISH",
-            "value": "true"
-          },
-          {
-            "name": "MAPPING_FILE_PATH",
-            "default": "default"
+            "name": "PMC_METADATA",
+            "reference":
+            {
+                "path": "Parameters\\pmcMetadata.json"
+            }
           }
         ],
         "identity": {

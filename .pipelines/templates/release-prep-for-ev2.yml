@@ -8,6 +8,8 @@ jobs:
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
   - name: repoRoot
     value: '$(Build.SourcesDirectory)/PowerShell'
+  - name: ev2ServiceGroupRootFolder
+    value: '$(Build.SourcesDirectory)/PowerShell/.pipelines/EV2Specs/ServiceGroupRoot'
   - name: ev2ParametersFolder
     value: '$(Build.SourcesDirectory)/PowerShell/.pipelines/EV2Specs/ServiceGroupRoot/Paramters'
   - group: 'mscodehub-code-read-akv'
@@ -111,17 +113,6 @@ jobs:
     displayName: 'Copy signed .deb and .rpm packages to .tar.gz to pass as a file var to shell extension'
 
   - pwsh: |
-      $settingFilePath = Join-Path '$(ev2ParametersFolder)' -ChildPath 'settings.toml'
-      New-Item -Path $settingFilePath -ItemType File
-      $pmcMIClientID = '$(PmcMIClientID)'
-
-      Add-Content -Path $settingFilePath -Value "[default]"
-      Add-Content -Path $settingFilePath -Value "base_url = `"https://pmc-ingest.trafficmanager.net/api/v4`""
-      Add-Content -Path $settingFilePath -Value "auth_type = `"msi`""
-      Add-Content -Path $settingFilePath -Value "client_id = `"$pmcMIClientID`""
-    displayName: 'Create settings.toml file with MI clientId populated'
-
-  - pwsh: |
       $pathToPMCMetadataFile = Join-Path -Path '$(ev2ParametersFolder)' -ChildPath 'pmcMetadata.json'
 
       $metadata = Get-Content -Path "$(repoRoot)/tools/metadata.json" -Raw | ConvertFrom-Json
@@ -143,6 +134,17 @@ jobs:
       Copy-Item -Path $mappingFilePath -Destination $mappingFileEV2Path
     displayName: 'Create pmcScriptMetadata.json and mapping.json file'
 
+  - pwsh: |
+      $settingFilePath = Join-Path '$(ev2ServiceGroupRootFolder)/Shell/Run' -ChildPath 'settings.toml'
+      New-Item -Path $settingFilePath -ItemType File
+      $pmcMIClientID = '$(PmcMIClientID)'
+
+      Add-Content -Path $settingFilePath -Value "[default]"
+      Add-Content -Path $settingFilePath -Value "base_url = `"https://pmc-ingest.trafficmanager.net/api/v4`""
+      Add-Content -Path $settingFilePath -Value "auth_type = `"msi`""
+      Add-Content -Path $settingFilePath -Value "client_id = `"$pmcMIClientID`""
+    displayName: 'Create settings.toml file with MI clientId populated'
+
   - task: onebranch.pipeline.signing@1
     inputs:
       command: 'sign'
@@ -156,8 +158,36 @@ jobs:
       $pathToRunTarFile = Join-Path '$(repoRoot)/.pipelines/EV2Specs/ServiceGroupRoot/Shell' -ChildPath "Run.tar"
       tar -cvf $pathToRunTarFile -C $srcPath ./Run
       # TODO: ensure this has: Run.ps1, settings.toml, python_dl
-      # tar cvf pmc_packages.tar start.sh settings.toml packages python_dl
     displayName: 'Create archive for the shell extension'
+
+  - pwsh: |
+      $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'RolloutSpec.json'
+      $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
+      $content.RolloutMetadata.Notification.Email.To = '$(PmcEV2SupportEmail)'
+      Remove-Item -Path $pathToJsonFile
+      $content | ConvertTo-Json -Depth 4 | Out-File $pathToJsonFile
+    displayName: 'Replace values in RolloutSpecPath.json'
+
+  - pwsh: |
+      $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'UploadLinux.Rollout.json'
+      $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
+
+      $identityString = "/subscriptions/$(PmcSubscription)/resourcegroups/$(PmcResourceGroup)/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$(PmcMIName)"
+      $content.shellExtensions.launch.identity.userAssignedIdentities[0] = $identityString
+
+      Remove-Item -Path $pathToJsonFile
+      $content | ConvertTo-Json -Depth 6 | Out-File $pathToJsonFile
+    displayName: 'Replace values in UploadLinux.Rollout.json file'
+
+  - pwsh: |
+      $pathToJsonFile = Join-Path -Path '$(ev2ServiceGroupRootFolder)' -ChildPath 'ServiceModel.json'
+      $content = Get-Content -Path $pathToJsonFile | ConvertFrom-Json
+      $content.ServiceResourceGroups[0].AzureResourceGroupName = '$(PmcResourceGroup)'
+      $content.ServiceResourceGroups[0].AzureSubscriptionId = '$(PmcSubscription)'
+
+      Remove-Item -Path $pathToJsonFile
+      $content | ConvertTo-Json -Depth 9 | Out-File $pathToJsonFile
+    displayName: 'Replace values in ServiceModel.json'
 
   - task: CopyFiles@2
     inputs:

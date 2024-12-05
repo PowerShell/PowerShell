@@ -1,54 +1,48 @@
-# ensure SAS variables were passed in
-if ($null -eq $env:RELEASE_TAG)
+if ($null -eq $env:MAPPING_FILE)
 {
-    Write-Verbose -Verbose "RELEASE_TAG variable didn't get passed correctly"
+    Write-Verbose -Verbose "MAPPING_FILE variable didn't get passed correctly"
     return 1
 }
 
-if ($null -eq $env:AAD_CLIENT_ID)
+if ($null -eq $env:PWSH_PACKAGES_TARGZIP)
 {
-    Write-Verbose -Verbose "AAD_CLIENT_ID variable didn't get passed correctly"
+    Write-Verbose -Verbose "PWSH_PACKAGES_TARGZIP variable didn't get passed correctly"
     return 1
 }
 
-if ($null -eq $env:BLOB_FOLDER_NAME)
+if ($null -eq $env:PMC_METADATA)
 {
-    Write-Verbose -Verbose "BLOB_FOLDER_NAME variable didn't get passed correctly"
-    return 1
-}
-
-if ($null -eq $env:LTS)
-{
-    Write-Verbose -Verbose "LTS variable didn't get passed correctly"
-    return 1
-}
-
-if ($null -eq $env:FOR_PRODUCTION)
-{
-    Write-Verbose -Verbose "FOR_PRODUCTION variable didn't get parsed properly"
-    return 1
-}
-
-if ($null -eq $env:SKIP_PUBLISH)
-{
-    Write-Verbose -Verbose "SKIP_PUBLISH variable didn't get parsed properly"
-    return 1
-}
-
-if ($null -eq $env:MAPPING_FILE_PATH)
-{
-    Write-Verbose -Verbose "MAPPING_FILE_PATH variable didn't get parsed properly"
+    Write-Verbose -Verbose "PMC_METADATA variable didn't get passed correctly"
     return 1
 }
 
 try {
-    Write-Verbose -Verbose "ReleaseTag: $env:RELEASE_TAG"
-    Write-Verbose -Verbose "AAD_Client_ID: $env:AAD_CLIENT_ID"
-    Write-Verbose -Verbose "Blob_folder_name: $env:BLOB_FOLDER_NAME"
-    Write-Verbose -Verbose "LTS: $env:LTS"
-    Write-Verbose -Verbose "for_production: $env:FOR_PRODUCTION"
-    Write-Verbose -Verbose "Skip_publish: $env:SKIP_PUBLISH"
-    Write-Verbose -Verbose "mapping file: $env:MAPPING_FILE_PATH"
+    Write-Verbose -Verbose "mapping.json file: $env:MAPPING_FILE"
+    Write-Verbose -Verbose "pwsh packages.tar.gz file: $env:PWSH_PACKAGES_TARGZIP"
+    Write-Verbose -Verbose "pmcMetadata.json file: $env:PMC_METADATA"
+
+    Write-Verbose -Verbose "Downloading files"
+    Invoke-WebRequest -Uri $env:MAPPING_FILE -OutFile mapping.json
+    Invoke-WebRequest -Uri $env:PWSH_PACKAGES_TARGZIP -OutFile packages.tar.gz
+    Invoke-WebRequest -Uri $env:PMC_METADATA -OutFile pmcMetadata.json
+
+    $settingsFile = Join-Path '/package/unarchive' -ChildPath 'settings.toml'
+    $settingsFileExists = Test-Path -Path $settingsFile
+    Write-Verbose -Verbose "settings.toml exists: $settingsFileExists"
+    $pythonDlFolder = Join-Path '/package/unarchive' -ChildPath 'python_dl'
+    $pyPathExists = Test-Path -Path $pythonDlFolder
+    Write-Verbose -Verbose "python_dl folder path exists: $pyPathExists"
+
+    Write-Verbose -Verbose "Installing pmc-cli"
+    python -m pip install --upgrade pip
+    pip --version --verbose
+    pip install /package/unarchive/python_dl/*.whl
+
+    Write-Verbose -Verbose "Test pmc-cli"
+
+    which pmc
+    pmc -d -c $settingsFile repo list --name "azurelinux-3.0-prod-ms-oss-x86_64-yum" || exit 1
+
 }
 catch {
     Write-Error -ErrorAction Stop $_.Exception.Message
