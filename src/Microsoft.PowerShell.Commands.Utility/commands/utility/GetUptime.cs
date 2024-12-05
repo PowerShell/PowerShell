@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Management;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -28,6 +29,24 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+#if !UNIX
+            // We use WMI since Stopwatch has a significant drift on Windows over time.
+            ManagementObject wmiObject = new ManagementObject(@"\\.\root\cimv2", "Win32_OperatingSystem=@", options: null);
+            string lastBootUpTime = wmiObject["LastBootUpTime"].ToString();
+
+            DateTime lastBootDateTime = ManagementDateTimeConverter.ToDateTime(lastBootUpTime);
+            switch (ParameterSetName)
+            {
+                case TimespanParameterSet:
+                    // return TimeSpan of time since the system started up
+                    WriteObject(DateTime.Now.Subtract(lastBootDateTime));
+                    break;
+                case SinceParameterSet:
+                    // return Datetime when the system started up
+                    WriteObject(lastBootDateTime);
+                    break;
+            }
+#else
             // Get-Uptime throw if IsHighResolution = false
             // because stopwatch.GetTimestamp() return DateTime.UtcNow.Ticks
             // instead of ticks from system startup.
@@ -54,6 +73,7 @@ namespace Microsoft.PowerShell.Commands
                 Exception exc = new NotSupportedException(GetUptimeStrings.GetUptimePlatformIsNotSupported);
                 ThrowTerminatingError(new ErrorRecord(exc, "GetUptimePlatformIsNotSupported", ErrorCategory.NotImplemented, null));
             }
+#endif
         }
 
         /// <summary>
