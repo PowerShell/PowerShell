@@ -41,6 +41,8 @@ variables:
     value: true
   - name: ob_outputDirectory
     value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\.config\tsaoptions.json
   - name: WindowsContainerImage
     value: 'onebranch.azurecr.io/windows/ltsc2022/vse2022:latest'
   - name: LinuxContainerImage
