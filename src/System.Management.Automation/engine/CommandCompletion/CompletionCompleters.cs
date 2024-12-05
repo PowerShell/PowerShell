@@ -462,7 +462,7 @@ namespace System.Management.Automation
                 }
             }
 
-            var psObjects = context.Helper.ExecuteCurrentPowerShell(out _);
+            Collection<PSObject> psObjects = context.Helper.ExecuteCurrentPowerShell(out _);
 
             if (psObjects != null)
             {
