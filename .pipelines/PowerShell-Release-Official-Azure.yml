@@ -101,11 +101,13 @@ extends:
       #   suppressionFile: $(Build.SourcesDirectory)\.gdn\global.gdnsuppress
       tsaOptionsFile: .config\tsaoptions.json
     stages:
-      - stage: PrepForEV2
-        displayName: Prep for EV2
-        dependsOn: []
-        jobs:
-        - template: /.pipelines/templates/release-prep-for-ev2.yml@self
+      - template: /.pipelines/templates/release-prep-for-ev2.yml@self
+      - template: /.pipelines/templates/release-publish-pmc.yml@self
+      # - stage: PrepForEV2
+      #   displayName: Prep for EV2
+      #   dependsOn: []
+      #   jobs:
+      #   - template: /.pipelines/templates/release-prep-for-ev2.yml@self
       
       # - stage: BlobPublic
       #   displayName: Make Blob Public
@@ -113,15 +115,15 @@ extends:
       #   jobs:
       #   - template: /.pipelines/templates/release-MakeBlobPublic.yml@self
 
-      - stage: Test_PublishPMC
-        displayName: Publish PMC
-        dependsOn: 
-          - PrepForEV2
-          # - BlobPublic
-        variables:
-          ob_release_environment: Test
-        jobs:
-        - template: /.pipelines/templates/release-publish-pmc.yml@self
+      # - stage: Test_PublishPMC
+      #   displayName: Publish PMC
+      #   dependsOn: 
+      #     - PrepForEV2
+      #     # - BlobPublic
+      #   variables:
+      #     ob_release_environment: Test
+      #   jobs:
+      #   - template: /.pipelines/templates/release-publish-pmc.yml@self
 
       # - stage: UploadBuildInfoJson
       #   dependsOn:
