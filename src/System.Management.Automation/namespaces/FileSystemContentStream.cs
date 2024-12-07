@@ -77,6 +77,9 @@ namespace Microsoft.PowerShell.Commands
         // False to add a newline to the end of the output string, true if not.
         private readonly bool _suppressNewline = false;
 
+        // False to remove trailing delimiter from end of string, true to leave as is.
+        private readonly bool _suppressLastDelimiter = false;
+
         /// <summary>
         /// Constructor for the content stream.
         /// </summary>
@@ -243,6 +246,72 @@ namespace Microsoft.PowerShell.Commands
                 : this(path, streamName, mode, access, share, encoding, usingByteEncoding, waitForChanges, provider, isRawStream)
         {
             _suppressNewline = suppressNewline;
+        }
+
+        /// <summary>
+        /// Constructor for the content stream.
+        /// </summary>
+        /// <param name="path">
+        /// The path to the file to get the content from.
+        /// </param>
+        /// <param name="streamName">
+        /// The name of the Alternate Data Stream to get the content from. If null or empty, returns
+        /// the file's primary content.
+        /// </param>
+        /// <param name="mode">
+        /// The file mode to open the file with.
+        /// </param>
+        /// <param name="access">
+        /// The file access requested in the file.
+        /// </param>
+        /// <param name="share">
+        /// The file share to open the file with.
+        /// </param>
+        /// <param name="encoding">
+        /// The encoding of the file to be read or written.
+        /// </param>
+        /// <param name="delimiter">
+        /// The delimiter to use when writing strings.
+        /// </param>
+        /// <param name="waitForChanges">
+        /// If true, we will perform blocking reads on the file, waiting for new content to be appended.
+        /// </param>
+        /// <param name="provider">
+        /// The CmdletProvider invoking this stream.
+        /// </param>
+        /// <param name="isRawStream">
+        /// Indicates raw stream.
+        /// </param>
+        /// <param name="suppressLastDelimiter">
+        /// False to remove trailing delimiter from end of string, true to leave as is.
+        /// </param>
+        public FileSystemContentReaderWriter(
+            string path,
+            string streamName,
+            FileMode mode,
+            FileAccess access,
+            FileShare share,
+            Encoding encoding,
+            string delimiter,
+            bool waitForChanges,
+            CmdletProvider provider,
+            bool isRawStream,
+            bool suppressLastDelimiter)
+            : this(
+                path,
+                streamName,
+                mode,
+                access,
+                share,
+                encoding,
+                false,
+                waitForChanges,
+                provider,
+                isRawStream)
+        {
+            _delimiter = delimiter;
+            _usingDelimiter = true;
+            _suppressLastDelimiter = suppressLastDelimiter;
         }
 
         /// <summary>
@@ -1067,26 +1136,28 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public IList Write(IList content)
         {
-            foreach (object line in content)
-            {
-                object[] contentArray = line as object[];
-                if (contentArray != null)
-                {
-                    foreach (object obj in contentArray)
-                    {
-                        WriteObject(obj);
-                    }
-                }
-                else
-                {
-                    WriteObject(line);
-                }
+            if (content == null || content.Count == 0) 
+            { 
+                return content;
             }
+
+            // Write all lines except last and insert delimiters if specified
+            for (int i = 0; i < content.Count - 1; i++)
+            {
+                WriteObject(
+                    content[i],
+                    writeDelimiter: _usingDelimiter);
+            }
+
+            // Write last line and remove last delimiter if required to be suppressed
+            WriteObject(
+                content[content.Count - 1],
+                writeDelimiter: !(_usingDelimiter && _suppressLastDelimiter));
 
             return content;
         }
 
-        private void WriteObject(object content)
+        private void WriteObject(object content, bool writeDelimiter)
         {
             if (content == null)
             {
@@ -1108,13 +1179,24 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
+                string contentToWrite = content.ToString();
+
                 if (_suppressNewline)
                 {
-                    _writer.Write(content.ToString());
+                    _writer.Write(contentToWrite);
+                }
+                else if (_usingDelimiter)
+                {
+                    _writer.Write(contentToWrite);
+
+                    if (writeDelimiter)
+                    {
+                        _writer.Write(_delimiter);
+                    }
                 }
                 else
                 {
-                    _writer.WriteLine(content.ToString());
+                    _writer.WriteLine(contentToWrite);
                 }
             }
         }
