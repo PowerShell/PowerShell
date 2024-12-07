@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         // False to add a newline to the end of the output string, true if not.
         private readonly bool _suppressNewline = false;
 
-        // False to remove trailing delimiter from end of string, true to leave as is.
+        // True to remove trailing delimiter from end of string, False to leave as is.
         private readonly bool _suppressLastDelimiter = false;
 
         /// <summary>
@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
         /// Indicates raw stream.
         /// </param>
         /// <param name="suppressLastDelimiter">
-        /// False to remove trailing delimiter from end of string, true to leave as is.
+        /// True to remove trailing delimiter from end of string, False to leave as is.
         /// </param>
         public FileSystemContentReaderWriter(
             string path,
