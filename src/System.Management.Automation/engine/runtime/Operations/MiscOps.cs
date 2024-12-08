@@ -3694,10 +3694,6 @@ namespace System.Management.Automation
 
         internal static void LogMemberInvocation(string targetName, string name, object[] args)
         {
-#if UNIX && !DEBUG
-            // For efficiency this is a no-op on non-Windows platforms in release builds.
-            return;
-#else
             try
             {
                 var contentName = "PowerShellMemberInvocation";
@@ -3745,7 +3741,6 @@ namespace System.Management.Automation
                     Console.WriteLine($"!!! Amsi notification report exception: {ex} !!!");
                 }
             }
-#endif
         }
     }
 }
