@@ -883,6 +883,10 @@ function Restore-PSPackage
         if ($Options.Runtime -like 'win*') {
             $RestoreArguments += "/property:EnableWindowsTargeting=True"
             $RestoreArguments += "/property:UseRidGraph=True"
+            $RestoreArguments += "/property:IsWindows=True"
+        }
+        else {
+            $RestoreArguments += "/property:IsWindows=False"
         }
 
         if ($InteractiveAuth) {
@@ -2742,11 +2746,19 @@ function Copy-PSGalleryModules
         throw "Can't find nuget global cache"
     }
 
+    $windowsOnlyModules = @("Microsoft.Winget.Client", "Microsoft.Winget.CommandNotFound")
+
     $psGalleryProj = [xml](Get-Content -Raw $CsProjPath)
 
     foreach ($m in $psGalleryProj.Project.ItemGroup.PackageReference) {
         $name = $m.Include
         $version = $m.Version
+
+        if ($name -in $windowsOnlyModules -and $Options.Runtime -notlike "win*") {
+            Write-Log -message "Skipping $name because it is Windows only"
+            continue
+        }
+
         Write-Log -message "Name='$Name', Version='$version', Destination='$Destination'"
 
         # Remove the build revision from the src (nuget drops it).
