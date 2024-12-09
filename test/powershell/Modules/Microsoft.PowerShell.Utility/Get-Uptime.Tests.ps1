@@ -3,37 +3,28 @@
 Describe "Get-Uptime" -Tags "CI" {
     BeforeAll {
         $IsHighResolution = [system.diagnostics.stopwatch]::IsHighResolution
-        # Skip Get-Uptime test if IsHighResolution = false
+        # Skip Get-Uptime all tests on Unix if IsHighResolution = false
         # because stopwatch.GetTimestamp() return DateTime.UtcNow.Ticks
         # instead of ticks from system startup
-        if ( ! $IsHighResolution )
-        {
-            $origDefaults = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues['it:skip'] = $true
-        }
+        # Skip Get-Uptime 'throw' test on Windows since we use WMI there.
     }
-    AfterAll {
-        if ( ! $IsHighResolution ){
-            $global:PSDefaultParameterValues = $origDefaults
-        }
-    }
-    It "Get-Uptime return timespan (default -Timespan)" {
+    It "Get-Uptime return timespan (default -Timespan)" -Skip:(! $IsHighResolution -and ! $IsWindows) {
         $upt = Get-Uptime
         $upt | Should -BeOfType Timespan
     }
-    It "Get-Uptime -Since return DateTime" {
+    It "Get-Uptime -Since return DateTime" -Skip:(! $IsHighResolution -and ! $IsWindows) {
         $upt = Get-Uptime -Since
         $upt | Should -BeOfType DateTime
     }
-    It "Get-Uptime throw if IsHighResolution == false" {
+    It "Get-Uptime throw if IsHighResolution == false" -Skip:(! $IsHighResolution -or $IsWindows) {
         # Enable the test hook
         [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsNotHighResolution', $true)
 
-	try {
+        try {
             { Get-Uptime } | Should -Throw -ErrorId "GetUptimePlatformIsNotSupported,Microsoft.PowerShell.Commands.GetUptimeCommand"
-	} finally {
+        } finally {
             # Disable the test hook
             [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsHighResolutionIsFalse', $false)
-	}
+        }
     }
 }
