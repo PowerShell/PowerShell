@@ -6830,6 +6830,13 @@ namespace System.Management.Automation
                 getToolTip = () => string.Join('\n', methodCacheEntry.methodInformationStructures.Select(static m => m.methodDefinition));
             }
 
+            if (member is DotNetAdapter.EventCacheEntry eventCacheEntry)
+            {
+                memberName = eventCacheEntry.events[0].Name;
+                isMethod = false;
+                getToolTip = () => eventCacheEntry.EventDefinition;
+            }
+
             var psMemberInfo = member as PSMemberInfo;
             if (psMemberInfo != null)
             {

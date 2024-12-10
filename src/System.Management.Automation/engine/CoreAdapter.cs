@@ -2724,6 +2724,46 @@ namespace System.Management.Automation
             internal EventCacheEntry(EventInfo[] events)
             {
                 this.events = events;
+                this._eventDefinition = new Lazy<string>(CreateEventDefinition);
+            }
+
+            private Lazy<string> _eventDefinition;
+
+            internal string EventDefinition => _eventDefinition.Value;
+
+            private string CreateEventDefinition()
+            {
+                MethodBase invokeMethod = new MethodInformation(
+                    events[0].EventHandlerType.GetMethod(nameof(Action.Invoke)),
+                    parametersToIgnore: 0)
+                        .method;
+
+                var sb = new StringBuilder()
+                    .Append("event ")
+                    .Append(ToStringCodeMethods.Type(events[0].EventHandlerType))
+                    .Append(' ')
+                    .Append(events[0].Name)
+                    .Append('(');
+
+                ParameterInfo[] invocationParameters = invokeMethod.GetParameters();
+                if (invocationParameters.Length > 0)
+                {
+                    ParameterInfo currentParam = invocationParameters[0];
+                    sb.Append(ToStringCodeMethods.Type(currentParam.ParameterType))
+                        .Append(' ')
+                        .Append(currentParam.Name);
+
+                    for (int i = 1; i < invocationParameters.Length; i++)
+                    {
+                        currentParam = invocationParameters[i];
+                        sb.Append(", ")
+                            .Append(ToStringCodeMethods.Type(currentParam.ParameterType))
+                            .Append(' ')
+                            .Append(currentParam.Name);
+                    }
+                }
+
+                return sb.Append(')').ToString();
             }
         }
 
@@ -3562,7 +3602,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal IEnumerable<object> GetPropertiesAndMethods(Type type, bool @static)
+        internal IEnumerable<object> GetPropertiesMethodsAndEvents(Type type, bool @static)
         {
             CacheTable propertyTable = @static
                 ? GetStaticPropertyReflectionTable(type)
@@ -3584,6 +3624,15 @@ namespace System.Management.Automation
                 {
                     yield return method;
                 }
+            }
+
+            Dictionary<string, EventCacheEntry> eventTable = @static
+                ? GetStaticEventReflectionTable(type)
+                : GetInstanceEventReflectionTable(type);
+
+            foreach (EventCacheEntry @event in eventTable.Values)
+            {
+                yield return @event;
             }
         }
 
@@ -3682,6 +3731,31 @@ namespace System.Management.Automation
             return PSMethod.Create(methods[0].method.Name, this, obj, methods, isSpecial, methods.IsHidden) as T;
         }
 
+        private T GetDotNetEventImpl<T>(object obj, string eventName, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            if (!typeof(T).IsAssignableFrom(typeof(PSEvent)))
+            {
+                return null;
+            }
+
+            Dictionary<string, EventCacheEntry> typeTable = _isStatic
+                ? GetStaticEventReflectionTable((Type)obj)
+                : GetInstanceEventReflectionTable(obj.GetType());
+
+            EventCacheEntry events = predicate != null
+                ? typeTable.Values.FirstOrDefault(e => predicate(e.events[0].Name))
+                : typeTable.ContainsKey(eventName)
+                    ? typeTable[eventName]
+                    : null;
+
+            if (events != null)
+            {
+                return new PSEvent(events.events[0]) as T;
+            }
+
+            return null;
+        }
+
         internal T GetDotNetProperty<T>(object obj, string propertyName) where T : PSMemberInfo
         {
             return GetDotNetPropertyImpl<T>(obj, propertyName, predicate: null);
@@ -3690,6 +3764,11 @@ namespace System.Management.Automation
         internal T GetDotNetMethod<T>(object obj, string methodName) where T : PSMemberInfo
         {
             return GetDotNetMethodImpl<T>(obj, methodName, predicate: null);
+        }
+
+        internal T GetDotNetEvent<T>(object obj, string eventName) where T : PSMemberInfo
+        {
+            return GetDotNetEventImpl<T>(obj, eventName, predicate: null);
         }
 
         protected T GetFirstDotNetPropertyOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
@@ -3704,24 +3783,7 @@ namespace System.Management.Automation
 
         protected T GetFirstDotNetEventOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
-            if (!typeof(T).IsAssignableFrom(typeof(PSEvent)))
-            {
-                return null;
-            }
-
-            var table = _isStatic
-                ? GetStaticEventReflectionTable((Type)obj)
-                : GetInstanceEventReflectionTable(obj.GetType());
-
-            foreach (var psEvent in table.Values)
-            {
-                if (predicate(psEvent.events[0].Name))
-                {
-                    return new PSEvent(psEvent.events[0]) as T;
-                }
-            }
-
-            return null;
+            return GetDotNetEventImpl<T>(obj, eventName: null, predicate);
         }
 
         protected T GetFirstDynamicMemberOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
@@ -3932,11 +3994,9 @@ namespace System.Management.Automation
         /// or null if the given member name is not a member in the adapter.
         /// </returns>
         protected override T GetMember<T>(object obj, string memberName)
-        {
-            T returnValue = GetDotNetProperty<T>(obj, memberName);
-            if (returnValue != null) return returnValue;
-            return GetDotNetMethod<T>(obj, memberName);
-        }
+            => GetDotNetProperty<T>(obj, memberName)
+                ?? GetDotNetMethod<T>(obj, memberName)
+                ?? GetDotNetEvent<T>(obj, memberName);
 
         /// <summary>
         /// Get the first .NET member whose name matches the specified <see cref="MemberNamePredicate"/>.

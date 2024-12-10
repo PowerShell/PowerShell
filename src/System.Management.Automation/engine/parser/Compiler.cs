@@ -976,33 +976,132 @@ namespace System.Management.Automation.Language
             return result;
         }
 
+        internal static ExpressionType GetAssignmentExpressionType(TokenKind token) => token switch
+        {
+            TokenKind.PlusEquals => ExpressionType.Add,
+            TokenKind.MinusEquals => ExpressionType.Subtract,
+            TokenKind.MultiplyEquals => ExpressionType.Multiply,
+            TokenKind.DivideEquals => ExpressionType.Divide,
+            TokenKind.RemainderEquals => ExpressionType.Modulo,
+            TokenKind.QuestionQuestionEquals => ExpressionType.Coalesce,
+            _ => ExpressionType.Extension
+        };
+
         internal Expression ReduceAssignment(ISupportsAssignment left, TokenKind tokenKind, Expression right)
         {
-            IAssignableValue av = left.GetAssignableValue();
-            ExpressionType et = ExpressionType.Extension;
+            IAssignableValue assignmentTarget = left.GetAssignableValue();
 
-            switch (tokenKind)
+            if (tokenKind == TokenKind.Equals)
             {
-                case TokenKind.Equals: return av.SetValue(this, right);
-                case TokenKind.PlusEquals: et = ExpressionType.Add; break;
-                case TokenKind.MinusEquals: et = ExpressionType.Subtract; break;
-                case TokenKind.MultiplyEquals: et = ExpressionType.Multiply; break;
-                case TokenKind.DivideEquals: et = ExpressionType.Divide; break;
-                case TokenKind.RemainderEquals: et = ExpressionType.Modulo; break;
-                case TokenKind.QuestionQuestionEquals: et = ExpressionType.Coalesce; break;
+                return assignmentTarget.SetValue(this, right);
             }
 
+            return ReduceCompoundAssignment(assignmentTarget, GetAssignmentExpressionType(tokenKind), right);
+        }
+
+        internal BlockExpression ReduceCompoundAssignment(
+            IAssignableValue assignmentTarget,
+            ExpressionType expressionType,
+            Expression valueToAssign)
+        {
             var exprs = new List<Expression>();
             var temps = new List<ParameterExpression>();
-            var getExpr = av.GetValue(this, exprs, temps);
+            var getExpr = assignmentTarget.GetValue(this, exprs, temps);
 
-            if (et == ExpressionType.Coalesce)
+            if (expressionType == ExpressionType.Coalesce)
             {
-                exprs.Add(av.SetValue(this, Coalesce(getExpr, right)));
+                exprs.Add(assignmentTarget.SetValue(this, Coalesce(getExpr, valueToAssign)));
             }
             else
             {
-                exprs.Add(av.SetValue(this, DynamicExpression.Dynamic(PSBinaryOperationBinder.Get(et), typeof(object), getExpr, right)));
+                exprs.Add(assignmentTarget.SetValue(
+                    this,
+                    DynamicExpression.Dynamic(
+                        PSBinaryOperationBinder.Get(expressionType),
+                        typeof(object),
+                        getExpr,
+                        valueToAssign)));
+            }
+
+            return Expression.Block(temps, exprs);
+        }
+
+        internal Expression ReduceMemberAssignment(MemberExpressionAst left, TokenKind tokenKind, Expression right)
+        {
+            IAssignableValue assignmentTarget = ((ISupportsAssignment)left).GetAssignableValue();
+
+            if (tokenKind == TokenKind.Equals)
+            {
+                return assignmentTarget.SetValue(this, right);
+            }
+
+            return ReduceCompoundMemberAssignment(
+                assignmentTarget,
+                GetAssignmentExpressionType(tokenKind),
+                right,
+                left.Static);
+        }
+
+        internal BlockExpression ReduceCompoundMemberAssignment(
+            IAssignableValue assignmentTarget,
+            ExpressionType expressionType,
+            Expression valueToAssign,
+            bool isStaticMember)
+        {
+            var exprs = new List<Expression>();
+            var temps = new List<ParameterExpression>();
+            var getExpr = assignmentTarget.GetValue(this, exprs, temps);
+
+            if (expressionType == ExpressionType.Coalesce)
+            {
+                exprs.Add(assignmentTarget.SetValue(this, Coalesce(getExpr, valueToAssign)));
+            }
+            else if (expressionType == ExpressionType.Add || expressionType == ExpressionType.Subtract)
+            {
+                // We're essentially compiling += / -= expressions as a conditional here if the LHS is a member access
+                // expression.
+                //
+                // The expression `$a.Member += $b` will be compiled more like this:
+                //
+                //      $tmp = $a.Member
+                //      if ($tmp -is [PSEvent]) {
+                //          $tmp.Value.GetAddMethod().Invoke($b)
+                //      }
+                //      else {
+                //          $a.Member = $tmp + $b
+                //      }
+                //
+                // The equivalent code is very similar for -= with the exception of calling GetRemoveMethod() instead of
+                // GetAddMethod(). This lets us handle event delegates with += or -=, but we should only make this check
+                // for the += / -= compound operators.
+                ParameterExpression lhsStoreVar = Expression.Variable(typeof(object));
+                temps.Add(lhsStoreVar);
+
+                exprs.Add(Expression.Assign(lhsStoreVar, getExpr));
+                exprs.Add(Expression.IfThenElse(
+                    Expression.TypeIs(lhsStoreVar, typeof(PSEvent)),
+                    DynamicExpression.Dynamic(
+                        PSEventDelegateBinder.Get(expressionType, isStaticMember),
+                        typeof(object),
+                        lhsStoreVar,
+                        valueToAssign),
+                    assignmentTarget.SetValue(
+                        this,
+                        DynamicExpression.Dynamic(
+                            PSBinaryOperationBinder.Get(expressionType),
+                            typeof(object),
+                            lhsStoreVar,
+                            valueToAssign))));
+            }
+            else
+            {
+                exprs.Add(assignmentTarget.SetValue(
+                    this,
+                    DynamicExpression.Dynamic(
+                        PSBinaryOperationBinder.Get(expressionType),
+                        typeof(object),
+                        getExpr,
+                        valueToAssign)));
             }
 
             return Expression.Block(temps, exprs);
@@ -3536,14 +3635,25 @@ namespace System.Management.Automation.Language
             }
 
             var exprs = new List<Expression>
-                        {
-                            // Set current position in case of errors.
-                            UpdatePosition(assignmentStatementAst),
-                            ReduceAssignment(
-                                (ISupportsAssignment)assignmentStatementAst.Left,
-                                assignmentStatementAst.Operator,
-                                rightExpr)
-                        };
+            {
+                // Set current position in case of errors.
+                UpdatePosition(assignmentStatementAst)
+            };
+
+            if (assignmentStatementAst.Left is MemberExpressionAst memberExpr)
+            {
+                exprs.Add(ReduceMemberAssignment(
+                    memberExpr,
+                    assignmentStatementAst.Operator,
+                    rightExpr));
+            }
+            else
+            {
+                exprs.Add(ReduceAssignment(
+                    (ISupportsAssignment)assignmentStatementAst.Left,
+                    assignmentStatementAst.Operator,
+                    rightExpr));
+            }
 
             return Expression.Block(exprs);
         }
@@ -5061,7 +5171,10 @@ namespace System.Management.Automation.Language
             Action<List<Expression>, Expression> loopBodyGenerator =
                 (exprs, newValue) =>
                 {
-                    exprs.Add(ReduceAssignment(forEachStatementAst.Variable, TokenKind.Equals, newValue));
+                    exprs.Add(ReduceAssignment(
+                        forEachStatementAst.Variable,
+                        TokenKind.Equals,
+                        newValue));
                     exprs.Add(Compile(forEachStatementAst.Body));
                 };
 
@@ -6921,7 +7034,10 @@ namespace System.Management.Automation.Language
                     indexedRHS = DynamicExpression.Dynamic(PSArrayAssignmentRHSBinder.Get(nestedArrayLHS.Elements.Count), typeof(IList), indexedRHS);
                 }
 
-                exprs.Add(compiler.ReduceAssignment((ISupportsAssignment)lhsElement, TokenKind.Equals, indexedRHS));
+                exprs.Add(compiler.ReduceAssignment(
+                    (ISupportsAssignment)lhsElement,
+                    TokenKind.Equals,
+                    indexedRHS));
             }
 
             // Add the temp as the last expression for chained assignment, i.e. $x = $y,$z = 1,2
