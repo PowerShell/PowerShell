@@ -11,9 +11,17 @@ jobs:
   steps:
   - template: release-SetReleaseTagandContainerName.yml@self
 
-  - pwsh: |
-      git clone --depth 1 https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
-    displayName: Clone Internal-Tools repository
+  - checkout: self
+    clean: true
+    path: $(Pipeline.Workspace)/PowerShell
+    env:
+      ob_restore_phase: true
+
+  - checkout: PSInternalTools
+    clean: true
+    path: $(Pipeline.Workspace)/tools
+    env:
+      ob_restore_phase: true
 
   - pwsh: |
       New-Item -ItemType Directory -Path '$(Pipeline.Workspace)/ToolArtifact'
@@ -51,8 +59,13 @@ jobs:
         $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
       }
 
-      $filePath = "$(REPOROOT)/CHANGELOG/$fileName"
+      $filePath = "$(Pipeline.Workspace)/PowerShell/CHANGELOG/$fileName"
       Write-Verbose -Verbose "Selected Log file: $filePath"
+
+      if (-not (Test-Path -Path $filePath)) {
+        Write-Error "Changelog file not found: $filePath"
+        exit 1
+      }
       
       Write-Verbose -Verbose "Creating output directory for CHANGELOG: $(ob_outputDirectory)/CHANGELOG"
       New-Item -Path $(ob_outputDirectory)/CHANGELOG -ItemType Directory -Force
