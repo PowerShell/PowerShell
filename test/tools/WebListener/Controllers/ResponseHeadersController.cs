@@ -23,7 +23,7 @@ namespace mvc.Controllers
             Hashtable headers = new Hashtable();
             foreach (var key in Request.Query.Keys)
             {
-                headers.Add(key, string.Join(Constants.HeaderSeparator, Request.Query[key]));
+                headers.Add(key, string.Join(Constants.HeaderSeparator, (string)Request.Query[key]));
 
                 if (string.Equals("Content-Type", key, StringComparison.InvariantCultureIgnoreCase))
                 {
