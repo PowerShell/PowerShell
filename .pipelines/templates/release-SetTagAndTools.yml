@@ -13,19 +13,19 @@ jobs:
 
   - checkout: self
     clean: true
-    path: $(Pipeline.Workspace)/PowerShell
+    path: $(Build.SourcesDirectory)/PowerShell
     env:
       ob_restore_phase: true
 
   - checkout: PSInternalTools
     clean: true
-    path: $(Pipeline.Workspace)/tools
+    path: $(Build.SourcesDirectory)/tools
     env:
       ob_restore_phase: true
 
   - pwsh: |
       New-Item -ItemType Directory -Path '$(Pipeline.Workspace)/ToolArtifact'
-      Get-ChildItem -Path '$(Pipeline.Workspace)/tools/Scripts' -Filter 'GitHubRelease.psm1' -ErrorAction SilentlyContinue |
+      Get-ChildItem -Path '$(Build.SourcesDirectory)/tools/Scripts' -Filter 'GitHubRelease.psm1' -ErrorAction SilentlyContinue |
         Copy-Item -Destination '$(Pipeline.Workspace)/ToolArtifact' -Verbose
     displayName: Move GitHub Tool
 
@@ -59,7 +59,7 @@ jobs:
         $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
       }
 
-      $filePath = "$(Pipeline.Workspace)/PowerShell/CHANGELOG/$fileName"
+      $filePath = "$(Build.SourcesDirectory)/PowerShell/CHANGELOG/$fileName"
       Write-Verbose -Verbose "Selected Log file: $filePath"
 
       if (-not (Test-Path -Path $filePath)) {
