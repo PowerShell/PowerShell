@@ -13,13 +13,11 @@ jobs:
 
   - checkout: self
     clean: true
-    path: PowerShell
     env:
       ob_restore_phase: true
 
   - checkout: PSInternalTools
     clean: true
-    path: tools
     env:
       ob_restore_phase: true
 
