@@ -27,7 +27,7 @@ jobs:
 
   - pwsh: |
       New-Item -ItemType Directory -Path '$(Pipeline.Workspace)/ToolArtifact'
-      Get-ChildItem -Path '$(Build.SourcesDirectory)/tools/Scripts' -Filter 'GitHubRelease.psm1' -ErrorAction SilentlyContinue |
+      Get-ChildItem -Path '$(Build.SourcesDirectory)/Internal-PowerShellTeam-Tools/Scripts' -Filter 'GitHubRelease.psm1' -ErrorAction SilentlyContinue |
         Copy-Item -Destination '$(Pipeline.Workspace)/ToolArtifact' -Verbose
     displayName: Move GitHub Tool
 
