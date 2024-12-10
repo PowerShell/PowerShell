@@ -491,10 +491,22 @@ namespace System.Management.Automation.Language
                     _interfaceMethods = new Dictionary<Tuple<string, Type, string>, MethodInfo>();
                     var allInterfaces = GetImplementingInterfaces();
 
+                    // We include NonPublic so we can also get protected interface methods.
+                    BindingFlags methodFlags = BindingFlags.Public |
+                        BindingFlags.NonPublic |
+                        BindingFlags.Instance |
+                        BindingFlags.Static;
+
                     foreach (var interfaceType in allInterfaces)
                     {
-                        foreach (var method in interfaceType.GetMethods())
+                        foreach (var method in interfaceType.GetMethods(methodFlags))
                         {
+                            if (!(method.IsFamily || method.IsFamilyOrAssembly || method.IsPublic))
+                            {
+                                // We want public and protected only, no internal or private.
+                                continue;
+                            }
+
                             Type[] methodParameters = method.GetParameters().Select(p => p.ParameterType).ToArray();
                             string methodParametersId = GetTypeArrayId(methodParameters);
                             _interfaceMethods.Add(Tuple.Create(method.Name, method.ReturnType, methodParametersId), method);

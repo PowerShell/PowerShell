@@ -177,6 +177,49 @@ class ClassWithStaticAbstractMethodInterface : IInterfaceWithStaticAbstractMetho
             [InterfaceStaticAbstractMethodTest]::GetTwoParameters[ClassWithStaticAbstractMethodInterface]("2", 2) | Should -Be 4
     }
 
+    It 'can implement .NET interface static protected methods' {
+        Add-Type -TypeDefinition @'
+public interface IInterfaceWithStaticAbstractProtectedMethod
+{
+    protected static abstract int ProtectedMeth();
+    protected internal static abstract int ProtectedInternalMeth(string value);
+}
+'@
+
+        $C1 = Invoke-Expression @'
+class ClassWithStaticAbstractProtectedMethodInterface : IInterfaceWithStaticAbstractProtectedMethod {
+    static [int] ProtectedMeth() { return 1 }
+    static [int] ProtectedInternalMeth([string]$Value) { return [int]$Value }
+}
+[ClassWithStaticAbstractProtectedMethodInterface]
+'@
+
+            $v = $C1::ProtectedMeth()
+            $v | Should -Be 1
+            $v | Should -BeOfType ([int])
+
+            $v = $C1::ProtectedInternalMeth("2")
+            $v | Should -Be 2
+            $v | Should -BeOfType ([int])
+    }
+
+    It 'fails to implement .NET interface static internal methods' {
+        Add-Type -TypeDefinition @'
+public interface IInterfaceWithStaticAbstractInternalMethod
+{
+    internal static abstract int Test();
+}
+'@
+
+        {
+            Invoke-Expression @'
+class ClassWithStaticAbstractInternalMethodInterface : IInterfaceWithStaticAbstractInternalMethod {
+    static [int] Test() { return 1 }
+}
+'@
+        } | Should -Throw -ExceptionType ([System.Management.Automation.ParseException])
+    }
+
     It 'allows use of defined later type as a property type' {
         class A { static [B]$b }
         class B : A {}
