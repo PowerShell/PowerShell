@@ -13,7 +13,7 @@ jobs:
   templateContext:
     inputs:
       - input: pipelineArtifact
-        pipeline: 'PowerShell-Packages-Official'
+        pipeline: PSPackagesOfficial
         artifactName: drop_upload_upload_packages
   variables:
   - template: ./variable/release-shared.yml@self
