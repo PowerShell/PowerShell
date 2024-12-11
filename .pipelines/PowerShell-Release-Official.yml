@@ -81,7 +81,7 @@ resources:
             - releases/*
 
 extends:
-  template: v2/OneBranch.NonOfficial.CrossPlat.yml@templates
+  template: v2/OneBranch.Official.CrossPlat.yml@templates
   parameters:
     release: 
       category: NonAzure
@@ -282,7 +282,7 @@ extends:
         - setReleaseTagAndUploadTools
         - UpdateChangeLog
       variables:
-        ob_release_environment: Test
+        ob_release_environment: Production
       jobs:
       - template: /.pipelines/templates/release-githubtasks.yml@self
     
@@ -321,7 +321,7 @@ extends:
         - setReleaseTagAndUploadTools
         - PushGitTagAndMakeDraftPublic
       variables:
-        ob_release_environment: Test
+        ob_release_environment: Production
       jobs:
       - template: /.pipelines/templates/release-publish-nuget.yml@self
         parameters:
