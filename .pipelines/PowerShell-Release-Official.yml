@@ -64,6 +64,10 @@ resources:
       type: git
       name: OneBranch.Pipelines/GovernedTemplates
       ref: refs/heads/main
+    - repository: PSInternalTools
+      type: git
+      name: PowerShellCore/Internal-PowerShellTeam-Tools
+      ref: refs/heads/master
 
   pipelines:
     - pipeline: CoOrdinatedBuildPipeline
@@ -110,8 +114,14 @@ extends:
       tsaOptionsFile: .config\tsaoptions.json
 
     stages:
+    - stage: setReleaseTagAndUploadTools
+      displayName: 'Set Release Tag and Upload Tools'
+      jobs:
+      - template: /.pipelines/templates/release-SetTagAndTools.yml@self
+
     - stage: msixbundle
       displayName: 'Create MSIX Bundle'
+      dependsOn: []
       jobs:
       - template: /.pipelines/templates/release-create-msix.yml@self
 
@@ -262,6 +272,35 @@ extends:
             Update and merge the changelog for the release.
             This step is required for creating GitHub draft release.
 
+    - stage: PublishGitHubRelease
+      displayName: Publish GitHub Release
+      dependsOn:
+        - setReleaseTagAndUploadTools
+        - UpdateChangeLog
+      variables:
+        ob_release_environment: Production
+      jobs:
+      - template: /.pipelines/templates/release-githubtasks.yml@self
+
+    - stage: PushGitTagAndMakeDraftPublic
+      displayName: Push Git Tag and Make Draft Public
+      dependsOn: PublishGitHubRelease
+      jobs:
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Push Git Tag
+          jobName: PushGitTag
+          instructions: |
+            Push the git tag to upstream
+
+      - template: /.pipelines/templates/approvalJob.yml@self
+        parameters:
+          displayName: Make Draft Public
+          dependsOnJob: PushGitTag
+          jobName: DraftPublic
+          instructions: |
+            Make the GitHub Release Draft Public
+
     - stage: BlobPublic
       displayName: Make Blob Public
       dependsOn: UpdateChangeLog
@@ -278,7 +317,11 @@ extends:
 
     - stage: PublishNuGet
       displayName: Publish NuGet
-      dependsOn: PublishGitHubRelease
+      dependsOn:
+        - setReleaseTagAndUploadTools
+        - PushGitTagAndMakeDraftPublic
+      variables:
+        ob_release_environment: Production
       jobs:
       - template: /.pipelines/templates/release-publish-nuget.yml@self
         parameters:
