@@ -622,15 +622,18 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// See base class.
         /// </summary>
-        public void PushRunspace(Runspace newRunspace)
+        public void PushRunspace(Runspace runspace)
         {
             if (_runspaceRef == null)
             {
                 return;
             }
 
-            RemoteRunspace remoteRunspace = newRunspace as RemoteRunspace;
-            Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
+            if (runspace is not RemoteRunspace remoteRunspace)
+            {
+                throw new ArgumentException(ConsoleHostStrings.PushRunspaceNotRemote, nameof(runspace));
+            }
+
             remoteRunspace.StateChanged += HandleRemoteRunspaceStateChanged;
 
             // Unsubscribe the local session debugger.
