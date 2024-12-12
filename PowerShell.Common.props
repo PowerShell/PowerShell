@@ -86,6 +86,7 @@
         <PSCoreLabelVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[5].Value)</PSCoreLabelVersion>
       -->
 
+      <Version>$(PSCoreFileVersion)</Version>
       <FileVersion>$(PSCoreFileVersion)</FileVersion>
       <AssemblyVersion>$(PSAssemblyVersion)</AssemblyVersion>
       <InformationalVersion>$(PSCoreFormattedVersion)</InformationalVersion>
