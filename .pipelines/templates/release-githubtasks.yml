@@ -8,31 +8,25 @@ jobs:
   templateContext:
     inputs:
       - input: pipelineArtifact
-        artifactName: drop_DownloadPackages_upload_packages
+        artifactName: drop_setReleaseTagAndUploadTools_SetTagAndTools
+      - input: pipelineArtifact
+        pipeline: PSPackagesOfficial
+        artifactName: drop_upload_upload_packages
   variables:
-  - template: ./variable/release-shared.yml@self
+    - template: ./variable/release-shared.yml@self
+      parameters:
+        RELEASETAG: $[ stageDependencies.setReleaseTagAndUploadTools.SetTagAndTools.outputs['OutputReleaseTag.releaseTag'] ]
 
   steps:
   - task: PowerShell@2
     inputs:
       targetType: inline
       script: |
-        Get-ChildItem Env: | Out-String -Stream | write-Verbose -Verbose
+        Write-Verbose -Verbose "Release Tag: $(ReleaseTag)"
+        Get-ChildItem Env: | Out-String -Stream | Write-Verbose -Verbose
     displayName: 'Capture Environment Variables'
 
   - template: release-install-pwsh.yml
-
-  - template: release-checkout-pwsh-repo.yml
-
-  - template: release-SetReleaseTagAndContainerName.yml
-
-  - task: PowerShell@2
-    inputs:
-      targetType: inline
-      pwsh: true
-      script: |
-        git clone --depth 1 https://$(mscodehubCodeReadPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
-    displayName: Clone Internal-Tools repository
 
   - task: PowerShell@2
     inputs:
@@ -54,18 +48,7 @@ jobs:
         $fileContent = Get-Content -Path $OutputPath -Raw | Out-String
         Write-Verbose -Verbose -Message $fileContent
     displayName: Add sha256 hashes
-
-  - task: PowerShell@2
-    inputs:
-      targetType: inline
-      pwsh: true
-      script: |
-        $releaseVersion = '$(ReleaseTag)' -replace '^v',''
-        $vstsCommandString = "vso[task.setvariable variable=ReleaseVersion]$releaseVersion"
-        Write-Host "sending " + $vstsCommandString
-        Write-Host "##$vstsCommandString"
-    displayName: 'Set release version'
-
+  
   - task: PowerShell@2
     inputs:
       targetType: inline
@@ -79,22 +62,12 @@ jobs:
       targetType: inline
       pwsh: true
       script: |
-        Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
-        $releaseVersion = '$(ReleaseTag)' -replace '^v',''
-        $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
+        Import-module '$(Pipeline.Workspace)/ToolArtifact/GitHubRelease.psm1'
+        Write-Verbose -Verbose "Available modules: "
+        Get-Module | Write-Verbose -Verbose
 
-        $isPreview = $semanticVersion.PreReleaseLabel -ne $null
-
-        $fileName = if ($isPreview) {
-          "preview.md"
-        }
-        else {
-          $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
-        }
-
-        $filePath = "$(Pipeline.Workspace)/PowerShell/CHANGELOG/$fileName"
-        Write-Verbose -Verbose "Selected Log file: $filePath"
-
+        $filePath = Get-ChildItem -Path "$(Pipeline.Workspace)/CHANGELOG" -Filter '*.md' | Select-Object -First 1 -ExpandProperty FullName
+  
         if (-not (Test-Path $filePath)) {
           throw "$filePath not found"
         }
