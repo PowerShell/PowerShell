@@ -58,15 +58,17 @@
       <PSCoreFileVersion Condition = "'$(ReleaseTagSemVersionPart)' != ''">$(ReleaseTagVersionPart).$(ReleaseTagSemVersionPart)</PSCoreFileVersion>
       <!-- Create the version if we have a release build -->
       <PSCoreFileVersion Condition = "'$(PSCoreFileVersion)' == ''">$(ReleaseTagVersionPart).$(GAIncrementValue)</PSCoreFileVersion>
-      <!-- Create the assembly version, which is 'PSCoreFileVersion' with the 'Build' field set to 0, so the assembly version doesn't change for servicing releases -->
-      <PSAssemblyVersion>$([System.Version]::Parse($(PSCoreFileVersion)).Major).$([System.Version]::Parse($(PSCoreFileVersion)).Minor).0.$([System.Version]::Parse($(PSCoreFileVersion)).Revision)</PSAssemblyVersion>
+      <!-- Set 'FileVersion' and 'AssemblyVersion' explicitly:
+           - make 'FileVersion' the same as 'PSCoreFileVersion'
+           - make 'AssemblyVersion' be the 'PSCoreFileVersion' with the 'Build' field set to 0, so the assembly version doesn't change for servicing releases -->
+      <FileVersion>$(PSCoreFileVersion)</FileVersion>
+      <AssemblyVersion>$([System.Version]::Parse($(PSCoreFileVersion)).Major).$([System.Version]::Parse($(PSCoreFileVersion)).Minor).0.$([System.Version]::Parse($(PSCoreFileVersion)).Revision)</AssemblyVersion>
     </PropertyGroup>
 
     <PropertyGroup>
       <RegexGitVersion>^v(.+)-(\d+)-g(.+)</RegexGitVersion>
       <PSCoreFileVersion Condition = "'$(PSCoreFileVersion)' == ''">$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[1].Value)</PSCoreFileVersion>
       <PSCoreBuildVersion Condition = "'$(PSCoreBuildVersion)' == ''">$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[1].Value)</PSCoreBuildVersion>
-      <PSAssemblyVersion Condition = "'$(PSAssemblyVersion)' == ''">$(PSCoreFileVersion)</PSAssemblyVersion>
       <PSCoreAdditionalCommits>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[2].Value)</PSCoreAdditionalCommits>
       <PSCoreCommitSHA>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[3].Value)</PSCoreCommitSHA>
 
@@ -86,9 +88,11 @@
         <PSCoreLabelVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[5].Value)</PSCoreLabelVersion>
       -->
 
+      <!--
+            Here we define explicitly 'Version' to set 'FileVersion' and 'AssemblyVersion' when they are not explicitly set.
+            Here we define explicitly 'InformationalVersion' because by default it is defined as 'Version' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
+      -->
       <Version>$(PSCoreFileVersion)</Version>
-      <FileVersion>$(PSCoreFileVersion)</FileVersion>
-      <AssemblyVersion>$(PSAssemblyVersion)</AssemblyVersion>
       <InformationalVersion>$(PSCoreFormattedVersion)</InformationalVersion>
       <ProductVersion>$(PSCoreFormattedVersion)</ProductVersion>
 
