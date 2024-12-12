@@ -425,7 +425,9 @@ namespace Microsoft.PowerShell.Cim
                 var cimIntrinsicValue = (byte[])LanguagePrimitives.ConvertTo(cimObject, typeof(byte[]), CultureInfo.InvariantCulture);
                 return exceptionSafeReturn(delegate
                                                {
+                                                   #pragma warning disable SYSLIB0057
                                                    return new X509Certificate2(cimIntrinsicValue);
+                                                   #pragma warning restore SYSLIB0057
                                                });
             }
 

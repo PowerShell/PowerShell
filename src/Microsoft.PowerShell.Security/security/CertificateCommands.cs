@@ -208,8 +208,11 @@ namespace Microsoft.PowerShell.Commands
 
         private static X509Certificate2 GetCertFromPfxFile(string path, SecureString password)
         {
+            // No overload found in X509CertificateLoader that takes SecureString
+            #pragma warning disable SYSLIB0057
             var cert = new X509Certificate2(path, password, X509KeyStorageFlags.DefaultKeySet);
             return cert;
+            #pragma warning restore SYSLIB0057
         }
     }
 }

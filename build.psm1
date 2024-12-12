@@ -587,6 +587,13 @@ Fix steps:
 
             try {
                 Push-Location $globalToolSrcFolder
+
+                if ($Options.Runtime -like 'fxdependent*') {
+                    if ($Arguments -contains '/property:UseAppHost=true') {
+                        $Arguments = @($Arguments | Where-Object { $_ -notlike '/property:UseAppHost=true' })
+                    }
+                }
+
                 if ($Arguments -notcontains '--output') {
                     $Arguments += "--output", $publishPath
                 }
@@ -733,7 +740,7 @@ function Switch-PSNugetConfig {
     param(
         [Parameter(Mandatory = $true, ParameterSetName = 'user')]
         [Parameter(Mandatory = $true, ParameterSetName = 'nouser')]
-        [ValidateSet('Public', 'Private')]
+        [ValidateSet('Public', 'Private', 'NuGetOnly')]
         [string] $Source,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'user')]
@@ -753,18 +760,23 @@ function Switch-PSNugetConfig {
         }
     }
 
+    $dotnetSdk = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v2'; Name = 'dotnet' }
+    $gallery = [NugetPackageSource] @{Url = 'https://www.powershellgallery.com/api/v2/'; Name = 'psgallery' }
+    $nugetorg = [NugetPackageSource] @{Url = 'https://api.nuget.org/v3/index.json'; Name = 'nuget.org' }
     if ( $Source -eq 'Public') {
-        $dotnetSdk = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v2'; Name = 'dotnet' }
-        $gallery = [NugetPackageSource] @{Url = 'https://www.powershellgallery.com/api/v2/'; Name = 'psgallery' }
-        $nugetorg = [NugetPackageSource] @{Url = 'https://api.nuget.org/v3/index.json'; Name = 'nuget.org' }
-
         New-NugetConfigFile -NugetPackageSource $nugetorg, $dotnetSdk   -Destination "$PSScriptRoot/" @extraParams
         New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
+    } elseif ( $Source -eq 'NuGetOnly') {
+        New-NugetConfigFile -NugetPackageSource $nugetorg   -Destination "$PSScriptRoot/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/src/Modules/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $gallery                -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams        
     } elseif ( $Source -eq 'Private') {
-        $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell-7-5-preview-test-2/nuget/v3/index.json'; Name = 'powershell' }
+        $powerShellPackages = [NugetPackageSource] @{Url = 'https://pkgs.dev.azure.com/powershell/PowerShell/_packaging/PowerShell/nuget/v3/index.json'; Name = 'powershell' }
 
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/" @extraParams
         New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/src/Modules/" @extraParams
+        New-NugetConfigFile -NugetPackageSource $powerShellPackages -Destination "$PSScriptRoot/test/tools/Modules/" @extraParams
     } else {
         throw "Unknown source: $Source"
     }
@@ -2324,12 +2336,11 @@ function Start-PSBootstrap {
                 }
             }
 
-            # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
+            # Install [fpm](https://github.com/jordansissel/fpm)
             if ($Package) {
                 Install-GlobalGem -Sudo $sudo -GemName "dotenv" -GemVersion "2.8.1"
                 Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.16.3"
                 Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.15.1"
-                Install-GlobalGem -Sudo $sudo -GemName "ronn" -GemVersion "0.7.3"
                 Install-GlobalGem -Sudo $sudo -GemName "rexml" -GemVersion "3.2.5"
             }
         }

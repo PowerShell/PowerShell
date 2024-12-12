@@ -104,8 +104,14 @@ jobs:
           if ($env:BundleDir) {
             $bundleFile = Get-Item "$env:BundleDir\*.msixbundle"
             $blobName = $bundleFile | Split-Path -Leaf
+            $existing = Get-AzStorageBlob -Container $containerName -Blob $blobName -Context $storageContext -ErrorAction Ignore
+            if ($existing) {
+              Write-Verbose -Verbose "MSIX bundle already exists at '$storageAccount/$containerName/$blobName', removing first."
+              $existingBlob | Remove-AzStorageBlob -ErrorAction Stop -Verbose
+            }
+
             Write-Verbose -Verbose "Uploading $bundleFile to $containerName/$blobName"
-            Set-AzStorageBlobContent -File $bundleFile -Container $containerName -Blob $blobName -Context $storageContext
+            Set-AzStorageBlobContent -File $bundleFile -Container $containerName -Blob $blobName -Context $storageContext -Force
           }
           else{
             throw "BundleDir not found"

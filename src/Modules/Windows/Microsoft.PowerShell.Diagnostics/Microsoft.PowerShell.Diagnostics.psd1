@@ -12,5 +12,5 @@ AliasesToExport = @()
 NestedModules="Microsoft.PowerShell.Commands.Diagnostics.dll"
 TypesToProcess="GetEvent.types.ps1xml"
 FormatsToProcess="Event.format.ps1xml", "Diagnostics.format.ps1xml"
-HelpInfoURI = 'https://aka.ms/powershell73-help'
+HelpInfoURI = 'https://aka.ms/powershell75-help'
 }

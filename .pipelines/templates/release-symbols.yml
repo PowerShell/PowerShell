@@ -36,7 +36,7 @@ jobs:
   - template: release-SetReleaseTagAndContainerName.yml
 
   - pwsh: |
-      Get-ChildItem Env:
+      Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: 'Capture Environment Variables'
 
   - download: CoOrdinatedBuildPipeline

@@ -26,7 +26,9 @@ $existingRegistrationsJson.Registrations | ForEach-Object {
     $registration = [Registration]$_
     if ($registration.Component) {
         $name = $registration.Component.Name()
-        $existingRegistrationTable.Add($name, $registration)
+        if (!$existingRegistrationTable.ContainsKey($name)) {
+            $existingRegistrationTable.Add($name, $registration)
+        }
     }
 }
 
@@ -103,7 +105,7 @@ function ConvertTo-SemVer {
             So, I'm making the logic work for that scenario by
             thorwing away any part that doesn't match non-pre-release semver portion
         #>
-        $null = $Version -match '^(\d+\.\d+\.\d+)).*'
+        $null = $Version -match '^(\d+\.\d+\.\d+).*'
         $desiredVersion = $matches[1]
     }
 

@@ -38,7 +38,7 @@ jobs:
     clean: true
 
   - pwsh: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
 
   - pwsh: |

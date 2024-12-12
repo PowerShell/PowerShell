@@ -1,0 +1,154 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+parameters:
+  - name: parentJobs
+    type: jobList
+
+jobs:
+- job: generateNotice
+  variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/notice'
+  - name: ob_sdl_apiscan_enabled
+    value: false
+  - name: repoRoot
+    value: '$(Build.SourcesDirectory)\PowerShell'
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+
+  displayName: Generate Notice
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  pool:
+    type: windows
+
+  timeoutInMinutes: 15
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - pwsh: |
+      [string]$Branch=$env:BUILD_SOURCEBRANCH
+      $branchOnly = $Branch -replace '^refs/heads/';
+      $branchOnly = $branchOnly -replace '[_\-]'
+
+      if ($branchOnly -eq 'master') {
+        $container = 'tpn'
+      } else {
+        $branchOnly = $branchOnly -replace '[\./]', '-'
+        $container = "tpn-$branchOnly"
+      }
+
+      $vstsCommandString = "vso[task.setvariable variable=tpnContainer]$container"
+      Write-Verbose -Message $vstsCommandString -Verbose
+      Write-Host -Object "##$vstsCommandString"
+    displayName: Set ContainerName
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(repoRoot)\tools'
+
+  - pwsh: |
+      $(repoRoot)/tools/clearlyDefined/ClearlyDefined.ps1 -TestAndHarvest
+    displayName: Verify that packages have license data
+
+
+  - task: msospo.ospo-extension.8d7f9abb-6896-461d-9e25-4f74ed65ddb2.notice@0
+    displayName: 'NOTICE File Generator'
+    inputs:
+      outputfile: '$(ob_outputDirectory)\ThirdPartyNotices.txt'
+      # output format can be html or text
+      outputformat: text
+      # this isn't working
+      # additionaldata: $(Build.SourcesDirectory)\assets\additionalAttributions.txt
+
+
+  - pwsh: |
+      Get-Content -Raw -Path $(repoRoot)\assets\additionalAttributions.txt | Out-File '$(ob_outputDirectory)\ThirdPartyNotices.txt' -Encoding utf8NoBOM -Force -Append
+      Get-Content -Raw -Path $(repoRoot)\assets\additionalAttributions.txt
+    displayName: Append Additional Attributions
+    continueOnError: true
+
+  - pwsh: |
+      Get-Content -Raw -Path '$(ob_outputDirectory)\ThirdPartyNotices.txt'
+    displayName: Capture Notice
+    continueOnError: true
+
+  - powershell: |
+      [System.Net.ServicePointManager]::SecurityProtocol =
+        [System.Net.ServicePointManager]::SecurityProtocol -bor
+        [System.Security.Authentication.SslProtocols]::Tls12 -bor
+        [System.Security.Authentication.SslProtocols]::Tls11
+
+      Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
+      Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
+      Get-PackageProvider -Name NuGet -ForceBootstrap
+    displayName: Initalize PowerShellGet
+
+  - powershell: |
+      $modules = 'Az.Accounts', 'Az.Storage'
+      foreach($module in $modules) {
+        if(!(get-module $module -listavailable)) {
+          Write-Verbose "installing $module..." -verbose
+          Install-Module $module -force -AllowClobber
+        } else {
+          Write-Verbose "$module already installed." -verbose
+          #Update-Module $module -verbose
+        }
+      }
+    displayName: Install PowerShell modules
+
+  - powershell: |
+      if(Get-Command -Name Uninstall-AzureRm -ErrorAction Ignore){
+        Write-Verbose "running Uninstall-AzureRm" -verbose
+        Uninstall-AzureRm
+      } else {
+        Write-Verbose "Uninstall-AzureRm not present" -verbose
+      }
+    displayName: Uninstall Uninstall-AzureRm
+    continueOnError: true
+
+  - task: AzurePowerShell@5
+    displayName: Upload Notice
+    inputs:
+      azureSubscription: az-blob-cicd-infra
+      scriptType: inlineScript
+      azurePowerShellVersion: LatestVersion
+      workingDirectory: '$(repoRoot)'
+      pwsh: true
+      inline: |
+        try {
+          $downloadsDirectory = '$(Build.ArtifactStagingDirectory)/downloads'
+          $uploadedDirectory = '$(Build.ArtifactStagingDirectory)/uploaded'
+          $storageAccountName = "pscoretestdata"
+          $containerName = '$(tpnContainer)'
+          $blobName = 'ThirdPartyNotices.txt'
+          $noticePath = "$(ob_outputDirectory)\$blobName"
+
+          Write-Verbose -Verbose "creating context ($storageAccountName) ..."
+          $context = New-AzStorageContext -StorageAccountName $storageAccountName -UseConnectedAccount
+
+          Write-Verbose -Verbose "checking if container ($containerName) exists ..."
+          $containerExists = Get-AzStorageContainer -Name $containerName -Context $context -ErrorAction SilentlyContinue
+          if (-not $containerExists) {
+            Write-Verbose -Verbose "Creating container ..."
+            $null = New-AzStorageContainer -Name $containerName -Context $context
+            Write-Verbose -Verbose "Blob container $containerName created successfully."
+          }
+
+          Write-Verbose -Verbose "Setting blob ($blobName) content ($noticePath) ..."
+          $null = Set-AzStorageBlobContent -File $noticePath -Container $containerName -Blob $blobName -Context $context -confirm:$false -force
+          Write-Verbose -Verbose "Done"
+        } catch {
+          Get-Error
+          throw
+        }

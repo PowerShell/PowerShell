@@ -1,5 +1,188 @@
 # Preview Changelog
 
+## [7.5.0-preview.5] - 2024-10-01
+
+### Breaking Changes
+
+- Treat large `Enum` values as numbers in `ConvertTo-Json` (#20999) (#24304)
+
+### Engine Updates and Fixes
+
+- Fix how processor architecture is validated in `Import-Module` (#24265) (#24317)
+
+### Experimental Features
+
+### General Cmdlet Updates and Fixes
+
+- Add `-Force` parameter to `Resolve-Path` and `Convert-Path` cmdlets to support wildcard hidden files (#20981) (#24344)
+- Add telemetry to track the use of features (#24247) (#24331)
+- Treat large `Enum` values as numbers in `ConvertTo-Json` (#20999) (#24304)
+- Make features `PSCommandNotFoundSuggestion`, `PSCommandWithArgs`, and `PSModuleAutoLoadSkipOfflineFiles` stable (#24246) (#24310)
+- Handle global tool when prepending `$PSHome` to `PATH` (#24228) (#24307)
+
+### Tests
+
+- Fix cleanup in `PSResourceGet` test (#24339) (#24345)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>Bump .NET SDK to 9.0.100-rc.1.24452.12</p>
+
+</summary>
+
+<ul>
+<li>Fixed Test Scenario for <code>Compress-PSResource</code> (Internal 32696)</li>
+<li>Add back local NuGet source for test packages (Internal 32693)</li>
+<li>Fix typo in <code>release-MakeBlobPublic.yml</code> (Internal 32689)</li>
+<li>Copy to static site instead of making blob public (#24269) (#24343)</li>
+<li>Update <code>Microsoft.PowerShell.PSResourceGet</code> to <code>1.1.0-preview2</code> (#24300) (#24337)</li>
+<li>Remove the MD5 branch in the strong name signing token calculation (#24288) (#24321)</li>
+<li>Update experimental-feature json files (#24271) (#24319)</li>
+<li>Add updated <code>libicu</code> dependency for Debian packages (#24301) (#24324)</li>
+<li>Add mapping to <code>AzureLinux</code> repo (#24290) (#24322)</li>
+<li>Update and add new NuGet package sources for different environments. (#24264) (#24316)</li>
+<li>Bump .NET 9 to <code>9.0.100-rc.1.24452.12</code> (#24273) (#24320)</li>
+<li>Make some release tests run in a hosted pools (#24270) (#24318)</li>
+<li>Do not build the exe for Global tool shim project (#24263) (#24315)</li>
+<li>Delete <code>assets/AppImageThirdPartyNotices.txt</code> (#24256) (#24313)</li>
+<li>Create new pipeline for compliance (#24252) (#24312)</li>
+<li>Add specific path for issues in tsaconfig (#24244) (#24309)</li>
+<li>Use Managed Identity for APIScan authentication (#24243) (#24308)</li>
+<li>Add Windows signing for <code>pwsh.exe</code> (#24219) (#24306)</li>
+<li>Check <code>Create and Submit</code> in vPack build by default (#24181) (#24305)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Delete demos directory (#24258) (#24314)
+
+[7.5.0-preview.5]: https://github.com/PowerShell/PowerShell/compare/v7.5.0-preview.4...v7.5.0-preview.5
+
+## [7.5.0-preview.4] - 2024-08-28
+
+### Engine Updates and Fixes
+
+- RecommendedAction: Explicitly start and stop ANSI Error Color (#24065) (Thanks @JustinGrote!)
+- Improve .NET overload definition of generic methods (#21326) (Thanks @jborean93!)
+- Optimize the `+=` operation for a collection when it's an object array (#23901) (Thanks @jborean93!)
+- Allow redirecting to a variable as experimental feature `PSRedirectToVariable` (#20381)
+
+### General Cmdlet Updates and Fixes
+
+- Change type of `LineNumber` to `ulong` in `Select-String` (#24075) (Thanks @Snowman-25!)
+- Fix `Invoke-RestMethod` to allow `-PassThru` and `-Outfile` work together (#24086) (Thanks @jshigetomi!)
+- Fix Hyper-V Remoting when the module is imported via implicit remoting (#24032) (Thanks @jborean93!)
+- Add `ConvertTo-CliXml` and `ConvertFrom-CliXml` cmdlets (#21063) (Thanks @ArmaanMcleod!)
+- Add `OutFile` property in `WebResponseObject` (#24047) (Thanks @jshigetomi!)
+- Show filename in `Invoke-WebRequest -OutFile -Verbose` (#24041) (Thanks @jshigetomi!)
+- `Set-Acl`: Do not fail on untranslatable SID (#21096) (Thanks @jborean93!)
+- Fix the extent of the parser error when a number constant is invalid (#24024)
+- Fix `Move-Item` to throw error when moving into itself (#24004)
+- Fix up .NET method invocation with `Optional` argument (#21387) (Thanks @jborean93!)
+- Fix progress calculation on `Remove-Item` (#23869) (Thanks @jborean93!)
+- Fix WebCmdlets when `-Body` is specified but `ContentType` is not (#23952) (Thanks @CarloToso!)
+- Enable `-NoRestart` to work with `Register-PSSessionConfiguration` (#23891)
+- Add `IgnoreComments` and `AllowTrailingCommas` options to `Test-Json` cmdlet (#23817) (Thanks @ArmaanMcleod!)
+- Get-Help may report parameters with `ValueFromRemainingArguments` attribute as pipeline-able (#23871)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @eltociear</p>
+
+</summary>
+
+<ul>
+<li>Minor cleanup on local variable names within a method (#24105)</li>
+<li>Remove explicit <code>IDE1005</code> suppressions (#21217) (Thanks @xtqqczze!)</li>
+<li>Fix a typo in <code>WebRequestSession.cs</code> (#23963) (Thanks @eltociear!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- devcontainers: mount workspace in /PowerShell (#23857) (Thanks @rzippo!)
+
+### Tests
+
+- Add debugging to the MTU size test (#21463)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@bosesubham2011</p>
+
+</summary>
+
+<ul>
+<li>Update third party notices (Internal 32128)</li>
+<li>Update cgmanifest (#24163)</li>
+<li>Fixes to Azure Public feed usage (#24149)</li>
+<li>Add support for back porting PRs from GitHub or the Private Azure Repos (#20670)</li>
+<li>Move to <code>9.0.0-preview.6.24327.7</code> (#24133)</li>
+<li>update path (#24134)</li>
+<li>Update to the latest NOTICES file (#24131)</li>
+<li>Fix semver issue with updating cgmanifest (#24132)</li>
+<li>Add ability to capture MSBuild Binary logs when restore fails (#24128)</li>
+<li>add ability to skip windows stage (#24116)</li>
+<li>chore: Refactor Nuget package source creation to use New-NugetPackageSource function (#24104)</li>
+<li>Make Microsoft feeds the default (#24098)</li>
+<li>Cleanup unused csproj (#23951)</li>
+<li>Add script to update SDK version during release (#24034)</li>
+<li>Enumerate over all signed zip packages (#24063)</li>
+<li>Update metadata.json for PowerShell July releases (#24082)</li>
+<li>Add macos signing for package files (#24015)</li>
+<li>Update <code>install-powershell.sh</code> to support azure-linux (#23955) (Thanks @bosesubham2011!)</li>
+<li>Skip build steps that do not have exe packages (#23945)</li>
+<li>Update metadata.json for PowerShell June releases (#23973)</li>
+<li>Create <code>powershell.config.json</code> for <code>PowerShell.Windows.x64</code> global tool (#23941)</li>
+<li>Fix error in the vPack release, debug script that blocked release (#23904)</li>
+<li>Add vPack release (#23898)</li>
+<li>Fix exe signing with third party signing for WiX engine (#23878)</li>
+<li>Update wix installation in CI (#23870)</li>
+<li>Add checkout to fix TSA config paths (#23865)</li>
+<li>Merge the <code>v7.5.0-preview.3</code> release branch to GitHub master branch</li>
+<li>Update <code>metadata.json</code> for the <code>v7.5.0-preview.3</code> release (#23862)</li>
+<li>Bump <code>PSResourceGet</code> to <code>1.1.0-preview1</code> (#24129)</li>
+<li>Bump <code>github/codeql-action</code> from 3.25.8 to 3.26.0 (#23953) (#23999) (#24053) (#24069) (#24095) (#24118)</li>
+<li>Bump <code>actions/upload-artifact</code> from 4.3.3 to 4.3.6 (#24019) (#24113) (#24119)</li>
+<li>Bump <code>agrc/create-reminder-action</code> from 1.1.13 to 1.1.15 (#24029) (#24043)</li>
+<li>Bump <code>agrc/reminder-action</code> from 1.0.12 to 1.0.14 (#24028) (#24042)</li>
+<li>Bump <code>super-linter/super-linter</code> from 5.7.2 to 6.8.0 (#23809) (#23856) (#23894) (#24030) (#24103)</li>
+<li>Bump <code>ossf/scorecard-action</code> from 2.3.1 to 2.4.0 (#23802) (#24096)</li>
+<li>Bump <code>actions/dependency-review-action</code> from 4.3.2 to 4.3.4 (#23897) (#24046)</li>
+<li>Bump <code>actions/checkout</code> from 4.1.5 to 4.1.7 (#23813) (#23947)</li>
+<li>Bump <code>github/codeql-action</code> from 3.25.4 to 3.25.8 (#23801) (#23893)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update docs sample nuget.config (#24109)
+- Update Code of Conduct and Security Policy (#23811)
+- Update working-group-definitions.md for the Security WG (#23884)
+- Fix up broken links in Markdown files (#23863)
+- Update Engine Working Group Members (#23803) (Thanks @kilasuit!)
+- Remove outdated and contradictory information from `README` (#23812)
+
+[7.5.0-preview.4]: https://github.com/PowerShell/PowerShell/compare/v7.5.0-preview.3...v7.5.0-preview.4
+
 ## [7.5.0-preview.3] - 2024-05-16
 
 ### Breaking Changes
@@ -201,7 +384,7 @@
 ### Breaking Changes
 
 - Fix `-OlderThan` and `-NewerThan` parameters for `Test-Path` when using `PathType` and date range (#20942) (Thanks @ArmaanMcleod!)
-  - Previously `-OlderThan` would be ignored if specified together
+- Previously `-OlderThan` would be ignored if specified together
 - Change `New-FileCatalog -CatalogVersion` default to 2 (#20428) (Thanks @ThomasNieto!)
 
 ### General Cmdlet Updates and Fixes

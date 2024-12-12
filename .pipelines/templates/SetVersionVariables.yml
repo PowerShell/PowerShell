@@ -72,7 +72,7 @@ steps:
     ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
 
 - powershell: |
-    Get-ChildItem -Path env:
+    Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
   displayName: Capture environment
   condition: succeededOrFailed()
   env:

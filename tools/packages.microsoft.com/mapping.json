@@ -54,6 +54,38 @@
           "channel": "preview"
       },
       {
+        "url": "azurelinux-3.0-prod-ms-oss-aarch64",
+        "distribution": [
+            "bionic"
+        ],
+        "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.aarch64.rpm",
+        "channel": "stable"
+      },
+      {
+          "url": "azurelinux-3.0-prod-ms-oss-x86_64",
+          "distribution": [
+              "bionic"
+          ],
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.x86_64.rpm",
+          "channel": "stable"
+      },
+      {
+          "url": "azurelinux-3.0-preview-ms-oss-aarch64",
+          "distribution": [
+              "bionic"
+          ],
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.aarch64.rpm",
+          "channel": "preview"
+      },
+      {
+          "url": "azurelinux-3.0-preview-ms-oss-x86_64",
+          "distribution": [
+              "bionic"
+          ],
+          "PackageFormat": "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.x86_64.rpm",
+          "channel": "preview"
+      },
+      {
           "url": "microsoft-debian-stretch-prod",
           "distribution": [
               "stretch"
@@ -89,18 +121,32 @@
           "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
       },
       {
-          "url": "microsoft-ubuntu-xenial-prod",
-          "distribution": [
-              "xenial"
-          ],
-          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-      },
-      {
-          "url": "microsoft-debian-bullseye-prod",
-          "distribution": [
-              "bullseye"
-          ],
-          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-      }
+        "url": "microsoft-ubuntu-noble-prod",
+        "distribution": [
+            "noble"
+        ],
+        "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+    },
+    {
+        "url": "microsoft-ubuntu-xenial-prod",
+        "distribution": [
+            "xenial"
+        ],
+        "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+    },
+    {
+        "url": "microsoft-debian-bullseye-prod",
+        "distribution": [
+            "bullseye"
+        ],
+        "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+    },
+    {
+      "url": "microsoft-debian-bookworm-prod",
+      "distribution": [
+          "bookworm"
+      ],
+      "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+    }
   ]
 }

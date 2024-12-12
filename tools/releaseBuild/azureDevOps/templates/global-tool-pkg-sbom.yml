@@ -43,7 +43,7 @@ steps:
     displayName: 'Create global tool NuSpec source for package.'
 
   - pwsh: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: 'Capture environment variables after Global Tool package source is created.'
 
   # NOTE: The above 'New-GlobalToolNupkgSource' task function sets the 'GlobalToolNuSpecSourcePath', 'GlobalToolPkgName',
