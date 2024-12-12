@@ -7634,7 +7634,7 @@ namespace System.Management.Automation
                 string fileName = Path.GetFileName(path);
                 if (fileName.StartsWith("about_", StringComparison.OrdinalIgnoreCase))
                 {
-                    string topicName = fileName.Substring(0, fileName.LastIndexOf(".help.txt"));
+                    string topicName = fileName.Substring(0, fileName.Length - ".help.txt".Length);
                     results.Add(new CompletionResult(topicName, topicName, CompletionResultType.ParameterValue, topicName));
                 }
             }
