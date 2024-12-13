@@ -60,9 +60,9 @@ namespace Microsoft.PowerShell.Commands
                         return s;
                     }
                 }
-                else if (o is XmlElement)
+                else if (o is XmlNode xmlNode)
                 {
-                    return ((XmlElement)o).Name;
+                    return xmlNode.Name;
                 }
                 else if (o is IEnumerable enumerable)
                 {
