@@ -1,6 +1,6 @@
 # Preview Changelog
 
-## [7.6.0-preview.1] - 2024-12-12
+## [7.6.0-preview.1] - 2024-12-13
 
 ### Breaking Changes
 
@@ -62,12 +62,14 @@
 <summary>
 
 <p>We thank the following contributors!</p>
-<p>@jshigetomi, @MartinGC94, @jborean93, @xtqqczze, @alerickson, @iSazonov, @rzippo</p>
+<p>@MartinGC94, @jborean93, @xtqqczze, @alerickson, @iSazonov, @rzippo</p>
 
 </summary>
 
 <ul>
-<li>Deploy Box Update (#24632) (Thanks @jshigetomi!)</li>
+<li>added Justin Chung to releasetools</li>
+<li>updated CL</li>
+<li>Deploy Box Update (#24632)</li>
 <li>Remove Regex use (Thanks @MartinGC94!)</li>
 <li>Improve cim ETS member inference completion (Thanks @MartinGC94!)</li>
 <li>Emit ProgressRecord in CLIXML minishell output (Thanks @jborean93!)</li>
@@ -83,7 +85,7 @@
 <li>Set <code>LangVersion</code> compiler option to <code>13.0</code> (#24617) (Thanks @xtqqczze!)</li>
 <li>Update metadata.json for PowerShell 7.5 RC1 release (#24589)</li>
 <li>Update nuget publish to use Deploy Box (#24596)</li>
-<li>Added Deploy Box Product Pathway to GitHub Release and NuGet Release Pipelines (#24583) (Thanks @jshigetomi!)</li>
+<li>Added Deploy Box Product Pathway to GitHub Release and NuGet Release Pipelines (#24583)</li>
 <li>Update machine pool for copy blob and upload buildinfo stage (#24587)</li>
 <li>Bump .NET 9 and dependencies (#24573)</li>
 <li>Bump actions/dependency-review-action from 4.3.4 to 4.4.0 (#24503)</li>
@@ -107,12 +109,12 @@
 <li>Update package references (#24414)</li>
 <li>Bump actions/checkout from 4.2.0 to 4.2.1 (#24395)</li>
 <li>Update vpack pipeline (#24281)</li>
-<li>Bring changes from v7.5.0-preview.5 Release Branch to Master (#24369) (Thanks @jshigetomi!)</li>
+<li>Bring changes from v7.5.0-preview.5 Release Branch to Master (#24369)</li>
 <li>Bump actions/checkout from 4.1.7 to 4.2.0 (#24348)</li>
 <li>Bump github/codeql-action from 3.26.8 to 3.26.10 (#24364)</li>
 <li>Bump agrc/create-reminder-action from 1.1.15 to 1.1.16 (#24375)</li>
 <li>Add <code>BaseUrl</code> to <code>buildinfo</code> json file (#24376)</li>
-<li>Update metadata.json (#24352) (Thanks @jshigetomi!)</li>
+<li>Update metadata.json (#24352)</li>
 <li>Copy to static site instead of making blob public (#24269)</li>
 <li>Update <code>Microsoft.PowerShell.PSResourceGet</code> to <code>1.1.0-preview2</code> (#24300) (Thanks @alerickson!)</li>
 <li>Bump github/codeql-action from 3.26.6 to 3.26.8 (#24325)</li>
@@ -147,14 +149,14 @@
 
 ### Documentation and Help Content
 
-- updated tpn (#24666) (Thanks @jshigetomi!)
+- updated tpn (#24666)
 - Update `HelpInfoUri` for 7.5 (#24610)
 - Update changelog for v7.4.6 release (#24496)
 - Update to the latest NOTICES file (#24259)
 - Update the changelog `preview.md` (#24213)
 - Update changelog readme with 7.4 (#24182) (Thanks @ThomasNieto!)
-- Fix markdown linting error (#24204) (Thanks @jshigetomi!)
-- Updated changelog for v7.2.23 (#24196) (Internal 32131) (Thanks @jshigetomi!)
+- Fix markdown linting error (#24204)
+- Updated changelog for v7.2.23 (#24196) (Internal 32131)
 - Update changelog and `metadata.json` for v7.4.5 release (#24183)
 - Bring 7.2 changelogs back to master (#24158)
 
