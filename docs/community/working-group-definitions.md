@@ -150,6 +150,7 @@ These modules include:
 * @jdhitsolutions
 * @TobiasPSP
 * @doctordns
+* @kilasuit
 
 ## Security
 
