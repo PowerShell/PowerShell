@@ -50,4 +50,9 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result.Count | Should -Be 1
     $result       | Should -BeExactly "one${sepChar}two${sepChar}three${sepChar}four${sepChar}five"
   }
+  It "should be able to join multiple child paths using -ChildPath" {
+    $result = Join-Path -Path 'one' -ChildPath 'two', 'three'
+    $result.Count | Should -Be 1
+    $result | Should -BeExactly "one${sepChar}two${sepChar}three"
+  }
 }
