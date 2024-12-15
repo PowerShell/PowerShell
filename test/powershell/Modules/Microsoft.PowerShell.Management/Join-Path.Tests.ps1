@@ -50,9 +50,38 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result.Count | Should -Be 1
     $result       | Should -BeExactly "one${sepChar}two${sepChar}three${sepChar}four${sepChar}five"
   }
-  It "should be able to join multiple child paths using -ChildPath" {
-    $result = Join-Path -Path 'one' -ChildPath 'two', 'three'
-    $result.Count | Should -Be 1
-    $result | Should -BeExactly "one${sepChar}two${sepChar}three"
+  It "Join-Path -Path <Path> -ChildPath <ChildPath> should return '<ExpectedResult>'" -TestCases @(
+    @{
+        Path = 'one'
+        ChildPath = 'two', 'three'
+        ExpectedResult = "one${sepChar}two${sepChar}three"
+    }
+    @{
+        Path = 'one', 'two'
+        ChildPath = 'three', 'four'
+        ExpectedResult = @(
+            "one${sepChar}three${sepChar}four"
+            "two${sepChar}three${sepChar}four"
+        )
+    }
+    @{
+        Path = 'one'
+        ChildPath = @()
+        ExpectedResult = "one${sepChar}"
+    }
+    @{
+        Path = 'one'
+        ChildPath = $null
+        ExpectedResult = "one${sepChar}"
+    }
+    @{
+        Path = 'one'
+        ChildPath = [string]::Empty
+        ExpectedResult = "one${sepChar}"
+    }
+  ) {
+    param($Path, $ChildPath, $ExpectedResult)
+    $result = Join-Path -Path $Path -ChildPath $ChildPath
+    $result | Should -BeExactly $ExpectedResult
   }
 }

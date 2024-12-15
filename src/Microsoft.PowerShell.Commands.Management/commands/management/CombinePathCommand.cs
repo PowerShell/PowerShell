@@ -32,6 +32,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         [AllowEmptyString]
+        [AllowEmptyCollection]
         public string[] ChildPath { get; set; }
 
         /// <summary>
@@ -65,9 +66,13 @@ namespace Microsoft.PowerShell.Commands
                 "Since Path is a mandatory parameter, paths should never be null");
 
             string combinedChildPath = string.Empty;
-            foreach (string childPath in ChildPath)
+            
+            if (ChildPath != null)
             {
-                combinedChildPath = SessionState.Path.Combine(combinedChildPath, childPath, CmdletProviderContext);
+                foreach (string childPath in ChildPath)
+                {
+                    combinedChildPath = SessionState.Path.Combine(combinedChildPath, childPath, CmdletProviderContext);
+                }
             }
 
             // join the ChildPath elements
