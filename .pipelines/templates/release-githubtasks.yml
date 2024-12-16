@@ -63,6 +63,7 @@ jobs:
       pwsh: true
       script: |
         Import-module '$(Pipeline.Workspace)/ToolArtifact/GitHubRelease.psm1'
+        $releaseVersion = '$(ReleaseTag)' -replace '^v',''
         Write-Verbose -Verbose "Available modules: "
         Get-Module | Write-Verbose -Verbose
 
