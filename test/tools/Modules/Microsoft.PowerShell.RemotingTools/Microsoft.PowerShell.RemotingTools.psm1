@@ -11,6 +11,7 @@ class PlatformInfo
     [bool] $isLinux
     [bool] $isOSX
     [bool] $isWindows
+    [bool] $isFreeBSD
 
     [bool] $isAdmin
 
@@ -41,13 +42,16 @@ function DetectPlatform
         $platformInfo.isLinux = $Runtime::IsOSPlatform($OSPlatform::Linux)
         $platformInfo.isOSX = $Runtime::IsOSPlatform($OSPlatform::OSX)
         $platformInfo.isWindows = $Runtime::IsOSPlatform($OSPlatform::Windows)
+        $platformInfo.isFreeBSD = $Runtime::IsOSPlatform($OSPlatform::FreeBSD)
     }
     catch
     {
         $platformInfo.isCoreCLR = $false
         $platformInfo.isLinux = $false
         $platformInfo.isOSX = $false
+        $platformInfo.isFreeBSD = $false
         $platformInfo.isWindows = $true
+
     }
 
     if ($platformInfo.isWindows)
@@ -390,7 +394,7 @@ function Enable-SSHRemoting
     {
         $SSHDFound = $null -ne (Get-Service -Name sshd -ErrorAction SilentlyContinue)
     }
-    elseif ($platformInfo.IsLinux)
+    elseif ($platformInfo.IsLinux -or $IsFreeBSD)
     {
         $sshdStatus = sudo service ssh status
         $SSHDFound = $null -ne $sshdStatus
@@ -414,7 +418,7 @@ function Enable-SSHRemoting
         {
             $SSHDConfigFilePath = Join-Path -Path $env:ProgramData -ChildPath 'ssh' -AdditionalChildPath 'sshd_config'
         }
-        elseif ($platformInfo.isLinux)
+        elseif ($platformInfo.isLinux -or $platformInfo.isFreeBSD)
         {
             $SSHDConfigFilePath = '/etc/ssh/sshd_config'
         }

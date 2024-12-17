@@ -275,7 +275,8 @@ Categories=Application;
         }
     }
 
-    It "Should open text file without error" -Skip:(!$supportedEnvironment) {
+    It "Should open text file without error" -Skip:(!$supportedEnvironment -or $IsFreeBSD) {
+        #FreeBSD requires `xdg-mime` to be installed
         if ($IsMacOS) {
             Set-TestInconclusive -Message "AppleScript is not currently reliable on Az Pipelines"
             $expectedTitle = Split-Path $TestFile -Leaf
