@@ -322,6 +322,8 @@ namespace System.Management.Automation
 
         #endregion EvaluatePowerShellDataFile
 
+        internal static readonly string[] ManifestPowerShellAndModuleVersionPropertyNames = new[] { "PowerShellVersion", "ModuleVersion" };
+
         internal static readonly string[] ManifestModuleVersionPropertyName = new[] { "ModuleVersion" };
         internal static readonly string[] ManifestGuidPropertyName = new[] { "GUID" };
         internal static readonly string[] ManifestPrivateDataPropertyName = new[] { "PrivateData" };
