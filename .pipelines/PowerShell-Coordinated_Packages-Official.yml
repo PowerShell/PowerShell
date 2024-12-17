@@ -1,4 +1,4 @@
-name: UnifiedPackageBuild-$(Build.BuildId)
+name: UnifiedPackageBuild-$(BUILD.SOURCEBRANCHNAME)-$(Build.BuildId)
 trigger: none
 
 parameters:
@@ -11,9 +11,25 @@ parameters:
     type: string
     default: 'fromBranch'
   - name: SKIP_SIGNING
-    displayName: Skip Signing
+    displayName: Debugging - Skip Signing
     type: string
     default: 'NO'
+  - name: RUN_TEST_AND_RELEASE
+    displayName: Debugging - Run Test and Release Artifacts Stage
+    type: boolean
+    default: true
+  - name: RUN_WINDOWS
+    displayName: Debugging - Enable Windows Stage
+    type: boolean
+    default: true
+  - name: ENABLE_MSBUILD_BINLOGS
+    displayName: Debugging - Enable MSBuild Binary Logs
+    type: boolean
+    default: false
+  - name: FORCE_CODEQL
+    displayName: Debugging - Enable CodeQL and set cadence to 1 hour
+    type: boolean
+    default: false
 
 resources:
   repositories:
@@ -58,13 +74,30 @@ variables:
     value: ${{ parameters.ReleaseTagVar }}
   - name: SKIP_SIGNING
     value: ${{ parameters.SKIP_SIGNING }}
-  - group: 'AzDevOpsArtifacts'
-  - group: 'mscodehub-feed-read-akv'
+  - group: mscodehub-feed-read-general
+  - group: mscodehub-feed-read-akv
+  - name: ENABLE_MSBUILD_BINLOGS
+    value: ${{ parameters.ENABLE_MSBUILD_BINLOGS }}
+  - ${{ if eq(parameters['FORCE_CODEQL'],'true') }}:
+    # Cadence is hours before CodeQL will allow a re-upload of the database
+    - name: CodeQL.Cadence
+      value: 1
+  - name: CODEQL_ENABLED
+    ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(parameters['FORCE_CODEQL'],'true')) }}:
+      value: true
+    ${{ else }}:
+      value: false
+
 
 extends:
   template: v2/OneBranch.Official.CrossPlat.yml@onebranchTemplates
   parameters:
     customTags: 'ES365AIMigrationTooling'
+    featureFlags:
+      LinuxHostVersion:
+          Network: KS3
+      WindowsHostVersion:
+          Network: KS3
     globalSdl:
       disableLegacyManifest: true
       # disabled Armorty as we dont have any ARM templates to scan. It fails on some sample ARM templates.
@@ -72,11 +105,10 @@ extends:
         enabled: false
       sbom:
         enabled: true
-      compiled:
-        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-          enabled: true
-        ${{ else }}:
-          enabled: false
+      codeql:
+        compiled:
+          enabled: $(CODEQL_ENABLED)
+        tsaEnabled: true # This enables TSA bug filing only for CodeQL 3000
       credscan:
         enabled: true
         scanFolder:  $(Build.SourcesDirectory)
@@ -86,7 +118,7 @@ extends:
         ignoreDirectories: '.devcontainer,demos,docker,docs,src,test,tools/packaging'
       asyncSdl:
         enabled: true
-        forStages: [prep, macos, linux, windows, SignFiles, test_and_release_artifacts]
+        forStages: [prep, macos, linux, windows, test_and_release_artifacts]
         credscan:
           enabled: true
           scanFolder:  $(Build.SourcesDirectory)
@@ -107,15 +139,18 @@ extends:
           type: windows
 
         variables:
-          - name: ob_sdl_tsa_configFile
-            value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
-          - name: ob_sdl_credscan_suppressionsFile
-            value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
-          - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-            - name: ob_sdl_codeql_compiled_enabled
-              value: true
           - name: ob_outputDirectory
             value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT/BuildJson'
+          - name: ob_sdl_codeSignValidation_enabled
+            value: false
+          - name: ob_sdl_codeql_compiled_enabled
+            value: false
+          - name: ob_sdl_credscan_suppressionsFile
+            value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+          - name: ob_sdl_tsa_configFile
+            value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+          - name: ob_signing_setup_enabled
+            value: false
 
         steps:
         - checkout: self
@@ -124,8 +159,10 @@ extends:
             ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
         - pwsh: |
-            Get-ChildItem Env:
+            Get-ChildItem Env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
           displayName: Capture environment variables
+          env:
+            ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
 
         - template: /.pipelines/templates/SetVersionVariables.yml@self
           parameters:
@@ -197,6 +234,7 @@ extends:
     - stage: windows
       displayName: windows - build and sign
       dependsOn: ['prep']
+      condition: and(succeeded(),eq('${{ parameters.RUN_WINDOWS }}','true'))
       jobs:
       - template: /.pipelines/templates/windows-hosted-build.yml@self
         parameters:
@@ -228,6 +266,7 @@ extends:
     - stage: test_and_release_artifacts
       displayName: Test and Release Artifacts
       dependsOn: ['prep']
+      condition: and(succeeded(),eq('${{ parameters.RUN_TEST_AND_RELEASE }}','true'))
       jobs:
       - template: /.pipelines/templates/testartifacts.yml@self
 
