@@ -28,6 +28,41 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'notepad.exe'
     }
 
+    It 'Should not include duplicate command results' {
+        $OldModulePath = $env:PSModulePath
+        $tempDir = Join-Path -Path $TestDrive -ChildPath "TempPsModuleDir"
+        try
+        {
+            $ModuleDirs = @(
+                Join-Path $tempDir "TestModule1\1.0"
+                Join-Path $tempDir "TestModule1\1.1"
+                Join-Path $tempDir "TestModule2\1.0"
+            )
+            foreach ($Dir in $ModuleDirs)
+            {
+                $NewDir = New-Item -Path $Dir -ItemType Directory -Force
+                $ModuleName = $NewDir.Parent.Name
+                Set-Content -Value 'MyTestFunction{}' -LiteralPath "$($NewDir.FullName)\$ModuleName.psm1"
+                New-ModuleManifest -Path "$($NewDir.FullName)\$ModuleName.psd1" -RootModule "$ModuleName.psm1" -FunctionsToExport "MyTestFunction" -ModuleVersion $NewDir.Name
+            }
+
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $tempDir            
+            $Res = TabExpansion2 -inputScript MyTestFunction
+            $Res.CompletionMatches.Count | Should -Be 2
+            $SortedMatches = $Res.CompletionMatches.CompletionText | Sort-Object
+            $SortedMatches[0] | Should -Be "TestModule1\MyTestFunction"
+            $SortedMatches[1] | Should -Be "TestModule2\MyTestFunction"
+        }
+        finally
+        {
+            $env:PSModulePath = $OldModulePath
+            if (Test-Path -LiteralPath $tempDir)
+            {
+                Remove-Item $tempDir -Recurse -Force
+            }
+        }
+    }
+
     It 'Should complete dotnet method' {
         $res = TabExpansion2 -inputScript '(1).ToSt' -cursorColumn '(1).ToSt'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
