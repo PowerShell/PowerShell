@@ -141,6 +141,28 @@ namespace Microsoft.PowerShell.Commands
         private bool _isModuleSpecified = false;
 
         /// <summary>
+        /// Gets or sets the ExcludeModule parameter to the cmdlet.
+        /// </summary>
+        [Parameter()]
+        public string[] ExcludeModule
+        {
+            get
+            {
+                return _excludedModules;
+            }
+
+            set
+            {
+                value ??= Array.Empty<string>();
+
+                _excludedModules = value;
+                _excludedModulePatterns = null;
+            }
+        }
+
+        private string[] _excludedModules = Array.Empty<string>();
+
+        /// <summary>
         /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -404,6 +426,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Initialize the module patterns
             _modulePatterns ??= SessionStateUtilities.CreateWildcardsFromStrings(Module, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+            _excludedModulePatterns ??= SessionStateUtilities.CreateWildcardsFromStrings(ExcludeModule, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
             switch (ParameterSetName)
             {
@@ -702,6 +725,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!string.IsNullOrEmpty(command.ModuleName))
                 {
+                    if (_excludedModulePatterns is not null
+                        && _excludedModulePatterns.Count > 0
+                        && SessionStateUtilities.MatchesAnyWildcardPattern(command.ModuleName, _excludedModulePatterns, true))
+                    {
+                        break;
+                    }
+
                     if (_isFullyQualifiedModuleSpecified)
                     {
                         if (!_moduleSpecifications.Any(
@@ -1271,6 +1301,13 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
+                    if (_excludedModulePatterns is not null
+                        && _excludedModulePatterns.Count > 0
+                        && SessionStateUtilities.MatchesAnyWildcardPattern(current.ModuleName, _excludedModulePatterns, true))
+                    {
+                        return false;
+                    }
+
                     if (_isFullyQualifiedModuleSpecified)
                     {
                         bool foundModuleMatch = false;
@@ -1530,6 +1567,7 @@ namespace Microsoft.PowerShell.Commands
         private Collection<WildcardPattern> _verbPatterns;
         private Collection<WildcardPattern> _nounPatterns;
         private Collection<WildcardPattern> _modulePatterns;
+        private Collection<WildcardPattern> _excludedModulePatterns;
 
 #if LEGACYTELEMETRY
         private Stopwatch _timer = new Stopwatch();
