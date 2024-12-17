@@ -96,7 +96,7 @@ jobs:
         azurePowerShellVersion: LatestVersion
         pwsh: true
         inline: |
-          $containerName = '$(AzureVersion)-private'
+          $containerName = '$(OutputVersion.AzureVersion)-private'
           $storageAccount = '$(StorageAccount)'
 
           $storageContext = New-AzStorageContext -StorageAccountName $storageAccount -UseConnectedAccount
