@@ -120,7 +120,7 @@ jobs:
       $refAssemblyFolder = Join-Path '$(System.ArtifactsDirectory)' 'RefAssembly'
       $null = New-Item -Path $refAssemblyFolder -Force -Verbose -Type Directory
 
-      Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release
+      Start-PSBuild -Clean -Runtime linux-x64 -Configuration Release -ReleaseTag $(ReleaseTagVar)
 
       $sharedModules | Foreach-Object {
         $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net9.0\refint\$_.dll"
@@ -136,7 +136,7 @@ jobs:
         }
       }
 
-      Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release
+      Start-PSBuild -Clean -Runtime win7-x64 -Configuration Release -ReleaseTag $(ReleaseTagVar)
 
       $winOnlyModules | Foreach-Object {
         $refFile = Get-ChildItem -Path "$(PowerShellRoot)\src\$_\obj\Release\net9.0\refint\*.dll"
