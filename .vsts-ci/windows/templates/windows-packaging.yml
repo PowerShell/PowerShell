@@ -38,7 +38,7 @@ jobs:
     path: $(complianceRepoFolder)
 
   - powershell: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture environment
     condition: succeededOrFailed()
 
@@ -49,6 +49,13 @@ jobs:
 
 
   - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Switch-PSNugetConfig -Source Public
+    displayName: Switch to public feeds
+    condition: succeeded()
+    workingDirectory: $(repoPath)
 
   - pwsh: |
       Import-Module .\tools\ci.psm1

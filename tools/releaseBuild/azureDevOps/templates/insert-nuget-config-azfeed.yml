@@ -1,38 +1,8 @@
 parameters:
-  - name: "repoRoot"
-    default: $(REPOROOT)
-
+- name: "repoRoot"
+  default: $(REPOROOT)
 steps:
-- pwsh: |
-      $configPath = "${env:NugetConfigDir}/nuget.config"
-      Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
+  - template: /.pipelines/templates/insert-nuget-config-azfeed.yml@self
+    parameters:
+      repoRoot: $(REPOROOT)
 
-      if(-not (Test-Path $configPath))
-      {
-          throw "nuget.config is not created"
-      }
-      Get-Content $configPath | Write-Verbose -Verbose
-  displayName: 'Add nuget.config for Azure DevOps feed for PSGallery modules'
-  condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
-  env:
-    NugetConfigDir: ${{ parameters.repoRoot }}/src/Modules
-
-- pwsh: |
-      $configPath = "${env:NugetConfigDir}/nuget.config"
-      Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination "${env:NugetConfigDir}"
-
-      if(-not (Test-Path $configPath))
-      {
-          throw "nuget.config is not created"
-      }
-      Get-Content $configPath | Write-Verbose -Verbose
-  displayName: 'Add nuget.config for Azure DevOps feed for packages'
-  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
-  env:
-    NugetConfigDir: ${{ parameters.repoRoot }}
-
-- task: nuget-security-analysis@0
-  displayName: 'Run Secure Supply Chain analysis'
-  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''), ne(variables['AzDevOpsFeed'], ''))

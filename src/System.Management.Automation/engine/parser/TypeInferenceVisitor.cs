@@ -195,7 +195,25 @@ namespace System.Management.Automation
                 // Look in the type table first.
                 if (!isStatic)
                 {
-                    var consolidatedString = new ConsolidatedString(new[] { typename.Name });
+                    // The Ciminstance type adapter adds the full typename with and without a namespace to the list of type names.
+                    // So if we see one with a full typename we need to also get the types for the short version.
+                    // For example: "CimInstance#root/standardcimv2/MSFT_NetFirewallRule" and "CimInstance#MSFT_NetFirewallRule"
+                    int namespaceSeparator = typename.Name.LastIndexOf('/');
+                    ConsolidatedString consolidatedString;
+                    if (namespaceSeparator != -1
+                        && typename.Name.StartsWith("Microsoft.Management.Infrastructure.CimInstance#", StringComparison.OrdinalIgnoreCase))
+                    {
+                        consolidatedString = new ConsolidatedString(new[]
+                        {
+                            typename.Name,
+                            string.Concat("Microsoft.Management.Infrastructure.CimInstance#", typename.Name.AsSpan(namespaceSeparator + 1))
+                        });
+                    }
+                    else
+                    {
+                        consolidatedString = new ConsolidatedString(new[] { typename.Name });
+                    }
+
                     results.AddRange(ExecutionContext.TypeTable.GetMembers<PSMemberInfo>(consolidatedString));
                 }
 
@@ -584,6 +602,20 @@ namespace System.Management.Automation
             if (hashtableAst.KeyValuePairs.Count > 0)
             {
                 var properties = new List<PSMemberNameAndType>();
+                void AddInferredTypes(Ast ast, string keyName)
+                {
+                    bool foundAnyTypes = false;
+                    foreach (PSTypeName item in InferTypes(ast))
+                    {
+                        foundAnyTypes = true;
+                        properties.Add(new PSMemberNameAndType(keyName, item));
+                    }
+
+                    if (!foundAnyTypes)
+                    {
+                        properties.Add(new PSMemberNameAndType(keyName, new PSTypeName("System.Object")));
+                    }
+                }
 
                 foreach (var kv in hashtableAst.KeyValuePairs)
                 {
@@ -615,31 +647,18 @@ namespace System.Management.Automation
                                 _ = SafeExprEvaluator.TrySafeEval(expression, _context.ExecutionContext, out value);
                             }
 
-                            PSTypeName valueType;
                             if (value is null)
                             {
-                                valueType = new PSTypeName("System.Object");
-                            }
-                            else
-                            {
-                                valueType = new PSTypeName(value.GetType());
+                                AddInferredTypes(expression, name);
+                                continue;
                             }
 
+                            PSTypeName valueType = new(value.GetType());
                             properties.Add(new PSMemberNameAndType(name, valueType, value));
                         }
                         else
                         {
-                            bool foundAnyTypes = false;
-                            foreach (var item in InferTypes(kv.Item2))
-                            {
-                                foundAnyTypes = true;
-                                properties.Add(new PSMemberNameAndType(name, item));
-                            }
-
-                            if (!foundAnyTypes)
-                            {
-                                properties.Add(new PSMemberNameAndType(name, new PSTypeName("System.Object")));
-                            }
+                            AddInferredTypes(kv.Item2, name);
                         }
                     }
                 }
@@ -1639,7 +1658,7 @@ namespace System.Management.Automation
             var memberNameList = new List<string> { memberAsStringConst.Value };
             foreach (var type in exprType)
             {
-                if (type.Type == typeof(PSObject))
+                if (type.Type == typeof(PSObject) && type is not PSSyntheticTypeName)
                 {
                     continue;
                 }
@@ -1983,8 +2002,19 @@ namespace System.Management.Automation
                     {
                         if (switchErrorStatement.Conditions?.Count > 0)
                         {
-                            parent = switchErrorStatement.Conditions[0];
+                            if (switchErrorStatement.Conditions[0].Extent.EndOffset < variableExpressionAst.Extent.StartOffset)
+                            {
+                                parent = switchErrorStatement.Conditions[0];
+                                break;
+                            }
+                            else
+                            {
+                                // $_ is inside the condition that is being declared, eg: Get-Process | Sort-Object -Property {switch ($_.Proc<Tab>
+                                parent = switchErrorStatement.Parent;
+                                continue;
+                            }
                         }
+
                         break;
                     }
                     else if (parent is ScriptBlockExpressionAst)

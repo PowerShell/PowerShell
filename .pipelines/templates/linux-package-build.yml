@@ -1,0 +1,185 @@
+parameters:
+  unsignedDrop: 'drop_linux_build_linux_x64'
+  signedeDrop: 'drop_linux_sign_linux_x64'
+  packageType: deb
+  jobName: 'deb'
+  signingProfile: 'CP-450779-pgpdetached'
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: Package linux ${{ parameters.packageType }}
+  condition: succeeded()
+  pool:
+    type: linux
+
+  variables:
+    - name: runCodesignValidationInjection
+      value: false
+    - name: nugetMultiFeedWarnLevel
+      value: none
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - name: skipNugetSecurityAnalysis
+      value: true
+    - group: DotNetPrivateBuildAccess
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_binskim_enabled
+      value: true
+    - name: PackageType
+      value: ${{ parameters.packageType }}
+    - name: signedDrop
+      value: ${{ parameters.signedDrop }}
+    - name: unsignedDrop
+      value: ${{ parameters.unsignedDrop }}
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)/PowerShell/.config/tsaoptions.json
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)/PowerShell/.config/suppress.json
+    - name: SigningProfile
+      value: ${{ parameters.signingProfile }}
+
+  steps:
+  - checkout: self
+    clean: true
+    env:
+      ob_restore_phase: true # This ensures checkout is done at the beginning of the restore phase
+
+  - pwsh: |
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+    displayName: Capture environment
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
+  - template: SetVersionVariables.yml@self
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: yes
+      UseJson: no
+
+  - template: shouldSign.yml
+
+  - template: cloneToOfficialPath.yml
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: ${{ parameters.unsignedDrop }}
+    displayName: 'Download unsigned artifacts'
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
+  - download: CoOrdinatedBuildPipeline
+    artifact: ${{ parameters.signedDrop }}
+    displayName: 'Download signed artifacts'
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
+  - pwsh: |
+      Write-Verbose -Verbose "Unsigned artifacts"
+      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${{ parameters.unsignedDrop }}" -Recurse
+
+      Write-Verbose -Verbose "Signed artifacts"
+      Get-ChildItem "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${{ parameters.signedDrop }}" -Recurse
+    displayName: 'Capture Downloaded Artifacts'
+    # Diagnostics is not critical it passes every time it runs
+    continueOnError: true
+    env:
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
+  - pwsh: |
+      $packageType = '$(PackageType)'
+      Write-Verbose -Verbose "packageType = $packageType"
+
+      $signedDrop = '$(signedDrop)'
+      Write-Verbose -Verbose "signedDrop = $signedDrop"
+
+      $unsignedDrop = '$(unsignedDrop)'
+      Write-Verbose -Verbose "unsignedDrop = $unsignedDrop"
+
+      Write-Verbose -Message "Init..." -Verbose
+
+      $repoRoot = "$env:REPOROOT"
+      Import-Module "$repoRoot/build.psm1"
+      Import-Module "$repoRoot/tools/packaging"
+
+      Start-PSBootstrap -Package
+
+      $psOptionsPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${unsignedDrop}/psoptions/psoptions.json"
+
+      if (-not (Test-Path $psOptionsPath)) {
+        throw "psOptionsPath file not found at $psOptionsPath"
+      }
+
+      Restore-PSOptions $psOptionsPath
+      Write-Verbose -Message "Restoring PSOptions from $psoptionsFilePath" -Verbose
+      Get-PSOptions | Write-Verbose -Verbose
+
+      $signedFolder, $pkgFilter = switch ($packageType) {
+        'tar-arm' { 'Signed-linux-arm', 'powershell*.tar.gz' }
+        'tar-arm64' { 'Signed-linux-arm64', 'powershell*.tar.gz' }
+        'tar-alpine' { 'Signed-linux-musl-x64', 'powershell*.tar.gz' }
+        'fxdependent' { 'Signed-fxdependent', 'powershell*.tar.gz' }
+        'tar' { 'Signed-linux-x64', 'powershell*.tar.gz' }
+        'tar-alpine-fxdependent' { 'Signed-fxdependent-noopt-linux-musl-x64', 'powershell*.tar.gz' }
+        'deb' { 'Signed-linux-x64', 'powershell*.deb' }
+        'rpm-fxdependent' { 'Signed-fxdependent-linux-x64', 'powershell*.rpm' }
+        'rpm-fxdependent-arm64' { 'Signed-fxdependent-linux-arm64', 'powershell*.rpm' }
+        'rpm' { 'Signed-linux-x64', 'powershell*.rpm' }
+        'min-size' { 'Signed-linux-x64', 'powershell*.tar.gz' }
+      }
+
+      $signedFilesPath = "$(Pipeline.Workspace)/CoOrdinatedBuildPipeline/${signedDrop}/${signedFolder}"
+      Write-Verbose -Verbose "signedFilesPath: $signedFilesPath"
+
+      Write-Verbose -Message "checking pwsh exists in $signedFilesPath" -Verbose
+      if (-not (Test-Path "$signedFilesPath/pwsh")) {
+        throw "pwsh not found in $signedFilesPath"
+      }
+
+      $metadata = Get-Content "$repoRoot/tools/metadata.json" -Raw | ConvertFrom-Json
+      $LTS = $metadata.LTSRelease.Package
+
+      if ($LTS) {
+        Write-Verbose -Message "LTS Release: $LTS"
+      }
+
+      if (-not (Test-Path $(ob_outputDirectory))) {
+        New-Item -ItemType Directory -Path $(ob_outputDirectory) -Force
+      }
+
+      $packageType = '$(PackageType)'
+      Write-Verbose -Verbose "packageType = $packageType"
+
+      Start-PSPackage -Type $packageType -ReleaseTag $(ReleaseTagVar) -PackageBinPath $signedFilesPath
+
+      $vstsCommandString = "vso[task.setvariable variable=PackageFilter]$pkgFilter"
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
+    displayName: 'Package ${{ parameters.packageType}}'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+      ob_restore_phase: true # This ensures this done in restore phase to workaround signing issue
+
+  - task: onebranch.pipeline.signing@1
+    displayName: Sign deb and rpm packages
+    inputs:
+      command: 'sign'
+      signing_profile: '$(SigningProfile)'
+      files_to_sign: '**/*.rpm;**/*.deb'
+      search_root: '$(Pipeline.Workspace)'
+
+  - pwsh: |
+      $pkgFilter = '$(PackageFilter)'
+      Write-Verbose -Verbose "pkgFilter: $pkgFilter"
+
+      $pkgPath = Get-ChildItem -Path $(Pipeline.Workspace) -Filter $pkgFilter -Recurse -File | Select-Object -ExpandProperty FullName
+      Write-Verbose -Verbose "pkgPath: $pkgPath"
+      Copy-Item -Path $pkgPath -Destination '$(ob_outputDirectory)' -Force -Verbose
+    displayName: 'Copy artifacts to output directory'
+    env:
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+  - pwsh: |
+      Get-ChildItem -Path $(ob_outputDirectory) -Recurse
+    displayName: 'List artifacts'
