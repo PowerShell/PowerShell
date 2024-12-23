@@ -1331,13 +1331,6 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(record != null, "WriteProgress called with null ProgressRecord");
 
-            if (Console.IsOutputRedirected)
-            {
-                // Do not write progress bar when the stdout is redirected.
-                return;
-            }
-
-            // We allow only one thread at a time to update the progress state.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
                 PSObject obj = new PSObject();
@@ -1345,8 +1338,14 @@ namespace Microsoft.PowerShell
                 obj.Properties.Add(new PSNoteProperty("Record", record));
                 _parent.ErrorSerializer.Serialize(obj, "progress");
             }
+            else if (Console.IsOutputRedirected)
+            {
+                // Do not write progress bar when the stdout is redirected.
+                return;
+            }
             else
             {
+                // We allow only one thread at a time to update the progress state.)
                 lock (_instanceLock)
                 {
                     HandleIncomingProgressRecord(sourceId, record);

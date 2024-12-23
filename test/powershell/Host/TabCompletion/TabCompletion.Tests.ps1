@@ -79,6 +79,21 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '$CurrentItem'
     }
 
+    It 'Should not complete parameter name' {
+        $res = TabExpansion2 -inputScript 'param($P'
+        $res.CompletionMatches.Count | Should -Be 0
+    }
+
+    It 'Should complete variable in default value of a parameter' {
+        $res = TabExpansion2 -inputScript 'param($PS = $P'
+        $res.CompletionMatches.Count | Should -BeGreaterThan 0
+    }
+
+    It 'Should not complete property name in class definition' {
+        $res = TabExpansion2 -inputScript 'class X {$P'
+        $res.CompletionMatches.Count | Should -Be 0
+    }
+
     foreach ($Operator in [System.Management.Automation.CompletionCompleters]::CompleteOperator(""))
     {
         It "Should complete $($Operator.CompletionText)" {
@@ -655,6 +670,11 @@ ConstructorTestClass(int i, bool b)
         $TestString = 'function Test-ValidateSet{Param([ValidateSet("Cat","Dog")]$Param1,$Param2)};Test-ValidateSet -Param1 Dog, -Param2'
         $res = TabExpansion2 -inputScript $TestString -cursorColumn ($TestString.LastIndexOf(',') + 1)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
+    }
+
+    It 'Should complete cim ETS member added by shortname' -Skip:(!$IsWindows -or (Test-IsWinServer2012R2) -or (Test-IsWindows2016)) {
+        $res = TabExpansion2 -inputScript '(Get-NetFirewallRule).Nam'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Name'
     }
 
     It 'Should complete variable assigned with Data statement' {
@@ -1394,12 +1414,16 @@ class InheritedClassTest : System.Attribute
             $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
         }
 
-        It "Should keep '~' in completiontext when it's used to refer to home in input" {
+        It "Should handle '~' in completiontext when it's used to refer to home in input" {
             $res = TabExpansion2 -inputScript "~$separator"
             # select the first answer which does not have a space in the completion (those completions look like & '3D Objects')
             $observedResult = $res.CompletionMatches.Where({$_.CompletionText.IndexOf("&") -eq -1})[0].CompletionText
             $completedText = $res.CompletionMatches.CompletionText -join ","
-            $observedResult | Should -BeLike "~$separator*" -Because "$completedText"
+            if ($IsWindows) {
+                $observedResult | Should -BeLike "$home$separator*" -Because "$completedText"
+            } else {
+                $observedResult | Should -BeLike "~$separator*" -Because "$completedText"
+            }
         }
 
         It "Should use '~' as relative filter text when not followed by separator" {
@@ -1858,6 +1882,11 @@ class InheritedClassTest : System.Attribute
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Black' # 0 = NonPositive
+        }
+
+        It 'Tab completion of $_ inside incomplete switch condition' {
+            $res = TabExpansion2 -inputScript 'Get-PSDrive | Sort-Object -Property {switch ($_.nam'
+            $res.CompletionMatches[0].CompletionText | Should -Be 'Name'
         }
 
         It "Test [CommandCompletion]::GetNextResult" {

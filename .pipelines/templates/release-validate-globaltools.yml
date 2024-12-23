@@ -1,0 +1,157 @@
+parameters:
+  jobName: ""
+  displayName: ""
+  jobtype: "windows"
+  globalToolExeName: 'pwsh.exe'
+  globalToolPackageName: 'PowerShell.Windows.x64'
+
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: ${{ parameters.displayName }}
+  pool:
+    type: ${{ parameters.jobtype }}
+  variables:
+    - group: DotNetPrivateBuildAccess
+    - name: ob_outputDirectory
+      value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+    - name: ob_sdl_credscan_suppressionsFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+    - name: ob_sdl_tsa_configFile
+      value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+
+  steps:
+    - checkout: self
+      clean: true
+
+    - template: release-SetReleaseTagandContainerName.yml@self
+
+    - download: PSPackagesOfficial
+      artifact: drop_nupkg_build_nupkg
+      displayName: Download nupkgs
+
+    - pwsh: |
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      displayName: Capture environment
+
+    - pwsh: |
+        Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/drop_nupkg_build_nupkg" -Recurse
+      displayName: 'Capture Downloaded Artifacts'
+
+    - pwsh: |
+        $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
+        $dotnetMetadataPath = "$repoRoot/DotnetRuntimeMetadata.json"
+        $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
+
+        # Channel is like: $Channel = "5.0.1xx-preview2"
+        $Channel = $dotnetMetadataJson.sdk.channel
+
+        $sdkVersion = (Get-Content "$repoRoot/global.json" -Raw | ConvertFrom-Json).sdk.version
+        Import-Module "$repoRoot/build.psm1" -Force
+
+        Find-Dotnet
+
+        if(-not (Get-PackageSource -Name 'dotnet' -ErrorAction SilentlyContinue))
+        {
+            $nugetFeed = ([xml](Get-Content $repoRoot/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet' } | Select-Object -ExpandProperty Value
+            if ($nugetFeed) {
+              Register-PackageSource -Name 'dotnet' -Location $nugetFeed -ProviderName NuGet
+              Write-Verbose -Message "Register new package source 'dotnet'" -verbose
+            }
+        }
+
+        ## Install latest version from the channel
+
+        #Install-Dotnet -Channel "$Channel" -Version $sdkVersion
+        Start-PSBootstrap
+
+        Write-Verbose -Message "Installing .NET SDK completed." -Verbose
+
+      displayName: Install .NET
+      env:
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+    - pwsh: |
+        $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
+        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+        Import-Module "$repoRoot/build.psm1" -Force
+        Start-PSBootstrap
+
+        $toolPath = New-Item -ItemType Directory "$(System.DefaultWorkingDirectory)/toolPath" | Select-Object -ExpandProperty FullName
+
+        Write-Verbose -Verbose "dotnet tool list -g"
+        dotnet tool list -g
+
+        $packageName = '${{ parameters.globalToolPackageName }}'
+        Write-Verbose -Verbose "Installing $packageName"
+
+        dotnet tool install --add-source "$ENV:PIPELINE_WORKSPACE/PSPackagesOfficial/drop_nupkg_build_nupkg" --tool-path $toolPath --version '$(Version)' $packageName
+
+        Get-ChildItem -Path $toolPath
+
+      displayName: Install global tool
+      env:
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+    - pwsh: |
+        $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/${{ parameters.globalToolExeName }}"
+
+        if (-not (Test-Path $toolPath))
+        {
+            throw "Tool is not installed at $toolPath"
+        }
+        else
+        {
+            Write-Verbose -Verbose "Tool found at: $toolPath"
+        }
+      displayName: Validate tool is installed
+
+    - pwsh: |
+        $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
+        Import-Module "$repoRoot/build.psm1" -Force
+        Start-PSBootstrap
+
+        $exeName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
+
+        $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/${{ parameters.globalToolExeName }}"
+
+        $source = (get-command -Type Application -Name dotnet | Select-Object -First 1 -ExpandProperty source)
+        $target = (Get-ChildItem $source).target
+
+        # If we find a symbolic link for dotnet, then we need to split the filename off the target.
+        if ($target) {
+          Write-Verbose -Verbose "Splitting target: $target"
+          $target = Split-Path $target
+        }
+
+        Write-Verbose -Verbose "target is set as $target"
+
+        $env:DOTNET_ROOT = (resolve-path -Path (Join-Path (split-path $source) $target)).ProviderPath
+
+        Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
+        Get-ChildItem $env:DOTNET_ROOT
+
+        $versionFound = & $toolPath -c '$PSVersionTable.PSVersion.ToString()'
+
+        if ( '$(Version)' -ne $versionFound)
+        {
+            throw "Expected version of global tool not found. Installed version is $versionFound"
+        }
+        else
+        {
+            write-verbose -verbose "Found expected version: $versionFound"
+        }
+
+        $dateYear = & $toolPath -c '(Get-Date).Year'
+
+        if ( $dateYear -ne [DateTime]::Now.Year)
+        {
+            throw "Get-Date returned incorrect year: $dateYear"
+        }
+        else
+        {
+            write-verbose -verbose "Got expected year: $dateYear"
+        }
+      displayName: Basic validation
+      env:
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)

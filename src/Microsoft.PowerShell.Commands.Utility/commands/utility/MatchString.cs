@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the number of the matching line.
         /// </summary>
         /// <value>The number of the matching line.</value>
-        public int LineNumber { get; set; }
+        public ulong LineNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the text of the matching line.
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
             // Otherwise, render the full context.
             List<string> lines = new(Context.DisplayPreContext.Length + Context.DisplayPostContext.Length + 1);
 
-            int displayLineNumber = this.LineNumber - Context.DisplayPreContext.Length;
+            ulong displayLineNumber = this.LineNumber - (ulong)Context.DisplayPreContext.Length;
             foreach (string contextLine in Context.DisplayPreContext)
             {
                 lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="displayPath">The file path, formatted for display.</param>
         /// <param name="prefix">The match prefix.</param>
         /// <returns>The formatted line as a string.</returns>
-        private string FormatLine(string lineStr, int displayLineNumber, string displayPath, string prefix)
+        private string FormatLine(string lineStr, ulong displayLineNumber, string displayPath, string prefix)
         {
             return _pathSet
                        ? StringUtil.Format(MatchFormat, prefix, displayPath, displayLineNumber, lineStr)
@@ -1417,7 +1417,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private bool _doneProcessing;
 
-        private int _inputRecordNumber;
+        private ulong _inputRecordNumber;
 
         /// <summary>
         /// Read command line parameters.
@@ -1595,7 +1595,7 @@ namespace Microsoft.PowerShell.Commands
                     using (StreamReader sr = new(fs, Encoding))
                     {
                         string line;
-                        int lineNo = 0;
+                        ulong lineNo = 0;
 
                         // Read and display lines from the file until the end of
                         // the file is reached.

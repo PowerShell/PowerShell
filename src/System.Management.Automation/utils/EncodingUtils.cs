@@ -115,6 +115,8 @@ namespace System.Management.Automation
     {
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
+            inputData = PSObject.Base(inputData);
+
             switch (inputData)
             {
                 case string stringName:

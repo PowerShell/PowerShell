@@ -137,9 +137,10 @@
     <Product>PowerShell</Product>
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation.</Copyright>
+    <AssemblyTitle>PowerShell 7</AssemblyTitle>
 
-    <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>11.0</LangVersion>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>13.0</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

@@ -70,6 +70,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public string StatusDescription => WebResponseHelper.GetStatusDescription(BaseResponse);
 
+        /// <summary>
+        /// Gets or sets the output file path.
+        /// </summary>
+        public string? OutFile { get; internal set; }
+
         #endregion Properties
 
         #region Protected Fields

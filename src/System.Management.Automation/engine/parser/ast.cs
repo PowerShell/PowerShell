@@ -520,7 +520,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Indicate the kind of the ErrorStatement. e.g. Kind == Switch means that this error statment is generated
+        /// Indicate the kind of the ErrorStatement. e.g. Kind == Switch means that this error statement is generated
         /// when parsing a switch statement.
         /// </summary>
         public Token Kind { get; }
@@ -4578,7 +4578,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Construct a do/while statement.
         /// </summary>
-        /// <param name="extent">The extent of the do/while statment from the label or do keyword to the closing curly brace.</param>
+        /// <param name="extent">The extent of the do/while statement from the label or do keyword to the closing curly brace.</param>
         /// <param name="label">The optionally null label.</param>
         /// <param name="condition">The condition tested on each iteration of the loop.</param>
         /// <param name="body">The body executed on each iteration of the loop.</param>

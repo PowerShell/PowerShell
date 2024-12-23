@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The HttpClient cached in the WebSession, based on all current settings.</returns>
         internal HttpClient GetHttpClient(bool suppressHttpClientRedirects, out bool clientWasReset)
         {
-            // Do not auto redirect if the the caller does not want it, or maximum redirections is 0
+            // Do not auto redirect if the caller does not want it, or maximum redirections is 0
             SetStructVar(ref _allowAutoRedirect, !(suppressHttpClientRedirects || MaximumRedirection == 0));
 
             clientWasReset = _disposedClient;

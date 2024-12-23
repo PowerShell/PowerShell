@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Management.Automation;
 using System.Text;
+using System.Xml;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -58,6 +59,10 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return s;
                     }
+                }
+                else if (o is XmlNode xmlNode)
+                {
+                    return xmlNode.Name;
                 }
                 else if (o is IEnumerable enumerable)
                 {

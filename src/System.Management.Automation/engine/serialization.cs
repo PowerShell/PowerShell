@@ -123,6 +123,45 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Serializes list of objects into PowerShell CliXml.
+        /// </summary>
+        /// <param name="source">The input objects to serialize.</param>
+        /// <param name="depth">The depth of the members to serialize.</param>
+        /// <param name="enumerate">Enumerates input objects and serializes one at a time.</param>
+        /// <returns>The serialized object, as CliXml.</returns>
+        internal static string Serialize(IList<object> source, int depth, bool enumerate)
+        {
+            StringBuilder sb = new();
+
+            XmlWriterSettings xmlSettings = new()
+            {
+                CloseOutput = true,
+                Encoding = Encoding.Unicode,
+                Indent = true,
+                OmitXmlDeclaration = true
+            };
+
+            XmlWriter xw = XmlWriter.Create(sb, xmlSettings);
+            Serializer serializer = new(xw, depth, useDepthFromTypes: true);
+
+            if (enumerate)
+            {
+                foreach (object item in source)
+                {
+                    serializer.Serialize(item);
+                }
+            }
+            else
+            {
+                serializer.Serialize(source);
+            }
+
+            serializer.Done();
+
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Deserializes PowerShell CliXml into an object.
         /// </summary>
         /// <param name="source">The CliXml the represents the object to deserialize.</param>
@@ -7253,7 +7292,9 @@ namespace Microsoft.PowerShell
         private static System.Security.Cryptography.X509Certificates.X509Certificate2 RehydrateX509Certificate2(PSObject pso)
         {
             byte[] rawData = GetPropertyValue<byte[]>(pso, "RawData");
+            #pragma warning disable SYSLIB0057
             return new System.Security.Cryptography.X509Certificates.X509Certificate2(rawData);
+            #pragma warning restore SYSLIB0057
         }
 
         private static System.Security.Cryptography.X509Certificates.X500DistinguishedName RehydrateX500DistinguishedName(PSObject pso)
