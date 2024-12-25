@@ -2187,15 +2187,12 @@ namespace Microsoft.PowerShell.Commands
         #region IDisposable Overrides
 
         /// <summary>
-        /// Dispose WaitHandle used to honor -Wait parameter.
+        /// Release all resources.
         /// </summary>
+        /// <remarks>
+        /// Dispose WaitHandle used to honor -Wait parameter.
+        /// </remarks>
         public void Dispose()
-        {
-            Dispose(true);
-            System.GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool isDisposing)
         {
             _cancellationTokenSource.Dispose();
         }
