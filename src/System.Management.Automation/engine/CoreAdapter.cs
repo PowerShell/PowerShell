@@ -4365,7 +4365,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a flavor of MethodInvokeDotNet to deal with a peculiarity of property setters:
-        /// Tthe setValue is always the last parameter. This enables a parameter after a varargs or optional
+        /// The setValue is always the last parameter. This enables a parameter after a varargs or optional
         /// parameters and GetBestMethodAndArguments is not prepared for that.
         /// This method disregards the last parameter in its call to GetBestMethodAndArguments used in this case
         /// more for its "Arguments" side than for its "BestMethod" side, since there is only one method.
@@ -4441,7 +4441,7 @@ namespace System.Management.Automation
             }
 
             builder.Append(memberName ?? methodEntry.Name);
-            if (methodEntry.IsGenericMethodDefinition)
+            if (methodEntry.IsGenericMethodDefinition || methodEntry.IsGenericMethod)
             {
                 builder.Append('[');
 
