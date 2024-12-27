@@ -2062,7 +2062,7 @@ namespace Microsoft.PowerShell.Commands
             Process process = null;
 
 #if !UNIX
-            ProcessCollection jobObject = null;
+            using ProcessCollection jobObject = new();
             bool? jobAssigned = null;
 #endif
             if (startInfo.UseShellExecute)
@@ -2100,7 +2100,6 @@ namespace Microsoft.PowerShell.Commands
                 // https://github.com/PowerShell/PowerShell/issues/17033
                 if (Wait)
                 {
-                    jobObject = new();
                     jobAssigned = jobObject.AssignProcessToJobObject(processInfo.Process);
                 }
 
@@ -2157,7 +2156,6 @@ namespace Microsoft.PowerShell.Commands
 
                         // Create and start the job object. This may have
                         // already been done in StartWithCreateProcess.
-                        jobObject ??= new();
                         if (jobAssigned == true || (jobAssigned is null && jobObject.AssignProcessToJobObject(process.SafeHandle)))
                         {
                             // Wait for the job object to finish
@@ -2742,74 +2740,145 @@ namespace Microsoft.PowerShell.Commands
     /// ProcessCollection is a helper class used by Start-Process -Wait cmdlet to monitor the
     /// child processes created by the main process hosted by the Start-process cmdlet.
     /// </summary>
-    internal class ProcessCollection
+    internal class ProcessCollection : IDisposable
     {
+        /// <summary>
+        /// Stores the initialisation state of the job and completion port.
+        /// </summary>
+        private bool? _initStatus;
+
         /// <summary>
         /// JobObjectHandle is a reference to the job object used to track
         /// the child processes created by the main process hosted by the Start-Process cmdlet.
         /// </summary>
-        private readonly Microsoft.PowerShell.Commands.SafeJobHandle _jobObjectHandle;
+        private nint _jobObjectHandle;
+
+        /// <summary>
+        /// The completion port handle that is used to monitor job events.
+        /// </summary>
+        private nint _completionPortHandle;
 
         /// <summary>
         /// ProcessCollection constructor.
         /// </summary>
         internal ProcessCollection()
-        {
-            IntPtr jobObjectHandleIntPtr = NativeMethods.CreateJobObject(IntPtr.Zero, null);
-            _jobObjectHandle = new SafeJobHandle(jobObjectHandleIntPtr);
-        }
+        {}
 
         /// <summary>
         /// Start API assigns the process to the JobObject and starts monitoring
         /// the child processes hosted by the process created by Start-Process cmdlet.
         /// </summary>
+        /// <returns>Whether the job and assignment worked or not.</returns>
         internal bool AssignProcessToJobObject(SafeProcessHandle process)
         {
-            // Add the process to the job object
-            bool result = Interop.Windows.AssignProcessToJobObject(
-                _jobObjectHandle.DangerousGetHandle(),
-                process.DangerousGetHandle());
-            return result;
-        }
-
-        /// <summary>
-        /// Checks to see if the JobObject is empty (has no assigned processes).
-        /// If job is empty the auto reset event supplied as input would be set.
-        /// </summary>
-        internal void CheckJobStatus(object stateInfo)
-        {
-            ManualResetEvent emptyJobAutoEvent = (ManualResetEvent)stateInfo;
-            int dwSize = 0;
-            const int JOB_OBJECT_BASIC_PROCESS_ID_LIST = 3;
-            JOBOBJECT_BASIC_PROCESS_ID_LIST JobList = new();
-
-            dwSize = Marshal.SizeOf(JobList);
-            if (NativeMethods.QueryInformationJobObject(_jobObjectHandle,
-                JOB_OBJECT_BASIC_PROCESS_ID_LIST,
-                ref JobList, dwSize, IntPtr.Zero))
+            if (!InitializeJob())
             {
-                if (JobList.NumberOfAssignedProcess == 0)
-                {
-                    emptyJobAutoEvent.Set();
-                }
+                return false;
             }
+
+            // // Add the process to the job object
+            return Interop.Windows.AssignProcessToJobObject(
+                this._jobObjectHandle,
+                process.DangerousGetHandle());
         }
 
         /// <summary>
-        /// WaitOne blocks the current thread until the current instance receives a signal, using
-        /// a System.TimeSpan to measure the time interval and specifying whether to
-        /// exit the synchronization domain before the wait.
+        /// WaitOne blocks the current thread until the job receives a
+        /// completion notification.
         /// </summary>
         /// <param name="waitHandleToUse">
         /// WaitHandle to use for waiting on the job object.
         /// </param>
         internal void WaitOne(ManualResetEvent waitHandleToUse)
         {
-            TimerCallback jobObjectStatusCb = this.CheckJobStatus;
-            using (Timer stateTimer = new(jobObjectStatusCb, waitHandleToUse, 0, 1000))
+            if (this._completionPortHandle == nint.Zero)
             {
-                waitHandleToUse.WaitOne();
+                return;
             }
+
+            const int INFINITE = -1;
+            int completionCode = 0;
+            do
+            {
+                Interop.Windows.GetQueuedCompletionStatus(
+                    this._completionPortHandle,
+                    out completionCode,
+                    out _,
+                    out _,
+                    INFINITE);
+            }
+            while (completionCode != Interop.Windows.JOB_OBJECT_MSG_ACTIVE_PROCESS_ZERO);
+        }
+
+        private bool InitializeJob()
+        {
+            if (this._initStatus is not null)
+            {
+                return (bool)this._initStatus;
+            }
+
+            if (this._jobObjectHandle == nint.Zero)
+            {
+                this._jobObjectHandle = Interop.Windows.CreateJobObject(nint.Zero, nint.Zero);
+                if (this._jobObjectHandle == nint.Zero)
+                {
+                    this._initStatus = false;
+                    return false;
+                }
+            }
+
+            if (this._completionPortHandle == nint.Zero)
+            {
+                this._completionPortHandle = Interop.Windows.CreateIoCompletionPort(
+                    -1,
+                    nint.Zero,
+                    nint.Zero,
+                    1);
+                if (this._completionPortHandle == nint.Zero)
+                {
+                    this._initStatus = false;
+                    return false;
+                }
+            }
+
+            var completionPort = new Interop.Windows.JOBOBJECT_ASSOCIATE_COMPLETION_PORT()
+            {
+                CompletionKey = this._jobObjectHandle,
+                CompletionPort = this._completionPortHandle,
+            };
+
+            unsafe
+            {
+                this._initStatus = Interop.Windows.SetInformationJobObject(
+                    this._jobObjectHandle,
+                    Interop.Windows.JobObjectAssociateCompletionPortInformation,
+                    (nint)(&completionPort),
+                    Marshal.SizeOf<Interop.Windows.JOBOBJECT_ASSOCIATE_COMPLETION_PORT>());
+            }
+
+            return (bool)this._initStatus;
+        }
+
+        ~ProcessCollection()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            if (this._jobObjectHandle != nint.Zero)
+            {
+                Interop.Windows.CloseHandle(this._jobObjectHandle);
+                this._jobObjectHandle = nint.Zero;
+            }
+
+            if (this._completionPortHandle != nint.Zero)
+            {
+                Interop.Windows.CloseHandle(this._completionPortHandle);
+                this._completionPortHandle = nint.Zero;
+            }
+
+            GC.SuppressFinalize(this);
         }
     }
 
