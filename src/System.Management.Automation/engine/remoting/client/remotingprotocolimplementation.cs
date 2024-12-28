@@ -741,9 +741,7 @@ namespace System.Management.Automation.Remoting
         public void Dispose()
         {
             _transportManager.Dispose();
-
-            GC.SuppressFinalize(this);
-        }   
+        }
 
         #endregion IDisposable
 
