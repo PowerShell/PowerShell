@@ -1205,6 +1205,11 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $result.Name | Should -BeExactly $testDir
         }
 
+        It "Verify Provider Root Directory + Force" {
+            $result = New-Item -Path . -ItemType Directory -Force
+            $result.FullName.TrimEnd('/\') | Should -BeExactly "$TestDrive"
+        }
+
         It "Verify File + Value" {
             $result = New-Item -Path . -ItemType File -Name $testFile -Value "Some String"
             $content = Get-Content -Path $testFile
