@@ -3309,7 +3309,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class DnsNameProperty
     {
         private readonly List<DnsNameRepresentation> _dnsList = new();
-        private readonly System.Globalization.IdnMapping idnMapping = new();
+        private readonly IdnMapping idnMapping = new();
 
         private const string distinguishedNamePrefix = "CN=";
 
@@ -3346,8 +3346,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public DnsNameProperty(X509Certificate2 cert)
         {
-            string name;
-            DnsNameRepresentation dnsName;
             _dnsList = new List<DnsNameRepresentation>();
 
             // extract DNS name from subject distinguish name
@@ -3356,8 +3354,8 @@ namespace Microsoft.PowerShell.Commands
             if (cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.OrdinalIgnoreCase) &&
                 !cert.Subject.Contains(','))
             {
-                name = cert.Subject.Substring(distinguishedNamePrefix.Length);
-                dnsName = GetDnsNameRepresentation(name);
+                string parsedSubjectDistinguishedDnsName = cert.Subject.Substring(distinguishedNamePrefix.Length);
+                DnsNameRepresentation dnsName = GetDnsNameRepresentation(parsedSubjectDistinguishedDnsName);
                 _dnsList.Add(dnsName);
             }
 
@@ -3368,7 +3366,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (string dnsNameEntry in sanExtension.EnumerateDnsNames())
                     {
-                        dnsName = GetDnsNameRepresentation(dnsNameEntry);
+                        DnsNameRepresentation dnsName = GetDnsNameRepresentation(dnsNameEntry);
 
                         // Only add the name if it is not the same as an existing name.
                         if (!_dnsList.Contains(dnsName))

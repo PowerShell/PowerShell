@@ -318,6 +318,9 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             DNS.1              = yourdomain.com
             DNS.2              = www.yourdomain.com
             DNS.3              = api.yourdomain.com
+            DNS.4              = xn--mnchen-3ya.com
+            DNS.5              = xn--80aaxitdbjr.com
+            DNS.6              = xn--caf-dma.com
 "@
 
             # Write the configuration to the specified path
@@ -346,10 +349,22 @@ Describe "Certificate Provider tests" -Tags "Feature" {
                     Punycode = "api.yourdomain.com"
                     Unicode  = "api.yourdomain.com"
                 }
+                [PSCustomObject]@{
+                    Punycode = "xn--mnchen-3ya.com"
+                    Unicode  = "münchen.com"
+                }
+                [PSCustomObject]@{
+                    Punycode = "xn--80aaxitdbjr.com"
+                    Unicode  = "папитрока.com"
+                }
+                [PSCustomObject]@{
+                    Punycode = "xn--caf-dma.com"
+                    Unicode  = "café.com"
+                }
             )
 
             $cert | Should -Not -BeNullOrEmpty
-            $cert.DnsNameList | Should -HaveCount 3
+            $cert.DnsNameList | Should -HaveCount 6
             ($cert.DnsNameList | ConvertTo-Json -Compress)  | Should -BeExactly ($expectedDnsNameList | ConvertTo-Json -Compress)
         }
     }
