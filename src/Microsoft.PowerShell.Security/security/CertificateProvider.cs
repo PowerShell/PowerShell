@@ -3355,6 +3355,7 @@ namespace Microsoft.PowerShell.Commands
                 _dnsList.Add(dnsName);
             }
 
+            // Extract DNS names from SAN extensions
             foreach (X509Extension extension in cert.Extensions)
             {
                 if (extension is X509SubjectAlternativeNameExtension sanExtension)
