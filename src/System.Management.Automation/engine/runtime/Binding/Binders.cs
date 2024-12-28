@@ -6947,7 +6947,7 @@ namespace System.Management.Automation.Language
                 //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
                 //  - Invoke method
                 string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
-                MaybeAddMemberInvocationLogging(expr, targetName, name, args);
+                expr = MaybeAddMemberInvocationLogging(expr, targetName, name, args);
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
