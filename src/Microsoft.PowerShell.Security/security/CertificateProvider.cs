@@ -3324,13 +3324,29 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private DnsNameRepresentation GetDnsNameRepresentation(string dnsName)
+        {
+            string unicodeName;
+
+            try
+            {
+                unicodeName = idnMapping.GetUnicode(dnsName);
+            }
+            catch (ArgumentException)
+            {
+                // The name is not valid Punycode, assume it's valid ASCII.
+                unicodeName = dnsName;
+            }
+
+            return new DnsNameRepresentation(dnsName, unicodeName);
+        }
+
         /// <summary>
         /// Constructor for DnsNameProperty.
         /// </summary>
         public DnsNameProperty(X509Certificate2 cert)
         {
             string name;
-            string unicodeName;
             DnsNameRepresentation dnsName;
             _dnsList = new List<DnsNameRepresentation>();
 
@@ -3341,17 +3357,7 @@ namespace Microsoft.PowerShell.Commands
                 !cert.Subject.Contains(','))
             {
                 name = cert.Subject.Substring(distinguishedNamePrefix.Length);
-                try
-                {
-                    unicodeName = idnMapping.GetUnicode(name);
-                }
-                catch (System.ArgumentException)
-                {
-                    // The name is not valid punyCode, assume it's valid ascii.
-                    unicodeName = name;
-                }
-
-                dnsName = new DnsNameRepresentation(name, unicodeName);
+                dnsName = GetDnsNameRepresentation(name);
                 _dnsList.Add(dnsName);
             }
 
@@ -3362,17 +3368,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (string dnsNameEntry in sanExtension.EnumerateDnsNames())
                     {
-                        try
-                        {
-                            unicodeName = idnMapping.GetUnicode(dnsNameEntry);
-                        }
-                        catch (ArgumentException)
-                        {
-                            // The name is not valid punyCode, assume it's valid ascii.
-                            unicodeName = dnsNameEntry;
-                        }
-
-                        dnsName = new DnsNameRepresentation(dnsNameEntry, unicodeName);
+                        dnsName = GetDnsNameRepresentation(dnsNameEntry);
 
                         // Only add the name if it is not the same as an existing name.
                         if (!_dnsList.Contains(dnsName))
