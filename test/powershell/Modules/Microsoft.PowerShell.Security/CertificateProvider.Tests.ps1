@@ -292,4 +292,50 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $certs.Thumbprint | Should -BeExactly $thumbprint
         }
     }
+
+    Context "SAN DNS Name Tests" {
+        BeforeAll {
+            $configFilePath = Join-Path -Path $TestDrive -ChildPath 'openssl.cnf'
+            $keyFilePath = Join-Path -Path $TestDrive -ChildPath 'privateKey.key'
+            $certFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.crt'
+            $pfxFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.pfx'
+            $password = "test"
+
+            $config = @"
+            [ req ]
+            default_bits       = 2048
+            distinguished_name = req_distinguished_name
+            req_extensions     = v3_req
+            prompt             = no
+
+            [ req_distinguished_name ]
+            CN                 = yourdomain.com
+
+            [ v3_req ]
+            subjectAltName     = @alt_names
+
+            [ alt_names ]
+            DNS.1              = yourdomain.com
+            DNS.2              = www.yourdomain.com
+            DNS.3              = api.yourdomain.com
+"@
+
+            # Write the configuration to the specified path
+            Set-Content -Path $configFilePath -Value $config
+
+            # Generate the self-signed certificate with SANs
+            openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFilePath -out $certFilePath -config $configFilePath -extensions v3_req
+
+            # Create the PFX file
+            openssl pkcs12 -export -out $pfxFilePath -inkey $keyFilePath -in $certFilePath -passout pass:$password
+        }
+
+        It "Should set DNSNameList from SAN extensions" {
+            $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($pfxFilePath, $password)
+
+            $cert | Should -Not -BeNullOrEmpty
+            $cert.DnsNameList | Should -HaveCount 3
+            $cert.DnsNameList | Should -BeExactly @('yourdomain.com', 'www.yourdomain.com', 'api.yourdomain.com')
+        }
+    }
 }
