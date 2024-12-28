@@ -1522,6 +1522,7 @@ class InheritedClassTest : System.Attribute
             $TestFile = Join-Path -Path $tempDir -ChildPath $ExpectedFileName
             $null = New-Item -Path $TestFile
             $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
+            Pop-Location
                         
             $ExpectedPath = Join-Path -Path '.\' -ChildPath $ExpectedFileName
             $res.CompletionMatches.CompletionText | Where-Object {$_ -Like "*$ExpectedFileName"} | Should -Be $ExpectedPath
