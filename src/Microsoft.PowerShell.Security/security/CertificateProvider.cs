@@ -3361,8 +3361,19 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (string dnsNameEntry in sanExtension.EnumerateDnsNames())
                     {
-                        dnsName = new DnsNameRepresentation(dnsNameEntry);
+                        try
+                        {
+                            unicodeName = idnMapping.GetUnicode(dnsNameEntry);
+                        }
+                        catch (ArgumentException)
+                        {
+                            // The name is not valid punyCode, assume it's valid ascii.
+                            unicodeName = dnsNameEntry;
+                        }
 
+                        dnsName = new DnsNameRepresentation(dnsNameEntry, unicodeName);
+
+                        // Only add the name if it is not the same as an existing name.
                         if (!_dnsList.Contains(dnsName))
                         {
                             _dnsList.Add(dnsName);

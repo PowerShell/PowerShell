@@ -333,9 +333,24 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         It "Should set DNSNameList from SAN extensions" {
             $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($pfxFilePath, $password)
 
+            $expectedDnsNameList = @(
+                [PSCustomObject]@{
+                    Punycode = "yourdomain.com"
+                    Unicode  = "yourdomain.com"
+                }
+                [PSCustomObject]@{
+                    Punycode = "www.yourdomain.com"
+                    Unicode  = "www.yourdomain.com"
+                }
+                [PSCustomObject]@{
+                    Punycode = "api.yourdomain.com"
+                    Unicode  = "api.yourdomain.com"
+                }
+            )
+
             $cert | Should -Not -BeNullOrEmpty
             $cert.DnsNameList | Should -HaveCount 3
-            $cert.DnsNameList | Should -BeExactly @('yourdomain.com', 'www.yourdomain.com', 'api.yourdomain.com')
+            ($cert.DnsNameList | ConvertTo-Json -Compress)  | Should -BeExactly ($expectedDnsNameList | ConvertTo-Json -Compress)
         }
     }
 }
