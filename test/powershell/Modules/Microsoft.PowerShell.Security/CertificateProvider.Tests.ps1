@@ -299,7 +299,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $keyFilePath = Join-Path -Path $TestDrive -ChildPath 'privateKey.key'
             $certFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.crt'
             $pfxFilePath = Join-Path -Path $TestDrive -ChildPath 'certificate.pfx'
-            $password = "test"
+            $password = New-CertificatePassword | ConvertFrom-SecureString -AsPlainText
 
             $config = @"
             [ req ]
