@@ -1,4 +1,5 @@
 {
+    "codebaseName": "TFSMSAzure_PowerShell",
     "instanceUrl": "https://msazure.visualstudio.com",
     "projectName": "One",
     "areaPath": "One\\MGMT\\Compute\\Powershell\\Powershell\\PowerShell Core\\pwsh",

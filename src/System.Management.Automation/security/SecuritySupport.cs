@@ -1104,7 +1104,10 @@ namespace System.Management.Automation
             var certificatesToProcess = new X509Certificate2Collection();
             try
             {
+                #pragma warning disable SYSLIB0057
                 X509Certificate2 newCertificate = new X509Certificate2(messageBytes);
+                #pragma warning restore SYSLIB0057
+
                 certificatesToProcess.Add(newCertificate);
             }
             catch (Exception)
@@ -1182,7 +1185,9 @@ namespace System.Management.Automation
 
                     try
                     {
+                        #pragma warning disable SYSLIB0057
                         certificate = new X509Certificate2(path);
+                        #pragma warning restore SYSLIB0057
                     }
                     catch (Exception)
                     {
@@ -1337,7 +1342,7 @@ namespace System.Management.Automation
         static AmsiUtils()
         {
 #if !UNIX
-            try 
+            try
             {
                 s_amsiInitFailed = !CheckAmsiInit();
             }
@@ -1347,7 +1352,7 @@ namespace System.Management.Automation
                 s_amsiInitFailed = true;
                 return;
             }
-            
+
             PSEtwLog.LogAmsiUtilStateEvent($"init-{s_amsiInitFailed}", $"{s_amsiContext}-{s_amsiSession}");
 #endif
         }

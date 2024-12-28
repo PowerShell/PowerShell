@@ -96,3 +96,20 @@ stages:
     parameters:
       pool: macOS-latest
 
+- stage: PackageMac
+  dependsOn: ['BuildMac']
+  displayName: Package macOS (bootstrap only)
+  jobs:
+    - job: macos_packaging
+      pool:
+        vmImage: macOS-latest
+
+      displayName: macOS packaging (bootstrap only)
+      steps:
+        - checkout: self
+          clean: true
+        - pwsh: |
+            import-module ./build.psm1
+            start-psbootstrap -package
+          displayName: Bootstrap packaging
+          condition: succeededOrFailed()
