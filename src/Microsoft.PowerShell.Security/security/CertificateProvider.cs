@@ -3316,13 +3316,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get property of DnsNameList.
         /// </summary>
-        public List<DnsNameRepresentation> DnsNameList
-        {
-            get
-            {
-                return _dnsList;
-            }
-        }
+        public List<DnsNameRepresentation> DnsNameList => _dnsList;
 
         private DnsNameRepresentation GetDnsNameRepresentation(string dnsName)
         {
