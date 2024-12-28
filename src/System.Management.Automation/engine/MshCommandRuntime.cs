@@ -1483,7 +1483,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ShouldProcessReason"/>
         /// are returned.
         /// </param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true if-and-only-if the action should be performed</remarks>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -1783,11 +1783,11 @@ namespace System.Management.Automation
         /// the default option selected in the selection menu is 'No'.
         /// </param>
         /// <param name="yesToAll">
-        /// true iff user selects YesToAll.  If this is already true,
+        /// true if-and-only-if user selects YesToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return true.
         /// </param>
         /// <param name="noToAll">
-        /// true iff user selects NoToAll.  If this is already true,
+        /// true if-and-only-if user selects NoToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return false.
         /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
@@ -1830,11 +1830,11 @@ namespace System.Management.Automation
         /// It may be displayed by some hosts, but not all.
         /// </param>
         /// <param name="yesToAll">
-        /// true iff user selects YesToAll.  If this is already true,
+        /// true if-and-only-if user selects YesToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return true.
         /// </param>
         /// <param name="noToAll">
-        /// true iff user selects NoToAll.  If this is already true,
+        /// true if-and-only-if user selects NoToAll.  If this is already true,
         /// ShouldContinue will bypass the prompt and return false.
         /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">

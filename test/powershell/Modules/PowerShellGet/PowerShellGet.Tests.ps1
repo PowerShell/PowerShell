@@ -104,7 +104,24 @@ function Initialize
 
 function Remove-InstalledModules
 {
-    Get-InstalledModule -Name $TestModule -AllVersions -ErrorAction SilentlyContinue | PowerShellGet\Uninstall-Module -Force
+    try {
+        $mod = Get-InstalledModule -Name $TestModule -AllVersions -ErrorAction SilentlyContinue
+        if ($null -eq $mod) {
+            return
+        }
+
+        if (Get-Module -Name $TestModule -ErrorAction Ignore) {
+            Remove-Module -Force -Name $TestModule
+        }
+
+        $installedPath = $mod.InstalledLocation
+        if (Test-Path $installedPath) {
+            Remove-Item -Force -Recurse $installedPath -ErrorAction Ignore
+        }
+    }
+    catch {
+        Write-Warning "Remove-InstalledModules: $_"
+    }
 }
 
 Describe "PowerShellGet - Module tests" -tags "Feature" {
@@ -128,15 +145,10 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
 
     It "Should install a module correctly to the required location with default CurrentUser scope" {
         Install-Module -Name $TestModule -Repository $RepositoryName
-        $installedModuleInfo = Get-InstalledModule -Name $TestModule
-
-        $installedModuleInfo | Should -Not -BeNullOrEmpty
-        $installedModuleInfo.Name | Should -Be $TestModule
-        $installedModuleInfo.InstalledLocation.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
-
-        $module = Get-Module $TestModule -ListAvailable
+        $module = Get-Module -Name $TestModule -ListAvailable
+        $module | Should -Not -BeNullOrEmpty
         $module.Name | Should -Be $TestModule
-        $module.ModuleBase | Should -Be $installedModuleInfo.InstalledLocation
+        $module.ModuleBase.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
     }
 
     AfterAll {
@@ -172,7 +184,20 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
 
 function Remove-InstalledScripts
 {
-    Get-InstalledScript -Name $TestScript -ErrorAction SilentlyContinue | Uninstall-Script -Force
+    $installedScript = Get-InstalledScript -Name $TestScript -ErrorAction SilentlyContinue
+    if ($null -eq $installedScript) {
+        return
+    }
+
+	$scriptPath = Join-Path ${installedScript}.InstalledLocation "${TestScript}.ps1"
+	if (test-Path -Type Leaf -Path $scriptPath) {
+		Remove-Item -Force -Path $scriptPath -ErrorAction Ignore
+	}
+
+	$xmlPath = Join-Path ${installedScript}.InstalledLocation InstalledScriptInfos "${TestScript}_InstalledScriptInfo.xml"
+	if (test-Path -Type Leaf -Path $xmlPath) {
+		Remove-Item -Force -Path $xmlPath -ErrorAction Ignore
+	}
 }
 
 Describe "PowerShellGet - Script tests" -tags "Feature" {

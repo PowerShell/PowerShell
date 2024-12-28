@@ -1,0 +1,158 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  # Batch merge builds together while a merge build is running
+  batch: true
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - .vsts-ci/misc-analysis.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .github/workflows/*
+    - .dependabot/config.yml
+    - test/perf/*
+    - .pipelines/*
+pr:
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - .dependabot/config.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .github/workflows/*
+    - .vsts-ci/misc-analysis.yml
+    - tools/cgmanifest.json
+    - LICENSE.txt
+    - test/common/markdown/*
+    - test/perf/*
+    - tools/packaging/*
+    - tools/releaseBuild/*
+    - tools/releaseBuild/azureDevOps/templates/*
+    - README.md
+    - .spelling
+    - .pipelines/*
+
+variables:
+  GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  __SuppressAnsiEscapeSequences: 1
+  NugetSecurityAnalysisWarningLevel: none
+  nugetMultiFeedWarnLevel: none
+
+resources:
+- repo: self
+  clean: true
+
+stages:
+- stage: BuildWin
+  displayName: Build for Windows
+  jobs:
+  - template: templates/ci-build.yml
+
+- stage: TestWin
+  displayName: Test PSResourceGetACR
+  jobs:
+  - job: win_test_ACR
+    displayName: PSResourceGet ACR Tests
+    pool:
+      vmImage: 'windows-latest'
+
+    steps:
+    - pwsh: |
+        Get-ChildItem -Path env:
+      displayName: Capture Environment
+      condition: succeededOrFailed()
+
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Artifacts'
+      inputs:
+        downloadType: specific
+        itemPattern: |
+          build/**/*
+        downloadPath: '$(System.ArtifactsDirectory)'
+
+    - pwsh: |
+        Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+      displayName: 'Capture Artifacts Directory'
+      continueOnError: true
+
+    - pwsh: |
+        # Remove "Program Files\dotnet" from the env variable PATH, so old SDKs won't affect us.
+        Write-Host "Old Path:"
+        Write-Host $env:Path
+
+        $dotnetPath = Join-Path $env:SystemDrive 'Program Files\dotnet'
+        $paths = $env:Path -split ";" | Where-Object { -not $_.StartsWith($dotnetPath) }
+        $env:Path = $paths -join ";"
+
+        Write-Host "New Path:"
+        Write-Host $env:Path
+
+        # Bootstrap
+        Import-Module .\tools\ci.psm1
+        Invoke-CIInstall
+      displayName: Bootstrap
+
+    - pwsh: |
+        Install-Module -Name 'Microsoft.PowerShell.SecretManagement' -force -SkipPublisherCheck -AllowClobber
+        Install-Module -Name 'Microsoft.PowerShell.SecretStore' -force -SkipPublisherCheck -AllowClobber
+        $vaultPassword = ConvertTo-SecureString $("a!!"+ (Get-Random -Maximum ([int]::MaxValue))) -AsPlainText -Force
+        Set-SecretStoreConfiguration -Authentication None -Interaction None -Confirm:$false -Password $vaultPassword
+        Register-SecretVault -Name SecretStore -ModuleName Microsoft.PowerShell.SecretStore -DefaultVault
+      displayName: 'Install Secret store'
+
+    - task: AzurePowerShell@5
+      inputs:
+        azureSubscription: PSResourceGetACR
+        azurePowerShellVersion: LatestVersion
+        ScriptType: InlineScript
+        pwsh: true
+        inline: |
+          Write-Verbose -Verbose "Getting Azure Container Registry"
+          Get-AzContainerRegistry -ResourceGroupName 'PSResourceGet' -Name 'psresourcegettest' | Select-Object -Property *
+          Write-Verbose -Verbose "Setting up secret for Azure Container Registry"
+          $azt = Get-AzAccessToken
+          $tenantId = $azt.TenantID
+          Set-Secret -Name $tenantId -Secret $azt.Token -Verbose
+          $vstsCommandString = "vso[task.setvariable variable=TenantId]$tenantId"
+          Write-Host "sending " + $vstsCommandString
+          Write-Host "##$vstsCommandString"
+      displayName: 'Setup Azure Container Registry secret'
+
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Start-PSBootstrap
+        Import-Module .\tools\ci.psm1
+        Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+        $options = (Get-PSOptions)
+        $path = split-path -path $options.Output
+        $rootPath = split-Path -path $path
+        Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
+
+        $pwshExe = Get-ChildItem -Path $rootPath -Recurse -Filter pwsh.exe | Select-Object -First 1
+
+        $outputFilePath = "$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\ACRTests.xml"
+        $cmdline = "`$env:ACRTESTS = 'true'; Invoke-Pester -Path '$(Build.SourcesDirectory)\test\powershell\Modules\Microsoft.PowerShell.PSResourceGet\Microsoft.PowerShell.PSResourceGet.Tests.ps1' -TestName 'PSResourceGet - ACR tests' -OutputFile $outputFilePath -OutputFormat NUnitXml"
+        Write-Verbose -Verbose "Running $cmdline"
+
+        & $pwshExe -Command $cmdline
+
+        Publish-TestResults -Title "PSResourceGet - ACR tests" -Path $outputFilePath -Type NUnit
+      displayName: 'PSResourceGet ACR functional tests using AzAuth'
+

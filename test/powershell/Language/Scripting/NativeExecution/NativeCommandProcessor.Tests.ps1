@@ -213,6 +213,12 @@ Describe "Native Command Processor" -tags "Feature" {
         Wait-UntilTrue -sb { (Get-Process mmc).Count -gt 0 } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 1000 | Should -BeTrue
         Get-Process mmc | Stop-Process
     }
+
+    It 'Can redirect stdout and stderr to different files' {
+        testexe -stderrandout testing > $TestDrive/stdout.txt 2> $TestDrive/stderr.txt
+        Get-Content $TestDrive/stdout.txt | Should -Be testing
+        Get-Content $TestDrive/stderr.txt | Should -Be gnitset
+    }
 }
 
 Describe "Open a text file with NativeCommandProcessor" -tags @("Feature", "RequireAdminOnWindows") {
@@ -361,6 +367,11 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
     }
 
     It "Should run 'whoami.exe' from FAT file system without error" -Skip:(!$IsWindows) {
+        if ((Test-IsWinServer2012R2) -or (Test-IsWindows2016)) {
+            Set-ItResult -Pending -Because "Marking as pending since whomai.exe is not found on T:\ on 2012R2 and 2016 after copying to VHD"
+            return
+        }
+
         $expected = & "$env:WinDir\System32\whoami.exe"
         $result = T:\whoami.exe
         $result | Should -BeExactly $expected

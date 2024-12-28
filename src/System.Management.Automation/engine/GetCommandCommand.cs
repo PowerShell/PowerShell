@@ -12,6 +12,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using static System.Management.Automation.Verbs;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -71,6 +72,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the verb parameter to the cmdlet.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "CmdletSet")]
+        [ArgumentCompleter(typeof(VerbArgumentCompleter))]
         public string[] Verb
         {
             get

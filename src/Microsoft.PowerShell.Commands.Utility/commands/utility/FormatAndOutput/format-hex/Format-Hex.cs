@@ -47,14 +47,14 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the path of file(s) to process.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Path")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] Path { get; set; }
 
         /// <summary>
         /// Gets or sets the literal path of file to process.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LiteralPath")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath { get; set; }
 
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the type of character encoding for InputObject.
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
-        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding

@@ -62,6 +62,12 @@ jobs:
 
   - task: DownloadPipelineArtifact@2
     inputs:
+      artifact: pwshLinuxBuildAlpine.tar.gz
+      path: $(Build.ArtifactStagingDirectory)/linuxTars/pwshAlpineFxdBuildAmd64.tar.gz
+    displayName: Download alpine fxdependent build
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
       artifact: pwshLinuxBuildFxdependent.tar.gz
       path: $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildFxdependent.tar.gz
     displayName: Download fxdependent build
@@ -100,6 +106,10 @@ jobs:
       Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz/pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine"
       New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine -ItemType Directory
       tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildAlpine.tar.gz/pwshLinuxBuild.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpine
+
+      Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshAlpineFxdBuildAmd64.tar.gz/pwshAlpineFxdBuildAmd64.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpineFxd"
+      New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpineFxd -ItemType Directory
+      tar -xf $(Build.ArtifactStagingDirectory)/linuxTars/pwshAlpineFxdBuildAmd64.tar.gz/pwshAlpineFxdBuildAmd64.tar.gz -C $(Build.ArtifactStagingDirectory)/pwshLinuxBuildAlpineFxd
 
       Write-Verbose -Verbose -Message "Expanding $(Build.ArtifactStagingDirectory)/linuxTars/pwshLinuxBuildFxdependent.tar.gz/pwshLinuxBuild.tar.gz to $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent"
       New-Item -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuildFxdependent -ItemType Directory
@@ -162,6 +172,11 @@ jobs:
     parameters:
       binLocation: pwshLinuxBuildAlpine
       buildPrefixName: 'PowerShell Linux Alpine x64'
+
+  - template: signBuildFiles.yml
+    parameters:
+      binLocation: pwshLinuxBuildAlpineFxd
+      buildPrefixName: 'PowerShell Linux Alpine Fxd x64'
 
   - template: signBuildFiles.yml
     parameters:

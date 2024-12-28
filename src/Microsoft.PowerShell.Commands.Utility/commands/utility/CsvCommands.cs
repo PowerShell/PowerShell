@@ -320,7 +320,6 @@ namespace Microsoft.PowerShell.Commands
 
             string csv = _helper.ConvertPSObjectToCSV(InputObject, _propertyNames);
             WriteCsvLine(csv);
-            _sw.Flush();
         }
 
         /// <summary>
@@ -422,7 +421,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_sw != null)
                 {
-                    _sw.Flush();
                     _sw.Dispose();
                     _sw = null;
                 }
@@ -1421,11 +1419,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (!string.IsNullOrEmpty(currentHeader))
                         {
-                            if (!headers.Contains(currentHeader))
-                            {
-                                headers.Add(currentHeader);
-                            }
-                            else
+                            if (!headers.Add(currentHeader))
                             {
                                 // throw a terminating error as there are duplicate headers in the input.
                                 string memberAlreadyPresentMsg =

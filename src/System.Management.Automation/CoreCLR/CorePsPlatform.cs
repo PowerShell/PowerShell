@@ -594,81 +594,68 @@ namespace System.Management.Automation
                 private const char CanRead = 'r';
                 private const char CanWrite = 'w';
                 private const char CanExecute = 'x';
-
-                // helper for getting unix mode
-                private readonly Dictionary<StatMask, char> modeMap = new()
-                {
-                        { StatMask.OwnerRead, CanRead },
-                        { StatMask.OwnerWrite, CanWrite },
-                        { StatMask.OwnerExecute, CanExecute },
-                        { StatMask.GroupRead, CanRead },
-                        { StatMask.GroupWrite, CanWrite },
-                        { StatMask.GroupExecute, CanExecute },
-                        { StatMask.OtherRead, CanRead },
-                        { StatMask.OtherWrite, CanWrite },
-                        { StatMask.OtherExecute, CanExecute },
-                };
-
-                private readonly StatMask[] permissions = new StatMask[]
-                {
-                    StatMask.OwnerRead,
-                    StatMask.OwnerWrite,
-                    StatMask.OwnerExecute,
-                    StatMask.GroupRead,
-                    StatMask.GroupWrite,
-                    StatMask.GroupExecute,
-                    StatMask.OtherRead,
-                    StatMask.OtherWrite,
-                    StatMask.OtherExecute
-                };
+                private const char NoPerm = '-';
+                private const char SetAndExec = 's';
+                private const char SetAndNotExec = 'S';
+                private const char StickyAndExec = 't';
+                private const char StickyAndNotExec = 'T';
 
                 // The item type and the character representation for the first element in the stat string
-                private readonly Dictionary<ItemType, char> itemTypeTable = new()
+                private static readonly Dictionary<ItemType, char> itemTypeTable = new()
                 {
-                    { ItemType.BlockDevice, 'b' },
+                    { ItemType.BlockDevice,     'b' },
                     { ItemType.CharacterDevice, 'c' },
-                    { ItemType.Directory, 'd' },
-                    { ItemType.File, '-' },
-                    { ItemType.NamedPipe, 'p' },
-                    { ItemType.Socket, 's' },
-                    { ItemType.SymbolicLink, 'l' },
+                    { ItemType.Directory,       'd' },
+                    { ItemType.File,            '-' },
+                    { ItemType.NamedPipe,       'p' },
+                    { ItemType.Socket,          's' },
+                    { ItemType.SymbolicLink,    'l' },
                 };
+
+                // We'll create a few common mode strings here to reduce allocations and improve performance a bit.
+                private const string OwnerReadGroupReadOtherRead = "-r--r--r--";
+                private const string OwnerReadWriteGroupReadOtherRead = "-rw-r--r--";
+                private const string DirectoryOwnerFullGroupReadExecOtherReadExec = "drwxr-xr-x";
 
                 /// <summary>Convert the mode to a string which is usable in our formatting.</summary>
                 /// <returns>The mode converted into a Unix style string similar to the output of ls.</returns>
                 public string GetModeString()
                 {
-                    int offset = 0;
-                    char[] modeCharacters = new char[10];
-                    modeCharacters[offset++] = itemTypeTable[ItemType];
-
-                    foreach (StatMask permission in permissions)
+                    // On an Ubuntu system (docker), these 3 are roughly 70% of all the permissions
+                    if ((Mode & 0xFFF) == 292)
                     {
-                        // determine whether we are setuid, sticky, or the usual rwx.
-                        if ((Mode & (int)permission) == (int)permission)
-                        {
-                            if ((permission == StatMask.OwnerExecute && IsSetUid) || (permission == StatMask.GroupExecute && IsSetGid))
-                            {
-                                // Check for setuid and add 's'
-                                modeCharacters[offset] = 's';
-                            }
-                            else if (permission == StatMask.OtherExecute && IsSticky && (ItemType == ItemType.Directory))
-                            {
-                                // Directories are sticky, rather than setuid
-                                modeCharacters[offset] = 't';
-                            }
-                            else
-                            {
-                                modeCharacters[offset] = modeMap[permission];
-                            }
-                        }
-                        else
-                        {
-                            modeCharacters[offset] = '-';
-                        }
-
-                        offset++;
+                        return OwnerReadGroupReadOtherRead;
                     }
+
+                    if ((Mode & 0xFFF) == 420)
+                    {
+                       return OwnerReadWriteGroupReadOtherRead;
+                    }
+
+                    if (ItemType == ItemType.Directory & (Mode & 0xFFF) == 493)
+                    {
+                        return DirectoryOwnerFullGroupReadExecOtherReadExec;
+                    }
+
+                    Span<char> modeCharacters = stackalloc char[10];
+                    modeCharacters[0] = itemTypeTable[ItemType];
+                    bool isExecutable;
+
+                    UnixFileMode modeInfo = (UnixFileMode)Mode;
+                    modeCharacters[1] = modeInfo.HasFlag(UnixFileMode.UserRead) ? CanRead : NoPerm;
+                    modeCharacters[2] = modeInfo.HasFlag(UnixFileMode.UserWrite) ? CanWrite : NoPerm;
+                    isExecutable = modeInfo.HasFlag(UnixFileMode.UserExecute);
+                    modeCharacters[3] = modeInfo.HasFlag(UnixFileMode.SetUser) ? (isExecutable ? SetAndExec : SetAndNotExec) : (isExecutable ? CanExecute : NoPerm);
+
+                    modeCharacters[4] = modeInfo.HasFlag(UnixFileMode.GroupRead) ? CanRead : NoPerm;
+                    modeCharacters[5] = modeInfo.HasFlag(UnixFileMode.GroupWrite) ? CanWrite : NoPerm;
+                    isExecutable = modeInfo.HasFlag(UnixFileMode.GroupExecute);
+                    modeCharacters[6] = modeInfo.HasFlag(UnixFileMode.SetGroup) ? (isExecutable ? SetAndExec : SetAndNotExec) : (isExecutable ? CanExecute : NoPerm);
+
+                    modeCharacters[7] = modeInfo.HasFlag(UnixFileMode.OtherRead) ? CanRead : NoPerm;
+                    modeCharacters[8] = modeInfo.HasFlag(UnixFileMode.OtherWrite) ? CanWrite : NoPerm;
+                    isExecutable = modeInfo.HasFlag(UnixFileMode.OtherExecute);
+                    modeCharacters[9] = modeInfo.HasFlag(UnixFileMode.StickyBit) ? (isExecutable ? StickyAndExec : StickyAndNotExec) : (isExecutable ? CanExecute : NoPerm);
 
                     return new string(modeCharacters);
                 }

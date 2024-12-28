@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         /// Any using statements required by the auto-generated type.
         /// </summary>
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
-        [ValidateNotNull()]
+        [ValidateNotNull]
         [Alias("Using")]
         public string[] UsingNamespace { get; set; } = Array.Empty<string>();
 
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Flag to pass the resulting types along.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>

@@ -1128,7 +1128,7 @@ namespace System.Management.Automation
                     replacementIndex = typeNameToComplete.Extent.StartOffset;
                     replacementLength = typeNameToComplete.Extent.EndOffset - replacementIndex;
                     completionContext.WordToComplete = typeNameToComplete.FullName;
-                    result = CompletionCompleters.CompleteType(completionContext);
+                    return CompletionCompleters.CompleteType(completionContext);
                 }
             }
 

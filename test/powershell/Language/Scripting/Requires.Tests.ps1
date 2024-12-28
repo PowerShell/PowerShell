@@ -41,7 +41,7 @@ Describe "Requires tests" -Tags "CI" {
         BeforeAll {
             $currentVersion = $PSVersionTable.PSVersion
 
-            $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0", "7.1", "7.2", "7.3", "7.4"
+            $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0", "7.1", "7.2", "7.3", "7.4", "7.5"
             $latestVersion = [version]($powerShellVersions | Sort-Object -Descending -Top 1)
             $nonExistingMinor = "$($latestVersion.Major).$($latestVersion.Minor + 1)"
             $nonExistingMajor = "$($latestVersion.Major + 1).0"
@@ -118,21 +118,73 @@ Describe "#requires -Modules" -Tags "CI" {
             $badName = 'ModuleThatDoesNotExist'
             $badPath = Join-Path $TestDrive 'ModuleThatDoesNotExist'
             $version = '1.0'
+            $requiredVersion = '1.1'
+            $maximumVersion = '1.2'
             $testCases = @(
-                @{ ModuleRequirement = "'$badName'"; Scenario = 'name' }
-                @{ ModuleRequirement = "'$badPath'"; Scenario = 'path' }
-                @{ ModuleRequirement = "@{ ModuleName = '$badName'; ModuleVersion = '$version' }"; Scenario = 'fully qualified name with name' }
-                @{ ModuleRequirement = "@{ ModuleName = '$badPath'; ModuleVersion = '$version' }"; Scenario = 'fully qualified name with path' }
+                @{
+                    ModuleRequirement = $badName
+                    Scenario = 'fully qualified with module name'
+                    ExpectedMessageStrings = @($badName)
+                }
+                @{
+                    ModuleRequirement = $badPath
+                    Scenario = 'fully qualified with module path'
+                    ExpectedMessageStrings = @($badPath)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badName'; ModuleVersion = '$version' }"
+                    Scenario = 'fully qualified with module name and version'
+                    ExpectedMessageStrings = @($badName, $version)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badPath'; ModuleVersion = '$version' }"
+                    Scenario = 'fully qualified with module name and version'
+                    ExpectedMessageStrings = @($badPath, $version)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badName'; RequiredVersion = '$requiredVersion' }"
+                    Scenario = 'fully qualified with module name and required version'
+                    ExpectedMessageStrings = @($badName, $requiredVersion)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badPath'; RequiredVersion = '$requiredVersion' }"
+                    Scenario = 'fully qualified with module path and required version'
+                    ExpectedMessageStrings = @($badPath, $requiredVersion)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badName'; MaximumVersion = '$maximumVersion' }"
+                    Scenario = 'fully qualified with module name and maximum version'
+                    ExpectedMessageStrings = @($badName, $maximumVersion)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badPath'; MaximumVersion = '$maximumVersion' }"
+                    Scenario = 'fully qualified with module path and maximum version'
+                    ExpectedMessageStrings = @($badPath, $maximumVersion)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badName'; ModuleVersion = '$version'; MaximumVersion = '$maximumVersion' }"
+                    Scenario = 'fully qualified with module name and version and maximum version'
+                    ExpectedMessageStrings = @($badName, $version, $maximumVersion)
+                }
+                @{
+                    ModuleRequirement = "@{ ModuleName = '$badPath'; ModuleVersion = '$version'; MaximumVersion = '$maximumVersion' }"
+                    Scenario = 'fully qualified with module path and version and maximum version'
+                    ExpectedMessageStrings = @($badPath, $version, $maximumVersion)
+                }
             )
         }
 
         It "Fails parsing a script that requires module by <Scenario>" -TestCases $testCases {
-            param([string]$ModuleRequirement, [string]$Scenario)
+            param([string]$ModuleRequirement, [string]$Scenario, [string[]]$ExpectedMessageStrings)
 
             $script = "#requires -Modules $ModuleRequirement`n`nWrite-Output 'failed'"
             $null = New-Item -Path $scriptPath -Value $script -Force
 
-            { & $scriptPath } | Should -Throw -ErrorId 'ScriptRequiresMissingModules'
+            $ex = { & $scriptPath } | Should -Throw -ErrorId 'ScriptRequiresMissingModules' -PassThru
+
+            $expectedPattern = $ExpectedMessageStrings.ForEach{ [regex]::Escape($_) } -join '|'
+            $stringMatches = [regex]::Matches($ex.Exception.Message, $expectedPattern)
+            $stringMatches | Should -HaveCount $ExpectedMessageStrings.Count
         }
     }
 

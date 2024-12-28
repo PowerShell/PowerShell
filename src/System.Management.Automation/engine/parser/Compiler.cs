@@ -39,6 +39,9 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo ObjectList_ToArray =
             typeof(List<object>).GetMethod(nameof(List<object>.ToArray), Type.EmptyTypes);
 
+        internal static readonly MethodInfo ArrayOps_AddObject =
+            typeof(ArrayOps).GetMethod(nameof(ArrayOps.AddObjectArray), StaticFlags);
+
         internal static readonly MethodInfo ArrayOps_GetMDArrayValue =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), StaticFlags);
 
@@ -1565,7 +1568,15 @@ namespace System.Management.Automation.Language
 
                 if (args[0] is Type)
                 {
-                    result = new OutputTypeAttribute(LanguagePrimitives.ConvertTo<Type[]>(args));
+                    // We avoid `ConvertTo<Type[]>(args)` here as CLM would throw due to `Type[]`
+                    // being a "non-core" type. NOTE: This doesn't apply to `string[]`.
+                    Type[] types = new Type[args.Length];
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        types[i] = LanguagePrimitives.ConvertTo<Type>(args[i]);
+                    }
+
+                    result = new OutputTypeAttribute(types);
                 }
                 else
                 {
@@ -2278,25 +2289,26 @@ namespace System.Management.Automation.Language
             switch (context)
             {
                 case CaptureAstContext.AssignmentWithResultPreservation:
-                    result = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
-
-                    // PipelineResult might get skipped in some circumstances due to an early return or a FlowControlException thrown out, in which case
-                    // we write to the oldPipe. This can happen in cases like:
-                    //     $(1;2;return 3)
-                    finallyExprs.Add(Expression.Call(CachedReflectionInfo.PipelineOps_FlushPipe, oldPipe, resultList));
-                    break;
                 case CaptureAstContext.AssignmentWithoutResultPreservation:
                     result = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
 
                     // Clear the temporary pipe in case of exception, if we are not required to preserve the results
-                    var catchExprs = new List<Expression>
+                    if (context == CaptureAstContext.AssignmentWithoutResultPreservation)
                     {
-                        Expression.Call(CachedReflectionInfo.PipelineOps_ClearPipe, resultList),
-                        Expression.Rethrow(),
-                        Expression.Constant(null, typeof(object))
-                    };
+                        var catchExprs = new List<Expression>
+                        {
+                            Expression.Call(CachedReflectionInfo.PipelineOps_ClearPipe, resultList),
+                            Expression.Rethrow(),
+                            Expression.Constant(null, typeof(object))
+                        };
 
-                    catches.Add(Expression.Catch(typeof(RuntimeException), Expression.Block(typeof(object), catchExprs)));
+                        catches.Add(Expression.Catch(typeof(RuntimeException), Expression.Block(typeof(object), catchExprs)));
+                    }
+
+                    // PipelineResult might get skipped in some circumstances due to an early return or a FlowControlException thrown out,
+                    // in which case we write to the oldPipe. This can happen in cases like:
+                    //     $(1;2;return 3)
+                    finallyExprs.Add(Expression.Call(CachedReflectionInfo.PipelineOps_FlushPipe, oldPipe, resultList));
                     break;
                 case CaptureAstContext.Condition:
                     result = DynamicExpression.Dynamic(PSPipelineResultToBoolBinder.Get(), typeof(bool), resultList);
@@ -2801,7 +2813,7 @@ namespace System.Management.Automation.Language
             {
                 if (!string.IsNullOrEmpty(scriptFileName) && !Path.IsPathRooted(assemblyFileName))
                 {
-                    assemblyFileName = Path.GetDirectoryName(scriptFileName) + "\\" + assemblyFileName;
+                    assemblyFileName = Path.Combine(Path.GetDirectoryName(scriptFileName), assemblyFileName);
                 }
 
                 if (File.Exists(assemblyFileName))

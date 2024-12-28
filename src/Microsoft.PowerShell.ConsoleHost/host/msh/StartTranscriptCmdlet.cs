@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// The read-only attribute will not be replaced when the transcript is done.
         /// </remarks>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that prevents file overwrite.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [Alias("NoOverwrite")]
         public SwitchParameter NoClobber
         {
@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Whether to include command invocation time headers between commands.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter IncludeInvocationHeader
         {
             get; set;

@@ -1,0 +1,132 @@
+parameters:
+  jobName: ""
+  displayName: ""
+  jobtype: ""
+  artifactName: ""
+  packageNamePattern: ""
+  arm64: "no"
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: ${{ parameters.displayName }}
+  variables:
+  - group: DotNetPrivateBuildAccess
+  - name: artifactName
+    value: ${{ parameters.artifactName }}
+  - name: ob_outputDirectory
+    value: '$(Build.ArtifactStagingDirectory)/ONEBRANCH_ARTIFACT'
+  - name: ob_sdl_credscan_suppressionsFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\suppress.json
+  - name: ob_sdl_tsa_configFile
+    value: $(Build.SourcesDirectory)\PowerShell\.config\tsaoptions.json
+
+  pool:
+    type: ${{ parameters.jobtype }}
+    ${{ if eq(parameters.arm64, 'yes') }}:
+      hostArchitecture: arm64
+
+  steps:
+    - checkout: self
+      clean: true
+
+    - template: release-SetReleaseTagandContainerName.yml@self
+
+    - download: PSPackagesOfficial
+      artifact: "${{ parameters.artifactName }}"
+      displayName: Download fxd artifact
+
+    - pwsh: |
+        Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
+      displayName: Capture environment
+
+    - pwsh: |
+        $artifactName = '$(artifactName)'
+        Get-ChildItem "$(Pipeline.Workspace)/PSPackagesOfficial/$artifactName" -Recurse
+      displayName: 'Capture Downloaded Artifacts'
+
+    - pwsh: |
+        $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
+        $dotnetMetadataPath = "$repoRoot/DotnetRuntimeMetadata.json"
+        $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
+
+        # Channel is like: $Channel = "5.0.1xx-preview2"
+        $Channel = $dotnetMetadataJson.sdk.channel
+
+        $sdkVersion = (Get-Content "$repoRoot/global.json" -Raw | ConvertFrom-Json).sdk.version
+        Import-Module "$repoRoot/build.psm1" -Force
+
+        Find-Dotnet
+
+        if(-not (Get-PackageSource -Name 'dotnet' -ErrorAction SilentlyContinue))
+        {
+            $nugetFeed = ([xml](Get-Content $repoRoot/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet' } | Select-Object -ExpandProperty Value
+            if ($nugetFeed) {
+              Register-PackageSource -Name 'dotnet' -Location $nugetFeed -ProviderName NuGet
+              Write-Verbose -Message "Register new package source 'dotnet'" -verbose
+            }
+        }
+
+        ## Install latest version from the channel
+
+        #Install-Dotnet -Channel "$Channel" -Version $sdkVersion
+        Start-PSBootstrap
+
+        Write-Verbose -Message "Installing .NET SDK completed." -Verbose
+
+      displayName: Install .NET
+      env:
+        __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
+
+    - pwsh: |
+        $artifactName = '$(artifactName)'
+        $rootPath = "$(Pipeline.Workspace)/PSPackagesOfficial/$artifactName"
+
+        $destPath = New-Item "$rootPath/fxd" -ItemType Directory
+        $packageNameFilter = '${{ parameters.packageNamePattern }}'
+
+        if ($packageNameFilter.EndsWith('tar.gz')) {
+            $package = @(Get-ChildItem -Path "$rootPath/*.tar.gz")
+            Write-Verbose -Verbose "Package: $package"
+            if ($package.Count -ne 1) {
+                throw 'Only 1 package was expected.'
+            }
+            tar -xvf $package.FullName -C $destPath
+        }
+        else {
+            $package = @(Get-ChildItem -Path "$rootPath/*.zip")
+            Write-Verbose -Verbose "Package: $package"
+            if ($package.Count -ne 1) {
+                throw 'Only 1 package was expected.'
+            }
+            Expand-Archive -Path $package.FullName -Destination "$destPath" -Verbose
+        }
+      displayName: Expand fxd package
+
+    - pwsh: |
+        $repoRoot = "$(Build.SourcesDirectory)/PowerShell"
+        $artifactName = '$(artifactName)'
+        $rootPath = "$(Pipeline.Workspace)/PSPackagesOfficial/$artifactName"
+
+        $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+        Import-Module "$repoRoot/build.psm1" -Force
+        Find-Dotnet -SetDotnetRoot
+        Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
+        Write-Verbose -Verbose "Check dotnet install"
+        dotnet --info
+        Write-Verbose -Verbose "Start test"
+        $packageNameFilter = '${{ parameters.packageNamePattern }}'
+        $pwshExeName = if ($packageNameFilter.EndsWith('tar.gz')) { 'pwsh' } else { 'pwsh.exe' }
+        $pwshPath = Join-Path "$rootPath/fxd" $pwshExeName
+
+        if ($IsLinux) {
+          chmod u+x $pwshPath
+        }
+
+        $pwshDllPath = Join-Path "$rootPath/fxd" 'pwsh.dll'
+
+        $actualOutput = & dotnet $pwshDllPath -c 'Start-ThreadJob -ScriptBlock { "1" } | Wait-Job | Receive-Job'
+        Write-Verbose -Verbose "Actual output: $actualOutput"
+        if ($actualOutput -ne 1) {
+            throw "Actual output is not as expected"
+        }
+      displayName: Test package

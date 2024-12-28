@@ -10,6 +10,7 @@ namespace Microsoft.Management.UI.Internal
     /// check if it is does not contain the rule's value within it.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class TextDoesNotContainFilterRule : TextContainsFilterRule
     {
         /// <summary>
