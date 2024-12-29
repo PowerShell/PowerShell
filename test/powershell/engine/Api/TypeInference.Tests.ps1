@@ -1449,9 +1449,13 @@ Describe "Type inference Tests" -tags "CI" {
     It 'Should only consider increments/decrements wrapped in parentheses to be a part of the output in a Named block' {
         $res = [AstTypeInference]::InferTypeOf( {
             [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+
+            $Int16++; $Int32--; ++$Int64; --$Int128}.Ast)
+        $res.Count | Should -Be 0
+
+        $res = [AstTypeInference]::InferTypeOf( {
             [UInt16]$Uint16 = 1; [UInt32]$Uint32 = 1; [UInt64]$Uint64 = 1; [System.UInt128]$Uint128 = 1
 
-            $Int16++; $Int32--; ++$Int64; --$Int128
             ($Uint16++); ($Uint32--); (++$Uint64); (--$Uint128) }.Ast)
         $res.Count | Should -Be 4
         $res.Name -join ',' | Should -Be ('System.UInt16', 'System.UInt32', 'System.UInt64', 'System.UInt128' -join ',')
@@ -1460,9 +1464,13 @@ Describe "Type inference Tests" -tags "CI" {
     It 'Should only consider increments/decrements wrapped in parentheses to be a part of the output in a Statement block' {
         $res = [AstTypeInference]::InferTypeOf( {if ($true){
             [Int16]$Int16 = 1; [Int32]$Int32 = 1; [Int64]$Int64 = 1; [System.Int128]$Int128 = 1;
+
+            $Int16++; $Int32--; ++$Int64; --$Int128}}.Ast)
+        $res.Count | Should -Be 0
+
+        $res = [AstTypeInference]::InferTypeOf( {if ($true){
             [UInt16]$Uint16 = 1; [UInt32]$Uint32 = 1; [UInt64]$Uint64 = 1; [System.UInt128]$Uint128 = 1
 
-            $Int16++; $Int32--; ++$Int64; --$Int128
             ($Uint16++); ($Uint32--); (++$Uint64); (--$Uint128) }}.Ast)
         $res.Count | Should -Be 4
         $res.Name -join ',' | Should -Be ('System.UInt16', 'System.UInt32', 'System.UInt64', 'System.UInt128' -join ',')
