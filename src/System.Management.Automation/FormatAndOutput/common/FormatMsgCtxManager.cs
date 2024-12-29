@@ -19,10 +19,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         // callbacks declarations
         internal delegate OutputContext FormatContextCreationCallback(OutputContext parentContext, FormatInfoData formatData);
+
         internal delegate void FormatStartCallback(OutputContext c);
+
         internal delegate void FormatEndCallback(FormatEndData fe, OutputContext c);
+
         internal delegate void GroupStartCallback(OutputContext c);
+
         internal delegate void GroupEndCallback(GroupEndData fe, OutputContext c);
+
         internal delegate void PayloadCallback(FormatEntryData formatEntryData, OutputContext c);
 
         // callback instances
@@ -63,8 +68,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal void Process(object o)
         {
             PacketInfoData formatData = o as PacketInfoData;
-            FormatEntryData fed = formatData as FormatEntryData;
-            if (fed != null)
+            if (formatData is FormatEntryData fed)
             {
                 OutputContext ctx = null;
 
@@ -135,6 +139,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Internal stack to manage context.
         /// </summary>
-        private Stack<OutputContext> _stack = new Stack<OutputContext>();
+        private readonly Stack<OutputContext> _stack = new Stack<OutputContext>();
     }
 }

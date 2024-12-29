@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
                 // first type group will take effect. So we skip the rest groups that have the same name.
                 if (!typeGroupMap.ContainsKey(typeGroup.name))
                 {
-                    var typesInGroup = typeGroup.typeReferenceList.Select(typeReference => typeReference.name).ToList();
+                    var typesInGroup = typeGroup.typeReferenceList.ConvertAll(static typeReference => typeReference.name);
                     typeGroupMap.Add(typeGroup.name, typesInGroup);
                 }
             }
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            // Remoting detection: 
+            // Remoting detection:
             //   * Automatic variable $PSSenderInfo is defined in true remoting contexts as well as in background jobs.
             //   * $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion contains the client version, as a [version] instance.
             //      Note: Even though $PSVersionTable.PSVersion is of type [semver] in PowerShell 6+, it is of type [version] here,
@@ -130,6 +130,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (ViewDefinition definition in viewdefinitions)
             {
+                this.WriteVerbose(string.Format(CultureInfo.CurrentCulture, GetFormatDataStrings.ProcessViewDefinition, definition.name));
                 if (definition.isHelpFormatter)
                     continue;
 
@@ -140,22 +141,19 @@ namespace Microsoft.PowerShell.Commands
 
                 PSControl control;
 
-                var tableControlBody = definition.mainControl as TableControlBody;
-                if (tableControlBody != null)
+                if (definition.mainControl is TableControlBody tableControlBody)
                 {
                     control = new TableControl(tableControlBody, definition);
                 }
                 else
                 {
-                    var listControlBody = definition.mainControl as ListControlBody;
-                    if (listControlBody != null)
+                    if (definition.mainControl is ListControlBody listControlBody)
                     {
                         control = new ListControl(listControlBody, definition);
                     }
                     else
                     {
-                        var wideControlBody = definition.mainControl as WideControlBody;
-                        if (wideControlBody != null)
+                        if (definition.mainControl is WideControlBody wideControlBody)
                         {
                             control = new WideControl(wideControlBody, definition);
                             if (writeOldWay)

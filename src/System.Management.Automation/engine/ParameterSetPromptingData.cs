@@ -60,4 +60,3 @@ namespace System.Management.Automation
         { get; } = new Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata>();
     }
 }
-

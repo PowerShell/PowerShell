@@ -15,7 +15,6 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Represents an error during execution of a CIM job.
     /// </summary>
-    [Serializable]
     public class CimJobException : SystemException, IContainsErrorRecord
     {
         #region Standard constructors and methods required for all exceptions
@@ -50,32 +49,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// </summary>
         /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected CimJobException(
             SerializationInfo info,
-            StreamingContext context) : base(info, context)
+            StreamingContext context)
         {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
-
-            _errorRecord = (ErrorRecord)info.GetValue("errorRecord", typeof(ErrorRecord));
-        }
-
-        /// <summary>
-        /// Sets the SerializationInfo with information about the exception.
-        /// </summary>
-        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("errorRecord", _errorRecord);
+            throw new NotSupportedException();
         }
 
         #endregion
@@ -90,7 +69,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Dbg.Assert(cimException != null, "Caller should verify cimException != null");
 
             string message = BuildErrorMessage(jobDescription, jobContext, cimException.Message);
-            CimJobException cimJobException = new CimJobException(message, cimException);
+            CimJobException cimJobException = new(message, cimException);
             cimJobException.InitializeErrorRecord(jobContext, cimException);
             return cimJobException;
         }
@@ -104,16 +83,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Dbg.Assert(jobContext != null, "Caller should verify jobContext != null");
             Dbg.Assert(inner != null, "Caller should verify inner != null");
 
-            CimException cimException = inner as CimException;
-            if (cimException != null)
+            if (inner is CimException cimException)
             {
                 return CreateFromCimException(jobDescription, jobContext, cimException);
             }
 
             string message = BuildErrorMessage(jobDescription, jobContext, inner.Message);
-            CimJobException cimJobException = new CimJobException(message, inner);
-            var containsErrorRecord = inner as IContainsErrorRecord;
-            if (containsErrorRecord != null)
+            CimJobException cimJobException = new(message, inner);
+            if (inner is IContainsErrorRecord containsErrorRecord)
             {
                 cimJobException.InitializeErrorRecord(
                     jobContext,
@@ -142,7 +119,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Dbg.Assert(!string.IsNullOrEmpty(message), "Caller should verify message != null");
             Dbg.Assert(!string.IsNullOrEmpty(errorId), "Caller should verify errorId != null");
 
-            CimJobException cimJobException = new CimJobException(jobContext.PrependComputerNameToMessage(message), inner);
+            CimJobException cimJobException = new(jobContext.PrependComputerNameToMessage(message), inner);
             cimJobException.InitializeErrorRecord(jobContext, errorId, errorCategory);
             return cimJobException;
         }
@@ -156,7 +133,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Dbg.Assert(!string.IsNullOrEmpty(message), "Caller should verify message != null");
             Dbg.Assert(!string.IsNullOrEmpty(errorId), "Caller should verify errorId != null");
 
-            CimJobException cimJobException = new CimJobException(message, inner);
+            CimJobException cimJobException = new(message, inner);
             cimJobException.InitializeErrorRecord(null, errorId, errorCategory);
             return cimJobException;
         }
@@ -170,7 +147,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             string errorMessage = BuildErrorMessage(jobDescription, jobContext, rawErrorMessage);
 
-            CimJobException cje = new CimJobException(errorMessage);
+            CimJobException cje = new(errorMessage);
             cje.InitializeErrorRecord(jobContext, "CimJob_" + methodName + "_" + errorCodeFromMethod, ErrorCategory.InvalidResult);
 
             return cje;
@@ -197,15 +174,15 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private void InitializeErrorRecordCore(CimJobContext jobContext, Exception exception, string errorId, ErrorCategory errorCategory)
         {
-            ErrorRecord coreErrorRecord = new ErrorRecord(
+            ErrorRecord coreErrorRecord = new(
                 exception: exception,
                 errorId: errorId,
                 errorCategory: errorCategory,
-                targetObject: jobContext != null ? jobContext.TargetObject : null);
+                targetObject: jobContext?.TargetObject);
 
             if (jobContext != null)
             {
-                System.Management.Automation.Remoting.OriginInfo originInfo = new System.Management.Automation.Remoting.OriginInfo(
+                System.Management.Automation.Remoting.OriginInfo originInfo = new(
                     jobContext.Session.ComputerName,
                     Guid.Empty);
 
@@ -242,7 +219,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             if (cimException.ErrorData != null)
             {
                 _errorRecord.CategoryInfo.TargetName = cimException.ErrorSource;
-                _errorRecord.CategoryInfo.TargetType = jobContext != null ? jobContext.CmdletizationClassName : null;
+                _errorRecord.CategoryInfo.TargetType = jobContext?.CmdletizationClassName;
             }
         }
 
@@ -362,8 +339,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get
             {
-                var cimException = this.InnerException as CimException;
-                if ((cimException == null) || (cimException.ErrorData == null))
+                if ((this.InnerException is not CimException cimException) || (cimException.ErrorData == null))
                 {
                     return false;
                 }
@@ -374,7 +350,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     return false;
                 }
 
-                UInt16 perceivedSeverityValue = (UInt16)perceivedSeverityProperty.Value;
+                ushort perceivedSeverityValue = (ushort)perceivedSeverityProperty.Value;
                 if (perceivedSeverityValue != 7)
                 {
                     /* from CIM Schema: Interop\CIM_Error.mof:

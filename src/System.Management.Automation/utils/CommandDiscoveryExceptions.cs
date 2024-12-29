@@ -4,7 +4,6 @@
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 using System.Text;
 
 namespace System.Management.Automation
@@ -12,7 +11,6 @@ namespace System.Management.Automation
     /// <summary>
     /// This exception is thrown when a command cannot be found.
     /// </summary>
-    [Serializable]
     public class CommandNotFoundException : RuntimeException
     {
         /// <summary>
@@ -71,7 +69,6 @@ namespace System.Management.Automation
         /// </param>
         public CommandNotFoundException(string message, Exception innerException) : base(message, innerException) { }
 
-        #region Serialization
         /// <summary>
         /// Serialization constructor for class CommandNotFoundException.
         /// </summary>
@@ -81,39 +78,12 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected CommandNotFoundException(SerializationInfo info,
                                         StreamingContext context)
-            : base(info, context)
         {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            _commandName = info.GetString("CommandName");
+            throw new NotSupportedException();
         }
-
-        /// <summary>
-        /// Serializes the CommandNotFoundException.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("CommandName", _commandName);
-        }
-        #endregion Serialization
 
         #region Properties
         /// <summary>
@@ -123,14 +93,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        _errorId,
-                        _errorCategory,
-                        _commandName);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    _errorId,
+                    _errorCategory,
+                    _commandName);
 
                 return _errorRecord;
             }
@@ -153,8 +120,8 @@ namespace System.Management.Automation
         #endregion Properties
 
         #region Private
-        private string _errorId = "CommandNotFoundException";
-        private ErrorCategory _errorCategory = ErrorCategory.ObjectNotFound;
+        private readonly string _errorId = "CommandNotFoundException";
+        private readonly ErrorCategory _errorCategory = ErrorCategory.ObjectNotFound;
 
         private static string BuildMessage(
             string commandName,
@@ -163,7 +130,7 @@ namespace System.Management.Automation
             )
         {
             object[] a;
-            if (messageArgs != null && 0 < messageArgs.Length)
+            if (messageArgs != null && messageArgs.Length > 0)
             {
                 a = new object[messageArgs.Length + 1];
                 a[0] = commandName;
@@ -183,7 +150,6 @@ namespace System.Management.Automation
     /// Defines the exception thrown when a script's requirements to run specified by the #requires
     /// statements are not met.
     /// </summary>
-    [Serializable]
     public class ScriptRequiresException : RuntimeException
     {
         /// <summary>
@@ -370,40 +336,13 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected ScriptRequiresException(SerializationInfo info,
                                         StreamingContext context)
-            : base(info, context)
         {
-            _commandName = info.GetString("CommandName");
-            _requiresPSVersion = (Version)info.GetValue("RequiresPSVersion", typeof(Version));
-            _missingPSSnapIns = (ReadOnlyCollection<string>)info.GetValue("MissingPSSnapIns", typeof(ReadOnlyCollection<string>));
-            _requiresShellId = info.GetString("RequiresShellId");
-            _requiresShellPath = info.GetString("RequiresShellPath");
+            throw new NotSupportedException();
         }
-        /// <summary>
-        /// Gets the serialized data for the exception.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("CommandName", _commandName);
-            info.AddValue("RequiresPSVersion", _requiresPSVersion, typeof(Version));
-            info.AddValue("MissingPSSnapIns", _missingPSSnapIns, typeof(ReadOnlyCollection<string>));
-            info.AddValue("RequiresShellId", _requiresShellId);
-            info.AddValue("RequiresShellPath", _requiresShellPath);
-        }
+        
         #endregion Serialization
 
         #region Properties
@@ -416,7 +355,7 @@ namespace System.Management.Automation
             get { return _commandName; }
         }
 
-        private string _commandName = string.Empty;
+        private readonly string _commandName = string.Empty;
 
         /// <summary>
         /// Gets the PSVersion that the script requires.
@@ -426,7 +365,7 @@ namespace System.Management.Automation
             get { return _requiresPSVersion; }
         }
 
-        private Version _requiresPSVersion;
+        private readonly Version _requiresPSVersion;
 
         /// <summary>
         /// Gets the missing snap-ins that the script requires.
@@ -436,7 +375,7 @@ namespace System.Management.Automation
             get { return _missingPSSnapIns; }
         }
 
-        private ReadOnlyCollection<string> _missingPSSnapIns = new ReadOnlyCollection<string>(Array.Empty<string>());
+        private readonly ReadOnlyCollection<string> _missingPSSnapIns = new ReadOnlyCollection<string>(Array.Empty<string>());
 
         /// <summary>
         /// Gets or sets the ID of the shell.
@@ -446,7 +385,7 @@ namespace System.Management.Automation
             get { return _requiresShellId; }
         }
 
-        private string _requiresShellId;
+        private readonly string _requiresShellId;
 
         /// <summary>
         /// Gets or sets the path to the incompatible shell.
@@ -456,7 +395,7 @@ namespace System.Management.Automation
             get { return _requiresShellPath; }
         }
 
-        private string _requiresShellPath;
+        private readonly string _requiresShellPath;
 
         #endregion Properties
 
@@ -536,4 +475,3 @@ namespace System.Management.Automation
         #endregion Private
     }
 }
-

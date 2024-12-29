@@ -77,17 +77,17 @@ namespace System.Management.Automation
         /// <param name="dotnetBaseType"></param>
         /// <param name="shouldIncludeNamespace"></param>
         /// <returns></returns>
-        private IEnumerable<string> GetTypeNameHierarchyFromDerivation(ManagementBaseObject managementObj,
+        private static IEnumerable<string> GetTypeNameHierarchyFromDerivation(ManagementBaseObject managementObj,
             string dotnetBaseType, bool shouldIncludeNamespace)
         {
             StringBuilder type = new StringBuilder(200);
             // give the typename based on NameSpace and Class
             type.Append(dotnetBaseType);
-            type.Append("#");
+            type.Append('#');
             if (shouldIncludeNamespace)
             {
                 type.Append(managementObj.SystemProperties["__NAMESPACE"].Value);
-                type.Append("\\");
+                type.Append('\\');
             }
 
             type.Append(managementObj.SystemProperties["__CLASS"].Value);
@@ -112,11 +112,11 @@ namespace System.Management.Automation
                     {
                         type.Clear();
                         type.Append(dotnetBaseType);
-                        type.Append("#");
+                        type.Append('#');
                         if (shouldIncludeNamespace)
                         {
                             type.Append(managementObj.SystemProperties["__NAMESPACE"].Value);
-                            type.Append("\\");
+                            type.Append('\\');
                         }
 
                         type.Append(t);
@@ -172,9 +172,7 @@ namespace System.Management.Automation
         {
             tracer.WriteLine("Getting member with name {0}", memberName);
 
-            ManagementBaseObject mgmtObject = obj as ManagementBaseObject;
-
-            if (mgmtObject == null)
+            if (!(obj is ManagementBaseObject mgmtObject))
             {
                 return null;
             }
@@ -366,8 +364,7 @@ namespace System.Management.Automation
         /// <param name="convertIfPossible">Instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            ManagementBaseObject mObj = property.baseObject as ManagementBaseObject;
-            if (mObj == null)
+            if (!(property.baseObject is ManagementBaseObject mObj))
             {
                 throw new SetValueInvocationException("CannotSetNonManagementObjectMsg",
                     null,
@@ -412,7 +409,7 @@ namespace System.Management.Automation
             // }
 
             returnValue.Append(PropertyType(property, forDisplay: true));
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(property.Name);
             returnValue.Append(" {");
             if (PropertyIsGettable(property))
@@ -425,7 +422,7 @@ namespace System.Management.Automation
                 returnValue.Append("set;");
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -457,7 +454,7 @@ namespace System.Management.Automation
 
                 // unique identifier for identifying this ManagementObject's type
                 ManagementPath classPath = wmiObject.ClassPath;
-                string key = string.Format(CultureInfo.InvariantCulture, "{0}#{1}", classPath.Path, staticBinding.ToString());
+                string key = string.Create(CultureInfo.InvariantCulture, $"{classPath.Path}#{staticBinding}");
 
                 typeTable = (CacheTable)s_instanceMethodCacheTable[key];
                 if (typeTable != null)
@@ -580,8 +577,11 @@ namespace System.Management.Automation
             try
             {
                 string cimType = (string)pData.Qualifiers["cimtype"].Value;
-                result = string.Format(CultureInfo.InvariantCulture, "{0}#{1}",
-                    typeof(ManagementObject).FullName, cimType.Replace("object:", string.Empty));
+                result = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{0}#{1}",
+                    typeof(ManagementObject).FullName,
+                    cimType.Replace("object:", string.Empty));
             }
             catch (ManagementException)
             {
@@ -856,7 +856,7 @@ namespace System.Management.Automation
                     }
 
                     inParameterString.Append(typeName);
-                    inParameterString.Append(" ");
+                    inParameterString.Append(' ');
                     inParameterString.Append(parameter.Name);
                     inParameterString.Append(", ");
                 }
@@ -872,9 +872,9 @@ namespace System.Management.Automation
 
             builder.Append("System.Management.ManagementBaseObject ");
             builder.Append(mData.Name);
-            builder.Append("(");
-            builder.Append(inParameterString.ToString());
-            builder.Append(")");
+            builder.Append('(');
+            builder.Append(inParameterString);
+            builder.Append(')');
 
             string returnValue = builder.ToString();
             tracer.WriteLine("Definition constructed: {0}", returnValue);
@@ -946,7 +946,7 @@ namespace System.Management.Automation
 
         #region Private Data
 
-        private static HybridDictionary s_instanceMethodCacheTable = new HybridDictionary();
+        private static readonly HybridDictionary s_instanceMethodCacheTable = new HybridDictionary();
 
         #endregion
     }
@@ -1165,9 +1165,7 @@ namespace System.Management.Automation
                                     PSLevel.Informational,
                                     PSTask.None,
                                     PSKeyword.UseAlwaysOperational,
-                                    string.Format(CultureInfo.InvariantCulture,
-                                                  "ManagementBaseObjectAdapter::DoGetProperty::PropertyName:{0}, Exception:{1}, StackTrace:{2}",
-                                                  propertyName, e.Message, e.StackTrace),
+                                    string.Create(CultureInfo.InvariantCulture, $"ManagementBaseObjectAdapter::DoGetProperty::PropertyName:{propertyName}, Exception:{e.Message}, StackTrace:{e.StackTrace}"),
                                     string.Empty,
                                     string.Empty);
                 // ignore the exception.

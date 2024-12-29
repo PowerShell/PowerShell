@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Management.Automation;
 using System.Threading;
 
@@ -27,9 +26,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Constructor
 
         /// <summary>
-        /// The constructor.
+        /// Initializes a new instance of the <see cref="CimAsyncOperation"/> class.
         /// </summary>
-        public CimAsyncOperation()
+        protected CimAsyncOperation()
         {
             this.moreActionEvent = new ManualResetEventSlim(false);
             this.actionQueue = new ConcurrentQueue<CimBaseAction>();
@@ -53,7 +52,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="actionArgs">Event argument.</param>
         protected void NewCmdletActionHandler(object cimSession, CmdletActionEventArgs actionArgs)
         {
-            DebugHelper.WriteLogEx("Disposed {0}, action type = {1}", 0, this._disposed, actionArgs.Action);
+            DebugHelper.WriteLogEx("Disposed {0}, action type = {1}", 0, this.Disposed, actionArgs.Action);
 
             if (this.Disposed)
             {
@@ -207,10 +206,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             lock (cimSessionProxyCacheLock)
             {
-                if (this.cimSessionProxyCache == null)
-                {
-                    this.cimSessionProxyCache = new List<CimSessionProxy>();
-                }
+                this.cimSessionProxyCache ??= new List<CimSessionProxy>();
 
                 if (!this.cimSessionProxyCache.Contains(sessionproxy))
                 {
@@ -238,7 +234,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         protected CimSessionProxy CreateCimSessionProxy(CimSessionProxy originalProxy)
         {
-            CimSessionProxy proxy = new CimSessionProxy(originalProxy);
+            CimSessionProxy proxy = new(originalProxy);
             this.SubscribeEventAndAddProxytoCache(proxy);
             return proxy;
         }
@@ -260,7 +256,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session"></param>
         protected CimSessionProxy CreateCimSessionProxy(CimSession session)
         {
-            CimSessionProxy proxy = new CimSessionProxy(session);
+            CimSessionProxy proxy = new(session);
             this.SubscribeEventAndAddProxytoCache(proxy);
             return proxy;
         }
@@ -283,7 +279,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="computerName"></param>
         protected CimSessionProxy CreateCimSessionProxy(string computerName)
         {
-            CimSessionProxy proxy = new CimSessionProxy(computerName);
+            CimSessionProxy proxy = new(computerName);
             this.SubscribeEventAndAddProxytoCache(proxy);
             return proxy;
         }
@@ -297,7 +293,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         protected CimSessionProxy CreateCimSessionProxy(string computerName, CimInstance cimInstance)
         {
-            CimSessionProxy proxy = new CimSessionProxy(computerName, cimInstance);
+            CimSessionProxy proxy = new(computerName, cimInstance);
             this.SubscribeEventAndAddProxytoCache(proxy);
             return proxy;
         }
@@ -348,16 +344,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         protected object GetBaseObject(object value)
         {
-            PSObject psObject = value as PSObject;
-            if (psObject == null)
+            if (value is not PSObject psObject)
             {
                 return value;
             }
             else
             {
                 object baseObject = psObject.BaseObject;
-                var arrayObject = baseObject as object[];
-                if (arrayObject == null)
+                if (baseObject is not object[] arrayObject)
                 {
                     return baseObject;
                 }
@@ -384,12 +378,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns>The object.</returns>
         protected object GetReferenceOrReferenceArrayObject(object value, ref CimType referenceType)
         {
-            PSReference cimReference = value as PSReference;
-            if (cimReference != null)
+            if (value is PSReference cimReference)
             {
                 object baseObject = GetBaseObject(cimReference.Value);
-                CimInstance cimInstance = baseObject as CimInstance;
-                if (cimInstance == null)
+                if (!(baseObject is CimInstance cimInstance))
                 {
                     return null;
                 }
@@ -399,12 +391,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
             else
             {
-                object[] cimReferenceArray = value as object[];
-                if (cimReferenceArray == null)
+                if (value is not object[] cimReferenceArray)
                 {
                     return null;
                 }
-                else if (!(cimReferenceArray[0] is PSReference))
+                else if (cimReferenceArray[0] is not PSReference)
                 {
                     return null;
                 }
@@ -412,8 +403,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimInstance[] cimInstanceArray = new CimInstance[cimReferenceArray.Length];
                 for (int i = 0; i < cimReferenceArray.Length; i++)
                 {
-                    PSReference tempCimReference = cimReferenceArray[i] as PSReference;
-                    if (tempCimReference == null)
+                    if (!(cimReferenceArray[i] is PSReference tempCimReference))
                     {
                         return null;
                     }
@@ -443,11 +433,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return Interlocked.Read(ref this._disposed) == 1;
+                return this._disposed == 1;
             }
         }
 
-        private long _disposed;
+        private int _disposed;
 
         /// <summary>
         /// <para>
@@ -534,10 +524,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             this.moreActionEvent.Dispose();
-            if (this.ackedEvent != null)
-            {
-                this.ackedEvent.Dispose();
-            }
+            this.ackedEvent?.Dispose();
 
             DebugHelper.WriteLog("Cleanup complete.", 2);
         }
@@ -549,7 +536,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock object.
         /// </summary>
-        private readonly object a_lock = new object();
+        private readonly object a_lock = new();
 
         /// <summary>
         /// Number of active operations.
@@ -559,19 +546,19 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Event to notify ps thread that more action is available.
         /// </summary>
-        private ManualResetEventSlim moreActionEvent;
+        private readonly ManualResetEventSlim moreActionEvent;
 
         /// <summary>
         /// The following is the definition of action queue.
         /// The queue holding all actions to be executed in the context of either
         /// ProcessRecord or EndProcessing.
         /// </summary>
-        private ConcurrentQueue<CimBaseAction> actionQueue;
+        private readonly ConcurrentQueue<CimBaseAction> actionQueue;
 
         /// <summary>
         /// Lock object.
         /// </summary>
-        private readonly object cimSessionProxyCacheLock = new object();
+        private readonly object cimSessionProxyCacheLock = new();
 
         /// <summary>
         /// Cache all <see cref="CimSessionProxy"/> objects related to

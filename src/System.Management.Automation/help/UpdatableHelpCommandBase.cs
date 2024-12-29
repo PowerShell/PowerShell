@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         internal bool _stopping;
 
         internal int activityId;
-        private Dictionary<string, UpdatableHelpExceptionContext> _exceptions;
+        private readonly Dictionary<string, UpdatableHelpExceptionContext> _exceptions;
 
         #region Parameters
 
@@ -60,7 +60,11 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null) return;
+                if (value == null)
+                {
+                    return;
+                }
+
                 _language = new string[value.Length];
                 for (int index = 0; index < value.Length; index++)
                 {
@@ -74,8 +78,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the credential parameter.
         /// </summary>
-        [Parameter()]
-        [Credential()]
+        [Parameter]
+        [Credential]
         public PSCredential Credential
         {
             get { return _credential; }
@@ -102,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal bool _useDefaultCredentials = false;
+        private bool _useDefaultCredentials = false;
 
         /// <summary>
         /// Forces the operation to complete.
@@ -161,27 +165,27 @@ namespace Microsoft.PowerShell.Commands
 
         #region Constructor
 
-        private static Dictionary<string, string> s_metadataCache;
+        private static readonly Dictionary<string, string> s_metadataCache;
 
         /// <summary>
         /// Static constructor
         ///
-        /// NOTE: FWLinks for core PowerShell modules are needed since they get loaded as snapins in a Remoting Endpoint.
+        /// NOTE: HelpInfoUri for core PowerShell modules are needed since they get loaded as snapins in a Remoting Endpoint.
         /// When we moved to modules in V3, we were not able to make this change as it was a risky change to make at that time.
         /// </summary>
         static UpdatableHelpCommandBase()
         {
             s_metadataCache = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            // TODO: assign real TechNet addresses
+            // NOTE: The HelpInfoUri must be updated with each release.
 
-            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.WSMan.Management", "https://aka.ms/powershell71-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://aka.ms/powershell75-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://aka.ms/powershell75-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://aka.ms/powershell75-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://aka.ms/powershell75-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://aka.ms/powershell75-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://aka.ms/powershell75-help");
+            s_metadataCache.Add("Microsoft.WSMan.Management", "https://aka.ms/powershell75-help");
         }
 
         /// <summary>
@@ -206,9 +210,7 @@ namespace Microsoft.PowerShell.Commands
             _exceptions = new Dictionary<string, UpdatableHelpExceptionContext>();
             _helpSystem.OnProgressChanged += HandleProgressChanged;
 
-            Random rand = new Random();
-
-            activityId = rand.Next();
+            activityId = Random.Shared.Next();
         }
 
         #endregion
@@ -299,9 +301,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Match wildcards
-            WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
-            IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { moduleNamePattern }, wildcardOptions);
+            IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(
+                globPatterns: new[] { moduleNamePattern },
+                options: WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
             foreach (KeyValuePair<string, string> name in s_metadataCache)
             {
@@ -397,7 +399,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fullyQualifiedNames">FullyQualifiedNames.</param>
         internal void Process(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> fullyQualifiedNames)
         {
-            _helpSystem.WebClient.UseDefaultCredentials = _useDefaultCredentials;
+            _helpSystem.UseDefaultCredentials = _useDefaultCredentials;
 
             if (moduleNames != null)
             {
@@ -443,7 +445,10 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="modules">Module objects given by the user.</param>
         internal void Process(IEnumerable<PSModuleInfo> modules)
         {
-            if (modules == null || !modules.Any()) { return; }
+            if (modules == null || !modules.Any())
+            {
+                return;
+            }
 
             var helpModules = new Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo>();
 
@@ -509,6 +514,7 @@ namespace Microsoft.PowerShell.Commands
             // Win8: 572882 When the system locale is English and the UI is JPN,
             // running "update-help" still downs English help content.
             var cultures = _language ?? _helpSystem.GetCurrentUICulture();
+            UpdatableHelpSystemException implicitCultureNotSupported = null;
 
             foreach (string culture in cultures)
             {
@@ -549,7 +555,8 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 catch (UpdatableHelpSystemException e)
                 {
-                    if (e.FullyQualifiedErrorId == "HelpCultureNotSupported")
+                    if (e.FullyQualifiedErrorId == "HelpCultureNotSupported"
+                            || e.FullyQualifiedErrorId == "UnableToRetrieveHelpInfoXml")
                     {
                         installed = false;
 
@@ -557,6 +564,12 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Display the error message only if we are not using the fallback chain
                             ProcessException(module.ModuleName, culture, e);
+                        }
+                        else
+                        {
+                            // Hold first exception, it will be displayed if fallback chain fails
+                            WriteVerbose(StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupportedFallback, e.Message));
+                            implicitCultureNotSupported ??= e;
                         }
                     }
                     else
@@ -581,12 +594,18 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                // If -Language is not specified, we only install
+                // If -UICulture is not specified, we only install
                 // one culture from the fallback chain
                 if (_language == null && installed)
                 {
-                    break;
+                    return;
                 }
+            }
+
+            // If the exception is not null and did not return early, then all of the fallback chain failed
+            if (implicitCultureNotSupported != null)
+            {
+                ProcessException(module.ModuleName, cultures.First(), implicitCultureNotSupported);
             }
         }
 
@@ -652,7 +671,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Culture check
-            if (!newHelpInfo.IsCultureSupported(culture))
+            if (!newHelpInfo.IsCultureSupported(culture.Name))
             {
                 throw new UpdatableHelpSystemException("HelpCultureNotSupported",
                     StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupported,
@@ -778,13 +797,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path">Path to resolve.</param>
         /// <returns>A list of directories.</returns>
-        private IEnumerable<string> RecursiveResolvePathHelper(string path)
+        private static IEnumerable<string> RecursiveResolvePathHelper(string path)
         {
             if (System.IO.Directory.Exists(path))
             {
                 yield return path;
 
-                foreach (string subDirectory in Directory.GetDirectories(path))
+                foreach (string subDirectory in Directory.EnumerateDirectories(path))
                 {
                     foreach (string subDirectory2 in RecursiveResolvePathHelper(subDirectory))
                     {
@@ -886,6 +905,7 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// Save the help content to the user directory.
+        /// </summary>
         CurrentUser,
 
         /// <summary>

@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
         /// An identifier for this event subscription.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true, ParameterSetName = "BySource")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string SourceIdentifier
         {
             get
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Go through all the received events and write them to the output
             // pipeline
-            List<PSEventSubscriber> subscribers = new List<PSEventSubscriber>(Events.Subscribers);
+            List<PSEventSubscriber> subscribers = new(Events.Subscribers);
             foreach (PSEventSubscriber subscriber in subscribers)
             {
                 // If they specified a event identifier and we don't match, continue
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
                         error = EventingStrings.EventSubscriptionNotFound;
                     }
 
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         new ArgumentException(string.Format(System.Globalization.CultureInfo.CurrentCulture, error, identifier)),
                         "INVALID_SOURCE_IDENTIFIER",
                         ErrorCategory.InvalidArgument,

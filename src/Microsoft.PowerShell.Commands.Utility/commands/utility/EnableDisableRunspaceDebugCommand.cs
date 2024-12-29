@@ -26,11 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// debugger is currently attached.  The script or command will remain stopped until
         /// a debugger is attached to debug the breakpoint.
         /// </summary>
-        public bool Enabled
-        {
-            get;
-            private set;
-        }
+        public bool Enabled { get; }
 
         /// <summary>
         /// When true this property will cause any running command or script in the Runspace
@@ -38,36 +34,24 @@ namespace Microsoft.PowerShell.Commands
         /// script or command will remain stopped until a debugger is attached to debug the
         /// current stop point.
         /// </summary>
-        public bool BreakAll
-        {
-            get;
-            private set;
-        }
+        public bool BreakAll { get; }
 
         /// <summary>
         /// Name of runspace for which the options apply.
         /// </summary>
-        public string RunspaceName
-        {
-            get;
-            private set;
-        }
+        public string RunspaceName { get; }
 
         /// <summary>
         /// Local Id of runspace for which the options apply.
         /// </summary>
-        public int RunspaceId
-        {
-            get;
-            private set;
-        }
+        public int RunspaceId { get; }
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="PSRunspaceDebug"/> class.
         /// </summary>
         /// <param name="enabled">Enable debugger option.</param>
         /// <param name="breakAll">BreakAll option.</param>
@@ -75,7 +59,10 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="runspaceId">Runspace local Id.</param>
         public PSRunspaceDebug(bool enabled, bool breakAll, string runspaceName, int runspaceId)
         {
-            if (string.IsNullOrEmpty(runspaceName)) { throw new PSArgumentNullException(nameof(runspaceName)); }
+            if (string.IsNullOrEmpty(runspaceName))
+            {
+                throw new PSArgumentNullException(nameof(runspaceName));
+            }
 
             this.Enabled = enabled;
             this.BreakAll = breakAll;
@@ -131,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0,
                    ParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] RunspaceName
         {
@@ -147,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ValueFromPipeline = true,
                    ParameterSetName = CommonRunspaceCommandBase.RunspaceParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Runspace[] Runspace
         {
@@ -161,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0,
                    Mandatory = true,
                    ParameterSetName = CommonRunspaceCommandBase.RunspaceIdParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] RunspaceId
         {
@@ -174,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0,
                    Mandatory = true,
                    ParameterSetName = CommonRunspaceCommandBase.RunspaceInstanceIdParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public System.Guid[] RunspaceInstanceId
         {
@@ -186,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or Sets the ProcessName for which runspace debugging has to be enabled or disabled.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = CommonRunspaceCommandBase.ProcessNameParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string ProcessName
         {
             get;
@@ -197,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or Sets the AppDomain Names for which runspace debugging has to be enabled or disabled.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = CommonRunspaceCommandBase.ProcessNameParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Scope = "member",
             Target = "Microsoft.PowerShell.Commands.CommonRunspaceCommandBase.#AppDomainName")]
         public string[] AppDomainName
@@ -291,10 +278,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!string.IsNullOrEmpty(currentAppDomainName))
                     {
-                        if (appDomainNames == null)
-                        {
-                            appDomainNames = new List<string>();
-                        }
+                        appDomainNames ??= new List<string>();
 
                         appDomainNames.Add(currentAppDomainName.ToLowerInvariant());
                     }
@@ -307,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception ex)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                 new PSInvalidOperationException(string.Format(CultureInfo.InvariantCulture, Debugger.PersistDebugPreferenceFailure, processName), ex),
                 fullyQualifiedErrorId,
                 ErrorCategory.InvalidOperation,

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 // ----------------------------------------------------------------------
 //  Contents:  Entry points for managed PowerShell plugin worker used to
 //  host powershell in a WSMan service.
@@ -24,7 +25,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal abstract class WSManPluginServerSession : IDisposable
     {
-        private object _syncObject;
+        private readonly object _syncObject;
 
         protected bool isClosed;
         protected bool isContextReported;
@@ -110,11 +111,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Use C# destructor syntax for finalization code.
-        /// This destructor will run only if the Dispose method
-        /// does not get called.
-        /// It gives your base class the opportunity to finalize.
-        /// Do not provide destructors in types derived from this class.
+        /// Finalizes an instance of the <see cref="WSManPluginServerSession"/> class.
         /// </summary>
         ~WSManPluginServerSession()
         {
@@ -151,7 +148,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_BINARY != inboundData.Type)
+            if (inboundData.Type != (uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_BINARY)
             {
                 // only binary data is supported
                 WSManPluginInstance.ReportOperationComplete(
@@ -201,7 +198,7 @@ namespace System.Management.Automation.Remoting
             }
 
             if ((streamSet == null) ||
-                (1 != streamSet.streamIDsCount))
+                (streamSet.streamIDsCount != 1))
             {
                 // only "stdout" is the supported output stream.
                 WSManPluginInstance.ReportOperationComplete(
@@ -255,7 +252,7 @@ namespace System.Management.Automation.Remoting
                     // TO BE FIXED - As soon as this API is called, WinRM service will send CommandResponse back and Signal is expected anytime
                     // If Signal comes and executes before registering the notification handle, cleanup will be messed
                     result = WSManNativeApi.WSManPluginReportContext(creationRequestDetails.unmanagedHandle, 0, creationRequestDetails.unmanagedHandle);
-                    if (Platform.IsWindows && (WSManPluginConstants.ExitCodeSuccess == result))
+                    if (Platform.IsWindows && (result == WSManPluginConstants.ExitCodeSuccess))
                     {
                         registeredShutdownNotification = 1;
 
@@ -280,7 +277,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if ((WSManPluginConstants.ExitCodeSuccess != result) || (isRegisterWaitForSingleObjectFailed))
+            if ((result != WSManPluginConstants.ExitCodeSuccess) || (isRegisterWaitForSingleObjectFailed))
             {
                 string errorMessage;
                 if (isRegisterWaitForSingleObjectFailed)
@@ -398,8 +395,8 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Members
 
-        private Dictionary<IntPtr, WSManPluginCommandSession> _activeCommandSessions;
-        private ServerRemoteSession _remoteSession;
+        private readonly Dictionary<IntPtr, WSManPluginCommandSession> _activeCommandSessions;
+        private readonly ServerRemoteSession _remoteSession;
 
         #endregion
 
@@ -471,11 +468,12 @@ namespace System.Management.Automation.Remoting
                     _remoteSession.ExecuteConnect(inputData, out outputData);
 
                     // construct Xml to send back
-                    string responseData = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                                    "<{0} xmlns=\"{1}\">{2}</{0}>",
-                                    WSManNativeApi.PS_CONNECTRESPONSE_XML_TAG,
-                                    WSManNativeApi.PS_XML_NAMESPACE,
-                                    Convert.ToBase64String(outputData));
+                    string responseData = string.Format(
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        "<{0} xmlns=\"{1}\">{2}</{0}>",
+                        WSManNativeApi.PS_CONNECTRESPONSE_XML_TAG,
+                        WSManNativeApi.PS_XML_NAMESPACE,
+                        Convert.ToBase64String(outputData));
 
                     // TODO: currently using OperationComplete to report back the responseXml. This will need to change to use WSManReportObject
                     // that is currently internal.
@@ -590,7 +588,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 IntPtr key = newCmdSession.creationRequestDetails.unmanagedHandle;
-                Dbg.Assert(IntPtr.Zero != key, "NULL handles should not be provided");
+                Dbg.Assert(key != IntPtr.Zero, "NULL handles should not be provided");
 
                 if (!_activeCommandSessions.ContainsKey(key))
                 {
@@ -728,7 +726,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Members
 
-        private ServerRemoteSession _remoteSession;
+        private readonly ServerRemoteSession _remoteSession;
 
         #endregion
 
@@ -755,7 +753,7 @@ namespace System.Management.Automation.Remoting
         internal bool ProcessArguments(
             WSManNativeApi.WSManCommandArgSet arguments)
         {
-            if (1 != arguments.argsCount)
+            if (arguments.argsCount != 1)
             {
                 return false;
             }
@@ -772,7 +770,7 @@ namespace System.Management.Automation.Remoting
         internal void Stop(
             WSManNativeApi.WSManPluginRequest requestDetails)
         {
-            // stop the command..command will be stoped if we raise ClosingEvent on
+            // stop the command..command will be stopped if we raise ClosingEvent on
             // transport manager.
             transportMgr.PerformStop();
             WSManPluginInstance.ReportWSManOperationComplete(requestDetails, null);

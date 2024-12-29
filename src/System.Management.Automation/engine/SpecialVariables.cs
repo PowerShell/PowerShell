@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Management.Automation.Internal;
 
 namespace System.Management.Automation
 {
@@ -31,6 +32,10 @@ namespace System.Management.Automation
         internal const string OFS = "OFS";
 
         internal static readonly VariablePath OFSVarPath = new VariablePath(OFS);
+
+        internal const string PSStyle = "PSStyle";
+
+        internal static readonly VariablePath PSStyleVarPath = new VariablePath(PSStyle);
 
         internal const string OutputEncoding = "OutputEncoding";
 
@@ -200,6 +205,7 @@ namespace System.Management.Automation
         internal static readonly VariablePath PSModuleAutoLoadingPreferenceVarPath = new VariablePath("global:" + PSModuleAutoLoading);
 
         #region Platform Variables
+
         internal const string IsLinux = "IsLinux";
 
         internal static readonly VariablePath IsLinuxPath = new VariablePath("IsLinux");
@@ -217,6 +223,7 @@ namespace System.Management.Automation
         internal static readonly VariablePath IsCoreCLRPath = new VariablePath("IsCoreCLR");
 
         #endregion
+
         #region Preference Variables
 
         internal const string DebugPreference = "DebugPreference";
@@ -252,6 +259,16 @@ namespace System.Management.Automation
         internal static readonly VariablePath InformationPreferenceVarPath = new VariablePath(InformationPreference);
 
         #endregion Preference Variables
+
+        internal const string PSNativeCommandUseErrorActionPreference = nameof(PSNativeCommandUseErrorActionPreference);
+
+        internal static readonly VariablePath PSNativeCommandUseErrorActionPreferenceVarPath =
+            new(PSNativeCommandUseErrorActionPreference);
+
+        // Native command argument passing style
+        internal const string NativeArgumentPassing = "PSNativeCommandArgumentPassing";
+
+        internal static readonly VariablePath NativeArgumentPassingVarPath = new VariablePath(NativeArgumentPassing);
 
         internal const string ErrorView = "ErrorView";
 
@@ -312,46 +329,51 @@ namespace System.Management.Automation
                                                                    /* PSCommandPath */     typeof(string),
                                                                  };
 
-        internal static readonly string[] PreferenceVariables = {
-                                                                    SpecialVariables.DebugPreference,
-                                                                    SpecialVariables.VerbosePreference,
-                                                                    SpecialVariables.ErrorActionPreference,
-                                                                    SpecialVariables.WhatIfPreference,
-                                                                    SpecialVariables.WarningPreference,
-                                                                    SpecialVariables.InformationPreference,
-                                                                    SpecialVariables.ConfirmPreference,
-                                                                };
+        // This array and the one below it exist to optimize the way common parameters work in advanced functions.
+        // Common parameters work by setting preference variables in the scope of the function and restoring the old value afterward.
+        // Variables that don't correspond to common cmdlet parameters don't need to be added here.
+        internal static readonly string[] PreferenceVariables =
+        {
+            SpecialVariables.DebugPreference,
+            SpecialVariables.VerbosePreference,
+            SpecialVariables.ErrorActionPreference,
+            SpecialVariables.WhatIfPreference,
+            SpecialVariables.WarningPreference,
+            SpecialVariables.InformationPreference,
+            SpecialVariables.ConfirmPreference,
+        };
 
-        internal static readonly Type[] PreferenceVariableTypes = {
-                                                                    /* DebugPreference */       typeof(ActionPreference),
-                                                                    /* VerbosePreference */     typeof(ActionPreference),
-                                                                    /* ErrorPreference */       typeof(ActionPreference),
-                                                                    /* WhatIfPreference */      typeof(SwitchParameter),
-                                                                    /* WarningPreference */     typeof(ActionPreference),
-                                                                    /* InformationPreference */ typeof(ActionPreference),
-                                                                    /* ConfirmPreference */     typeof(ConfirmImpact),
-                                                                  };
+        internal static readonly Type[] PreferenceVariableTypes =
+        {
+            /* DebugPreference */                         typeof(ActionPreference),
+            /* VerbosePreference */                       typeof(ActionPreference),
+            /* ErrorPreference */                         typeof(ActionPreference),
+            /* WhatIfPreference */                        typeof(SwitchParameter),
+            /* WarningPreference */                       typeof(ActionPreference),
+            /* InformationPreference */                   typeof(ActionPreference),
+            /* ConfirmPreference */                       typeof(ConfirmImpact),
+        };
 
         // The following variables are created in every session w/ AllScope.  We avoid creating local slots when we
         // see an assignment to any of these variables so that they get handled properly (either throwing an exception
         // because they are constant/readonly, or having the value persist in parent scopes where the allscope variable
         // also exists.
-        internal static readonly string[] AllScopeVariables = {
-                                                                  SpecialVariables.Question,
-                                                                  SpecialVariables.ExecutionContext,
-                                                                  SpecialVariables.False,
-                                                                  SpecialVariables.Home,
-                                                                  SpecialVariables.Host,
-                                                                  SpecialVariables.PID,
-                                                                  SpecialVariables.PSCulture,
-                                                                  SpecialVariables.PSHome,
-                                                                  SpecialVariables.PSUICulture,
-                                                                  SpecialVariables.PSVersionTable,
-                                                                  SpecialVariables.PSEdition,
-                                                                  SpecialVariables.ShellId,
-                                                                  SpecialVariables.True,
-                                                                  SpecialVariables.EnabledExperimentalFeatures,
-                                                              };
+        internal static readonly Dictionary<string, Type> AllScopeVariables = new(StringComparer.OrdinalIgnoreCase) {
+            { Question, typeof(bool) },
+            { ExecutionContext, typeof(EngineIntrinsics) },
+            { False, typeof(bool) },
+            { Home, typeof(string) },
+            { Host, typeof(object) },
+            { PID, typeof(int) },
+            { PSCulture, typeof(string) },
+            { PSHome, typeof(string) },
+            { PSUICulture, typeof(string) },
+            { PSVersionTable, typeof(PSVersionHashTable) },
+            { PSEdition, typeof(string) },
+            { ShellId, typeof(string) },
+            { True, typeof(bool) },
+            { EnabledExperimentalFeatures, typeof(ReadOnlyBag<string>) }
+        };
 
         private static readonly HashSet<string> s_classMethodsAccessibleVariables = new HashSet<string>
             (
@@ -397,5 +419,6 @@ namespace System.Management.Automation
         Warning = 13,
         Information = 14,
         Confirm = 15,
+        Progress = 16,
     }
 }

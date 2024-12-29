@@ -13,11 +13,11 @@ namespace System.Management.Automation.Remoting
     /// version on the server. These capabilities will be used in remote debugging sessions to
     /// determine what is supported by the server.
     /// </summary>
-    internal class RemoteDebuggingCapability
+    internal sealed class RemoteDebuggingCapability
     {
         private readonly HashSet<string> _supportedCommands = new HashSet<string>();
 
-        internal Version PSVersion { get; private set; }
+        internal Version PSVersion { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoteDebuggingCapability"/> class.
@@ -43,14 +43,14 @@ namespace System.Management.Automation.Remoting
             }
 
             // Commands added in v5
-            if (PSVersion.Major >= PSVersionInfo.PSV5Version.Major)
+            if (PSVersion.Major >= 5)
             {
                 _supportedCommands.Add(RemoteDebuggingCommands.SetDebuggerStepMode);
                 _supportedCommands.Add(RemoteDebuggingCommands.SetUnhandledBreakpointMode);
             }
 
             // Commands added in v7
-            if (PSVersion.Major >= PSVersionInfo.PSV7Version.Major)
+            if (PSVersion.Major >= 7)
             {
                 _supportedCommands.Add(RemoteDebuggingCommands.GetBreakpoint);
                 _supportedCommands.Add(RemoteDebuggingCommands.SetBreakpoint);

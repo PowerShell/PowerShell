@@ -34,7 +34,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = "optionsSet")]
         public PSTraceSourceOptions Option
         {
-            get { return base.OptionsInternal; }
+            get
+            {
+                return base.OptionsInternal;
+            }
 
             set
             {
@@ -48,7 +51,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "optionsSet")]
         public TraceOptions ListenerOption
         {
-            get { return base.ListenerOptionsInternal; }
+            get
+            {
+                return base.ListenerOptionsInternal;
+            }
 
             set
             {
@@ -93,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// If this parameter is specified the Msh Host trace listener will be added.
+        /// If this parameter is specified the PSHost trace listener will be added.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "optionsSet")]

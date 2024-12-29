@@ -20,7 +20,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Tracer
 
         [TraceSourceAttribute("CRPS", "ClientRemotePowerShell")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("CRPS", "ClientRemotePowerShellBase");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("CRPS", "ClientRemotePowerShellBase");
 
         #endregion Tracer
 
@@ -166,10 +166,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             outputstream.Close();
             errorstream.Close();
-            if (inputstream != null)
-            {
-                inputstream.Close();
-            }
+            inputstream?.Close();
         }
 
         /// <summary>
@@ -645,7 +642,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // If RemoteSessionStateEventArgs are provided then use them to set the
                     // session close reason when setting finished state.
                     RemoteSessionStateEventArgs sessionEventArgs = args as RemoteSessionStateEventArgs;
-                    Exception closeReason = (sessionEventArgs != null) ? sessionEventArgs.SessionStateInfo.Reason : null;
+                    Exception closeReason = sessionEventArgs?.SessionStateInfo.Reason;
                     PSInvocationState finishedState = (shell.InvocationStateInfo.State == PSInvocationState.Disconnected) ?
                         PSInvocationState.Failed : PSInvocationState.Stopped;
 
@@ -663,7 +660,7 @@ namespace System.Management.Automation.Runspaces.Internal
             }
         }
 
-        private bool IsFinished(PSInvocationState state)
+        private static bool IsFinished(PSInvocationState state)
         {
             return (state == PSInvocationState.Completed ||
                     state == PSInvocationState.Failed ||
@@ -902,64 +899,51 @@ namespace System.Management.Automation.Runspaces.Internal
 
         #endregion Private Methods
 
-        #region Protected Members
+        #region Private Fields
 
-        protected ObjectStreamBase inputstream;
-        protected ObjectStreamBase errorstream;
-        protected PSInformationalBuffers informationalBuffers;
-        protected PowerShell shell;
-        protected Guid clientRunspacePoolId;
-        protected bool noInput;
-        protected PSInvocationSettings settings;
-        protected ObjectStreamBase outputstream;
-        protected string computerName;
-        protected ClientPowerShellDataStructureHandler dataStructureHandler;
-        protected bool stopCalled = false;
-        protected PSHost hostToUse;
-        protected RemoteRunspacePoolInternal runspacePool;
+        private ObjectStreamBase inputstream;
+        private ObjectStreamBase errorstream;
+        private PSInformationalBuffers informationalBuffers;
+        private readonly PowerShell shell;
+        private readonly Guid clientRunspacePoolId;
+        private bool noInput;
+        private PSInvocationSettings settings;
+        private ObjectStreamBase outputstream;
+        private readonly string computerName;
+        private ClientPowerShellDataStructureHandler dataStructureHandler;
+        private bool stopCalled = false;
+        private PSHost hostToUse;
+        private readonly RemoteRunspacePoolInternal runspacePool;
 
-        protected const string WRITE_DEBUG_LINE = "WriteDebugLine";
-        protected const string WRITE_VERBOSE_LINE = "WriteVerboseLine";
-        protected const string WRITE_WARNING_LINE = "WriteWarningLine";
-        protected const string WRITE_PROGRESS = "WriteProgress";
+        private const string WRITE_DEBUG_LINE = "WriteDebugLine";
+        private const string WRITE_VERBOSE_LINE = "WriteVerboseLine";
+        private const string WRITE_WARNING_LINE = "WriteWarningLine";
+        private const string WRITE_PROGRESS = "WriteProgress";
 
-        protected bool initialized = false;
+        private bool initialized = false;
         /// <summary>
         /// This queue is for the state change events that resulted in closing the underlying
         /// datastructure handler. We cannot send the state back to the upper layers until
         /// close is completed from the datastructure/transport layer.
         /// </summary>
-        private Queue<PSInvocationStateInfo> _stateInfoQueue = new Queue<PSInvocationStateInfo>();
+        private readonly Queue<PSInvocationStateInfo> _stateInfoQueue = new Queue<PSInvocationStateInfo>();
 
         private PSConnectionRetryStatus _connectionRetryStatus = PSConnectionRetryStatus.None;
 
-        #endregion Protected Members
+        #endregion Private Fields
 
         #region IDisposable
 
         /// <summary>
-        /// Public interface for dispose.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-
-            GC.SuppressFinalize(this);
+            // inputstream.Dispose();
+            // outputstream.Dispose();
+            // errorstream.Dispose();
         }
 
-        /// <summary>
-        /// Release all resources.
-        /// </summary>
-        /// <param name="disposing">If true, release all managed resources.</param>
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                // inputstream.Dispose();
-                // outputstream.Dispose();
-                // errorstream.Dispose();
-            }
-        }
         #endregion IDisposable
     }
 
@@ -977,7 +961,7 @@ namespace System.Management.Automation.Runspaces.Internal
         AutoDisconnectStarting = 4,
         AutoDisconnectSucceeded = 5,
         InternalErrorAbort = 6
-    };
+    }
 
     /// <summary>
     /// PSConnectionRetryStatusEventArgs.

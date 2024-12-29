@@ -1,8 +1,0 @@
-[ClassVersion("1.0.0"), Description("The configuration provider for ssh authorized key control."), FriendlyName("nxSshAuthorizedKeys")]
-class MSFT_nxSshAuthorizedKeysResource:OMI_BaseResource
-{
-	[Key] string KeyComment;
-	[write,ValueMap{"Present", "Absent"},Values{"Present", "Absent"}] string Ensure;
-	[write] string UserName;
-	[write] string Key;
-};

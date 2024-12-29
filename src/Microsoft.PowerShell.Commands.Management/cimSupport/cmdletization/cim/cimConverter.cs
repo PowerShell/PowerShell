@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Cim
 {
     internal class CimSensitiveValueConverter : IDisposable
     {
-        private class SensitiveString : IDisposable
+        private sealed class SensitiveString : IDisposable
         {
             private GCHandle _gcHandle;
             private string _string;
@@ -50,15 +50,9 @@ namespace Microsoft.PowerShell.Cim
 
             private unsafe void Copy(char* source, int offset, int charsToCopy)
             {
-                if ((offset < 0) || (offset >= _string.Length))
-                {
-                    throw new ArgumentOutOfRangeException(nameof(offset));
-                }
-
-                if (offset + charsToCopy > _string.Length)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(charsToCopy));
-                }
+                ArgumentOutOfRangeException.ThrowIfNegative(offset);
+                ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(offset, _string.Length);
+                ArgumentOutOfRangeException.ThrowIfGreaterThan(offset + charsToCopy, _string.Length, nameof(charsToCopy));
 
                 fixed (char* target = _string)
                 {
@@ -129,7 +123,7 @@ namespace Microsoft.PowerShell.Cim
             }
         }
 
-        private readonly List<IDisposable> _trackedDisposables = new List<IDisposable>();
+        private readonly List<IDisposable> _trackedDisposables = new();
 
         /// <summary>
         /// Releases resources associated with this object.
@@ -352,7 +346,7 @@ namespace Microsoft.PowerShell.Cim
         /// <exception cref="PSInvalidCastException">The only kind of exception this method can throw.</exception>
         internal static object ConvertFromCimToDotNet(object cimObject, Type expectedDotNetType)
         {
-            if (expectedDotNetType == null) { throw new ArgumentNullException(nameof(expectedDotNetType)); }
+            ArgumentNullException.ThrowIfNull(expectedDotNetType);
 
             if (cimObject == null)
             {
@@ -399,21 +393,21 @@ namespace Microsoft.PowerShell.Cim
                 return dotNetObject;
             }
 
-            Func<Func<object>, object> exceptionSafeReturn = delegate (Func<object> innerAction)
-                                                                 {
-                                                                     try
-                                                                     {
-                                                                         return innerAction();
-                                                                     }
-                                                                     catch (Exception e)
-                                                                     {
-                                                                         throw CimValueConverter.GetInvalidCastException(
-                                                                             e,
-                                                                             "InvalidCimToDotNetCast",
-                                                                             cimObject,
-                                                                             expectedDotNetType.FullName);
-                                                                     }
-                                                                 };
+            Func<Func<object>, object> exceptionSafeReturn = (Func<object> innerAction) =>
+            {
+                try
+                {
+                    return innerAction();
+                }
+                catch (Exception e)
+                {
+                    throw CimValueConverter.GetInvalidCastException(
+                        e,
+                        "InvalidCimToDotNetCast",
+                        cimObject,
+                        expectedDotNetType.FullName);
+                }
+            };
 
             if (typeof(ObjectSecurity).IsAssignableFrom(expectedDotNetType))
             {
@@ -431,7 +425,9 @@ namespace Microsoft.PowerShell.Cim
                 var cimIntrinsicValue = (byte[])LanguagePrimitives.ConvertTo(cimObject, typeof(byte[]), CultureInfo.InvariantCulture);
                 return exceptionSafeReturn(delegate
                                                {
+                                                   #pragma warning disable SYSLIB0057
                                                    return new X509Certificate2(cimIntrinsicValue);
+                                                   #pragma warning restore SYSLIB0057
                                                });
             }
 

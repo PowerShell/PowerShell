@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 /*
  * This is the source code for the tool 'TypeCatalogGen.exe', which has been checked in %SDXROOT%\tools\managed\v4.0\TypeCatalogGen.
  * The tool 'TypeCatalogGen.exe' is used when building 'Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll' for OneCore powershell
@@ -26,7 +27,7 @@ using System.Text;
 
 namespace Microsoft.PowerShell.CoreCLR
 {
-    public class TypeCatalogGen
+    public static class TypeCatalogGen
     {
         // Help messages
         private const string Param_TargetCSharpFilePath = "TargetCSharpFilePath";
@@ -96,7 +97,7 @@ Usage: TypeCatalogGen.exe <{0}> <{1}> [{2}]
                         // We only care about public types
                         TypeDefinition typeDefinition = metadataReader.GetTypeDefinition(typeHandle);
                         // The visibility mask is used to mask out the bits that contain the visibility.
-                        // The visibilities are not combineable, e.g. you can't be both public and private, which is why these aren't independent powers of two.
+                        // The visibilities are not combinable, e.g. you can't be both public and private, which is why these aren't independent powers of two.
                         TypeAttributes visibilityBits = typeDefinition.Attributes & TypeAttributes.VisibilityMask;
                         if (visibilityBits != TypeAttributes.Public && visibilityBits != TypeAttributes.NestedPublic)
                         {
@@ -174,7 +175,11 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
                     // Attribute is defined in the same module
                     MethodDefinition methodDef = reader.GetMethodDefinition((MethodDefinitionHandle)customAttribute.Constructor);
                     TypeDefinitionHandle declaringTypeDefHandle = methodDef.GetDeclaringType();
-                    if (declaringTypeDefHandle.IsNil) { /* Global method */ return false; }
+                    if (declaringTypeDefHandle.IsNil)
+                    {
+                        // Global method
+                        return false;
+                    }
 
                     TypeDefinition declaringTypeDef = reader.GetTypeDefinition(declaringTypeDefHandle);
                     attributeFullName = GetTypeFullName(reader, declaringTypeDef);
@@ -230,9 +235,6 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
                 case AssemblyHashAlgorithm.Sha1:
                     hashImpl = SHA1.Create();
                     break;
-                case AssemblyHashAlgorithm.MD5:
-                    hashImpl = MD5.Create();
-                    break;
                 case AssemblyHashAlgorithm.Sha256:
                     hashImpl = SHA256.Create();
                     break;
@@ -255,10 +257,8 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
             }
 
             // Convert bytes to hex format strings in lower case.
-            string publicKeyTokenString = BitConverter.ToString(publicKeyTokenBytes).Replace("-", string.Empty).ToLowerInvariant();
-            string strongAssemblyName = string.Format(CultureInfo.InvariantCulture,
-                                                      "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
-                                                      asmName, asmVersion, asmCulture, publicKeyTokenString);
+            string publicKeyTokenString = Convert.ToHexString(publicKeyTokenBytes).ToLowerInvariant();
+            string strongAssemblyName = string.Create(CultureInfo.InvariantCulture, $"{asmName}, Version={asmVersion}, Culture={asmCulture}, PublicKeyToken={publicKeyTokenString}");
 
             return strongAssemblyName;
         }
@@ -430,7 +430,7 @@ namespace System.Management.Automation
 {{
     internal partial class PowerShellAssemblyLoadContext
     {{
-        private Dictionary<string, string> InitializeTypeCatalog()
+        private static Dictionary<string, string> InitializeTypeCatalog()
         {{
             return new Dictionary<string, string>({0}, StringComparer.OrdinalIgnoreCase) {{";
             const string SourceEnd = @"
@@ -458,7 +458,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper class to keep the metadata of a type.
         /// </summary>
-        private class TypeMetadata
+        private sealed class TypeMetadata
         {
             internal readonly string AssemblyName;
             internal readonly bool IsObsolete;

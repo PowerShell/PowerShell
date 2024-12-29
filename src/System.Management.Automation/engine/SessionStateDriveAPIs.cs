@@ -231,27 +231,11 @@ namespace System.Management.Automation
 
         private static bool IsValidDriveName(string name)
         {
-            bool result = true;
+            const string CharactersInvalidInDriveName = ":/\\.~";
 
-            do
-            {
-                if (string.IsNullOrEmpty(name))
-                {
-                    result = false;
-                    break;
-                }
-
-                if (name.IndexOfAny(s_charactersInvalidInDriveName) >= 0)
-                {
-                    result = false;
-                    break;
-                }
-            } while (false);
-
-            return result;
+            return !string.IsNullOrEmpty(name)
+                && name.AsSpan().IndexOfAny(CharactersInvalidInDriveName) < 0;
         }
-
-        private static char[] s_charactersInvalidInDriveName = new char[] { ':', '/', '\\', '.', '~' };
 
         /// <summary>
         /// Tries to resolve the drive root as an MSH path. If it successfully resolves
@@ -1204,8 +1188,7 @@ namespace System.Management.Automation
             else
             {
                 PSInvalidOperationException e =
-                    (PSInvalidOperationException)
-                    PSTraceSource.NewInvalidOperationException(
+                    (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                         SessionStateStrings.DriveRemovalPreventedByProvider,
                         drive.Name,
                         drive.Provider);

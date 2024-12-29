@@ -7,7 +7,6 @@ Describe "Validate start of console host" -Tag CI {
             'Microsoft.ApplicationInsights.dll'
             'Microsoft.Management.Infrastructure.dll'
             'Microsoft.PowerShell.ConsoleHost.dll'
-            'Microsoft.PowerShell.Security.dll'
             'Microsoft.Win32.Primitives.dll'
             'Microsoft.Win32.Registry.dll'
             'netstandard.dll'
@@ -15,19 +14,16 @@ Describe "Validate start of console host" -Tag CI {
             'pwsh.dll'
             'System.Collections.Concurrent.dll'
             'System.Collections.dll'
-            'System.Collections.NonGeneric.dll'
             'System.Collections.Specialized.dll'
             'System.ComponentModel.dll'
             'System.ComponentModel.Primitives.dll'
             'System.ComponentModel.TypeConverter.dll'
             'System.Console.dll'
             'System.Data.Common.dll'
-            'System.Diagnostics.FileVersionInfo.dll'
             'System.Diagnostics.Process.dll'
             'System.Diagnostics.TraceSource.dll'
             'System.Diagnostics.Tracing.dll'
             'System.IO.FileSystem.AccessControl.dll'
-            'System.IO.FileSystem.dll'
             'System.IO.FileSystem.DriveInfo.dll'
             'System.IO.Pipes.dll'
             'System.Linq.dll'
@@ -37,6 +33,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Net.Mail.dll'
             'System.Net.NetworkInformation.dll'
             'System.Net.Primitives.dll'
+            'System.Numerics.Vectors.dll'
             'System.ObjectModel.dll'
             'System.Private.CoreLib.dll'
             'System.Private.Uri.dll'
@@ -46,15 +43,14 @@ Describe "Validate start of console host" -Tag CI {
             'System.Reflection.Primitives.dll'
             'System.Runtime.dll'
             'System.Runtime.InteropServices.dll'
-            'System.Runtime.InteropServices.RuntimeInformation.dll'
             'System.Runtime.Loader.dll'
             'System.Runtime.Numerics.dll'
             'System.Runtime.Serialization.Formatters.dll'
             'System.Runtime.Serialization.Primitives.dll'
             'System.Security.AccessControl.dll'
-            'System.Security.Cryptography.Encoding.dll'
-            'System.Security.Cryptography.X509Certificates.dll'
+            'System.Security.Cryptography.dll'
             'System.Security.Principal.Windows.dll'
+            'System.Text.Encoding.CodePages.dll'
             'System.Text.Encoding.Extensions.dll'
             'System.Text.RegularExpressions.dll'
             'System.Threading.dll'
@@ -70,16 +66,13 @@ Describe "Validate start of console host" -Tag CI {
                 'System.DirectoryServices.dll'
                 'System.Management.dll'
                 'System.Security.Claims.dll'
-                'System.Security.Cryptography.Primitives.dll'
                 'System.Threading.Overlapped.dll'
             )
         }
         else {
             $allowedAssemblies += @(
-                'System.Collections.Immutable.dll'
-                'System.IO.MemoryMappedFiles.dll'
+                'System.Diagnostics.DiagnosticSource.dll'
                 'System.Net.Sockets.dll'
-                'System.Reflection.Metadata.dll'
             )
         }
 
@@ -93,7 +86,7 @@ Describe "Validate start of console host" -Tag CI {
             Remove-Item $profileDataFile -Force
         }
 
-        $loadedAssemblies = & "$PSHOME/pwsh" -noprofile -command '([System.AppDomain]::CurrentDomain.GetAssemblies()).manifestmodule | Where-Object { $_.Name -notlike ""<*>"" } | ForEach-Object { $_.Name }'
+        $loadedAssemblies = & "$PSHOME/pwsh" -noprofile -command '([System.AppDomain]::CurrentDomain.GetAssemblies()).manifestmodule | Where-Object { $_.Name -notlike "<*>" } | ForEach-Object { $_.Name }'
     }
 
     It "No new assemblies are loaded" {

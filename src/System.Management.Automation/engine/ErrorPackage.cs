@@ -18,7 +18,7 @@ using System.Security.Permissions;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Errors reported by Monad will be in one of these categories.
+    /// Errors reported by PowerShell will be in one of these categories.
     /// </summary>
     /// <remarks>
     /// Do not specify ErrorCategory.NotSpecified when creating an
@@ -28,13 +28,15 @@ namespace System.Management.Automation
     public enum ErrorCategory
     {
         /// <summary>
+        /// <para>
         /// No error category is specified, or the error category is invalid.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// Do not specify ErrorCategory.NotSpecified when creating an
         /// <see cref="System.Management.Automation.ErrorRecord"/>.
         /// Choose the best match from among the other values.
-        /// </remarks>
+        /// </para>
+        /// </summary>
         NotSpecified = 0,
 
         /// <summary>
@@ -132,14 +134,16 @@ namespace System.Management.Automation
         WriteError = 23,
 
         /// <summary>
-        /// A non-Monad command reported an error to its STDERR pipe.
-        /// </summary>
-        /// <remarks>
+        /// <para>
+        /// A native command reported an error to its STDERR pipe.
+        /// </para>
+        /// <para>
         /// The Engine uses this ErrorCategory when it executes a native
         /// console applications and captures the errors reported by the
         /// native application.  Avoid using ErrorCategory.FromStdErr
         /// in other circumstances.
-        /// </remarks>
+        /// </para>
+        /// </summary>
         FromStdErr = 24,
 
         /// <summary>
@@ -193,10 +197,7 @@ namespace System.Management.Automation
         #region ctor
         internal ErrorCategoryInfo(ErrorRecord errorRecord)
         {
-            if (errorRecord == null)
-            {
-                throw new ArgumentNullException(nameof(errorRecord));
-            }
+            ArgumentNullException.ThrowIfNull(errorRecord);
 
             _errorRecord = errorRecord;
         }
@@ -477,7 +478,7 @@ namespace System.Management.Automation
 
         #region Private
         // back-reference for facade class
-        private ErrorRecord _errorRecord;
+        private readonly ErrorRecord _errorRecord;
 
         /// <summary>
         /// The Activity, Reason, TargetName and TargetType strings in
@@ -495,7 +496,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal static string Ellipsize(CultureInfo uiCultureInfo, string original)
         {
-            if (40 >= original.Length)
+            if (original.Length <= 40)
             {
                 return original;
             }
@@ -526,7 +527,6 @@ namespace System.Management.Automation
     /// It is permitted to subclass <see cref="ErrorDetails"/>
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
-    [Serializable]
     public class ErrorDetails : ISerializable
     {
         #region Constructor
@@ -720,7 +720,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info != null)
@@ -757,7 +756,7 @@ namespace System.Management.Automation
             get { return ErrorRecord.NotNull(_message); }
         }
 
-        private string _message = string.Empty;
+        private readonly string _message = string.Empty;
 
         /// <summary>
         /// Text describing the recommended action in the event that this error
@@ -770,7 +769,10 @@ namespace System.Management.Automation
         /// </remarks>
         public string RecommendedAction
         {
-            get { return ErrorRecord.NotNull(_recommendedAction); }
+            get
+            {
+                return ErrorRecord.NotNull(_recommendedAction);
+            }
 
             set
             {
@@ -983,7 +985,6 @@ namespace System.Management.Automation
     /// <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>.
     /// rather than the actual exception, to avoid the mutual references.
     /// </remarks>
-    [Serializable]
     public class ErrorRecord : ISerializable
     {
         #region Constructor
@@ -1024,10 +1025,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(exception));
             }
 
-            if (errorId == null)
-            {
-                errorId = string.Empty;
-            }
+            errorId ??= string.Empty;
 
             // targetObject may be null
             _error = exception;
@@ -1077,7 +1075,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info != null)
@@ -1206,21 +1203,21 @@ namespace System.Management.Automation
 
         private void ToPSObjectForRemoting(PSObject dest, bool serializeExtInfo)
         {
-            RemotingEncoder.AddNoteProperty<Exception>(dest, "Exception", delegate () { return Exception; });
-            RemotingEncoder.AddNoteProperty<object>(dest, "TargetObject", delegate () { return TargetObject; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "FullyQualifiedErrorId", delegate () { return FullyQualifiedErrorId; });
-            RemotingEncoder.AddNoteProperty<InvocationInfo>(dest, "InvocationInfo", delegate () { return InvocationInfo; });
-            RemotingEncoder.AddNoteProperty<int>(dest, "ErrorCategory_Category", delegate () { return (int)CategoryInfo.Category; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Activity", delegate () { return CategoryInfo.Activity; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Reason", delegate () { return CategoryInfo.Reason; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetName", delegate () { return CategoryInfo.TargetName; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetType", delegate () { return CategoryInfo.TargetType; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Message", delegate () { return CategoryInfo.GetMessage(CultureInfo.CurrentCulture); });
+            RemotingEncoder.AddNoteProperty<Exception>(dest, "Exception", () => Exception);
+            RemotingEncoder.AddNoteProperty<object>(dest, "TargetObject", () => TargetObject);
+            RemotingEncoder.AddNoteProperty<string>(dest, "FullyQualifiedErrorId", () => FullyQualifiedErrorId);
+            RemotingEncoder.AddNoteProperty<InvocationInfo>(dest, "InvocationInfo", () => InvocationInfo);
+            RemotingEncoder.AddNoteProperty<int>(dest, "ErrorCategory_Category", () => (int)CategoryInfo.Category);
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Activity", () => CategoryInfo.Activity);
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Reason", () => CategoryInfo.Reason);
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetName", () => CategoryInfo.TargetName);
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetType", () => CategoryInfo.TargetType);
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Message", () => CategoryInfo.GetMessage(CultureInfo.CurrentCulture));
 
             if (ErrorDetails != null)
             {
-                RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_Message", delegate () { return ErrorDetails.Message; });
-                RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_RecommendedAction", delegate () { return ErrorDetails.RecommendedAction; });
+                RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_Message", () => ErrorDetails.Message);
+                RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_RecommendedAction", () => ErrorDetails.RecommendedAction);
             }
 
             if (!serializeExtInfo || this.InvocationInfo == null)
@@ -1231,12 +1228,12 @@ namespace System.Management.Automation
             {
                 RemotingEncoder.AddNoteProperty(dest, "SerializeExtendedInfo", () => true);
                 this.InvocationInfo.ToPSObjectForRemoting(dest);
-                RemotingEncoder.AddNoteProperty<object>(dest, "PipelineIterationInfo", delegate () { return PipelineIterationInfo; });
+                RemotingEncoder.AddNoteProperty<object>(dest, "PipelineIterationInfo", () => PipelineIterationInfo);
             }
 
             if (!string.IsNullOrEmpty(this.ScriptStackTrace))
             {
-                RemotingEncoder.AddNoteProperty(dest, "ErrorDetails_ScriptStackTrace", delegate () { return this.ScriptStackTrace; });
+                RemotingEncoder.AddNoteProperty(dest, "ErrorDetails_ScriptStackTrace", () => this.ScriptStackTrace);
             }
         }
 
@@ -1338,7 +1335,7 @@ namespace System.Management.Automation
             string errorDetails_ScriptStackTrace =
                 GetNoteValue(serializedErrorRecord, "ErrorDetails_ScriptStackTrace") as string;
 
-            RemoteException re = new RemoteException((string.IsNullOrWhiteSpace(exceptionMessage) == false) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
+            RemoteException re = new RemoteException((!string.IsNullOrWhiteSpace(exceptionMessage)) ? exceptionMessage : errorCategory_Message, serializedException, invocationInfo);
 
             // Create ErrorRecord
             PopulateProperties(
@@ -1482,7 +1479,7 @@ namespace System.Management.Automation
         /// for that ErrorCategory.
         /// </summary>
         /// <value>never null</value>
-        public ErrorCategoryInfo CategoryInfo { get => _categoryInfo ?? (_categoryInfo = new ErrorCategoryInfo(this)); }
+        public ErrorCategoryInfo CategoryInfo { get => _categoryInfo ??= new ErrorCategoryInfo(this); }
 
         private ErrorCategoryInfo _categoryInfo;
 
@@ -1636,7 +1633,7 @@ namespace System.Management.Automation
         #endregion Public Properties
 
         #region Private
-        private string _errorId;
+        private readonly string _errorId;
 
         #region Exposed by ErrorCategoryInfo
         internal ErrorCategory _category;
@@ -1668,8 +1665,7 @@ namespace System.Management.Automation
                 return commandInfo.Name;
             }
 
-            CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
-            if (cmdletInfo == null)
+            if (!(commandInfo is CmdletInfo cmdletInfo))
             {
                 return string.Empty;
             }
@@ -1726,10 +1722,10 @@ namespace System.Management.Automation
     /// information.
     /// </summary>
     /// <remarks>
-    /// MSH defines certain exception classes which implement this interface.
+    /// PowerShell defines certain exception classes which implement this interface.
     /// This includes wrapper exceptions such as
     /// <see cref="System.Management.Automation.CmdletInvocationException"/>,
-    /// and also MSH engine errors such as
+    /// and also PowerShell engine errors such as
     /// <see cref="System.Management.Automation.GetValueException"/>.
     /// Cmdlets and providers should not define this interface;
     /// instead, they should use the
@@ -1764,6 +1760,7 @@ namespace System.Management.Automation
     /// <seealso cref="Provider.CmdletProvider"/>
     /// is no longer available.
     /// </remarks>
+#nullable enable
     public interface IContainsErrorRecord
     {
         /// <summary>
@@ -1792,6 +1789,7 @@ namespace System.Management.Automation
         /// </remarks>
         ErrorRecord ErrorRecord { get; }
     }
+#nullable restore
 
     /// <summary>
     /// Objects implementing this interface can be used by
@@ -1813,6 +1811,7 @@ namespace System.Management.Automation
     /// since the improved
     /// information about the error may help enable future scenarios.
     /// </remarks>
+#nullable enable
     public interface IResourceSupplier
     {
         /// <summary>

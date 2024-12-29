@@ -37,17 +37,17 @@ namespace System.Management.Automation
         /// <param name="acceptableCommandNames">
         /// The patterns to search for in the paths.
         /// </param>
-        /// <param name="useFuzzyMatch">
-        /// Use likely relevant search.
+        /// <param name="fuzzyMatcher">
+        /// The fuzzy matcher to use for fuzzy searching.
         /// </param>
         internal CommandPathSearch(
             string commandName,
             LookupPathCollection lookupPaths,
             ExecutionContext context,
             Collection<string>? acceptableCommandNames,
-            bool useFuzzyMatch)
+            FuzzyMatcher? fuzzyMatcher)
         {
-            _useFuzzyMatch = useFuzzyMatch;
+            _fuzzyMatcher = fuzzyMatcher;
             string[] commandPatterns;
             if (acceptableCommandNames != null)
             {
@@ -110,7 +110,17 @@ namespace System.Management.Automation
                 sessionState.CurrentDrive.Provider.NameEquals(fileSystemProviderName) &&
                 sessionState.IsProviderLoaded(fileSystemProviderName);
 
-            string environmentCurrentDirectory = Directory.GetCurrentDirectory();
+            string? environmentCurrentDirectory = null;
+            
+            try
+            {
+                environmentCurrentDirectory = Directory.GetCurrentDirectory();
+            }
+            catch (FileNotFoundException)
+            {
+                // This can happen if the current working directory is deleted by another process on non-Windows
+                // In this case, we'll just ignore it and continue on with the current directory as null
+            }
 
             LocationGlobber pathResolver = _context.LocationGlobber;
 
@@ -278,9 +288,9 @@ namespace System.Management.Automation
                 GetNewDirectoryResults(_patternEnumerator.Current, _lookupPathsEnumerator.Current);
             }
 
-            do // while lookupPathsEnumerator is valid
+            while (true) // while lookupPathsEnumerator is valid
             {
-                do // while patternEnumerator is valid
+                while (true) // while patternEnumerator is valid
                 {
                     // Try moving to the next path in the current results
 
@@ -309,7 +319,7 @@ namespace System.Management.Automation
                     }
 
                     // Since we have reset the results, loop again to find the next result.
-                } while (true);
+                }
 
                 if (result)
                 {
@@ -336,7 +346,7 @@ namespace System.Management.Automation
                 }
 
                 GetNewDirectoryResults(_patternEnumerator.Current, _lookupPathsEnumerator.Current);
-            } while (true);
+            }
 
             return result;
         }
@@ -346,9 +356,12 @@ namespace System.Management.Automation
         /// </summary>
         public void Reset()
         {
+            _lookupPathsEnumerator.Dispose();
             _lookupPathsEnumerator = _lookupPaths.GetEnumerator();
+            _patternEnumerator.Dispose();
             _patternEnumerator = _patterns.GetEnumerator();
             _currentDirectoryResults = Array.Empty<string>();
+            _currentDirectoryResultsEnumerator.Dispose();
             _currentDirectoryResultsEnumerator = _currentDirectoryResults.GetEnumerator();
             _justReset = true;
         }
@@ -421,13 +434,13 @@ namespace System.Management.Automation
                     // to forcefully use null if pattern is "."
                     if (pattern.Length != 1 || pattern[0] != '.')
                     {
-                        if (_useFuzzyMatch)
+                        if (_fuzzyMatcher is not null)
                         {
                             var files = new List<string>();
                             var matchingFiles = Directory.EnumerateFiles(directory);
                             foreach (string file in matchingFiles)
                             {
-                                if (FuzzyMatcher.IsFuzzyMatch(Path.GetFileName(file), pattern))
+                                if (_fuzzyMatcher.IsFuzzyMatch(Path.GetFileName(file), pattern))
                                 {
                                     files.Add(file);
                                 }
@@ -490,8 +503,7 @@ namespace System.Management.Automation
                         if (name.Equals(baseNames[i], StringComparison.OrdinalIgnoreCase)
                             || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(name)))
                         {
-                            if (result == null)
-                                result = new Collection<string>();
+                            result ??= new Collection<string>();
                             result.Add(fileNames[i]);
                             break;
                         }
@@ -517,8 +529,7 @@ namespace System.Management.Automation
                     if (fileName.EndsWith(allowedExt, StringComparison.OrdinalIgnoreCase)
                         || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileName)))
                     {
-                        if (result == null)
-                            result = new Collection<string>();
+                        result ??= new Collection<string>();
                         result.Add(fileName);
                     }
                 }
@@ -531,7 +542,7 @@ namespace System.Management.Automation
         /// The directory paths in which to look for commands.
         /// This is derived from the PATH environment variable.
         /// </summary>
-        private LookupPathCollection _lookupPaths;
+        private readonly LookupPathCollection _lookupPaths;
 
         /// <summary>
         /// The enumerator for the lookup paths.
@@ -552,7 +563,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The command name to search for.
         /// </summary>
-        private IEnumerable<string> _patterns;
+        private readonly IEnumerable<string> _patterns;
 
         /// <summary>
         /// The enumerator for the patterns.
@@ -562,7 +573,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A reference to the execution context for this runspace.
         /// </summary>
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
 
         /// <summary>
         /// When reset is called, this gets set to true. Once MoveNext
@@ -573,14 +584,13 @@ namespace System.Management.Automation
         /// <summary>
         /// If not null, called with the enumerated files for further processing.
         /// </summary>
-        private Func<string[], IEnumerable<string>?> _postProcessEnumeratedFiles;
+        private readonly Func<string[], IEnumerable<string>?> _postProcessEnumeratedFiles;
 
-        private string[] _orderedPathExt;
-        private Collection<string>? _acceptableCommandNames;
+        private readonly string[] _orderedPathExt;
+        private readonly Collection<string>? _acceptableCommandNames;
 
-        private bool _useFuzzyMatch = false;
+        private readonly FuzzyMatcher? _fuzzyMatcher;
 
         #endregion private members
     }
 }
-

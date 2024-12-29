@@ -153,4 +153,16 @@
   <data name="InvalidSessionKey" xml:space="preserve">
     <value>Invalid session key data.</value>
   </data>
+  <data name="ScriptFileBlockedBySystemPolicy" xml:space="preserve">
+    <value>Script file, '{0}', is blocked from running by system policy.</value>
+  </data>
+  <data name="UnknownSystemScriptFileEnforcement" xml:space="preserve">
+    <value>An unknown script file policy enforcement value was returned: {0}.</value>
+  </data>
+  <data name="ExternalScriptWDACLogTitle" xml:space="preserve">
+    <value>Script File Read</value>
+  </data>
+  <data name="ExternalScriptWDACLogMessage" xml:space="preserve">
+    <value>Script file '{0}' is not trusted by policy and will run in ConstrainedLanguage mode.</value>
+  </data>
 </root>

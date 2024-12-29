@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -42,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets force parameter. This will allow to clear the recyclebin.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get
@@ -155,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        private bool IsValidPattern(string input)
+        private static bool IsValidPattern(string input)
         {
             return Regex.IsMatch(input, @"^[a-z]{1}$|^[a-z]{1}:$|^[a-z]{1}:\\$", RegexOptions.IgnoreCase);
         }
@@ -166,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="driveName"></param>
         /// <returns></returns>
-        private string GetDrivePath(string driveName)
+        private static string GetDrivePath(string driveName)
         {
             string drivePath;
             if (driveName.EndsWith(":\\", StringComparison.OrdinalIgnoreCase))
@@ -221,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
                     statusDescription = string.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinStatusDescriptionByDrive, drivePath);
                 }
 
-                ProgressRecord progress = new ProgressRecord(0, activity, statusDescription);
+                ProgressRecord progress = new(0, activity, statusDescription);
                 progress.PercentComplete = 30;
                 progress.RecordType = ProgressRecordType.Processing;
                 WriteProgress(progress);
@@ -238,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    internal static class NativeMethod
+    internal static partial class NativeMethod
     {
         // Internal code to SHEmptyRecycleBin
         internal enum RecycleFlags : uint
@@ -248,8 +247,8 @@ namespace Microsoft.PowerShell.Commands
             SHERB_NOSOUND = 0x00000004
         }
 
-        [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
-        internal static extern uint SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
+        [LibraryImport("Shell32.dll", StringMarshalling = StringMarshalling.Utf16, EntryPoint = "SHEmptyRecycleBinW")]
+        internal static partial uint SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
     }
 }
 #endif

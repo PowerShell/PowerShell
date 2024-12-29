@@ -28,6 +28,39 @@ Describe "Language Primitive Tests" -Tags "CI" {
         $ObjArray.Length | Should -Be $col.Count
     }
 
+    It "Test convertion with .Net Core intrinsic type convertor" {
+        $result = [System.Management.Automation.LanguagePrimitives]::ConvertTo('2,3', [System.Drawing.Point])
+        $result | Should -BeOfType System.Drawing.Point
+        $result.X | Should -Be 2
+        $result.Y | Should -Be 3
+
+        $result = [System.Management.Automation.LanguagePrimitives]::ConvertTo([PSObject]'2,3', [System.Drawing.Point])
+        $result | Should -BeOfType System.Drawing.Point
+        $result.X | Should -Be 2
+        $result.Y | Should -Be 3
+
+        $result = [System.Management.Automation.LanguagePrimitives]::ConvertTo('http://test.site.com', [System.Uri])
+        $result | Should -BeOfType System.Uri
+        $result.AbsoluteUri | Should -BeExactly 'http://test.site.com/'
+
+        # accept relative URI path
+        $result = [System.Management.Automation.LanguagePrimitives]::ConvertTo('..\foo', [System.Uri])
+        $result | Should -BeOfType System.Uri
+        $result.OriginalString | Should -BeExactly '..\foo'
+    }
+
+    It "Test convertion with .Net Core intrinsic type convertor (Windows only types)" -Skip:(-not $IsWindows) {
+        $result = [System.Management.Automation.LanguagePrimitives]::ConvertTo('Microsoft Sans Serif,10', [System.Drawing.Font])
+        $result | Should -BeOfType System.Drawing.Font
+        $result.Size | Should -Be 10
+        $result.Name | Should -BeExactly 'Microsoft Sans Serif'
+
+        $result = [System.Management.Automation.LanguagePrimitives]::ConvertTo([PSObject]'Microsoft Sans Serif,10', [System.Drawing.Font])
+        $result | Should -BeOfType System.Drawing.Font
+        $result.Size | Should -Be 10
+        $result.Name | Should -BeExactly 'Microsoft Sans Serif'
+    }
+
     It "Casting recursive array to bool should not cause crash" {
         $a[0] = $a = [PSObject](, 1)
         [System.Management.Automation.LanguagePrimitives]::IsTrue($a) | Should -BeTrue

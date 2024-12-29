@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #pragma warning disable 1634, 1691
 
 using System.Collections;
@@ -13,15 +14,14 @@ namespace System.Management.Automation
     /// </summary>
     internal class DefaultCommandRuntime : ICommandRuntime2
     {
-        private List<object> _output;
+        private readonly List<object> _output;
         /// <summary>
         /// Constructs an instance of the default ICommandRuntime object
         /// that will write objects into the list that was passed.
         /// </summary>
         public DefaultCommandRuntime(List<object> outputList)
         {
-            if (outputList == null)
-                throw new System.ArgumentNullException(nameof(outputList));
+            ArgumentNullException.ThrowIfNull(outputList);
 
             _output = outputList;
         }
@@ -29,7 +29,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Return the instance of PSHost - null by default.
         /// </summary>
-        public PSHost Host { set; get; }
+        public PSHost Host { get; set; }
 
         #region Write
         /// <summary>
@@ -64,7 +64,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Default implementation of the enumerated WriteObject. Either way, the
-        /// objects are added to the list passed to this object in the constuctor.
+        /// objects are added to the list passed to this object in the constructor.
         /// </summary>
         /// <param name="sendToPipeline">Object to write.</param>
         /// <param name="enumerateCollection">If true, the collection is enumerated, otherwise
@@ -229,6 +229,7 @@ namespace System.Management.Automation
         /// if it exists, otherwise throw an invalid operation exception.
         /// </summary>
         /// <param name="errorRecord">The error record to throw.</param>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             if (errorRecord.Exception != null)

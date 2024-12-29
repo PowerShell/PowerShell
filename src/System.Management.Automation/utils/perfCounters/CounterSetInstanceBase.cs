@@ -400,7 +400,7 @@ namespace System.Management.Automation.PerformanceData
             // retrieve counter id associated with the counter name
             if (counterName == null)
             {
-                ArgumentNullException argNullException = new ArgumentNullException("counterName");
+                ArgumentNullException argNullException = new ArgumentNullException(nameof(counterName));
                 _tracer.TraceException(argNullException);
                 return false;
             }
@@ -484,7 +484,7 @@ namespace System.Management.Automation.PerformanceData
             // retrieve counter id associated with the counter name
             if (counterName == null)
             {
-                ArgumentNullException argNullException = new ArgumentNullException("counterName");
+                ArgumentNullException argNullException = new ArgumentNullException(nameof(counterName));
                 _tracer.TraceException(argNullException);
                 return false;
             }
@@ -568,7 +568,7 @@ namespace System.Management.Automation.PerformanceData
             // retrieve counter id associated with the counter name
             if (counterName == null)
             {
-                ArgumentNullException argNullException = new ArgumentNullException("counterName");
+                ArgumentNullException argNullException = new ArgumentNullException(nameof(counterName));
                 _tracer.TraceException(argNullException);
                 return false;
             }

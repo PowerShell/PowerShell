@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 
 //
 // Now define the set of commands for manipulating modules.
@@ -28,6 +29,11 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Function
         {
+            get
+            {
+                return _functionList;
+            }
+
             set
             {
                 _functionList = value;
@@ -42,8 +48,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-
-            get { return _functionList; }
         }
 
         private string[] _functionList;
@@ -57,6 +61,11 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Cmdlet
         {
+            get
+            {
+                return _cmdletList;
+            }
+
             set
             {
                 _cmdletList = value;
@@ -71,8 +80,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-
-            get { return _cmdletList; }
         }
 
         private string[] _cmdletList;
@@ -86,6 +93,11 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Variable
         {
+            get
+            {
+                return _variableExportList;
+            }
+
             set
             {
                 _variableExportList = value;
@@ -100,8 +112,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-
-            get { return _variableExportList; }
         }
 
         private string[] _variableExportList;
@@ -115,6 +125,11 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Alias
         {
+            get
+            {
+                return _aliasExportList;
+            }
+
             set
             {
                 _aliasExportList = value;
@@ -129,8 +144,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-
-            get { return _aliasExportList; }
         }
 
         private string[] _aliasExportList;
@@ -155,9 +168,19 @@ namespace Microsoft.PowerShell.Commands
             if (Context.EngineSessionState.Module?.LanguageMode != null &&
                 Context.LanguageMode != Context.EngineSessionState.Module.LanguageMode)
             {
-                var se = new PSSecurityException(Modules.CannotExportMembersAccrossLanguageBoundaries);
-                var er = new ErrorRecord(se, "Modules_CannotExportMembersAccrossLanguageBoundaries", ErrorCategory.SecurityError, this);
-                ThrowTerminatingError(er);
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                {
+                    var se = new PSSecurityException(Modules.CannotExportMembersAccrossLanguageBoundaries);
+                    var er = new ErrorRecord(se, "Modules_CannotExportMembersAccrossLanguageBoundaries", ErrorCategory.SecurityError, this);
+                    ThrowTerminatingError(er);
+                }
+
+                SystemPolicy.LogWDACAuditMessage(
+                    context: Context,
+                    title: Modules.WDACExportModuleCommandLogTitle,
+                    message: StringUtil.Format(Modules.WDACExportModuleCommandLogMessage, Context.EngineSessionState.Module.Name, Context.EngineSessionState.Module.LanguageMode, Context.LanguageMode),
+                    fqid: "ExportModuleMemberCmdletNotAllowed",
+                    dropIntoDebugger: true);
             }
 
             ModuleIntrinsics.ExportModuleMembers(this,

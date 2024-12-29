@@ -422,7 +422,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private Pipe GetRedirectionPipe(
+        private static Pipe GetRedirectionPipe(
             PipelineResultTypes toType,
             MshCommandRuntime mcr)
         {
@@ -568,7 +568,7 @@ namespace System.Management.Automation.Runspaces
         /// property is bool, not bool? (from V1), so it should probably
         /// be deprecated, at least for internal use.
         /// </summary>
-        private bool? _useLocalScope;
+        private readonly bool? _useLocalScope;
 
         #endregion Private fields
 
@@ -900,4 +900,3 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-

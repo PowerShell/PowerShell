@@ -27,10 +27,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ViewDefinition view = LoadView(n, index++);
                         if (view != null)
                         {
-                            ReportTrace(string.Format(CultureInfo.InvariantCulture,
+                            ReportTrace(string.Format(
+                                CultureInfo.InvariantCulture,
                                 "{0} view {1} is loaded from file {2}",
                                 ControlBase.GetControlShapeName(view.mainControl),
-                                view.name, view.loadingInfo.filePath));
+                                view.name,
+                                view.loadingInfo.filePath));
                             // we are fine, add the view to the list
                             db.viewDefinitionsSection.viewDefinitionList.Add(view);
                         }
@@ -170,7 +172,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         return false;
                     }
 
-                    if (!(view.mainControl is ComplexControlBody) && !(view.mainControl is ListControlBody))
+                    if (view.mainControl is not ComplexControlBody && view.mainControl is not ListControlBody)
                     {
                         // Error at XPath {0} in file {1}: Out Of Band views can only have CustomControl or ListControl.
                         ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidControlForOutOfBandView, ComputeCurrentXPath(), FilePath));

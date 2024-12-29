@@ -2,7 +2,7 @@
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell Host</Description>
-    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <NoWarn>$(NoWarn);CS1570;CA1416</NoWarn>
     <AssemblyName>Microsoft.PowerShell.ConsoleHost</AssemblyName>
   </PropertyGroup>
 

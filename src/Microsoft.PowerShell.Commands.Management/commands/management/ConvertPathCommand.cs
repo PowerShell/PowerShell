@@ -4,8 +4,6 @@
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 
-using Dbg = System.Management.Automation;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -55,6 +53,16 @@ namespace Microsoft.PowerShell.Commands
                 base.SuppressWildcardExpansion = true;
                 _paths = value;
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the force property.
+        /// </summary>
+        [Parameter]
+        public override SwitchParameter Force
+        {
+            get => base.Force;
+            set => base.Force = value;
         }
 
         #endregion Parameters
@@ -128,4 +136,3 @@ namespace Microsoft.PowerShell.Commands
 
     }
 }
-

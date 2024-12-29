@@ -24,6 +24,7 @@ Describe 'minishell for native executables' -Tag 'CI' {
         }
 
         It 'gets the error stream from minishell' {
+            $PSNativeCommandUseErrorActionPreference = $false
             $output = & $powershell -noprofile { Write-Error 'foo' } 2>&1
             ($output | Measure-Object).Count | Should -Be 1
             $output | Should -BeOfType System.Management.Automation.ErrorRecord
@@ -92,25 +93,16 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
     }
 
     It "Clear-Host does not injects data into PowerShell output stream" {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "ARM64 runs in non-interactively mode and Clear-Host does not work."
+        }
+
         & { Clear-Host; 'hi' } | Should -BeExactly 'hi'
     }
 
     Context "ShellInterop" {
         It "Verify Parsing Error Output Format Single Shell should throw exception" {
             { & $powershell -outp blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
-        }
-
-        It "Verify Validate Dollar Error Populated should throw exception" {
-            $origEA = $ErrorActionPreference
-            $ErrorActionPreference = "Stop"
-            $a = 1,2,3
-            $e = {
-                $a | & $powershell -noprofile -command { wgwg-wrwrhqwrhrh35h3h3}
-            } | Should -Throw -ErrorId "CommandNotFoundException" -PassThru
-
-            $e.ToString() | Should -Match "wgwg-wrwrhqwrhrh35h3h3"
-
-            $ErrorActionPreference = $origEA
         }
 
         It "Verify Validate Output Format As Text Explicitly Child Single Shell does not throw" {
@@ -160,19 +152,30 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "-File should be default parameter" {
-            Set-Content -Path $testdrive/test -Value "'hello'"
-            $observed = & $powershell -NoProfile $testdrive/test
+            Set-Content -Path $testdrive/test.ps1 -Value "'hello'"
+            $observed = & $powershell -NoProfile $testdrive/test.ps1
             $observed | Should -Be "hello"
         }
 
-        It "-File accepts scripts with and without .ps1 extension: <Filename>" -TestCases @(
-            @{Filename="test.ps1"},
-            @{Filename="test"}
-        ) {
-            param($Filename)
+        It "-File accepts scripts with .ps1 extension" {
+            $Filename = 'test.ps1'
             Set-Content -Path $testdrive/$Filename -Value "'hello'"
             $observed = & $powershell -NoProfile -File $testdrive/$Filename
             $observed | Should -Be "hello"
+        }
+
+        It "-File accepts scripts without .ps1 extension to support shebang" -Skip:($IsWindows) {
+            $Filename = 'test.xxx'
+            Set-Content -Path $testdrive/$Filename -Value "'hello'"
+            $observed = & $powershell -NoProfile -File $testdrive/$Filename
+            $observed | Should -Be "hello"
+        }
+
+        It "-File should fail for script without .ps1 extension" -Skip:(!$IsWindows) {
+            $Filename = 'test.xxx'
+            Set-Content -Path $testdrive/$Filename -Value "'hello'"
+            & $powershell -NoProfile -File $testdrive/$Filename 2>&1 $null
+            $LASTEXITCODE | Should -Be 64
         }
 
         It "-File should pass additional arguments to script" {
@@ -221,11 +224,8 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should -Be $BoolValue
         }
 
-        It "-File '<filename>' should return exit code from script" -TestCases @(
-            @{Filename = "test.ps1"},
-            @{Filename = "test"}
-        ) {
-            param($Filename)
+        It "-File should return exit code from script" {
+            $Filename = 'test.ps1'
             Set-Content -Path $testdrive/$Filename -Value 'exit 123'
             & $powershell $testdrive/$Filename
             $LASTEXITCODE | Should -Be 123
@@ -248,9 +248,14 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should -BeExactly "h-llo"
         }
 
-        It "Empty command should fail" {
-            & $powershell -noprofile -c ''
+        It "Missing command should fail" {
+            & $powershell -noprofile -c
             $LASTEXITCODE | Should -Be 64
+        }
+
+        It "Empty space command should succeed on non-Windows" -skip:$IsWindows {
+            & $powershell -noprofile -c '' | Should -BeNullOrEmpty
+            $LASTEXITCODE | Should -Be 0
         }
 
         It "Whitespace command should succeed" {
@@ -283,7 +288,7 @@ export $envVarName='$guid'
         }
 
         It "Doesn't run the login profile when -Login not used" {
-            $result = & $powershell -Command "`$env:$envVarName"
+            $result = & $powershell -noprofile -Command "`$env:$envVarName"
             $result | Should -BeNullOrEmpty
             $LASTEXITCODE | Should -Be 0
         }
@@ -382,7 +387,20 @@ export $envVarName='$guid'
     }
 
     Context "Pipe to/from powershell" {
-        $p = [PSCustomObject]@{X=10;Y=20}
+        BeforeAll {
+            if ($null -ne $PSStyle) {
+                $outputRendering = $PSStyle.OutputRendering
+                $PSStyle.OutputRendering = 'plaintext'
+            }
+
+            $p = [PSCustomObject]@{X=10;Y=20}
+        }
+
+        AfterAll {
+            if ($null -ne $PSStyle) {
+                $PSStyle.OutputRendering = $outputRendering
+            }
+        }
 
         It "xml input" {
             $p | & $powershell -noprofile { $input | ForEach-Object {$a = 0} { $a += $_.X + $_.Y } { $a } } | Should -Be 30
@@ -401,20 +419,42 @@ export $envVarName='$guid'
 
         It "text output" {
             # Join (multiple lines) and remove whitespace (we don't care about spacing) to verify we converted to string (by generating a table)
-            -join (& $powershell -noprofile -outputFormat text { [PSCustomObject]@{X=10;Y=20} }) -replace "\s","" | Should -Be "XY--1020"
+            -join (& $powershell -noprofile -outputFormat text { $PSStyle.OutputRendering = 'PlainText'; [PSCustomObject]@{X=10;Y=20} }) -replace "\s","" | Should -Be "XY--1020"
         }
 
         It "errors are in text if error is redirected, encoded command, non-interactive, and outputformat specified" {
             $p = [Diagnostics.Process]::new()
             $p.StartInfo.FileName = "pwsh"
-            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes('$ErrorView="NormalView";throw "boom"'))
+            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes('throw "boom"'))
             $p.StartInfo.Arguments = "-EncodedCommand $encoded -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -OutputFormat text"
             $p.StartInfo.UseShellExecute = $false
             $p.StartInfo.RedirectStandardError = $true
             $p.Start() | Out-Null
             $out = $p.StandardError.ReadToEnd()
             $out | Should -Not -BeNullOrEmpty
-            $out.Split([Environment]::NewLine)[0] | Should -BeExactly "boom"
+            $out = $out.Split([Environment]::NewLine)[0]
+            [System.Management.Automation.Internal.StringDecorated]::new($out).ToString("PlainText") | Should -BeExactly "Exception: boom"
+        }
+
+        It "Progress is not emitted when stdout is redirected" {
+            $ps = [powershell]::Create()
+            $null = $ps.AddScript('$a = & ([Environment]::ProcessPath) -Command "Write-Progress -Activity progress"; $a')
+            $actual = $ps.Invoke()
+
+            $ps.HadErrors | Should -BeFalse
+            $actual | Should -BeNullOrEmpty
+            $ps.Streams.Progress | Should -BeNullOrEmpty
+        }
+
+        It "Progress is still emitted with redireciton with XML output" {
+            $ps = [powershell]::Create()
+            $null = $ps.AddScript('$a = & ([Environment]::ProcessPath) -OutputFormat xml -Command "Write-Progress -Activity progress"; $a')
+            $actual = $ps.Invoke()
+
+            $ps.HadErrors | Should -BeFalse
+            $actual | Should -BeNullOrEmpty
+            $ps.Streams.Progress.Count | Should -Be 1
+            $ps.Streams.Progress[0].Activity | Should -Be progress
         }
     }
 
@@ -478,7 +518,15 @@ export $envVarName='$guid'
     }
 
     Context "Redirected standard input for 'interactive' use" {
-        $nl = [Environment]::Newline
+        BeforeAll {
+            $nl = [Environment]::Newline
+            $oldColor = $env:NO_COLOR
+            $env:NO_COLOR = 1
+        }
+
+        AfterAll {
+            $env:NO_COLOR = $oldColor
+        }
 
         # All of the following tests replace the prompt (either via an initial command or interactively)
         # so that we can read StandardOutput and reliably know exactly what the prompt is.
@@ -573,6 +621,8 @@ foo
         It "Redirected input w/ nested prompt" -Pending:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS' + ('>'*(`$NestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
             $process = RunPowerShell $si
+            $process.StandardInput.Write("`$PSStyle.OutputRendering='plaintext'`n")
+            $null = $process.StandardOutput.ReadLine()
             $process.StandardInput.Write("`$Host.EnterNestedPrompt()`n")
             $process.StandardOutput.ReadLine() | Should -Be "PS> `$Host.EnterNestedPrompt()"
             $process.StandardInput.Write("exit`n")
@@ -651,6 +701,20 @@ namespace StackTest {
         It "Should start if HOME is not defined" -Skip:($IsWindows) {
             bash -c "unset HOME;$powershell -c '1+1'" | Should -BeExactly 2
         }
+
+        It "Same user should use the same temporary HOME directory for different sessions" -Skip:($IsWindows) {
+            $results = bash -c @"
+unset HOME;
+$powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::DEFAULT)';
+$powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::DEFAULT)';
+"@
+            $results | Should -HaveCount 2
+            $results[0] | Should -BeExactly $results[1]
+
+            $tempHomeName = "pwsh-{0}-98288ff9-5712-4a14-9a11-23693b9cd91a" -f [System.Environment]::UserName
+            $defaultPath = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath "$tempHomeName/.config/powershell"
+            $results[0] | Should -BeExactly $defaultPath
+        }
     }
 
     Context "PATH environment variable" {
@@ -659,7 +723,7 @@ namespace StackTest {
         }
 
         It "powershell starts if PATH is not set" -Skip:($IsWindows) {
-            bash -c "unset PATH;$powershell -c '1+1'" | Should -BeExactly 2
+            bash -c "unset PATH;$powershell -nop -c '1+1'" | Should -BeExactly 2
         }
     }
 
@@ -820,6 +884,92 @@ namespace StackTest {
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
         }
     }
+
+    Context "Startup banner text tests" -Tag Slow {
+        BeforeAll {
+            $outputPath = "Temp:\StartupBannerTest-Output-${Pid}.txt"
+            $inputPath  = "Temp:\StartupBannerTest-Input.txt"
+            "exit" > $inputPath
+
+            # Not testing update notification banner text here
+            $oldPowerShellUpdateCheck = $env:POWERSHELL_UPDATECHECK
+            $env:POWERSHELL_UPDATECHECK = "Off"
+
+            # Set TERM to "dumb" to avoid DECCKM codes in the output
+            $oldTERM = $env:TERM
+            $env:TERM = "dumb"
+
+            $escPwd = [regex]::Escape($pwd)
+            $expectedPromptPattern = "^PS ${escPwd}> exit`$"
+
+            $spArgs = @{
+                FilePath = $powershell
+                ArgumentList = @("-NoProfile")
+                RedirectStandardInput = $inputPath
+                RedirectStandardOutput = $outputPath
+                WorkingDirectory = $pwd
+                PassThru = $true
+                NoNewWindow = $true
+                UseNewEnvironment = $false
+            }
+        }
+        AfterAll {
+            $env:TERM = $oldTERM
+            $env:POWERSHELL_UPDATECHECK = $oldPowerShellUpdateCheck
+
+            Remove-Item $inputPath -Force -ErrorAction Ignore
+            Remove-Item $outputPath -Force -ErrorAction Ignore
+        }
+        BeforeEach {
+            Remove-Item $outputPath -Force -ErrorAction Ignore
+        }
+        It "Displays expected startup banner text by default" {
+            $process = Start-Process @spArgs
+            Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
+
+            $out = @(Get-Content $outputPath)
+            $out.Count | Should -Be 2
+            $out[0] | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
+            $out[1] | Should -MatchExactly $expectedPromptPattern
+        }
+        It "Displays only the prompt with -NoLogo" {
+            $spArgs["ArgumentList"] += "-NoLogo"
+            $process = Start-Process @spArgs
+            Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
+
+            $out = @(Get-Content $outputPath)
+            $out.Count | Should -Be 1
+            $out[0] | Should -MatchExactly $expectedPromptPattern
+        }
+    }
+
+    Context 'CommandWithArgs tests' {
+        It 'Should be able to run a pipeline with arguments using <param>' -TestCases @(
+            @{ param = '-commandwithargs' }
+            @{ param = '-cwa' }
+        ){
+            param($param)
+            $out = pwsh -nologo -noprofile $param '$args | % { "[$_]" }'  '$fun' '@times'
+            $out.Count | Should -Be 2 -Because ($out | Out-String)
+            $out[0] | Should -BeExactly '[$fun]'
+            $out[1] | Should -BeExactly '[@times]'
+        }
+
+        It 'Should be able to handle boolean switch: <param>' -TestCases @(
+            @{ param = '-switch:$true'; expected = 'True'}
+            @{ param = '-switch:$false'; expected = 'False'}
+        ){
+            param($param, $expected)
+            $out = pwsh -nologo -noprofile -cwa 'param([switch]$switch) $switch.IsPresent' $param
+            $out | Should -Be $expected
+        }
+    }
+
+    It 'Errors for invalid ExecutionPolicy string' {
+        $out = pwsh -nologo -noprofile -executionpolicy NonExistingExecutionPolicy -c 'exit 0' 2>&1
+        $out | Should -Not -BeNullOrEmpty
+        $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
+    }
 }
 
 Describe "WindowStyle argument" -Tag Feature {
@@ -877,6 +1027,10 @@ public enum ShowWindowCommands : int
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
         ) {
         param ($WindowStyle)
+
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "All windows are showing up as hidden or ARM64"
+        }
 
         try {
             $ps = Start-Process $powershell -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
@@ -1011,8 +1165,42 @@ Describe 'Pwsh startup and PATH' -Tag CI {
 }
 
 Describe 'Console host name' -Tag CI {
-    It 'Name is pwsh' -Pending {
-        # waiting on https://github.com/dotnet/runtime/issues/33673
+    It 'Name is pwsh' {
         (Get-Process -Id $PID).Name | Should -BeExactly 'pwsh'
+    }
+}
+
+Describe 'TERM env var' -Tag CI {
+    BeforeAll {
+        $oldTERM = $env:TERM
+    }
+
+    AfterAll {
+        $env:TERM = $oldTERM
+    }
+
+    It 'TERM = "dumb"' {
+        $env:TERM = 'dumb'
+        pwsh -noprofile -command '$Host.UI.SupportsVirtualTerminal' | Should -BeExactly 'False'
+    }
+
+    It 'TERM = "<term>"' -TestCases @(
+        @{ term = "xterm-mono" }
+        @{ term = "xtermm" }
+    ) {
+        param ($term)
+
+        $env:TERM = $term
+        pwsh -noprofile -command '$PSStyle.OutputRendering' | Should -BeExactly 'PlainText'
+    }
+
+    It 'NO_COLOR' {
+        try {
+            $env:NO_COLOR = 1
+            pwsh -noprofile -command '$PSStyle.OutputRendering' | Should -BeExactly 'PlainText'
+        }
+        finally {
+            $env:NO_COLOR = $null
+        }
     }
 }

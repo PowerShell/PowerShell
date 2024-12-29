@@ -15,8 +15,7 @@ namespace System.Management.Automation
     /// which, according to user preference, forwards that information on to the host for rendering to the user.
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Cmdlet.WriteProgress(ProgressRecord)"/>
-
-    [DataContract()]
+    [DataContract]
     public
     class ProgressRecord
     {
@@ -35,7 +34,6 @@ namespace System.Management.Automation
         /// <param name="statusDescription">
         /// A description of the status of the activity.
         /// </param>
-
         public
         ProgressRecord(int activityId, string activity, string statusDescription)
         {
@@ -62,6 +60,25 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Initializes a new instance of the ProgressRecord class and defines the activity Id.
+        /// </summary>
+        /// <param name="activityId">
+        /// A unique numeric key that identifies the activity to which this record applies.
+        /// </param>
+        public
+        ProgressRecord(int activityId)
+        {
+            if (activityId < 0)
+            {
+                // negative Ids are reserved to indicate "no id" for parent Ids.
+
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(activityId), activityId, ProgressRecordStrings.ArgMayNotBeNegative, "activityId");
+            }
+
+            this.id = activityId;
+        }
+
+        /// <summary>
         /// Cloning constructor (all fields are value types - can treat our implementation of cloning as "deep" copy)
         /// </summary>
         /// <param name="other"></param>
@@ -81,7 +98,6 @@ namespace System.Management.Automation
         /// Gets the Id of the activity to which this record corresponds.  Used as a 'key' for the
         /// linking of subordinate activities.
         /// </summary>
-
         public
         int
         ActivityId
@@ -107,7 +123,6 @@ namespace System.Management.Automation
         /// shell so that a script can set that variable, and have all subsequent calls to WriteProgress (the API) be
         /// subordinate to the "current parent id".-->
         /// </remarks>
-
         public
         int
         ParentActivityId
@@ -135,7 +150,6 @@ namespace System.Management.Automation
         /// States the overall intent of whats being accomplished, such as "Recursively removing item c:\temp." Typically
         /// displayed in conjunction with a progress bar.
         /// </remarks>
-
         public
         string
         Activity
@@ -159,7 +173,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets and sets the current status of the operation, e.g., "35 of 50 items Copied." or "95% completed." or "100 files purged."
         /// </summary>
-
         public
         string
         StatusDescription
@@ -185,7 +198,6 @@ namespace System.Management.Automation
         /// below its associated progress bar, e.g., "deleting file foo.bar"
         /// Set to null or empty in the case a sub-activity will be used to show the current operation.
         /// </summary>
-
         public
         string
         CurrentOperation
@@ -207,7 +219,6 @@ namespace System.Management.Automation
         /// Gets and sets the estimate of the percentage of total work for the activity that is completed.  Typically displayed as a progress bar.
         /// Set to a negative value to indicate that the percentage completed should not be displayed.
         /// </summary>
-
         public
         int
         PercentComplete
@@ -238,10 +249,9 @@ namespace System.Management.Automation
         ///
         /// Normally displayed beside the progress bar, as "N seconds remaining."
         /// </summary>
-        ///<remarks>
+        /// <remarks>
         /// A value less than 0 means "don't display a time remaining."
         /// </remarks>
-
         public
         int
         SecondsRemaining
@@ -262,7 +272,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets and sets the type of record represented by this instance.
         /// </summary>
-
         public
         ProgressRecordType
         RecordType
@@ -291,7 +300,6 @@ namespace System.Management.Automation
         /// a, b, c, d, e, f, and g are the values of ParentActivityId, ActivityId, Activity, StatusDescription,
         /// CurrentOperation, PercentComplete, SecondsRemaining and RecordType properties.
         /// </returns>
-
         public override
         string
         ToString()
@@ -371,15 +379,8 @@ namespace System.Management.Automation
                 startTime.Kind == DateTimeKind.Utc,
                 "DateTime arithmetic should always be done in utc mode [to avoid problems when some operands are calculated right before and right after switching to /from a daylight saving time");
 
-            if (startTime > now)
-            {
-                throw new ArgumentOutOfRangeException(nameof(startTime));
-            }
-
-            if (expectedDuration <= TimeSpan.Zero)
-            {
-                throw new ArgumentOutOfRangeException(nameof(expectedDuration));
-            }
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(startTime, now);
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(expectedDuration, TimeSpan.Zero);
 
             /*
              * According to the spec of Checkpoint-Computer
@@ -428,28 +429,28 @@ namespace System.Management.Automation
 
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
-        [DataMemberAttribute()]
-        private int id;
+        [DataMemberAttribute]
+        private readonly int id;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private int parentId = -1;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private string activity;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private string status;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private string currentOperation;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private int percent = -1;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private int secondsRemaining = -1;
 
-        [DataMemberAttribute()]
+        [DataMemberAttribute]
         private ProgressRecordType type = ProgressRecordType.Processing;
 
         #endregion
@@ -499,9 +500,13 @@ namespace System.Management.Automation
         /// <returns>This object as a PSObject property bag.</returns>
         internal PSObject ToPSObjectForRemoting()
         {
+            // Activity used to be mandatory but that's no longer the case.
+            // We ensure the string has a value to maintain compatibility with older versions.
+            string activity = string.IsNullOrEmpty(Activity) ? " " : Activity;
+
             PSObject progressAsPSObject = RemotingEncoder.CreateEmptyPSObject();
 
-            progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_Activity, this.Activity));
+            progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_Activity, activity));
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_ActivityId, this.ActivityId));
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_StatusDescription, this.StatusDescription));
 
@@ -520,14 +525,14 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines two types of progress record that refer to the beginning (or middle) and end of an operation.
     /// </summary>
-
     public
     enum ProgressRecordType
     {
-        ///<summary>
+        /// <summary>
+        /// <para>
         /// Operation just started or is not yet complete.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// A cmdlet can call WriteProgress with ProgressRecordType.Processing
         /// as many times as it wishes.  However, at the end of the operation,
         /// it should call once more with ProgressRecordType.Completed.
@@ -538,20 +543,20 @@ namespace System.Management.Automation
         /// of the same Id, the host will update that display.
         /// Finally, when the host receives a 'completed' record
         /// for that activity, it will remove the progress indicator.
-        /// </remarks>
-
+        /// </para>
+        /// </summary>
         Processing,
 
         /// <summary>
+        /// <para>
         /// Operation is complete.
-        /// </summary>
-        /// <remarks>
+        /// </para>
+        /// <para>
         /// If a cmdlet uses WriteProgress, it should use
         /// ProgressRecordType.Completed exactly once, in the last call
         /// to WriteProgress.
-        /// </remarks>
-
+        /// </para>
+        /// </summary>
         Completed
     }
 }
-

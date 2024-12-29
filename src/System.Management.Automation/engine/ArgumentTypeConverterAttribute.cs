@@ -25,15 +25,13 @@ namespace System.Management.Automation
             _convertTypes = types;
         }
 
-        private Type[] _convertTypes;
+        private readonly Type[] _convertTypes;
 
         internal Type TargetType
         {
             get
             {
-                return _convertTypes == null
-                           ? null
-                           : _convertTypes.LastOrDefault();
+                return _convertTypes?.LastOrDefault();
             }
         }
 
@@ -67,9 +65,7 @@ namespace System.Management.Automation
                             else
                                 temp = result;
 
-                            PSReference reference = temp as PSReference;
-
-                            if (reference == null)
+                            if (!(temp is PSReference reference))
                             {
                                 throw new PSInvalidCastException("InvalidCastExceptionReferenceTypeExpected", null,
                                                                    ExtendedTypeSystem.ReferenceTypeExpected);
@@ -210,4 +206,3 @@ namespace System.Management.Automation
         }
     }
 }
-

@@ -30,6 +30,7 @@ namespace Microsoft.WSMan.Management
     /// 4. Enable firewall exception for WS-Management traffic.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "WSManQuickConfig", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097112")]
+    [OutputType(typeof(string))]
     public class SetWSManQuickConfigCommand : PSCmdlet, IDisposable
     {
         /// <summary>
@@ -55,7 +56,7 @@ namespace Microsoft.WSMan.Management
         /// Property that sets force parameter. This will allow
         /// configuring WinRM without prompting the user.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get { return force; }
@@ -68,7 +69,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Property that will allow configuring WinRM with Public profile exception enabled.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter SkipNetworkProfileCheck
         {
             get { return skipNetworkProfileCheck; }

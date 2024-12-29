@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
@@ -75,14 +74,14 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _isLiteralPath = false;
 
-        private List<ExtendedTypeDefinition> _typeDefinitions = new List<ExtendedTypeDefinition>();
+        private readonly List<ExtendedTypeDefinition> _typeDefinitions = new();
 
         private bool _force;
 
         /// <summary>
         /// Force writing a file.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force
         {
             get
@@ -99,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Do not overwrite file if exists.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [Alias("NoOverwrite")]
         public SwitchParameter NoClobber
         {
@@ -119,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Include scriptblocks for export.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter IncludeScriptBlock
         {
             get

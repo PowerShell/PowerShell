@@ -4,6 +4,7 @@
 using System.Collections;
 using System.IO;
 
+#nullable enable
 namespace System.Management.Automation.Provider
 {
     #region IContentWriter
@@ -66,4 +67,3 @@ namespace System.Management.Automation.Provider
 
     #endregion IContentWriter
 }
-

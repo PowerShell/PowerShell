@@ -14,8 +14,7 @@ namespace System.Management.Automation
     /// which, according to host or user preference, forwards that information on to the host for rendering to the user.
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Cmdlet.WriteInformation(object, string[])"/>
-
-    [DataContract()]
+    [DataContract]
     public class InformationRecord
     {
         /// <summary>
@@ -30,7 +29,7 @@ namespace System.Management.Automation
 
             this.TimeGenerated = DateTime.Now;
             this.NativeThreadId = PsUtils.GetNativeThreadId();
-            this.ManagedThreadId = (uint)System.Threading.Thread.CurrentThread.ManagedThreadId;
+            this.ManagedThreadId = (uint)Environment.CurrentManagedThreadId;
         }
 
         private InformationRecord() { }
@@ -82,7 +81,7 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public List<string> Tags
         {
-            get { return _tags ?? (_tags = new List<string>()); }
+            get { return _tags ??= new List<string>(); }
 
             internal set { _tags = value; }
         }
@@ -97,20 +96,21 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this._user == null)
-                {
-                    // domain\user on Windows, just user on Unix
+                // domain\user on Windows, just user on Unix
+                this._user ??=
 #if UNIX
-                    this._user = Environment.UserName;
+                    Environment.UserName;
 #else
-                    this._user = Environment.UserDomainName + "\\" + Environment.UserName;
+                    Environment.UserDomainName + "\\" + Environment.UserName;
 #endif
-                }
 
                 return _user;
             }
 
-            set { _user = value; }
+            set
+            {
+                _user = value;
+            }
         }
 
         private string _user;
@@ -121,7 +121,7 @@ namespace System.Management.Automation
         [DataMember]
         public string Computer
         {
-            get { return this._computerName ?? (this._computerName = PsUtils.GetHostName()); }
+            get { return this._computerName ??= PsUtils.GetHostName(); }
 
             set { this._computerName = value; }
         }
@@ -138,13 +138,16 @@ namespace System.Management.Automation
             {
                 if (!this._processId.HasValue)
                 {
-                    this._processId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
+                    this._processId = (uint)Environment.ProcessId;
                 }
 
                 return this._processId.Value;
             }
 
-            set { _processId = value; }
+            set
+            {
+                _processId = value;
+            }
         }
 
         private uint? _processId;

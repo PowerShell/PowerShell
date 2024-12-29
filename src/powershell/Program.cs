@@ -1,8 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.IO;
+using System.Management.Automation;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -17,7 +20,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Exception to signify an early startup failure.
         /// </summary>
-        private class StartupException : Exception
+        private sealed class StartupException : Exception
         {
             /// <summary>
             /// Construct a new startup exception instance.
@@ -56,17 +59,17 @@ namespace Microsoft.PowerShell
 #endif
 
         /// <summary>
-        /// Starts the managed MSH.
+        /// Starts PowerShell.
         /// </summary>
         /// <param name="args">
-        /// Command line arguments to the managed MSH
+        /// Command line arguments to PowerShell
         /// </param>
         public static int Main(string[] args)
         {
 #if UNIX
             AttemptExecPwshLogin(args);
 #endif
-            return UnmanagedPSEntry.Start(string.Empty, args, args.Length);
+            return UnmanagedPSEntry.Start(args, args.Length);
         }
 
 #if UNIX
@@ -87,13 +90,13 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+            bool isLinux = Platform.IsLinux;
 
             // The first byte (ASCII char) of the name of this process, used to detect '-' for login
             byte procNameFirstByte;
 
             // The path to the executable this process was started from
-            string pwshPath;
+            string? pwshPath;
 
             // On Linux, we can simply use the /proc filesystem
             if (isLinux)
@@ -115,6 +118,8 @@ namespace Microsoft.PowerShell
                 IntPtr bufSize = ReadLink("/proc/self/exe", linkPathPtr, (UIntPtr)LINUX_PATH_MAX);
                 pwshPath = Marshal.PtrToStringAnsi(linkPathPtr, (int)bufSize);
                 Marshal.FreeHGlobal(linkPathPtr);
+
+                ArgumentNullException.ThrowIfNull(pwshPath);
 
                 // exec pwsh
                 ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: false));
@@ -178,7 +183,6 @@ namespace Microsoft.PowerShell
                     // We can reuse this value later to prevent needing to call a .NET API
                     // to generate our exec invocation.
 
-
                     // We don't care about argc's value, since argv[0] must always exist.
                     // Skip over argc, but remember where exec_path is for later
                     executablePathPtr = IntPtr.Add(procargs, sizeof(int));
@@ -199,6 +203,8 @@ namespace Microsoft.PowerShell
 
                 // Get the pwshPath from exec_path
                 pwshPath = Marshal.PtrToStringAnsi(executablePathPtr);
+
+                ArgumentNullException.ThrowIfNull(pwshPath);
 
                 // exec pwsh
                 ThrowOnFailure("exec", ExecPwshLogin(args, pwshPath, isMacOS: true));
@@ -255,8 +261,8 @@ namespace Microsoft.PowerShell
             // Check arg chars in order and allow prefixes
             for (int i = 1; i < arg.Length; i++)
             {
-                if (arg[i] != paramToCheck[i-1]
-                    && arg[i] != paramToCheckUpper[i-1])
+                if (arg[i] != paramToCheck[i - 1]
+                    && arg[i] != paramToCheckUpper[i - 1])
                 {
                     return false;
                 }
@@ -281,20 +287,20 @@ namespace Microsoft.PowerShell
             int quotedPwshPathLength = GetQuotedPathLength(pwshPath);
 
             string pwshInvocation = string.Create(
-                quotedPwshPathLength + 10, // exec '{pwshPath}' "$@" 
+                quotedPwshPathLength + 10, // exec '{pwshPath}' "$@"
                 (pwshPath, quotedPwshPathLength),
                 CreatePwshInvocation);
 
             // Set up the arguments for '/bin/sh'.
             // We need to add 5 slots for the '/bin/sh' invocation parts, plus 1 slot for the null terminator at the end
-            var execArgs = new string[args.Length + 6];
+            var execArgs = new string?[args.Length + 6];
 
             // The command arguments
 
             // First argument is the command name.
             // Even when executing 'zsh', we want to set this to '/bin/sh'
             // because this tells 'zsh' to run in sh emulation mode (it examines $0)
-            execArgs[0] = "/bin/sh"; 
+            execArgs[0] = "/bin/sh";
 
             execArgs[1] = "-l"; // Login flag
             execArgs[2] = "-c"; // Command parameter
@@ -309,7 +315,7 @@ namespace Microsoft.PowerShell
             //
             // Since command_name is ignored and we can't use null (it's the terminator)
             // we use empty string
-            execArgs[4] = "";
+            execArgs[4] = string.Empty;
 
             // Add the arguments passed to pwsh on the end.
             args.CopyTo(execArgs, 5);
@@ -342,7 +348,11 @@ namespace Microsoft.PowerShell
             foreach (char c in str)
             {
                 length++;
-                if (c == '\'') { length++; }
+
+                if (c == '\'')
+                {
+                    length++;
+                }
             }
 
             return length;
@@ -359,7 +369,7 @@ namespace Microsoft.PowerShell
             (string path, int quotedLength) invocationInfo)
         {
             // "exec "
-            string prefix = "exec ";
+            const string prefix = "exec ";
             prefix.AsSpan().CopyTo(strBuf);
 
             // The quoted path to pwsh, like "'/opt/microsoft/powershell/7/pwsh'"
@@ -369,7 +379,7 @@ namespace Microsoft.PowerShell
             i += invocationInfo.quotedLength;
 
             // ' "$@"' the argument vector splat to pass pwsh arguments through
-            string suffix = " \"$@\"";
+            const string suffix = " \"$@\"";
             Span<char> bufSuffix = strBuf.Slice(i);
             suffix.AsSpan().CopyTo(bufSuffix);
         }
@@ -433,7 +443,7 @@ namespace Microsoft.PowerShell
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi,
             SetLastError = true)]
-        private static extern int Exec(string path, string[] args);
+        private static extern int Exec(string path, string?[] args);
 
         /// <summary>
         /// The `readlink` POSIX syscall we use to read the symlink from /proc/self/exe
@@ -490,7 +500,7 @@ namespace Microsoft.PowerShell
             CallingConvention = CallingConvention.Cdecl,
             CharSet = CharSet.Ansi,
             SetLastError = true)]
-        private static unsafe extern int SysCtl(int *mib, int mibLength, void *oldp, int *oldlenp, IntPtr newp, int newlenp);
+        private static extern unsafe int SysCtl(int *mib, int mibLength, void *oldp, int *oldlenp, IntPtr newp, int newlenp);
 #endif
     }
 }

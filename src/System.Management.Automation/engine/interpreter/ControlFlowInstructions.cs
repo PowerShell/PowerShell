@@ -69,7 +69,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
+            get { return s_cache ??= new Instruction[CacheSize]; }
         }
 
         internal BranchFalseInstruction()
@@ -97,7 +97,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
+            get { return s_cache ??= new Instruction[CacheSize]; }
         }
 
         internal BranchTrueInstruction()
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
+            get { return s_cache ??= new Instruction[CacheSize]; }
         }
 
         internal CoalescingBranchInstruction()
@@ -157,10 +157,7 @@ namespace System.Management.Automation.Interpreter
         {
             get
             {
-                if (s_caches == null)
-                {
-                    s_caches = new Instruction[2][][] { new Instruction[2][], new Instruction[2][] };
-                }
+                s_caches ??= new Instruction[2][][] { new Instruction[2][], new Instruction[2][] };
 
                 return s_caches[ConsumedStack][ProducedStack] ?? (s_caches[ConsumedStack][ProducedStack] = new Instruction[CacheSize]);
             }
@@ -204,7 +201,7 @@ namespace System.Management.Automation.Interpreter
 
         internal readonly int _labelIndex;
 
-        public IndexedBranchInstruction(int labelIndex)
+        protected IndexedBranchInstruction(int labelIndex)
         {
             _labelIndex = labelIndex;
         }
@@ -509,7 +506,7 @@ namespace System.Management.Automation.Interpreter
             frame.PopPendingContinuation();
 
             // If _pendingContinuation == -1 then we were getting into the finally block because an exception was thrown
-            // In this case we just return 1, and the the real instruction index will be calculated by GotoHandler later
+            // In this case we just return 1, and the real instruction index will be calculated by GotoHandler later
             if (!frame.IsJumpHappened()) { return 1; }
             // jump to goto target or to the next finally:
             return frame.YieldToPendingContinuation();
@@ -554,7 +551,7 @@ namespace System.Management.Automation.Interpreter
     /// </summary>
     internal sealed class LeaveExceptionHandlerInstruction : IndexedBranchInstruction
     {
-        private static LeaveExceptionHandlerInstruction[] s_cache = new LeaveExceptionHandlerInstruction[2 * CacheSize];
+        private static readonly LeaveExceptionHandlerInstruction[] s_cache = new LeaveExceptionHandlerInstruction[2 * CacheSize];
 
         private readonly bool _hasValue;
 

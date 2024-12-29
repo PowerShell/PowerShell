@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<Job> jobList = FindJobs();
 
-            jobList.Sort((x, y) => x != null ? x.Id.CompareTo(y != null ? y.Id : 1) : -1);
+            jobList.Sort(static (x, y) => x != null ? x.Id.CompareTo(y != null ? y.Id : 1) : -1);
             WriteObject(jobList, true);
         }
 
@@ -256,7 +256,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (Job childJob in job.ChildJobs)
                     {
-                        if (childJob.JobStateInfo.State != ChildJobState) continue;
+                        if (childJob.JobStateInfo.State != ChildJobState)
+                        {
+                            continue;
+                        }
 
                         matches.Add(childJob);
                     }

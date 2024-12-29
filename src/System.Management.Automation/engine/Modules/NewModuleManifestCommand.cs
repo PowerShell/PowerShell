@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public ProcessorArchitecture ProcessorArchitecture
         {
-            get { return _processorArchitecture.HasValue ? _processorArchitecture.Value : ProcessorArchitecture.None; }
+            get { return _processorArchitecture ?? ProcessorArchitecture.None; }
 
             set { _processorArchitecture = value; }
         }
@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="name">The string to quote.</param>
         /// <returns>The quoted string.</returns>
-        private string QuoteName(string name)
+        private static string QuoteName(string name)
         {
             if (name == null)
                 return "''";
@@ -546,7 +546,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="name">The Uri to quote.</param>
         /// <returns>The quoted AbsoluteUri.</returns>
-        private string QuoteName(Uri name)
+        private static string QuoteName(Uri name)
         {
             if (name == null)
                 return "''";
@@ -558,7 +558,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="name">The Version object to quote.</param>
         /// <returns>The quoted Version string.</returns>
-        private string QuoteName(Version name)
+        private static string QuoteName(Version name)
         {
             if (name == null)
                 return "''";
@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="names">The list to quote.</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from.</param>
         /// <returns>The quoted list.</returns>
-        private string QuoteNames(IEnumerable names, StreamWriter streamWriter)
+        private static string QuoteNames(IEnumerable names, StreamWriter streamWriter)
         {
             if (names == null)
                 return "@()";
@@ -622,13 +622,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="moduleSpecs"></param>
         /// <returns></returns>
-        private IEnumerable PreProcessModuleSpec(IEnumerable moduleSpecs)
+        private static IEnumerable PreProcessModuleSpec(IEnumerable moduleSpecs)
         {
             if (moduleSpecs != null)
             {
                 foreach (object spec in moduleSpecs)
                 {
-                    if (!(spec is Hashtable))
+                    if (spec is not Hashtable)
                     {
                         yield return spec.ToString();
                     }
@@ -647,7 +647,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleSpecs">The list to quote.</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from.</param>
         /// <returns>The quoted list.</returns>
-        private string QuoteModules(IEnumerable moduleSpecs, StreamWriter streamWriter)
+        private static string QuoteModules(IEnumerable moduleSpecs, StreamWriter streamWriter)
         {
             StringBuilder result = new StringBuilder();
             result.Append("@(");
@@ -662,8 +662,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    ModuleSpecification moduleSpecification = (ModuleSpecification)
-                        LanguagePrimitives.ConvertTo(
+                    ModuleSpecification moduleSpecification = (ModuleSpecification)LanguagePrimitives.ConvertTo(
                             spec,
                             typeof(ModuleSpecification),
                             CultureInfo.InvariantCulture);
@@ -717,12 +716,12 @@ namespace Microsoft.PowerShell.Commands
                             result.Append("; ");
                         }
 
-                        result.Append("}");
+                        result.Append('}');
                     }
                 }
             }
 
-            result.Append(")");
+            result.Append(')');
             return result.ToString();
         }
 
@@ -887,17 +886,15 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private string ManifestFragment(string key, string resourceString, string value, StreamWriter streamWriter)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}{3:19} = {4}{2}{2}",
-                _indent, resourceString, streamWriter.NewLine, key, value);
+            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}{3:19} = {4}{2}{2}", _indent, resourceString, streamWriter.NewLine, key, value);
         }
 
         private string ManifestFragmentForNonSpecifiedManifestMember(string key, string resourceString, string value, StreamWriter streamWriter)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}# {3:19} = {4}{2}{2}",
-                _indent, resourceString, streamWriter.NewLine, key, value);
+            return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}# {3:19} = {4}{2}{2}", _indent, resourceString, streamWriter.NewLine, key, value);
         }
 
-        private string ManifestComment(string insert, StreamWriter streamWriter)
+        private static string ManifestComment(string insert, StreamWriter streamWriter)
         {
             // Prefix a non-empty string with a space for formatting reasons...
             if (!string.IsNullOrEmpty(insert))
@@ -949,12 +946,9 @@ namespace Microsoft.PowerShell.Commands
             // wildcards for exported commands that weren't specified on the command line.
             if (_rootModule != null || _nestedModules != null || _requiredModules != null)
             {
-                if (_exportedFunctions == null)
-                    _exportedFunctions = new string[] { "*" };
-                if (_exportedAliases == null)
-                    _exportedAliases = new string[] { "*" };
-                if (_exportedCmdlets == null)
-                    _exportedCmdlets = new string[] { "*" };
+                _exportedAliases ??= new string[] { "*" };
+                _exportedCmdlets ??= new string[] { "*" };
+                _exportedFunctions ??= new string[] { "*" };
             }
 
             ValidateUriParameterValue(ProjectUri, "ProjectUri");
@@ -967,7 +961,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Length))
             {
-                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, string.Join(",", CompatiblePSEditions));
+                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, string.Join(',', CompatiblePSEditions));
                 var ioe = new InvalidOperationException(message);
                 var er = new ErrorRecord(ioe, "Modules_DuplicateEntriesInCompatiblePSEditions", ErrorCategory.InvalidArgument, CompatiblePSEditions);
                 ThrowTerminatingError(er);
@@ -1031,8 +1025,7 @@ namespace Microsoft.PowerShell.Commands
                     result.Append(streamWriter.NewLine);
                     result.Append(streamWriter.NewLine);
 
-                    if (_rootModule == null)
-                        _rootModule = string.Empty;
+                    _rootModule ??= string.Empty;
 
                     BuildModuleManifest(result, nameof(RootModule), Modules.RootModule, !string.IsNullOrEmpty(_rootModule), () => QuoteName(_rootModule), streamWriter);
 
@@ -1094,7 +1087,7 @@ namespace Microsoft.PowerShell.Commands
 
                     BuildModuleManifest(result, nameof(DefaultCommandPrefix), Modules.DefaultCommandPrefix, !string.IsNullOrEmpty(_defaultCommandPrefix), () => QuoteName(_defaultCommandPrefix), streamWriter);
 
-                    result.Append("}");
+                    result.Append('}');
                     result.Append(streamWriter.NewLine);
                     result.Append(streamWriter.NewLine);
                     string strResult = result.ToString();
@@ -1188,7 +1181,7 @@ namespace Microsoft.PowerShell.Commands
                 BuildModuleManifest(result, nameof(IconUri), Modules.IconUri, IconUri != null, () => QuoteName(IconUri), streamWriter);
                 BuildModuleManifest(result, nameof(ReleaseNotes), Modules.ReleaseNotes, !string.IsNullOrEmpty(ReleaseNotes), () => QuoteName(ReleaseNotes), streamWriter);
                 BuildModuleManifest(result, nameof(Prerelease), Modules.Prerelease, !string.IsNullOrEmpty(Prerelease), () => QuoteName(Prerelease), streamWriter);
-                BuildModuleManifest(result, nameof(RequireLicenseAcceptance), Modules.RequireLicenseAcceptance, RequireLicenseAcceptance.IsPresent, () => { return RequireLicenseAcceptance.IsPresent ? "$true" : "$false"; }, streamWriter);
+                BuildModuleManifest(result, nameof(RequireLicenseAcceptance), Modules.RequireLicenseAcceptance, RequireLicenseAcceptance.IsPresent, () => RequireLicenseAcceptance.IsPresent ? "$true" : "$false", streamWriter);
                 BuildModuleManifest(result, nameof(ExternalModuleDependencies), Modules.ExternalModuleDependencies, ExternalModuleDependencies != null && ExternalModuleDependencies.Length > 0, () => QuoteNames(ExternalModuleDependencies, streamWriter), streamWriter);
 
                 result.Append("    } ");

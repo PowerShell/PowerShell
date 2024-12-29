@@ -43,8 +43,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>Objects the cache needs to return. It can be null.</returns>
         internal List<PacketInfoData> Add(PacketInfoData o)
         {
-            FormatStartData fsd = o as FormatStartData;
-            if (fsd != null)
+            if (o is FormatStartData fsd)
             {
                 // just cache the reference (used during the notification call)
                 _formatStartData = fsd;
@@ -120,12 +119,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // add only of it's not a control message
             // and it's not out of band
-            FormatEntryData fed = o as FormatEntryData;
-
-            if (fed == null || fed.outOfBand)
-                return;
-
-            _currentObjectCount++;
+            if (o is FormatEntryData fed && !fed.outOfBand)
+            {
+                _currentObjectCount++;
+            }
         }
 
         private void Notify()
@@ -139,8 +136,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             foreach (PacketInfoData x in _queue)
             {
-                FormatEntryData fed = x as FormatEntryData;
-                if (fed != null && fed.outOfBand)
+                if (x is FormatEntryData fed && fed.outOfBand)
                     continue;
 
                 validObjects.Add(x);
@@ -164,28 +160,28 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Queue to store the currently cached objects.
         /// </summary>
-        private Queue<PacketInfoData> _queue = new Queue<PacketInfoData>();
+        private readonly Queue<PacketInfoData> _queue = new Queue<PacketInfoData>();
 
         /// <summary>
         /// Number of objects to compute the best fit.
         /// Zero: all the objects
         /// a positive number N: use the first N.
         /// </summary>
-        private int _objectCount = 0;
+        private readonly int _objectCount = 0;
 
         /// <summary>
         /// Maximum amount of time for record processing to compute the best fit.
         /// MaxValue: all the objects.
         /// A positive timespan: use all objects that have been processed within the timeframe.
         /// </summary>
-        private TimeSpan _groupingDuration = TimeSpan.MinValue;
+        private readonly TimeSpan _groupingDuration = TimeSpan.MinValue;
         private Stopwatch _groupingTimer = null;
 
         /// <summary>
         /// Notification callback to be called when we have accumulated enough
         /// data to compute a hint.
         /// </summary>
-        private FormattedObjectsCache.ProcessCachedGroupNotification _notificationCallBack = null;
+        private readonly FormattedObjectsCache.ProcessCachedGroupNotification _notificationCallBack = null;
 
         /// <summary>
         /// Reference kept to be used during notification.
@@ -327,7 +323,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Front end queue (if present, cache ALL, if not, bypass)
         /// </summary>
-        private Queue<PacketInfoData> _frontEndQueue;
+        private readonly Queue<PacketInfoData> _frontEndQueue;
 
         /// <summary>
         /// Back end grouping queue.
@@ -335,4 +331,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private OutputGroupQueue _groupQueue = null;
     }
 }
-

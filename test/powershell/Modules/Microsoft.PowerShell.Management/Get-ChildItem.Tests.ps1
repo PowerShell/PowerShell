@@ -6,6 +6,7 @@ Describe "Get-ChildItem" -Tags "CI" {
 
         BeforeAll {
             # Create Test data
+            $max_Path = 260
             $item_a = "a3fe710a-31af-4834-bc29-d0b584589838"
             $item_B = "B1B691A9-B7B1-4584-AED7-5259511BEEC4"
             $item_c = "c283d143-2116-4809-bf11-4f7d61613f92"
@@ -13,6 +14,9 @@ Describe "Get-ChildItem" -Tags "CI" {
             $item_E = "EE150FEB-0F21-4AFF-8066-AF59E925810C"
             $item_F = ".F81D8514-8862-4227-B041-0529B1656A43"
             $item_G = "5560A62F-74F1-4FAE-9A23-F4EBD90D2676"
+            $item_H = "5f05ebca-4859-11ec-81d3-0242ac130003"
+            $item_I = "z" * ($max_Path - $TestDrive.FullName.Length - $item_H.Length - 2)
+            $item_J = "32d74aae-9054-4fa7-be97-8c806d10e8b9"
             $null = New-Item -Path $TestDrive -Name $item_a -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_B -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_c -ItemType "File" -Force
@@ -20,6 +24,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $null = New-Item -Path $TestDrive -Name $item_E -ItemType "Directory" -Force
             $null = New-Item -Path $TestDrive -Name $item_F -ItemType "File" -Force | ForEach-Object {$_.Attributes = "hidden"}
             $null = New-Item -Path (Join-Path -Path $TestDrive -ChildPath $item_E) -Name $item_G -ItemType "File" -Force
+            $null = New-Item -Path $TestDrive\$item_I\$item_H -Name $item_J -ItemType "Directory" -Force
 
             $searchRoot = Join-Path $TestDrive -ChildPath "TestPS"
             $file1 = Join-Path $searchRoot -ChildPath "D1" -AdditionalChildPath "File1.txt"
@@ -33,11 +38,6 @@ Describe "Get-ChildItem" -Tags "CI" {
                 @{Parameters = @{Path = (Join-Path $searchRoot 'F*.txt'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard filename"}
             )
 
-            $SkipAppExeCLinks = $true
-            if ($IsWindows -and (Get-ChildItem -Path ~\AppData\Local\Microsoft\WindowsApps\*.exe -ErrorAction Ignore) -ne $null)
-            {
-                $SkipAppExeCLinks = $false
-            }
         }
 
         It "Should list the contents of the current folder" {
@@ -103,16 +103,17 @@ Describe "Get-ChildItem" -Tags "CI" {
         It "Should list files in sorted order" {
             $files = Get-ChildItem -Path $TestDrive
             $files[0].Name     | Should -Be $item_E
-            $files[1].Name     | Should -Be $item_a
-            $files[2].Name     | Should -Be $item_B
-            $files[3].Name     | Should -Be $item_c
-            $files[4].Name     | Should -Be $item_D
+            $files[1].Name     | Should -Be $item_I
+            $files[2].Name     | Should -Be $item_a
+            $files[3].Name     | Should -Be $item_B
+            $files[4].Name     | Should -Be $item_c
+            $files[5].Name     | Should -Be $item_D
         }
 
         It "Should list hidden files as well when 'Force' parameter is used" {
             $files = Get-ChildItem -Path $TestDrive -Force
             $files | Should -Not -BeNullOrEmpty
-            $files.Count | Should -Be 6
+            $files.Count | Should -Be 7
             $files.Name.Contains($item_F) | Should -BeTrue
         }
 
@@ -130,22 +131,22 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should list items in current directory only with depth set to 0" {
-            (Get-ChildItem -Path $TestDrive -Depth 0).Count | Should -Be 5
-            (Get-ChildItem -Path $TestDrive -Depth 0 -Include *).Count | Should -Be 5
-            (Get-ChildItem -Path $TestDrive -Depth 0 -Exclude IntentionallyNonexistent).Count | Should -Be 5
+            (Get-ChildItem -Path $TestDrive -Depth 0).Count | Should -Be 6
+            (Get-ChildItem -Path $TestDrive -Depth 0 -Include *).Count | Should -Be 6
+            (Get-ChildItem -Path $TestDrive -Depth 0 -Exclude IntentionallyNonexistent).Count | Should -Be 6
         }
 
         It "Should return items recursively when using 'Include' or 'Exclude' parameters" {
-            (Get-ChildItem -Path $TestDrive -Depth 1).Count | Should -Be 6
+            (Get-ChildItem -Path $TestDrive -Depth 1).Count | Should -Be 8
             (Get-ChildItem -Path $TestDrive -Depth 1 -Include $item_G).Count | Should -Be 1
-            (Get-ChildItem -Path $TestDrive -Depth 1 -Exclude $item_a).Count | Should -Be 5
+            (Get-ChildItem -Path $TestDrive -Depth 1 -Exclude $item_a).Count | Should -Be 7
         }
 
         It "Should return items recursively when using 'Include' or 'Exclude' parameters with -LiteralPath" {
             (Get-ChildItem -LiteralPath $TestDrive -Recurse -Exclude *).Count | Should -Be 0
             (Get-ChildItem -LiteralPath $TestDrive -Recurse -Include *.dll).Count | Should -Be (Get-ChildItem $TestDrive -Recurse -Include *.dll).Count
             (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Include $item_G).Count | Should -Be 1
-            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Exclude $item_a).Count | Should -Be 5
+            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Exclude $item_a).Count | Should -Be 7
         }
 
         It "get-childitem path wildcard - <title>" -TestCases $PathWildCardTestCases {
@@ -181,7 +182,8 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem -File -LiteralPath TestDrive:/ -Filter noext*.*).Name | Should -BeExactly 'noextension'
         }
 
-        It "Understand APPEXECLINKs" -Skip:($SkipAppExeCLinks) {
+        # Because "dotnet API is not available, see PR 16044
+        It "Understand APPEXECLINKs" -Skip {
             $app = Get-ChildItem -Path ~\appdata\local\microsoft\windowsapps\*.exe | Select-Object -First 1
             $app.Target | Should -Not -Be $app.FullName
             $app.LinkType | Should -BeExactly 'AppExeCLink'
@@ -206,6 +208,52 @@ Describe "Get-ChildItem" -Tags "CI" {
             } finally {
                 Set-Location $oldLocation
             }
+        }
+
+        It "Should list the folder present when path length equal to MAX_PATH" {
+            (Get-ChildItem -Path TestDrive:\$item_I -Recurse -Force).Name.Length | Should -BeGreaterThan 0
+        }
+
+        It 'Trailing slash for -Path should treat it as a folder only when used with -recurse' {
+            $foo = New-Item -ItemType Directory -Path TestDrive:\foo
+            $foo2 = New-Item -ItemType Directory -Path TestDrive:\foo\foo
+            $bar = New-Item -ItemType File -Path TestDrive:\foo\bar
+            $bar2 = New-Item -ItemType File -Path TestDrive:\foo\foo\bar
+
+            { Get-ChildItem -Path testdrive:/foo/bar/ -Recurse -ErrorAction Stop } | Should -Throw -ErrorId 'ItemNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand'
+            $barFiles = Get-ChildItem -Path testdrive:/foo/bar -Recurse
+            $barFiles.Count | Should -Be 2
+        }
+
+        It 'Works with Windows volume paths' -Skip:(!$IsWindows) {
+            $winPath = $env:windir
+            if (! $winPath) {
+                Set-ItResult -Skipped -Because "windir is null"
+                return
+            }
+
+            $driveLetter = $winPath[0]
+            $winPartialPath = $winPath.SubString(3) # skip the drive letter, colon, and backslash
+            Write-Verbose -Verbose "Partial path is '$winPartialPath'"
+            $volume = (Get-Volume -DriveLetter $driveLetter).Path
+            if (! $volume) {
+                Set-ItResult -Skipped -Because "Get-Volume returned no volume for system drive '$driveLetter'"
+                return
+            }
+
+            $items = Get-ChildItem -LiteralPath "${volume}${winPartialPath}"
+            Write-Verbose -Verbose "Trying files in '${volume}${winPartialPath}'"
+            if ($items.Count -eq 0) {
+                Write-Verbose -Verbose "`$items is null!!"
+            }
+
+            $items[0].Parent.FullName | Should -BeExactly "${volume}${winPartialPath}"
+            $items | Should -HaveCount (Get-ChildItem $winPath).Count
+        }
+
+        It 'Works with Windows pipes' -Skip:(!$IsWindows) {
+            $out = pwsh -noprofile -custompipename myTestPipe { Get-ChildItem \\.\pipe\myTestPipe }
+            $out.Name | Should -BeExactly 'myTestPipe'
         }
     }
 
@@ -261,7 +309,10 @@ Describe 'FileSystem Provider Formatting' -Tag "CI","RequireAdminOnWindows" {
 
         if ($IsWindows)
         {
-            $testcases += @{ expectedMode = "l----"; expectedModeWithoutHardlink = "l----"; itemType = "Junction"; itemName = "Junction-Directory"; fileAttributes = [System.IO.FileAttributes]::Directory -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetDir1.FullName }
+            # arm64 adds the archive attribute
+            $junctionMode = (Test-IsWindowsArm64) ? "la---" : "l----"
+            $armFileAttributes = (Test-IsWindowsArm64) ? [System.IO.FileAttributes]"Directory,Archive,ReparsePoint" : [System.IO.FileAttributes]"Directory,ReparsePoint"
+            $testcases += @{ expectedMode = $junctionMode; expectedModeWithoutHardlink = $junctionMode; itemType = "Junction"; itemName = "Junction-Directory"; fileAttributes = $armFileAttributes; target = $targetDir1.FullName }
             $testcases += @{ expectedMode = "-a---"; expectedModeWithoutHardlink = "-a---"; itemType = "File"; itemName = "ArchiveFile"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $null }
             $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "la---"; itemType = "SymbolicLink"; itemName = "SymbolicLink-File"; fileAttributes = [System.IO.FileAttributes]::Archive -bor [System.IO.FileAttributes]::ReparsePoint; target = $targetFile1.FullName }
             $testcases += @{ expectedMode = "la---"; expectedModeWithoutHardlink = "-a---"; itemType = "HardLink"; itemName = "HardLink"; fileAttributes = [System.IO.FileAttributes] "Archive"; target = $targetFile2.FullName }

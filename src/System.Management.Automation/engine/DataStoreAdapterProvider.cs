@@ -34,7 +34,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The instance of session state the provider belongs to.
         /// </summary>
-        private SessionState _sessionState;
+        private readonly SessionState _sessionState;
 
         private string _fullName;
         private string _cachedModuleName;
@@ -51,7 +51,7 @@ namespace System.Management.Automation
         {
             get
             {
-                string GetFullName(string name, string psSnapInName, string moduleName)
+                static string GetFullName(string name, string psSnapInName, string moduleName)
                 {
                     string result = name;
                     if (!string.IsNullOrEmpty(psSnapInName))
@@ -201,7 +201,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// The location can be either a fully qualified provider path
-        /// or an Msh path. This is the location that is substituted for the ~.
+        /// or a PowerShell path. This is the location that is substituted for the ~.
         /// </remarks>
         public string Home { get; set; }
 
@@ -221,7 +221,7 @@ namespace System.Management.Automation
         /// A hidden drive for the provider that is used for setting
         /// the location to a provider-qualified path.
         /// </summary>
-        private PSDriveInfo _hiddenDrive;
+        private readonly PSDriveInfo _hiddenDrive;
 
         /// <summary>
         /// Gets the hidden drive for the provider that is used
@@ -368,7 +368,7 @@ namespace System.Management.Automation
         /// The description of the provider.
         /// </param>
         /// <param name="home">
-        /// The home path for the provider. This must be an MSH path.
+        /// The home path for the provider. This must be a PowerShell path.
         /// </param>
         /// <param name="helpFile">
         /// The help file for the provider.
@@ -686,4 +686,3 @@ namespace System.Management.Automation
         }
     }
 }
-

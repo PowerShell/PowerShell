@@ -7,153 +7,307 @@ jobs:
 - job: build_${{ parameters.buildName }}
   displayName: Build ${{ parameters.buildName }}
   condition: succeeded()
-  pool: Hosted Ubuntu 1604
+  pool:
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMSUbuntu20.04-Secure
   dependsOn: ${{ parameters.parentJob }}
   variables:
-    build: ${{ parameters.buildName }}
+    - name: runCodesignValidationInjection
+      value: false
+    - name: build
+      value: ${{ parameters.buildName }}
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
+    - group: ESRP
+    - group: DotNetPrivateBuildAccess
+
   steps:
+  - checkout: self
+    clean: true
+
+  - checkout: ComplianceRepo
+    clean: true
 
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
 
-  - powershell: |
-      Write-Verbose -Verbose "$(build)"
+  - pwsh: |
+      # create folder
+      sudo mkdir /PowerShell
 
-      if ('$(build)' -in 'alpine', 'fxdependent' -and '$(ReleaseTagVar)' -match '6.0.*')
-      {
-          $vstsCommandString = "vso[task.setvariable variable=SkipBuild]true"
-      }
-      else
-      {
-          $vstsCommandString = "vso[task.setvariable variable=SkipBuild]false"
-      }
-    displayName: 'Skip Alpine or fxdependent for PS v6.0.*'
+      # make the current user the owner
+      sudo chown $env:USER /PowerShell
+    displayName: 'Create /PowerShell'
+
+  - template: cloneToOfficialPath.yml
 
   - template: insert-nuget-config-azfeed.yml
-
+    parameters:
+      repoRoot: $(PowerShellRoot)
 
   - powershell: |
-      import-module ./build.psm1
+      import-module "$env:POWERSHELLROOT/build.psm1"
       Sync-PSTags -AddRemoteIfMissing
     displayName: SyncTags
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+    workingDirectory: $(PowerShellRoot)
 
   - powershell: |
-      tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTagVar) -Name '$(build)'
+      Import-Module "$env:POWERSHELLROOT/build.psm1"
 
-    displayName: 'Build and package'
+      Start-PSBootstrap -Package
+    displayName: 'Bootstrap'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
-
-- job: upload_${{ parameters.buildName }}
-  displayName: ${{ parameters.uploadDisplayName }} ${{ parameters.buildName }}
-  dependsOn: build_${{ parameters.buildName }}
-  condition: succeeded()
-  pool: Package ES CodeHub Lab E
-  variables:
-    buildName: ${{ parameters.buildName }}
-  steps:
-
-  - template: shouldSign.yml
-
-  - template: SetVersionVariables.yml
-    parameters:
-      ReleaseTagVar: $(ReleaseTagVar)
-
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download Deb Artifacts'
-    inputs:
-      downloadType: specific
-      itemPattern: '**/*.deb'
-      downloadPath: '$(System.ArtifactsDirectory)\finished'
-    condition: and(eq(variables['buildName'], 'DEB'),succeeded())
-
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download tar.gz Artifacts copy'
-    inputs:
-      downloadType: specific
-      itemPattern: '**/*.tar.gz'
-      downloadPath: '$(System.ArtifactsDirectory)\finished'
-
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download rpm Artifacts copy'
-    inputs:
-      downloadType: specific
-      itemPattern: '**/*.rpm'
-      downloadPath: '$(System.ArtifactsDirectory)\rpm'
-    condition: and(eq(variables['buildName'], 'RPM'),succeeded())
-
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
-    displayName: 'Run Defender Scan'
-
-  - powershell: |
-      $authenticodefiles = @()
-      Get-ChildItem -Path '$(System.ArtifactsDirectory)\rpm\*.rpm' -recurse | ForEach-Object { $authenticodefiles += $_.FullName}
-      tools/releaseBuild/generatePackgeSigning.ps1 -LinuxFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml"
-    displayName: 'Generate RPM Signing Xml'
-    condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
-
-  - powershell: |
-      Get-Content "$(System.ArtifactsDirectory)\package.xml"
-    displayName: 'Capture RPM signing xml'
-    condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
-
-  - task: PkgESCodeSign@10
-    displayName: 'CodeSign RPM $(System.ArtifactsDirectory)\package.xml'
+    workingDirectory: $(PowerShellRoot)
     env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    inputs:
-      signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
-      outPathRoot: '$(Build.StagingDirectory)\signedPackages'
-      binVersion: $(SigingVersion)
-      binVersionOverride: $(SigningVersionOverride)
-    condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+      __DOTNET_RUNTIME_FEED_KEY: $(RUNTIME_SOURCEFEED_KEY)
 
-  - task: AzureFileCopy@3
-    displayName: 'Upload to Azure - DEB and tar.gz'
-    inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\finished\release'
-      azureSubscription: '$(AzureFileCopySubscription)'
-      Destination: AzureBlob
-      storage: '$(StorageAccount)'
-      ContainerName: '$(AzureVersion)'
+  - pwsh: |
+      try {
+        Import-Module "$env:POWERSHELLROOT/build.psm1"
+        Import-Module "$env:POWERSHELLROOT/tools/packaging"
 
-  - template: upload-final-results.yml
+        Invoke-AzDevOpsLinuxPackageBuild -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+
+        Write-Verbose -Verbose "File permisions after building"
+        Get-ChildItem -Path $(System.ArtifactsDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
+
+      } catch {
+        Get-Error
+        throw
+      }
+    displayName: 'Build'
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+    workingDirectory: $(PowerShellRoot)
+
+  - template: Sbom.yml@ComplianceRepo
     parameters:
-      artifactPath: $(System.ArtifactsDirectory)\finished\release
+      BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+      Build_Repository_Uri: $(Github_Build_Repository_Uri)
+      displayName: ${{ parameters.buildName }} SBOM
+      PackageName: PowerShell Linux
+      PackageVersion: $(Version)
+      sourceScanPath: '$(PowerShellRoot)/tools'
 
-  - task: AzureFileCopy@3
-    displayName: 'Upload to Azure - RPM - Unsigned'
-    inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\rpm\release'
-      azureSubscription: '$(AzureFileCopySubscription)'
-      Destination: AzureBlob
-      storage: '$(StorageAccount)'
-      ContainerName: '$(AzureVersion)'
-    condition: and(and(succeeded(), ne(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+  - ${{ if eq(variables.build,'rpm') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Mariner x64 SBOM
+        PackageName: PowerShell Linux Framework Dependent
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
 
-  - task: AzureFileCopy@3
-    displayName: 'Upload to Azure - RPM - Signed'
-    inputs:
-      SourcePath: '$(Build.StagingDirectory)\signedPackages'
-      azureSubscription: '$(AzureFileCopySubscription)'
-      Destination: AzureBlob
-      storage: '$(StorageAccount)'
-      ContainerName: '$(AzureVersion)'
-    condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+  - ${{ if eq(variables.build,'rpm') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Mariner arm64 SBOM
+        PackageName: PowerShell Linux Framework Dependent
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
 
-  - template: upload-final-results.yml
-    parameters:
-      artifactPath: $(System.ArtifactsDirectory)\rpm\release
-      condition: and(and(succeeded(), ne(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+  - ${{ if eq(variables.build,'deb') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: MinSize SBOM
+        PackageName: PowerShell Linux Minimum Size
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
 
-  - template: upload-final-results.yml
-    parameters:
-      artifactPath: '$(Build.StagingDirectory)\signedPackages'
-      condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+  - ${{ if eq(variables.build,'deb') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Arm32 SBOM
+        PackageName: PowerShell Linux Arm32
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
 
-  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-    displayName: 'Component Detection'
-    inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
-      snapshotForceEnabled: true
+  - ${{ if eq(variables.build,'deb') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Arm64 SBOM
+        PackageName: PowerShell Linux Arm64
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Alpine FXD SBOM
+        PackageName: PowerShell Alpine Framework Dependent AMD64
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
+
+  - pwsh: |
+      Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+      Write-Verbose -Verbose "File permisions before compressing"
+      Get-ChildItem -Path $(Build.ArtifactStagingDirectory)/pwshLinuxBuild/pwsh | Select-Object -Property 'unixmode', 'size', 'name'
+      tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz *
+    displayName: Compress pwshLinuxBuild
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - pwsh: |
+        Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz *
+        Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz *
+        Set-Location '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz *
+      displayName: Compress deb
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - pwsh: |
+        Set-Location '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz *
+      displayName: Compress pwshMarinerBuildAmd64
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - pwsh: |
+        Set-Location '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz *
+      displayName: Compress pwshAlpineFxdBuildAmd64
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - pwsh: |
+        Set-Location '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64'
+        tar -czvf $(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz *
+      displayName: Compress pwshMarinerBuildArm64
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
+        artifactName: pwshLinuxBuild.tar.gz
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
+        artifactName: pwshLinuxBuild-meta
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize.tar.gz'
+        artifactName: pwshLinuxBuildMinSize.tar.gz
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize-meta'
+        artifactName: pwshLinuxBuildMinSize-meta
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32.tar.gz'
+        artifactName: pwshLinuxBuildArm32.tar.gz
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32-meta'
+        artifactName: pwshLinuxBuildArm32-meta
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64.tar.gz'
+        artifactName: pwshLinuxBuildArm64.tar.gz
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64-meta'
+        artifactName: pwshLinuxBuildArm64-meta
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64.tar.gz'
+        artifactName: pwshMarinerBuildAmd64.tar.gz
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64-meta'
+        artifactName: pwshMarinerBuildAmd64-meta
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64.tar.gz'
+        artifactName: pwshMarinerBuildArm64.tar.gz
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshMarinerBuildArm64-meta'
+        artifactName: pwshMarinerBuildArm64-meta
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
+        artifactName: pwshLinuxBuildAlpine.tar.gz
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
+        artifactName: pwshLinuxBuildAlpine-meta
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64.tar.gz'
+        artifactName: pwshAlpineFxdBuildAmd64.tar.gz
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'alpine') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshAlpineFxdBuildAmd64-meta'
+        artifactName: pwshAlpineFxdBuildAmd64-meta
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'fxdependent') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild.tar.gz'
+        artifactName: pwshLinuxBuildFxdependent.tar.gz
+      retryCountOnTaskFailure: 2
+
+  - ${{ if eq(variables.build,'fxdependent') }} :
+    - task: PublishPipelineArtifact@1
+      inputs:
+        path: '$(System.ArtifactsDirectory)/pwshLinuxBuild-meta'
+        artifactName: pwshLinuxBuildFxdependent-meta
+      retryCountOnTaskFailure: 2

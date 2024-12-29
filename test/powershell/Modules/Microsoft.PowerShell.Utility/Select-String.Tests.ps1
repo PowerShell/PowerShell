@@ -5,9 +5,12 @@ Describe "Select-String" -Tags "CI" {
     BeforeAll {
         $nl = [Environment]::NewLine
         $currentDirectory = $PWD.Path
+        $originalRendering = $PSStyle.OutputRendering
+        $PSStyle.OutputRendering = 'Ansi'
     }
 
     AfterAll {
+        $PSStyle.OutputRendering = $originalRendering
         Push-Location $currentDirectory
     }
 

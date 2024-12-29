@@ -11,6 +11,12 @@ Describe "Replace Operator" -Tags CI {
             $res | Should -BeExactly "image.jpg"
         }
 
+        It "Replace operator can convert an substitution object to string" {
+            $substitution = Get-Process -Id $pid
+            $res = "!3!" -replace "3",$substitution
+            $res | Should -BeExactly "!System.Diagnostics.Process (pwsh)!"
+        }
+
         It "Replace operator can be case-insensitive and case-sensitive" {
             $res = "book" -replace "B","C"
             $res | Should -BeExactly "Cook"
@@ -28,6 +34,18 @@ Describe "Replace Operator" -Tags CI {
 
             $res = "PowerPoint" -replace "Point"
             $res | Should -BeExactly "Power"
+        }
+
+        It "Replace operator can take an enumerable as first argument, a mandatory pattern, and an optional substitution" {
+            $res = "PowerPoint1","PowerPoint2" -replace "Point","Shell"
+            $res.Count | Should -Be 2
+            $res[0] | Should -BeExactly "PowerShell1"
+            $res[1] | Should -BeExactly "PowerShell2"
+
+            $res = "PowerPoint1","PowerPoint2" -replace "Point"
+            $res.Count | Should -Be 2
+            $res[0] | Should -BeExactly "Power1"
+            $res[1] | Should -BeExactly "Power2"
         }
     }
 
@@ -67,24 +85,13 @@ Describe "Replace Operator" -Tags CI {
 
     Describe "Culture-invariance tests for -split and -replace" -Tags CI {
         BeforeAll {
-            $skipTest = -not [ExperimentalFeature]::IsEnabled("PSCultureInvariantReplaceOperator")
-            if ($skipTest) {
-                Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSCultureInvariantReplaceOperator' to be enabled." -Verbose
-                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-                $PSDefaultParameterValues["it:skip"] = $true
-            } else {
-                $prevCulture = [cultureinfo]::CurrentCulture
-                # The French culture uses "," as the decimal mark.
-                [cultureinfo]::CurrentCulture = 'fr'
-            }
+            $prevCulture = [cultureinfo]::CurrentCulture
+            # The French culture uses "," as the decimal mark.
+            [cultureinfo]::CurrentCulture = 'fr'
         }
 
         AfterAll {
-            if ($skipTest) {
-                $global:PSDefaultParameterValues = $originalDefaultParameterValues
-            } else {
-                [cultureinfo]::CurrentCulture = $prevCulture
-            }
+            [cultureinfo]::CurrentCulture = $prevCulture
         }
 
         It "-split: LHS stringification is not culture-sensitive" {

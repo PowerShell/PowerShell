@@ -68,6 +68,7 @@ namespace System.Management.Automation.PSTasks
             _powershell.Streams.Warning.DataAdded += (sender, args) => HandleWarningData();
             _powershell.Streams.Verbose.DataAdded += (sender, args) => HandleVerboseData();
             _powershell.Streams.Debug.DataAdded += (sender, args) => HandleDebugData();
+            _powershell.Streams.Progress.DataAdded += (sender, args) => HandleProgressData();
             _powershell.Streams.Information.DataAdded += (sender, args) => HandleInformationData();
 
             // State change handler
@@ -129,6 +130,15 @@ namespace System.Management.Automation.PSTasks
             {
                 _dataStreamWriter.Add(
                     new PSStreamObject(PSStreamObjectType.Information, item));
+            }
+        }
+
+        private void HandleProgressData()
+        {
+            foreach (var item in _powershell.Streams.Progress.ReadAll())
+            {
+                _dataStreamWriter.Add(
+                    new PSStreamObject(PSStreamObjectType.Progress, item));
             }
         }
 
@@ -486,13 +496,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Signals the running task to stop.
         /// </summary>
-        public void SignalStop()
-        {
-            if (_powershell != null)
-            {
-                _powershell.BeginStop(null, null);
-            }
-        }
+        public void SignalStop() => _powershell?.BeginStop(null, null);
 
         #endregion
     }
@@ -539,7 +543,7 @@ namespace System.Management.Automation.PSTasks
         public PSTaskDataStreamWriter(PSCmdlet psCmdlet)
         {
             _cmdlet = psCmdlet;
-            _cmdletThreadId = Thread.CurrentThread.ManagedThreadId;
+            _cmdletThreadId = Environment.CurrentManagedThreadId;
             _dataStream = new PSDataCollection<PSStreamObject>();
         }
 
@@ -605,7 +609,7 @@ namespace System.Management.Automation.PSTasks
 
         private void CheckCmdletThread()
         {
-            if (Thread.CurrentThread.ManagedThreadId != _cmdletThreadId)
+            if (Environment.CurrentManagedThreadId != _cmdletThreadId)
             {
                 throw new PSInvalidOperationException(InternalCommandStrings.PSTaskStreamWriterWrongThread);
             }
@@ -908,7 +912,7 @@ namespace System.Management.Automation.PSTasks
 
         private Runspace GetRunspace(int taskId)
         {
-            var runspaceName = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", PSTask.RunspaceName, taskId);
+            var runspaceName = string.Create(CultureInfo.InvariantCulture, $"{PSTask.RunspaceName}:{taskId}");
 
             if (_useRunspacePool && _runspacePool.TryDequeue(out Runspace runspace))
             {
@@ -932,8 +936,23 @@ namespace System.Management.Automation.PSTasks
 
             // Create and initialize a new Runspace
             var iss = InitialSessionState.CreateDefault2();
-            iss.LanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
-                ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
+            switch (SystemPolicy.GetSystemLockdownPolicy())
+            {
+                case SystemEnforcementMode.Enforce:
+                    iss.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                    break;
+
+                case SystemEnforcementMode.Audit:
+                    // In audit mode, CL restrictions are not enforced and instead audit
+                    // log entries are created.
+                    iss.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                    break;
+
+                case SystemEnforcementMode.None:
+                    iss.LanguageMode = PSLanguageMode.FullLanguage;
+                    break;
+            }
+            
             runspace = RunspaceFactory.CreateRunspace(iss);
             runspace.Name = runspaceName;
             _activeRunspaces.TryAdd(runspace.Id, runspace);
@@ -1526,12 +1545,9 @@ namespace System.Management.Automation.PSTasks
         {
             get
             {
-                if (_jobDebuggerWrapper == null)
-                {
-                    _jobDebuggerWrapper = new PSTaskChildDebugger(
-                        _task.Debugger,
-                        this.Name);
-                }
+                _jobDebuggerWrapper ??= new PSTaskChildDebugger(
+                    _task.Debugger,
+                    this.Name);
 
                 return _jobDebuggerWrapper;
             }

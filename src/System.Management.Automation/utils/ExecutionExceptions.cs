@@ -7,7 +7,6 @@
 using System.Runtime.Serialization;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
-using System.Security.Permissions;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -20,7 +19,6 @@ namespace System.Management.Automation
     /// <remarks>
     /// InnerException is the error which the cmdlet hit.
     /// </remarks>
-    [Serializable]
     public class CmdletInvocationException : RuntimeException
     {
         #region ctor
@@ -31,10 +29,7 @@ namespace System.Management.Automation
         internal CmdletInvocationException(ErrorRecord errorRecord)
             : base(RetrieveMessage(errorRecord), RetrieveException(errorRecord))
         {
-            if (errorRecord == null)
-            {
-                throw new ArgumentNullException(nameof(errorRecord));
-            }
+            ArgumentNullException.ThrowIfNull(errorRecord);
 
             _errorRecord = errorRecord;
             if (errorRecord.Exception != null)
@@ -56,14 +51,10 @@ namespace System.Management.Automation
                                            InvocationInfo invocationInfo)
             : base(RetrieveMessage(innerException), innerException)
         {
-            if (innerException == null)
-            {
-                throw new ArgumentNullException(nameof(innerException));
-            }
+            ArgumentNullException.ThrowIfNull(innerException);
             // invocationInfo may be null
 
-            IContainsErrorRecord icer = innerException as IContainsErrorRecord;
-            if (icer != null && icer.ErrorRecord != null)
+            if (innerException is IContainsErrorRecord icer && icer.ErrorRecord != null)
             {
                 _errorRecord = new ErrorRecord(icer.ErrorRecord, innerException);
             }
@@ -123,34 +114,12 @@ namespace System.Management.Automation
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected CmdletInvocationException(SerializationInfo info,
                                             StreamingContext context)
-                    : base(info, context)
         {
-            bool hasErrorRecord = info.GetBoolean("HasErrorRecord");
-            if (hasErrorRecord)
-                _errorRecord = (ErrorRecord)info.GetValue("ErrorRecord", typeof(ErrorRecord));
-        }
-
-        /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            bool hasErrorRecord = (_errorRecord != null);
-            info.AddValue("HasErrorRecord", hasErrorRecord);
-            if (hasErrorRecord)
-                info.AddValue("ErrorRecord", _errorRecord);
-        }
+            throw new NotSupportedException();
+        }        
         #endregion Serialization
         #endregion ctor
 
@@ -163,14 +132,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "CmdletInvocationException",
-                        ErrorCategory.NotSpecified,
-                        null);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "CmdletInvocationException",
+                    ErrorCategory.NotSpecified,
+                    null);
 
                 return _errorRecord;
             }
@@ -188,8 +154,7 @@ namespace System.Management.Automation
     /// <see cref="System.Management.Automation.ProviderInvocationException"/>.
     /// This is generally reported from the standard provider navigation cmdlets
     /// such as get-childitem.
-    /// </summary>
-    [Serializable]
+    /// </summary>    
     public class CmdletProviderInvocationException : CmdletInvocationException
     {
         #region ctor
@@ -206,10 +171,7 @@ namespace System.Management.Automation
                     InvocationInfo myInvocation)
             : base(GetInnerException(innerException), myInvocation)
         {
-            if (innerException == null)
-            {
-                throw new ArgumentNullException(nameof(innerException));
-            }
+            ArgumentNullException.ThrowIfNull(innerException);
 
             _providerInvocationException = innerException;
         }
@@ -231,11 +193,11 @@ namespace System.Management.Automation
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected CmdletProviderInvocationException(SerializationInfo info,
                                                     StreamingContext context)
-            : base(info, context)
         {
-            _providerInvocationException = InnerException as ProviderInvocationException;
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -276,7 +238,7 @@ namespace System.Management.Automation
         }
 
         [NonSerialized]
-        private ProviderInvocationException _providerInvocationException;
+        private readonly ProviderInvocationException _providerInvocationException;
 
         /// <summary>
         /// This is the ProviderInfo associated with the provider which
@@ -287,9 +249,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (_providerInvocationException == null)
-                    ? null
-                    : _providerInvocationException.ProviderInfo;
+                return _providerInvocationException?.ProviderInfo;
             }
         }
 
@@ -298,7 +258,7 @@ namespace System.Management.Automation
         #region Internal
         private static Exception GetInnerException(Exception e)
         {
-            return (e == null) ? null : e.InnerException;
+            return e?.InnerException;
         }
         #endregion Internal
     }
@@ -314,15 +274,14 @@ namespace System.Management.Automation
     /// user hitting CTRL-C, or by a call to
     /// <see cref="System.Management.Automation.Runspaces.Pipeline.Stop"/>.
     ///
-    /// When a cmdlet or provider sees this exception thrown from a Monad API such as
+    /// When a cmdlet or provider sees this exception thrown from a PowerShell API such as
     ///     WriteObject(object)
     /// this means that the command was already stopped.  The cmdlet or provider
     /// should clean up and return.
     /// Catching this exception is optional; if the cmdlet or providers chooses not to
     /// handle PipelineStoppedException and instead allow it to propagate to the
-    /// Monad Engine's call to ProcessRecord, the Monad Engine will handle it properly.
-    /// </remarks>
-    [Serializable]
+    /// PowerShell Engine's call to ProcessRecord, the PowerShell Engine will handle it properly.
+    /// </remarks>    
     public class PipelineStoppedException : RuntimeException
     {
         #region ctor
@@ -345,12 +304,11 @@ namespace System.Management.Automation
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected PipelineStoppedException(SerializationInfo info,
                                            StreamingContext context)
-                    : base(info, context)
         {
-            // no properties, nothing more to serialize
-            // no need for a GetObjectData implementation
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -384,8 +342,7 @@ namespace System.Management.Automation
     /// to an asynchronous pipeline source and the pipeline has already
     /// been stopped.
     /// </summary>
-    /// <seealso cref="System.Management.Automation.Runspaces.Pipeline.Input"/>
-    [Serializable]
+    /// <seealso cref="System.Management.Automation.Runspaces.Pipeline.Input"/>    
     public class PipelineClosedException : RuntimeException
     {
         #region ctor
@@ -430,10 +387,11 @@ namespace System.Management.Automation
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected PipelineClosedException(SerializationInfo info,
                                           StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
     }
@@ -447,8 +405,7 @@ namespace System.Management.Automation
     /// <remarks>
     /// For example, if $WarningPreference is "Stop", the command will fail with
     /// this error if a cmdlet calls WriteWarning.
-    /// </remarks>
-    [Serializable]
+    /// </remarks>    
     public class ActionPreferenceStopException : RuntimeException
     {
         #region ctor
@@ -471,10 +428,7 @@ namespace System.Management.Automation
         internal ActionPreferenceStopException(ErrorRecord error)
             : this(RetrieveMessage(error))
         {
-            if (error == null)
-            {
-                throw new ArgumentNullException(nameof(error));
-            }
+            ArgumentNullException.ThrowIfNull(error);
 
             _errorRecord = error;
         }
@@ -499,10 +453,7 @@ namespace System.Management.Automation
                                                string message)
             : this(invocationInfo, message)
         {
-            if (errorRecord == null)
-            {
-                throw new ArgumentNullException(nameof(errorRecord));
-            }
+            ArgumentNullException.ThrowIfNull(errorRecord);
 
             _errorRecord = errorRecord;
         }
@@ -516,48 +467,12 @@ namespace System.Management.Automation
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected ActionPreferenceStopException(SerializationInfo info,
                                                 StreamingContext context)
-                    : base(info, context)
         {
-            bool hasErrorRecord = info.GetBoolean("HasErrorRecord");
-            if (hasErrorRecord)
-                _errorRecord = (ErrorRecord)info.GetValue("ErrorRecord", typeof(ErrorRecord));
-
-            // fix for BUG: Windows Out Of Band Releases: 906263 and 906264
-            // The interpreter prompt CommandBaseStrings:InquireHalt
-            // should be suppressed when this flag is set.  This will be set
-            // when this prompt has already occurred and Break was chosen,
-            // or for ActionPreferenceStopException in all cases.
-            this.SuppressPromptInInterpreter = true;
-        }
-
-        /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            if (info != null)
-            {
-                bool hasErrorRecord = (_errorRecord != null);
-                info.AddValue("HasErrorRecord", hasErrorRecord);
-                if (hasErrorRecord)
-                {
-                    info.AddValue("ErrorRecord", _errorRecord);
-                }
-            }
-
-            // fix for BUG: Windows Out Of Band Releases: 906263 and 906264
-            // The interpreter prompt CommandBaseStrings:InquireHalt
-            // should be suppressed when this flag is set.  This will be set
-            // when this prompt has already occurred and Break was chosen,
-            // or for ActionPreferenceStopException in all cases.
-            this.SuppressPromptInInterpreter = true;
-        }
+            throw new NotSupportedException();
+        }        
         #endregion Serialization
 
         /// <summary>
@@ -624,15 +539,14 @@ namespace System.Management.Automation
     #region ParentContainsErrorRecordException
     /// <summary>
     /// ParentContainsErrorRecordException is the exception contained by the ErrorRecord
-    /// which is associated with a Monad engine custom exception through
+    /// which is associated with a PowerShell engine custom exception through
     /// the IContainsErrorRecord interface.
     /// </summary>
     /// <remarks>
     /// We use this exception class
     /// so that there is not a recursive "containment" relationship
-    /// between the Monad engine exception and its ErrorRecord.
+    /// between the PowerShell engine exception and its ErrorRecord.
     /// </remarks>
-    [Serializable]
     public class ParentContainsErrorRecordException : SystemException
     {
         #region Constructors
@@ -698,11 +612,11 @@ namespace System.Management.Automation
         /// <param name="context">Streaming context.</param>
         /// <returns>Doesn't return.</returns>
         /// <exception cref="NotImplementedException">Always.</exception>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected ParentContainsErrorRecordException(
             SerializationInfo info, StreamingContext context)
-                    : base(info, context)
         {
-            _message = info.GetString("ParentContainsErrorRecordException_Message");
+            throw new NotSupportedException();
         }
         #endregion Serialization
         /// <summary>
@@ -712,24 +626,8 @@ namespace System.Management.Automation
         {
             get
             {
-                return _message ?? (_message = (_wrapperException != null) ? _wrapperException.Message : string.Empty);
+                return _message ??= (_wrapperException != null) ? _wrapperException.Message : string.Empty;
             }
-        }
-
-        /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Context.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("ParentContainsErrorRecordException_Message", this.Message);
         }
 
         #region Private Data
@@ -750,8 +648,7 @@ namespace System.Management.Automation
     /// The redirected object is available as
     /// <see cref="System.Management.Automation.ErrorRecord.TargetObject"/>
     /// in the ErrorRecord which contains this exception.
-    /// </remarks>
-    [Serializable]
+    /// </remarks>    
     public class RedirectedException : RuntimeException
     {
         #region constructors
@@ -800,10 +697,11 @@ namespace System.Management.Automation
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected RedirectedException(SerializationInfo info,
                                       StreamingContext context)
-                    : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion constructors
     }
@@ -816,13 +714,12 @@ namespace System.Management.Automation
     /// exceeds the configured maximum.
     /// </summary>
     /// <remarks>
-    /// When one Monad command or script calls another, this creates an additional
-    /// scope.  Some script expressions also create a scope.  Monad imposes a maximum
+    /// When one PowerShell command or script calls another, this creates an additional
+    /// scope.  Some script expressions also create a scope.  PowerShell imposes a maximum
     /// call depth to prevent stack overflows.  The maximum call depth is configurable
     /// but generally high enough that scripts which are not deeply recursive
     /// should not have a problem.
-    /// </remarks>
-    [Serializable]
+    /// </remarks>    
     public class ScriptCallDepthException : SystemException, IContainsErrorRecord
     {
         #region ctor
@@ -868,21 +765,11 @@ namespace System.Management.Automation
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected ScriptCallDepthException(SerializationInfo info,
                                            StreamingContext context)
-            : base(info, context)
         {
-        }
-        /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Context.</param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override
-        void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
+            throw new NotSupportedException();
         }
         #endregion Serialization
 
@@ -898,14 +785,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "CallDepthOverflow",
-                        ErrorCategory.InvalidOperation,
-                        CallDepth);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "CallDepthOverflow",
+                    ErrorCategory.InvalidOperation,
+                    CallDepth);
 
                 return _errorRecord;
             }
@@ -932,7 +816,6 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>
     /// </remarks>
-    [Serializable]
     public class PipelineDepthException : SystemException, IContainsErrorRecord
     {
         #region ctor
@@ -977,21 +860,11 @@ namespace System.Management.Automation
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected PipelineDepthException(SerializationInfo info,
-                                           StreamingContext context)
-            : base(info, context)
+                                           StreamingContext context)            
         {
-        }
-        /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Context.</param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override
-        void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
+            throw new NotSupportedException();            
         }
         #endregion Serialization
 
@@ -1008,14 +881,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        "CallDepthOverflow",
-                        ErrorCategory.InvalidOperation,
-                        CallDepth);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    "CallDepthOverflow",
+                    ErrorCategory.InvalidOperation,
+                    CallDepth);
 
                 return _errorRecord;
             }
@@ -1048,8 +918,7 @@ namespace System.Management.Automation
     ///
     /// Note that HaltCommandException does not define IContainsErrorRecord.
     /// This is because it is not reported to the user.
-    /// </remarks>
-    [Serializable]
+    /// </remarks>    
     public class HaltCommandException : SystemException
     {
         #region ctor
@@ -1094,10 +963,11 @@ namespace System.Management.Automation
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected HaltCommandException(SerializationInfo info,
                                        StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
     }

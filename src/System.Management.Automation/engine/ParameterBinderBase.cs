@@ -58,7 +58,7 @@ namespace System.Management.Automation
     {
         #region tracer
         [TraceSource("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.");
 
         [TraceSource("ParameterBinding", "Traces the process of binding the arguments to the parameters of cmdlets, scripts, and applications.")]
         internal static readonly PSTraceSource bindingTracer =
@@ -172,10 +172,10 @@ namespace System.Management.Automation
         /// </summary>
         internal CommandLineParameters CommandLineParameters
         {
+            get { return _commandLineParameters ??= new CommandLineParameters(); }
+
             // Setter is needed to pass into RuntimeParameterBinder instances
             set { _commandLineParameters = value; }
-
-            get { return _commandLineParameters ?? (_commandLineParameters = new CommandLineParameters()); }
         }
 
         private CommandLineParameters _commandLineParameters;
@@ -439,7 +439,7 @@ namespace System.Management.Automation
                                             GetErrorExtent(parameter),
                                             parameterMetadata.Name,
                                             parameterMetadata.Type,
-                                            (parameterValue == null) ? null : parameterValue.GetType(),
+                                            parameterValue?.GetType(),
                                             ParameterBinderStrings.ParameterArgumentTransformationError,
                                             "ParameterArgumentTransformationError",
                                             e.Message);
@@ -522,7 +522,7 @@ namespace System.Management.Automation
                                             GetErrorExtent(parameter),
                                             parameterMetadata.Name,
                                             parameterMetadata.Type,
-                                            (parameterValue == null) ? null : parameterValue.GetType(),
+                                            parameterValue?.GetType(),
                                             ParameterBinderStrings.ParameterArgumentValidationError,
                                             "ParameterArgumentValidationError",
                                             e.Message);
@@ -559,15 +559,13 @@ namespace System.Management.Automation
                             parameterMetadata.ObsoleteAttribute.Message);
 
                         var mshCommandRuntime = this.Command.commandRuntime as MshCommandRuntime;
-                        if (mshCommandRuntime != null)
-                        {
-                            // Write out warning only if we are in the context of MshCommandRuntime.
-                            // This is because
-                            //  1. The overload method WriteWarning(WarningRecord) is only available in MshCommandRuntime;
-                            //  2. We write out warnings for obsolete commands and obsolete cmdlet parameters only when in
-                            //     the context of MshCommandRuntime. So we do it here to keep consistency.
-                            mshCommandRuntime.WriteWarning(new WarningRecord(FQIDParameterObsolete, obsoleteWarning));
-                        }
+
+                        // Write out warning only if we are in the context of MshCommandRuntime.
+                        // This is because
+                        //  1. The overload method WriteWarning(WarningRecord) is only available in MshCommandRuntime;
+                        //  2. We write out warnings for obsolete commands and obsolete cmdlet parameters only when in
+                        //     the context of MshCommandRuntime. So we do it here to keep consistency.
+                        mshCommandRuntime?.WriteWarning(new WarningRecord(FQIDParameterObsolete, obsoleteWarning));
                     }
 
                     // Finally bind the argument to the parameter
@@ -586,7 +584,7 @@ namespace System.Management.Automation
 
                     if (bindError != null)
                     {
-                        Type specifiedType = (parameterValue == null) ? null : parameterValue.GetType();
+                        Type specifiedType = parameterValue?.GetType();
                         ParameterBindingException bindingException =
                             new ParameterBindingException(
                                 bindError,
@@ -736,7 +734,7 @@ namespace System.Management.Automation
                             GetErrorExtent(parameter),
                             parameterMetadata.Name,
                             parameterMetadata.Type,
-                            (parameterValue == null) ? null : parameterValue.GetType(),
+                            parameterValue?.GetType(),
                             ParameterBinderStrings.ParameterArgumentValidationErrorEmptyStringNotAllowed,
                             "ParameterArgumentValidationErrorEmptyStringNotAllowed");
                     throw bindingException;
@@ -772,7 +770,10 @@ namespace System.Management.Automation
 
             // Note - we explicitly don't pass the context here because we don't want
             // the overhead of the calls that check for stopping.
-            if (ParserOps.MoveNext(null, null, ienum)) { isEmpty = false; }
+            if (ParserOps.MoveNext(null, null, ienum))
+            {
+                isEmpty = false;
+            }
 
             // If the element of the collection is of value type, then no need to check for null
             // because a value-type value cannot be null.
@@ -813,7 +814,7 @@ namespace System.Management.Automation
                         GetErrorExtent(parameter),
                         parameterMetadata.Name,
                         parameterMetadata.Type,
-                        (parameterValue == null) ? null : parameterValue.GetType(),
+                        parameterValue?.GetType(),
                         resourceString,
                         errorId);
                 throw bindingException;
@@ -903,7 +904,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The invocation information for the code that is being bound.
         /// </summary>
-        private InvocationInfo _invocationInfo;
+        private readonly InvocationInfo _invocationInfo;
 
         internal InvocationInfo InvocationInfo
         {
@@ -916,7 +917,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The context of the currently running engine.
         /// </summary>
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
 
         internal ExecutionContext Context
         {
@@ -929,7 +930,7 @@ namespace System.Management.Automation
         /// <summary>
         /// An instance of InternalCommand that the binder is binding to.
         /// </summary>
-        private InternalCommand _command;
+        private readonly InternalCommand _command;
 
         internal InternalCommand Command
         {
@@ -942,9 +943,9 @@ namespace System.Management.Automation
         /// <summary>
         /// The engine APIs that need to be passed the attributes when evaluated.
         /// </summary>
-        private EngineIntrinsics _engine;
+        private readonly EngineIntrinsics _engine;
 
-        private bool _isTranscribing;
+        private readonly bool _isTranscribing;
 
         #endregion internal members
 
@@ -999,10 +1000,7 @@ namespace System.Management.Automation
 
             // Construct the collection type information if it wasn't passed in.
 
-            if (collectionTypeInfo == null)
-            {
-                collectionTypeInfo = new ParameterCollectionTypeInformation(toType);
-            }
+            collectionTypeInfo ??= new ParameterCollectionTypeInformation(toType);
 
             object originalValue = currentValue;
             object result = currentValue;
@@ -1246,8 +1244,9 @@ namespace System.Management.Automation
                         // However, we don't allow Hashtable-to-Object conversion (PSObject and IDictionary) because
                         // those can lead to property setters that probably aren't expected. This is enforced by
                         // setting 'Context.LanguageModeTransitionInParameterBinding' to true before the conversion.
+                        var currentLanguageMode = Context.LanguageMode;
                         bool changeLanguageModeForTrustedCommand =
-                            Context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                            currentLanguageMode == PSLanguageMode.ConstrainedLanguage &&
                             this.Command.CommandInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage;
                         bool oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
 
@@ -1265,7 +1264,7 @@ namespace System.Management.Automation
                         {
                             if (changeLanguageModeForTrustedCommand)
                             {
-                                Context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                                Context.LanguageMode = currentLanguageMode;
                                 Context.LanguageModeTransitionInParameterBinding = oldLangModeTransitionStatus;
                             }
                         }
@@ -1452,7 +1451,7 @@ namespace System.Management.Automation
         /// could not be created.
         /// </exception>
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
-        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Consider Simplyfing it")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Consider Simplifying it")]
         private object EncodeCollection(
             CommandParameterInternal argument,
             string parameterName,
@@ -1559,7 +1558,7 @@ namespace System.Management.Automation
                                 toType,
                                 0,
                                 null,
-                                new object[] { },
+                                Array.Empty<object>(),
                                 System.Globalization.CultureInfo.InvariantCulture);
                         if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.IList)
                             resultAsIList = (IList)resultCollection;
@@ -1781,7 +1780,7 @@ namespace System.Management.Automation
                                     GetErrorExtent(argument),
                                     parameterName,
                                     toType,
-                                    (currentValueElement == null) ? null : currentValueElement.GetType(),
+                                    currentValueElement?.GetType(),
                                     ParameterBinderStrings.CannotConvertArgument,
                                     "CannotConvertArgument",
                                     currentValueElement ?? "null",
@@ -1878,7 +1877,7 @@ namespace System.Management.Automation
                                 GetErrorExtent(argument),
                                 parameterName,
                                 toType,
-                                (currentValue == null) ? null : currentValue.GetType(),
+                                currentValue?.GetType(),
                                 ParameterBinderStrings.CannotConvertArgument,
                                 "CannotConvertArgument",
                                 currentValue ?? "null",
@@ -1985,7 +1984,7 @@ namespace System.Management.Automation
 
         private static readonly IDictionary s_emptyUsingParameters = new ReadOnlyDictionary<object, object>(new Dictionary<object, object>());
 
-        public List<string> BoundPositionally { get; private set; }
+        public List<string> BoundPositionally { get; }
 
         internal IDictionary ImplicitUsingParameters { get; set; }
     }
@@ -2066,4 +2065,3 @@ namespace System.Management.Automation
         }
     }
 }
-

@@ -42,27 +42,24 @@ namespace System.Management.Automation.Runspaces
         private static IEnumerable<FormatViewDefinition> ViewsOf_FileSystemTypes(CustomControl[] sharedControls)
         {
 #if UNIX
-            if (ExperimentalFeature.IsEnabled("PSUnixFileStat"))
-            {
-                yield return new FormatViewDefinition("childrenWithUnixStat",
-                    TableControl.Create()
-                        .GroupByProperty("PSParentPath", customControl: sharedControls[0])
-                        .AddHeader(Alignment.Left, label: "UnixMode", width: 10)
-                        .AddHeader(Alignment.Left, label: "User", width: 16)
-                        .AddHeader(Alignment.Left, label: "Group", width: 16)
-                        .AddHeader(Alignment.Right, label: "LastWriteTime", width: 18)
-                        .AddHeader(Alignment.Right, label: "Size", width: 14)
-                        .AddHeader(Alignment.Left, label: "Name")
-                        .StartRowDefinition(wrap: true)
-                            .AddPropertyColumn("UnixMode")
-                            .AddPropertyColumn("User")
-                            .AddPropertyColumn("Group")
-                            .AddScriptBlockColumn(scriptBlock: @"'{0:d} {0:HH}:{0:mm}' -f $_.LastWriteTime")
-                            .AddPropertyColumn("Size")
-                            .AddPropertyColumn("NameString")
-                        .EndRowDefinition()
-                    .EndTable());
-            }
+            yield return new FormatViewDefinition("childrenWithUnixStat",
+                TableControl.Create()
+                    .GroupByProperty("PSParentPath", customControl: sharedControls[0])
+                    .AddHeader(Alignment.Left, label: "UnixMode", width: 10)
+                    .AddHeader(Alignment.Right, label: "User", width: 10)
+                    .AddHeader(Alignment.Left, label: "Group", width: 10)
+                    .AddHeader(Alignment.Right, label: "LastWriteTime", width: 16)
+                    .AddHeader(Alignment.Right, label: "Size", width: 12)
+                    .AddHeader(Alignment.Left, label: "Name")
+                    .StartRowDefinition(wrap: true)
+                        .AddPropertyColumn("UnixMode")
+                        .AddPropertyColumn("User")
+                        .AddPropertyColumn("Group")
+                        .AddScriptBlockColumn(scriptBlock: @"'{0:d} {0:HH}:{0:mm}' -f $_.LastWriteTime")
+                        .AddPropertyColumn("Size")
+                        .AddPropertyColumn("NameString")
+                    .EndRowDefinition()
+                .EndTable());
 #endif
 
             yield return new FormatViewDefinition("children",

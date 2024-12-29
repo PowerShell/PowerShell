@@ -181,7 +181,7 @@ namespace System.Management.Automation
         /// The variable if it was found or null if it was not.
         /// </returns>
         /// <remarks>
-        /// The <paramref name="variablePath" /> is first parsed to see if it contains a drive
+        /// The <paramref name="variablePath"/> is first parsed to see if it contains a drive
         /// specifier or special scope.  If a special scope is found ("LOCAL" or "GLOBAL")
         /// then only that scope is searched for the variable. If any other drive specifier
         /// is found the lookup goes in the following order.
@@ -252,7 +252,7 @@ namespace System.Management.Automation
         /// The variable if it was found or null if it was not.
         /// </returns>
         /// <remarks>
-        /// The <paramref name="variablePath" /> is first parsed to see if it contains a drive
+        /// The <paramref name="variablePath"/> is first parsed to see if it contains a drive
         /// specifier or special scope.  If a special scope is found ("LOCAL" or "GLOBAL")
         /// then only that scope is searched for the variable. If any other drive specifier
         /// is found the lookup goes in the following order.
@@ -352,8 +352,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderCannotBeUsedAsVariable",
@@ -368,8 +367,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderCannotBeUsedAsVariable",
@@ -407,8 +405,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderVariableSyntaxInvalid",
@@ -445,8 +442,7 @@ namespace System.Management.Automation
                 {
                     // First get the provider for the path.
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     ProviderInvocationException providerException =
                         new ProviderInvocationException(
@@ -523,7 +519,7 @@ namespace System.Management.Automation
         /// The variable if it was found or null if it was not.
         /// </returns>
         /// <remarks>
-        /// The <paramref name="variablePath" /> is first parsed to see if it contains a drive
+        /// The <paramref name="variablePath"/> is first parsed to see if it contains a drive
         /// specifier or special scope.  If a special scope is found ("LOCAL" or "GLOBAL")
         /// then only that scope is searched for the variable.
         ///     - current scope
@@ -575,7 +571,7 @@ namespace System.Management.Automation
         /// The variable if it was found or null if it was not.
         /// </returns>
         /// <remarks>
-        /// The <paramref name="variablePath" /> is first parsed to see if it contains a drive
+        /// The <paramref name="variablePath"/> is first parsed to see if it contains a drive
         /// specifier or special scope.  If a special scope is found ("LOCAL" or "GLOBAL")
         /// then only that scope is searched for the variable.
         ///     - current scope
@@ -741,8 +737,7 @@ namespace System.Management.Automation
                         // First get the provider for the path.
 
                         ProviderInfo providerInfo = null;
-                        string unused =
-                            this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                         throw NewProviderInvocationException(
                             "ProviderCannotBeUsedAsVariable",
@@ -757,8 +752,7 @@ namespace System.Management.Automation
                         // First get the provider for the path.
 
                         ProviderInfo providerInfo = null;
-                        string unused =
-                            this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                         throw NewProviderInvocationException(
                             "ProviderCannotBeUsedAsVariable",
@@ -796,8 +790,7 @@ namespace System.Management.Automation
                         // First get the provider for the path.
 
                         ProviderInfo providerInfo = null;
-                        string unused =
-                            this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                         throw NewProviderInvocationException(
                             "ProviderVariableSyntaxInvalid",
@@ -835,8 +828,7 @@ namespace System.Management.Automation
                         // First get the provider for the path.
 
                         ProviderInfo providerInfo = null;
-                        string unused =
-                            this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                         ProviderInvocationException providerException =
                             new ProviderInvocationException(
@@ -1179,7 +1171,7 @@ namespace System.Management.Automation
 
                 if (variablePath.IsPrivate && varResult != null)
                 {
-                    varResult.Options = varResult.Options | ScopedItemOptions.Private;
+                    varResult.Options |= ScopedItemOptions.Private;
                 }
 
                 result = varResult;
@@ -1245,8 +1237,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderCannotBeUsedAsVariable",
@@ -1261,8 +1252,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderCannotBeUsedAsVariable",
@@ -1301,8 +1291,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderVariableSyntaxInvalid",
@@ -1325,8 +1314,7 @@ namespace System.Management.Automation
                     // First get the provider for the path.
 
                     ProviderInfo providerInfo = null;
-                    string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                    _ = this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
                     ProviderInvocationException providerException =
                         new ProviderInvocationException(
@@ -1816,7 +1804,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        private void GetScopeVariableTable(SessionStateScope scope, Dictionary<string, PSVariable> result, bool includePrivate)
+        private static void GetScopeVariableTable(SessionStateScope scope, Dictionary<string, PSVariable> result, bool includePrivate)
         {
             foreach (KeyValuePair<string, PSVariable> entry in scope.Variables)
             {
@@ -1839,10 +1827,7 @@ namespace System.Management.Automation
                 dottedScope.GetVariableTable(result, includePrivate);
             }
 
-            if (scope.LocalsTuple != null)
-            {
-                scope.LocalsTuple.GetVariableTable(result, includePrivate);
-            }
+            scope.LocalsTuple?.GetVariableTable(result, includePrivate);
         }
 
         /// <summary>

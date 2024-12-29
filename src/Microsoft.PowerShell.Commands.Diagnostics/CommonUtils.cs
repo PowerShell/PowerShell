@@ -2,9 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections;
 using System.Diagnostics;
-using System.Globalization;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
@@ -42,12 +40,12 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
         [DllImport(LocalizationDllName, EntryPoint = "GetUserDefaultLangID", CallingConvention = CallingConvention.Winapi, SetLastError = true)]
         private static extern ushort GetUserDefaultLangID();
 
-        public static uint FormatMessageFromModule(uint lastError, string moduleName, out String msg)
+        public static uint FormatMessageFromModule(uint lastError, string moduleName, out string msg)
         {
             Debug.Assert(!string.IsNullOrEmpty(moduleName));
 
             uint formatError = 0;
-            msg = String.Empty;
+            msg = string.Empty;
 
             IntPtr moduleHandle = LoadLibraryEx(moduleName, IntPtr.Zero, LOAD_LIBRARY_AS_DATAFILE);
             if (moduleHandle == IntPtr.Zero)
@@ -57,7 +55,6 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
 
             try
             {
-                uint dwFormatFlags = FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE;
                 uint LANGID = (uint)GetUserDefaultLangID();
                 uint langError = (uint)Marshal.GetLastWin32Error();
                 if (langError != 0)
@@ -65,14 +62,15 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
                     LANGID = 0; // neutral
                 }
 
-                StringBuilder outStringBuilder = new StringBuilder(1024);
-                uint nChars = FormatMessage(dwFormatFlags,
-                    moduleHandle,
-                    lastError,
-                    LANGID,
-                    outStringBuilder,
-                    (uint)outStringBuilder.Capacity,
-                    IntPtr.Zero);
+                StringBuilder outStringBuilder = new(1024);
+                uint nChars = FormatMessage(
+                    dwFlags: FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE,
+                    lpSource: moduleHandle,
+                    dwMessageId: lastError,
+                    dwLanguageId: LANGID,
+                    lpBuffer: outStringBuilder,
+                    nSize: (uint)outStringBuilder.Capacity,
+                    Arguments: IntPtr.Zero);
 
                 if (nChars == 0)
                 {
@@ -100,4 +98,3 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
         }
     }
 }
-

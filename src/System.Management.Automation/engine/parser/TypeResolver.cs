@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 #if !UNIX
 using System.DirectoryServices;
 #endif
@@ -53,9 +54,9 @@ namespace System.Management.Automation.Language
         /// </summary>
         internal class AmbiguousTypeException : InvalidCastException
         {
-            public string[] Candidates { private set; get; }
+            public string[] Candidates { get; }
 
-            public TypeName TypeName { private set; get; }
+            public TypeName TypeName { get; }
 
             public AmbiguousTypeException(TypeName typeName, IEnumerable<string> candidates)
             {
@@ -79,7 +80,10 @@ namespace System.Management.Automation.Language
             foreach (Assembly assembly in assemblies)
             {
                 // Skip the assemblies that we already searched and found no matching type.
-                if (searchedAssemblies.Contains(assembly)) { continue; }
+                if (searchedAssemblies.Contains(assembly))
+                {
+                    continue;
+                }
 
                 try
                 {
@@ -246,7 +250,7 @@ namespace System.Management.Automation.Language
             try
             {
                 exception = null;
-                var currentScope = context != null ? context.EngineSessionState.CurrentScope : null;
+                var currentScope = context?.EngineSessionState.CurrentScope;
                 Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, t_searchedAssemblies, typeResolutionState,
                                                     /*onlySearchInGivenAssemblies*/ false, /* reportAmbiguousException */ true, out exception);
                 if (exception == null && result == null)
@@ -370,10 +374,7 @@ namespace System.Management.Automation.Language
                 return typeName._typeDefinitionAst.Type;
             }
 
-            if (context == null)
-            {
-                context = LocalPipeline.GetExecutionContextFromTLS();
-            }
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
 
             // Use the explicitly passed-in assembly list when it's specified by the caller.
             // Otherwise, retrieve all currently loaded assemblies.
@@ -582,10 +583,7 @@ namespace System.Management.Automation.Language
 
         internal static TypeResolutionState GetDefaultUsingState(ExecutionContext context)
         {
-            if (context == null)
-            {
-                context = LocalPipeline.GetExecutionContextFromTLS();
-            }
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
 
             if (context != null)
             {
@@ -615,9 +613,7 @@ namespace System.Management.Automation.Language
             if (object.ReferenceEquals(this, obj))
                 return true;
 
-            var other = obj as TypeResolutionState;
-
-            if (other == null)
+            if (!(obj is TypeResolutionState other))
                 return false;
 
             if (this.attribute != other.attribute)
@@ -673,9 +669,9 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class TypeCache
+    internal static class TypeCache
     {
-        private class KeyComparer : IEqualityComparer<Tuple<ITypeName, TypeResolutionState>>
+        private sealed class KeyComparer : IEqualityComparer<Tuple<ITypeName, TypeResolutionState>>
         {
             public bool Equals(Tuple<ITypeName, TypeResolutionState> x,
                                Tuple<ITypeName, TypeResolutionState> y)
@@ -757,10 +753,12 @@ namespace System.Management.Automation
                     { typeof(CimConverter),                                new[] { "cimconverter" } },
                     { typeof(ModuleSpecification),                         null },
                     { typeof(IPEndPoint),                                  new[] { "IPEndpoint" } },
+                    { typeof(NoRunspaceAffinityAttribute),                 new[] { "NoRunspaceAffinity" } },
                     { typeof(NullString),                                  new[] { "NullString" } },
                     { typeof(OutputTypeAttribute),                         new[] { "OutputType" } },
                     { typeof(object[]),                                    null },
                     { typeof(ObjectSecurity),                              new[] { "ObjectSecurity" } },
+                    { typeof(OrderedDictionary),                           new[] { "ordered" } },
                     { typeof(ParameterAttribute),                          new[] { "Parameter" } },
                     { typeof(PhysicalAddress),                             new[] { "PhysicalAddress" } },
                     { typeof(PSCredential),                                new[] { "pscredential" } },
@@ -789,6 +787,7 @@ namespace System.Management.Automation
                     { typeof(ValidateLengthAttribute),                     new[] { "ValidateLength" } },
                     { typeof(ValidateNotNullAttribute),                    new[] { "ValidateNotNull" } },
                     { typeof(ValidateNotNullOrEmptyAttribute),             new[] { "ValidateNotNullOrEmpty" } },
+                    { typeof(ValidateNotNullOrWhiteSpaceAttribute),        new[] { "ValidateNotNullOrWhiteSpace" } },
                     { typeof(ValidatePatternAttribute),                    new[] { "ValidatePattern" } },
                     { typeof(ValidateRangeAttribute),                      new[] { "ValidateRange" } },
                     { typeof(ValidateScriptAttribute),                     new[] { "ValidateScript" } },
@@ -935,10 +934,7 @@ namespace System.Management.Automation
         public static bool Remove(string typeName)
         {
             userTypeAccelerators.Remove(typeName);
-            if (s_allTypeAccelerators != null)
-            {
-                s_allTypeAccelerators.Remove(typeName);
-            }
+            s_allTypeAccelerators?.Remove(typeName);
 
             return true;
         }

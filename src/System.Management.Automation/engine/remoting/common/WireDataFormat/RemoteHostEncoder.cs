@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Management.Automation.Host;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Security;
 
@@ -24,7 +25,7 @@ namespace System.Management.Automation.Remoting
     /// guarantees that transmitting on the wire will not change the encoded
     /// object's type.
     /// </summary>
-    internal class RemoteHostEncoder
+    internal static class RemoteHostEncoder
     {
         /// <summary>
         /// Is known type.
@@ -87,7 +88,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static object DecodeClassOrStruct(PSObject psObject, Type type)
         {
-            object obj = FormatterServices.GetUninitializedObject(type);
+            object obj = RuntimeHelpers.GetUninitializedObject(type);
 
             // Field values cannot be null - because for null fields we simply don't transport them.
             foreach (PSPropertyInfo propertyInfo in psObject.Properties)
@@ -744,7 +745,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static T SafelyGetBaseObject<T>(PSObject psObject)
         {
-            if (psObject == null || psObject.BaseObject == null || !(psObject.BaseObject is T))
+            if (psObject == null || psObject.BaseObject == null || psObject.BaseObject is not T)
             {
                 throw RemoteHostExceptions.NewDecodingFailedException();
             }
@@ -771,7 +772,7 @@ namespace System.Management.Automation.Remoting
         private static T SafelyGetPropertyValue<T>(PSObject psObject, string key)
         {
             PSPropertyInfo propertyInfo = psObject.Properties[key];
-            if (propertyInfo == null || propertyInfo.Value == null || !(propertyInfo.Value is T))
+            if (propertyInfo == null || propertyInfo.Value == null || propertyInfo.Value is not T)
             {
                 throw RemoteHostExceptions.NewDecodingFailedException();
             }

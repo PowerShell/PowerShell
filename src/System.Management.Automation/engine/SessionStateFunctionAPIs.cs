@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -116,7 +117,10 @@ namespace System.Management.Automation
         /// </summary>
         internal bool FunctionsExportedWithWildcard
         {
-            get { return _functionsExportedWithWildcard; }
+            get
+            {
+                return _functionsExportedWithWildcard;
+            }
 
             set
             {
@@ -181,7 +185,7 @@ namespace System.Management.Automation
 
             // Early out.
             // Always allow built-in functions needed for command line debugging.
-            if ((this.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage) ||
+            if (this.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage ||
                 (fnInfo == null) ||
                 (fnInfo.Name.Equals("prompt", StringComparison.OrdinalIgnoreCase)) ||
                 (fnInfo.Name.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase)) ||
@@ -220,7 +224,7 @@ namespace System.Management.Automation
             return GetFunction(name, CommandOrigin.Internal);
         }
 
-        private IEnumerable<string> GetFunctionAliases(IParameterMetadataProvider ipmp)
+        private static IEnumerable<string> GetFunctionAliases(IParameterMetadataProvider ipmp)
         {
             if (ipmp == null || ipmp.Body.ParamBlock == null)
                 yield break;

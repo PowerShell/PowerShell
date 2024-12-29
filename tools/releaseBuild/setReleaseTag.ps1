@@ -41,6 +41,7 @@ function New-BuildInfoJson {
         ReleaseTag = $ReleaseTag
         ReleaseDate = $dateTime
         BlobName = $blobName
+        BaseUrl = 'https://powershellinfraartifacts-gkhedzdeaghdezhr.z01.azurefd.net/install'
     } | ConvertTo-Json | Out-File -Encoding ascii -Force -FilePath $filename
 
     $resolvedPath = (Resolve-Path -Path $filename).ProviderPath
@@ -48,7 +49,21 @@ function New-BuildInfoJson {
     Write-Verbose -Message "$vstsCommandString" -Verbose
     Write-Host -Object "##$vstsCommandString"
 
+    # Upload for ADO pipelines
     Write-Host "##vso[artifact.upload containerfolder=BuildInfoJson;artifactname=BuildInfoJson]$resolvedPath"
+
+    # Copy to location where OneBranch Pipelines uploads from
+
+    # if the environment variable does not exist, we are not in OneBranch. So just return.
+    if (-not $env:ob_outputDirectory) {
+        return
+    }
+
+    if (-not (Test-Path $env:ob_outputDirectory)) {
+        $null = New-Item -Path $env:ob_outputDirectory -ItemType Directory -Force -Verbose
+    }
+
+    Copy-Item $resolvedPath -Destination $env:ob_outputDirectory -Force -Verbose
 }
 
 # Script to set the release tag based on the branch name if it is not set or it is "fromBranch"
@@ -65,11 +80,12 @@ $isDaily = $false
 if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
 {
     # Branch is named release-<semver>
-    if($Branch -match '^.*(release[-/])')
+    $releaseBranchRegex = '^.*((release/|rebuild/.*rebuild))'
+    if($Branch -match $releaseBranchRegex)
     {
         $msixType = 'release'
         Write-Verbose "release branch:" -Verbose
-        $releaseTag = $Branch -replace '^.*(release[-/])'
+        $releaseTag = $Branch -replace '^.*((release|rebuild)/)'
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"
@@ -79,19 +95,27 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
             New-BuildInfoJson -ReleaseTag $releaseTag
         }
     }
-    elseif($branchOnly -eq 'master' -or $branchOnly -like '*dailytest*')
+    elseif(($branchOnly -eq 'master' -and $env:BUILD_REASON -ne 'Manual')  -or $branchOnly -like '*dailytest*')
     {
         $isDaily = $true
         Write-Verbose "daily build" -Verbose
-        $metaDataJsonPath = Join-Path $PSScriptRoot -ChildPath '..\metadata.json'
-        $metadata = Get-Content $metaDataJsonPath | ConvertFrom-Json
-        $versionPart = $metadata.PreviewReleaseTag
-        if($versionPart -match '-.*$')
-        {
-            $versionPart = $versionPart -replace '-.*$'
+        $jsonPath = "${env:SYSTEM_ARTIFACTSDIRECTORY}\BuildInfoJson\daily.json"
+        if (test-path -Path $jsonPath) {
+            Write-Verbose "restoring from buildinfo json..." -Verbose
+            $buildInfo = Get-Content -Path $jsonPath | ConvertFrom-Json
+            $releaseTag = $buildInfo.ReleaseTag
+        } else {
+            Write-Verbose "creating from branch counter and metadata.json..." -Verbose
+            $metaDataJsonPath = Join-Path $PSScriptRoot -ChildPath '..\metadata.json'
+            $metadata = Get-Content $metaDataJsonPath | ConvertFrom-Json
+            $versionPart = $metadata.PreviewReleaseTag
+            if ($versionPart -match '-.*$') {
+                $versionPart = $versionPart -replace '-.*$'
+            }
+
+            $releaseTag = "$versionPart-daily$((Get-Date).ToString('yyyyMMdd')).$($env:BRANCHCOUNTER)"
         }
 
-        $releaseTag = "$versionPart-daily.$((Get-Date).ToString('yyyyMMdd'))"
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"

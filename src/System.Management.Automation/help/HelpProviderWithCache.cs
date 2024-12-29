@@ -28,7 +28,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// This hashtable is made case-insensitive so that helpInfo can be retrieved case insensitively.
         /// </remarks>
-        private Hashtable _helpCache = new Hashtable(StringComparer.OrdinalIgnoreCase);
+        private readonly Hashtable _helpCache = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Exact match help for a target.

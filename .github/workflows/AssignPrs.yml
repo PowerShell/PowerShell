@@ -1,0 +1,28 @@
+name: Auto Assign PR Maintainer
+on:
+  pull_request:
+    types: [opened, edited]
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: wow-actions/auto-assign@67fafa03df61d7e5f201734a2fa60d1ab111880d # v3.0.2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # using the `org/team_slug` or `/team_slug` syntax to add git team as reviewers
+          assignees: |
+            TravisEz13
+            daxian-dbw
+            adityapatwardhan
+            iSazonov
+            SeeminglyScience
+          skipDraft: true
+          skipKeywords: wip, draft
+          addReviewers: false
+          numberOfAssignees: 1

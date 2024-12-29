@@ -1,7 +1,0 @@
-#pragma namespace("\\\\.\\root\\microsoft\\windows\\DesiredstateConfiguration")
-
-[ClassVersion("1.0.0"),FriendlyName("Log")] 
-class MSFT_LogResource : OMI_BaseResource
-{
-  [required] string Message;
-};

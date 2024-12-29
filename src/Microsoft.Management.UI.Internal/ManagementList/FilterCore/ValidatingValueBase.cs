@@ -14,8 +14,8 @@ namespace Microsoft.Management.UI.Internal
     /// The ValidatingValueBase class provides basic services for base
     /// classes to support validation via the IDataErrorInfo interface.
     /// </summary>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public abstract class ValidatingValueBase : IDataErrorInfo, INotifyPropertyChanged
     {
         #region Properties
@@ -82,10 +82,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                if (string.IsNullOrEmpty(columnName))
-                {
-                    throw new ArgumentNullException("columnName");
-                }
+                ArgumentException.ThrowIfNullOrEmpty(columnName);
 
                 this.UpdateValidationResult(columnName);
                 return this.GetValidationResult().ErrorMessage;
@@ -140,10 +137,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="rule">The validation rule to add.</param>
         public void AddValidationRule(DataErrorInfoValidationRule rule)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException("rule");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
 
             this.validationRules.Add(rule);
 
@@ -161,10 +155,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="rule">The rule to remove.</param>
         public void RemoveValidationRule(DataErrorInfoValidationRule rule)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException("rule");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
 
             this.validationRules.Remove(rule);
 
@@ -223,7 +214,7 @@ namespace Microsoft.Management.UI.Internal
                 DataErrorInfoValidationResult result = rule.Validate(value, cultureInfo);
                 if (result == null)
                 {
-                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "DataErrorInfoValidationResult not returned by ValidationRule: {0}", rule.ToString()));
+                    throw new InvalidOperationException(string.Create(CultureInfo.CurrentCulture, $"DataErrorInfoValidationResult not returned by ValidationRule: {rule}"));
                 }
 
                 if (!result.IsValid)

@@ -1,0 +1,8 @@
+[
+  "PSFeedbackProvider",
+  "PSLoadAssemblyFromNativeCode",
+  "PSNativeWindowsTildeExpansion",
+  "PSSerializeJSONLongEnumAsNumber",
+  "PSRedirectToVariable",
+  "PSSubsystemPluginModel"
+]

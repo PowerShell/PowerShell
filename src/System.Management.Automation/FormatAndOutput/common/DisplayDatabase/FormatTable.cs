@@ -19,20 +19,20 @@ namespace System.Management.Automation.Runspaces
 {
     /// <summary>
     /// This exception is used by Formattable constructor to indicate errors
-    /// occured during construction time.
-    /// </summary>
-    [Serializable]
+    /// occurred during construction time.
+    /// </summary>    
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
     public class FormatTableLoadException : RuntimeException
     {
-        private Collection<string> _errors;
+        private readonly Collection<string> _errors;
 
         #region Constructors
 
         /// <summary>
         /// This is the default constructor.
         /// </summary>
-        public FormatTableLoadException() : base()
+        public FormatTableLoadException()
+            : base()
         {
             SetDefaultErrorRecord();
         }
@@ -43,7 +43,8 @@ namespace System.Management.Automation.Runspaces
         /// <param name="message">
         /// A localized error message.
         /// </param>
-        public FormatTableLoadException(string message) : base(message)
+        public FormatTableLoadException(string message)
+            : base(message)
         {
             SetDefaultErrorRecord();
         }
@@ -68,10 +69,10 @@ namespace System.Management.Automation.Runspaces
         /// time.
         /// </summary>
         /// <param name="loadErrors">
-        /// The errors that occured
+        /// The errors that occurred.
         /// </param>
-        internal FormatTableLoadException(ConcurrentBag<string> loadErrors) :
-            base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))
+        internal FormatTableLoadException(ConcurrentBag<string> loadErrors)
+            : base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))
         {
             _errors = new Collection<string>(loadErrors.ToArray());
             SetDefaultErrorRecord();
@@ -82,55 +83,13 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected FormatTableLoadException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            int errorCount = info.GetInt32("ErrorCount");
-            if (errorCount > 0)
-            {
-                _errors = new Collection<string>();
-                for (int index = 0; index < errorCount; index++)
-                {
-                    string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
-                    _errors.Add(info.GetString(key));
-                }
-            }
+            throw new NotSupportedException();
         }
 
         #endregion Constructors
-
-        /// <summary>
-        /// Serializes the exception data.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            // If there are simple fields, serialize them with info.AddValue
-            if (_errors != null)
-            {
-                int errorCount = _errors.Count;
-                info.AddValue("ErrorCount", errorCount);
-
-                for (int index = 0; index < errorCount; index++)
-                {
-                    string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
-                    info.AddValue(key, _errors[index]);
-                }
-            }
-        }
 
         /// <summary>
         /// Set the default ErrorRecord.
@@ -161,7 +120,7 @@ namespace System.Management.Automation.Runspaces
     {
         #region Private Data
 
-        private TypeInfoDataBaseManager _formatDBMgr;
+        private readonly TypeInfoDataBaseManager _formatDBMgr;
 
         #endregion
 

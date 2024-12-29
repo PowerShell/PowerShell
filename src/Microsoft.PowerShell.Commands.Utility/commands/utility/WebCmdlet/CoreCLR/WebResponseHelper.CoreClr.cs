@@ -1,20 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Net.Http;
 
 namespace Microsoft.PowerShell.Commands
 {
     internal static class WebResponseHelper
     {
-        internal static string GetCharacterSet(HttpResponseMessage response)
-        {
-            string characterSet = response.Content.Headers.ContentType.CharSet;
-            return characterSet;
-        }
+        internal static string? GetCharacterSet(HttpResponseMessage response) => response.Content.Headers.ContentType?.CharSet;
 
         internal static Dictionary<string, IEnumerable<string>> GetHeadersDictionary(HttpResponseMessage response)
         {
@@ -27,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
             // HttpResponseMessage.Content.Headers. The remaining headers are in HttpResponseMessage.Headers.
             // The keys in both should be unique with no duplicates between them.
             // Added for backwards compatibility with PowerShell 5.1 and earlier.
-            if (response.Content != null)
+            if (response.Content is not null)
             {
                 foreach (var entry in response.Content.Headers)
                 {
@@ -38,29 +37,24 @@ namespace Microsoft.PowerShell.Commands
             return headers;
         }
 
-        internal static string GetProtocol(HttpResponseMessage response)
+        internal static string GetOutFilePath(HttpResponseMessage response, string qualifiedOutFile)
         {
-            string protocol = string.Format(CultureInfo.InvariantCulture,
-                                            "HTTP/{0}", response.Version);
-            return protocol;
+            // Get file name from last segment of Uri
+            string? lastUriSegment = System.Net.WebUtility.UrlDecode(response.RequestMessage?.RequestUri?.Segments[^1]);
+
+            return Directory.Exists(qualifiedOutFile) ? Path.Join(qualifiedOutFile, lastUriSegment) : qualifiedOutFile;
         }
 
-        internal static int GetStatusCode(HttpResponseMessage response)
-        {
-            int statusCode = (int)response.StatusCode;
-            return statusCode;
-        }
+        internal static string GetProtocol(HttpResponseMessage response) => string.Create(CultureInfo.InvariantCulture, $"HTTP/{response.Version}");
 
-        internal static string GetStatusDescription(HttpResponseMessage response)
-        {
-            string statusDescription = response.StatusCode.ToString();
-            return statusDescription;
-        }
+        internal static int GetStatusCode(HttpResponseMessage response) => (int)response.StatusCode;
+
+        internal static string GetStatusDescription(HttpResponseMessage response) => response.StatusCode.ToString();
 
         internal static bool IsText(HttpResponseMessage response)
         {
             // ContentType may not exist in response header.
-            string contentType = response.Content.Headers.ContentType?.MediaType;
+            string? contentType = ContentHelper.GetContentType(response);
             return ContentHelper.IsText(contentType);
         }
     }

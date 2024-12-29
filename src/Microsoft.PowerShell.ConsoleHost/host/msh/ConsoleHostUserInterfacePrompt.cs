@@ -87,7 +87,6 @@ namespace Microsoft.PowerShell
         /// If the converting the user input to the prompt field type fails unless it is caused by
         ///     OverflowException or FormatException
         /// </exception>
-
         public override
         Dictionary<string, PSObject>
         Prompt(string caption, string message, Collection<FieldDescription> descriptions)
@@ -141,21 +140,19 @@ namespace Microsoft.PowerShell
                     {
                         throw PSTraceSource.NewArgumentException(nameof(descriptions),
                             ConsoleHostUserInterfaceStrings.NullErrorTemplate,
-                            string.Format(CultureInfo.InvariantCulture, "descriptions[{0}]", descIndex));
+                            string.Create(CultureInfo.InvariantCulture, $"descriptions[{descIndex}]"));
                     }
 
                     PSObject inputPSObject = null;
                     string fieldPrompt = null;
                     fieldPrompt = desc.Name;
 
-                    bool fieldEchoOnPrompt = true;
-
                     // FieldDescription.ParameterAssemblyFullName never returns null. But this is
                     // defense in depth.
                     if (string.IsNullOrEmpty(desc.ParameterAssemblyFullName))
                     {
                         string paramName =
-                            string.Format(CultureInfo.InvariantCulture, "descriptions[{0}].AssemblyFullName", descIndex);
+                            string.Create(CultureInfo.InvariantCulture, $"descriptions[{descIndex}].AssemblyFullName");
                         throw PSTraceSource.NewArgumentException(paramName, ConsoleHostUserInterfaceStrings.NullOrEmptyErrorTemplate, paramName);
                     }
 
@@ -193,8 +190,7 @@ namespace Microsoft.PowerShell
                             {
                                 string msg = StringUtil.Format(ConsoleHostUserInterfaceStrings.RankZeroArrayErrorTemplate, desc.Name);
                                 ArgumentException innerException = PSTraceSource.NewArgumentException(
-                                    string.Format(CultureInfo.InvariantCulture,
-                                    "descriptions[{0}].AssemblyFullName", descIndex));
+                                    string.Create(CultureInfo.InvariantCulture, $"descriptions[{descIndex}].AssemblyFullName"));
                                 PromptingException e = new PromptingException(msg, innerException, "ZeroRankArray", ErrorCategory.InvalidOperation);
                                 throw e;
                             }
@@ -202,18 +198,27 @@ namespace Microsoft.PowerShell
 
                         StringBuilder fieldPromptList = new StringBuilder(fieldPrompt);
                         // fieldPromptList = fieldPrompt + "[i] :"
-                        fieldPromptList.Append("[");
+                        fieldPromptList.Append('[');
 
                         while (true)
                         {
-                            fieldPromptList.Append(
-                                string.Format(CultureInfo.InvariantCulture, "{0}]: ", inputList.Count));
-                            bool inputListEnd = false;
+                            fieldPromptList.Append(CultureInfo.InvariantCulture, $"{inputList.Count}]: ");
+                            bool endListInput = false;
                             object convertedObj = null;
-                            string inputString = PromptForSingleItem(elementType, fieldPromptList.ToString(), fieldPrompt, caption, message,
-                                desc, fieldEchoOnPrompt, true, out inputListEnd, out cancelInput, out convertedObj);
+                            _ = PromptForSingleItem(
+                                elementType,
+                                fieldPromptList.ToString(),
+                                fieldPrompt,
+                                caption,
+                                message,
+                                desc,
+                                fieldEchoOnPrompt: true,
+                                listInput: true,
+                                out endListInput,
+                                out cancelInput,
+                                out convertedObj);
 
-                            if (cancelInput || inputListEnd)
+                            if (cancelInput || endListInput)
                             {
                                 break;
                             }
@@ -244,10 +249,20 @@ namespace Microsoft.PowerShell
                             fieldPrompt);
                         // field is not a list
                         object convertedObj = null;
-                        bool dummy = false;
 
-                        PromptForSingleItem(fieldType, printFieldPrompt, fieldPrompt, caption, message, desc,
-                                            fieldEchoOnPrompt, false, out dummy, out cancelInput, out convertedObj);
+                        _ = PromptForSingleItem(
+                            fieldType,
+                            printFieldPrompt,
+                            fieldPrompt,
+                            caption,
+                            message,
+                            desc,
+                            fieldEchoOnPrompt: true,
+                            listInput: false,
+                            endListInput: out _,
+                            out cancelInput,
+                            out convertedObj);
+
                         if (!cancelInput)
                         {
                             inputPSObject = PSObject.AsPSObject(convertedObj);
@@ -339,7 +354,7 @@ namespace Microsoft.PowerShell
         /// <param name="fieldEchoOnPrompt">True to echo user input.</param>
         /// <param name="listInput">True if the field is a list.</param>
         /// <param name="endListInput">Valid only if listInput is true. set to true if the input signals end of list input.</param>
-        /// <param name="cancelled">True iff the input is canceled, e.g., by Ctrl-C or Ctrl-Break.</param>
+        /// <param name="cancelled">True if-and-only-if the input is canceled, e.g., by Ctrl-C or Ctrl-Break.</param>
         /// <returns>Processed input string to be converted with LanguagePrimitives.ConvertTo.</returns>
         private string PromptReadInput(string fieldPrompt, FieldDescription desc, bool fieldEchoOnPrompt,
                         bool listInput, out bool endListInput, out bool cancelled)
@@ -469,17 +484,16 @@ namespace Microsoft.PowerShell
         /// !h  prints out field's Quick Help, returns null
         /// All others tilde comments are invalid and return null
         ///
-        /// returns null iff there's nothing the caller can process.
+        /// returns null if-and-only-if there's nothing the caller can process.
         /// </summary>
         /// <param name="input"></param>
         /// <param name="desc"></param>
         /// <param name="inputDone"></param>
         /// <returns></returns>
-
         private string PromptCommandMode(string input, FieldDescription desc, out bool inputDone)
         {
             Dbg.Assert(input != null && input.StartsWith(PromptCommandPrefix, StringComparison.OrdinalIgnoreCase),
-                string.Format(CultureInfo.InvariantCulture, "input should start with {0}", PromptCommandPrefix));
+                string.Create(CultureInfo.InvariantCulture, $"input should start with {PromptCommandPrefix}"));
             Dbg.Assert(desc != null, "desc should never be null when PromptCommandMode is called");
             string command = input.Substring(1);
 
@@ -544,4 +558,3 @@ namespace Microsoft.PowerShell
         private const string PromptCommandPrefix = "!";
     }
 }   // namespace
-

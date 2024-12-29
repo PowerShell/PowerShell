@@ -93,8 +93,7 @@ namespace System.Management.Automation
                 {
                     lock (_syncobject)
                     {
-                        if (_parameters == null)
-                            _parameters = new List<CommandParameterCollection>();
+                        _parameters ??= new List<CommandParameterCollection>();
                     }
                 }
 
@@ -342,10 +341,7 @@ namespace System.Management.Automation
 #pragma warning disable 56500
             try
             {
-                if (handler != null)
-                {
-                    handler(this, eventArgs);
-                }
+                handler?.Invoke(this, eventArgs);
             }
             catch (Exception exception)
             {
@@ -509,7 +505,7 @@ namespace System.Management.Automation
 
         private const int DisposedTrue = 1;
         private const int DisposedFalse = 0;
-        // This variable is set to true if atleast one child job failed.
+        // This variable is set to true if at least one child job failed.
 
         // count of number of child jobs which have finished
         private int _finishedChildJobsCount = 0;
@@ -536,7 +532,10 @@ namespace System.Management.Automation
 
         internal PSEventManager EventManager
         {
-            get { return _eventManager; }
+            get
+            {
+                return _eventManager;
+            }
 
             set
             {
@@ -707,10 +706,8 @@ namespace System.Management.Automation
         public void AddChildJob(Job2 childJob)
         {
             AssertNotDisposed();
-            if (childJob == null)
-            {
-                throw new ArgumentNullException(nameof(childJob));
-            }
+
+            ArgumentNullException.ThrowIfNull(childJob);
 
             _tracer.WriteMessage(TraceClassName, "AddChildJob", Guid.Empty, childJob, "Adding Child to Parent with InstanceId : ", InstanceId.ToString());
 
@@ -888,7 +885,7 @@ namespace System.Management.Automation
             _tracer.WriteMessage(TraceClassName, "StartJob", Guid.Empty, this, "Exiting method", null);
         }
 
-        private static Tracer s_structuredTracer = new Tracer();
+        private static readonly Tracer s_structuredTracer = new Tracer();
 
         /// <summary>
         /// Starts all child jobs asynchronously.
@@ -2022,11 +2019,8 @@ namespace System.Management.Automation
                     job.Dispose();
                 }
 
-                if (_jobRunning != null)
-                    _jobRunning.Dispose();
-
-                if (_jobSuspendedOrAborted != null)
-                    _jobSuspendedOrAborted.Dispose();
+                _jobRunning?.Dispose();
+                _jobSuspendedOrAborted?.Dispose();
             }
             finally
             {
@@ -2038,7 +2032,7 @@ namespace System.Management.Automation
         {
             if (ChildJobs == null || ChildJobs.Count == 0)
                 return string.Empty;
-            string location = ChildJobs.Select((job) => job.Location).Aggregate((s1, s2) => s1 + ',' + s2);
+            string location = ChildJobs.Select(static (job) => job.Location).Aggregate((s1, s2) => s1 + ',' + s2);
             return location;
         }
 
@@ -2058,7 +2052,7 @@ namespace System.Management.Automation
 
                 if (i < (ChildJobs.Count - 1))
                 {
-                    sb.Append(",");
+                    sb.Append(',');
                 }
             }
 
@@ -2112,7 +2106,6 @@ namespace System.Management.Automation
     /// Container exception for jobs that can map errors and exceptions
     /// to specific lines in their input.
     /// </summary>
-    [Serializable]
     public class JobFailedException : SystemException
     {
         /// <summary>
@@ -2157,11 +2150,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="serializationInfo">Serialization info.</param>
         /// <param name="streamingContext">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected JobFailedException(SerializationInfo serializationInfo, StreamingContext streamingContext)
-            : base(serializationInfo, streamingContext)
         {
-            _reason = (Exception)serializationInfo.GetValue("Reason", typeof(Exception));
-            _displayScriptPosition = (ScriptExtent)serializationInfo.GetValue("DisplayScriptPosition", typeof(ScriptExtent));
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -2169,30 +2161,14 @@ namespace System.Management.Automation
         /// </summary>
         public Exception Reason { get { return _reason; } }
 
-        private Exception _reason;
+        private readonly Exception _reason;
 
         /// <summary>
         /// The user-focused location from where this error originated.
         /// </summary>
         public ScriptExtent DisplayScriptPosition { get { return _displayScriptPosition; } }
 
-        private ScriptExtent _displayScriptPosition;
-
-        /// <summary>
-        /// Gets the information for serialization.
-        /// </summary>
-        /// <param name="info">The standard SerializationInfo.</param>
-        /// <param name="context">The standard StreaminContext.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-                throw new ArgumentNullException(nameof(info));
-
-            base.GetObjectData(info, context);
-
-            info.AddValue("Reason", _reason);
-            info.AddValue("DisplayScriptPosition", _displayScriptPosition);
-        }
+        private readonly ScriptExtent _displayScriptPosition;
 
         /// <summary>
         /// Returns the reason for this exception.

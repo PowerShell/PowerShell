@@ -14,9 +14,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Execution context used for stepping.
     /// </summary>
-    internal class ExecutionContextForStepping : IDisposable
+    internal sealed class ExecutionContextForStepping : IDisposable
     {
-        private ExecutionContext _executionContext;
+        private readonly ExecutionContext _executionContext;
         private PSInformationalBuffers _originalInformationalBuffers;
         private PSHost _originalHost;
 
@@ -72,13 +72,13 @@ namespace System.Management.Automation
         // information
         // data to client
         // was created
-        private bool _addToHistory;
+        private readonly bool _addToHistory;
         // associated with this powershell
-        private ApartmentState apartmentState;  // apartment state for this powershell
+        private readonly ApartmentState apartmentState;  // apartment state for this powershell
 
         // pipeline that runs the actual command.
-        private ServerSteppablePipelineSubscriber _eventSubscriber;
-        private PSDataCollection<object> _powershellInput; // input collection of the PowerShell pipeline
+        private readonly ServerSteppablePipelineSubscriber _eventSubscriber;
+        private readonly PSDataCollection<object> _powershellInput; // input collection of the PowerShell pipeline
 
         #endregion
 
@@ -241,10 +241,7 @@ namespace System.Management.Automation
 
             _eventSubscriber.FireStartSteppablePipeline(this);
 
-            if (_powershellInput != null)
-            {
-                _powershellInput.Pulse();
-            }
+            _powershellInput?.Pulse();
         }
 
         #endregion Internal Methods
@@ -262,20 +259,14 @@ namespace System.Management.Automation
 
             CheckAndPulseForProcessing(true);
 
-            if (_powershellInput != null)
-            {
-                _powershellInput.Pulse();
-            }
+            _powershellInput?.Pulse();
         }
 
         private void HandleSessionConnected(object sender, EventArgs eventArgs)
         {
             // Close input if its active. no need to synchronize as input stream would have already been processed
             // when connect call came into PS plugin
-            if (Input != null)
-            {
-                Input.Complete();
-            }
+            Input?.Complete();
         }
 
         /// <summary>
@@ -302,10 +293,7 @@ namespace System.Management.Automation
 
             PerformStop();
 
-            if (_powershellInput != null)
-            {
-                _powershellInput.Pulse();
-            }
+            _powershellInput?.Pulse();
         }
 
         /// <summary>
@@ -326,10 +314,7 @@ namespace System.Management.Automation
 
                 CheckAndPulseForProcessing(false);
 
-                if (_powershellInput != null)
-                {
-                    _powershellInput.Pulse();
-                }
+                _powershellInput?.Pulse();
             }
         }
 

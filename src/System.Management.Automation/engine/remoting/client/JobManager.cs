@@ -158,7 +158,11 @@ namespace System.Management.Automation
         {
             lock (s_syncObject)
             {
-                if (s_jobIdsForReuse.ContainsKey(instanceId)) return;
+                if (s_jobIdsForReuse.ContainsKey(instanceId))
+                {
+                    return;
+                }
+
                 s_jobIdsForReuse.Add(instanceId, new KeyValuePair<int, string>(id, typeName));
             }
         }
@@ -176,10 +180,7 @@ namespace System.Management.Automation
         /// </exception>
         public Job2 NewJob(JobDefinition definition)
         {
-            if (definition == null)
-            {
-                throw new ArgumentNullException(nameof(definition));
-            }
+            ArgumentNullException.ThrowIfNull(definition);
 
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(definition);
             Job2 newJob;
@@ -216,10 +217,7 @@ namespace System.Management.Automation
         /// </exception>
         public Job2 NewJob(JobInvocationInfo specification)
         {
-            if (specification == null)
-            {
-                throw new ArgumentNullException(nameof(specification));
-            }
+            ArgumentNullException.ThrowIfNull(specification);
 
             if (specification.Definition == null)
             {
@@ -593,7 +591,11 @@ namespace System.Management.Automation
                     }
 #pragma warning restore 56500
 
-                    if (jobs == null) continue;
+                    if (jobs == null)
+                    {
+                        continue;
+                    }
+
                     allJobs.AddRange(jobs);
                 }
             }
@@ -616,7 +618,7 @@ namespace System.Management.Automation
         /// <param name="sourceAdapter"></param>
         /// <param name="jobSourceAdapterTypes"></param>
         /// <returns></returns>
-        private bool CheckTypeNames(JobSourceAdapter sourceAdapter, string[] jobSourceAdapterTypes)
+        private static bool CheckTypeNames(JobSourceAdapter sourceAdapter, string[] jobSourceAdapterTypes)
         {
             // If no type names were specified then allow all adapter types.
             if (jobSourceAdapterTypes == null ||
@@ -641,9 +643,9 @@ namespace System.Management.Automation
             return false;
         }
 
-        private string GetAdapterName(JobSourceAdapter sourceAdapter)
+        private static string GetAdapterName(JobSourceAdapter sourceAdapter)
         {
-            return (string.IsNullOrEmpty(sourceAdapter.Name) == false ?
+            return (!string.IsNullOrEmpty(sourceAdapter.Name) ?
                 sourceAdapter.Name :
                 sourceAdapter.GetType().ToString());
         }
@@ -758,7 +760,10 @@ namespace System.Management.Automation
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobByInstanceIdError", sourceAdapter);
                     }
 
-                    if (job == null) continue;
+                    if (job == null)
+                    {
+                        continue;
+                    }
 
                     if (writeObject)
                     {
@@ -934,12 +939,20 @@ namespace System.Management.Automation
 
                         // sourceAdapter.GetJobByInstanceId() threw unknown exception.
                         _tracer.TraceException(exception);
-                        if (throwExceptions) throw;
+                        if (throwExceptions)
+                        {
+                            throw;
+                        }
+
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobError", sourceAdapter);
                     }
 #pragma warning restore 56500
 
-                    if (foundJob == null) continue;
+                    if (foundJob == null)
+                    {
+                        continue;
+                    }
+
                     jobFound = true;
                     RemoveJobIdForReuse(foundJob);
 
@@ -957,7 +970,11 @@ namespace System.Management.Automation
                         // sourceAdapter.RemoveJob() threw unknown exception.
 
                         _tracer.TraceException(exception);
-                        if (throwExceptions) throw;
+                        if (throwExceptions)
+                        {
+                            throw;
+                        }
+
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterRemoveJobError", sourceAdapter);
                     }
 #pragma warning restore 56500

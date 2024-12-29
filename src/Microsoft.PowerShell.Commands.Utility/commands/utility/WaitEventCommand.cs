@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("TimeoutSec")]
-        [ValidateRangeAttribute(-1, Int32.MaxValue)]
+        [ValidateRangeAttribute(-1, int.MaxValue)]
         public int Timeout
         {
             get
@@ -60,9 +60,9 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion parameters
 
-        private AutoResetEvent _eventArrived = new AutoResetEvent(false);
+        private readonly AutoResetEvent _eventArrived = new(false);
         private PSEventArgs _receivedEvent = null;
-        private object _receivedEventLock = new object();
+        private readonly object _receivedEventLock = new();
         private WildcardPattern _matchPattern;
 
         /// <summary>

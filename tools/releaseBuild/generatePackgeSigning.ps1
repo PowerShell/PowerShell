@@ -100,11 +100,11 @@ foreach ($file in $ThirdPartyFiles) {
 }
 
 foreach ($file in $MsixFiles) {
-    # 'CP-459155' signs for the store only
-    # AuthenticodeFormer works only for sideloading
+    # 'CP-459155' is supposed to work for the store
+    # AuthenticodeFormer works for sideloading and via a workaround, through the store
     # ----------------------------------------------
     # update releasePublisher in packaging.psm1 when this is changed
-    New-FileElement -File $file -SignType 'CP-459155' -XmlDoc $signingXml -Job $job
+    New-FileElement -File $file -SignType 'AuthenticodeFormer' -XmlDoc $signingXml -Job $job
 }
 
 $signingXml.Save($path)

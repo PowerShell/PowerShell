@@ -263,7 +263,7 @@ namespace System.Management.Automation
             this.OutOfBand = viewDefinition.outOfBand;
             this.GroupBy = PSControlGroupBy.Get(viewDefinition.groupBy);
 
-            this.AutoSize = tcb.autosize.HasValue && tcb.autosize.Value;
+            this.AutoSize = tcb.autosize.GetValueOrDefault();
             this.HideTableHeaders = tcb.header.hideHeader;
 
             TableControlRow row = new TableControlRow(tcb.defaultDefinition);
@@ -446,10 +446,9 @@ namespace System.Management.Automation
 
             foreach (TableRowItemDefinition itemdef in rowdefinition.rowItemDefinitionList)
             {
-                FieldPropertyToken fpt = itemdef.formatTokenList[0] as FieldPropertyToken;
                 TableControlColumn column;
 
-                if (fpt != null)
+                if (itemdef.formatTokenList[0] is FieldPropertyToken fpt)
                 {
                     column = new TableControlColumn(fpt.expression.expressionValue, itemdef.alignment,
                                     fpt.expression.isScriptBlock, fpt.fieldFormattingDirective.formatString);

@@ -38,33 +38,33 @@ namespace Microsoft.PowerShell.Commands
         [Dbg.TraceSourceAttribute(
             "FileSystemContentStream",
             "The provider content reader and writer for the file system")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("FileSystemContentStream",
             "The provider content reader and writer for the file system");
 
         #endregion tracer
 
-        private string _path;
-        private string _streamName;
-        private FileMode _mode;
-        private FileAccess _access;
-        private FileShare _share;
-        private Encoding _encoding;
-        private CmdletProvider _provider;
+        private readonly string _path;
+        private readonly string _streamName;
+        private readonly FileMode _mode;
+        private readonly FileAccess _access;
+        private readonly FileShare _share;
+        private readonly Encoding _encoding;
+        private readonly CmdletProvider _provider;
 
         private FileStream _stream;
         private StreamReader _reader;
         private StreamWriter _writer;
-        private bool _usingByteEncoding;
+        private readonly bool _usingByteEncoding;
 
         private const char DefaultDelimiter = '\n';
 
-        private string _delimiter = $"{DefaultDelimiter}";
-        private int[] _offsetDictionary;
-        private bool _usingDelimiter;
-        private StringBuilder _currentLineContent;
+        private readonly string _delimiter = $"{DefaultDelimiter}";
+        private readonly int[] _offsetDictionary;
+        private readonly bool _usingDelimiter;
+        private readonly StringBuilder _currentLineContent;
         private bool _waitForChanges;
-        private bool _isRawStream;
+        private readonly bool _isRawStream;
         private long _fileOffset;
 
         private FileAttributes _oldAttributes;
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _alreadyDetectEncoding = false;
 
         // False to add a newline to the end of the output string, true if not.
-        private bool _suppressNewline = false;
+        private readonly bool _suppressNewline = false;
 
         /// <summary>
         /// Constructor for the content stream.
@@ -109,10 +109,26 @@ namespace Microsoft.PowerShell.Commands
         /// Indicates raw stream.
         /// </param>
         public FileSystemContentReaderWriter(
-            string path, FileMode mode, FileAccess access,
-            FileShare share, Encoding encoding, bool usingByteEncoding,
-            bool waitForChanges, CmdletProvider provider, bool isRawStream) :
-                this(path, null, mode, access, share, encoding, usingByteEncoding, waitForChanges, provider, isRawStream)
+            string path,
+            FileMode mode,
+            FileAccess access,
+            FileShare share,
+            Encoding encoding,
+            bool usingByteEncoding,
+            bool waitForChanges,
+            CmdletProvider provider,
+            bool isRawStream)
+            : this(
+                path,
+                streamName: null,
+                mode,
+                access,
+                share,
+                encoding,
+                usingByteEncoding,
+                waitForChanges,
+                provider,
+                isRawStream)
         {
         }
 
@@ -397,7 +413,7 @@ namespace Microsoft.PowerShell.Commands
                     (e is UnauthorizedAccessException) ||
                     (e is ArgumentNullException))
                 {
-                    // Exception contains specific message about the error occured and so no need for errordetails.
+                    // Exception contains specific message about the error occurred and so no need for errordetails.
                     _provider.WriteError(new ErrorRecord(e, "GetContentReaderIOError", ErrorCategory.ReadError, _path));
                     return null;
                 }
@@ -551,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
                     (e is UnauthorizedAccessException) ||
                     (e is ArgumentNullException))
                 {
-                    // Exception contains specific message about the error occured and so no need for errordetails.
+                    // Exception contains specific message about the error occurred and so no need for errordetails.
                     _provider.WriteError(new ErrorRecord(e, "GetContentReaderIOError", ErrorCategory.ReadError, _path));
                 }
                 else
@@ -693,7 +709,7 @@ namespace Microsoft.PowerShell.Commands
             // We've reached the end of file or end of line.
             if (_currentLineContent.Length > 0)
             {
-                // Add the block read to the ouptut array list, trimming a trailing delimiter, if present.
+                // Add the block read to the output array list, trimming a trailing delimiter, if present.
                 // Note: If -Tail was specified, we get here in the course of 2 distinct passes:
                 //  - Once while reading backward simply to determine the appropriate *start position* for later forward reading, ignoring the content of the blocks read (in reverse).
                 //  - Then again during forward reading, for regular output processing; it is only then that trimming the delimiter is necessary.
@@ -778,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
                 // the changes
                 if (waitChanges)
                 {
-                    WaitForChanges(_path, _mode, _access, _share, ClrFacade.GetDefaultEncoding());
+                    WaitForChanges(_path, _mode, _access, _share, Encoding.Default);
                     byteRead = _stream.ReadByte();
                 }
             }
@@ -903,8 +919,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorEventArgs errorEventArgs = null;
                 var tcs = new TaskCompletionSource<FileSystemEventArgs>();
-                FileSystemEventHandler onChangedHandler = (object source, FileSystemEventArgs e) => { tcs.TrySetResult(e); };
-                RenamedEventHandler onRenamedHandler = (object source, RenamedEventArgs e) => { tcs.TrySetResult(e); };
+                FileSystemEventHandler onChangedHandler = (object source, FileSystemEventArgs e) => tcs.TrySetResult(e);
+                RenamedEventHandler onRenamedHandler = (object source, RenamedEventArgs e) => tcs.TrySetResult(e);
                 ErrorEventHandler onErrorHandler = (object source, ErrorEventArgs e) =>
                 {
                     errorEventArgs = e;
@@ -971,9 +987,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Seek to the place we last left off.
             _stream.Seek(_fileOffset, SeekOrigin.Begin);
-            if (_reader != null) { _reader.DiscardBufferedData(); }
-
-            if (_backReader != null) { _backReader.DiscardBufferedData(); }
+            _reader?.DiscardBufferedData();
+            _backReader?.DiscardBufferedData();
         }
 
         /// <summary>
@@ -987,15 +1002,13 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         public void Seek(long offset, SeekOrigin origin)
         {
-            if (_writer != null) { _writer.Flush(); }
+            _writer?.Flush();
 
             _stream.Seek(offset, origin);
 
-            if (_writer != null) { _writer.Flush(); }
-
-            if (_reader != null) { _reader.DiscardBufferedData(); }
-
-            if (_backReader != null) { _backReader.DiscardBufferedData(); }
+            _writer?.Flush();
+            _reader?.DiscardBufferedData();
+            _backReader?.DiscardBufferedData();
         }
 
         /// <summary>
@@ -1119,14 +1132,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (isDisposing)
             {
-                if (_stream != null)
-                    _stream.Dispose();
-                if (_reader != null)
-                    _reader.Dispose();
-                if (_backReader != null)
-                    _backReader.Dispose();
-                if (_writer != null)
-                    _writer.Dispose();
+                _stream?.Dispose();
+                _reader?.Dispose();
+                _backReader?.Dispose();
+                _writer?.Dispose();
             }
         }
     }
@@ -1164,38 +1173,8 @@ namespace Microsoft.PowerShell.Commands
         private int _byteCount = 0;
         private int _charCount = 0;
         private long _currentPosition = 0;
-        private bool? _singleByteCharSet = null;
-
         private const byte BothTopBitsSet = 0xC0;
         private const byte TopBitUnset = 0x80;
-
-        /// <summary>
-        /// If the given encoding is OEM or Default, check to see if the code page
-        /// is SBCS(single byte character set).
-        /// </summary>
-        /// <returns></returns>
-        private bool IsSingleByteCharacterSet()
-        {
-            if (_singleByteCharSet != null)
-                return (bool)_singleByteCharSet;
-
-            // Porting note: only UTF-8 is supported on Linux, which is not an SBCS
-            if ((_currentEncoding.Equals(_oemEncoding) ||
-                 _currentEncoding.Equals(_defaultAnsiEncoding))
-                && Platform.IsWindows)
-            {
-                NativeMethods.CPINFO cpInfo;
-                if (NativeMethods.GetCPInfo((uint)_currentEncoding.CodePage, out cpInfo) &&
-                    cpInfo.MaxCharSize == 1)
-                {
-                    _singleByteCharSet = true;
-                    return true;
-                }
-            }
-
-            _singleByteCharSet = false;
-            return false;
-        }
 
         /// <summary>
         /// We don't support this method because it is not used by the ReadBackward method in FileStreamContentReaderWriter.
@@ -1382,7 +1361,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            do
+            while (true)
             {
                 while (_charCount > 0)
                 {
@@ -1403,7 +1382,7 @@ namespace Microsoft.PowerShell.Commands
                     line.Remove(line.Length - charsToRemove, charsToRemove);
                     return line.ToString();
                 }
-            } while (true);
+            }
         }
 
         /// <summary>
@@ -1465,8 +1444,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (_currentEncoding is UnicodeEncoding ||
                 _currentEncoding is UTF32Encoding ||
-                _currentEncoding is ASCIIEncoding ||
-                IsSingleByteCharacterSet())
+                _currentEncoding.IsSingleByte)
             {
                 // Unicode -- two bytes per character
                 // UTF-32 -- four bytes per character
@@ -1515,17 +1493,7 @@ namespace Microsoft.PowerShell.Commands
 
                 [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_LEADBYTES)]
                 public byte[] LeadBytes;
-            };
-
-            /// <summary>
-            /// Get information on a named code page.
-            /// </summary>
-            /// <param name="codePage"></param>
-            /// <param name="lpCpInfo"></param>
-            /// <returns></returns>
-            [DllImport(PinvokeDllNames.GetCPInfoDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool GetCPInfo(uint codePage, out CPINFO lpCpInfo);
+            }
         }
     }
 

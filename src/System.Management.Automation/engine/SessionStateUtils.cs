@@ -151,10 +151,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static bool CollectionContainsValue(IEnumerable collection, object value, IComparer comparer)
         {
-            if (collection == null)
-            {
-                throw new ArgumentNullException(nameof(collection));
-            }
+            ArgumentNullException.ThrowIfNull(collection);
 
             bool result = false;
 
@@ -325,4 +322,3 @@ namespace Microsoft.PowerShell.Commands
         Overwrite
     }
 }
-

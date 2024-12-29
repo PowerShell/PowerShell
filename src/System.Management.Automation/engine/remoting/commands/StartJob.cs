@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = StartJobCommand.FilePathComputerNameParameterSet)]
         [Parameter(ParameterSetName = StartJobCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
-        [Credential()]
+        [Credential]
         public override PSCredential Credential
         {
             get
@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets an initial working directory for the powershell background job.
         /// </summary>
         [Parameter]
-        [ValidateNotNullOrEmpty]
+        [ValidateNotNullOrWhiteSpace]
         public string WorkingDirectory { get; set; }
 
         /// <summary>
@@ -505,14 +505,19 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public virtual Version PSVersion
         {
-            get { return _psVersion; }
+            get
+            {
+                return _psVersion;
+            }
 
             set
             {
-                RemotingCommandUtil.CheckPSVersion(value);
-
-                // Check if specified version of PowerShell is installed
-                RemotingCommandUtil.CheckIfPowerShellVersionIsInstalled(value);
+                // PSVersion value can only be 5.1 for Start-Job.
+                if (!(value.Major == 5 && value.Minor == 1))
+                {
+                    throw new ArgumentException(
+                        StringUtil.Format(RemotingErrorIdStrings.PSVersionParameterOutOfRange, value, "PSVersion"));
+                }
 
                 _psVersion = value;
             }
@@ -596,7 +601,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(errorRecord);
             }
 
-            if (WorkingDirectory != null && !Directory.Exists(WorkingDirectory))
+            if (WorkingDirectory != null && !InvokeProvider.Item.IsContainer(WorkingDirectory))
             {
                 string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, WorkingDirectory);
                 var errorRecord = new ErrorRecord(
@@ -641,7 +646,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // If we're in ConstrainedLanguage mode and the system is in lockdown mode,
             // ensure that they haven't specified a ScriptBlock or InitScript - as
-            // we can't protect that boundary
+            // we can't protect that boundary.
             if ((Context.LanguageMode == PSLanguageMode.ConstrainedLanguage) &&
                 (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Enforce) &&
                 ((ScriptBlock != null) || (InitializationScript != null)))

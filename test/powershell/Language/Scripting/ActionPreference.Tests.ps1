@@ -194,6 +194,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         @{ name = "ErrorAction";       argValue = "AutomationNull"; arguments = @{ ErrorAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
         @{ name = "WarningAction";     argValue = "AutomationNull"; arguments = @{ WarningAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
         @{ name = "InformationAction"; argValue = "AutomationNull"; arguments = @{ InformationAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
+        @{ name = "ProgressAction";    argValue = "AutomationNull"; arguments = @{ ProgressAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
     ) {
         param($arguments)
 
@@ -384,18 +385,18 @@ Describe 'ActionPreference.Break tests' -Tag 'CI' {
                     Write-Debug -Message 'This is a debug message'
                     Write-Information -MessageData 'This is an information message'
                     Write-Progress -Activity 'This shows progress'
+                    Write-Progress -Activity 'This shows progress' -Completed
                 }
                 Test-Break -WarningAction Break -InformationAction Break *>$null
                 $WarningPreference = $VerbosePreference = $DebugPreference = $InformationPreference = $ProgressPreference = [System.Management.Automation.ActionPreference]::Break
                 Test-Break *>$null
             }
-
             $results = @(Test-Debugger -Scriptblock $testScript)
         }
 
-        It 'Should show 7 debugger commands were invoked' {
+        It 'Should show 8 debugger commands were invoked' {
             # When no debugger commands are provided, 'c' is invoked every time a breakpoint is hit
-            $results.Count | Should -Be 7
+            $results.Count | Should -Be 8
         }
 
         It 'Write-Warning should trigger a breakpoint from -WarningAction Break' {

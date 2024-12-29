@@ -133,7 +133,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
 
 Describe "Default enablement of Experimental Features" -Tags CI {
     BeforeAll {
-        $isPreview = $PSVersionTable.GitCommitId -match "preview|daily"
+        $isPreview = (Test-IsPreview -Version $PSVersionTable.PSVersion) -and (-not (Test-IsReleaseCandidate -Version $PSVersionTable.PSVersion))
 
         Function BeEnabled {
             [CmdletBinding()]
@@ -165,16 +165,38 @@ Describe "Default enablement of Experimental Features" -Tags CI {
     }
 
     It "On stable builds, Experimental Features are not enabled" -Skip:($isPreview) {
-        foreach ($expFeature in Get-ExperimentalFeature) {
-            $expFeature.Enabled | Should -Not -BeEnabled -Name $expFeature.Name
+        foreach ($expFeature in Get-ExperimentalFeature)
+        {
+            # In CI, pwsh that is running tests (with $PSHOME like D:\a\1\s\src\powershell-win-core\bin\release\net8.0\win7-x64\publish)
+            # is launched from another pwsh (with $PSHOME like C:\program files\powershell\7)
+            # resulting in combined PSModulePath which is used by Get-ExperimentalFeature to enum module-scoped exp.features from both pwsh locations.
+            # So we need to exclude parent's modules' exp.features from verification using filtering on $PSHOME.
+            if (($expFeature.Source -eq 'PSEngine') -or ($expFeature.Source.StartsWith($PSHOME, "InvariantCultureIgnoreCase")))
+            {
+                "Checking $($expFeature.Name) experimental feature" | Write-Verbose -Verbose
+                $expFeature.Enabled | Should -Not -BeEnabled -Name $expFeature.Name
+            }
         }
     }
 
     It "On preview builds, Experimental Features are enabled" -Skip:(!$isPreview) {
+        if (Test-IsWindowsArm64) {
+            Set-ItResult -Pending -Because "Needs investigation"
+        }
+
         (Join-Path -Path $PSHOME -ChildPath 'powershell.config.json') | Should -Exist
 
-        foreach ($expFeature in Get-ExperimentalFeature) {
-            $expFeature.Enabled | Should -BeEnabled -Name $expFeature.Name
+        foreach ($expFeature in Get-ExperimentalFeature)
+        {
+            # In CI, pwsh that is running tests (with $PSHOME like D:\a\1\s\src\powershell-win-core\bin\release\net8.0\win7-x64\publish)
+            # is launched from another pwsh (with $PSHOME like C:\program files\powershell\7)
+            # resulting in combined PSModulePath which is used by Get-ExperimentalFeature to enum module-scoped exp.features from both pwsh locations.
+            # So we need to exclude parent's modules' exp.features from verification using filtering on $PSHOME.
+            if (($expFeature.Source -eq 'PSEngine') -or ($expFeature.Source.StartsWith($PSHOME, "InvariantCultureIgnoreCase")))
+            {
+                "Checking $($expFeature.Name) experimental feature" | Write-Verbose -Verbose
+                $expFeature.Enabled | Should -BeEnabled -Name $expFeature.Name
+            }
         }
     }
 }

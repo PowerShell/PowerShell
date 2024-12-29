@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Globalization;
-using System.IO;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -35,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // name of this command
         //
-        private string _commandName;
+        private readonly string _commandName;
 
         /// <summary>
         /// Initializes a new instance of the SecureStringCommandBase
@@ -241,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the unsecured string to be imported.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true)]
-        public String String
+        public string String
         {
             get
             {
@@ -328,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
                         // representation, then parse it into its components.
                         byte[] inputBytes = Convert.FromBase64String(remainingData);
                         string dataPackage = System.Text.Encoding.Unicode.GetString(inputBytes);
-                        string[] dataElements = dataPackage.Split(Utils.Separators.Pipe);
+                        string[] dataElements = dataPackage.Split('|');
 
                         if (dataElements.Length == 3)
                         {
@@ -361,8 +359,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    importedString = new SecureString();
-                    foreach (char currentChar in String) { importedString.AppendChar(currentChar); }
+                    importedString = SecureStringHelper.FromPlainTextString(String);
                 }
             }
             catch (ArgumentException e)
@@ -391,4 +388,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

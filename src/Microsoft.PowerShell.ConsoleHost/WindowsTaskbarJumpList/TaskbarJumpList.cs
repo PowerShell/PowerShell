@@ -33,13 +33,12 @@ namespace Microsoft.PowerShell
             {
                 try
                 {
-                    TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
+                    CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
                     // Due to COM threading complexity there might still be sporadic failures but they can be
                     // ignored as creating the JumpList is not critical and persists after its first creation.
-                    Debug.Fail($"Creating 'Run as Administrator' JumpList failed. {exception}");
                 }
             });
 
@@ -48,7 +47,7 @@ namespace Microsoft.PowerShell
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
             }
-            catch (System.Threading.ThreadStartException)
+            catch (ThreadStartException)
             {
                 // STA may not be supported on some platforms
             }
@@ -59,8 +58,8 @@ namespace Microsoft.PowerShell
             // Check startupInfo first to know if the current shell is interactive and owns a window before proceeding
             // This check is fast (less than 1ms) and allows for quick-exit
             GetStartupInfo(out StartUpInfo startupInfo);
-            var STARTF_USESHOWWINDOW = 0x00000001;
-            var SW_HIDE = 0;
+            const uint STARTF_USESHOWWINDOW = 0x00000001;
+            const ushort SW_HIDE = 0;
             if (((startupInfo.dwFlags & STARTF_USESHOWWINDOW) == 1) && (startupInfo.wShowWindow != SW_HIDE))
             {
                 string cmdPath = Assembly.GetEntryAssembly().Location.Replace(".dll", ".exe");
@@ -97,7 +96,7 @@ namespace Microsoft.PowerShell
                     flags |= 0x00002000; // SLDF_RUNAS_USER
                     shellLinkDataList.SetFlags(flags);
                     var PKEY_TITLE = new PropertyKey(new Guid("{F29F85E0-4FF9-1068-AB91-08002B27B3D9}"), 2);
-                    hResult = nativePropertyStore.SetValue(ref PKEY_TITLE, new PropVariant(title));
+                    hResult = nativePropertyStore.SetValue(in PKEY_TITLE, new PropVariant(title));
                     if (hResult < 0)
                     {
                         pCustDestList.AbortList();
@@ -117,7 +116,6 @@ namespace Microsoft.PowerShell
                     var CLSID_EnumerableObjectCollection = new Guid(@"2d3468c1-36a7-43b6-ac24-d3f02fd9607a");
                     const uint CLSCTX_INPROC_HANDLER = 2;
                     const uint CLSCTX_INPROC = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER;
-                    var ComSvrInterface_GUID = new Guid(@"555E2D2B-EE00-47AA-AB2B-39F953F6B339");
                     hResult = CoCreateInstance(ref CLSID_EnumerableObjectCollection, null, CLSCTX_INPROC, ref IID_IUnknown, out object instance);
                     if (hResult < 0)
                     {

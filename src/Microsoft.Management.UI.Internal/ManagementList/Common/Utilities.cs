@@ -83,14 +83,11 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
         public static bool AreAllItemsOfType<T>(IEnumerable items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException("items");
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             foreach (object item in items)
             {
-                if (!(item is T))
+                if (item is not T)
                 {
                     return false;
                 }
@@ -108,10 +105,7 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
         public static T Find<T>(this IEnumerable items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException("items");
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             foreach (object item in items)
             {

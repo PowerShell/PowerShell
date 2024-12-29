@@ -26,7 +26,20 @@ Describe "Format-Custom" -Tags "CI" {
 }
 
 Describe "Format-Custom DRT basic functionality" -Tags "CI" {
-	Add-Type -TypeDefinition @"
+    BeforeAll {
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+    }
+
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+    }
+
+    Add-Type -TypeDefinition @"
     public abstract class NamedItem
     {
         public string name;
@@ -310,6 +323,11 @@ class MyLeaf2
 
 Describe "Format-Custom with expression based EntrySelectedBy in a CustomControl" -Tags "CI" {
     BeforeAll {
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+
         $formatFilePath = Join-Path $TestDrive 'UpdateFormatDataTests.format.ps1xml'
         $xmlContent = @'
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -389,6 +407,10 @@ Describe "Format-Custom with expression based EntrySelectedBy in a CustomControl
     }
 
     AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+
         $rs.Close()
         $ps.Dispose()
     }

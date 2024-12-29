@@ -14,7 +14,6 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// See base class.
         /// </summary>
-
         public override
         PSCredential
         PromptForCredential
@@ -34,7 +33,6 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// See base class.
         /// </summary>
-
         public override
         PSCredential
         PromptForCredential
@@ -74,4 +72,3 @@ namespace System.Management.Automation.Internal.Host
         }
     }
 }
-

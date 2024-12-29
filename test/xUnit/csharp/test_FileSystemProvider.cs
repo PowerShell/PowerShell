@@ -24,8 +24,8 @@ namespace PSTests.Parallel
 {
     public class FileSystemProviderTests : IDisposable
     {
-        private string testPath;
-        private string testContent;
+        private readonly string testPath;
+        private readonly string testContent;
 
         public FileSystemProviderTests()
         {
@@ -39,12 +39,21 @@ namespace PSTests.Parallel
             File.AppendAllText(testPath, testContent);
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
-            File.Delete(testPath);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }        
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                File.Delete(testPath);
+            }
         }
 
-        private ExecutionContext GetExecutionContext()
+        private static ExecutionContext GetExecutionContext()
         {
             CultureInfo currentCulture = CultureInfo.CurrentCulture;
             PSHost hostInterface = new DefaultHost(currentCulture, currentCulture);
@@ -54,7 +63,7 @@ namespace PSTests.Parallel
             return executionContext;
         }
 
-        private ProviderInfo GetProvider()
+        private static ProviderInfo GetProvider()
         {
             ExecutionContext executionContext = GetExecutionContext();
             SessionStateInternal sessionState = new SessionStateInternal(executionContext);
@@ -75,7 +84,7 @@ namespace PSTests.Parallel
             }
             else
             {
-                Assert.Throws<System.ArgumentNullException>(delegate { InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty); });
+                Assert.Throws<System.ArgumentException>(delegate { InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty); });
             }
         }
 
@@ -106,7 +115,7 @@ namespace PSTests.Parallel
             {
                 directoryObject = new DirectoryInfo(System.Environment.CurrentDirectory);
                 fileObject = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-                executableObject = new FileInfo(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+                executableObject = new FileInfo(Environment.ProcessPath);
             }
 
             Assert.Equal("d----", FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r", "-"));

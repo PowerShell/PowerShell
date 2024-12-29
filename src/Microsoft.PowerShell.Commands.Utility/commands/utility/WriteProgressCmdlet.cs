@@ -4,8 +4,6 @@
 using System;
 using System.Management.Automation;
 
-using Dbg = System.Management.Automation.Diagnostics;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -19,7 +17,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(
             Position = 0,
-            Mandatory = true,
             HelpMessageBaseName = HelpMessageBaseName,
             HelpMessageResourceId = "ActivityParameterHelpMessage")]
         public string Activity { get; set; }
@@ -38,8 +35,8 @@ namespace Microsoft.PowerShell.Commands
         /// Uniquely identifies this activity for purposes of chaining subordinate activities.
         /// </summary>
         [Parameter(Position = 2)]
-        [ValidateRange(0, Int32.MaxValue)]
-        public int Id { get; set; } = 0;
+        [ValidateRange(0, int.MaxValue)]
+        public int Id { get; set; }
 
         /// <summary>
         /// Percentage completion of the activity, or -1 if n/a.
@@ -64,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
         /// Identifies the parent Id of this activity, or -1 if none.
         /// </summary>
         [Parameter]
-        [ValidateRange(-1, Int32.MaxValue)]
+        [ValidateRange(-1, int.MaxValue)]
         public int ParentId { get; set; } = -1;
 
         /// <summary>
@@ -98,7 +95,29 @@ namespace Microsoft.PowerShell.Commands
         void
         ProcessRecord()
         {
-            ProgressRecord pr = new ProgressRecord(Id, Activity, Status);
+            ProgressRecord pr;
+            if (string.IsNullOrEmpty(Activity))
+            {
+                if (!Completed)
+                {
+                    ThrowTerminatingError(new ErrorRecord(
+                    new ArgumentException("Missing value for mandatory parameter.", nameof(Activity)),
+                    "MissingActivity",
+                    ErrorCategory.InvalidArgument,
+                    Activity));
+                    return;
+                }
+                else
+                {
+                    pr = new(Id);
+                    pr.StatusDescription = Status;
+                }
+            }
+            else
+            {
+                pr = new(Id, Activity, Status);
+            }
+
             pr.ParentActivityId = ParentId;
             pr.PercentComplete = PercentComplete;
             pr.SecondsRemaining = SecondsRemaining;

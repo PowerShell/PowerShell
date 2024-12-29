@@ -32,9 +32,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Name
         {
-            set { _name = value; }
-
             get { return _name; }
+
+            set { _name = value; }
         }
 
         private string[] _name = Array.Empty<string>();
@@ -53,9 +53,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public PSModuleInfo[] ModuleInfo
         {
-            set { _moduleInfo = value; }
-
             get { return _moduleInfo; }
+
+            set { _moduleInfo = value; }
         }
 
         private PSModuleInfo[] _moduleInfo = Array.Empty<PSModuleInfo>();
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        private void GetAllNestedModules(PSModuleInfo module, ref List<PSModuleInfo> nestedModulesWithNoCircularReference)
+        private static void GetAllNestedModules(PSModuleInfo module, ref List<PSModuleInfo> nestedModulesWithNoCircularReference)
         {
             List<PSModuleInfo> nestedModules = new List<PSModuleInfo>();
             if (module.NestedModules != null && module.NestedModules.Count > 0)
@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Commands
                         hasWildcards = false;
                 }
 
-                if (FullyQualifiedName != null && (FullyQualifiedName.Any(moduleSpec => !InitialSessionState.IsEngineModule(moduleSpec.Name))))
+                if (FullyQualifiedName != null && (FullyQualifiedName.Any(static moduleSpec => !InitialSessionState.IsEngineModule(moduleSpec.Name))))
                 {
                     isEngineModule = false;
                 }

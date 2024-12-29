@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -129,15 +128,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // instantiate the cache if not done yet
-            if (_cache == null)
-            {
-                _cache = new FormattedObjectsCache(this.LineOutput.RequiresBuffering);
-            }
+            _cache ??= new FormattedObjectsCache(this.LineOutput.RequiresBuffering);
 
             // no need for formatting, just process the object
-            FormatStartData formatStart = o as FormatStartData;
-
-            if (formatStart != null)
+            if (o is FormatStartData formatStart)
             {
                 // get autosize flag from object
                 // turn on group caching
@@ -149,8 +143,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else
                 {
                     // If the format info doesn't define column widths, then auto-size based on the first ten elements
-                    TableHeaderInfo headerInfo = formatStart.shapeInfo as TableHeaderInfo;
-                    if ((headerInfo != null) &&
+                    if ((formatStart.shapeInfo is TableHeaderInfo headerInfo) &&
                         (headerInfo.tableColumnInfoList.Count > 0) &&
                         (headerInfo.tableColumnInfoList[0].width == 0))
                     {
@@ -181,7 +174,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // we assume that the format context
                 // contains the information
-                FormatShape shape = FormatShape.Table; // default
+                const FormatShape shape = FormatShape.Table; // default
                 FormatOutputContext foc = this.FormatContext;
 
                 if (foc == null || foc.Data.shapeInfo == null)
@@ -262,8 +255,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns>Whether the object needs to be shunted to preprocessing.</returns>
         private bool NeedsPreprocessing(object o)
         {
-            FormatEntryData fed = o as FormatEntryData;
-            if (fed != null)
+            if (o is FormatEntryData fed)
             {
                 // we got an already pre-processed object
                 if (!fed.outOfBand)
@@ -326,8 +318,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // need to abort the command
 
                 string violatingCommand = "format-*";
-                StartData sdObj = obj as StartData;
-                if (sdObj != null)
+                if (obj is StartData sdObj)
                 {
                     if (sdObj.shapeInfo is WideViewHeaderInfo)
                     {
@@ -387,18 +378,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                         FormatMessagesContextManager.OutputContext parentContext,
                                         FormatInfoData formatInfoData)
         {
-            FormatStartData formatStartData = formatInfoData as FormatStartData;
             // initialize the format context
-            if (formatStartData != null)
+            if (formatInfoData is FormatStartData formatStartData)
             {
                 FormatOutputContext foc = new FormatOutputContext(parentContext, formatStartData);
 
                 return foc;
             }
 
-            GroupStartData gsd = formatInfoData as GroupStartData;
             // we are starting a group, initialize the group context
-            if (gsd != null)
+            if (formatInfoData is GroupStartData gsd)
             {
                 GroupOutputContext goc = null;
 
@@ -460,9 +449,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="c">Current context, with Fs in it.</param>
         private void ProcessFormatEnd(FormatEndData fe, FormatMessagesContextManager.OutputContext c)
         {
-            // Console.WriteLine("ProcessFormatEnd");
-            // we just add an empty line to the display
-            this.LineOutput.WriteLine(string.Empty);
+            if (c is FormatOutputContext foContext
+                && foContext.Data.shapeInfo is ListViewHeaderInfo)
+            {
+                // Skip writing out a new line for List view, because we already wrote out
+                // an extra new line after displaying the last list entry.
+                return;
+            }
+
+            // We just add an empty line to the display.
+            LineOutput.WriteLine(string.Empty);
         }
 
         /// <summary>
@@ -541,8 +537,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void ProcessOutOfBandPayload(FormatEntryData fed)
         {
             // try if it is raw text
-            RawTextFormatEntry rte = fed.formatEntryInfo as RawTextFormatEntry;
-            if (rte != null)
+            if (fed.formatEntryInfo is RawTextFormatEntry rte)
             {
                 if (fed.isHelpObject)
                 {
@@ -553,15 +548,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    _lo.WriteLine(rte.text);
+                    // Write out raw text without any changes to it.
+                    _lo.WriteRawText(rte.text);
                 }
 
                 return;
             }
 
             // try if it is a complex entry
-            ComplexViewEntry cve = fed.formatEntryInfo as ComplexViewEntry;
-            if (cve != null && cve.formatValueList != null)
+            if (fed.formatEntryInfo is ComplexViewEntry cve && cve.formatValueList != null)
             {
                 ComplexWriter complexWriter = new ComplexWriter();
 
@@ -571,8 +566,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return;
             }
             // try if it is a list view
-            ListViewEntry lve = fed.formatEntryInfo as ListViewEntry;
-            if (lve != null && lve.listViewFieldList != null)
+            if (fed.formatEntryInfo is ListViewEntry lve && lve.listViewFieldList != null)
             {
                 ListWriter listWriter = new ListWriter();
 
@@ -596,9 +590,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal LineOutput LineOutput
         {
-            set { _lo = value; }
-
             get { return _lo; }
+
+            set { _lo = value; }
         }
 
         private ShapeInfo ShapeInfoOnFormatContext
@@ -624,9 +618,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 for (FormatMessagesContextManager.OutputContext oc = _ctxManager.ActiveOutputContext; oc != null; oc = oc.ParentContext)
                 {
-                    FormatOutputContext foc = oc as FormatOutputContext;
-
-                    if (foc != null)
+                    if (oc is FormatOutputContext foc)
                         return foc;
                 }
 
@@ -637,7 +629,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Context manager instance to guide the message traversal.
         /// </summary>
-        private FormatMessagesContextManager _ctxManager = new FormatMessagesContextManager();
+        private readonly FormatMessagesContextManager _ctxManager = new FormatMessagesContextManager();
 
         private FormattedObjectsCache _cache = null;
 
@@ -651,17 +643,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             _formattingHint = null;
 
-            TableHeaderInfo thi = formatStartData.shapeInfo as TableHeaderInfo;
-
-            if (thi != null)
+            if (formatStartData.shapeInfo is TableHeaderInfo thi)
             {
                 ProcessCachedGroupOnTable(thi, objects);
                 return;
             }
 
-            WideViewHeaderInfo wvhi = formatStartData.shapeInfo as WideViewHeaderInfo;
-
-            if (wvhi != null)
+            if (formatStartData.shapeInfo is WideViewHeaderInfo wvhi)
             {
                 ProcessCachedGroupOnWide(wvhi, objects);
                 return;
@@ -848,7 +836,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Context for the outer scope of the format sequence.
         /// </summary>
-        private class FormatOutputContext : FormatMessagesContextManager.OutputContext
+        private sealed class FormatOutputContext : FormatMessagesContextManager.OutputContext
         {
             /// <summary>
             /// Construct a context to push on the stack.
@@ -940,7 +928,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Helper class to properly write a table using text output.
             /// </summary>
-            private TableWriter _tableWriter = new TableWriter();
+            private readonly TableWriter _tableWriter = new TableWriter();
         }
 
         private sealed class TableOutputContext : TableOutputContextBase
@@ -951,7 +939,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             private const int WhitespaceAndPagerLineCount = 2;
 
-            private bool _repeatHeader = false;
+            private readonly bool _repeatHeader = false;
 
             /// <summary>
             /// Construct a context to push on the stack.
@@ -978,11 +966,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// </summary>
             internal override void Initialize()
             {
-                TableFormattingHint tableHint = this.InnerCommand.RetrieveFormattingHint() as TableFormattingHint;
                 int[] columnWidthsHint = null;
-                // We expect that console width is less then 120.
+                // We expect that console width is less than 120.
 
-                if (tableHint != null)
+                if (this.InnerCommand.RetrieveFormattingHint() is TableFormattingHint tableHint)
                 {
                     columnWidthsHint = tableHint.columnWidths;
                 }
@@ -999,16 +986,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // create arrays for widths and alignment
                 Span<int> columnWidths = columns <= StackAllocThreshold ? stackalloc int[columns] : new int[columns];
                 Span<int> alignment = columns <= StackAllocThreshold ? stackalloc int[columns] : new int[columns];
+                Span<bool> headerMatchesProperty = columns <= StackAllocThreshold ? stackalloc bool[columns] : new bool[columns];
 
                 int k = 0;
                 foreach (TableColumnInfo tci in this.CurrentTableHeaderInfo.tableColumnInfoList)
                 {
                     columnWidths[k] = (columnWidthsHint != null) ? columnWidthsHint[k] : tci.width;
                     alignment[k] = tci.alignment;
+                    headerMatchesProperty[k] = tci.HeaderMatchesProperty;
                     k++;
                 }
 
-                this.Writer.Initialize(0, _consoleWidth, columnWidths, alignment, this.CurrentTableHeaderInfo.hideHeader);
+                this.Writer.Initialize(0, _consoleWidth, columnWidths, alignment, headerMatchesProperty, this.CurrentTableHeaderInfo.hideHeader);
             }
 
             /// <summary>
@@ -1117,33 +1106,40 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             internal static string[] GetProperties(ListViewEntry lve)
             {
-                StringCollection props = new StringCollection();
-                foreach (ListViewField lvf in lve.listViewFieldList)
+                int count = lve.listViewFieldList.Count;
+
+                if (count == 0)
                 {
-                    props.Add(lvf.label ?? lvf.propertyName);
+                    return null;
                 }
 
-                if (props.Count == 0)
-                    return null;
-                string[] retVal = new string[props.Count];
-                props.CopyTo(retVal, 0);
-                return retVal;
+                string[] result = new string[count];
+                for (int index = 0; index < result.Length; ++index)
+                {
+                    ListViewField lvf = lve.listViewFieldList[index];
+                    result[index] = lvf.label ?? lvf.propertyName;
+                }
+
+                return result;
             }
 
             internal static string[] GetValues(ListViewEntry lve)
             {
-                StringCollection vals = new StringCollection();
+                int count = lve.listViewFieldList.Count;
 
-                foreach (ListViewField lvf in lve.listViewFieldList)
+                if (count == 0)
                 {
-                    vals.Add(lvf.formatPropertyField.propertyValue);
+                    return null;
                 }
 
-                if (vals.Count == 0)
-                    return null;
-                string[] retVal = new string[vals.Count];
-                vals.CopyTo(retVal, 0);
-                return retVal;
+                string[] result = new string[count];
+                for (int index = 0; index < result.Length; ++index)
+                {
+                    ListViewField lvf = lve.listViewFieldList[index];
+                    result[index] = lvf.formatPropertyField.propertyValue;
+                }
+
+                return result;
             }
 
             /// <summary>
@@ -1174,7 +1170,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Writer to do the actual formatting.
             /// </summary>
-            private ListWriter _listWriter = new ListWriter();
+            private readonly ListWriter _listWriter = new ListWriter();
         }
 
         private sealed class WideOutputContext : TableOutputContextBase
@@ -1202,13 +1198,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // set the hard wider default, to be used if no other info is available
                 int itemsPerRow = 2;
 
-                // get the header info and the view hint
-                WideFormattingHint hint = this.InnerCommand.RetrieveFormattingHint() as WideFormattingHint;
-
+                // get the header info
                 int columnsOnTheScreen = GetConsoleWindowWidth(this.InnerCommand._lo.ColumnNumber);
 
                 // give a preference to the hint, if there
-                if (hint != null && hint.maxWidth > 0)
+                if (this.InnerCommand.RetrieveFormattingHint() is WideFormattingHint hint && hint.maxWidth > 0)
                 {
                     itemsPerRow = TableWriter.ComputeWideViewBestItemsPerRowFit(hint.maxWidth, columnsOnTheScreen);
                 }
@@ -1230,7 +1224,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     alignment[k] = TextAlignment.Left;
                 }
 
-                this.Writer.Initialize(0, columnsOnTheScreen, columnWidths, alignment, false, GetConsoleWindowHeight(this.InnerCommand._lo.RowNumber));
+                this.Writer.Initialize(leftMarginIndent: 0, columnsOnTheScreen, columnWidths, alignment, headerMatchesProperty: null, suppressHeader: false, screenRows: GetConsoleWindowHeight(this.InnerCommand._lo.RowNumber));
             }
 
             /// <summary>
@@ -1296,7 +1290,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// Helper class to accumulate the display values so that when the end
             /// of a line is reached, a full line can be composed.
             /// </summary>
-            private class StringValuesBuffer
+            private sealed class StringValuesBuffer
             {
                 /// <summary>
                 /// Construct the buffer.
@@ -1357,7 +1351,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         _arr[k] = null;
                 }
 
-                private string[] _arr;
+                private readonly string[] _arr;
                 private int _lastEmptySpot;
             }
         }
@@ -1389,14 +1383,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <param name="fed">FormatEntryData to process.</param>
             internal override void ProcessPayload(FormatEntryData fed)
             {
-                ComplexViewEntry cve = fed.formatEntryInfo as ComplexViewEntry;
-                if (cve == null || cve.formatValueList == null)
-                    return;
-                _writer.WriteObject(cve.formatValueList);
+                if (fed.formatEntryInfo is ComplexViewEntry cve && cve.formatValueList is not null)
+                {
+                    _writer.WriteObject(cve.formatValueList);
+                }
             }
 
-            private ComplexWriter _writer = new ComplexWriter();
+            private readonly ComplexWriter _writer = new ComplexWriter();
         }
     }
 }
-

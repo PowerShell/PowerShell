@@ -56,7 +56,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     # The 'week of year' test cases is from https://en.wikipedia.org/wiki/ISO_week_date
-    It "using -uformat 'V' produces the correct output" -TestCases @(
+    It "using -uformat 'V' produces the correct output (<date>:<week>)" -TestCases @(
         @{date="1998-01-02"; week = "01"},
         @{date="1998-01-03"; week = "01"},
         @{date="2003-01-03"; week = "01"},
@@ -97,12 +97,143 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-Date -Date $date -UFormat %V | Should -BeExactly $week
     }
 
-    It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(
-        @{ name = "`$null"      ; value = $null }
-        @{ name = "empty string"; value = "" }
+    # Using the same test cases as V for ISO week date component parity, plus some more esoteric ones
+    It "using -uformat 'G' produces the correct output (<date>:<year>)" -TestCases @(
+        @{date="0055-12-31"; year = "0055"},
+        @{date="0325-01-01"; year = "0325"},
+        @{date="0777-01-01"; year = "0776"},
+        @{date="1998-01-02"; year = "1998"},
+        @{date="1998-01-03"; year = "1998"},
+        @{date="2003-01-03"; year = "2003"},
+        @{date="2004-01-02"; year = "2004"},
+        @{date="2004-01-03"; year = "2004"},
+        @{date="2005-01-01"; year = "2004"},
+        @{date="2005-01-02"; year = "2004"},
+        @{date="2005-12-31"; year = "2005"},
+        @{date="2006-01-01"; year = "2005"},
+        @{date="2006-01-02"; year = "2006"},
+        @{date="2006-12-31"; year = "2006"},
+        @{date="2007-01-01"; year = "2007"},
+        @{date="2007-12-30"; year = "2007"},
+        @{date="2007-12-31"; year = "2008"},
+        @{date="2008-01-01"; year = "2008"},
+        @{date="2008-12-28"; year = "2008"},
+        @{date="2008-12-29"; year = "2009"},
+        @{date="2008-12-30"; year = "2009"},
+        @{date="2008-12-31"; year = "2009"},
+        @{date="2009-01-01"; year = "2009"},
+        @{date="2009-01-02"; year = "2009"},
+        @{date="2009-01-03"; year = "2009"},
+        @{date="2009-12-31"; year = "2009"},
+        @{date="2010-01-01"; year = "2009"},
+        @{date="2010-01-02"; year = "2009"},
+        @{date="2010-01-03"; year = "2009"},
+        @{date="2010-01-04"; year = "2010"},
+        @{date="2014-01-03"; year = "2014"},
+        @{date="2015-01-02"; year = "2015"},
+        @{date="2015-01-03"; year = "2015"},
+        @{date="2020-01-03"; year = "2020"},
+        @{date="2025-01-03"; year = "2025"},
+        @{date="2026-01-02"; year = "2026"},
+        @{date="2026-01-03"; year = "2026"},
+        @{date="2031-01-03"; year = "2031"}
     ) {
-        param($value)
-        { Get-Date -Date 1/1/1970 -UFormat $value -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetDateCommand"
+        param($date, $year)
+        Get-Date -Date $date -UFormat %G | Should -BeExactly $year
+    }
+
+    # Using the same test cases as V for ISO week date component parity, plus some more esoteric ones
+    It "using -uformat 'g' produces the correct output (<date>:<yy>" -TestCases @(
+        @{date="0055-12-31"; yy = "55"},
+        @{date="0325-01-01"; yy = "25"},
+        @{date="0777-01-01"; yy = "76"},
+        @{date="1998-01-02"; yy = "98"},
+        @{date="1998-01-03"; yy = "98"},
+        @{date="2003-01-03"; yy = "03"},
+        @{date="2004-01-02"; yy = "04"},
+        @{date="2004-01-03"; yy = "04"},
+        @{date="2005-01-01"; yy = "04"},
+        @{date="2005-01-02"; yy = "04"},
+        @{date="2005-12-31"; yy = "05"},
+        @{date="2006-01-01"; yy = "05"},
+        @{date="2006-01-02"; yy = "06"},
+        @{date="2006-12-31"; yy = "06"},
+        @{date="2007-01-01"; yy = "07"},
+        @{date="2007-12-30"; yy = "07"},
+        @{date="2007-12-31"; yy = "08"},
+        @{date="2008-01-01"; yy = "08"},
+        @{date="2008-12-28"; yy = "08"},
+        @{date="2008-12-29"; yy = "09"},
+        @{date="2008-12-30"; yy = "09"},
+        @{date="2008-12-31"; yy = "09"},
+        @{date="2009-01-01"; yy = "09"},
+        @{date="2009-01-02"; yy = "09"},
+        @{date="2009-01-03"; yy = "09"},
+        @{date="2009-12-31"; yy = "09"},
+        @{date="2010-01-01"; yy = "09"},
+        @{date="2010-01-02"; yy = "09"},
+        @{date="2010-01-03"; yy = "09"},
+        @{date="2010-01-04"; yy = "10"},
+        @{date="2014-01-03"; yy = "14"},
+        @{date="2015-01-02"; yy = "15"},
+        @{date="2015-01-03"; yy = "15"},
+        @{date="2020-01-03"; yy = "20"},
+        @{date="2025-01-03"; yy = "25"},
+        @{date="2026-01-02"; yy = "26"},
+        @{date="2026-01-03"; yy = "26"},
+        @{date="2031-01-03"; yy = "31"}
+    ) {
+        param($date, $yy)
+        Get-Date -Date $date -UFormat %g | Should -BeExactly $yy
+    }
+
+    # Using the same test cases as V for ISO week date component parity
+    It "using -uformat 'u' produces the correct output (<date>:<dayOfWeek>)" -TestCases @(
+        @{date="1998-01-02"; dayOfWeek = "5"},
+        @{date="1998-01-03"; dayOfWeek = "6"},
+        @{date="2003-01-03"; dayOfWeek = "5"},
+        @{date="2004-01-02"; dayOfWeek = "5"},
+        @{date="2004-01-03"; dayOfWeek = "6"},
+        @{date="2005-01-01"; dayOfWeek = "6"},
+        @{date="2005-01-02"; dayOfWeek = "7"},
+        @{date="2005-12-31"; dayOfWeek = "6"},
+        @{date="2006-01-01"; dayOfWeek = "7"},
+        @{date="2006-01-02"; dayOfWeek = "1"},
+        @{date="2006-12-31"; dayOfWeek = "7"},
+        @{date="2007-01-01"; dayOfWeek = "1"},
+        @{date="2007-12-30"; dayOfWeek = "7"},
+        @{date="2007-12-31"; dayOfWeek = "1"},
+        @{date="2008-01-01"; dayOfWeek = "2"},
+        @{date="2008-12-28"; dayOfWeek = "7"},
+        @{date="2008-12-29"; dayOfWeek = "1"},
+        @{date="2008-12-30"; dayOfWeek = "2"},
+        @{date="2008-12-31"; dayOfWeek = "3"},
+        @{date="2009-01-01"; dayOfWeek = "4"},
+        @{date="2009-01-02"; dayOfWeek = "5"},
+        @{date="2009-01-03"; dayOfWeek = "6"},
+        @{date="2009-12-31"; dayOfWeek = "4"},
+        @{date="2010-01-01"; dayOfWeek = "5"},
+        @{date="2010-01-02"; dayOfWeek = "6"},
+        @{date="2010-01-03"; dayOfWeek = "7"},
+        @{date="2010-01-04"; dayOfWeek = "1"},
+        @{date="2014-01-03"; dayOfWeek = "5"},
+        @{date="2015-01-02"; dayOfWeek = "5"},
+        @{date="2015-01-03"; dayOfWeek = "6"},
+        @{date="2020-01-03"; dayOfWeek = "5"},
+        @{date="2025-01-03"; dayOfWeek = "5"},
+        @{date="2026-01-02"; dayOfWeek = "5"},
+        @{date="2026-01-03"; dayOfWeek = "6"},
+        @{date="2031-01-03"; dayOfWeek = "5"}
+    ) {
+        param($date, $dayOfWeek)
+        Get-Date -Date $date -UFormat %u | Should -BeExactly $dayOfWeek
+    }
+    It "Passing '<name>' to -uformat produces a descriptive error (<errorId>)" -TestCases @(
+        @{ name = "`$null"      ; value = $null; errorId = "ParameterArgumentValidationErrorNullNotAllowed" }
+        @{ name = "empty string"; value = ""; errorId = "ParameterArgumentValidationErrorEmptyStringNotAllowed" }
+    ) {
+        param($value, $errorId)
+        { Get-Date -Date 1/1/1970 -UFormat $value -ErrorAction Stop } | Should -Throw -ErrorId "${errorId},Microsoft.PowerShell.Commands.GetDateCommand"
     }
 
     It "Get-date works with pipeline input" {
@@ -155,11 +286,11 @@ Describe "Get-Date" -Tags "CI" {
         Get-Date -Date 0030-01-01T01:02:03.0004 -Format FileDateTime | Should -Be "00300101T0102030004"
     }
 
-    It "-Format FileDateTimeUniversal works" {
+    It "-Format FileDateTimeUniversal works (1)" {
         Get-Date -Date 0030-01-01T01:02:03.0004z -Format FileDateTimeUniversal | Should -Be "00300101T0102030004Z"
     }
 
-    It "-Format FileDateTimeUniversal works" {
+    It "-Format FileDateTimeUniversal works (2)" {
         Get-Date -Date 0030-01-01T01:02:03.0004z -Format FileDateUniversal | Should -Be "00300101Z"
     }
 
@@ -193,13 +324,17 @@ Describe "Get-Date" -Tags "CI" {
         $timeDifference.Ticks        | Should -BeLessThan 10000
     }
 
-    It "-FromUnixTime works" {
+    It "-UnixTimeSeconds works (<Expected>)" -TestCases @(
+        @{ UnixTimeSeconds = 1577836800; Expected = [System.DateTimeOffset]::FromUnixTimeSeconds(1577836800).LocalDateTime },
+        @{ UnixTimeSeconds = 0;          Expected = [System.DateTimeOffset]::UnixEpoch.LocalDateTime },
+        @{ UnixTimeSeconds = -1;         Expected = [System.DateTimeOffset]::FromUnixTimeSeconds(-1).LocalDateTime }
+    ) {
+        param(
+            [long] $UnixTimeSeconds,
+            [DateTime] $Expected
+        )
 
-        # Test conversion of arbitrary date in Unix time: 2020-01-01​T00:00:00.000Z
-        Get-Date -Date 1577836800 -FromUnixTime | Should -Be (Get-Date -Date 637134336000000000 -AsUTC)
-
-        # Test converstion of Unix time start date: 1970-01-01​T00:00:00.000Z
-        Get-Date -Date 0 -FromUnixTime | Should -Be (Get-Date -Date 621355968000000000 -AsUTC)
+        Get-Date -UnixTimeSeconds $UnixTimeSeconds | Should -Be $Expected
     }
 }
 
@@ -225,7 +360,7 @@ Describe "Get-Date -UFormat tests" -Tags "CI" {
         $timeZone1 = [String]::Format("{0:+00;-00}", [Timezone]::CurrentTimeZone.GetUtcOffset( $date1 ).Hours)
     }
 
-    It "Get-Date -UFormat <format>" -TestCases @(
+    It "Get-Date -UFormat <format> (<result>)" -TestCases @(
             # Some format specifiers is locale sensetive:
             #   - and tests work on EN-US only
             #   - and can not be full compatible with Unix 'date' utility.

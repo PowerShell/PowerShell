@@ -12,6 +12,15 @@ namespace System.Management.Automation
 {
     internal static class ArrayOps
     {
+        internal static object AddObjectArray(object[] lhs, object rhs)
+        {
+            int newIdx = lhs.Length;
+            Array.Resize(ref lhs, newIdx + 1);
+            lhs[newIdx] = rhs;
+
+            return lhs;
+        }
+
         internal static object[] SlicingIndex(object target, object[] indexes, Func<object, object, object> indexer)
         {
             var result = new object[indexes.Length];
@@ -52,7 +61,10 @@ namespace System.Management.Automation
 
             if (times == 0 || array.Length == 0)
             {
-                return new T[0]; // don't use Utils.EmptyArray, always return a new array
+#pragma warning disable CA1825 // Avoid zero-length array allocations
+                // Don't use Array.Empty<T>(); always return a new instance.
+                return new T[0];
+#pragma warning restore CA1825 // Avoid zero-length array allocations
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();
@@ -231,7 +243,7 @@ namespace System.Management.Automation
             // Convert this index into something printable (we hope)...
             string msgString = PSObject.ToString(null, index, ",", null, null, true, true);
             if (msgString.Length > 20)
-                msgString = msgString.Substring(0, 20) + " ...";
+                msgString = string.Concat(msgString.AsSpan(0, 20), " ...");
             return msgString;
         }
 

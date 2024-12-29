@@ -4,8 +4,7 @@
 ## PowerShell Invoke-Command -RemoteDebug Tests
 ##
 
-if ($IsWindows)
-{
+if ($IsWindows) {
     $typeDef = @'
     using System;
     using System.Globalization;
@@ -120,10 +119,13 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOn
 
     BeforeAll {
 
-        if (!$IsWindows)
-        {
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
+        $isArm64orWow64 = (Test-IsWindowsArm64) -or (Test-IsWinWow64)
+        $skipTest = ! $IsWindows -or $isArm64orWow64
+        if ($skipTest) {
+            if ($isArm64orWow64) {
+                Write-Verbose "remoting is not setup on ARM64 or x86, skipping tests" -Verbose
+            }
+            Push-DefaultParameterValueStack @{ "it:skip" = $true }
             return
         }
 
@@ -150,9 +152,8 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOn
 
     AfterAll {
 
-        if (!$IsWindows)
-        {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        if ($skipTest) {
+            Pop-DefaultParameterValueStack
             return
         }
 
@@ -165,16 +166,20 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature','RequireAdminOn
     }
 
     BeforeEach {
-
-        $remoteSession = New-RemoteSession
+        if (!$skipTest) {
+            $remoteSession = New-RemoteSession
+        }
     }
 
     AfterEach {
+        if ($skipTest) {
+            return
+        }
 
         $ps.Commands.Clear()
         $ps2.Commands.Clear()
 
-        Remove-PSSession $remoteSession -ErrorAction SilentlyContinue
+        if ($null -ne $remoteSession) { Remove-PSSession $remoteSession -ErrorAction SilentlyContinue }
         $remoteSession = $null
     }
 

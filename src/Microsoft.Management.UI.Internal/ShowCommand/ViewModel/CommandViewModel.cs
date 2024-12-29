@@ -431,19 +431,19 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             if (commandName.Contains(' '))
             {
-                builder.AppendFormat("& \"{0}\"", commandName);
+                builder.Append($"& \"{commandName}\"");
             }
             else
             {
                 builder.Append(commandName);
             }
 
-            builder.Append(" ");
+            builder.Append(' ');
 
             if (this.SelectedParameterSet != null)
             {
                 builder.Append(this.SelectedParameterSet.GetScript());
-                builder.Append(" ");
+                builder.Append(' ');
             }
 
             if (this.CommonParameters != null)
@@ -457,7 +457,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Showing help information for current actived cmdlet.
+        /// Showing help information for current active cmdlet.
         /// </summary>
         public void OpenHelpWindow()
         {
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Determins whether current command name and a specifed ParameterSetName have same name.
+        /// Determines whether current command name and a specified ParameterSetName have same name.
         /// </summary>
         /// <param name="name">The name of ShareParameterSet.</param>
         /// <returns>Return true is ShareParameterSet. Else return false.</returns>
@@ -490,10 +490,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <returns>The CommandViewModel corresponding to commandInfo.</returns>
         internal static CommandViewModel GetCommandViewModel(ModuleViewModel module, ShowCommandCommandInfo commandInfo, bool noCommonParameters)
         {
-            if (commandInfo == null)
-            {
-                throw new ArgumentNullException("commandInfo");
-            }
+            ArgumentNullException.ThrowIfNull(commandInfo);
 
             CommandViewModel returnValue = new CommandViewModel();
             returnValue.commandInfo = commandInfo;

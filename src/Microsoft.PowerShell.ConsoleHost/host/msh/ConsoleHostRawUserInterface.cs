@@ -4,25 +4,23 @@
 #if !UNIX
 
 using System;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Host;
 using System.ComponentModel;
 using System.Globalization;
+using System.Management.Automation;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
+using Dbg = System.Management.Automation.Diagnostics;
 using WORD = System.UInt16;
-using DWORD = System.UInt32;
 
 namespace Microsoft.PowerShell
 {
     /// <summary>
     /// Implementation of RawConsole for powershell.
     /// </summary>
-
     internal sealed
     class ConsoleHostRawUserInterface : System.Management.Automation.Host.PSHostRawUserInterface
     {
@@ -31,7 +29,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If obtaining the buffer's foreground and background color failed
         /// </exception>
-
         internal
         ConsoleHostRawUserInterface(ConsoleHostUserInterface mshConsole) : base()
         {
@@ -44,23 +41,16 @@ namespace Microsoft.PowerShell
             //   (we may load resources which can take some time)
             Task.Run(() =>
             {
-                WindowsIdentity identity = WindowsIdentity.GetCurrent();
-                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                var identity = WindowsIdentity.GetCurrent();
+                var principal = new WindowsPrincipal(identity);
                 if (principal.IsInRole(WindowsBuiltInRole.Administrator))
                 {
-                    string prefix = ConsoleHostRawUserInterfaceStrings.WindowTitleElevatedPrefix;
-
-                    // check using Regex if the window already has Administrator: prefix
-                    // (i.e. from the parent console process)
-                    string titlePattern = ConsoleHostRawUserInterfaceStrings.WindowTitleTemplate;
-                    titlePattern = Regex.Escape(titlePattern)
-                        .Replace(@"\{1}", ".*")
-                        .Replace(@"\{0}", Regex.Escape(prefix));
-                    if (!Regex.IsMatch(this.WindowTitle, titlePattern))
+                    // Check if the window already has the "Administrator: " prefix (i.e. from the parent console process).
+                    ReadOnlySpan<char> prefix = ConsoleHostRawUserInterfaceStrings.WindowTitleElevatedPrefix;
+                    ReadOnlySpan<char> windowTitle = WindowTitle;
+                    if (!windowTitle.StartsWith(prefix))
                     {
-                        this.WindowTitle = StringUtil.Format(ConsoleHostRawUserInterfaceStrings.WindowTitleTemplate,
-                            prefix,
-                            this.WindowTitle);
+                        WindowTitle = string.Concat(prefix, windowTitle);
                     }
                 }
             });
@@ -78,7 +68,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleTextAttribute
         /// </exception>
-
         public override
         ConsoleColor
         ForegroundColor
@@ -89,9 +78,8 @@ namespace Microsoft.PowerShell
                 GetBufferInfo(out bufferInfo);
 
                 ConsoleColor foreground;
-                ConsoleColor unused;
 
-                ConsoleControl.WORDToColor(bufferInfo.Attributes, out foreground, out unused);
+                ConsoleControl.WORDToColor(bufferInfo.Attributes, out foreground, out _);
                 return foreground;
             }
 
@@ -129,7 +117,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleTextAttribute
         /// </exception>
-
         public override
         ConsoleColor
         BackgroundColor
@@ -140,9 +127,8 @@ namespace Microsoft.PowerShell
                 GetBufferInfo(out bufferInfo);
 
                 ConsoleColor background;
-                ConsoleColor unused;
 
-                ConsoleControl.WORDToColor(bufferInfo.Attributes, out unused, out background);
+                ConsoleControl.WORDToColor(bufferInfo.Attributes, out _, out background);
                 return background;
             }
 
@@ -195,14 +181,15 @@ namespace Microsoft.PowerShell
 
             set
             {
-                // cursor position can't be outside the buffer area
-
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
-
-                ConsoleHandle handle = GetBufferInfo(out bufferInfo);
-
-                CheckCoordinateWithinBuffer(ref value, ref bufferInfo, "value");
-                ConsoleControl.SetConsoleCursorPosition(handle, value);
+                try
+                {
+                    Console.SetCursorPosition(value.X, value.Y);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    // if screen buffer has changed, we cannot set it anywhere reasonable as the screen buffer
+                    // might change again, so we ignore this
+                }
             }
         }
 
@@ -222,7 +209,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleCursorInfo failed
         /// </exception>
-
         public override
         int
         CursorSize
@@ -278,7 +264,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleWindowInfo failed
         /// </exception>
-
         public override
         Coordinates
         WindowPosition
@@ -345,7 +330,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleScreenBufferSize failed
         /// </exception>
-
         public override
         Size
         BufferSize
@@ -370,8 +354,7 @@ namespace Microsoft.PowerShell
                 }
                 catch (HostException e)
                 {
-                    Win32Exception win32exception = e.InnerException as Win32Exception;
-                    if (win32exception != null &&
+                    if (e.InnerException is Win32Exception win32exception &&
                         win32exception.NativeErrorCode == 0x57)
                     {
                         throw PSTraceSource.NewArgumentOutOfRangeException("value", value,
@@ -398,7 +381,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleWindowInfo failed
         /// </exception>
-
         public override
         Size
         WindowSize
@@ -465,7 +447,7 @@ namespace Microsoft.PowerShell
                 }
 
                 // if the new size will extend past the edge of screen buffer, then move the window position to try to
-                // accomodate that.
+                // accommodate that.
 
                 ConsoleControl.SMALL_RECT r = bufferInfo.WindowRect;
 
@@ -519,7 +501,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If obtaining information about the buffer failed
         /// </exception>
-
         public override
         Size
         MaxWindowSize
@@ -543,7 +524,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's GetLargestConsoleWindowSize failed
         /// </exception>
-
         public override
         Size
         MaxPhysicalWindowSize
@@ -559,7 +539,7 @@ namespace Microsoft.PowerShell
         /// Helper method to create and trace PipelineStoppedException.
         /// </summary>
         /// <returns></returns>
-        private PipelineStoppedException NewPipelineStoppedException()
+        private static PipelineStoppedException NewPipelineStoppedException()
         {
             PipelineStoppedException e = new PipelineStoppedException();
             return e;
@@ -602,7 +582,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's ReadConsoleInput failed
         /// </exception>
-
         public override
         KeyInfo
         ReadKey(ReadKeyOptions options)
@@ -659,8 +638,7 @@ namespace Microsoft.PowerShell
                     {
                         int actualNumberOfInput = ConsoleControl.ReadConsoleInput(handle, ref inputRecords);
                         Dbg.Assert(actualNumberOfInput == 1,
-                            string.Format(CultureInfo.InvariantCulture, "ReadConsoleInput returns {0} number of input event records",
-                                actualNumberOfInput));
+                            string.Create(CultureInfo.InvariantCulture, $"ReadConsoleInput returns {actualNumberOfInput} number of input event records"));
                         if (actualNumberOfInput == 1)
                         {
                             if (((ConsoleControl.InputRecordEventTypes)inputRecords[0].EventType) ==
@@ -730,7 +708,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's FlushConsoleInputBuffer failed
         /// </exception>
-
         public override
         void
         FlushInputBuffer()
@@ -752,7 +729,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's PeekConsoleInput failed
         /// </exception>
-
         public override
         bool
         KeyAvailable
@@ -873,7 +849,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    there is not enough memory to complete calls to Win32's WriteConsoleOutput
         /// </exception>
-
         public override
         void
         SetBufferContents(Coordinates origin, BufferCell[,] contents)
@@ -1084,7 +1059,6 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    there is not enough memory to complete calls to Win32's ReadConsoleOutput
         /// </exception>
-
         public override
         BufferCell[,] GetBufferContents(Rectangle region)
         {
@@ -1208,7 +1182,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If Win32's WideCharToMultiByte fails
         /// </exception>
-
         public override
         int LengthInBufferCells(string s)
         {
@@ -1224,7 +1197,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If Win32's WideCharToMultiByte fails
         /// </exception>
-
         public override
         int LengthInBufferCells(string s, int offset)
         {
@@ -1244,7 +1216,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If Win32's WideCharToMultiByte fails
         /// </exception>
-
         public override
         int LengthInBufferCells(char c)
         {
@@ -1317,17 +1288,16 @@ namespace Microsoft.PowerShell
 
         #endregion helpers
 
-        private ConsoleColor defaultForeground = ConsoleColor.Gray;
+        private readonly ConsoleColor defaultForeground = ConsoleColor.Gray;
 
-        private ConsoleColor defaultBackground = ConsoleColor.Black;
+        private readonly ConsoleColor defaultBackground = ConsoleColor.Black;
 
-        private ConsoleHostUserInterface parent = null;
+        private readonly ConsoleHostUserInterface parent = null;
 
         private ConsoleControl.KEY_EVENT_RECORD cachedKeyEvent;
 
         [TraceSourceAttribute("ConsoleHostRawUserInterface", "Console host's subclass of S.M.A.Host.RawConsole")]
-        private static
-        PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleHostRawUserInterface", "Console host's subclass of S.M.A.Host.RawConsole");
+        private static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleHostRawUserInterface", "Console host's subclass of S.M.A.Host.RawConsole");
     }
 }   // namespace
 
@@ -1354,7 +1324,7 @@ namespace Microsoft.PowerShell
     internal sealed class ConsoleHostRawUserInterface : PSHostRawUserInterface
     {
 
-        private ConsoleHostUserInterface _parent = null;
+        private readonly ConsoleHostUserInterface _parent = null;
 
         internal ConsoleHostRawUserInterface(ConsoleHostUserInterface mshConsole) : base()
         {
@@ -1389,7 +1359,10 @@ namespace Microsoft.PowerShell
                     : new Size(Console.BufferWidth, Console.BufferHeight);
             }
 
-            set { Console.SetBufferSize(value.Width, value.Height); }
+            set
+            {
+                Console.SetBufferSize(value.Width, value.Height);
+            }
         }
 
         /// <summary>
@@ -1397,7 +1370,10 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override Coordinates CursorPosition
         {
-            get { return new Coordinates(Console.CursorLeft, Console.CursorTop); }
+            get
+            {
+                return new Coordinates(Console.CursorLeft, Console.CursorTop);
+            }
 
             set
             {
@@ -1495,7 +1471,10 @@ namespace Microsoft.PowerShell
                     : new Size(Console.WindowWidth, Console.WindowHeight);
             }
 
-            set { Console.SetWindowSize(value.Width, value.Height); }
+            set
+            {
+                Console.SetWindowSize(value.Width, value.Height);
+            }
         }
 
         /// <summary>
@@ -1551,7 +1530,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
+                return string.Create(CultureInfo.InvariantCulture, $"{X},{Y}");
             }
         }
 
@@ -1567,7 +1546,7 @@ namespace Microsoft.PowerShell
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
+                return string.Create(CultureInfo.InvariantCulture, $"{Left},{Top},{Right},{Bottom}");
             }
         }
 

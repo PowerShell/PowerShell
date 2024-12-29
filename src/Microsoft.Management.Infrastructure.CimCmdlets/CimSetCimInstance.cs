@@ -3,11 +3,10 @@
 
 #region Using directives
 
-using System.Collections;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Management.Automation;
 
 #endregion
 
@@ -20,9 +19,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimSetCimInstanceContext : XOperationContextBase
     {
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimSetCimInstanceContext"/> class.
         /// </summary>
         /// <param name="theNamespace"></param>
         /// <param name="theCollection"></param>
@@ -34,50 +31,26 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             bool passThru)
         {
             this.proxy = theProxy;
-            this.property = theProperty;
+            this.Property = theProperty;
             this.nameSpace = theNamespace;
-            this.parameterSetName = theParameterSetName;
-            this.passThru = passThru;
+            this.ParameterSetName = theParameterSetName;
+            this.PassThru = passThru;
         }
 
         /// <summary>
         /// <para>property value</para>
         /// </summary>
-        internal IDictionary Property
-        {
-            get
-            {
-                return this.property;
-            }
-        }
-
-        private IDictionary property;
+        internal IDictionary Property { get; }
 
         /// <summary>
         /// <para>parameter set name</para>
         /// </summary>
-        internal string ParameterSetName
-        {
-            get
-            {
-                return this.parameterSetName;
-            }
-        }
-
-        private string parameterSetName;
+        internal string ParameterSetName { get; }
 
         /// <summary>
         /// <para>PassThru value</para>
         /// </summary>
-        internal bool PassThru
-        {
-            get
-            {
-                return this.passThru;
-            }
-        }
-
-        private bool passThru;
+        internal bool PassThru { get; }
     }
 
     /// <summary>
@@ -88,9 +61,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimSetCimInstance : CimGetInstance
     {
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimSetCimInstance"/> class.
         /// </summary>
         public CimSetCimInstance()
             : base()
@@ -107,7 +78,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             IEnumerable<string> computerNames = ConstValue.GetComputerNames(
                 GetComputerName(cmdlet));
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            List<CimSessionProxy> proxys = new();
             switch (cmdlet.ParameterSetName)
             {
                 case CimBaseCommand.CimInstanceComputerSet:

@@ -28,12 +28,16 @@ namespace System.Management.Automation
     /// Interface exposing driver single thread invoke enter/exit
     /// nested pipeline.
     /// </summary>
+#nullable enable
     internal interface IRSPDriverInvoke
     {
         void EnterNestedPipeline();
+
         void ExitNestedPipeline();
+
         bool HandleStopSignal();
     }
+#nullable restore
 
     /// <summary>
     /// This class wraps a RunspacePoolInternal object. It is used to function
@@ -49,7 +53,7 @@ namespace System.Management.Automation
         private readonly string _initialLocation;
 
         // Script to run after a RunspacePool/Runspace is created in this session.
-        private ConfigurationDataFromXML _configData;
+        private readonly ConfigurationDataFromXML _configData;
 
         // application private data to send back to the client in when we get into "opened" state
         private PSPrimitiveDictionary _applicationPrivateData;
@@ -61,35 +65,35 @@ namespace System.Management.Automation
         // with the client
 
         // powershell's associated with this runspace pool
-        private Dictionary<Guid, ServerPowerShellDriver> _associatedShells
+        private readonly Dictionary<Guid, ServerPowerShellDriver> _associatedShells
             = new Dictionary<Guid, ServerPowerShellDriver>();
 
         // remote host associated with this runspacepool
-        private ServerDriverRemoteHost _remoteHost;
+        private readonly ServerDriverRemoteHost _remoteHost;
 
         private bool _isClosed;
 
         // server capability reported to the client during negotiation (not the actual capability)
-        private RemoteSessionCapability _serverCapability;
+        private readonly RemoteSessionCapability _serverCapability;
         private Runspace _rsToUseForSteppablePipeline;
 
         // steppable pipeline event subscribers exist per-session
-        private ServerSteppablePipelineSubscriber _eventSubscriber = new ServerSteppablePipelineSubscriber();
+        private readonly ServerSteppablePipelineSubscriber _eventSubscriber = new ServerSteppablePipelineSubscriber();
         private PSDataCollection<object> _inputCollection; // PowerShell driver input collection
 
         // Object to invoke nested PowerShell drivers on single pipeline worker thread.
-        private PowerShellDriverInvoker _driverNestedInvoker;
+        private readonly PowerShellDriverInvoker _driverNestedInvoker;
 
         // Remote wrapper for script debugger.
         private ServerRemoteDebugger _serverRemoteDebugger;
 
         // Version of PowerShell client.
-        private Version _clientPSVersion;
+        private readonly Version _clientPSVersion;
 
         // Optional endpoint configuration name.
         // Used in OutOfProc scenarios that do not support PSSession endpoint configuration.
         // Results in a configured remote runspace pushed onto driver host.
-        private string _configurationName;
+        private readonly string _configurationName;
 
         /// <summary>
         /// Event that get raised when the RunspacePool is closed.
@@ -164,7 +168,7 @@ namespace System.Management.Automation
             // The default server settings is to make new commands execute in the calling thread...this saves
             // thread switching time and thread pool pressure on the service.
             // Users can override the server settings only if they are administrators
-            PSThreadOptions serverThreadOptions = configData.ShellThreadOptions.HasValue ? configData.ShellThreadOptions.Value : PSThreadOptions.UseCurrentThread;
+            PSThreadOptions serverThreadOptions = configData.ShellThreadOptions ?? PSThreadOptions.UseCurrentThread;
             if (threadOptions == PSThreadOptions.Default || threadOptions == serverThreadOptions)
             {
                 RunspacePool.ThreadOptions = serverThreadOptions;
@@ -180,7 +184,7 @@ namespace System.Management.Automation
             }
 
             // Set Thread ApartmentState for this RunspacePool
-            ApartmentState serverApartmentState = configData.ShellThreadApartmentState.HasValue ? configData.ShellThreadApartmentState.Value : Runspace.DefaultApartmentState;
+            ApartmentState serverApartmentState = configData.ShellThreadApartmentState ?? Runspace.DefaultApartmentState;
 
             if (apartmentState == ApartmentState.Unknown || apartmentState == serverApartmentState)
             {
@@ -267,10 +271,7 @@ namespace System.Management.Automation
         internal void SendApplicationPrivateDataToClient()
         {
             // Include Debug mode information.
-            if (_applicationPrivateData == null)
-            {
-                _applicationPrivateData = new PSPrimitiveDictionary();
-            }
+            _applicationPrivateData ??= new PSPrimitiveDictionary();
 
             if (_serverRemoteDebugger != null)
             {
@@ -346,10 +347,7 @@ namespace System.Management.Automation
                 {
                     Runspace runspaceToDispose = _remoteHost.PushedRunspace;
                     _remoteHost.PopRunspace();
-                    if (runspaceToDispose != null)
-                    {
-                        runspaceToDispose.Dispose();
-                    }
+                    runspaceToDispose?.Dispose();
                 }
 
                 DisposeRemoteDebugger();
@@ -474,7 +472,7 @@ namespace System.Management.Automation
             // Remote debugger is created only when client version is PSVersion (4.0)
             // or greater, and remote session supports debugging.
             if ((_driverNestedInvoker != null) &&
-                (_clientPSVersion != null && _clientPSVersion >= PSVersionInfo.PSV4Version) &&
+                (_clientPSVersion != null && _clientPSVersion.Major >= 4) &&
                 (runspace != null && runspace.Debugger != null))
             {
                 _serverRemoteDebugger = new ServerRemoteDebugger(this, runspace, runspace.Debugger);
@@ -482,13 +480,7 @@ namespace System.Management.Automation
             }
         }
 
-        private void DisposeRemoteDebugger()
-        {
-            if (_serverRemoteDebugger != null)
-            {
-                _serverRemoteDebugger.Dispose();
-            }
-        }
+        private void DisposeRemoteDebugger() => _serverRemoteDebugger?.Dispose();
 
         /// <summary>
         /// Invokes a script.
@@ -557,7 +549,7 @@ namespace System.Management.Automation
                     Exception lastException = errorList[0] as Exception;
                     if (lastException != null)
                     {
-                        exceptionThrown = (lastException.Message != null) ? lastException.Message : string.Empty;
+                        exceptionThrown = lastException.Message ?? string.Empty;
                     }
                     else
                     {
@@ -808,10 +800,7 @@ namespace System.Management.Automation
             {
                 // If we have a pushed runspace then execute there.
                 // Ensure debugger is enabled to the original mode it was set to.
-                if (_serverRemoteDebugger != null)
-                {
-                    _serverRemoteDebugger.CheckDebuggerState();
-                }
+                _serverRemoteDebugger?.CheckDebuggerState();
 
                 StartPowerShellCommandOnPushedRunspace(
                     powershell,
@@ -831,7 +820,7 @@ namespace System.Management.Automation
                 {
                     if (_driverNestedInvoker != null && _driverNestedInvoker.IsActive)
                     {
-                        if (_driverNestedInvoker.IsAvailable == false)
+                        if (!_driverNestedInvoker.IsAvailable)
                         {
                             // A nested command is already running.
                             throw new PSInvalidOperationException(
@@ -919,10 +908,7 @@ namespace System.Management.Automation
 
             // Invoke command normally.  Ensure debugger is enabled to the
             // original mode it was set to.
-            if (_serverRemoteDebugger != null)
-            {
-                _serverRemoteDebugger.CheckDebuggerState();
-            }
+            _serverRemoteDebugger?.CheckDebuggerState();
 
             // Invoke PowerShell on driver runspace pool.
             ServerPowerShellDriver driver = new ServerPowerShellDriver(
@@ -943,7 +929,7 @@ namespace System.Management.Automation
         }
 
         private bool? _initialSessionStateIncludesGetCommandWithListImportedSwitch;
-        private object _initialSessionStateIncludesGetCommandWithListImportedSwitchLock = new object();
+        private readonly object _initialSessionStateIncludesGetCommandWithListImportedSwitchLock = new object();
 
         private bool DoesInitialSessionStateIncludeGetCommandWithListImportedSwitch()
         {
@@ -960,7 +946,7 @@ namespace System.Management.Automation
                         {
                             IEnumerable<SessionStateCommandEntry> publicGetCommandEntries = iss
                                 .Commands["Get-Command"]
-                                .Where(entry => entry.Visibility == SessionStateEntryVisibility.Public);
+                                .Where(static entry => entry.Visibility == SessionStateEntryVisibility.Public);
                             SessionStateFunctionEntry getCommandProxy = publicGetCommandEntries.OfType<SessionStateFunctionEntry>().FirstOrDefault();
                             if (getCommandProxy != null)
                             {
@@ -1115,7 +1101,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Forces a state reset on a single runspace runspace pool.
+        /// Forces a state reset on a single runspace pool.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
@@ -1246,9 +1232,9 @@ namespace System.Management.Automation
             /// The PreProcessCommandResult used for managing breakpoints.
             /// </summary>
             BreakpointManagement,
-        };
+        }
 
-        private class DebuggerCommandArgument
+        private sealed class DebuggerCommandArgument
         {
             public DebugModes? Mode { get; set; }
 
@@ -1484,9 +1470,7 @@ namespace System.Management.Automation
 
                 Breakpoint breakpoint = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
                 preProcessOutput.Add(
-                    breakpoint == null
-                        ? false
-                        : serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
+                    breakpoint != null && serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
 
                 result = PreProcessCommandResult.BreakpointManagement;
             }
@@ -1587,7 +1571,7 @@ namespace System.Management.Automation
         {
             #region Private Members
 
-            private ConcurrentStack<InvokePump> _invokePumpStack;
+            private readonly ConcurrentStack<InvokePump> _invokePumpStack;
 
             #endregion
 
@@ -1626,7 +1610,7 @@ namespace System.Management.Automation
                         pump = null;
                     }
 
-                    return (pump != null) ? !(pump.IsBusy) : false;
+                    return (pump != null) && !(pump.IsBusy);
                 }
             }
 
@@ -1690,9 +1674,9 @@ namespace System.Management.Automation
             /// </summary>
             private sealed class InvokePump
             {
-                private Queue<ServerPowerShellDriver> _driverInvokeQueue;
-                private ManualResetEvent _processDrivers;
-                private object _syncObject;
+                private readonly Queue<ServerPowerShellDriver> _driverInvokeQueue;
+                private readonly ManualResetEvent _processDrivers;
+                private readonly object _syncObject;
                 private bool _stopPump;
                 private bool _isDisposed;
 
@@ -1802,9 +1786,9 @@ namespace System.Management.Automation
     {
         #region Private Members
 
-        private IRSPDriverInvoke _driverInvoker;
-        private Runspace _runspace;
-        private ObjectRef<Debugger> _wrappedDebugger;
+        private readonly IRSPDriverInvoke _driverInvoker;
+        private readonly Runspace _runspace;
+        private readonly ObjectRef<Debugger> _wrappedDebugger;
         private bool _inDebugMode;
         private DebuggerStopEventArgs _debuggerStopEventArgs;
 
@@ -2002,10 +1986,7 @@ namespace System.Management.Automation
                     StringUtil.Format(DebuggerStrings.CannotProcessDebuggerCommandNotStopped));
             }
 
-            if (_processCommandCompleteEvent == null)
-            {
-                _processCommandCompleteEvent = new ManualResetEventSlim(false);
-            }
+            _processCommandCompleteEvent ??= new ManualResetEventSlim(false);
 
             _threadCommandProcessing = new ThreadCommandProcessing(command, output, _wrappedDebugger.Value, _processCommandCompleteEvent);
             try
@@ -2029,10 +2010,7 @@ namespace System.Management.Automation
             }
 
             ThreadCommandProcessing threadCommandProcessing = _threadCommandProcessing;
-            if (threadCommandProcessing != null)
-            {
-                threadCommandProcessing.Stop();
-            }
+            threadCommandProcessing?.Stop();
         }
 
         /// <summary>
@@ -2064,7 +2042,7 @@ namespace System.Management.Automation
         public override void SetDebuggerStepMode(bool enabled)
         {
             // Enable both the wrapper and wrapped debuggers for debugging before setting step mode.
-            DebugModes mode = DebugModes.LocalScript | DebugModes.RemoteScript;
+            const DebugModes mode = DebugModes.LocalScript | DebugModes.RemoteScript;
             base.SetDebugMode(mode);
             _wrappedDebugger.Value.SetDebugMode(mode);
 
@@ -2230,15 +2208,8 @@ namespace System.Management.Automation
                 ExitDebugMode(DebuggerResumeAction.Stop);
             }
 
-            if (_nestedDebugStopCompleteEvent != null)
-            {
-                _nestedDebugStopCompleteEvent.Dispose();
-            }
-
-            if (_processCommandCompleteEvent != null)
-            {
-                _processCommandCompleteEvent.Dispose();
-            }
+            _nestedDebugStopCompleteEvent?.Dispose();
+            _processCommandCompleteEvent?.Dispose();
         }
 
         #endregion
@@ -2248,10 +2219,10 @@ namespace System.Management.Automation
         private sealed class ThreadCommandProcessing
         {
             // Members
-            private ManualResetEventSlim _commandCompleteEvent;
-            private Debugger _wrappedDebugger;
-            private PSCommand _command;
-            private PSDataCollection<PSObject> _output;
+            private readonly ManualResetEventSlim _commandCompleteEvent;
+            private readonly Debugger _wrappedDebugger;
+            private readonly PSCommand _command;
+            private readonly PSDataCollection<PSObject> _output;
             private DebuggerCommandResults _results;
             private Exception _exception;
 #if !UNIX
@@ -2310,10 +2281,7 @@ namespace System.Management.Automation
             public void Stop()
             {
                 Debugger debugger = _wrappedDebugger;
-                if (debugger != null)
-                {
-                    debugger.StopProcessCommand();
-                }
+                debugger?.StopProcessCommand();
             }
 
             internal void DoInvoke()
@@ -2418,7 +2386,10 @@ namespace System.Management.Automation
         private void HandleDebuggerStop(object sender, DebuggerStopEventArgs e)
         {
             // Ignore if we are in restricted mode.
-            if (!IsDebuggingSupported()) { return; }
+            if (!IsDebuggingSupported())
+            {
+                return;
+            }
 
             if (LocalDebugMode)
             {
@@ -2474,7 +2445,10 @@ namespace System.Management.Automation
         private void HandleBreakpointUpdated(object sender, BreakpointUpdatedEventArgs e)
         {
             // Ignore if we are in restricted mode.
-            if (!IsDebuggingSupported()) { return; }
+            if (!IsDebuggingSupported())
+            {
+                return;
+            }
 
             if (LocalDebugMode)
             {
@@ -2525,10 +2499,7 @@ namespace System.Management.Automation
                 {
                     // Blocking call for nested debugger execution (Debug-Runspace) stop events.
                     // The root debugger never makes two EnterDebugMode calls without an ExitDebugMode.
-                    if (_nestedDebugStopCompleteEvent == null)
-                    {
-                        _nestedDebugStopCompleteEvent = new ManualResetEventSlim(false);
-                    }
+                    _nestedDebugStopCompleteEvent ??= new ManualResetEventSlim(false);
 
                     _nestedDebugging = true;
                     OnEnterDebugMode(_nestedDebugStopCompleteEvent);
@@ -2710,7 +2681,7 @@ namespace System.Management.Automation
                 powershell.InvocationStateChanged += HandlePowerShellInvocationStateChanged;
                 powershell.SetIsNested(false);
 
-                string script = @"
+                const string script = @"
                     param ($Debugger, $Commands, $output)
                     trap { throw $_ }
 
@@ -2797,7 +2768,10 @@ namespace System.Management.Automation
 
         internal void PopDebugger()
         {
-            if (!_wrappedDebugger.IsOverridden) { return; }
+            if (!_wrappedDebugger.IsOverridden)
+            {
+                return;
+            }
 
             // Swap wrapped debugger.
             UnsubscribeWrappedDebugger(_wrappedDebugger.Value);

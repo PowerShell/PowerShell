@@ -84,10 +84,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (this.SyncRoot)
                 {
-                    if (_applicationPrivateData == null)
-                    {
-                        _applicationPrivateData = new PSPrimitiveDictionary();
-                    }
+                    _applicationPrivateData ??= new PSPrimitiveDictionary();
                 }
             }
 
@@ -240,7 +237,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the execution context.
         /// </summary>
-        internal override System.Management.Automation.ExecutionContext GetExecutionContext
+        internal override ExecutionContext GetExecutionContext
         {
             get
             {
@@ -363,8 +360,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private static string s_debugPreferenceCachePath = Path.Combine(Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell"), "DebugPreference.clixml");
-        private static object s_debugPreferenceLockObject = new object();
+        private static readonly string s_debugPreferenceCachePath = Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell", "DebugPreference.clixml");
+        private static readonly object s_debugPreferenceLockObject = new object();
 
         /// <summary>
         /// DebugPreference serves as a property bag to keep
@@ -768,10 +765,7 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         internal PipelineThread GetPipelineThread()
         {
-            if (_pipelineThread == null)
-            {
-                _pipelineThread = new PipelineThread(this.ApartmentState);
-            }
+            _pipelineThread ??= new PipelineThread(this.ApartmentState);
 
             return _pipelineThread;
         }
@@ -840,18 +834,14 @@ namespace System.Management.Automation.Runspaces
                 if (executionContext != null)
                 {
                     PSHostUserInterface hostUI = executionContext.EngineHostInterface.UI;
-                    if (hostUI != null)
-                    {
-                        hostUI.StopAllTranscribing();
-                    }
+                    hostUI?.StopAllTranscribing();
                 }
 
                 AmsiUtils.Uninitialize();
             }
 
             // Generate the shutdown event
-            if (Events != null)
-                Events.GenerateEvent(PSEngineEvent.Exiting, null, new object[] { }, null, true, false);
+            Events?.GenerateEvent(PSEngineEvent.Exiting, null, Array.Empty<object>(), null, true, false);
 
             // Stop all running pipelines
             // Note:Do not perform the Cancel in lock. Reason is
@@ -884,7 +874,7 @@ namespace System.Management.Automation.Runspaces
                     return runspaces;
                 });
 
-            // Notify Engine components that that runspace is closing.
+            // Notify Engine components that runspace is closing.
             _engine.Context.RunspaceClosingNotification();
 
             // Log engine lifecycle event.
@@ -941,19 +931,19 @@ namespace System.Management.Automation.Runspaces
         /// function.  If a remote runspace supports disconnect then it will be disconnected
         /// rather than closed.
         /// </summary>
-        private void CloseOrDisconnectAllRemoteRunspaces(Func<List<RemoteRunspace>> getRunspaces)
+        private static void CloseOrDisconnectAllRemoteRunspaces(Func<List<RemoteRunspace>> getRunspaces)
         {
             List<RemoteRunspace> runspaces = getRunspaces();
-            if (runspaces.Count == 0) { return; }
+            if (runspaces.Count == 0)
+            {
+                return;
+            }
 
             // whether the close of all remoterunspaces completed
             using (ManualResetEvent remoteRunspaceCloseCompleted = new ManualResetEvent(false))
             {
                 ThrottleManager throttleManager = new ThrottleManager();
-                throttleManager.ThrottleComplete += delegate (object sender, EventArgs e)
-                {
-                    remoteRunspaceCloseCompleted.Set();
-                };
+                throttleManager.ThrottleComplete += (object sender, EventArgs e) => remoteRunspaceCloseCompleted.Set();
 
                 foreach (RemoteRunspace remoteRunspace in runspaces)
                 {
@@ -972,22 +962,22 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void StopOrDisconnectAllJobs()
         {
-            if (JobRepository.Jobs.Count == 0) { return; }
+            if (JobRepository.Jobs.Count == 0)
+            {
+                return;
+            }
 
             List<RemoteRunspace> disconnectRunspaces = new List<RemoteRunspace>();
 
             using (ManualResetEvent jobsStopCompleted = new ManualResetEvent(false))
             {
                 ThrottleManager throttleManager = new ThrottleManager();
-                throttleManager.ThrottleComplete += delegate (object sender, EventArgs e)
-                {
-                    jobsStopCompleted.Set();
-                };
+                throttleManager.ThrottleComplete += (object sender, EventArgs e) => jobsStopCompleted.Set();
 
                 foreach (Job job in this.JobRepository.Jobs)
                 {
                     // Only stop or disconnect PowerShell jobs.
-                    if (job is PSRemotingJob == false)
+                    if (job is not PSRemotingJob)
                     {
                         continue;
                     }
@@ -1016,10 +1006,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Disconnect all disconnectable job runspaces found.
-            CloseOrDisconnectAllRemoteRunspaces(() =>
-                {
-                    return disconnectRunspaces;
-                });
+            CloseOrDisconnectAllRemoteRunspaces(() => disconnectRunspaces);
         }
 
         internal void ReleaseDebugger()
@@ -1251,8 +1238,6 @@ namespace System.Management.Automation.Runspaces
                         RunspaceOpening = null;
                     }
 
-                    Platform.RemoveTemporaryDirectory();
-
                     // Dispose the event manager
                     if (this.ExecutionContext != null && this.ExecutionContext.Events != null)
                     {
@@ -1283,10 +1268,7 @@ namespace System.Management.Automation.Runspaces
 
             base.Close(); // call base.Close() first to make it stop the pipeline
 
-            if (_pipelineThread != null)
-            {
-                _pipelineThread.Close();
-            }
+            _pipelineThread?.Close();
         }
 
         #endregion IDisposable Members
@@ -1312,14 +1294,13 @@ namespace System.Management.Automation.Runspaces
         private History _history;
 
         [TraceSource("RunspaceInit", "Initialization code for Runspace")]
-        private static
-        PSTraceSource s_runspaceInitTracer =
+        private static readonly PSTraceSource s_runspaceInitTracer =
             PSTraceSource.GetTracer("RunspaceInit", "Initialization code for Runspace", false);
 
         /// <summary>
         /// This ensures all processes have a server/listener.
         /// </summary>
-        private static RemoteSessionNamedPipeServer s_IPCNamedPipeServer = RemoteSessionNamedPipeServer.IPCNamedPipeServer;
+        private static readonly RemoteSessionNamedPipeServer s_IPCNamedPipeServer = RemoteSessionNamedPipeServer.IPCNamedPipeServer;
 
         #endregion private fields
     }
@@ -1331,7 +1312,7 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     internal sealed class StopJobOperationHelper : IThrottleOperation
     {
-        private Job _job;
+        private readonly Job _job;
 
         /// <summary>
         /// Internal constructor.
@@ -1408,7 +1389,7 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     internal sealed class CloseOrDisconnectRunspaceOperationHelper : IThrottleOperation
     {
-        private RemoteRunspace _remoteRunspace;
+        private readonly RemoteRunspace _remoteRunspace;
 
         /// <summary>
         /// Internal constructor.
@@ -1510,7 +1491,6 @@ namespace System.Management.Automation.Runspaces
     /// Defines the exception thrown an error loading modules occurs while opening the runspace. It
     /// contains a list of all of the module errors that have occurred.
     /// </summary>
-    [Serializable]
     public class RunspaceOpenModuleLoadException : RuntimeException
     {
         #region ctor
@@ -1537,7 +1517,7 @@ namespace System.Management.Automation.Runspaces
         /// Initializes a new instance of ScriptBlockToPowerShellNotSupportedException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public RunspaceOpenModuleLoadException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -1569,7 +1549,7 @@ namespace System.Management.Automation.Runspaces
             get { return _errors; }
         }
 
-        private PSDataCollection<ErrorRecord> _errors;
+        private readonly PSDataCollection<ErrorRecord> _errors;
 
         #region Serialization
         /// <summary>
@@ -1577,30 +1557,13 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected RunspaceOpenModuleLoadException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
-        }
-
-        /// <summary>
-        /// Populates a <see cref="SerializationInfo"/> with the
-        /// data needed to serialize the RunspaceOpenModuleLoadException object.
-        /// </summary>
-        /// <param name="info">The <see cref="SerializationInfo"/> to populate with data.</param>
-        /// <param name="context">The destination for this serialization.</param>
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-        }
-
+            throw new NotSupportedException();
+        }        
         #endregion Serialization
     }
 
     #endregion Helper Class
 }
-

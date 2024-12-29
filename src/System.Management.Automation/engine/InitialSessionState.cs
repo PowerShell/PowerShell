@@ -26,7 +26,7 @@ using Debug = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Runspaces
 {
-    internal class EarlyStartup
+    internal static class EarlyStartup
     {
         internal static void Init()
         {
@@ -44,25 +44,28 @@ namespace System.Management.Automation.Runspaces
 
             // We shouldn't create too many tasks.
 #if !UNIX
-            // Amsi initialize can be a little slow
-            Task.Run(() =>
-            {
-                AmsiUtils.WinScanContent(content: string.Empty, sourceMetadata: string.Empty, warmUp: true);
-            });
+            // Amsi initialize can be a little slow.
+            Task.Run(() => AmsiUtils.WinScanContent(content: string.Empty, sourceMetadata: string.Empty, warmUp: true));
 #endif
+            // Initialize the types 'Compiler', 'CachedReflectionInfo', and 'ExpressionCache'.
+            // Their type initializers do a lot of reflection operations.
+            // We will access 'Compiler' members when creating the first session state.
+            Task.Run(() => _ = Compiler.DottedLocalsTupleType);
 
             // One other task for other stuff that's faster, but still a little slow.
             Task.Run(() =>
             {
-                // Loading the resources for System.Management.Automation can be expensive, so force that to
-                // happen early on a background thread.
+                // Loading the resources for System.Management.Automation can be expensive,
+                // so force that to happen early on a background thread.
                 _ = RunspaceInit.OutputEncodingDescription;
 
                 // This will init some tables and could load some assemblies.
-                _ = TypeAccelerators.builtinTypeAccelerators;
+                // We will access 'LanguagePrimitives' when binding built-in variables for the Runspace.
+                LanguagePrimitives.GetEnumerator(null);
 
                 // This will init some tables and could load some assemblies.
-                LanguagePrimitives.GetEnumerator(null);
+                // We will access 'TypeAccelerators' when auto-loading the PSReadLine module, which happens last.
+                _ = TypeAccelerators.builtinTypeAccelerators;
             });
         }
     }
@@ -413,7 +416,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
-            SessionStateAssemblyEntry entry = new SessionStateAssemblyEntry(Name, FileName);
+            var entry = new SessionStateAssemblyEntry(Name, FileName);
             entry.SetPSSnapIn(this.PSSnapIn);
             entry.SetModule(this.Module);
             return entry;
@@ -649,7 +652,7 @@ namespace System.Management.Automation.Runspaces
         public string Description { get; } = string.Empty;
 
         /// <summary>
-        /// Options controling scope visibility and setability for this entry.
+        /// Options controlling scope visibility and setability for this entry.
         /// </summary>
         public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
     }
@@ -806,7 +809,7 @@ namespace System.Management.Automation.Runspaces
         internal ScriptBlock ScriptBlock { get; set; }
 
         /// <summary>
-        /// Options controling scope visibility and setability for this entry.
+        /// Options controlling scope visibility and setability for this entry.
         /// </summary>
         public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
 
@@ -952,7 +955,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public Collection<Attribute> Attributes
         {
-            get { return _attributes ?? (_attributes = new Collection<Attribute>()); }
+            get { return _attributes ??= new Collection<Attribute>(); }
         }
 
         private Collection<Attribute> _attributes;
@@ -977,10 +980,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="items"></param>
         public InitialSessionStateEntryCollection(IEnumerable<T> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             _internalCollection = new Collection<T>();
 
@@ -1151,10 +1151,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="type">The type of object to remove, can be null to remove any type.</param>
         public void Remove(string name, object type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             lock (_syncObject)
             {
@@ -1189,10 +1186,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="item">The item to add...</param>
         public void Add(T item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+            ArgumentNullException.ThrowIfNull(item);
 
             lock (_syncObject)
             {
@@ -1206,10 +1200,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="items"></param>
         public void Add(IEnumerable<T> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             lock (_syncObject)
             {
@@ -1250,10 +1241,10 @@ namespace System.Management.Automation.Runspaces
             return _internalCollection.GetEnumerator();
         }
 
-        private Collection<T> _internalCollection;
+        private readonly Collection<T> _internalCollection;
 
         // object to use for locking
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
     }
 
     /// <summary>
@@ -1315,7 +1306,7 @@ namespace System.Management.Automation.Runspaces
         /// Creates an initial session state from a PSSC configuration file.
         /// </summary>
         /// <param name="path">The path to the PSSC session configuration file.</param>
-        /// <returns></returns>
+        /// <returns>InitialSessionState object.</returns>
         public static InitialSessionState CreateFromSessionConfigurationFile(string path)
         {
             return CreateFromSessionConfigurationFile(path, null);
@@ -1330,10 +1321,48 @@ namespace System.Management.Automation.Runspaces
         /// target session. If you have a WindowsPrincipal for a user, for example, create a Function that
         /// checks windowsPrincipal.IsInRole().
         /// </param>
-        /// <returns></returns>
-        public static InitialSessionState CreateFromSessionConfigurationFile(string path, Func<string, bool> roleVerifier)
+        /// <returns>InitialSessionState object.</returns>
+        public static InitialSessionState CreateFromSessionConfigurationFile(
+            string path,
+            Func<string, bool> roleVerifier)
         {
-            Remoting.DISCPowerShellConfiguration discConfiguration = new Remoting.DISCPowerShellConfiguration(path, roleVerifier);
+            return CreateFromSessionConfigurationFile(path, roleVerifier, validateFile: false);
+        }
+
+        /// <summary>
+        /// Creates an initial session state from a PSSC configuration file.
+        /// </summary>
+        /// <param name="path">The path to the PSSC session configuration file.</param>
+        /// <param name="roleVerifier">
+        /// The verifier that PowerShell should call to determine if groups in the Role entry apply to the
+        /// target session. If you have a WindowsPrincipal for a user, for example, create a Function that
+        /// checks windowsPrincipal.IsInRole().
+        /// </param>
+        /// <param name="validateFile">Validates the file contents for supported SessionState options.</param>
+        /// <returns>InitialSessionState object.</returns>
+        public static InitialSessionState CreateFromSessionConfigurationFile(
+            string path,
+            Func<string, bool> roleVerifier,
+            bool validateFile)
+        {
+            if (path is null)
+            {
+                throw new PSArgumentNullException(nameof(path));
+            }
+
+            if (!File.Exists(path))
+            {
+                throw new PSInvalidOperationException(
+                    StringUtil.Format(ConsoleInfoErrorStrings.ConfigurationFileDoesNotExist, path));
+            }
+
+            if (!path.EndsWith(".pssc", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new PSInvalidOperationException(
+                    StringUtil.Format(ConsoleInfoErrorStrings.NotConfigurationFile, path));
+            }
+
+            Remoting.DISCPowerShellConfiguration discConfiguration = new Remoting.DISCPowerShellConfiguration(path, roleVerifier, validateFile);
             return discConfiguration.GetInitialSessionState(null);
         }
 
@@ -1349,7 +1378,7 @@ namespace System.Management.Automation.Runspaces
         public static InitialSessionState CreateRestricted(SessionCapabilities sessionCapabilities)
         {
             // only remote server has been requested
-            if (SessionCapabilities.RemoteServer == sessionCapabilities)
+            if (sessionCapabilities == SessionCapabilities.RemoteServer)
             {
                 return CreateRestrictedForRemoteServer();
             }
@@ -1437,9 +1466,6 @@ namespace System.Management.Automation.Runspaces
             return iss;
         }
 
-        // Porting note: moved to Platform so we have one list to maintain
-        private static string[] s_PSCoreFormatFileNames = Platform.FormatFileNames.ToArray();
-
         private static void IncludePowerShellCoreFormats(InitialSessionState iss)
         {
             string psHome = Utils.DefaultPowerShellAppBase;
@@ -1449,7 +1475,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             iss.Formats.Clear();
-            foreach (var coreFormat in s_PSCoreFormatFileNames)
+            foreach (var coreFormat in Platform.FormatFileNames)
             {
                 iss.Formats.Add(new SessionStateFormatEntry(Path.Combine(psHome, coreFormat)));
             }
@@ -1480,7 +1506,7 @@ namespace System.Management.Automation.Runspaces
             // be causing test failures - i suspect due to lack test isolation - brucepay Mar 06/2008
 #if false
             // Add the default variables and make them private...
-            iss.Variables.Add(BuiltInVariables);
+            iss.AddVariables(BuiltInVariables);
             foreach (SessionStateVariableEntry v in iss.Variables)
             {
                 v.Visibility = SessionStateEntryVisibility.Private;
@@ -1543,13 +1569,9 @@ namespace System.Management.Automation.Runspaces
                 string assembly = ss.Assemblies[i].FileName;
                 if (!string.IsNullOrEmpty(assembly))
                 {
-                    if (assemblyList.Contains(assembly))
+                    if (!assemblyList.Add(assembly))
                     {
                         ss.Assemblies.RemoveItem(i);
-                    }
-                    else
-                    {
-                        assemblyList.Add(assembly);
                     }
                 }
             }
@@ -1668,11 +1690,6 @@ namespace System.Management.Automation.Runspaces
             }
 
             ss.DisableFormatUpdates = this.DisableFormatUpdates;
-
-            foreach (var s in this.defaultSnapins)
-            {
-                ss.defaultSnapins.Add(s);
-            }
 
             foreach (var s in ImportedSnapins)
             {
@@ -1837,10 +1854,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public void ImportPSModule(params string[] name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             foreach (string n in name)
             {
@@ -1865,10 +1879,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         public void ImportPSModule(IEnumerable<ModuleSpecification> modules)
         {
-            if (modules == null)
-            {
-                throw new ArgumentNullException(nameof(modules));
-            }
+            ArgumentNullException.ThrowIfNull(modules);
 
             foreach (var moduleSpecification in modules)
             {
@@ -1896,10 +1907,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal void ImportPSCoreModule(string[] name)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             foreach (string n in name)
             {
@@ -2118,7 +2126,7 @@ namespace System.Management.Automation.Runspaces
 
         private HashSet<string> _startupScripts = new HashSet<string>();
 
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
 
         internal void Bind(ExecutionContext context, bool updateOnly, PSModuleInfo module, bool noClobber, bool local, bool setLocation)
         {
@@ -2416,9 +2424,14 @@ namespace System.Management.Automation.Runspaces
             // Load the assemblies and initialize the assembly cache...
             foreach (SessionStateAssemblyEntry ssae in Assemblies)
             {
-                if (etwEnabled) RunspaceEventSource.Log.LoadAssemblyStart(ssae.Name, ssae.FileName);
-                Exception error = null;
-                Assembly asm = context.AddAssembly(ssae.Name, ssae.FileName, out error);
+                if (etwEnabled)
+                {
+                    RunspaceEventSource.Log.LoadAssemblyStart(ssae.Name, ssae.FileName);
+                }
+
+                // Specify the source only if this is for module loading.
+                // The source is used for proper cleaning of the assembly cache when a module is unloaded.
+                Assembly asm = context.AddAssembly(ssae.Module?.Name, ssae.Name, ssae.FileName, out Exception error);
 
                 if (asm == null || error != null)
                 {
@@ -2587,7 +2600,7 @@ namespace System.Management.Automation.Runspaces
             return null;
         }
 
-        private string[] GetModulesForUnResolvedCommands(IEnumerable<string> unresolvedCommands, ExecutionContext context)
+        private static string[] GetModulesForUnResolvedCommands(IEnumerable<string> unresolvedCommands, ExecutionContext context)
         {
             Collection<string> modulesToImport = new Collection<string>();
             HashSet<string> commandsToResolve = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -2743,7 +2756,7 @@ namespace System.Management.Automation.Runspaces
                         break;
 
                     case "ValidatePattern":
-                        string pattern = "^(" + string.Join("|", parameterValidationValues) + ")$";
+                        string pattern = "^(" + string.Join('|', parameterValidationValues) + ")$";
                         ValidatePatternAttribute validatePattern = new ValidatePatternAttribute(pattern);
                         metadata.Parameters[parameterName].Attributes.Add(validatePattern);
                         break;
@@ -2904,7 +2917,7 @@ namespace System.Management.Automation.Runspaces
             }
             finally
             {
-                // Restore the langauge mode, but not if it was altered by the startup script itself.
+                // Restore the language mode, but not if it was altered by the startup script itself.
                 if (initializedRunspace.SessionStateProxy.LanguageMode == PSLanguageMode.FullLanguage)
                 {
                     initializedRunspace.SessionStateProxy.LanguageMode = originalLanguageMode;
@@ -2949,13 +2962,20 @@ namespace System.Management.Automation.Runspaces
             HashSet<string> unresolvedCmdsToExpose)
         {
             RunspaceOpenModuleLoadException exceptionToReturn = null;
+            List<PSModuleInfo> processedModules = new List<PSModuleInfo>();
 
             foreach (object module in moduleList)
             {
                 string moduleName = module as string;
                 if (moduleName != null)
                 {
-                    exceptionToReturn = ProcessOneModule(initializedRunspace, moduleName, null, path, publicCommands);
+                    exceptionToReturn = ProcessOneModule(
+                        initializedRunspace: initializedRunspace,
+                        name: moduleName,
+                        moduleInfoToLoad: null,
+                        path: path,
+                        publicCommands: publicCommands,
+                        processedModules: processedModules);
                 }
                 else
                 {
@@ -2966,7 +2986,13 @@ namespace System.Management.Automation.Runspaces
                         {
                             // if only name is specified in the module spec, just try import the module
                             // ie., don't take the performance overhead of calling GetModule.
-                            exceptionToReturn = ProcessOneModule(initializedRunspace, moduleSpecification.Name, null, path, publicCommands);
+                            exceptionToReturn = ProcessOneModule(
+                                initializedRunspace: initializedRunspace,
+                                name: moduleSpecification.Name,
+                                moduleInfoToLoad: null,
+                                path: path,
+                                publicCommands: publicCommands,
+                                processedModules: processedModules);
                         }
                         else
                         {
@@ -2974,7 +3000,13 @@ namespace System.Management.Automation.Runspaces
 
                             if (moduleInfos != null && moduleInfos.Count > 0)
                             {
-                                exceptionToReturn = ProcessOneModule(initializedRunspace, moduleSpecification.Name, moduleInfos[0], path, publicCommands);
+                                exceptionToReturn = ProcessOneModule(
+                                    initializedRunspace: initializedRunspace,
+                                    name: moduleSpecification.Name,
+                                    moduleInfoToLoad: moduleInfos[0],
+                                    path: path,
+                                    publicCommands: publicCommands,
+                                    processedModules: processedModules);
                             }
                             else
                             {
@@ -3023,7 +3055,11 @@ namespace System.Management.Automation.Runspaces
                     string commandToMakeVisible = Utils.ParseCommandName(unresolvedCommand, out moduleName);
                     bool found = false;
 
-                    foreach (CommandInfo cmd in LookupCommands(commandToMakeVisible, moduleName, initializedRunspace.ExecutionContext))
+                    foreach (CommandInfo cmd in LookupCommands(
+                        commandPattern: commandToMakeVisible,
+                        moduleName: moduleName,
+                        context: initializedRunspace.ExecutionContext,
+                        processedModules: processedModules))
                     {
                         if (!found)
                         {
@@ -3074,11 +3110,13 @@ namespace System.Management.Automation.Runspaces
         /// <param name="commandPattern"></param>
         /// <param name="moduleName"></param>
         /// <param name="context"></param>
+        /// <param name="processedModules"></param>
         /// <returns></returns>
-        private IEnumerable<CommandInfo> LookupCommands(
+        private static IEnumerable<CommandInfo> LookupCommands(
             string commandPattern,
             string moduleName,
-            ExecutionContext context)
+            ExecutionContext context,
+            List<PSModuleInfo> processedModules)
         {
             bool isWildCardPattern = WildcardPattern.ContainsWildcardCharacters(commandPattern);
             var searchOptions = isWildCardPattern ?
@@ -3092,7 +3130,11 @@ namespace System.Management.Automation.Runspaces
             CommandOrigin cmdOrigin = CommandOrigin.Runspace;
             while (true)
             {
-                foreach (CommandInfo commandInfo in context.SessionState.InvokeCommand.GetCommands(commandPattern, CommandTypes.All, searchOptions, cmdOrigin))
+                foreach (CommandInfo commandInfo in context.SessionState.InvokeCommand.GetCommands(
+                    name: commandPattern,
+                    commandTypes: CommandTypes.All,
+                    options: searchOptions,
+                    commandOrigin: cmdOrigin))
                 {
                     // If module name is provided then use it to restrict returned results.
                     if (haveModuleName && !moduleName.Equals(commandInfo.ModuleName, StringComparison.OrdinalIgnoreCase))
@@ -3122,13 +3164,43 @@ namespace System.Management.Automation.Runspaces
                 // Next try internal search.
                 cmdOrigin = CommandOrigin.Internal;
             }
+
+            // If the command is associated with a module, try finding the command in the imported module list.
+            // The SessionState function table holds only one command name, and if two or more modules contain
+            // a command with the same name, only one of them will appear in the function table search above.
+            if (!found && haveModuleName)
+            {
+                var pattern = new WildcardPattern(commandPattern);
+
+                foreach (PSModuleInfo moduleInfo in processedModules)
+                {
+                    if (moduleInfo.Name.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        foreach (var cmd in moduleInfo.ExportedCommands.Values)
+                        {
+                            if (pattern.IsMatch(cmd.Name))
+                            {
+                                yield return cmd;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// If <paramref name="moduleInfoToLoad"/> is null, import module using <paramref name="name"/>. Otherwise,
         /// import module using <paramref name="moduleInfoToLoad"/>
         /// </summary>
-        private RunspaceOpenModuleLoadException ProcessOneModule(Runspace initializedRunspace, string name, PSModuleInfo moduleInfoToLoad, string path, HashSet<CommandInfo> publicCommands)
+        private RunspaceOpenModuleLoadException ProcessOneModule(
+            Runspace initializedRunspace,
+            string name,
+            PSModuleInfo moduleInfoToLoad,
+            string path,
+            HashSet<CommandInfo> publicCommands,
+            List<PSModuleInfo> processedModules)
         {
             using (PowerShell pse = PowerShell.Create())
             {
@@ -3165,6 +3237,11 @@ namespace System.Management.Automation.Runspaces
                     c = new CmdletInfo("Out-Default", typeof(OutDefaultCommand), null, null, initializedRunspace.ExecutionContext);
                     pse.AddCommand(new Command(c));
                 }
+                else
+                {
+                    // For runspace init module processing, pass back the PSModuleInfo to the output pipeline.
+                    cmd.Parameters.Add("PassThru");
+                }
 
                 pse.Runspace = initializedRunspace;
                 // Module import should be run in FullLanguage mode since it is running in
@@ -3173,7 +3250,10 @@ namespace System.Management.Automation.Runspaces
                 pse.Runspace.ExecutionContext.LanguageMode = PSLanguageMode.FullLanguage;
                 try
                 {
-                    pse.Invoke();
+                    // For runspace init module processing, collect the imported PSModuleInfo returned in the output pipeline.
+                    // In other cases, this collection will be empty.
+                    Collection<PSModuleInfo> moduleInfos = pse.Invoke<PSModuleInfo>();
+                    processedModules.AddRange(moduleInfos);
                 }
                 finally
                 {
@@ -3368,8 +3448,7 @@ namespace System.Management.Automation.Runspaces
                         {
                             // If we can't access the Environment.CurrentDirectory, we may be in an AppContainer. Set the
                             // default drive to $pshome
-                            System.Diagnostics.Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
-                            string defaultPath = System.IO.Path.GetDirectoryName(PsUtils.GetMainModule(currentProcess).FileName);
+                            string defaultPath = System.IO.Path.GetDirectoryName(Environment.ProcessPath);
                             context.EngineSessionState.SetLocation(defaultPath, providerContext);
                         }
                     }
@@ -3384,105 +3463,6 @@ namespace System.Management.Automation.Runspaces
         {
             QuestionMarkVariable qv = new QuestionMarkVariable(context);
             context.EngineSessionState.SetVariableAtScope(qv, "global", true, CommandOrigin.Internal);
-        }
-
-        /// <summary>
-        /// Remove anything that would have been bound by this ISS instance.
-        /// At this point, it removes assemblies and cmdlet entries at the top level.
-        /// It also removes types and formats.
-        /// The other entry types - functions, variables, aliases
-        /// are not removed by this function.
-        /// </summary>
-        /// <param name="context"></param>
-        internal void Unbind(ExecutionContext context)
-        {
-            lock (_syncObject)
-            {
-                SessionStateInternal ss = context.EngineSessionState;
-
-                // Remove the assemblies from the assembly cache...
-                foreach (SessionStateAssemblyEntry ssae in Assemblies)
-                {
-                    context.RemoveAssembly(ssae.Name);
-                }
-
-                // Remove all of the commands from the top-level session state.
-                foreach (SessionStateCommandEntry cmd in Commands)
-                {
-                    SessionStateCmdletEntry ssce = cmd as SessionStateCmdletEntry;
-                    if (ssce != null)
-                    {
-                        List<CmdletInfo> matches;
-                        if (context.TopLevelSessionState.GetCmdletTable().TryGetValue(ssce.Name, out matches))
-                        {
-                            // Remove the name from the list...
-                            for (int i = matches.Count - 1; i >= 0; i--)
-                            {
-                                if (matches[i].ModuleName.Equals(cmd.PSSnapIn.Name))
-                                {
-                                    string name = matches[i].Name;
-                                    matches.RemoveAt(i);
-                                    context.TopLevelSessionState.RemoveCmdlet(name, i,  /*force*/ true);
-                                }
-                            }
-                            // And remove the entry if the list is now empty...
-                            if (matches.Count == 0)
-                            {
-                                context.TopLevelSessionState.RemoveCmdletEntry(ssce.Name, true);
-                            }
-                        }
-
-                        continue;
-                    }
-                }
-
-                // Remove all of the providers from the top-level provider table.
-                if (_providers != null && _providers.Count > 0)
-                {
-                    Dictionary<string, List<ProviderInfo>> providerTable = context.TopLevelSessionState.Providers;
-
-                    foreach (SessionStateProviderEntry sspe in _providers)
-                    {
-                        List<ProviderInfo> pl;
-                        if (providerTable.TryGetValue(sspe.Name, out pl))
-                        {
-                            Diagnostics.Assert(pl != null, "There should never be a null list of entries in the provider table");
-                            // For each provider with the same name...
-                            for (int i = pl.Count - 1; i >= 0; i--)
-                            {
-                                ProviderInfo pi = pl[i];
-
-                                // If it was implemented by this entry, remove it
-                                if (pi.ImplementingType == sspe.ImplementingType)
-                                {
-                                    RemoveAllDrivesForProvider(pi, context.TopLevelSessionState);
-                                    pl.RemoveAt(i);
-                                }
-                            }
-
-                            // If there are no providers left with this name, remove the key.
-                            if (pl.Count == 0)
-                            {
-                                providerTable.Remove(sspe.Name);
-                            }
-                        }
-                    }
-                }
-
-                List<string> formatFilesToRemove = new List<string>();
-                if (this.Formats != null)
-                {
-                    formatFilesToRemove.AddRange(this.Formats.Select(f => f.FileName));
-                }
-
-                List<string> typeFilesToRemove = new List<string>();
-                if (this.Types != null)
-                {
-                    typeFilesToRemove.AddRange(this.Types.Select(t => t.FileName));
-                }
-
-                RemoveTypesAndFormats(context, formatFilesToRemove, typeFilesToRemove);
-            }
         }
 
         internal static void RemoveTypesAndFormats(ExecutionContext context, IList<string> formatFilesToRemove, IList<string> typeFilesToRemove)
@@ -3603,8 +3583,7 @@ namespace System.Management.Automation.Runspaces
                             moduleName = sste.PSSnapIn.Name;
                         }
 
-                        bool unused;
-                        context.TypeTable.Update(moduleName, sste.FileName, errors, context.AuthorizationManager, context.EngineHostInterface, out unused);
+                        context.TypeTable.Update(moduleName, sste.FileName, errors, context.AuthorizationManager, context.EngineHostInterface, out _);
                     }
                 }
                 else if (sste.TypeTable != null)
@@ -3630,7 +3609,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if (errors.Count > 0)
+            if (!errors.IsEmpty)
             {
                 var allErrors = new StringBuilder();
                 allErrors.Append('\n');
@@ -3739,7 +3718,7 @@ namespace System.Management.Automation.Runspaces
                 // if this is the case...
                 foreach (PSSnapInTypeAndFormatErrors entry in entries)
                 {
-                    if (entry.Errors != null && entry.Errors.Count > 0)
+                    if (entry.Errors != null && !entry.Errors.IsEmpty)
                     {
                         foreach (string error in entry.Errors)
                         {
@@ -3795,7 +3774,7 @@ namespace System.Management.Automation.Runspaces
             // implementation and should be refactored.
             PSSnapInInfo newPSSnapIn = PSSnapInReader.Read("2", name);
 
-            if (!Utils.IsPSVersionSupported(newPSSnapIn.PSVersion.ToString()))
+            if (!PSVersionInfo.IsValidPSVersion(newPSSnapIn.PSVersion))
             {
                 s_PSSnapInTracer.TraceError("MshSnapin {0} and current monad engine's versions don't match.", name);
 
@@ -3808,34 +3787,22 @@ namespace System.Management.Automation.Runspaces
 
             // Now actually load the snapin...
             PSSnapInInfo snapin = ImportPSSnapIn(newPSSnapIn, out warning);
-            if (snapin != null)
-            {
-                ImportedSnapins.Add(snapin.Name, snapin);
-            }
 
             return snapin;
         }
 
         internal PSSnapInInfo ImportCorePSSnapIn()
         {
-            // Load Microsoft.PowerShell.Core as a snapin
+            // Load Microsoft.PowerShell.Core as a snapin.
             PSSnapInInfo coreSnapin = PSSnapInReader.ReadCoreEngineSnapIn();
-            this.defaultSnapins.Add(coreSnapin);
-            try
-            {
-                PSSnapInException warning;
-                this.ImportPSSnapIn(coreSnapin, out warning);
-            }
-            catch (PSSnapInException)
-            {
-                throw;
-            }
-
+            ImportPSSnapIn(coreSnapin, out _);
             return coreSnapin;
         }
 
         internal PSSnapInInfo ImportPSSnapIn(PSSnapInInfo psSnapInInfo, out PSSnapInException warning)
         {
+            ArgumentNullException.ThrowIfNull(psSnapInInfo);
+
             // See if the snapin is already loaded. If has been then there will be an entry in the
             // Assemblies list for it already...
             bool reload = true;
@@ -3867,12 +3834,6 @@ namespace System.Management.Automation.Runspaces
             Dictionary<string, SessionStateCmdletEntry> cmdlets = null;
             Dictionary<string, List<SessionStateAliasEntry>> aliases = null;
             Dictionary<string, SessionStateProviderEntry> providers = null;
-
-            if (psSnapInInfo == null)
-            {
-                ArgumentNullException e = new ArgumentNullException(nameof(psSnapInInfo));
-                throw e;
-            }
 
             Assembly assembly = null;
             string helpFile = null;
@@ -3930,18 +3891,9 @@ namespace System.Management.Automation.Runspaces
                 this.Formats.Add(formatEntry);
             }
 
-            SessionStateAssemblyEntry assemblyEntry = new SessionStateAssemblyEntry(psSnapInInfo.AssemblyName, psSnapInInfo.AbsoluteModulePath);
-
+            var assemblyEntry = new SessionStateAssemblyEntry(psSnapInInfo.AssemblyName, psSnapInInfo.AbsoluteModulePath);
             assemblyEntry.SetPSSnapIn(psSnapInInfo);
-
-            this.Assemblies.Add(assemblyEntry);
-
-            // entry from types.ps1xml references a type (Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase) in this assembly
-            if (psSnapInInfo.Name.Equals(CoreSnapin, StringComparison.OrdinalIgnoreCase))
-            {
-                assemblyEntry = new SessionStateAssemblyEntry("Microsoft.PowerShell.Security", null);
-                this.Assemblies.Add(assemblyEntry);
-            }
+            Assemblies.Add(assemblyEntry);
 
             if (cmdlets != null)
             {
@@ -3992,37 +3944,18 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
+            ImportedSnapins.Add(psSnapInInfo.Name, psSnapInInfo);
             return psSnapInInfo;
         }
 
-        internal List<PSSnapInInfo> GetPSSnapIn(string psSnapinName)
+        internal PSSnapInInfo GetPSSnapIn(string psSnapinName)
         {
-            List<PSSnapInInfo> loadedSnapins = null;
-            foreach (var defaultSnapin in defaultSnapins)
+            if (ImportedSnapins.TryGetValue(psSnapinName, out PSSnapInInfo importedSnapin))
             {
-                if (defaultSnapin.Name.Equals(psSnapinName, StringComparison.OrdinalIgnoreCase))
-                {
-                    if (loadedSnapins == null)
-                    {
-                        loadedSnapins = new List<PSSnapInInfo>();
-                    }
-
-                    loadedSnapins.Add(defaultSnapin);
-                }
+                return importedSnapin;
             }
 
-            PSSnapInInfo importedSnapin = null;
-            if (ImportedSnapins.TryGetValue(psSnapinName, out importedSnapin))
-            {
-                if (loadedSnapins == null)
-                {
-                    loadedSnapins = new List<PSSnapInInfo>();
-                }
-
-                loadedSnapins.Add(importedSnapin);
-            }
-
-            return loadedSnapins;
+            return null;
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
@@ -4044,26 +3977,18 @@ namespace System.Management.Automation.Runspaces
 
         internal void ImportCmdletsFromAssembly(Assembly assembly, PSModuleInfo module)
         {
-            if (assembly == null)
-            {
-                ArgumentNullException e = new ArgumentNullException(nameof(assembly));
-                throw e;
-            }
-
-            Dictionary<string, SessionStateCmdletEntry> cmdlets = null;
-            Dictionary<string, List<SessionStateAliasEntry>> aliases = null;
-            Dictionary<string, SessionStateProviderEntry> providers = null;
+            ArgumentNullException.ThrowIfNull(assembly);
 
             string assemblyPath = assembly.Location;
-            PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, assemblyPath, psSnapInInfo: null, module, out cmdlets, out aliases, out providers, helpFile: out _);
-
-            // If this is an in-memory assembly, don't added it to the list of AssemblyEntries
-            // since it can't be loaded by path or name
-            if (!string.IsNullOrEmpty(assembly.Location))
-            {
-                SessionStateAssemblyEntry assemblyEntry = new SessionStateAssemblyEntry(assembly.FullName, assemblyPath);
-                this.Assemblies.Add(assemblyEntry);
-            }
+            PSSnapInHelpers.AnalyzePSSnapInAssembly(
+                assembly,
+                assemblyPath,
+                psSnapInInfo: null,
+                module,
+                out Dictionary<string, SessionStateCmdletEntry> cmdlets,
+                out Dictionary<string, List<SessionStateAliasEntry>> aliases,
+                out Dictionary<string, SessionStateProviderEntry> providers,
+                helpFile: out _);
 
             if (cmdlets != null)
             {
@@ -4100,7 +4025,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// This is the default function to use for tab expansion.
         /// </summary>
-        private static string s_tabExpansionFunctionText = @"
+        private static readonly string s_tabExpansionFunctionText = @"
 <# Options include:
      RelativeFilePaths - [bool]
          Always resolve file paths using Resolve-Path -Relative.
@@ -4112,8 +4037,10 @@ namespace System.Management.Automation.Runspaces
 #>
 
 [CmdletBinding(DefaultParameterSetName = 'ScriptInputSet')]
+[OutputType([System.Management.Automation.CommandCompletion])]
 Param(
     [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 0)]
+    [AllowEmptyString()]
     [string] $inputScript,
 
     [Parameter(ParameterSetName = 'ScriptInputSet', Position = 1)]
@@ -4151,7 +4078,7 @@ End
             <#options#>          $options)
     }
 }
-        ";
+";
 
         /// <summary>
         /// This is the default function to use for clear-host.
@@ -4186,16 +4113,16 @@ $RawUI.SetBufferContents(
             }
         }
 
-        /// <summary>
-        /// This is the default function to use for man/help. It uses
-        /// splatting to pass in the parameters.
-        /// </summary>
-        internal static string GetHelpPagingFunctionText()
+#if UNIX
+        internal static string GetExecFunctionText()
         {
-            // We used to generate the text for this function so you could add a parameter
-            // to Get-Help and not worry about adding it here.  That was a little slow at
-            // startup, so it's hard coded, with a test to make sure the parameters match.
             return @"
+Switch-Process -WithCommand $args
+";
+        }
+#endif
+
+        internal const string WindowsHelpFunctionText = @"
 <#
 .FORWARDHELPTARGETNAME Get-Help
 .FORWARDHELPCATEGORY Cmdlet
@@ -4269,14 +4196,132 @@ param(
     elseif ($help -ne $null)
     {
         # By default use more on Windows and less on Linux.
-        if ($IsWindows) {
-            $pagerCommand = 'more.com'
-            $pagerArgs = $null
+        $pagerCommand = 'more.com'
+        $pagerArgs = $null
+
+        # Respect PAGER environment variable which allows user to specify a custom pager.
+        # Ignore a pure whitespace PAGER value as that would cause the tokenizer to return 0 tokens.
+        if (![string]::IsNullOrWhitespace($env:PAGER)) {
+            if (Get-Command $env:PAGER -ErrorAction Ignore) {
+                # Entire PAGER value corresponds to a single command.
+                $pagerCommand = $env:PAGER
+                $pagerArgs = $null
+            }
+            else {
+                # PAGER value is not a valid command, check if PAGER command and arguments have been specified.
+                # Tokenize the specified $env:PAGER value. Ignore tokenizing errors since any errors may be valid
+                # argument syntax for the paging utility.
+                $errs = $null
+                $tokens = [System.Management.Automation.PSParser]::Tokenize($env:PAGER, [ref]$errs)
+
+                $customPagerCommand = $tokens[0].Content
+                if (!(Get-Command $customPagerCommand -ErrorAction Ignore)) {
+                    # Custom pager command is invalid, issue a warning.
+                    Write-Warning ""Custom-paging utility command not found. Ignoring command specified in `$env:PAGER: $env:PAGER""
+                }
+                else {
+                    # This approach will preserve all the pagers args.
+                    $pagerCommand = $customPagerCommand
+                    $pagerArgs = if ($tokens.Count -gt 1) {
+                        $env:PAGER.Substring($tokens[1].Start)
+                    }
+                    else {
+                        $null
+                    }
+                }
+            }
+        }
+
+        $pagerCommandInfo = Get-Command -Name $pagerCommand -ErrorAction Ignore
+        if ($pagerCommandInfo -eq $null) {
+            $help
+        }
+        elseif ($pagerCommandInfo.CommandType -eq 'Application') {
+            # If the pager is an application, format the output width before sending to the app.
+            $consoleWidth = [System.Math]::Max([System.Console]::WindowWidth, 20)
+
+            if ($pagerArgs) {
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand $pagerArgs
+            }
+            else {
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand
+            }
         }
         else {
-            $pagerCommand = 'less'
-            $pagerArgs = '-Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""'
+            # The pager command is a PowerShell function, script or alias, so pipe directly into it.
+            $help | & $pagerCommand $pagerArgs
         }
+    }
+";
+
+        internal const string UnixHelpFunctionText = @"
+<#
+.FORWARDHELPTARGETNAME Get-Help
+.FORWARDHELPCATEGORY Cmdlet
+#>
+[CmdletBinding(DefaultParameterSetName='AllUsersView', HelpUri='https://go.microsoft.com/fwlink/?LinkID=113316')]
+param(
+    [Parameter(Position=0, ValueFromPipelineByPropertyName=$true)]
+    [string]
+    ${Name},
+
+    [string]
+    ${Path},
+
+    [ValidateSet('Alias','Cmdlet','Provider','General','FAQ','Glossary','HelpFile','ScriptCommand','Function','Filter','ExternalScript','All','DefaultHelp','DscResource','Class','Configuration')]
+    [string[]]
+    ${Category},
+
+    [Parameter(ParameterSetName='DetailedView', Mandatory=$true)]
+    [switch]
+    ${Detailed},
+
+    [Parameter(ParameterSetName='AllUsersView')]
+    [switch]
+    ${Full},
+
+    [Parameter(ParameterSetName='Examples', Mandatory=$true)]
+    [switch]
+    ${Examples},
+
+    [Parameter(ParameterSetName='Parameters', Mandatory=$true)]
+    [string[]]
+    ${Parameter},
+
+    [string[]]
+    ${Component},
+
+    [string[]]
+    ${Functionality},
+
+    [string[]]
+    ${Role},
+
+    [Parameter(ParameterSetName='Online', Mandatory=$true)]
+    [switch]
+    ${Online})
+
+    # Display the full help topic by default but only for the AllUsersView parameter set.
+    if (($psCmdlet.ParameterSetName -eq 'AllUsersView') -and !$Full) {
+        $PSBoundParameters['Full'] = $true
+    }
+
+    # Linux need the default
+    $OutputEncoding = [System.Console]::OutputEncoding
+
+    $help = Get-Help @PSBoundParameters
+
+    # If a list of help is returned or AliasHelpInfo (because it is small), don't pipe to more
+    $psTypeNames = ($help | Select-Object -First 1).PSTypeNames
+    if ($psTypeNames -Contains 'HelpInfoShort' -Or $psTypeNames -Contains 'AliasHelpInfo')
+    {
+        $help
+    }
+    elseif ($help -ne $null)
+    {
+        # By default use more on Windows and less on Linux.
+        $pagerCommand = 'less'
+        $pagerArgs = '-s','-P','Page %db?B of %D:.\. Press h for help or q to quit\.'
 
         # Respect PAGER environment variable which allows user to specify a custom pager.
         # Ignore a pure whitespace PAGER value as that would cause the tokenizer to return 0 tokens.
@@ -4315,10 +4360,7 @@ param(
             $consoleWidth = [System.Math]::Max([System.Console]::WindowWidth, 20)
 
             if ($pagerArgs) {
-                # Supply pager arguments to an application without any PowerShell parsing of the arguments.
-                # Leave environment variable to help user debug arguments supplied in $env:PAGER.
-                $env:__PSPAGER_ARGS = $pagerArgs
-                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand --% %__PSPAGER_ARGS%
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand $pagerArgs
             }
             else {
                 $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand
@@ -4330,7 +4372,30 @@ param(
         }
     }
 ";
+
+        /// <summary>
+        /// This is the default function to use for man/help. It uses
+        /// splatting to pass in the parameters.
+        /// </summary>
+#if !UNIX
+        internal static string GetHelpPagingFunctionText()
+        {
+            // We used to generate the text for this function so you could add a parameter
+            // to Get-Help and not worry about adding it here.  That was a little slow at
+            // startup, so it's hard coded, with a test to make sure the parameters match.
+            return WindowsHelpFunctionText;
         }
+
+#else
+        internal static string GetHelpPagingFunctionText()
+        {
+            // We used to generate the text for this function so you could add a parameter
+            // to Get-Help and not worry about adding it here.  That was a little slow at
+            // startup, so it's hard coded, with a test to make sure the parameters match.
+            // This version removes the -ShowWindow parameter since it is not supported on Linux.
+            return UnixHelpFunctionText;
+        }
+#endif
 
         internal static string GetMkdirFunctionText()
         {
@@ -4435,147 +4500,191 @@ end {
         internal const bool DefaultWhatIfPreference = false;
         internal const ConfirmImpact DefaultConfirmPreference = ConfirmImpact.High;
 
-        internal static readonly SessionStateVariableEntry[] BuiltInVariables = new SessionStateVariableEntry[]
+        static InitialSessionState()
         {
-            // Engine variables that should be precreated before running profile
-            // Bug fix for Win7:2202228 Engine halts if initial command fulls up variable table
-            // Anytime a new variable that the engine depends on to run is added, this table
-            // must be updated...
-            new SessionStateVariableEntry(SpecialVariables.LastToken, null, string.Empty),
-            new SessionStateVariableEntry(SpecialVariables.FirstToken, null, string.Empty),
-            new SessionStateVariableEntry(SpecialVariables.StackTrace, null, string.Empty),
+            var builtinVariables = new List<SessionStateVariableEntry>()
+            {
+                // Engine variables that should be precreated before running profile
+                // Bug fix for Win7:2202228 Engine halts if initial command fulls up variable table
+                // Anytime a new variable that the engine depends on to run is added, this table
+                // must be updated...
+                new SessionStateVariableEntry(SpecialVariables.LastToken, null, string.Empty),
+                new SessionStateVariableEntry(SpecialVariables.FirstToken, null, string.Empty),
+                new SessionStateVariableEntry(SpecialVariables.StackTrace, null, string.Empty),
 
-            // Variable which controls the encoding for piping data to a NativeCommand
-            new SessionStateVariableEntry(
-                SpecialVariables.OutputEncoding,
-                Utils.utf8NoBom,
-                RunspaceInit.OutputEncodingDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(System.Text.Encoding))),
+                // Variable which controls the output rendering
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSStyle,
+                    PSStyle.Instance,
+                    RunspaceInit.PSStyleDescription,
+                    ScopedItemOptions.Constant),
 
-            // Preferences
-            //
-            // NTRAID#Windows Out Of Band Releases-931461-2006/03/13
-            // ArgumentTypeConverterAttribute is applied to these variables,
-            // but this only reaches the global variable.  If these are
-            // redefined in script scope etc, the type conversion
-            // is not applicable.
-            //
-            // Variables typed to ActionPreference
-            new SessionStateVariableEntry(
-                SpecialVariables.ConfirmPreference,
-                DefaultConfirmPreference,
-                RunspaceInit.ConfirmPreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ConfirmImpact))),
-            new SessionStateVariableEntry(
-                SpecialVariables.DebugPreference,
-                DefaultDebugPreference,
-                RunspaceInit.DebugPreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
-            new SessionStateVariableEntry(
-                SpecialVariables.ErrorActionPreference,
-                DefaultErrorActionPreference,
-                RunspaceInit.ErrorActionPreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
-            new SessionStateVariableEntry(
-                SpecialVariables.ProgressPreference,
-                DefaultProgressPreference,
-                RunspaceInit.ProgressPreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
-            new SessionStateVariableEntry(
-                SpecialVariables.VerbosePreference,
-                DefaultVerbosePreference,
-                RunspaceInit.VerbosePreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
-            new SessionStateVariableEntry(
-                SpecialVariables.WarningPreference,
-                DefaultWarningPreference,
-                RunspaceInit.WarningPreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
-            new SessionStateVariableEntry(
-                SpecialVariables.InformationPreference,
-                DefaultInformationPreference,
-                RunspaceInit.InformationPreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
-            new SessionStateVariableEntry(
-                SpecialVariables.ErrorView,
-                DefaultErrorView,
-                RunspaceInit.ErrorViewDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ErrorView))),
-            new SessionStateVariableEntry(
-                SpecialVariables.NestedPromptLevel,
-                0,
-                RunspaceInit.NestedPromptLevelDescription),
-            new SessionStateVariableEntry(
-                SpecialVariables.WhatIfPreference,
-                DefaultWhatIfPreference,
-                RunspaceInit.WhatIfPreferenceDescription),
-            new SessionStateVariableEntry(
-                FormatEnumerationLimit,
-                DefaultFormatEnumerationLimit,
-                RunspaceInit.FormatEnumerationLimitDescription),
+                // Variable which controls the encoding for piping data to a NativeCommand
+                new SessionStateVariableEntry(
+                    SpecialVariables.OutputEncoding,
+                    Encoding.Default,
+                    RunspaceInit.OutputEncodingDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(System.Text.Encoding))),
 
-             // variable for PSEmailServer
-            new SessionStateVariableEntry(
-                SpecialVariables.PSEmailServer,
-                string.Empty,
-                RunspaceInit.PSEmailServerDescription),
+                // Preferences
+                //
+                // NTRAID#Windows Out Of Band Releases-931461-2006/03/13
+                // ArgumentTypeConverterAttribute is applied to these variables,
+                // but this only reaches the global variable.  If these are
+                // redefined in script scope etc, the type conversion
+                // is not applicable.
+                //
+                // Variables typed to ActionPreference
+                new SessionStateVariableEntry(
+                    SpecialVariables.ConfirmPreference,
+                    DefaultConfirmPreference,
+                    RunspaceInit.ConfirmPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ConfirmImpact))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.DebugPreference,
+                    DefaultDebugPreference,
+                    RunspaceInit.DebugPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.ErrorActionPreference,
+                    DefaultErrorActionPreference,
+                    RunspaceInit.ErrorActionPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.ProgressPreference,
+                    DefaultProgressPreference,
+                    RunspaceInit.ProgressPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.VerbosePreference,
+                    DefaultVerbosePreference,
+                    RunspaceInit.VerbosePreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.WarningPreference,
+                    DefaultWarningPreference,
+                    RunspaceInit.WarningPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.InformationPreference,
+                    DefaultInformationPreference,
+                    RunspaceInit.InformationPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.ErrorView,
+                    DefaultErrorView,
+                    RunspaceInit.ErrorViewDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ErrorView))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.NestedPromptLevel,
+                    0,
+                    RunspaceInit.NestedPromptLevelDescription),
+                new SessionStateVariableEntry(
+                    SpecialVariables.WhatIfPreference,
+                    DefaultWhatIfPreference,
+                    RunspaceInit.WhatIfPreferenceDescription),
+                new SessionStateVariableEntry(
+                    FormatEnumerationLimit,
+                    DefaultFormatEnumerationLimit,
+                    RunspaceInit.FormatEnumerationLimitDescription),
 
-            // Start: Variables which control remoting behavior
-            new SessionStateVariableEntry(
-                Microsoft.PowerShell.Commands.PSRemotingBaseCmdlet.DEFAULT_SESSION_OPTION,
-                new System.Management.Automation.Remoting.PSSessionOption(),
-                RemotingErrorIdStrings.PSDefaultSessionOptionDescription,
-                ScopedItemOptions.None),
-            new SessionStateVariableEntry(
-                SpecialVariables.PSSessionConfigurationName,
-                "http://schemas.microsoft.com/powershell/Microsoft.PowerShell",
-                RemotingErrorIdStrings.PSSessionConfigurationName,
-                ScopedItemOptions.None),
-            new SessionStateVariableEntry(
-                SpecialVariables.PSSessionApplicationName,
-                "wsman",
-                RemotingErrorIdStrings.PSSessionAppName,
-                ScopedItemOptions.None),
-            // End: Variables which control remoting behavior
+                // variable for PSEmailServer
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSEmailServer,
+                    string.Empty,
+                    RunspaceInit.PSEmailServerDescription),
 
-            #region Platform
-            new SessionStateVariableEntry(
-                SpecialVariables.IsLinux,
-                Platform.IsLinux,
-                string.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                // Start: Variables which control remoting behavior
+                new SessionStateVariableEntry(
+                    Microsoft.PowerShell.Commands.PSRemotingBaseCmdlet.DEFAULT_SESSION_OPTION,
+                    new System.Management.Automation.Remoting.PSSessionOption(),
+                    RemotingErrorIdStrings.PSDefaultSessionOptionDescription,
+                    ScopedItemOptions.None),
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSSessionConfigurationName,
+                    "http://schemas.microsoft.com/powershell/Microsoft.PowerShell",
+                    RemotingErrorIdStrings.PSSessionConfigurationName,
+                    ScopedItemOptions.None),
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSSessionApplicationName,
+                    "wsman",
+                    RemotingErrorIdStrings.PSSessionAppName,
+                    ScopedItemOptions.None),
+                // End: Variables which control remoting behavior
 
-            new SessionStateVariableEntry(
-                SpecialVariables.IsMacOS,
-                Platform.IsMacOS,
-                string.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                #region Platform
+                new SessionStateVariableEntry(
+                    SpecialVariables.IsLinux,
+                    Platform.IsLinux,
+                    string.Empty,
+                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
-            new SessionStateVariableEntry(
-                SpecialVariables.IsWindows,
-                Platform.IsWindows,
-                string.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                new SessionStateVariableEntry(
+                    SpecialVariables.IsMacOS,
+                    Platform.IsMacOS,
+                    string.Empty,
+                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
-            new SessionStateVariableEntry(
-                SpecialVariables.IsCoreCLR,
-                Platform.IsCoreCLR,
-                string.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-            #endregion
-        };
+                new SessionStateVariableEntry(
+                    SpecialVariables.IsWindows,
+                    Platform.IsWindows,
+                    string.Empty,
+                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+
+                new SessionStateVariableEntry(
+                    SpecialVariables.IsCoreCLR,
+                    Platform.IsCoreCLR,
+                    string.Empty,
+                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                #endregion
+            };
+
+            builtinVariables.Add(
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSNativeCommandUseErrorActionPreference,
+                    value: false,
+                    RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(bool))));
+
+            builtinVariables.Add(
+                new SessionStateVariableEntry(
+                    SpecialVariables.NativeArgumentPassing,
+                    GetPassingStyle(),
+                    RunspaceInit.NativeCommandArgumentPassingDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
+
+            BuiltInVariables = builtinVariables.ToArray();
+        }
 
         /// <summary>
-        /// Returns a new array of alias entries everytime it's called. This
+        /// Assigns the default behavior for native argument passing.
+        /// If the system is non-Windows, we will return Standard.
+        /// Otherwise, we will return Windows.
+        /// </summary>
+        private static NativeArgumentPassingStyle GetPassingStyle()
+        {
+#if UNIX
+            return NativeArgumentPassingStyle.Standard;
+#else
+            return NativeArgumentPassingStyle.Windows;
+#endif
+        }
+
+        internal static readonly SessionStateVariableEntry[] BuiltInVariables;
+
+        /// <summary>
+        /// Returns a new array of alias entries every time it's called. This
         /// can't be static because the elements may be mutated in different session
         /// state objects so each session state must have a copy of the entry.
         /// </summary>
@@ -4593,7 +4702,7 @@ end {
                 const ScopedItemOptions ReadOnly_AllScope = ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope;
                 const ScopedItemOptions ReadOnly = ScopedItemOptions.ReadOnly;
 
-                return new SessionStateAliasEntry[] {
+                var builtInAliases = new List<SessionStateAliasEntry> {
                     new SessionStateAliasEntry("foreach", "ForEach-Object", string.Empty, ReadOnly_AllScope),
                     new SessionStateAliasEntry("%", "ForEach-Object", string.Empty, ReadOnly_AllScope),
                     new SessionStateAliasEntry("where", "Where-Object", string.Empty, ReadOnly_AllScope),
@@ -4624,7 +4733,7 @@ end {
                     new SessionStateAliasEntry("gm", "Get-Member", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("gmo", "Get-Module", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("gp", "Get-ItemProperty", string.Empty, ReadOnly),
-                    new SessionStateAliasEntry("gpv", "Get-ItemPropertyValue", string.Empty,ReadOnly),
+                    new SessionStateAliasEntry("gpv", "Get-ItemPropertyValue", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("gps", "Get-Process", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("group", "Group-Object", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("gu", "Get-Unique", string.Empty, ReadOnly),
@@ -4760,6 +4869,8 @@ end {
                     //   - do not use AllScope - this causes errors in profiles that set this somewhat commonly used alias.
                     new SessionStateAliasEntry("sls", "Select-String"),
                 };
+
+                return builtInAliases.ToArray();
             }
         }
 
@@ -4774,18 +4885,23 @@ end {
 
         internal static readonly ScriptBlock SetDriveScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(DefaultSetDriveFunctionText, isProductCode: true);
 
-        private static PSLanguageMode systemLanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
+        private static readonly PSLanguageMode systemLanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
 
         internal static readonly SessionStateFunctionEntry[] BuiltInFunctions = new SessionStateFunctionEntry[]
         {
            // Functions that don't require full language mode
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true, languageMode: systemLanguageMode),
-            // Win8: 320909. Retaining the original definition to ensure backward compatability.
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd~", "Set-Location ~", isProductCode: true, languageMode: systemLanguageMode),
+            // Win8: 320909. Retaining the original definition to ensure backward compatibility.
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Pause",
-                string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString),"'"), isProductCode: true, languageMode: systemLanguageMode),
+                string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString), "'"), isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("prompt", DefaultPromptFunctionText, isProductCode: true, languageMode: systemLanguageMode),
+
+#if UNIX
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("exec", GetExecFunctionText(), isProductCode: true, languageMode: systemLanguageMode),
+#endif
 
             // Functions that require full language mode and are trusted
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Clear-Host", GetClearHostFunctionText(), isProductCode: true, languageMode: PSLanguageMode.FullLanguage),
@@ -4841,11 +4957,10 @@ end {
             }
         }
 
-        private static PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
+        private static readonly PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
 
         internal static readonly string CoreSnapin = "Microsoft.PowerShell.Core";
         internal static readonly string CoreModule = "Microsoft.PowerShell.Core";
-        internal Collection<PSSnapInInfo> defaultSnapins = new Collection<PSSnapInInfo>();
 
         // The list of engine modules to create warnings when you try to remove them
         internal static readonly HashSet<string> EngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -4994,10 +5109,8 @@ end {
             out string helpFile)
         {
             helpFile = null;
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
+
+            ArgumentNullException.ThrowIfNull(assembly);
 
             cmdlets = null;
             aliases = null;
@@ -5244,12 +5357,12 @@ end {
                         cmdlet.SetModule(moduleInfo);
                     }
 
-                    cmdlets = cmdlets ?? new Dictionary<string, SessionStateCmdletEntry>(StringComparer.OrdinalIgnoreCase);
+                    cmdlets ??= new Dictionary<string, SessionStateCmdletEntry>(StringComparer.OrdinalIgnoreCase);
                     cmdlets.Add(cmdletName, cmdlet);
 
                     if (TryGetCustomAttribute(type, out AliasAttribute aliasAttribute))
                     {
-                        aliases = aliases ?? new Dictionary<string, List<SessionStateAliasEntry>>(StringComparer.OrdinalIgnoreCase);
+                        aliases ??= new Dictionary<string, List<SessionStateAliasEntry>>(StringComparer.OrdinalIgnoreCase);
 
                         var aliasList = new List<SessionStateAliasEntry>();
                         foreach (var alias in aliasAttribute.AliasNames)
@@ -5258,7 +5371,11 @@ end {
                             // the users of the cmdlet, instead of the author, should have control of what options applied to an alias
                             // ('ScopedItemOptions.ReadOnly' and/or 'ScopedItemOptions.AllScopes').
                             var aliasEntry = new SessionStateAliasEntry(alias, cmdletName, description: string.Empty, ScopedItemOptions.None);
-                            if (psSnapInInfo != null) { aliasEntry.SetPSSnapIn(psSnapInInfo); }
+
+                            if (psSnapInInfo != null)
+                            {
+                                aliasEntry.SetPSSnapIn(psSnapInInfo);
+                            }
 
                             if (moduleInfo != null)
                             {
@@ -5302,7 +5419,7 @@ end {
                         provider.SetModule(moduleInfo);
                     }
 
-                    providers = providers ?? new Dictionary<string, SessionStateProviderEntry>(StringComparer.OrdinalIgnoreCase);
+                    providers ??= new Dictionary<string, SessionStateProviderEntry>(StringComparer.OrdinalIgnoreCase);
                     providers.Add(providerName, provider);
 
                     s_PSSnapInTracer.WriteLine("{0} from type {1} is added as a provider. ", providerName, type.FullName);
@@ -5329,7 +5446,6 @@ end {
                 { "Enable-PSSessionConfiguration",     new SessionStateCmdletEntry("Enable-PSSessionConfiguration", typeof(EnablePSSessionConfigurationCommand), helpFile) },
                 { "Get-PSSessionCapability",           new SessionStateCmdletEntry("Get-PSSessionCapability", typeof(GetPSSessionCapabilityCommand), helpFile) },
                 { "Get-PSSessionConfiguration",        new SessionStateCmdletEntry("Get-PSSessionConfiguration", typeof(GetPSSessionConfigurationCommand), helpFile) },
-                { "New-PSSessionConfigurationFile",    new SessionStateCmdletEntry("New-PSSessionConfigurationFile", typeof(NewPSSessionConfigurationFileCommand), helpFile) },
                 { "Receive-PSSession",                 new SessionStateCmdletEntry("Receive-PSSession", typeof(ReceivePSSessionCommand), helpFile) },
                 { "Register-PSSessionConfiguration",   new SessionStateCmdletEntry("Register-PSSessionConfiguration", typeof(RegisterPSSessionConfigurationCommand), helpFile) },
                 { "Unregister-PSSessionConfiguration", new SessionStateCmdletEntry("Unregister-PSSessionConfiguration", typeof(UnregisterPSSessionConfigurationCommand), helpFile) },
@@ -5361,6 +5477,7 @@ end {
                 { "New-ModuleManifest",                new SessionStateCmdletEntry("New-ModuleManifest", typeof(NewModuleManifestCommand), helpFile) },
                 { "New-PSRoleCapabilityFile",          new SessionStateCmdletEntry("New-PSRoleCapabilityFile", typeof(NewPSRoleCapabilityFileCommand), helpFile) },
                 { "New-PSSession",                     new SessionStateCmdletEntry("New-PSSession", typeof(NewPSSessionCommand), helpFile) },
+                { "New-PSSessionConfigurationFile",    new SessionStateCmdletEntry("New-PSSessionConfigurationFile", typeof(NewPSSessionConfigurationFileCommand), helpFile) },
                 { "New-PSSessionOption",               new SessionStateCmdletEntry("New-PSSessionOption", typeof(NewPSSessionOptionCommand), helpFile) },
                 { "New-PSTransportOption",             new SessionStateCmdletEntry("New-PSTransportOption", typeof(NewPSTransportOptionCommand), helpFile) },
                 { "Out-Default",                       new SessionStateCmdletEntry("Out-Default", typeof(OutDefaultCommand), helpFile) },
@@ -5392,6 +5509,16 @@ end {
                 { "Out-LineOutput",                    new SessionStateCmdletEntry("Out-LineOutput", typeof(OutLineOutputCommand), helpFile) },
                 { "Format-Default",                    new SessionStateCmdletEntry("Format-Default", typeof(FormatDefaultCommand), helpFile) },
             };
+
+            if (ExperimentalFeature.IsEnabled("PSSubsystemPluginModel"))
+            {
+                cmdlets.Add("Get-PSSubsystem", new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile));
+            }
+
+#if UNIX
+            cmdlets.Add("Switch-Process", new SessionStateCmdletEntry("Switch-Process", typeof(SwitchProcessCommand), helpFile));
+#endif
+
             foreach (var val in cmdlets.Values)
             {
                 val.SetPSSnapIn(psSnapInInfo);
@@ -5408,6 +5535,7 @@ end {
                 { "Function",    new SessionStateProviderEntry("Function", typeof(FunctionProvider), helpFile) },
                 { "Variable",    new SessionStateProviderEntry("Variable", typeof(VariableProvider), helpFile) },
             };
+
             foreach (var val in providers.Values)
             {
                 val.SetPSSnapIn(psSnapInInfo);
@@ -5432,7 +5560,7 @@ end {
             try
             {
                 // Return types that are public, non-abstract, non-interface and non-valueType.
-                return assembly.ExportedTypes.Where(t => !t.IsAbstract && !t.IsInterface && !t.IsValueType);
+                return assembly.ExportedTypes.Where(static t => !t.IsAbstract && !t.IsInterface && !t.IsValueType);
             }
             catch (ReflectionTypeLoadException e)
             {
@@ -5475,7 +5603,7 @@ end {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool HasDefaultConstructor(Type type)
         {
-            return !(type.GetConstructor(Type.EmptyTypes) == null);
+            return type.GetConstructor(Type.EmptyTypes) is not null;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -5485,7 +5613,7 @@ end {
             return Path.GetFileName(assemblyPath).Replace(".ni.dll", ".dll") + StringLiterals.HelpFileExtension;
         }
 
-        private static PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
+        private static readonly PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
     }
 
     // Guid is {15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}

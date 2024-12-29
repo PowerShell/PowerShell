@@ -23,23 +23,35 @@ pr:
     - '/test/SSHRemoting/*'
 
 variables:
-  DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  POWERSHELL_TELEMETRY_OPTOUT: 1
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
   # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-  __SuppressAnsiEscapeSequences: 1
+  - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
+    value: 1
+  - name:  __SuppressAnsiEscapeSequences
+    value: 1
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+# Prevents auto-injection of nuget-security-analysis@0
+  - name: skipNugetSecurityAnalysis
+    value: true
+
 
 resources:
 - repo: self
   clean: true
 jobs:
 - job: SSHRemotingTests
+  pool:
+    vmImage: ubuntu-20.04
   container: mcr.microsoft.com/powershell/test-deps:ubuntu-18.04
   displayName: SSH Remoting Tests
 
   steps:
   - pwsh: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture Environment
     condition: succeededOrFailed()
 

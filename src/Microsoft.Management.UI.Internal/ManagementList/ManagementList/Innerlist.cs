@@ -93,7 +93,7 @@ namespace Microsoft.Management.UI.Internal
 
         /// <summary>
         /// Gets ItemsSource instead.
-        /// <seealso cref="InnerList"/> Does not support adding to Items.
+        /// <see cref="InnerList"/> Does not support adding to Items.
         /// </summary>
         [Browsable(false)]
         public new ItemCollection Items
@@ -191,10 +191,7 @@ namespace Microsoft.Management.UI.Internal
         /// <exception cref="ArgumentNullException">The specified value is a null reference.</exception>
         public void ApplySort(InnerListColumn column, bool shouldScrollIntoView)
         {
-            if (column == null)
-            {
-                throw new ArgumentNullException("column");
-            }
+            ArgumentNullException.ThrowIfNull(column);
 
             // NOTE : By setting the column here, it will be used
             // later to set the sorted column when the UI state
@@ -296,7 +293,7 @@ namespace Microsoft.Management.UI.Internal
 
             this.itemsSourceIsEmpty = this.ItemsSource != null && this.ItemsSource.GetEnumerator().MoveNext() == false;
 
-            // A view can be created if there is data to auto-generate columns, or columns are added programatically \\
+            // A view can be created if there is data to auto-generate columns, or columns are added programmatically \\
             bool canCreateView = (this.ItemsSource != null) &&
                 (this.itemsSourceIsEmpty == false || this.AutoGenerateColumns == false);
 
@@ -355,7 +352,7 @@ namespace Microsoft.Management.UI.Internal
         {
             base.OnKeyDown(e);
 
-            if ((Key.Left == e.Key || Key.Right == e.Key) &&
+            if ((e.Key == Key.Left || e.Key == Key.Right) &&
                 Keyboard.Modifiers == ModifierKeys.None)
             {
                 // If pressing Left or Right on a column header, move the focus \\
@@ -388,8 +385,8 @@ namespace Microsoft.Management.UI.Internal
                 throw new NotSupportedException(string.Format(
                     CultureInfo.InvariantCulture,
                    InvariantResources.ViewSetWithType,
-                   typeof(GridView).Name,
-                   typeof(InnerListGridView).Name));
+                   nameof(GridView),
+                   nameof(InnerListGridView)));
             }
 
             ((InnerList)obj).innerGrid = innerGrid;
@@ -405,7 +402,7 @@ namespace Microsoft.Management.UI.Internal
                 string.Format(
                     CultureInfo.InvariantCulture,
                     InvariantResources.NotSupportAddingToItems,
-                    typeof(InnerList).Name,
+                    nameof(InnerList),
                     ItemsControl.ItemsSourceProperty.Name));
         }
         #endregion static private methods
@@ -599,7 +596,7 @@ namespace Microsoft.Management.UI.Internal
                     propertyValue = string.Empty;
                 }
 
-                entryText.AppendFormat(CultureInfo.CurrentCulture, "{0}\t", propertyValue);
+                entryText.Append(CultureInfo.CurrentCulture, $"{propertyValue}\t");
             }
 
             return entryText.ToString();

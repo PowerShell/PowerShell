@@ -20,7 +20,6 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>The actual implementation of this class will
     /// happen in M2</remarks>
-    [Serializable]
     public class JobDefinition : ISerializable
     {
         private string _name;
@@ -172,7 +171,6 @@ namespace System.Management.Automation
     /// CommandParameterCollection adds a public
     /// constructor.The actual implementation of
     /// this class will happen in M2</remarks>
-    [Serializable]
     public class JobInvocationInfo : ISerializable
     {
         /// <summary>
@@ -238,7 +236,7 @@ namespace System.Management.Automation
         /// </summary>
         public List<CommandParameterCollection> Parameters
         {
-            get { return _parameters ?? (_parameters = new List<CommandParameterCollection>()); }
+            get { return _parameters ??= new List<CommandParameterCollection>(); }
         }
 
         /// <summary>
@@ -361,7 +359,7 @@ namespace System.Management.Automation
                 return null;
             CommandParameterCollection paramCollection = new CommandParameterCollection();
             foreach (CommandParameter paramItem in
-                parameters.Select(param => new CommandParameter(param.Key, param.Value)))
+                parameters.Select(static param => new CommandParameter(param.Key, param.Value)))
             {
                 paramCollection.Add(paramItem);
             }
@@ -415,8 +413,7 @@ namespace System.Management.Automation
                 duplicateDetector.Add(job.InstanceId, job.InstanceId);
                 foreach (Job child in job.ChildJobs)
                 {
-                    Job2 childJob = child as Job2;
-                    if (childJob == null) continue;
+                    if (!(child is Job2 childJob)) continue;
                     StoreJobIdForReuseHelper(duplicateDetector, childJob, true);
                 }
             }
@@ -432,8 +429,7 @@ namespace System.Management.Automation
             if (!recurse || job.ChildJobs == null) return;
             foreach (Job child in job.ChildJobs)
             {
-                Job2 childJob = child as Job2;
-                if (childJob == null) continue;
+                if (!(child is Job2 childJob)) continue;
                 StoreJobIdForReuseHelper(duplicateDetector, childJob, recurse);
             }
         }

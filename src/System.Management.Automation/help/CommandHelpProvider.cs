@@ -48,7 +48,7 @@ namespace System.Management.Automation
             s_engineModuleHelpFileCache.Add("Microsoft.WSMan.Management", "Microsoft.Wsman.Management.dll-Help.xml");
         }
 
-        private static Dictionary<string, string> s_engineModuleHelpFileCache = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> s_engineModuleHelpFileCache = new Dictionary<string, string>();
 
         private readonly ExecutionContext _context;
 
@@ -84,7 +84,7 @@ namespace System.Management.Automation
 
         #region Help Provider Interface
 
-        private void GetModulePaths(CommandInfo commandInfo, out string moduleName, out string moduleDir, out string nestedModulePath)
+        private static void GetModulePaths(CommandInfo commandInfo, out string moduleName, out string moduleDir, out string nestedModulePath)
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
 
@@ -132,7 +132,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string GetHelpName(CommandInfo commandInfo)
+        private static string GetHelpName(CommandInfo commandInfo)
         {
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo != null");
 
@@ -765,9 +765,7 @@ namespace System.Management.Automation
             if (helpInfo == null)
                 return;
 
-            MamlCommandHelpInfo commandHelpInfo = helpInfo as MamlCommandHelpInfo;
-
-            if (commandHelpInfo == null)
+            if (!(helpInfo is MamlCommandHelpInfo commandHelpInfo))
                 return;
 
             commandHelpInfo.AddUserDefinedData(userDefinedHelpData);
@@ -881,7 +879,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used to retrieve helpinfo by removing the prefix from the noun portion of a command name.
         /// Import-Module and Import-PSSession supports changing the name of a command
-        /// by suppling a custom prefix. In those cases, the help content is stored by using the
+        /// by supplying a custom prefix. In those cases, the help content is stored by using the
         /// original command name (without prefix) as the key.
         ///
         /// This method retrieves the help content by suppressing the prefix and then making a copy
@@ -952,15 +950,21 @@ namespace System.Management.Automation
 
             // Add snapin qualified type name for this command at the top..
             // this will enable customizations of the help object.
-            helpInfo.FullHelp.TypeNames.Insert(0, string.Format(CultureInfo.InvariantCulture,
-                "MamlCommandHelpInfo#{0}#{1}", mshSnapInId, cmdletName));
+            helpInfo.FullHelp.TypeNames.Insert(
+                index: 0,
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"MamlCommandHelpInfo#{mshSnapInId}#{cmdletName}"));
 
             if (!string.IsNullOrEmpty(mshSnapInId))
             {
                 key = mshSnapInId + "\\" + key;
                 // Add snapin name to the typenames of this object
-                helpInfo.FullHelp.TypeNames.Insert(1, string.Format(CultureInfo.InvariantCulture,
-                    "MamlCommandHelpInfo#{0}", mshSnapInId));
+                helpInfo.FullHelp.TypeNames.Insert(
+                    index: 1,
+                    string.Create(
+                        CultureInfo.InvariantCulture,
+                        $"MamlCommandHelpInfo#{mshSnapInId}"));
             }
 
             AddCache(key, helpInfo);
@@ -1024,7 +1028,7 @@ namespace System.Management.Automation
             {
                 if (decoratedSearch)
                 {
-                    if (target.IndexOf(StringLiterals.CommandVerbNounSeparator) >= 0)
+                    if (target.Contains(StringLiterals.CommandVerbNounSeparator))
                     {
                         patternList.Add(target + "*");
                     }
@@ -1077,10 +1081,7 @@ namespace System.Management.Automation
                         {
                             // this command is not visible to the user (from CommandOrigin) so
                             // dont show help topic for it.
-                            if (!hiddenCommands.Contains(helpName))
-                            {
-                                hiddenCommands.Add(helpName);
-                            }
+                            hiddenCommands.Add(helpName);
 
                             continue;
                         }
@@ -1173,12 +1174,12 @@ namespace System.Management.Automation
             if (helpRequest == null)
                 return true;
 
-            if (0 == (helpRequest.HelpCategory & commandInfo.HelpCategory))
+            if ((helpRequest.HelpCategory & commandInfo.HelpCategory) == 0)
             {
                 return false;
             }
 
-            if (!(helpInfo is BaseCommandHelpInfo))
+            if (helpInfo is not BaseCommandHelpInfo)
                 return false;
 
             if (!Match(helpInfo.Component, helpRequest.Component))
@@ -1244,7 +1245,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Process helpInfo forwarded over from other other providers, specificly AliasHelpProvider.
+        /// Process helpInfo forwarded over from other providers, specificly AliasHelpProvider.
         /// This can return more than 1 helpinfo object.
         /// </summary>
         /// <param name="helpInfo">HelpInfo that is forwarded over.</param>
@@ -1252,7 +1253,7 @@ namespace System.Management.Automation
         /// <returns>The result helpInfo objects after processing.</returns>
         internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
-            HelpCategory categoriesHandled = (HelpCategory.Alias
+            const HelpCategory categoriesHandled = (HelpCategory.Alias
                 | HelpCategory.ExternalScript | HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand);
 
             if ((helpInfo.HelpCategory & categoriesHandled) != 0)
@@ -1277,7 +1278,7 @@ namespace System.Management.Automation
                     }
                     catch (CommandNotFoundException)
                     {
-                        // ignore errors for aliases pointing to non-existant commands
+                        // ignore errors for aliases pointing to non-existent commands
                     }
                 }
 
@@ -1361,7 +1362,7 @@ namespace System.Management.Automation
     /// Legally, user-defined Help Data should be within the same file as the corresponding
     /// commandHelp and it should appear after the commandHelp.
     /// </summary>
-    internal class UserDefinedHelpData
+    internal sealed class UserDefinedHelpData
     {
         private UserDefinedHelpData()
         {

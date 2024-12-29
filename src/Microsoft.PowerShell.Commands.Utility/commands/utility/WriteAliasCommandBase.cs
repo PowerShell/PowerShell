@@ -1,10 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Management.Automation;
-
-using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -64,6 +61,7 @@ namespace Microsoft.PowerShell.Commands
         /// The scope parameter for the command determines which scope the alias is set in.
         /// </summary>
         [Parameter]
+        [ArgumentCompleter(typeof(ScopeArgumentCompleter))]
         public string Scope { get; set; }
 
         /// <summary>

@@ -316,10 +316,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (context == null)
-            {
-                context = new CmdletProviderContext(this.ExecutionContext);
-            }
+            context ??= new CmdletProviderContext(this.ExecutionContext);
 
             if (CurrentDrive != null)
             {
@@ -799,7 +796,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A stack of the most recently pushed locations.
         /// </summary>
-        private Dictionary<string, Stack<PathInfo>> _workingLocationStack;
+        private readonly Dictionary<string, Stack<PathInfo>> _workingLocationStack;
 
         private const string startingDefaultStackName = "default";
         /// <summary>
@@ -1115,4 +1112,3 @@ namespace System.Management.Automation
         public SessionState SessionState { get; internal set; }
     }
 }
-

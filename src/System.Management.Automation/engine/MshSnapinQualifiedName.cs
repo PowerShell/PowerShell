@@ -10,7 +10,7 @@ namespace System.Management.Automation
     /// <summary>
     /// A class representing a name that is qualified by the PSSnapin name.
     /// </summary>
-    internal class PSSnapinQualifiedName
+    internal sealed class PSSnapinQualifiedName
     {
         private PSSnapinQualifiedName(string[] splitName)
         {
@@ -68,7 +68,7 @@ namespace System.Management.Automation
         {
             if (name == null)
                 return null;
-            string[] splitName = name.Split(Utils.Separators.Backslash);
+            string[] splitName = name.Split('\\');
             if (splitName.Length == 0 || splitName.Length > 2)
                 return null;
             var result = new PSSnapinQualifiedName(splitName);
@@ -132,4 +132,3 @@ namespace System.Management.Automation
         }
     }
 }
-

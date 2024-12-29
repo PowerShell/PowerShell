@@ -20,7 +20,6 @@ namespace System.Management.Automation.Runspaces
     ///     1. PSSnapin name
     ///     2. Inner exception.
     /// -->
-    [Serializable]
     public class PSConsoleLoadException : SystemException, IContainsErrorRecord
     {
         /// <summary>
@@ -78,7 +77,7 @@ namespace System.Management.Automation.Runspaces
             {
                 foreach (PSSnapInException e in PSSnapInExceptions)
                 {
-                    sb.Append("\n");
+                    sb.Append('\n');
                     sb.Append(e.Message);
                 }
             }
@@ -86,7 +85,7 @@ namespace System.Management.Automation.Runspaces
             _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(this), "ConsoleLoadFailure", ErrorCategory.ResourceUnavailable, null);
         }
 
-        private Collection<PSSnapInException> _PSSnapInExceptions = new Collection<PSSnapInException>();
+        private readonly Collection<PSSnapInException> _PSSnapInExceptions = new Collection<PSSnapInException>();
 
         internal Collection<PSSnapInException> PSSnapInExceptions
         {
@@ -115,4 +114,3 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-

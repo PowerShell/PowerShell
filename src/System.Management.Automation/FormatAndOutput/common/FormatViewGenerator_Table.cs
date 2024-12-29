@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // make sure we do not have too many properties
 
             // NOTE: this is an arbitrary number, chosen to be a sensitive default
-            int nMax = 10;
+            const int nMax = 10;
 
             if (activeAssociationList.Count > nMax)
             {
@@ -172,7 +172,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     ci.width = colHeader.width;
                     ci.alignment = colHeader.alignment;
                     if (colHeader.label != null)
+                    {
+                        if (colHeader.label.text != string.Empty)
+                        {
+                            ci.HeaderMatchesProperty = so.Properties[colHeader.label.text] is not null;
+                        }
+
                         ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(colHeader.label);
+                    }
                 }
 
                 if (ci.alignment == TextAlignment.Undefined)
@@ -187,18 +194,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         token = rowItem.formatTokenList[0];
                     if (token != null)
                     {
-                        FieldPropertyToken fpt = token as FieldPropertyToken;
-                        if (fpt != null)
+                        if (token is FieldPropertyToken fpt)
                         {
                             ci.label = fpt.expression.expressionValue;
                         }
-                        else
+                        else if (token is TextToken tt)
                         {
-                            TextToken tt = token as TextToken;
-                            if (tt != null)
-                            {
-                                ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
-                            }
+                            ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                         }
                     }
                     else
@@ -219,6 +221,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             TableHeaderInfo thi = new TableHeaderInfo();
 
             thi.hideHeader = this.HideHeaders;
+            thi.repeatHeader = this.RepeatHeader;
 
             for (int k = 0; k < this.activeAssociationList.Count; k++)
             {
@@ -233,10 +236,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ci.propertyName = (string)key;
                 }
 
-                if (ci.propertyName == null)
-                {
-                    ci.propertyName = this.activeAssociationList[k].ResolvedExpression.ToString();
-                }
+                ci.propertyName ??= this.activeAssociationList[k].ResolvedExpression.ToString();
 
                 // set the width of the table
                 if (a.OriginatingParameter != null)
@@ -391,10 +391,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (matchingRowDefinition == null)
-            {
-                matchingRowDefinition = match.BestMatch as TableRowDefinition;
-            }
+            matchingRowDefinition ??= match.BestMatch as TableRowDefinition;
 
             if (matchingRowDefinition == null)
             {
@@ -412,10 +409,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                     }
 
-                    if (matchingRowDefinition == null)
-                    {
-                        matchingRowDefinition = match.BestMatch as TableRowDefinition;
-                    }
+                    matchingRowDefinition ??= match.BestMatch as TableRowDefinition;
                 }
             }
 
@@ -483,6 +477,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     directive = activeAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
 
+                if (directive is null)
+                {
+                    directive = new FieldFormattingDirective();
+                    directive.isTable = true;
+                }
+
                 fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, this.activeAssociationList[k].ResolvedExpression, directive);
                 tre.formatPropertyFieldList.Add(fpf);
             }
@@ -491,4 +491,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 }
-

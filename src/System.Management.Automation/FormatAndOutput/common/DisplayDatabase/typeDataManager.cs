@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal object updateDatabaseLock = new object();
         // this is used to throw errors when updating a shared TypeTable.
         internal bool isShared;
-        private List<string> _formatFileList;
+        private readonly List<string> _formatFileList;
 
         internal bool DisableFormatTableUpdates { get; set; }
 
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
         /// </param>
-        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentNullException"/>
         /// <exception cref="ArgumentException">
         /// 1. FormatFile is not rooted.
         /// </exception>
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             this.isShared = isShared;
 
             // check to see if there are any errors loading the format files
-            if (errors.Count > 0)
+            if (!errors.IsEmpty)
             {
                 throw new FormatTableLoadException(errors);
             }
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             LoadFromFile(filesToLoad, expressionFactory, false, null, null, false, out logEntries);
 
             // check to see if there are any errors loading the format files
-            if (errors.Count > 0)
+            if (!errors.IsEmpty)
             {
                 throw new FormatTableLoadException(errors);
             }
@@ -409,7 +409,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                if (etwEnabled) RunspaceEventSource.Log.ProcessFormatFileStart(file.FullPath);
+                if (etwEnabled)
+                {
+                    RunspaceEventSource.Log.ProcessFormatFileStart(file.FullPath);
+                }
 
                 if (!ProcessBuiltin(file, db, expressionFactory, logEntries, ref success))
                 {
@@ -428,7 +431,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             {
                                 string mshsnapinMessage = StringUtil.Format(FormatAndOutXmlLoadingStrings.MshSnapinQualifiedError, info.psSnapinName, entry.message);
                                 info.errors.Add(mshsnapinMessage);
-                                if (entry.failToLoadFile) { file.FailToLoadFile = true; }
+                                if (entry.failToLoadFile)
+                                {
+                                    file.FailToLoadFile = true;
+                                }
                             }
                         }
                         // now aggregate the entries...
@@ -436,7 +442,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                if (etwEnabled) RunspaceEventSource.Log.ProcessFormatFileStop(file.FullPath);
+                if (etwEnabled)
+                {
+                    RunspaceEventSource.Log.ProcessFormatFileStop(file.FullPath);
+                }
             }
 
             // add any sensible defaults to the database
@@ -533,7 +542,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Helper to to add any pre-load intrinsics to the db.
+        /// Helper to add any pre-load intrinsics to the db.
         /// </summary>
         /// <param name="db">Db being initialized.</param>
         private static void AddPreLoadIntrinsics(TypeInfoDataBase db)
@@ -542,7 +551,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Helper to to add any post-load intrinsics to the db.
+        /// Helper to add any post-load intrinsics to the db.
         /// </summary>
         /// <param name="db">Db being initialized.</param>
         private static void AddPostLoadIntrinsics(TypeInfoDataBase db)
@@ -559,4 +568,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 }
-

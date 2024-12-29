@@ -4,8 +4,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-using System.Runtime.ConstrainedExecution;
-
 namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 {
     internal sealed class PdhSafeDataSourceHandle : SafeHandle
@@ -20,7 +18,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
         }
 
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
         {
             return (PdhHelper.PdhCloseLog(handle, 0) == 0);
@@ -39,7 +36,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
         }
 
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
         {
             return (PdhHelper.PdhCloseQuery(handle) == 0);
@@ -58,7 +54,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
         }
 
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
         {
             return (PdhHelper.PdhCloseLog(handle, 0) == 0);

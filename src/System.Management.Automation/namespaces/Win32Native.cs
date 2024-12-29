@@ -16,16 +16,10 @@ namespace Microsoft.PowerShell.Commands.Internal
 {
     using System;
     using System.Security;
-    using System.Text;
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
     using System.Management.Automation;
     using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.ConstrainedExecution;
-
-    using BOOL = System.Int32;
-    using DWORD = System.UInt32;
-    using ULONG = System.UInt32;
 
     /**
      * Win32 encapsulation for MSCORLIB.
@@ -33,7 +27,7 @@ namespace Microsoft.PowerShell.Commands.Internal
     // Remove the default demands for all N/Direct methods with this
     // global declaration on the class.
     //
-    [SuppressUnmanagedCodeSecurityAttribute()]
+    [SuppressUnmanagedCodeSecurityAttribute]
     internal static class Win32Native
     {
         #region Integer Const
@@ -146,7 +140,6 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]
         [ResourceExposure(ResourceScope.Machine)]
-        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CloseHandle(IntPtr handle);

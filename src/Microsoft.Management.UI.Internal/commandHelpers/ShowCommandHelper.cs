@@ -21,7 +21,7 @@ using Microsoft.PowerShell.Commands.ShowCommandExtension;
 namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 {
     /// <summary>
-    /// Implements thw WPF window part of the show-command cmdlet.
+    /// Implements the WPF window part of the show-command cmdlet.
     /// </summary>
     internal class ShowCommandHelper : IDisposable
     {
@@ -289,7 +289,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Finalizes an instance of the ShowCommandHelper class.
+        /// Finalizes an instance of the <see cref="ShowCommandHelper"/> class.
         /// </summary>
         ~ShowCommandHelper()
         {
@@ -490,37 +490,6 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Gets the command to be run to in order to import a module and refresh the command data.
-        /// </summary>
-        /// <param name="module">Module we want to import.</param>
-        /// <param name="isRemoteRunspace">Boolean flag determining whether Show-Command is queried in the local or remote runspace scenario.</param>
-        /// <param name="isFirstChance">Boolean flag to indicate that it is the second attempt to query Show-Command data.</param>
-        /// <returns>The command to be run to in order to import a module and refresh the command data.</returns>
-        internal static string GetImportModuleCommand(string module, bool isRemoteRunspace = false, bool isFirstChance = true)
-        {
-            string scriptBase = "Import-Module " + ShowCommandHelper.SingleQuote(module);
-
-            if (isRemoteRunspace)
-            {
-                if (isFirstChance)
-                {
-                    scriptBase += ";@(Get-Command " + ShowCommandHelper.CommandTypeSegment + @" -ShowCommandInfo )";
-                }
-                else
-                {
-                    scriptBase += GetSerializedCommandScript();
-                }
-            }
-            else
-            {
-                scriptBase += ";@(Get-Command " + ShowCommandHelper.CommandTypeSegment + ")";
-            }
-
-            scriptBase += ShowCommandHelper.GetGetModuleSuffix();
-            return scriptBase;
-        }
-
-        /// <summary>
         /// Gets the command to be run in order to show help for a command.
         /// </summary>
         /// <param name="command">Command we want to get help from.</param>
@@ -672,7 +641,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets an error message to be displayed when failed to import a module.
         /// </summary>
-        /// <param name="command">Command belongiong to the module to import.</param>
+        /// <param name="command">Command belonging to the module to import.</param>
         /// <param name="module">Module to import.</param>
         /// <param name="error">Error importing the module.</param>
         /// <returns>An error message to be displayed when failed to import a module.</returns>
@@ -750,7 +719,7 @@ Function PSGetSerializedShowCommandInfo
 
             try
             {
-                return property.GetValue(obj, new object[] { });
+                return property.GetValue(obj, Array.Empty<object>());
             }
             catch (ArgumentException)
             {
@@ -794,7 +763,7 @@ Function PSGetSerializedShowCommandInfo
 
             try
             {
-                property.SetValue(obj, value, new object[] { });
+                property.SetValue(obj, value, Array.Empty<object>());
             }
             catch (ArgumentException)
             {
@@ -1000,7 +969,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate (object ignored)
+                        delegate(object ignored)
                         {
                             this.allModulesViewModel = ShowCommandHelper.GetNewAllModulesViewModel(
                                 this.allModulesViewModel,
@@ -1050,7 +1019,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate (object ignored)
+                        delegate(object ignored)
                         {
                             HelpWindow help = new HelpWindow(getHelpResults[0]);
                             help.Owner = this.window;
@@ -1200,7 +1169,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Sets a succesfull dialog result and then closes the window.
+        /// Sets a successful dialog result and then closes the window.
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>

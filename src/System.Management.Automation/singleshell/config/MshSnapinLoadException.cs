@@ -19,7 +19,6 @@ namespace System.Management.Automation.Runspaces
     ///     1. PSSnapin name
     ///     2. Inner exception.
     /// -->
-    [Serializable]
     public class PSSnapInException : RuntimeException
     {
         /// <summary>
@@ -116,7 +115,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private bool _warning = false;
+        private readonly bool _warning = false;
 
         private ErrorRecord _errorRecord;
         private bool _isErrorRecordOriginallyNull;
@@ -146,8 +145,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private string _PSSnapin = string.Empty;
-        private string _reason = string.Empty;
+        private readonly string _PSSnapin = string.Empty;
+        private readonly string _reason = string.Empty;
 
         /// <summary>
         /// Gets message for this exception.
@@ -172,36 +171,13 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected PSSnapInException(SerializationInfo info,
                                         StreamingContext context)
-            : base(info, context)
         {
-            _PSSnapin = info.GetString("PSSnapIn");
-            _reason = info.GetString("Reason");
-
-            CreateErrorRecord();
-        }
-
-        /// <summary>
-        /// Get object data from serialization information.
-        /// </summary>
-        /// <param name="info">Serialization information.</param>
-        /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-
-            info.AddValue("PSSnapIn", _PSSnapin);
-            info.AddValue("Reason", _reason);
+            throw new NotSupportedException();
         }
 
         #endregion Serialization
     }
 }
-

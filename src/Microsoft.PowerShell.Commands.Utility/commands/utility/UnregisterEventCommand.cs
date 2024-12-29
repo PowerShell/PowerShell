@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Flag that determines if we should include subscriptions used to support other subscriptions.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force { get; set; }
 
         #endregion parameters
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier)) &&
                (!_foundMatch))
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new ArgumentException(
                         string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
             else if ((SubscriptionId >= 0) &&
                (!_foundMatch))
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new ArgumentException(
                         string.Format(
                             System.Globalization.CultureInfo.CurrentCulture,

@@ -7,7 +7,7 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The command information for MSH scripts that are directly executable by MSH.
+    /// The command information for scripts that are directly executable by PowerShell.
     /// </summary>
     public class ScriptInfo : CommandInfo, IScriptCommandInfo
     {
@@ -68,7 +68,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the ScriptBlock that represents the implementation of the script.
         /// </summary>
-        public ScriptBlock ScriptBlock { get; private set; }
+        public ScriptBlock ScriptBlock { get; }
 
         // Path
 
@@ -116,9 +116,8 @@ namespace System.Management.Automation
         {
             get
             {
-                return _commandMetadata ??
-                       (_commandMetadata =
-                        new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
+                return _commandMetadata ??=
+                    new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS());
             }
         }
 

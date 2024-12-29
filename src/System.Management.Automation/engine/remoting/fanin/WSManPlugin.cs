@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 // ----------------------------------------------------------------------
 //  Contents:  Entry points for managed PowerShell plugin worker used to
 //  host powershell in a WSMan service.
@@ -127,9 +128,9 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Members
 
-        private Dictionary<IntPtr, WSManPluginShellSession> _activeShellSessions;
-        private object _syncObject;
-        private static Dictionary<IntPtr, WSManPluginInstance> s_activePlugins = new Dictionary<IntPtr, WSManPluginInstance>();
+        private readonly Dictionary<IntPtr, WSManPluginShellSession> _activeShellSessions;
+        private readonly object _syncObject;
+        private static readonly Dictionary<IntPtr, WSManPluginInstance> s_activePlugins = new Dictionary<IntPtr, WSManPluginInstance>();
 
         /// <summary>
         /// Enables dependency injection after the static constructor is called.
@@ -246,7 +247,7 @@ namespace System.Management.Automation.Remoting
                 "CreateShell: NULL checks being performed",
                 string.Empty);
 
-            if ((0 == startupInfo.inputStreamSet.streamIDsCount) || (0 == startupInfo.outputStreamSet.streamIDsCount))
+            if ((startupInfo.inputStreamSet.streamIDsCount == 0) || (startupInfo.outputStreamSet.streamIDsCount == 0))
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -305,10 +306,16 @@ namespace System.Management.Automation.Remoting
                     PSOpcode.Connect, PSTask.None,
                     PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                     requestDetails.ToString(), senderInfo.UserInfo.Identity.Name, requestDetails.resourceUri);
-                    ServerRemoteSession remoteShellSession = ServerRemoteSession.CreateServerRemoteSession(senderInfo,
-                    requestDetails.resourceUri,
-                    extraInfo,
-                    serverTransportMgr);
+
+                ServerRemoteSession remoteShellSession = ServerRemoteSession.CreateServerRemoteSession(
+                    senderInfo: senderInfo,
+                    configurationProviderId: requestDetails.resourceUri,
+                    initializationParameters: extraInfo,
+                    transportManager: serverTransportMgr,
+                    initialCommand: null,       // Not used by WinRM endpoint.
+                    configurationName: null,    // Not used by WinRM endpoint, which has its own configuration.
+                    configurationFile: null,    // Same.
+                    initialLocation: null);     // Same.
 
                 if (remoteShellSession == null)
                 {
@@ -332,7 +339,7 @@ namespace System.Management.Automation.Remoting
 
                 if (inboundShellInformation != null)
                 {
-                    if ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT != inboundShellInformation.Type)
+                    if (inboundShellInformation.Type != (uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT)
                     {
                         // only text data is supported
                         ReportOperationComplete(
@@ -360,7 +367,7 @@ namespace System.Management.Automation.Remoting
                     requestDetails.ToString(), requestDetails.ToString());
                 result = wsmanPinvokeStatic.WSManPluginReportContext(requestDetails.unmanagedHandle, 0, requestDetails.unmanagedHandle);
 
-                if (WSManPluginConstants.ExitCodeSuccess != result)
+                if (result != WSManPluginConstants.ExitCodeSuccess)
                 {
                     ReportOperationComplete(
                         requestDetails,
@@ -562,7 +569,7 @@ namespace System.Management.Automation.Remoting
             lock (_syncObject)
             {
                 IntPtr key = newShellSession.creationRequestDetails.unmanagedHandle;
-                Dbg.Assert(IntPtr.Zero != key, "NULL handles should not be provided");
+                Dbg.Assert(key != IntPtr.Zero, "NULL handles should not be provided");
 
                 if (!_activeShellSessions.ContainsKey(key))
                 {
@@ -573,7 +580,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if (-1 != count)
+            if (count != -1)
             {
                 // Raise session count changed event
                 WSManServerChannelEvents.RaiseActiveSessionsChangedEvent(new ActiveSessionsChangedEventArgs(count));
@@ -613,7 +620,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if (-1 != count)
+            if (count != -1)
             {
                 // Raise session count changed event
                 WSManServerChannelEvents.RaiseActiveSessionsChangedEvent(new ActiveSessionsChangedEventArgs(count));
@@ -639,7 +646,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="shellContext"></param>
         /// <param name="inputFunctionName"></param>
         /// <returns></returns>
-        private bool validateIncomingContexts(
+        private static bool validateIncomingContexts(
             WSManNativeApi.WSManPluginRequest requestDetails,
             IntPtr shellContext,
             string inputFunctionName)
@@ -661,7 +668,7 @@ namespace System.Management.Automation.Remoting
                 return false;
             }
 
-            if (IntPtr.Zero == shellContext)
+            if (shellContext == IntPtr.Zero)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -870,7 +877,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if (IntPtr.Zero == commandContext)
+            if (commandContext == IntPtr.Zero)
             {
                 mgdShellSession.ExecuteConnect(requestDetails, flags, inboundConnectInformation);
                 return;
@@ -963,7 +970,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if (IntPtr.Zero == commandContext)
+            if (commandContext == IntPtr.Zero)
             {
                 // the data is destined for shell (runspace) session. so let shell handle it
                 mgdShellSession.SendOneItemToSession(requestDetails, flags, stream, inboundData);
@@ -1074,7 +1081,7 @@ namespace System.Management.Automation.Remoting
                 "EnableShellOrCommandToSendDataToClient: Instruction destined to shell or for command",
                 string.Empty);
 
-            if (IntPtr.Zero == commandContext)
+            if (commandContext == IntPtr.Zero)
             {
                 // the instruction is destined for shell (runspace) session. so let shell handle it
                 if (mgdShellSession.EnableSessionToSendDataToClient(requestDetails, flags, streamSet, ctxtToReport))
@@ -1110,7 +1117,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="senderDetails"></param>
         /// <returns></returns>
-        private PSSenderInfo GetPSSenderInfo(
+        private static PSSenderInfo GetPSSenderInfo(
             WSManNativeApi.WSManSenderDetails senderDetails)
         {
             // senderDetails will not be null.
@@ -1167,7 +1174,7 @@ namespace System.Management.Automation.Remoting
         /// environment variable, which is set in the WSMan layer for Virtual or RunAs accounts.
         /// </summary>
         /// <returns>ClientToken IntPtr.</returns>
-        private IntPtr GetRunAsClientToken()
+        private static IntPtr GetRunAsClientToken()
         {
             string clientTokenStr = System.Environment.GetEnvironmentVariable(WSManRunAsClientTokenName);
             if (clientTokenStr != null)
@@ -1210,7 +1217,7 @@ namespace System.Management.Automation.Remoting
                     isProtocolVersionDeclared = true;
                 }
 
-                if (0 == string.Compare(option.name, 0, WSManPluginConstants.PowerShellOptionPrefix, 0, WSManPluginConstants.PowerShellOptionPrefix.Length, StringComparison.Ordinal))
+                if (string.Compare(option.name, 0, WSManPluginConstants.PowerShellOptionPrefix, 0, WSManPluginConstants.PowerShellOptionPrefix.Length, StringComparison.Ordinal) == 0)
                 {
                     if (option.mustComply)
                     {
@@ -1575,7 +1582,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest request = WSManNativeApi.WSManPluginRequest.UnMarshal(requestDetails);
 
             // Close Command
-            if (IntPtr.Zero != commandContext)
+            if (commandContext != IntPtr.Zero)
             {
                 if (!string.Equals(code, WSManPluginConstants.CtrlCSignal, StringComparison.Ordinal))
                 {
@@ -1639,7 +1646,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if (IntPtr.Zero == context.commandContext)
+            if (context.commandContext == IntPtr.Zero)
             {
                 // this is targeted at shell
                 pluginToUse.CloseShellOperation(context);
@@ -1784,7 +1791,7 @@ namespace System.Management.Automation.Remoting
                 WSManPluginConstants.WSManPluginParamsGetRequestedLocale,
                 outputStruct);
             // ref nativeLocaleData);
-            bool retrievingLocaleSucceeded = (0 == hResult);
+            bool retrievingLocaleSucceeded = (hResult == 0);
             WSManNativeApi.WSManData_UnToMan localeData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeLocaleData
 
             // IntPtr nativeDataLocaleData = IntPtr.Zero;
@@ -1793,13 +1800,13 @@ namespace System.Management.Automation.Remoting
                 WSManPluginConstants.WSManPluginParamsGetRequestedDataLocale,
                 outputStruct);
             // ref nativeDataLocaleData);
-            bool retrievingDataLocaleSucceeded = ((int)WSManPluginErrorCodes.NoError == hResult);
+            bool retrievingDataLocaleSucceeded = (hResult == (int)WSManPluginErrorCodes.NoError);
             WSManNativeApi.WSManData_UnToMan dataLocaleData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeDataLocaleData
 
             // Set the UI Culture
             try
             {
-                if (retrievingLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == localeData.Type))
+                if (retrievingLocaleSucceeded && (localeData.Type == (uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT))
                 {
                     CultureInfo uiCultureToUse = new CultureInfo(localeData.Text);
                     Thread.CurrentThread.CurrentUICulture = uiCultureToUse;
@@ -1813,7 +1820,7 @@ namespace System.Management.Automation.Remoting
             // Set the Culture
             try
             {
-                if (retrievingDataLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == dataLocaleData.Type))
+                if (retrievingDataLocaleSucceeded && (dataLocaleData.Type == (uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT))
                 {
                     CultureInfo cultureToUse = new CultureInfo(dataLocaleData.Text);
                     Thread.CurrentThread.CurrentCulture = cultureToUse;
@@ -1882,7 +1889,7 @@ namespace System.Management.Automation.Remoting
             WSManPluginErrorCodes errorCode)
         {
             if (requestDetails != null &&
-                IntPtr.Zero != requestDetails.unmanagedHandle)
+                requestDetails.unmanagedHandle != IntPtr.Zero)
             {
                 wsmanPinvokeStatic.WSManPluginOperationComplete(
                     requestDetails.unmanagedHandle,
@@ -1905,7 +1912,7 @@ namespace System.Management.Automation.Remoting
             WSManPluginErrorCodes errorCode,
             string errorMessage = "")
         {
-            if (IntPtr.Zero == requestDetails)
+            if (requestDetails == IntPtr.Zero)
             {
                 // cannot report if requestDetails is null.
                 return;

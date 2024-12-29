@@ -95,14 +95,18 @@ install(){
                 else
                     DistroBasedOn='redhat'
                 fi
-            elif [ -f /etc/SuSE-release ] ; then
-                DistroBasedOn='suse'
-                PSUEDONAME=$( (tr "\n" ' '| sed s/VERSION.*//) < /etc/SuSE-release )
-                REV=$( (grep 'VERSION' | sed s/.*=\ //) < /etc/SuSE-release )
+            elif [ -f /etc/mariner-release ] ; then
+                DistroBasedOn='mariner'
+                PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mariner-release )
+                REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mariner-release )
             elif [ -f /etc/mandrake-release ] ; then
                 DistroBasedOn='mandrake'
                 PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mandrake-release )
                 REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/mandrake-release )
+            elif [ -f /etc/azurelinux-release ] ; then
+                DistroBasedOn='mariner'
+                PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/azurelinux-release )
+                REV=$( (sed s/.*release\ // | sed s/\ .*//) < /etc/azurelinux-release )
             elif [ -f /etc/debian_version ] ; then
                 DistroBasedOn='debian'
                 DIST=$(. /etc/os-release && echo $NAME)
@@ -117,6 +121,11 @@ install(){
             if [ -f /etc/UnitedLinux-release ] ; then
                 DIST="${DIST}[$( (tr "\n" ' ' | sed s/VERSION.*//) < /etc/UnitedLinux-release )]"
             fi
+			osname=$(source /etc/os-release; echo $PRETTY_NAME)
+			if [[ $osname = *SUSE* ]]; then
+				DistroBasedOn='suse'
+				REV=$(source /etc/os-release; echo $VERSION_ID)
+			fi			
             OS=$(lowercase $OS)
             DistroBasedOn=$(lowercase $DistroBasedOn)
         fi
@@ -134,7 +143,7 @@ install(){
 
 
     case "$DistroBasedOn" in
-        redhat|debian|osx|suse|amazonlinux|gentoo)
+        redhat|debian|osx|suse|amazonlinux|gentoo|mariner)
             echo "Configuring PowerShell Environment for: $DistroBasedOn $DIST $REV"
             if [ -f "$SCRIPTFOLDER/installpsh-$DistroBasedOn.sh" ]; then
                 #Script files were copied local - use them

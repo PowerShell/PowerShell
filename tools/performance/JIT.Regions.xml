@@ -3,8 +3,8 @@
 <!-- Created by Alois Kraus. Free for public use.
    The JIT time is determined by the MethodJitStart event and the directly on this thread following MethodLoadUnload event which signals when the JIT compilation for this
    method is complete.
-   Unfortunately the Region sums as it is currently in WPA it will sum not the JIT times of all threads but if e.g. 2 threads JIT for one second each then the WPA sum accross all threads will be only 1s.
-   WPA seems to sum on a timeline only the active time accross all threads and uses this as sum which is not a good measure to compare results. This should be changed although this logic might
+   Unfortunately the Region sums as it is currently in WPA it will sum not the JIT times of all threads but if e.g. 2 threads JIT for one second each then the WPA sum across all threads will be only 1s.
+   WPA seems to sum on a timeline only the active time across all threads and uses this as sum which is not a good measure to compare results. This should be changed although this logic might
    be well suited for regions where each region signals a bottleneck on which others have to wait e.g. during boot.
 -->
 <InstrumentationManifest>

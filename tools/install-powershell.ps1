@@ -125,7 +125,7 @@ Function Remove-Destination([string] $Destination) {
         if ($IsWinEnv -and ($Destination -eq $PSHOME)) {
             # handle the case where the updated folder is currently in use
             Get-ChildItem -Recurse -File -Path $PSHOME | ForEach-Object {
-                if ($_.extension -eq "old") {
+                if ($_.extension -eq ".old") {
                     Remove-Item $_
                 } else {
                     Move-Item $_.fullname "$($_.fullname).old"
@@ -248,6 +248,8 @@ Function Add-PathTToSettings {
 
 if (-not $IsWinEnv) {
     $architecture = "x64"
+} elseif ($(Get-ComputerInfo -Property OsArchitecture).OsArchitecture -eq "ARM 64-bit Processor") {
+    $architecture = "arm64"
 } else {
     switch ($env:PROCESSOR_ARCHITECTURE) {
         "AMD64" { $architecture = "x64" }
@@ -266,7 +268,6 @@ try {
     if ($Daily) {
         $metadata = Invoke-RestMethod 'https://aka.ms/pwsh-buildinfo-daily'
         $release = $metadata.ReleaseTag -replace '^v'
-        $blobName = $metadata.BlobName
 
         # Get version from currently installed PowerShell Daily if available.
         $pwshPath = if ($IsWinEnv) {Join-Path $Destination "pwsh.exe"} else {Join-Path $Destination "pwsh"}
@@ -295,8 +296,7 @@ try {
             throw "The OS architecture is '$architecture'. However, we currently only support daily package for x64."
         }
 
-
-        $downloadURL = "https://pscoretestdata.blob.core.windows.net/${blobName}/${packageName}"
+        $downloadURL = "https://powershellinfraartifacts-gkhedzdeaghdezhr.z01.azurefd.net/install/$($metadata.ReleaseTag)/$packageName"
         Write-Verbose "About to download package from '$downloadURL'" -Verbose
 
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
@@ -419,19 +419,6 @@ try {
             $null = New-Item -Path (Split-Path -Path $Destination -Parent) -ItemType Directory -ErrorAction SilentlyContinue
             Move-Item -Path $contentPath -Destination $Destination
         }
-    }
-
-    # Edit icon to disambiguate daily builds.
-    if ($IsWinEnv -and $Daily.IsPresent) {
-        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
-            Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
-            $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
-            $null = New-Item -Path "~/.rcedit" -Type Directory -Force -ErrorAction SilentlyContinue
-            Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
-        }
-
-        Write-Verbose "Change icon to disambiguate it from a released installation" -Verbose
-        & "~/.rcedit/rcedit-x64.exe" "$Destination\pwsh.exe" --set-icon "$Destination\assets\Powershell_avatar.ico"
     }
 
     ## Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution

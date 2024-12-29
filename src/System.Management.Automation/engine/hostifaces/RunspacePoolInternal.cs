@@ -40,7 +40,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         private static readonly TimeSpan s_defaultCleanupPeriod = new TimeSpan(0, 15, 0);   // 15 minutes.
         private TimeSpan _cleanupInterval;
-        private Timer _cleanupTimer;
+        private readonly Timer _cleanupTimer;
 
         #endregion
 
@@ -231,10 +231,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 lock (this.syncObject)
                 {
-                    if (_applicationPrivateData == null)
-                    {
-                        _applicationPrivateData = new PSPrimitiveDictionary();
-                    }
+                    _applicationPrivateData ??= new PSPrimitiveDictionary();
                 }
             }
 
@@ -276,7 +273,10 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         public TimeSpan CleanupInterval
         {
-            get { return _cleanupInterval; }
+            get
+            {
+                return _cleanupInterval;
+            }
 
             set
             {
@@ -1303,7 +1303,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Cleans the pool closing the runspaces that are idle.
         /// This method is called as part of a timer callback.
-        /// This method will make sure atleast minPoolSz number
+        /// This method will make sure at least minPoolSz number
         /// of Runspaces are active.
         /// </summary>
         /// <param name="state"></param>
@@ -1510,7 +1510,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             try
             {
-                do
+                while (true)
                 {
                     lock (ultimateRequestQueue)
                     {
@@ -1591,7 +1591,7 @@ namespace System.Management.Automation.Runspaces.Internal
                             ultimateRequestQueue.Enqueue(runspaceRequestQueue.Dequeue());
                         }
                     }
-                } while (true);
+                }
             endOuterWhile:;
             }
             finally
@@ -1640,12 +1640,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         protected virtual void OnForwardEvent(PSEventArgs e)
         {
-            EventHandler<PSEventArgs> eh = this.ForwardEvent;
-
-            if (eh != null)
-            {
-                eh(this, e);
-            }
+            this.ForwardEvent?.Invoke(this, e);
         }
 
         /// <summary>

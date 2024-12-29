@@ -3,6 +3,7 @@
 
 Describe -Name "Windows MSI" -Fixture {
     BeforeAll {
+        Set-StrictMode -Off
         function Test-Elevated {
             [CmdletBinding()]
             [OutputType([bool])]
@@ -12,6 +13,62 @@ Describe -Name "Windows MSI" -Fixture {
             # the Administrator Group's well-known SID will show up in the Groups for the current identity.
             # Note that the SID won't show up unless the process is elevated.
             return (([Security.Principal.WindowsIdentity]::GetCurrent()).Groups -contains "S-1-5-32-544")
+        }
+
+        function Test-IsMuEnabled {
+            $sm = (New-Object -ComObject Microsoft.Update.ServiceManager)
+            $mu = $sm.Services | Where-Object { $_.ServiceId -eq '7971f918-a847-4430-9279-4a52d1efe18d' }
+            if ($mu) {
+                return $true
+            }
+            return $false
+        }
+
+        function Invoke-TestAndUploadLogOnFailure {
+            param (
+                [scriptblock] $Test
+            )
+
+            try {
+                & $Test
+            }
+            catch {
+                Send-VstsLogFile -Path $msiLog
+                throw
+            }
+        }
+
+        function Get-UseMU {
+            $useMu = $null
+            $key = 'HKLM:\SOFTWARE\Microsoft\PowerShellCore\'
+            if ($runtime -like '*x86*') {
+                $key = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\PowerShellCore\'
+            }
+
+            try {
+                $useMu = Get-ItemPropertyValue -Path $key -Name UseMU -ErrorAction SilentlyContinue
+            } catch {}
+
+            if (!$useMu) {
+                $useMu = 0
+            }
+
+            return $useMu
+        }
+
+        function Set-UseMU {
+            param(
+                [int]
+                $Value
+            )
+            $key = 'HKLM:\SOFTWARE\Microsoft\PowerShellCore\'
+            if ($runtime -like '*x86*') {
+                $key = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\PowerShellCore\'
+            }
+
+            Set-ItemProperty -Path $key -Name UseMU -Value $Value -Type DWord
+
+            return $useMu
         }
 
         function Invoke-Msiexec {
@@ -45,6 +102,7 @@ Describe -Name "Windows MSI" -Fixture {
             }
 
             $argumentList = "$switch $MsiPath /quiet /l*vx $msiLog $additionalOptions"
+            Write-Verbose -Message "running msiexec $argumentList"
             $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList $argumentList -NoNewWindow -PassThru
             if ($msiExecProcess.ExitCode -ne 0) {
                 $exitCode = $msiExecProcess.ExitCode
@@ -53,6 +111,30 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         $msiX64Path = $env:PsMsiX64Path
+        $channel = $env:PSMsiChannel
+        $runtime = $env:PSMsiRuntime
+        $muEnabled = Test-IsMuEnabled
+
+        if ($runtime -like '*x86*') {
+            $propertiesRegKeyParent = "HKLM:\SOFTWARE\Wow6432Node\Microsoft\PowerShellCore"
+        } else {
+            $propertiesRegKeyParent = "HKLM:\SOFTWARE\Microsoft\PowerShellCore"
+        }
+
+        if ($channel -eq "preview") {
+            $propertiesRegKeyName = "PreviewInstallerProperties"
+        } else {
+            $propertiesRegKeyName = "InstallerProperties"
+        }
+
+        # Rename the registry key that contains the saved installer
+        # properties so that the tests don't overwrite them.
+        $propertiesRegKeyPath = Join-Path -Path $propertiesRegKeyParent -ChildPath $propertiesRegKeyName
+        $propertiesBackupRegKeyName = "BackupInstallerProperties"
+        $propertiesBackupRegKeyPath = Join-Path -Path $propertiesRegKeyParent -ChildPath $propertiesBackupRegKeyName
+        if (Test-Path -Path $propertiesRegKeyPath) {
+            Rename-Item -Path $propertiesRegKeyPath -NewName $propertiesBackupRegKeyName
+        }
 
         # Get any existing powershell in the path
         $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
@@ -69,25 +151,63 @@ Describe -Name "Windows MSI" -Fixture {
         }
         $uploadedLog = $false
     }
+
+    AfterAll {
+        Set-StrictMode -Version 3.0
+
+        # Restore the original saved installer properties registry key.
+        Remove-Item -Path $propertiesRegKeyPath -ErrorAction SilentlyContinue
+        if (Test-Path -Path $propertiesBackupRegKeyPath) {
+            Rename-Item -Path $propertiesBackupRegKeyPath -NewName $propertiesRegKeyName
+        }
+    }
+
     BeforeEach {
         $error.Clear()
-    }
-    AfterEach {
-        if ($error.Count -ne 0 -and !$uploadedLog) {
-            Copy-Item -Path $msiLog -Destination $env:temp -Force
-            Write-Verbose "MSI log is at $env:temp\msilog.txt" -Verbose
-            $uploadedLog = $true
-        }
+        Remove-Item -Path $propertiesRegKeyPath -ErrorAction SilentlyContinue
     }
 
     Context "Upgrade code" {
         BeforeAll {
-            $previewUpgladeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
+            Write-Verbose "cr-$channel-$runtime" -Verbose
+            $pwshPath = Join-Path $env:ProgramFiles -ChildPath "PowerShell"
+            $pwshx86Path = Join-Path ${env:ProgramFiles(x86)} -ChildPath "PowerShell"
+            $regKeyPath = "HKLM:\SOFTWARE\Microsoft\PowerShellCore\InstalledVersions"
+
+            switch ("$channel-$runtime") {
+                "preview-win7-x64" {
+                    $versionPath = Join-Path -Path $pwshPath -ChildPath '7-preview'
+                    $revisionRange = 0, 99
+                    $msiUpgradeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
+                    $regKeyPath = Join-Path $regKeyPath -ChildPath $msiUpgradeCode
+                }
+                "stable-win7-x64" {
+                    $versionPath = Join-Path -Path $pwshPath -ChildPath '7'
+                    $revisionRange = 500, 500
+                    $msiUpgradeCode = '31ab5147-9a97-4452-8443-d9709f0516e1'
+                    $regKeyPath = Join-Path $regKeyPath -ChildPath $msiUpgradeCode
+                }
+                "preview-win7-x86" {
+                    $versionPath = Join-Path -Path $pwshx86Path -ChildPath '7-preview'
+                    $revisionRange = 0, 99
+                    $msiUpgradeCode = '86abcfbd-1ccc-4a88-b8b2-0facfde29094'
+                    $regKeyPath = Join-Path $regKeyPath -ChildPath $msiUpgradeCode
+                }
+                "stable-win7-x86" {
+                    $versionPath = Join-Path -Path $pwshx86Path -ChildPath '7'
+                    $revisionRange = 500, 500
+                    $msiUpgradeCode = '1d00683b-0f84-4db8-a64f-2f98ad42fe06'
+                    $regKeyPath = Join-Path $regKeyPath -ChildPath $msiUpgradeCode
+                }
+                default {
+                    throw "'$_' not a valid channel runtime combination"
+                }
+            }
         }
 
-        It "Preview MSI should not be installed before test" -Skip:(!(Test-Elevated)) {
-            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$previewUpgladeCode}'")
-            $result.Count | Should -Be 0 -Because 'Query should return nothing if preview x64 is not installed'
+        It "$Channel MSI should not be installed before test" -Skip:(!(Test-Elevated)) {
+            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$msiUpgradeCode}'")
+            $result.Count | Should -Be 0 -Because "Query should return nothing if $channel $runtime is not installed"
         }
 
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
@@ -97,8 +217,37 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         It "Upgrade code should be correct" -Skip:(!(Test-Elevated)) {
-            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$previewUpgladeCode}'")
-            $result.Count | Should -Be 1 -Because 'Query should return 1 result if Upgrade code is for x64 preview'
+            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$msiUpgradeCode}'")
+            $result.Count | Should -Be 1 -Because "Query should return 1 result if Upgrade code is for $runtime $channel"
+        }
+
+        It "Revision should be in correct range" -Skip:(!(Test-Elevated)) {
+            $pwshDllPath = Join-Path -Path $versionPath -ChildPath "pwsh.dll"
+            [version] $version = (Get-ChildItem $pwshDllPath).VersionInfo.FileVersion
+            Write-Verbose "pwsh.dll version: $version" -Verbose
+            $version.Revision | Should -BeGreaterOrEqual $revisionRange[0] -Because "$channel revision should between $($revisionRange[0]) and $($revisionRange[1])"
+            $version.Revision | Should -BeLessOrEqual $revisionRange[1] -Because "$channel revision should between $($revisionRange[0]) and $($revisionRange[1])"
+        }
+
+        It 'MSI should add ProductCode in registry' -Skip:(!(Test-Elevated)) {
+
+            $productCode = if ($msiUpgradeCode -eq '39243d76-adaf-42b1-94fb-16ecf83237c8' -or
+                $msiUpgradeCode -eq '31ab5147-9a97-4452-8443-d9709f0516e1') {
+                # x64
+                $regKeyPath | Should -Exist
+                Get-ItemPropertyValue -Path $regKeyPath -Name 'ProductCode'
+            } elseif ($msiUpgradeCode -eq '86abcfbd-1ccc-4a88-b8b2-0facfde29094' -or
+                $msiUpgradeCode -eq '1d00683b-0f84-4db8-a64f-2f98ad42fe06') {
+                # x86 - need to open the 32bit reghive
+                $wow32RegKey = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry32)
+                $subKey = $wow32RegKey.OpenSubKey("Software\Microsoft\PowerShellCore\InstalledVersions\$msiUpgradeCode")
+                $subKey.GetValue("ProductCode")
+            }
+
+            $productCode | Should -Not -BeNullOrEmpty
+            $productCodeGuid = [Guid]$productCode
+            $productCodeGuid | Should -BeOfType "Guid"
+            $productCodeGuid.Guid | Should -Not -Be $msiUpgradeCode
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
@@ -109,17 +258,63 @@ Describe -Name "Windows MSI" -Fixture {
     }
 
     Context "Add Path disabled" {
+        BeforeAll {
+            Set-UseMU -Value 0
+        }
+
+        It "UseMU should be 0 before install" -Skip:(!(Test-Elevated)) {
+            $useMu = Get-UseMU
+            $useMu | Should -Be 0
+        }
+
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
             {
-                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 0}
+                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 0; USE_MU = 1; ENABLE_MU = 1}
             } | Should -Not -Throw
         }
 
         It "MSI should have not be updated path" -Skip:(!(Test-Elevated)) {
             $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
-                Where-Object {$_ -like '*files\powershell*' -and $_ -notin $beforePath}
+                Where-Object { $_ -like '*files\powershell*' -and $_ -notin $beforePath }
 
             $psPath | Should -BeNullOrEmpty
+        }
+
+        It "UseMU should be 1" -Skip:(!(Test-Elevated)) {
+            Invoke-TestAndUploadLogOnFailure -Test {
+                $useMu = Get-UseMU
+                $useMu | Should -Be 1
+            }
+        }
+
+        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
+            {
+                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
+            } | Should -Not -Throw
+        }
+    }
+
+    Context "USE_MU disabled" {
+        BeforeAll {
+            Set-UseMU -Value 0
+        }
+
+        It "UseMU should be 0 before install" -Skip:(!(Test-Elevated)) {
+            $useMu = Get-UseMU
+            $useMu | Should -Be 0
+        }
+
+        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
+            {
+                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{USE_MU = 0}
+            } | Should -Not -Throw
+        }
+
+        It "UseMU should be 0" -Skip:(!(Test-Elevated)) {
+            Invoke-TestAndUploadLogOnFailure -Test {
+                $useMu = Get-UseMU
+                $useMu | Should -Be 0
+            }
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
@@ -137,8 +332,20 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         It "MSI should have updated path" -Skip:(!(Test-Elevated)) {
+            if ($channel -eq 'preview') {
+                $pattern = '*files*\powershell*\preview*'
+            } else {
+                $pattern = '*files*\powershell*'
+            }
+
             $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
-                Where-Object {$_ -like '*files\powershell*\preview*' -and $_ -notin $beforePath}
+            Where-Object { $_ -like $pattern -and $_ -notin $beforePath }
+
+            if (!$psPath) {
+                ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
+                Where-Object { $_ -notin $beforePath } |
+                ForEach-Object { Write-Verbose -Verbose $_ }
+            }
 
             $psPath | Should -Not -BeNullOrEmpty
         }
@@ -147,6 +354,44 @@ Describe -Name "Windows MSI" -Fixture {
             {
                 Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
             } | Should -Not -Throw
+        }
+
+        Context "Disable Telemetry" {
+            It "MSI should set POWERSHELL_TELEMETRY_OPTOUT env variable when MSI property DISABLE_TELEMETRY is set to 1" -Skip:(!(Test-Elevated)) {
+                try {
+                    $originalValue = [System.Environment]::GetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', [System.EnvironmentVariableTarget]::Machine)
+                    [System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '0', [System.EnvironmentVariableTarget]::Machine)
+                    {
+                        Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{DISABLE_TELEMETRY = 1 }
+                    } | Should -Not -Throw
+                    [System.Environment]::GetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', [System.EnvironmentVariableTarget]::Machine) |
+                        Should -Be 1
+                }
+                finally {
+                    [System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', $originalValue, [System.EnvironmentVariableTarget]::Machine)
+                    {
+                        Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
+                    } | Should -Not -Throw
+                }
+            }
+
+            It "MSI should not change POWERSHELL_TELEMETRY_OPTOUT env variable when MSI property DISABLE_TELEMETRY not set" -Skip:(!(Test-Elevated)) {
+                try {
+                    $originalValue = [System.Environment]::GetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', [System.EnvironmentVariableTarget]::Machine)
+                    [System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', 'untouched', [System.EnvironmentVariableTarget]::Machine)
+                    {
+                        Invoke-MsiExec -Install -MsiPath $msiX64Path
+                    } | Should -Not -Throw
+                    [System.Environment]::GetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', [System.EnvironmentVariableTarget]::Machine) |
+                        Should -Be 'untouched'
+                }
+                finally {
+                    [System.Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', $originalValue, [System.EnvironmentVariableTarget]::Machine)
+                    {
+                        Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
+                    } | Should -Not -Throw
+                }
+            }
         }
     }
 }

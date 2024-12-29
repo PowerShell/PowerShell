@@ -20,7 +20,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Old value.
         /// </summary>
-        private T _oldValue;
+        private readonly T _oldValue;
 
         /// <summary>
         /// Old value.

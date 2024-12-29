@@ -130,7 +130,7 @@ namespace System.Management.Automation
             OutOfBand = viewDefinition.outOfBand;
             GroupBy = PSControlGroupBy.Get(viewDefinition.groupBy);
 
-            AutoSize = widecontrolbody.autosize.HasValue && widecontrolbody.autosize.Value;
+            AutoSize = widecontrolbody.autosize.GetValueOrDefault();
             Columns = (uint)widecontrolbody.columns;
 
             Entries.Add(new WideControlEntryItem(widecontrolbody.defaultEntryDefinition));
@@ -187,8 +187,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (EntrySelectedBy == null)
-                    EntrySelectedBy = new EntrySelectedBy { TypeNames = new List<string>() };
+                EntrySelectedBy ??= new EntrySelectedBy { TypeNames = new List<string>() };
                 return EntrySelectedBy.TypeNames;
             }
         }
@@ -205,8 +204,7 @@ namespace System.Management.Automation
 
         internal WideControlEntryItem(WideControlEntryDefinition definition) : this()
         {
-            FieldPropertyToken fpt = definition.formatTokenList[0] as FieldPropertyToken;
-            if (fpt != null)
+            if (definition.formatTokenList[0] is FieldPropertyToken fpt)
             {
                 DisplayEntry = new DisplayEntry(fpt.expression);
                 FormatString = fpt.fieldFormattingDirective.formatString;

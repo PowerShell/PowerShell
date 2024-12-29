@@ -25,7 +25,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets a string that indentifies which group this
+        /// Gets a string that identifies which group this
         /// item belongs to.
         /// </summary>
         public string GroupId
@@ -79,15 +79,8 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public FilterRulePanelItem(FilterRule rule, string groupId)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException("rule");
-            }
-
-            if (string.IsNullOrEmpty(groupId))
-            {
-                throw new ArgumentNullException("groupId");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
+            ArgumentException.ThrowIfNullOrEmpty(groupId);
 
             this.Rule = rule;
             this.GroupId = groupId;

@@ -153,6 +153,9 @@
   <data name="OutputEncodingDescription" xml:space="preserve">
     <value>The text encoding used when piping text to a native executable file</value>
   </data>
+  <data name="PSStyleDescription" xml:space="preserve">
+    <value>Configuration controlling how text is rendered.</value>
+  </data>
   <data name="PSEmailServerDescription" xml:space="preserve">
     <value>Variable to contain the name of the email server. This can be used instead of the HostName parameter in the Send-MailMessage cmdlet.</value>
   </data>
@@ -183,8 +186,14 @@
   <data name="NestedPromptLevelDescription" xml:space="preserve">
     <value>Dictates what type of prompt should be displayed for the current nesting level</value>
   </data>
+  <data name="PSNativeCommandUseErrorActionPreferenceDescription" xml:space="preserve">
+    <value>If true, $ErrorActionPreference applies to native executables, so that non-zero exit codes will generate cmdlet-style errors governed by error action settings</value>
+  </data>
   <data name="WhatIfPreferenceDescription" xml:space="preserve">
     <value>If true, WhatIf is considered to be enabled for all commands.</value>
+  </data>
+  <data name="NativeCommandArgumentPassingDescription" xml:space="preserve">
+    <value>Dictates how arguments are passed to native executables.</value>
   </data>
   <data name="FormatEnumerationLimitDescription" xml:space="preserve">
     <value>Dictates the limit of enumeration on formatting IEnumerable objects</value>

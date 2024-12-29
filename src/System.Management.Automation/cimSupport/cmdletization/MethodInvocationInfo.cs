@@ -18,11 +18,11 @@ namespace Microsoft.PowerShell.Cmdletization
         /// </summary>
         /// <param name="name">Name of the method to invoke.</param>
         /// <param name="parameters">Method parameters.</param>
-        /// <param name="returnValue">Return value of the method (ok to pass <c>null</c> if the method doesn't return anything).</param>
+        /// <param name="returnValue">Return value of the method (ok to pass <see langword="null"/> if the method doesn't return anything).</param>
         public MethodInvocationInfo(string name, IEnumerable<MethodParameter> parameters, MethodParameter returnValue)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
-            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(parameters);
             // returnValue can be null
 
             MethodName = name;
@@ -48,34 +48,31 @@ namespace Microsoft.PowerShell.Cmdletization
         public KeyedCollection<string, MethodParameter> Parameters { get; }
 
         /// <summary>
-        /// Return value of the method.  Can be <c>null</c> if the method doesn't return anything.
+        /// Return value of the method.  Can be <see langword="null"/> if the method doesn't return anything.
         /// </summary>
         public MethodParameter ReturnValue { get; }
 
         internal IEnumerable<T> GetArgumentsOfType<T>() where T : class
         {
-            List<T> result = new List<T>();
+            List<T> result = new();
             foreach (var methodParameter in this.Parameters)
             {
-                if (MethodParameterBindings.In != (methodParameter.Bindings & MethodParameterBindings.In))
+                if ((methodParameter.Bindings & MethodParameterBindings.In) != MethodParameterBindings.In)
                 {
                     continue;
                 }
 
-                var objectInstance = methodParameter.Value as T;
-                if (objectInstance != null)
+                if (methodParameter.Value is T objectInstance)
                 {
                     result.Add(objectInstance);
                     continue;
                 }
 
-                var objectInstanceArray = methodParameter.Value as IEnumerable;
-                if (objectInstanceArray != null)
+                if (methodParameter.Value is IEnumerable objectInstanceArray)
                 {
                     foreach (object element in objectInstanceArray)
                     {
-                        var objectInstance2 = element as T;
-                        if (objectInstance2 != null)
+                        if (element is T objectInstance2)
                         {
                             result.Add(objectInstance2);
                         }

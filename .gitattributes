@@ -2,5 +2,6 @@ CHANGELOG.md merge=union
 * text=auto
 *.png binary
 *.rtf binary
+*.sh text eol=lf
 testablescript.ps1 text eol=lf
 TestFileCatalog.txt text eol=lf

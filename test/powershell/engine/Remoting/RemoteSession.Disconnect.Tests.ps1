@@ -7,7 +7,15 @@ Describe "WinRM based remoting session abrupt disconnect" -Tags 'Feature','Requi
 
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (! $IsWindows)
+        $pendingTest = (Test-IsWinWow64)
+        $skipTest = !$IsWindows
+
+        if ($pendingTest)
+        {
+            $PSDefaultParameterValues["it:pending"] = $true
+            return
+        }
+        elseif ($skipTest)
         {
             $PSDefaultParameterValues["it:skip"] = $true
             return
@@ -56,6 +64,11 @@ Describe "WinRM based remoting session abrupt disconnect" -Tags 'Feature','Requi
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
 
+        if ($pendingTest -or $skipTest)
+        {
+            return
+        }
+
         if ($ps -ne $null) { $ps.Dispose() }
         if ($session -ne $null) { Remove-PSSession -Session $session }
         if ($script:job -ne $null) { Remove-Job -Job $script:job -Force }
@@ -72,7 +85,7 @@ Describe "WinRM based remoting session abrupt disconnect" -Tags 'Feature','Requi
         } -ErrorAction SilentlyContinue
 
         # Session should be disconnected.
-        $session.State | Should -BeExactly 'Disconnected'
+        $session.State | Should -BeLikeExactly 'Disconnect*'
 
         # A disconnected job should have been created for reconnect.
         $script:job = Get-Job | Where-Object { $_.ChildJobs[0].Runspace.Id -eq $session.Runspace.Id }

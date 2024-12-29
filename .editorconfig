@@ -1,6 +1,6 @@
 # EditorConfig is awesome: https://EditorConfig.org
 # .NET coding convention settings for EditorConfig
-# https://docs.microsoft.com/visualstudio/ide/editorconfig-code-style-settings-reference
+# https://learn.microsoft.com/visualstudio/ide/editorconfig-code-style-settings-reference
 #
 # This file comes from dotnet repositories:
 # https://github.com/dotnet/runtime/blob/master/.editorconfig
@@ -21,6 +21,7 @@ indent_size = 4
 
 # Shell scripts
 [*.sh]
+end_of_line = lf
 indent_size = 4
 
 # Xml project files
@@ -43,10 +44,15 @@ indent_size = 2
 [*.{props,targets,config,nuspec}]
 indent_size = 2
 
+[*.tsv]
+indent_style = tab
+
 # Dotnet code style settings:
 [*.cs]
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
+
+file_header_template = Copyright (c) Microsoft Corporation.\nLicensed under the MIT License.
 
 # Modifier preferences
 csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:suggestion

@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// This parameter specifies that objects should be converted to
@@ -50,6 +50,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _onType = false;
+
+        /// <summary>
+        /// Gets or sets case insensitive switch for string comparison.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter CaseInsensitive { get; set; }
+
         #endregion Parameters
 
         #region Overrides
@@ -72,15 +79,12 @@ namespace Microsoft.PowerShell.Commands
             else if (AsString)
             {
                 string inputString = InputObject.ToString();
-                if (_lastObjectAsString == null)
-                {
-                    _lastObjectAsString = _lastObject.ToString();
-                }
+                _lastObjectAsString ??= _lastObject.ToString();
 
                 if (string.Equals(
                     inputString,
                     _lastObjectAsString,
-                    StringComparison.CurrentCulture))
+                    CaseInsensitive.IsPresent ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture))
                 {
                     isUnique = false;
                 }
@@ -91,15 +95,12 @@ namespace Microsoft.PowerShell.Commands
             }
             else // compare as objects
             {
-                if (_comparer == null)
-                {
-                    _comparer = new ObjectCommandComparer(
-                        true, // ascending (doesn't matter)
-                        CultureInfo.CurrentCulture,
-                        true); // case-sensitive
-                }
+                _comparer ??= new ObjectCommandComparer(
+                    ascending: true,
+                    CultureInfo.CurrentCulture,
+                    caseSensitive: !CaseInsensitive.IsPresent);
 
-                isUnique = (0 != _comparer.Compare(InputObject, _lastObject));
+                isUnique = (_comparer.Compare(InputObject, _lastObject) != 0);
             }
 
             if (isUnique)

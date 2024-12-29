@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="RunspacePoolClosed" xml:space="preserve">
-    <value>The runspace pool is closed.</value>
-  </data>
   <data name="MaxPoolLessThan1" xml:space="preserve">
     <value>The maximum pool size cannot be less than 1.</value>
   </data>
@@ -149,9 +146,6 @@
   </data>
   <data name="RunspaceDisconnectConnectNotSupported" xml:space="preserve">
     <value>This runspace does not support disconnect and connect operations.</value>
-  </data>
-  <data name="CannotSetTypeTable" xml:space="preserve">
-    <value>Cannot set the TypeTable data unless the runspace pool is in either the Disconnected or BeforeOpen states.  Current state is {0}.</value>
   </data>
   <data name="CannotWhileDisconnected" xml:space="preserve">
     <value>Cannot perform the operation because the runspace pool is in the Disconnected state.</value>

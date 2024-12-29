@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Security;
 
 namespace System.Management.Automation
 {
@@ -64,7 +65,10 @@ namespace System.Management.Automation
         /// </exception>
         internal SessionStateScope ScriptScope
         {
-            get { return _scriptScope; }
+            get
+            {
+                return _scriptScope;
+            }
 
             set
             {
@@ -111,7 +115,7 @@ namespace System.Management.Automation
         /// the provider has already been notified.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="newDrive" /> is null.
+        /// If <paramref name="newDrive"/> is null.
         /// </exception>
         /// <exception cref="SessionStateException">
         /// If a drive of the same name already exists in this scope.
@@ -165,7 +169,7 @@ namespace System.Management.Automation
         /// by the provider.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="drive" /> is null.
+        /// If <paramref name="drive"/> is null.
         /// </exception>
         internal void RemoveDrive(PSDriveInfo drive)
         {
@@ -216,7 +220,7 @@ namespace System.Management.Automation
         /// exists in this scope or null if one does not exist.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="name" /> is null.
+        /// If <paramref name="name"/> is null.
         /// </exception>
         internal PSDriveInfo GetDrive(string name)
         {
@@ -418,7 +422,10 @@ namespace System.Management.Automation
             bool varExists = TryGetVariable(name, origin, true, out variable);
 
             // Initialize the private variable dictionary if it's not yet
-            if (_variables == null) { GetPrivateVariables(); }
+            if (_variables == null)
+            {
+                GetPrivateVariables();
+            }
 
             if (!asValue && variableToSet != null)
             {
@@ -489,7 +496,7 @@ namespace System.Management.Automation
             }
             else
             {
-                variable = (LocalsTuple != null ? LocalsTuple.TrySetVariable(name, value) : null) ?? new PSVariable(name, value);
+                variable = (LocalsTuple?.TrySetVariable(name, value)) ?? new PSVariable(name, value);
             }
 
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
@@ -1242,11 +1249,18 @@ namespace System.Management.Automation
                 name != null,
                 "The caller should verify the name");
 
-            var functionInfos = GetFunctions();
-            FunctionInfo existingValue;
+            Dictionary<string, FunctionInfo> functionInfos = GetFunctions();
             FunctionInfo result;
-            if (!functionInfos.TryGetValue(name, out existingValue))
+
+            // Functions are equal only if they have the same name and if they come from the same module (if any).
+            // If the function is not associated with a module then the info 'ModuleName' property is set to empty string.
+            // If the new function has the same name of an existing function, but different module names, then the
+            // existing table function is replaced with the new function.
+            if (!functionInfos.TryGetValue(name, out FunctionInfo existingValue) ||
+                (originalFunction != null &&
+                    !existingValue.ModuleName.Equals(originalFunction.ModuleName, StringComparison.OrdinalIgnoreCase)))
             {
+                // Add new function info to function table and return.
                 result = functionFactory(name, function, originalFunction, options, context, helpFile);
                 functionInfos[name] = result;
 
@@ -1254,81 +1268,78 @@ namespace System.Management.Automation
                 {
                     GetAllScopeFunctions()[name] = result;
                 }
+
+                return result;
+            }
+
+            // Update the existing function.
+
+            // Make sure the function isn't constant or readonly.
+            SessionState.ThrowIfNotVisible(origin, existingValue);
+
+            if (IsFunctionOptionSet(existingValue, ScopedItemOptions.Constant) ||
+                (!force && IsFunctionOptionSet(existingValue, ScopedItemOptions.ReadOnly)))
+            {
+                SessionStateUnauthorizedAccessException e =
+                    new SessionStateUnauthorizedAccessException(
+                            name,
+                            SessionStateCategory.Function,
+                            "FunctionNotWritable",
+                            SessionStateStrings.FunctionNotWritable);
+
+                throw e;
+            }
+
+            // Ensure we are not trying to set the function to constant as this can only be
+            // done at creation time.
+            if ((options & ScopedItemOptions.Constant) != 0)
+            {
+                SessionStateUnauthorizedAccessException e =
+                    new SessionStateUnauthorizedAccessException(
+                            name,
+                            SessionStateCategory.Function,
+                            "FunctionCannotBeMadeConstant",
+                            SessionStateStrings.FunctionCannotBeMadeConstant);
+
+                throw e;
+            }
+
+            // Ensure we are not trying to remove the AllScope option.
+            if ((options & ScopedItemOptions.AllScope) == 0 &&
+                IsFunctionOptionSet(existingValue, ScopedItemOptions.AllScope))
+            {
+                SessionStateUnauthorizedAccessException e =
+                    new SessionStateUnauthorizedAccessException(
+                            name,
+                            SessionStateCategory.Function,
+                            "FunctionAllScopeOptionCannotBeRemoved",
+                            SessionStateStrings.FunctionAllScopeOptionCannotBeRemoved);
+
+                throw e;
+            }
+
+            FunctionInfo existingFunction = existingValue;
+
+            // If the function type changes (i.e.: function to workflow or back)
+            // then we need to replace what was there.
+            FunctionInfo newValue = functionFactory(name, function, originalFunction, options, context, helpFile);
+
+            bool changesFunctionType = existingFunction.GetType() != newValue.GetType();
+
+            // Since the options are set after the script block, we have to
+            // forcefully apply the script block if the options will be
+            // set to not being ReadOnly.
+            if (changesFunctionType ||
+                ((existingFunction.Options & ScopedItemOptions.ReadOnly) != 0 && force))
+            {
+                result = newValue;
+                functionInfos[name] = newValue;
             }
             else
             {
-                // Make sure the function isn't constant or readonly
-
-                SessionState.ThrowIfNotVisible(origin, existingValue);
-
-                if (IsFunctionOptionSet(existingValue, ScopedItemOptions.Constant) ||
-                    (!force && IsFunctionOptionSet(existingValue, ScopedItemOptions.ReadOnly)))
-                {
-                    SessionStateUnauthorizedAccessException e =
-                        new SessionStateUnauthorizedAccessException(
-                                name,
-                                SessionStateCategory.Function,
-                                "FunctionNotWritable",
-                                SessionStateStrings.FunctionNotWritable);
-
-                    throw e;
-                }
-
-                // Ensure we are not trying to set the function to constant as this can only be
-                // done at creation time.
-
-                if ((options & ScopedItemOptions.Constant) != 0)
-                {
-                    SessionStateUnauthorizedAccessException e =
-                        new SessionStateUnauthorizedAccessException(
-                                name,
-                                SessionStateCategory.Function,
-                                "FunctionCannotBeMadeConstant",
-                                SessionStateStrings.FunctionCannotBeMadeConstant);
-
-                    throw e;
-                }
-
-                // Ensure we are not trying to remove the AllScope option
-
-                if ((options & ScopedItemOptions.AllScope) == 0 &&
-                    IsFunctionOptionSet(existingValue, ScopedItemOptions.AllScope))
-                {
-                    SessionStateUnauthorizedAccessException e =
-                        new SessionStateUnauthorizedAccessException(
-                                name,
-                                SessionStateCategory.Function,
-                                "FunctionAllScopeOptionCannotBeRemoved",
-                                SessionStateStrings.FunctionAllScopeOptionCannotBeRemoved);
-
-                    throw e;
-                }
-
-                FunctionInfo existingFunction = existingValue;
-                FunctionInfo newValue = null;
-
-                // If the function type changes (i.e.: function to workflow or back)
-                // then we need to blast what was there
-                newValue = functionFactory(name, function, originalFunction, options, context, helpFile);
-
-                bool changesFunctionType = existingFunction.GetType() != newValue.GetType();
-
-                // Since the options are set after the script block, we have to
-                // forcefully apply the script block if the options will be
-                // set to not being ReadOnly
-                if (changesFunctionType ||
-                    ((existingFunction.Options & ScopedItemOptions.ReadOnly) != 0 && force))
-                {
-                    result = newValue;
-                    functionInfos[name] = newValue;
-                }
-                else
-                {
-                    bool applyForce = force || (options & ScopedItemOptions.ReadOnly) == 0;
-
-                    existingFunction.Update(newValue, applyForce, options, helpFile);
-                    result = existingFunction;
-                }
+                bool applyForce = force || (options & ScopedItemOptions.ReadOnly) == 0;
+                existingFunction.Update(newValue, applyForce, options, helpFile);
+                result = existingFunction;
             }
 
             return result;
@@ -1615,26 +1626,31 @@ namespace System.Management.Automation
                 return Parent != null ? Parent.TypeResolutionState : Language.TypeResolutionState.UsingSystem;
             }
 
-            set { _typeResolutionState = value; }
+            set
+            {
+                _typeResolutionState = value;
+            }
         }
 
         internal IDictionary<string, Type> TypeTable { get; private set; }
 
         internal void AddType(string name, Type type)
         {
-            if (TypeTable == null)
-            {
-                TypeTable = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-            }
+            TypeTable ??= new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 
             TypeTable[name] = type;
         }
 
         internal Type LookupType(string name)
         {
-            if (TypeTable == null) return null;
+            if (TypeTable == null)
+            {
+                return null;
+            }
+
             Type result;
             TypeTable.TryGetValue(name, out result);
+
             return result;
         }
 
@@ -1675,12 +1691,18 @@ namespace System.Management.Automation
 
             // Then use the creation constructors - workflows don't get here because the workflow info
             // is created during compilation.
-            else if (function.IsFilter) { newValue = new FilterInfo(name, function, options, context, helpFile); }
+            else if (function.IsFilter)
+            {
+                newValue = new FilterInfo(name, function, options, context, helpFile);
+            }
             else if (function.IsConfiguration)
             {
                 newValue = new ConfigurationInfo(name, function, options, context, helpFile, function.IsMetaConfiguration());
             }
-            else newValue = new FunctionInfo(name, function, options, context, helpFile);
+            else
+            {
+                newValue = new FunctionInfo(name, function, options, context, helpFile);
+            }
 
             return newValue;
         }
@@ -1692,7 +1714,7 @@ namespace System.Management.Automation
         // performance degradation, so we use lazy initialization for all of them.
         private Dictionary<string, PSDriveInfo> GetDrives()
         {
-            return _drives ?? (_drives = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase));
+            return _drives ??= new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase);
         }
 
         private Dictionary<string, PSDriveInfo> _drives;
@@ -1704,8 +1726,7 @@ namespace System.Management.Automation
         // performance degradation, so we use lazy initialization for all of them.
         private Dictionary<string, PSDriveInfo> GetAutomountedDrives()
         {
-            return _automountedDrives ??
-                   (_automountedDrives = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase));
+            return _automountedDrives ??= new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase);
         }
 
         private Dictionary<string, PSDriveInfo> _automountedDrives;
@@ -1852,7 +1873,6 @@ namespace System.Management.Automation
         /// table. The entries in this table are automatically propagated
         /// to new scopes.
         /// </summary>
-
         private readonly Dictionary<string, List<CmdletInfo>> _allScopeCmdlets = new Dictionary<string, List<CmdletInfo>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -1891,7 +1911,7 @@ namespace System.Management.Automation
 
         #region Alias mapping
 
-        private Dictionary<string, List<string>> _commandsToAliasesCache = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, List<string>> _commandsToAliasesCache = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets the aliases by command name (used by metadata-driven help)
@@ -1965,11 +1985,21 @@ namespace System.Management.Automation
             var context = LocalPipeline.GetExecutionContextFromTLS();
             if (context?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                if ((variable.Options & ScopedItemOptions.AllScope) == ScopedItemOptions.AllScope)
+                if (variable.Options.HasFlag(ScopedItemOptions.AllScope))
                 {
-                    // Don't let people set AllScope variables in ConstrainedLanguage, as they can be used to
-                    // interfere with the session state of trusted commands.
-                    throw new PSNotSupportedException();
+                    if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                    {
+                        // Don't let people set AllScope variables in ConstrainedLanguage, as they can be used to
+                        // interfere with the session state of trusted commands.
+                        throw new PSNotSupportedException();
+                    }
+
+                    SystemPolicy.LogWDACAuditMessage(
+                        context: context,
+                        title: SessionStateStrings.WDACSessionStateVarLogTitle,
+                        message: StringUtil.Format(SessionStateStrings.WDACSessionStateVarLogMessage, variable.Name),
+                        fqid: "AllScopeVariableNotAllowed",
+                        dropIntoDebugger: true);
                 }
 
                 // Mark untrusted values for assignments to 'Global:' variables, and 'Script:' variables in
@@ -1981,4 +2011,3 @@ namespace System.Management.Automation
         #endregion
     }
 }
-

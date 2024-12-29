@@ -41,8 +41,7 @@ namespace System.Diagnostics.Eventing
             [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
             set
             {
-                if (value == null)
-                    throw new ArgumentNullException("Delimiter");
+                ArgumentNullException.ThrowIfNull(value, nameof(Delimiter));
 
                 if (value.Length == 0)
                     throw new ArgumentException(DotNetEventingStrings.Argument_NeedNonemptyDelimiter);
@@ -72,8 +71,7 @@ namespace System.Diagnostics.Eventing
         public EventProviderTraceListener(string providerId, string name, string delimiter)
             : base(name)
         {
-            if (delimiter == null)
-                throw new ArgumentNullException(nameof(delimiter));
+            ArgumentNullException.ThrowIfNull(delimiter);
 
             if (delimiter.Length == 0)
                 throw new ArgumentException(DotNetEventingStrings.Argument_NeedNonemptyDelimiter);
@@ -84,7 +82,7 @@ namespace System.Diagnostics.Eventing
 
         private void InitProvider(string providerId)
         {
-            Guid controlGuid = new Guid(providerId);
+            Guid controlGuid = new(providerId);
             //
             // Create The ETW TraceProvider
             //
@@ -148,7 +146,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
+            StringBuilder dataString = new(s_defaultPayloadSize);
 
             if (data != null)
             {
@@ -177,7 +175,7 @@ namespace System.Diagnostics.Eventing
             }
 
             int index;
-            StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
+            StringBuilder dataString = new(s_defaultPayloadSize);
 
             if ((data != null) && (data.Length > 0))
             {
@@ -242,7 +240,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
+            StringBuilder dataString = new(s_defaultPayloadSize);
             dataString.Append(message);
 
             _provider.WriteMessageEvent(dataString.ToString(),
@@ -278,10 +276,10 @@ namespace System.Diagnostics.Eventing
 
         public override void Fail(string message, string detailMessage)
         {
-            StringBuilder failMessage = new StringBuilder(message);
+            StringBuilder failMessage = new(message);
             if (detailMessage != null)
             {
-                failMessage.Append(" ");
+                failMessage.Append(' ');
                 failMessage.Append(detailMessage);
             }
 

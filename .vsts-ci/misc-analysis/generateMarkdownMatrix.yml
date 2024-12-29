@@ -1,0 +1,46 @@
+parameters:
+  - name: jobName
+  - name: taskName
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: Generate Markdown Matrix
+
+  pool:
+    vmImage: ubuntu-20.04
+
+  variables:
+    - name: repoPath
+      value: $(Agent.BuildDirectory)/$(repoFolder)
+
+  steps:
+  - checkout: self
+    clean: true
+    path: $(repoFolder)
+
+  - powershell: |
+      $matrix = @{}
+      $matrix += @{
+        'root' = @{
+          markdown_folder = "$(repoPath)"
+          markdown_recurse = $false
+        }
+      }
+      Get-ChildItem -path '$(repoPath)' -Directory | Foreach-Object {
+        $folder = $_
+        $matrix += @{
+          $_.Name = @{
+            markdown_folder = $_.fullName
+            markdown_recurse = $true
+          }
+        }
+      }
+
+      $matrixJson = $matrix | ConvertTo-Json -Compress
+      $variableName = "matrix"
+      $command = "vso[task.setvariable variable=$variableName;isoutput=true]$($matrixJson)"
+      Write-Verbose "sending command: '$command'"
+      Write-Host "##$command"
+    displayName: Create Matrix
+    condition: succeededOrFailed()
+    name: ${{ parameters.taskName }}

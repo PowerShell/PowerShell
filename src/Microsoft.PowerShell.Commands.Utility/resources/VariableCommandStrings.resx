@@ -123,17 +123,14 @@
   <data name="SetVariableTarget" xml:space="preserve">
     <value>Name: {0} Value: {1}</value>
   </data>
+  <data name="UseSingleVariable" xml:space="preserve">
+    <value>Use a single variable rather than a collection</value>
+  </data>
   <data name="NewVariableAction" xml:space="preserve">
     <value>New variable</value>
   </data>
   <data name="NewVariableTarget" xml:space="preserve">
     <value>Name: {0} Value: {1}</value>
-  </data>
-  <data name="AddVariableAction" xml:space="preserve">
-    <value>Add variable</value>
-  </data>
-  <data name="AddVariableTarget" xml:space="preserve">
-    <value>Name: {0}</value>
   </data>
   <data name="RemoveVariableAction" xml:space="preserve">
     <value>Remove variable</value>

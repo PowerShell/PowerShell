@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true, Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
-        [Credential()]
+        [Credential]
         public override PSCredential Credential
         {
             get
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
-        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
+        /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If that's
         /// not specified as well, then "WSMAN" will be used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -347,14 +347,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
         public override int ThrottleLimit
         {
-            set
-            {
-                base.ThrottleLimit = value;
-            }
-
             get
             {
                 return base.ThrottleLimit;
+            }
+
+            set
+            {
+                base.ThrottleLimit = value;
             }
         }
 
@@ -702,7 +702,7 @@ namespace Microsoft.PowerShell.Commands
             ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(Mandatory = true,
             ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override string[] HostName
         {
             get { return base.HostName; }
@@ -715,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override string UserName
         {
             get { return base.UserName; }
@@ -728,13 +728,37 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [Alias("IdentityFilePath")]
         public override string KeyFilePath
         {
             get { return base.KeyFilePath; }
 
             set { base.KeyFilePath = value; }
+        }
+
+        /// <summary>
+        /// Gets and sets a value for the SSH subsystem to use for the remote connection.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        public override string Subsystem
+        {
+            get { return base.Subsystem; }
+
+            set { base.Subsystem = value; }
+        }
+
+        /// <summary>
+        /// Gets and sets a value in milliseconds that limits the time allowed for an SSH connection to be established.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        public override int ConnectingTimeout
+        {
+            get { return base.ConnectingTimeout; }
+            
+            set { base.ConnectingTimeout = value; }
         }
 
         /// <summary>
@@ -761,11 +785,30 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostHashParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostHashParameterSet, Mandatory = true)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override Hashtable[] SSHConnection
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Hashtable containing options to be passed to OpenSSH.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public override Hashtable Options
+        {
+            get 
+            {
+                return base.Options;
+            }
+
+            set 
+            {
+                base.Options = value;
+            }
         }
 
         #endregion
@@ -972,7 +1015,7 @@ namespace Microsoft.PowerShell.Commands
                         // of this bug in Win8 where not responding can occur during data piping.
                         // We are reverting to Win7 behavior for {icm | icm} and {proxycommand | proxycommand}
                         // cases. For ICM | % ICM case, we are using remote steppable pipeline.
-                        if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && (MyInvocation.ExpectingInput == false))
+                        if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && !MyInvocation.ExpectingInput)
                         {
                             PSPrimitiveDictionary table = (object)runspaceInfo.ApplicationPrivateData[PSVersionInfo.PSVersionTableName] as PSPrimitiveDictionary;
                             if (table != null)
@@ -1007,8 +1050,7 @@ namespace Microsoft.PowerShell.Commands
                 // create collection of input writers here
                 foreach (IThrottleOperation operation in Operations)
                 {
-                    ExecutionCmdletHelperRunspace ecHelper = operation as ExecutionCmdletHelperRunspace;
-                    if (ecHelper == null)
+                    if (!(operation is ExecutionCmdletHelperRunspace ecHelper))
                     {
                         // either all the operations will be of type ExecutionCmdletHelperRunspace
                         // or not...there is no mix.
@@ -1421,10 +1463,7 @@ namespace Microsoft.PowerShell.Commands
             operation.RunspaceDebugStop -= HandleRunspaceDebugStop;
 
             var hostDebugger = GetHostDebugger();
-            if (hostDebugger != null)
-            {
-                hostDebugger.QueueRunspaceForDebug(args.Runspace);
-            }
+            hostDebugger?.QueueRunspaceForDebug(args.Runspace);
         }
 
         private void HandleJobStateChanged(object sender, JobStateEventArgs e)
@@ -1441,10 +1480,7 @@ namespace Microsoft.PowerShell.Commands
                 // Signal that this job has been disconnected, or has ended.
                 lock (_jobSyncObject)
                 {
-                    if (_disconnectComplete != null)
-                    {
-                        _disconnectComplete.Set();
-                    }
+                    _disconnectComplete?.Set();
                 }
             }
         }
@@ -1876,7 +1912,7 @@ namespace Microsoft.PowerShell.Commands
                 this.Host);
         }
 
-        private void StopProgressBar(
+        private static void StopProgressBar(
             long sourceId)
         {
             s_RCProgress.StopProgress(sourceId);
@@ -1955,7 +1991,7 @@ namespace Microsoft.PowerShell.Commands
         /// Process the stream object before writing it in the specified collection.
         /// </summary>
         /// <param name="streamObject">Stream object to process.</param>
-        private void PreProcessStreamObject(PSStreamObject streamObject)
+        private static void PreProcessStreamObject(PSStreamObject streamObject)
         {
             ErrorRecord errorRecord = streamObject.Value as ErrorRecord;
 
@@ -1984,7 +2020,7 @@ namespace Microsoft.PowerShell.Commands
 
         private ThrottleManager _throttleManager = new ThrottleManager();
         // throttle manager for handling all throttling operations
-        private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
+        private readonly ManualResetEvent _operationsComplete = new ManualResetEvent(true);
         private ManualResetEvent _disconnectComplete;
         // the initial state is true because when no
         // operations actually take place as in case of a
@@ -2002,17 +2038,17 @@ namespace Microsoft.PowerShell.Commands
 
         private const string InProcParameterSet = "InProcess";
 
-        private PSDataCollection<object> _input = new PSDataCollection<object>();
+        private readonly PSDataCollection<object> _input = new PSDataCollection<object>();
         private bool _needToCollect = false;
         private bool _needToStartSteppablePipelineOnServer = false;
         private bool _clearInvokeCommandOnRunspace = false;
-        private List<PipelineWriter> _inputWriters = new List<PipelineWriter>();
-        private object _jobSyncObject = new object();
+        private readonly List<PipelineWriter> _inputWriters = new List<PipelineWriter>();
+        private readonly object _jobSyncObject = new object();
         private bool _nojob = false;
-        private Guid _instanceId = Guid.NewGuid();
+        private readonly Guid _instanceId = Guid.NewGuid();
         private bool _propagateErrors = false;
 
-        private static RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
+        private static readonly RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
 
         internal static readonly string RemoteJobType = "RemoteJob";
 
@@ -2048,11 +2084,8 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!_asjob)
                 {
-                    if (_job != null)
-                    {
-                        // job will be null in the "InProcess" case
-                        _job.Dispose();
-                    }
+                    // job will be null in the "InProcess" case
+                    _job?.Dispose();
 
                     _throttleManager.ThrottleComplete -= HandleThrottleComplete;
                     _throttleManager.Dispose();
@@ -2092,14 +2125,14 @@ namespace System.Management.Automation.Internal
     internal class RobustConnectionProgress
     {
         private System.Management.Automation.Host.PSHost _psHost;
-        private string _activity;
+        private readonly string _activity;
         private string _status;
         private int _secondsTotal;
         private int _secondsRemaining;
         private ProgressRecord _progressRecord;
         private long _sourceId;
         private bool _progressIsRunning;
-        private object _syncObject;
+        private readonly object _syncObject;
         private Timer _updateTimer;
 
         /// <summary>
@@ -2134,10 +2167,7 @@ namespace System.Management.Automation.Internal
                 return;
             }
 
-            if (string.IsNullOrEmpty(computerName))
-            {
-                throw new ArgumentNullException(nameof(computerName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(computerName);
 
             lock (_syncObject)
             {

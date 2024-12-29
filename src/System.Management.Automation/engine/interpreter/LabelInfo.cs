@@ -80,7 +80,7 @@ namespace System.Management.Automation.Interpreter
             {
                 if (j.ContainsTarget(_node))
                 {
-                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Label target already defined: {0}", _node.Name));
+                    throw new InvalidOperationException(string.Create(CultureInfo.InvariantCulture, $"Label target already defined: {_node.Name}"));
                 }
             }
 
@@ -132,12 +132,12 @@ namespace System.Management.Automation.Interpreter
 
             if (HasMultipleDefinitions)
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Ambiguous jump {0}", _node.Name));
+                throw new InvalidOperationException(string.Create(CultureInfo.InvariantCulture, $"Ambiguous jump {_node.Name}"));
             }
 
             // We didn't find an outward jump. Look for a jump across blocks
             LabelScopeInfo def = FirstDefinition();
-            LabelScopeInfo common = CommonNode(def, reference, b => b.Parent);
+            LabelScopeInfo common = CommonNode(def, reference, static b => b.Parent);
 
             // Validate that we aren't jumping across a finally
             for (LabelScopeInfo j = reference; j != common; j = j.Parent)
@@ -176,10 +176,7 @@ namespace System.Management.Automation.Interpreter
 
         private void EnsureLabel(LightCompiler compiler)
         {
-            if (_label == null)
-            {
-                _label = compiler.Instructions.MakeLabel();
-            }
+            _label ??= compiler.Instructions.MakeLabel();
         }
 
         private bool DefinedIn(LabelScopeInfo scope)
@@ -359,10 +356,7 @@ namespace System.Management.Automation.Interpreter
         {
             Debug.Assert(CanJumpInto);
 
-            if (_labels == null)
-            {
-                _labels = new HybridReferenceDictionary<LabelTarget, LabelInfo>();
-            }
+            _labels ??= new HybridReferenceDictionary<LabelTarget, LabelInfo>();
 
             _labels[target] = info;
         }

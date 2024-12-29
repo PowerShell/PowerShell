@@ -162,7 +162,7 @@ namespace System.Management.Automation.Internal
         }
         #endregion parameters
 
-        private MshCommandRuntime _commandRuntime;
+        private readonly MshCommandRuntime _commandRuntime;
     }
 
     /// <summary>
@@ -208,7 +208,6 @@ namespace System.Management.Automation.Internal
 
         #endregion parameters
 
-        private MshCommandRuntime _commandRuntime;
+        private readonly MshCommandRuntime _commandRuntime;
     }
 }
-

@@ -308,6 +308,5 @@ namespace System.Management.Automation
         internal const string MonadNamespacePrefix = "ps";
 
         #endregion namespace values
-    };
+    }
 }
-

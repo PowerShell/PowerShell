@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Microsoft.PowerShell.Commands.Internal
 {
-    internal static class Clipboard
+    internal static partial class Clipboard
     {
         private static bool? _clipboardSupported;
 
@@ -19,18 +19,19 @@ namespace Microsoft.PowerShell.Commands.Internal
         private static string StartProcess(
             string tool,
             string args,
-            string stdin = "")
+            string stdin = "",
+            bool readStdout = true)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo();
+            ProcessStartInfo startInfo = new();
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardInput = true;
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
             startInfo.FileName = tool;
             startInfo.Arguments = args;
-            string stdout;
+            string stdout = string.Empty;
 
-            using (Process process = new Process())
+            using (Process process = new())
             {
                 process.StartInfo = startInfo;
                 try
@@ -43,15 +44,15 @@ namespace Microsoft.PowerShell.Commands.Internal
                     return string.Empty;
                 }
 
-                if (!string.IsNullOrEmpty(stdin))
+                process.StandardInput.Write(stdin);
+                process.StandardInput.Close();
+
+                if (readStdout)
                 {
-                    process.StandardInput.Write(stdin);
-                    process.StandardInput.Close();
+                    stdout = process.StandardOutput.ReadToEnd();
                 }
 
-                stdout = process.StandardOutput.ReadToEnd();
                 process.WaitForExit(250);
-
                 _clipboardSupported = process.ExitCode == 0;
             }
 
@@ -93,11 +94,6 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         public static void SetText(string text)
         {
-            if (string.IsNullOrEmpty(text))
-            {
-                return;
-            }
-
             if (_clipboardSupported == false)
             {
                 _internalClipboard = text;
@@ -114,7 +110,14 @@ namespace Microsoft.PowerShell.Commands.Internal
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 tool = "xclip";
-                args = "-selection clipboard -in";
+                if (string.IsNullOrEmpty(text))
+                {
+                    args = "-selection clipboard /dev/null";
+                }
+                else
+                {
+                    args = "-selection clipboard -in";
+                }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
@@ -126,7 +129,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 return;
             }
 
-            StartProcess(tool, args, text);
+            StartProcess(tool, args, text, readStdout: false);
             if (_clipboardSupported == false)
             {
                 _internalClipboard = text;
@@ -154,46 +157,46 @@ namespace Microsoft.PowerShell.Commands.Internal
         private const uint GMEM_ZEROINIT = 0x0040;
         private const uint GHND = GMEM_MOVEABLE | GMEM_ZEROINIT;
 
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GlobalAlloc(uint flags, UIntPtr dwBytes);
+        [LibraryImport("kernel32.dll")]
+        private static partial IntPtr GlobalAlloc(uint flags, UIntPtr dwBytes);
 
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GlobalFree(IntPtr hMem);
+        [LibraryImport("kernel32.dll")]
+        private static partial IntPtr GlobalFree(IntPtr hMem);
 
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GlobalLock(IntPtr hMem);
+        [LibraryImport("kernel32.dll")]
+        private static partial IntPtr GlobalLock(IntPtr hMem);
 
-        [DllImport("kernel32.dll")]
+        [LibraryImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GlobalUnlock(IntPtr hMem);
+        private static partial bool GlobalUnlock(IntPtr hMem);
 
-        [DllImport("kernel32.dll", ExactSpelling = true, EntryPoint = "RtlMoveMemory", SetLastError = true)]
-        private static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
+        [LibraryImport("kernel32.dll", EntryPoint = "RtlMoveMemory")]
+        private static partial void CopyMemory(IntPtr dest, IntPtr src, uint count);
 
-        [DllImport("user32.dll", SetLastError = false)]
+        [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool IsClipboardFormatAvailable(uint format);
+        private static partial bool IsClipboardFormatAvailable(uint format);
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool OpenClipboard(IntPtr hWndNewOwner);
+        private static partial bool OpenClipboard(IntPtr hWndNewOwner);
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool CloseClipboard();
+        private static partial bool CloseClipboard();
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [LibraryImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool EmptyClipboard();
+        private static partial bool EmptyClipboard();
 
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern IntPtr GetClipboardData(uint format);
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr GetClipboardData(uint format);
 
-        [DllImport("user32.dll")]
-        private static extern IntPtr SetClipboardData(uint format, IntPtr data);
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr SetClipboardData(uint format, IntPtr data);
 
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern uint RegisterClipboardFormat(string lpszFormat);
+        [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16)]
+        private static partial uint RegisterClipboardFormat(string lpszFormat);
 
         private const uint CF_TEXT = 1;
         private const uint CF_UNICODETEXT = 13;

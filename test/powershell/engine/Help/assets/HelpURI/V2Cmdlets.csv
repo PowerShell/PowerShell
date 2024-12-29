@@ -159,6 +159,7 @@ Register-EngineEvent,https://go.microsoft.com/fwlink/?linkid=2097128
 Register-ObjectEvent,https://go.microsoft.com/fwlink/?linkid=2096714
 Register-PSSessionConfiguration,https://go.microsoft.com/fwlink/?linkid=2096793
 Register-WmiEvent,https://go.microsoft.com/fwlink/?LinkID=135245
+Remove-Alias,https://go.microsoft.com/fwlink/?linkid=2097127
 Remove-Computer,https://go.microsoft.com/fwlink/?LinkID=135246
 Remove-Event,https://go.microsoft.com/fwlink/?linkid=2096715
 Remove-EventLog,https://go.microsoft.com/fwlink/?LinkID=135248

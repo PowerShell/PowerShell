@@ -27,14 +27,13 @@ namespace Microsoft.Management.UI.Internal
         /// </returns>
         public static FilterRule DeepCopy(this FilterRule rule)
         {
-            if (rule == null)
-            {
-                throw new ArgumentNullException("rule");
-            }
+            ArgumentNullException.ThrowIfNull(rule);
 
+#pragma warning disable SYSLIB0050
             Debug.Assert(rule.GetType().IsSerializable, "rule is serializable");
-
+#pragma warning disable SYSLIB0011
             BinaryFormatter formatter = new BinaryFormatter(null, new StreamingContext(StreamingContextStates.Clone));
+#pragma warning restore SYSLIB0011
             MemoryStream ms = new MemoryStream();
 
             FilterRule copy = null;
@@ -44,6 +43,7 @@ namespace Microsoft.Management.UI.Internal
 
                 ms.Position = 0;
                 copy = (FilterRule)formatter.Deserialize(ms);
+#pragma warning restore SYSLIB0050
             }
             finally
             {

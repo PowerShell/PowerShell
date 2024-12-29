@@ -6,10 +6,9 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Host
 {
     /// <summary>
-    /// Provides a description of a choice for use by <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>.
-    /// <!--Used by the Msh engine to describe cmdlet parameters.-->
+    /// Provides a description of a choice for use by <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>.
+    /// <!--Used by the engine to describe cmdlet parameters.-->
     /// </summary>
-
     public sealed
     class ChoiceDescription
     {
@@ -29,7 +28,6 @@ namespace System.Management.Automation.Host
         /// <exception cref="System.Management.Automation.PSArgumentException">
         /// <paramref name="label"/> is null or empty.
         /// </exception>
-
         public
         ChoiceDescription(string label)
         {
@@ -59,7 +57,6 @@ namespace System.Management.Automation.Host
         /// <exception cref="System.Management.Automation.PSArgumentNullException">
         /// <paramref name="helpMessage"/> is null.
         /// </exception>
-
         public
         ChoiceDescription(string label, string helpMessage)
         {
@@ -87,12 +84,11 @@ namespace System.Management.Automation.Host
         /// <remarks>
         /// Note that the special character &amp; (ampersand) may be embedded in the label string to identify the next character in the label
         /// as a "hot key" (aka "keyboard accelerator") that the Console.PromptForChoice implementation may use to allow the user to
-        /// quickly set input focus to this choice.  The implementation of <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
+        /// quickly set input focus to this choice.  The implementation of <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// is responsible for parsing the label string for this special character and rendering it accordingly.
         ///
         /// For examples, a choice named "Yes to All" might have "Yes to &amp;All" as it's label.
         /// </remarks>
-
         public
         string
         Label
@@ -115,7 +111,6 @@ namespace System.Management.Automation.Host
         /// This should be a few sentences to describe the field, suitable for presentation as a tool tip.
         /// Avoid placing including formatting characters such as newline and tab.
         /// </remarks>
-
         public
         string
         HelpMessage
@@ -139,4 +134,3 @@ namespace System.Management.Automation.Host
         }
     }
 }
-

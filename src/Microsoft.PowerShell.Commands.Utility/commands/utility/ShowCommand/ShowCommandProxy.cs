@@ -20,9 +20,9 @@ namespace Microsoft.PowerShell.Commands
     {
         private const string ShowCommandHelperName = "Microsoft.PowerShell.Commands.ShowCommandInternal.ShowCommandHelper";
 
-        private ShowCommandCommand _cmdlet;
+        private readonly ShowCommandCommand _cmdlet;
 
-        private GraphicalHostReflectionWrapper _graphicalHostReflectionWrapper;
+        private readonly GraphicalHostReflectionWrapper _graphicalHostReflectionWrapper;
 
         internal ShowCommandProxy(ShowCommandCommand cmdlet)
         {

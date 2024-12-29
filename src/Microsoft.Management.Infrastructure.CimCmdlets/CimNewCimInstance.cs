@@ -20,9 +20,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimNewCimInstanceContext : XOperationContextBase
     {
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimNewCimInstanceContext"/> class.
         /// </summary>
         /// <param name="methodName"></param>
         /// <param name="propertyName"></param>
@@ -44,6 +42,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimNewCimInstance : CimAsyncOperation
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimNewCimInstance"/> class.
         /// <para>
         /// Constructor
         /// </para>
@@ -133,7 +132,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             // create ciminstance on server
-            List<CimSessionProxy> proxys = new List<CimSessionProxy>();
+            List<CimSessionProxy> proxys = new();
 
             switch (cmdlet.ParameterSetName)
             {
@@ -180,15 +179,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
 
-            CimNewCimInstanceContext newCimInstanceContext = context as CimNewCimInstanceContext;
-            if (newCimInstanceContext == null)
+            if (context is not CimNewCimInstanceContext newCimInstanceContext)
             {
                 DebugHelper.WriteLog("Invalid (null) CimNewCimInstanceContext", 1);
                 return;
             }
 
             CimSessionProxy proxy = CreateCimSessionProxy(newCimInstanceContext.Proxy);
-            string nameSpace = (cimInstance.CimSystemProperties.Namespace == null) ? newCimInstanceContext.Namespace : cimInstance.CimSystemProperties.Namespace;
+            string nameSpace = cimInstance.CimSystemProperties.Namespace ?? newCimInstanceContext.Namespace;
             proxy.GetInstanceAsync(nameSpace, cimInstance);
         }
 
@@ -203,7 +201,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="proxy"></param>
         /// <param name="cmdlet"></param>
-        private void SetSessionProxyProperties(
+        private static void SetSessionProxyProperties(
             ref CimSessionProxy proxy,
             NewCimInstanceCommand cmdlet)
         {
@@ -267,13 +265,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IDictionary properties,
             NewCimInstanceCommand cmdlet)
         {
-            CimInstance cimInstance = new CimInstance(className, cimNamespace);
+            CimInstance cimInstance = new(className, cimNamespace);
             if (properties == null)
             {
                 return cimInstance;
             }
 
-            List<string> keys = new List<string>();
+            List<string> keys = new();
             if (key != null)
             {
                 foreach (string keyName in key)
@@ -296,8 +294,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 DebugHelper.WriteLog("Create and add new property to ciminstance: name = {0}; value = {1}; flags = {2}", 5, propertyName, propertyValue, flag);
 
-                PSReference cimReference = propertyValue as PSReference;
-                if (cimReference != null)
+                if (propertyValue is PSReference cimReference)
                 {
                     CimProperty newProperty = CimProperty.Create(propertyName, GetBaseObject(cimReference.Value), CimType.Reference, flag);
                     cimInstance.CimInstanceProperties.Add(newProperty);
@@ -331,13 +328,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IDictionary properties,
             NewCimInstanceCommand cmdlet)
         {
-            CimInstance cimInstance = new CimInstance(cimClass);
+            CimInstance cimInstance = new(cimClass);
             if (properties == null)
             {
                 return cimInstance;
             }
 
-            List<string> notfoundProperties = new List<string>();
+            List<string> notfoundProperties = new();
             foreach (string property in properties.Keys)
             {
                 if (cimInstance.CimInstanceProperties[property] == null)

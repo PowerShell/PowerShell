@@ -31,7 +31,7 @@ namespace System.Management.Automation
         public Exception Exception { get; }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="SettingValueExceptionEventArgs"/> setting the value of of the exception that triggered the associated event.
+        /// Initializes a new instance of <see cref="SettingValueExceptionEventArgs"/> setting the value of the exception that triggered the associated event.
         /// </summary>
         /// <param name="exception">Exception that triggered the associated event.</param>
         internal SettingValueExceptionEventArgs(Exception exception)
@@ -64,7 +64,7 @@ namespace System.Management.Automation
         public Exception Exception { get; }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="GettingValueExceptionEventArgs"/> setting the value of of the exception that triggered the associated event.
+        /// Initializes a new instance of <see cref="GettingValueExceptionEventArgs"/> setting the value of the exception that triggered the associated event.
         /// </summary>
         /// <param name="exception">Exception that triggered the associated event.</param>
         internal GettingValueExceptionEventArgs(Exception exception)
@@ -92,6 +92,7 @@ namespace System.Management.Automation
     public class PSObjectPropertyDescriptor : PropertyDescriptor
     {
         internal event EventHandler<SettingValueExceptionEventArgs> SettingValueException;
+
         internal event EventHandler<GettingValueExceptionEventArgs> GettingValueException;
 
         internal PSObjectPropertyDescriptor(string propertyName, Type propertyType, bool isReadOnly, AttributeCollection propertyAttributes)
@@ -218,13 +219,12 @@ namespace System.Management.Automation
             PSObject mshObj = component as PSObject;
             if (mshObj == null)
             {
-                PSObjectTypeDescriptor descriptor = component as PSObjectTypeDescriptor;
-                if (descriptor == null)
+                if (!(component is PSObjectTypeDescriptor descriptor))
                 {
                     throw PSTraceSource.NewArgumentException(nameof(component), ExtendedTypeSystem.InvalidComponent,
                                                              "component",
-                                                             typeof(PSObject).Name,
-                                                             typeof(PSObjectTypeDescriptor).Name);
+                                                             nameof(PSObject),
+                                                             nameof(PSObjectTypeDescriptor));
                 }
 
                 mshObj = descriptor.Instance;
@@ -410,10 +410,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (propertyAttributes == null)
-                {
-                    propertyAttributes = new AttributeCollection();
-                }
+                propertyAttributes ??= new AttributeCollection();
 
                 typeDescriptor.WriteLine("Adding property \"{0}\".", propertyInfo.Name);
 
@@ -467,8 +464,7 @@ namespace System.Management.Automation
         /// <returns>True if the Instance property of <paramref name="obj"/> is equal to the current Instance; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            PSObjectTypeDescriptor other = obj as PSObjectTypeDescriptor;
-            if (other == null)
+            if (!(obj is PSObjectTypeDescriptor other))
             {
                 return false;
             }
@@ -771,4 +767,3 @@ namespace System.Management.Automation
         }
     }
 }
-

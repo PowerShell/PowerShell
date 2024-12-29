@@ -3,21 +3,49 @@ parameters:
 
 jobs:
 - job: vpack_${{ parameters.architecture }}
+  variables:
+    - group: vPack
+    - group: ReleasePipelineSecrets
+
   displayName: Build and Publish VPack - ${{ parameters.architecture }}
   condition: succeeded()
-  pool: Package ES Standard Build
+  pool:
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
   steps:
+  - checkout: self
+    clean: true
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      packageType: sdk
+      version: 3.1.x
+      installationPath: $(Agent.ToolsDirectory)/dotnet
 
   - template: ./SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
 
   - pwsh: |
-      $azcopy = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+      Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+      Install-AzCopy
+    displayName: Install AzCopy
+    retryCountOnTaskFailure: 2
 
-      Write-Host "running: $azcopy /Source:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) /Dest:$(System.ArtifactsDirectory) /S /SourceKey:****** /Pattern:PowerShell-$(Version)-win-${{ parameters.architecture }}.zip /Z:$(AGENT.TEMPDIRECTORY)"
-      & $azcopy /Source:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) /Dest:$(System.ArtifactsDirectory) /S /SourceKey:$(StorageAccountKey) /Pattern:PowerShell-$(Version)-win-${{ parameters.architecture }}.zip /Z:$(AGENT.TEMPDIRECTORY)
+  - pwsh: |
+      Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+      $azcopy = Find-AzCopy
+      Write-Verbose -Verbose "Found AzCopy: $azcopy"
+
+      Write-Host "running: $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)"
+
+      & $azcopy cp https://$(StorageAccount).blob.core.windows.net/$(AzureVersion)/PowerShell-$(Version)-win-${{ parameters.architecture }}.zip $(System.ArtifactsDirectory)
     displayName: 'Download Azure Artifacts'
+    retryCountOnTaskFailure: 2
+    env:
+      AZCOPY_AUTO_LOGIN_TYPE: MSI
 
   - pwsh: 'Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name'
     displayName: 'Capture Artifact Listing'
@@ -25,7 +53,7 @@ jobs:
   - pwsh: |
       $message = @()
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
-          if($_.Name -notmatch 'PowerShell-\d\.\d\.\d\-([a-z]*.\d+\-)?win\-(fxdependent|x64|arm32|arm64|x86|fxdependentWinDesktop)\.(msi|zip){1}')
+          if($_.Name -notmatch 'PowerShell-\d+\.\d+\.\d+\-([a-z]*.\d+\-)?win\-(fxdependent|x64|arm64|x86|fxdependentWinDesktop)\.(msi|zip){1}')
           {
                 $messageInstance = "$($_.Name) is not a valid package name"
                 $message += $messageInstance
@@ -38,7 +66,7 @@ jobs:
 
   - pwsh: |
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
-          if($_.Name -match 'PowerShell-\d\.\d\.\d\-([a-z]*.\d+\-)?win\-(${{ parameters.architecture }})\.(zip){1}')
+          if($_.Name -match 'PowerShell-\d+\.\d+\.\d+\-([a-z]*.\d+\-)?win\-(${{ parameters.architecture }})\.(zip){1}')
           {
               $destDir = "$(System.ArtifactsDirectory)\vpack${{ parameters.architecture }}"
               $null = new-item -ItemType Directory -Path $destDir
@@ -65,14 +93,12 @@ jobs:
     displayName: 'Set vpackVersion'
 
   - pwsh: |
-      Get-ChildItem -Path env:
+      Get-ChildItem -Path env: | Out-String -width 9999 -Stream | write-Verbose -Verbose
     displayName: Capture Environment
     condition: succeededOrFailed()
 
-  - task: PkgESVPack@10
+  - task: PkgESVPack@12
     displayName: 'Package ES - VPack '
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
       sourceDirectory: '$(vpackDir)'
       description: PowerShell ${{ parameters.architecture }} $(version)
@@ -81,6 +107,7 @@ jobs:
       platforms: x64
       target: '$(System.ArtifactsDirectory)'
       owner: tplunk
-      provData: false
+      provData: true
       version: '$(vpackVersion)'
+      vpackToken: $(vPackPat)
     condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))

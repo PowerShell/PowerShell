@@ -35,10 +35,13 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
 Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
+        $skipTest = (Test-IsWinWow64) -or !$IsWindows
 
-        if ($IsWindows) {
-            $script:remoteRunspace = New-RemoteRunspace
+        if ($skipTest) {
+            return
         }
+
+        $script:remoteRunspace = New-RemoteRunspace
     }
 
     AfterAll {
@@ -48,7 +51,7 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAd
         }
     }
 
-    It "Method should successfully invoke command on remote runspace" -Skip:(!$IsWindows) {
+    It "Method should successfully invoke command on remote runspace" -Skip:$skipTest {
 
         $command = [System.Management.Automation.PSCommand]::new()
         $command.AddScript('"Hello!"')
@@ -56,5 +59,40 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAd
         $results = [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $script:remoteRunspace)
 
         $results[0] | Should -Be "Hello!"
+    }
+}
+
+Describe 'PromptForCredential' -Tags "CI" {
+    BeforeAll {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('NoPromptForPassword', $true)
+    }
+
+    AfterAll {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('NoPromptForPassword', $false)
+    }
+
+    It 'Should accept no targetname' {
+        $out = $Host.UI.PromptForCredential('caption','message','myUser',$null)
+        $out.UserName | Should -BeExactly 'myUser'
+    }
+
+    It 'Should accept targetname as domain' {
+        $out = $Host.UI.PromptForCredential('caption','message','myUser','myDomain')
+        $out.UserName | Should -BeExactly 'myDomain\myUser'
+    }
+}
+
+Describe 'PushRunspaceLocalFailure' -Tags 'CI' {
+    It 'Should throw an exception when pushing a local runspace' {
+        $runspace = [RunspaceFactory]::CreateRunspace()
+        try {
+            $runspace.Open()
+            $exc = { $Host.PushRunspace($runspace) } | Should -Throw -PassThru
+            $exc.Exception.InnerException | Should -BeOfType ([System.ArgumentException])
+            [string]$exc | Should -BeLike "*PushRunspace can only push a remote runspace. (Parameter 'runspace')*"
+        }
+        finally {
+            $runspace.Dispose()
+        }
     }
 }

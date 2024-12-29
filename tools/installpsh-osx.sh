@@ -132,7 +132,7 @@ done
 
 if ! hash pwsh 2>/dev/null; then
     echo "Installing PowerShell..."
-    if ! brew cask install ${powershellpackageid}; then
+    if ! brew install ${powershellpackageid} --cask; then
         echo "ERROR: PowerShell failed to install! Cannot install powershell..." >&2
     fi
 else
@@ -142,7 +142,7 @@ fi
 if [[ "'$*'" =~ includeide ]] ; then
     echo "*** Installing VS Code PowerShell IDE..."
     if [[ ! -d $(brew --prefix visual-studio-code) ]]; then
-        if ! brew cask install visual-studio-code; then
+        if ! brew install visual-studio-code --cask; then
             echo "ERROR: Visual Studio Code failed to install..." >&2
             exit 1
         fi

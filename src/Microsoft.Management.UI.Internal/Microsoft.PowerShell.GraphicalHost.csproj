@@ -1,10 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>Assembly containing WPF code for Out-GridView, HelpWindow, and Show-Command</Description>
     <NoWarn>$(NoWarn);CS1570</NoWarn>
     <RootNamespace>Microsoft.Management.UI.Internal</RootNamespace>
     <AssemblyName>Microsoft.PowerShell.GraphicalHost</AssemblyName>
+    <RunAnalyzers>false</RunAnalyzers>
+    <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
+    <TargetPlatformVersion>8.0</TargetPlatformVersion>
+    <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>True</UseWPF>
   </PropertyGroup>
 

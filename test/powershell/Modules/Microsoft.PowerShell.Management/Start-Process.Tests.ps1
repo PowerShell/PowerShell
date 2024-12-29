@@ -32,25 +32,25 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     It "Should process arguments without error" {
         $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
-	    $process.Length      | Should -Be 1
-	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should -Be "ping"
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should work correctly when used with full path name" {
         $process = Start-Process $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
 
-	    $process.Length      | Should -Be 1
-	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should -Be "ping"
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should invoke correct path when used with FilePath argument" {
         $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
-	    $process.Length      | Should -Be 1
-	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should -Be "ping"
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should invoke correct path when used with Path alias argument" {
@@ -67,26 +67,26 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     It "Should work correctly with WorkingDirectory argument" {
         $process = Start-Process ping -WorkingDirectory $pingDirectory -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
-	    $process.Length      | Should -Be 1
-	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should -Be "ping"
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+        # $process.ProcessName | Should -Be "ping"
     }
-	
+
     It "Should work correctly within an unspecified WorkingDirectory with wildcard-type characters" {
         Push-Location -LiteralPath $tempDirectory
-	    $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
-	    $process.Length      | Should -Be 1
-	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should -Be "ping"
+        $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+        # $process.ProcessName | Should -Be "ping"
         Pop-Location
     }
 
     It "Should handle stderr redirection without error" {
         $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
 
-	    $process.Length      | Should -Be 1
-	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should -Be "ping"
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+        # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should handle stdout redirection without error" {
@@ -95,8 +95,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         $dirEntry.Length | Should -BeGreaterThan 0
     }
 
-    # Marking this test 'pending' to unblock daily builds. Filed issue : https://github.com/PowerShell/PowerShell/issues/2396
-    It "Should handle stdin redirection without error" -Pending {
+    It "Should handle stdin redirection without error" {
         $process = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile  @extraArgs
         $dirEntry = Get-ChildItem $tempFile
         $dirEntry.Length | Should -BeGreaterThan 0
@@ -114,6 +113,11 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
     It "Should give an error when both -NoNewWindow and -WindowStyle are specified" -Skip:(!$isFullWin) {
         { Start-Process -FilePath $pingCommand -NoNewWindow -WindowStyle Normal -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.StartProcessCommand"
+    }
+
+    It "ExitCode returns with -NoNewWindow, -PassThru and -Wait" {
+        $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -NoNewWindow -PassThru -Wait -ErrorAction Stop
+        $process.ExitCode | Should -Be 0
     }
 
     It "Should start cmd.exe with Verb 'open' and WindowStyle 'Minimized'" -Skip:(!$isFullWin) {
@@ -182,7 +186,7 @@ Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWi
     }
 }
 
-Describe "Start-Process" -Tags "Feature" {
+Describe "Environment Tests" -Tags "Feature" {
 
     It "UseNewEnvironment parameter should reset environment variables for child process" {
 
@@ -205,6 +209,35 @@ Describe "Start-Process" -Tags "Feature" {
             Get-Content -LiteralPath $outputFile | Should -BeExactly ";$userName"
         } finally {
             $env:TestEnvVariable = $null
+        }
+    }
+
+    It '-Environment adds or replaces environment variables to child process' {
+        $outputfile = Join-Path -Path $TestDrive -ChildPath output.txt
+        Start-Process pwsh -ArgumentList '-NoProfile','-Nologo','-OutputFormat xml','-Command get-childitem env:' -Wait -Environment @{ a = 1; B = 'hello'; TERM = 'dumb'; PATH = 'mine' } -RedirectStandardOutput $outputfile
+        $out = Import-Clixml $outputfile
+        ($out | Where-Object { $_.Name -eq 'a' }).Value | Should -Be 1
+        ($out | Where-Object { $_.Name -eq 'B' }).Value | Should -BeExactly 'hello'
+        ($out | Where-Object { $_.Name -eq 'TERM' }).Value | Should -BeExactly 'dumb'
+        $pathSeparator = [System.IO.Path]::PathSeparator
+        if ($IsWindows) {
+            ($out | Where-Object { $_.Name -eq 'PATH' }).Value | Should -BeLike "*${pathSeparator}mine${pathSeparator}*"
+        } else {
+            ($out | Where-Object { $_.Name -eq 'PATH' }).Value | Should -BeLike "*${pathSeparator}mine"
+        }
+    }
+
+    It '-Environment can remove an environment variable from child process' {
+        try {
+            $env:existing = 1 # set a variable that we will remove
+            $env:nonexisting = $null # validate that removing a non-existing variable is a no-op
+            $outputfile = Join-Path -Path $TestDrive -ChildPath output.txt
+            Start-Process pwsh -ArgumentList '-NoProfile','-Nologo','-OutputFormat xml','-Command get-childitem env:' -Wait -Environment @{ existing = $null; nonexisting = $null } -RedirectStandardOutput $outputfile
+            $out = Import-Clixml $outputfile
+            $out | Where-Object { $_.Name -eq 'existing' } | Should -BeNullOrEmpty
+            $out | Where-Object { $_.Name -eq 'nonexisting' } | Should -BeNullOrEmpty
+        } finally {
+            $env:existing = $null
         }
     }
 }

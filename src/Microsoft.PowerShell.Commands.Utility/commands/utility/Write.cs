@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
         [Alias("Msg")]
-        public string Message { get; set; } = null;
+        public string Message { get; set; }
 
         /// <summary>
         /// This method implements the ProcessRecord method for Write-Debug command.
@@ -33,15 +33,11 @@ namespace Microsoft.PowerShell.Commands
             // so we create the DebugRecord here and fill it up with the appropriate InvocationInfo;
             // then, we call the command runtime directly and pass this record to WriteDebug().
             //
-            MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
-
-            if (mshCommandRuntime != null)
+            if (this.CommandRuntime is MshCommandRuntime mshCommandRuntime)
             {
-                DebugRecord record = new DebugRecord(Message);
+                DebugRecord record = new(Message);
 
-                InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-
-                if (invocationInfo != null)
+                if (GetVariableValue(SpecialVariables.MyInvocation) is InvocationInfo invocationInfo)
                 {
                     record.SetInvocationInfo(invocationInfo);
                 }
@@ -69,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
         [Alias("Msg")]
-        public string Message { get; set; } = null;
+        public string Message { get; set; }
 
         /// <summary>
         /// This method implements the ProcessRecord method for Write-verbose command.
@@ -81,15 +77,11 @@ namespace Microsoft.PowerShell.Commands
             // so we create the VerboseRecord here and fill it up with the appropriate InvocationInfo;
             // then, we call the command runtime directly and pass this record to WriteVerbose().
             //
-            MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
-
-            if (mshCommandRuntime != null)
+            if (this.CommandRuntime is MshCommandRuntime mshCommandRuntime)
             {
-                VerboseRecord record = new VerboseRecord(Message);
+                VerboseRecord record = new(Message);
 
-                InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-
-                if (invocationInfo != null)
+                if (GetVariableValue(SpecialVariables.MyInvocation) is InvocationInfo invocationInfo)
                 {
                     record.SetInvocationInfo(invocationInfo);
                 }
@@ -117,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
         [Alias("Msg")]
-        public string Message { get; set; } = null;
+        public string Message { get; set; }
 
         /// <summary>
         /// This method implements the ProcessRecord method for Write-Warning command.
@@ -129,15 +121,11 @@ namespace Microsoft.PowerShell.Commands
             // so we create the WarningRecord here and fill it up with the appropriate InvocationInfo;
             // then, we call the command runtime directly and pass this record to WriteWarning().
             //
-            MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
-
-            if (mshCommandRuntime != null)
+            if (this.CommandRuntime is MshCommandRuntime mshCommandRuntime)
             {
-                WarningRecord record = new WarningRecord(Message);
+                WarningRecord record = new(Message);
 
-                InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-
-                if (invocationInfo != null)
+                if (GetVariableValue(SpecialVariables.MyInvocation) is InvocationInfo invocationInfo)
                 {
                     record.SetInvocationInfo(invocationInfo);
                 }
@@ -184,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (tag.StartsWith("PS", StringComparison.OrdinalIgnoreCase))
                     {
-                        ErrorRecord er = new ErrorRecord(
+                        ErrorRecord er = new(
                             new InvalidOperationException(StringUtil.Format(UtilityCommonStrings.PSPrefixReservedInInformationTag, tag)),
                             "PSPrefixReservedInInformationTag", ErrorCategory.InvalidArgument, tag);
                         ThrowTerminatingError(er);
@@ -214,8 +202,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ErrorRecord.Exception -- if not specified, ErrorRecord.Exception is System.Exception.
         /// </summary>
-        [Parameter(ParameterSetName = "WithException", Mandatory = true)]
-        public Exception Exception { get; set; } = null;
+        [Parameter(Position = 0, ParameterSetName = "WithException", Mandatory = true)]
+        public Exception Exception { get; set; }
 
         /// <summary>
         /// If Exception is specified, this is ErrorRecord.ErrorDetails.Message;
@@ -226,14 +214,14 @@ namespace Microsoft.PowerShell.Commands
         [AllowNull]
         [AllowEmptyString]
         [Alias("Msg")]
-        public string Message { get; set; } = null;
+        public string Message { get; set; }
 
         /// <summary>
         /// If Exception is specified, this is ErrorRecord.ErrorDetails.Message;
         /// otherwise, the Exception is System.Exception, and this is Exception.Message.
         /// </summary>
-        [Parameter(ParameterSetName = "ErrorRecord", Mandatory = true)]
-        public ErrorRecord ErrorRecord { get; set; } = null;
+        [Parameter(Position = 0, ParameterSetName = "ErrorRecord", Mandatory = true)]
+        public ErrorRecord ErrorRecord { get; set; }
 
         /// <summary>
         /// ErrorRecord.CategoryInfo.Category.
@@ -254,7 +242,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "NoException")]
         [Parameter(ParameterSetName = "WithException")]
-        public object TargetObject { get; set; } = null;
+        public object TargetObject { get; set; }
 
         /// <summary>
         /// ErrorRecord.ErrorDetails.RecommendedAction.
@@ -312,10 +300,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Exception e = this.Exception;
                 string msg = Message;
-                if (e == null)
-                {
-                    e = new WriteErrorException(msg);
-                }
+                e ??= new WriteErrorException(msg);
 
                 string errid = ErrorId;
                 if (string.IsNullOrEmpty(errid))
@@ -339,10 +324,7 @@ namespace Microsoft.PowerShell.Commands
             string recact = RecommendedAction;
             if (!string.IsNullOrEmpty(recact))
             {
-                if (errorRecord.ErrorDetails == null)
-                {
-                    errorRecord.ErrorDetails = new ErrorDetails(errorRecord.ToString());
-                }
+                errorRecord.ErrorDetails ??= new ErrorDetails(errorRecord.ToString());
 
                 errorRecord.ErrorDetails.RecommendedAction = recact;
             }
@@ -367,8 +349,7 @@ namespace Microsoft.PowerShell.Commands
 
             // 2005/07/14-913791 "write-error output is confusing and misleading"
             // set InvocationInfo to the script not the command
-            InvocationInfo myInvocation = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-            if (myInvocation != null)
+            if (GetVariableValue(SpecialVariables.MyInvocation) is InvocationInfo myInvocation)
             {
                 errorRecord.SetInvocationInfo(myInvocation);
                 errorRecord.PreserveInvocationInfoOnce = true;
@@ -393,7 +374,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class WriteErrorCommand : WriteOrThrowErrorCommand
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="WriteErrorCommand"/> class.
         /// </summary>
         public WriteErrorCommand()
         {
@@ -428,12 +409,11 @@ namespace Microsoft.PowerShell.Commands
     /// when the user only specifies a string and not
     /// an Exception or ErrorRecord.
     /// </summary>
-    [Serializable]
     public class WriteErrorException : SystemException
     {
         #region ctor
         /// <summary>
-        /// Constructor for class WriteErrorException.
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class.
         /// </summary>
         /// <returns>Constructed object.</returns>
         public WriteErrorException()
@@ -442,7 +422,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Constructor for class WriteErrorException.
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class.
         /// </summary>
         /// <param name="message"></param>
         /// <returns>Constructed object.</returns>
@@ -452,7 +432,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Constructor for class WriteErrorException.
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -466,15 +446,16 @@ namespace Microsoft.PowerShell.Commands
 
         #region Serialization
         /// <summary>
-        /// Serialization constructor for class WriteErrorException.
+        /// Initializes a new instance of the <see cref="WriteErrorException"/> class for serialization.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
         /// <returns>Constructed object.</returns>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected WriteErrorException(SerializationInfo info,
                                       StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
     }

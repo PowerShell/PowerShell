@@ -11,8 +11,8 @@ namespace Microsoft.PowerShell.Commands
 {
     internal class OriginalColumnInfo : ColumnInfo
     {
-        private string _liveObjectPropertyName;
-        private OutGridViewCommand _parentCmdlet;
+        private readonly string _liveObjectPropertyName;
+        private readonly OutGridViewCommand _parentCmdlet;
 
         internal OriginalColumnInfo(string staleObjectPropertyName, string displayName, string liveObjectPropertyName, OutGridViewCommand parentCmdlet)
             : base(staleObjectPropertyName, displayName)
@@ -33,15 +33,13 @@ namespace Microsoft.PowerShell.Commands
 
                 // The live object has the liveObjectPropertyName property.
                 object liveObjectValue = propertyInfo.Value;
-                ICollection collectionValue = liveObjectValue as ICollection;
-                if (collectionValue != null)
+                if (liveObjectValue is ICollection collectionValue)
                 {
                     liveObjectValue = _parentCmdlet.ConvertToString(PSObjectHelper.AsPSObject(propertyInfo.Value));
                 }
                 else
                 {
-                    PSObject psObjectValue = liveObjectValue as PSObject;
-                    if (psObjectValue != null)
+                    if (liveObjectValue is PSObject psObjectValue)
                     {
                         // Since PSObject implements IComparable there is a need to verify if its BaseObject actually implements IComparable.
                         if (psObjectValue.BaseObject is IComparable)

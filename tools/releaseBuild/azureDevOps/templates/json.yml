@@ -3,24 +3,34 @@ parameters:
 
 jobs:
 - job: json
+  variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
   displayName: Create Json for Blob
   dependsOn:
     ${{ parameters.parentJobs }}
   condition: succeeded()
   pool:
-    vmImage: windows-latest
+    name: $(windowsPool)
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
 
   steps:
   #- task: <task type name>@<version>
   #  inputs:
   #    <task specific inputs>
   #  displayName: '<display name of task>'
+  - checkout: self
+    clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
       CreateJson: yes
 
-  - task: AzureFileCopy@3
+  - task: AzureFileCopy@4
     displayName: 'upload daily-build-info JSON file to Azure - ${{ parameters.architecture }}'
     inputs:
       SourcePath: '$(BuildInfoPath)'
@@ -41,5 +51,7 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
+      sourceScanPath: '$(Build.SourcesDirectory)\tools'
       snapshotForceEnabled: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

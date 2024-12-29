@@ -8,7 +8,7 @@ namespace Microsoft.PowerShell.Commands
 {
     internal class ScalarTypeColumnInfo : ColumnInfo
     {
-        private Type _type;
+        private readonly Type _type;
 
         internal ScalarTypeColumnInfo(Type type)
             : base(type.Name, type.Name)
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
 
     internal class ToStringColumnInfo : ColumnInfo
     {
-        private OutGridViewCommand _parentCmdlet;
+        private readonly OutGridViewCommand _parentCmdlet;
 
         internal ToStringColumnInfo(string staleObjectPropertyName, string displayName, OutGridViewCommand parentCmdlet)
             : base(staleObjectPropertyName, displayName)

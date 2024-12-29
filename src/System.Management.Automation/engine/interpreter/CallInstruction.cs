@@ -104,7 +104,7 @@ namespace System.Management.Automation.Interpreter
             }
             catch (TargetInvocationException tie)
             {
-                if (!(tie.InnerException is NotSupportedException))
+                if (tie.InnerException is not NotSupportedException)
                 {
                     throw;
                 }
@@ -178,7 +178,7 @@ namespace System.Management.Automation.Interpreter
 
         private static bool ShouldCache(MethodInfo info)
         {
-            return !(info is DynamicMethod);
+            return info is not DynamicMethod;
         }
 
         /// <summary>
@@ -222,7 +222,11 @@ namespace System.Management.Automation.Interpreter
         private static CallInstruction SlowCreate(MethodInfo info, ParameterInfo[] pis)
         {
             List<Type> types = new List<Type>();
-            if (!info.IsStatic) types.Add(info.DeclaringType);
+            if (!info.IsStatic)
+            {
+                types.Add(info.DeclaringType);
+            }
+
             foreach (ParameterInfo pi in pis)
             {
                 types.Add(pi.ParameterType);

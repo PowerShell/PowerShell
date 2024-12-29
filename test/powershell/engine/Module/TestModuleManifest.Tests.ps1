@@ -18,12 +18,21 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         New-Item -ItemType Directory -Path testdrive:/module/foo > $null
         New-Item -ItemType Directory -Path testdrive:/module/bar > $null
+
         New-Item -ItemType File -Path testdrive:/module/foo/bar.psm1 > $null
+        New-Item -ItemType File -Path testdrive:/module/foo/bar.ps1 > $null
+        New-Item -ItemType File -Path testdrive:/module/foo/bar.ps1xml > $null
+
         New-Item -ItemType File -Path testdrive:/module/bar/foo.psm1 > $null
+        New-Item -ItemType File -Path testdrive:/module/bar/foo.ps1 > $null
+        New-Item -ItemType File -Path testdrive:/module/bar/foo.ps1xml > $null
+
         $testModulePath = "testdrive:/module/test.psd1"
         $fileList = "foo\bar.psm1","bar/foo.psm1"
+        $scripts = "foo\/bar.ps1","bar/\foo.ps1"
+        $ps1xml = "foo//bar.ps1xml","bar\\foo.ps1xml"
 
-        New-ModuleManifest -NestedModules $fileList -RootModule foo\bar.psm1 -RequiredAssemblies $fileList -Path $testModulePath -TypesToProcess $fileList -FormatsToProcess $fileList -ScriptsToProcess $fileList -FileList $fileList -ModuleList $fileList
+        New-ModuleManifest -NestedModules $fileList -RootModule foo\bar.psm1 -RequiredAssemblies $fileList -Path $testModulePath -TypesToProcess $ps1xml -FormatsToProcess $ps1xml -ScriptsToProcess $scripts -FileList $fileList -ModuleList $fileList
 
         Test-Path $testModulePath | Should -BeTrue
 
@@ -141,6 +150,16 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         $module = Test-ModuleManifest -Path $testModulePath
         $module.NestedModules | Should -HaveCount 1
         $module.NestedModules.Name | Should -BeExactly "Foo"
+    }
+
+    It 'Works for manifest specified as UNC path' -Skip:(!$IsWindows) {
+        # chance the testdrive path to a UNC path
+
+        $testModulePath = '\\localhost\' + "$testDrive\test.psd1".Replace(':', '$')
+        New-Item -ItemType File -Path testdrive:/foo.psm1 > $null
+        New-ModuleManifest -Path $testModulePath -RootModule "foo.psm1"
+        $module = Test-ModuleManifest -Path $testModulePath
+        $module.RootModule | Should -Be "foo.psm1"
     }
 }
 

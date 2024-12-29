@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         internal Collection<string> ParseCsv(string csv)
         {
-            Collection<string> result = new Collection<string>();
+            Collection<string> result = new();
             string tempString = string.Empty;
             csv = csv.Trim();
             if (csv.Length == 0 || csv[0] == '#')

@@ -16,7 +16,6 @@ namespace System.Management.Automation.Runspaces
     /// Exception thrown when state of the runspace pool is different from
     /// expected state of runspace pool.
     /// </summary>
-    [Serializable]
     public class InvalidRunspacePoolStateException : SystemException
     {
         /// <summary>
@@ -91,10 +90,11 @@ namespace System.Management.Automation.Runspaces
         /// The <see cref="StreamingContext"/> that contains
         /// contextual information about the source or destination.
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected
         InvalidRunspacePoolStateException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion
@@ -182,13 +182,13 @@ namespace System.Management.Automation.Runspaces
         /// State of the runspace pool when exception was thrown.
         /// </summary>
         [NonSerialized]
-        private RunspacePoolState _currentState = 0;
+        private readonly RunspacePoolState _currentState = 0;
 
         /// <summary>
         /// State of the runspace pool expected in method which throws this exception.
         /// </summary>
         [NonSerialized]
-        private RunspacePoolState _expectedState = 0;
+        private readonly RunspacePoolState _expectedState = 0;
     }
     #endregion
 
@@ -504,11 +504,13 @@ namespace System.Management.Automation.Runspaces
     {
         #region Private Data
 
-        private RunspacePoolInternal _internalPool;
-        private object _syncObject = new object();
+        private readonly RunspacePoolInternal _internalPool;
+        private readonly object _syncObject = new object();
 
         private event EventHandler<RunspacePoolStateChangedEventArgs> InternalStateChanged = null;
+
         private event EventHandler<PSEventArgs> InternalForwardEvent = null;
+
         private event EventHandler<RunspaceCreatedEventArgs> InternalRunspaceCreated = null;
 
         #endregion
@@ -638,7 +640,7 @@ namespace System.Management.Automation.Runspaces
             TypeTable typeTable)
         {
             // Disconnect-Connect semantics are currently only supported in WSMan transport.
-            if (!(connectionInfo is WSManConnectionInfo))
+            if (connectionInfo is not WSManConnectionInfo)
             {
                 throw new NotSupportedException();
             }
@@ -837,12 +839,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void OnEventForwarded(PSEventArgs e)
         {
-            EventHandler<PSEventArgs> eh = InternalForwardEvent;
-
-            if (eh != null)
-            {
-                eh(this, e);
-            }
+            InternalForwardEvent?.Invoke(this, e);
         }
 
         /// <summary>
@@ -1006,7 +1003,7 @@ namespace System.Management.Automation.Runspaces
             return _internalPool.CreateDisconnectedPowerShells(this);
         }
 
-        ///<summary>
+        /// <summary>
         /// Returns RunspacePool capabilities.
         /// </summary>
         /// <returns>RunspacePoolCapability.</returns>

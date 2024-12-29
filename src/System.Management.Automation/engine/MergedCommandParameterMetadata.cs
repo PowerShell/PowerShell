@@ -164,6 +164,13 @@ namespace System.Management.Automation
         private uint _nextAvailableParameterSetIndex;
 
         /// <summary>
+        /// The maximum number of parameter sets allowed. Limit is set by the use
+        /// of a uint bitmask to store which parameter sets a parameter is included in.
+        /// See <see cref="ParameterSetSpecificMetadata.ParameterSetFlag"/>.
+        /// </summary>
+        private const uint MaxParameterSetCount = 32;
+
+        /// <summary>
         /// Gets the number of parameter sets that were declared for the command.
         /// </summary>
         internal int ParameterSetCount
@@ -228,7 +235,7 @@ namespace System.Management.Automation
                 // A parameter set name should only be added once
                 if (index == -1)
                 {
-                    if (_nextAvailableParameterSetIndex == uint.MaxValue)
+                    if (_nextAvailableParameterSetIndex >= MaxParameterSetCount)
                     {
                         // Don't let the parameter set index overflow
                         ParsingMetadataException parsingException =
@@ -657,12 +664,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the compiled command parameter for the association.
         /// </summary>
-        internal CompiledCommandParameter Parameter { get; private set; }
+        internal CompiledCommandParameter Parameter { get; }
 
         /// <summary>
         /// Gets the type of binder that the compiled command parameter should be bound with.
         /// </summary>
-        internal ParameterBinderAssociation BinderAssociation { get; private set; }
+        internal ParameterBinderAssociation BinderAssociation { get; }
 
         public override string ToString()
         {
@@ -708,4 +715,3 @@ namespace System.Management.Automation
         PagingParameters,
     }
 }
-

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
@@ -28,7 +29,7 @@ namespace System.Management.Automation
     /// Enumerates all possible types of members.
     /// </summary>
     [TypeConverterAttribute(typeof(LanguagePrimitives.EnumMultipleTypeConverter))]
-    [FlagsAttribute()]
+    [FlagsAttribute]
     public enum PSMemberTypes
     {
         /// <summary>
@@ -120,7 +121,7 @@ namespace System.Management.Automation
     /// Enumerator for all possible views available on a PSObject.
     /// </summary>
     [TypeConverterAttribute(typeof(LanguagePrimitives.EnumMultipleTypeConverter))]
-    [FlagsAttribute()]
+    [FlagsAttribute]
     public enum PSMemberViewTypes
     {
         /// <summary>
@@ -161,7 +162,7 @@ namespace System.Management.Automation
         IncludeHidden = 1,
 
         /// <summary>
-        /// Only include members with <see cref="PSMemberInfo.ShouldSerialize"/> property set to <c>true</c>
+        /// Only include members with <see cref="PSMemberInfo.ShouldSerialize"/> property set to <see langword="true"/>
         /// </summary>
         OnlySerializable = 2
     }
@@ -183,7 +184,7 @@ namespace System.Management.Automation
 
         internal void SetValueNoConversion(object setValue)
         {
-            if (!(this is PSProperty thisAsProperty))
+            if (this is not PSProperty thisAsProperty)
             {
                 this.Value = setValue;
                 return;
@@ -283,12 +284,12 @@ namespace System.Management.Automation
 
         internal bool MatchesOptions(MshMemberMatchOptions options)
         {
-            if (this.IsHidden && (0 == (options & MshMemberMatchOptions.IncludeHidden)))
+            if (this.IsHidden && ((options & MshMemberMatchOptions.IncludeHidden) == 0))
             {
                 return false;
             }
 
-            if (!this.ShouldSerialize && (0 != (options & MshMemberMatchOptions.OnlySerializable)))
+            if (!this.ShouldSerialize && ((options & MshMemberMatchOptions.OnlySerializable) != 0))
             {
                 return false;
             }
@@ -356,9 +357,9 @@ namespace System.Management.Automation
             returnValue.Append(" = ");
             if (ConversionType != null)
             {
-                returnValue.Append("(");
+                returnValue.Append('(');
                 returnValue.Append(ConversionType);
-                returnValue.Append(")");
+                returnValue.Append(')');
             }
 
             returnValue.Append(ReferencedMemberName);
@@ -426,7 +427,7 @@ namespace System.Management.Automation
         internal PSMemberInfo ReferencedMember => this.LookupMember(ReferencedMemberName);
 
         /// <summary>
-        /// Gets the the type to convert the referenced member's value. It might be
+        /// Gets the type to convert the referenced member's value. It might be
         /// null when no conversion is done.
         /// </summary>
         public Type ConversionType { get; private set; }
@@ -552,7 +553,7 @@ namespace System.Management.Automation
                     name);
             }
 
-            if (!(member is PSAliasProperty aliasMember))
+            if (member is not PSAliasProperty aliasMember)
             {
                 hasCycle = false;
                 returnedMember = member;
@@ -616,24 +617,24 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(this.TypeNameOfValue);
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(this.Name);
-            returnValue.Append("{");
+            returnValue.Append('{');
             if (this.IsGettable)
             {
                 returnValue.Append("get=");
                 returnValue.Append(GetterCodeReference.Name);
-                returnValue.Append(";");
+                returnValue.Append(';');
             }
 
             if (this.IsSettable)
             {
                 returnValue.Append("set=");
                 returnValue.Append(SetterCodeReference.Name);
-                returnValue.Append(";");
+                returnValue.Append(';');
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -875,6 +876,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <exception cref="GetValueException">When getting and there is no getter or when the getter throws an exception.</exception>
         /// <exception cref="SetValueException">When setting and there is no setter or when the setter throws an exception.</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public override object Value
         {
             get
@@ -964,6 +966,7 @@ namespace System.Management.Automation
         /// Gets the type of the value for this member.
         /// </summary>
         /// <exception cref="GetValueException">If there is no property getter.</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public override string TypeNameOfValue
         {
             get
@@ -1274,9 +1277,9 @@ namespace System.Management.Automation
             StringBuilder returnValue = new StringBuilder();
 
             returnValue.Append(GetDisplayTypeNameOfValue(this.Value));
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(this.Name);
-            returnValue.Append("=");
+            returnValue.Append('=');
             returnValue.Append(this.noteValue == null ? "null" : this.noteValue.ToString());
             return returnValue.ToString();
         }
@@ -1421,9 +1424,9 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(GetDisplayTypeNameOfValue(_variable.Value));
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(_variable.Name);
-            returnValue.Append("=");
+            returnValue.Append('=');
             returnValue.Append(_variable.Value ?? "null");
             return returnValue.ToString();
         }
@@ -1541,24 +1544,24 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(this.TypeNameOfValue);
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(this.Name);
             returnValue.Append(" {");
             if (this.IsGettable)
             {
                 returnValue.Append("get=");
                 returnValue.Append(this.GetterScript.ToString());
-                returnValue.Append(";");
+                returnValue.Append(';');
             }
 
             if (this.IsSettable)
             {
                 returnValue.Append("set=");
                 returnValue.Append(this.SetterScript.ToString());
-                returnValue.Append(";");
+                returnValue.Append(';');
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -1786,6 +1789,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="SetValueException">When setting and there is no setter,
         /// when the setter throws an exception or when there is no Runspace to run the script.</exception>
+        [SuppressMessage("Design", "CA1065:Do not raise exceptions in unexpected locations", Justification = "<Pending>")]
         public override object Value
         {
             get
@@ -1905,22 +1909,34 @@ namespace System.Management.Automation
         internal PSMethodInvocationConstraints(
             Type methodTargetType,
             Type[] parameterTypes)
+            : this(methodTargetType, parameterTypes, genericTypeParameters: null)
         {
-            this.MethodTargetType = methodTargetType;
-            _parameterTypes = parameterTypes;
+        }
+
+        internal PSMethodInvocationConstraints(
+            Type methodTargetType,
+            Type[] parameterTypes,
+            object[] genericTypeParameters)
+        {
+            MethodTargetType = methodTargetType;
+            ParameterTypes = parameterTypes;
+            GenericTypeParameters = genericTypeParameters;
         }
 
         /// <remarks>
-        /// If <c>null</c> then there are no constraints
+        /// If <see langword="null"/> then there are no constraints
         /// </remarks>
         public Type MethodTargetType { get; }
 
         /// <remarks>
-        /// If <c>null</c> then there are no constraints
+        /// If <see langword="null"/> then there are no constraints
         /// </remarks>
-        public IEnumerable<Type> ParameterTypes => _parameterTypes;
+        public Type[] ParameterTypes { get; }
 
-        private readonly Type[] _parameterTypes;
+        /// <summary>
+        /// Gets the generic type parameters for the method invocation.
+        /// </summary>
+        public object[] GenericTypeParameters { get; }
 
         internal static bool EqualsForCollection<T>(ICollection<T> xs, ICollection<T> ys)
         {
@@ -1942,8 +1958,6 @@ namespace System.Management.Automation
             return xs.SequenceEqual(ys);
         }
 
-        // TODO: IEnumerable<Type> genericTypeParameters { get; private set; }
-
         public bool Equals(PSMethodInvocationConstraints other)
         {
             if (other is null)
@@ -1961,7 +1975,12 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (!EqualsForCollection(_parameterTypes, other._parameterTypes))
+            if (!EqualsForCollection(ParameterTypes, other.ParameterTypes))
+            {
+                return false;
+            }
+
+            if (!EqualsForCollection(GenericTypeParameters, other.GenericTypeParameters))
             {
                 return false;
             }
@@ -1971,7 +1990,7 @@ namespace System.Management.Automation
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
             {
                 return false;
             }
@@ -1990,36 +2009,53 @@ namespace System.Management.Automation
         }
 
         public override int GetHashCode()
-        {
-            // algorithm based on https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
-            unchecked
-            {
-                int result = 61;
-
-                result = result * 397 + (MethodTargetType != null ? MethodTargetType.GetHashCode() : 0);
-                result = result * 397 + ParameterTypes.SequenceGetHashCode();
-
-                return result;
-            }
-        }
+            => HashCode.Combine(MethodTargetType, ParameterTypes, GenericTypeParameters);
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             string separator = string.Empty;
-            if (MethodTargetType != null)
+            if (MethodTargetType is not null)
             {
                 sb.Append("this: ");
                 sb.Append(ToStringCodeMethods.Type(MethodTargetType, dropNamespaces: true));
                 separator = " ";
             }
 
-            if (_parameterTypes != null)
+            if (GenericTypeParameters is not null)
+            {
+                sb.Append(separator);
+                sb.Append("genericTypeParams: ");
+
+                separator = string.Empty;
+                foreach (object parameter in GenericTypeParameters)
+                {
+                    sb.Append(separator);
+
+                    switch (parameter)
+                    {
+                        case Type paramType:
+                            sb.Append(ToStringCodeMethods.Type(paramType, dropNamespaces: true));
+                            break;
+                        case ITypeName paramTypeName:
+                            sb.Append(paramTypeName.ToString());
+                            break;
+                        default:
+                            throw new ArgumentException("Unexpected value");
+                    }
+
+                    separator = ", ";
+                }
+
+                separator = " ";
+            }
+
+            if (ParameterTypes is not null)
             {
                 sb.Append(separator);
                 sb.Append("args: ");
                 separator = string.Empty;
-                foreach (var p in _parameterTypes)
+                foreach (var p in ParameterTypes)
                 {
                     sb.Append(separator);
                     sb.Append(ToStringCodeMethods.Type(p, dropNamespaces: true));
@@ -2240,10 +2276,7 @@ namespace System.Management.Automation
                 newArguments[i + 1] = arguments[i];
             }
 
-            if (_codeReferenceMethodInformation == null)
-            {
-                _codeReferenceMethodInformation = DotNetAdapter.GetMethodInformationArray(new[] { CodeReference });
-            }
+            _codeReferenceMethodInformation ??= DotNetAdapter.GetMethodInformationArray(new[] { CodeReference });
 
             Adapter.GetBestMethodAndArguments(CodeReference.Name, _codeReferenceMethodInformation, newArguments, out object[] convertedArguments);
 
@@ -2283,7 +2316,7 @@ namespace System.Management.Automation
         {
             StringBuilder returnValue = new StringBuilder();
             returnValue.Append(this.TypeNameOfValue);
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(this.Name);
             returnValue.Append("();");
             return returnValue.ToString();
@@ -2596,10 +2629,7 @@ namespace System.Management.Automation
                 return new PSMethod(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
             }
 
-            if (method.PSMethodCtor == null)
-            {
-                method.PSMethodCtor = CreatePSMethodConstructor(method.methodInformationStructures);
-            }
+            method.PSMethodCtor ??= CreatePSMethodConstructor(method.methodInformationStructures);
 
             return method.PSMethodCtor.Invoke(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
         }
@@ -2655,7 +2685,7 @@ namespace System.Management.Automation
 
                 return DelegateHelpers.MakeDelegate(methodTypes);
             }
-            catch (TypeLoadException)
+            catch (Exception)
             {
                 return typeof(Func<PSNonBindableType>);
             }
@@ -3038,7 +3068,7 @@ namespace System.Management.Automation
             }
 
             returnValue.Insert(0, this.Name);
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -3335,8 +3365,7 @@ namespace System.Management.Automation
                                     break;
                                 default:
                                     Diagnostics.Assert(false,
-                                        string.Format(CultureInfo.InvariantCulture,
-                                            "PSInternalMemberSet cannot process {0}", name));
+                                        string.Create(CultureInfo.InvariantCulture, $"PSInternalMemberSet cannot process {name}"));
                                     break;
                             }
                         }
@@ -3441,7 +3470,7 @@ namespace System.Management.Automation
                 returnValue.Remove(returnValue.Length - 2, 2);
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -3554,7 +3583,7 @@ namespace System.Management.Automation
             StringBuilder eventDefinition = new StringBuilder();
             eventDefinition.Append(this.baseEvent.ToString());
 
-            eventDefinition.Append("(");
+            eventDefinition.Append('(');
 
             int loopCounter = 0;
             foreach (ParameterInfo parameter in baseEvent.EventHandlerType.GetMethod("Invoke").GetParameters())
@@ -3567,7 +3596,7 @@ namespace System.Management.Automation
                 loopCounter++;
             }
 
-            eventDefinition.Append(")");
+            eventDefinition.Append(')');
 
             return eventDefinition.ToString();
         }
@@ -3666,7 +3695,7 @@ namespace System.Management.Automation
     /// <summary>
     /// /// This class is used in PSMemberInfoInternalCollection and ReadOnlyPSMemberInfoCollection.
     /// </summary>
-    internal class MemberMatch
+    internal static class MemberMatch
     {
         internal static WildcardPattern GetNamePattern(string name)
         {
@@ -3728,7 +3757,7 @@ namespace System.Management.Automation
     /// A Predicate that determine if a member name matches a criterion.
     /// </summary>
     /// <param name="memberName"></param>
-    /// <returns><c>true</c> if the <paramref name="memberName"/> matches the predicate, otherwise <c>false</c>.</returns>
+    /// <returns><see langword="true"/> if the <paramref name="memberName"/> matches the predicate, otherwise <see langword="false"/>.</returns>
     public delegate bool MemberNamePredicate(string memberName);
 
     /// <summary>
@@ -4970,7 +4999,7 @@ namespace System.Management.Automation
         /// <returns>The enumerator for this collection.</returns>
         public override IEnumerator<T> GetEnumerator()
         {
-            return new Enumerator<T>(this);
+            return new Enumerator(this);
         }
 
         internal override T FirstOrDefault(MemberNamePredicate predicate)
@@ -5024,17 +5053,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Enumerable for this class.
         /// </summary>
-        internal struct Enumerator<S> : IEnumerator<S> where S : PSMemberInfo
+        internal struct Enumerator : IEnumerator<T>
         {
-            private S _current;
+            private T _current;
             private int _currentIndex;
-            private readonly PSMemberInfoInternalCollection<S> _allMembers;
+            private readonly PSMemberInfoInternalCollection<T> _allMembers;
 
             /// <summary>
-            /// Constructs this instance to enumerate over members.
+            /// Initializes a new instance of the <see cref="Enumerator"/> class to enumerate over members.
             /// </summary>
             /// <param name="integratingCollection">Members we are enumerating.</param>
-            internal Enumerator(PSMemberInfoIntegratingCollection<S> integratingCollection)
+            internal Enumerator(PSMemberInfoIntegratingCollection<T> integratingCollection)
             {
                 using (PSObject.MemberResolution.TraceScope("Enumeration Start"))
                 {
@@ -5059,14 +5088,14 @@ namespace System.Management.Automation
             /// Moves to the next element in the enumeration.
             /// </summary>
             /// <returns>
-            /// false if there are no more elements to enumerate
-            /// true otherwise
+            /// If there are no more elements to enumerate, returns false.
+            /// Returns true otherwise.
             /// </returns>
             public bool MoveNext()
             {
                 _currentIndex++;
 
-                S member = null;
+                T member = null;
                 while (_currentIndex < _allMembers.Count)
                 {
                     member = _allMembers[_currentIndex];
@@ -5089,10 +5118,10 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Current PSMemberInfo in the enumeration.
+            /// Gets the current PSMemberInfo in the enumeration.
             /// </summary>
             /// <exception cref="ArgumentException">For invalid arguments.</exception>
-            S IEnumerator<S>.Current
+            T IEnumerator<T>.Current
             {
                 get
                 {
@@ -5105,7 +5134,7 @@ namespace System.Management.Automation
                 }
             }
 
-            object IEnumerator.Current => ((IEnumerator<S>)this).Current;
+            object IEnumerator.Current => ((IEnumerator<T>)this).Current;
 
             void IEnumerator.Reset()
             {

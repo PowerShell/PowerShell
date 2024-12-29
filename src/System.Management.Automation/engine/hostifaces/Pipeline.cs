@@ -16,7 +16,6 @@ namespace System.Management.Automation.Runspaces
     /// Defines exception which is thrown when state of the pipeline is different
     /// from expected state.
     /// </summary>
-    [Serializable]
     public class InvalidPipelineStateException : SystemException
     {
         /// <summary>
@@ -86,9 +85,10 @@ namespace System.Management.Automation.Runspaces
         /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         private InvalidPipelineStateException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion
@@ -113,13 +113,13 @@ namespace System.Management.Automation.Runspaces
         /// State of pipeline when exception was thrown.
         /// </summary>
         [NonSerialized]
-        private PipelineState _currentState = 0;
+        private readonly PipelineState _currentState = 0;
 
         /// <summary>
         /// States of the pipeline expected in method which throws this exception.
         /// </summary>
         [NonSerialized]
-        private PipelineState _expectedState = 0;
+        private readonly PipelineState _expectedState = 0;
     }
 
     #endregion Exceptions
@@ -445,7 +445,7 @@ namespace System.Management.Automation.Runspaces
         ///
         /// This flag is used to force the redirection. By default it is false to maintain compatibility with
         /// V1, but the V2 hosting interface (PowerShell class) sets this flag to true to ensure the global
-        /// error output pipe is always set and $ErrorActionPreference when invoking the Pipeline.
+        /// error output pipe is always set and $ErrorActionPreference is checked when invoking the Pipeline.
         /// </summary>
         internal bool RedirectShellErrorOutputPipe { get; set; } = false;
 
@@ -738,4 +738,3 @@ namespace System.Management.Automation.Runspaces
         #endregion IDisposable Members
     }
 }
-

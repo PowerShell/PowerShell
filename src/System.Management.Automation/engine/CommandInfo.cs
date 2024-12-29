@@ -17,33 +17,27 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines the types of commands that MSH can execute.
+    /// Defines the types of commands that PowerShell can execute.
     /// </summary>
     [Flags]
     public enum CommandTypes
     {
         /// <summary>
         /// Aliases create a name that refers to other command types.
-        /// </summary>
-        /// <remarks>
         /// Aliases are only persisted within the execution of a single engine.
-        /// </remarks>
+        /// </summary>
         Alias = 0x0001,
 
         /// <summary>
         /// Script functions that are defined by a script block.
-        /// </summary>
-        /// <remarks>
         /// Functions are only persisted within the execution of a single engine.
-        /// </remarks>
+        /// </summary>
         Function = 0x0002,
 
         /// <summary>
         /// Script filters that are defined by a script block.
-        /// </summary>
-        /// <remarks>
         /// Filters are only persisted within the execution of a single engine.
-        /// </remarks>
+        /// </summary>
         Filter = 0x0004,
 
         /// <summary>
@@ -52,17 +46,15 @@ namespace System.Management.Automation
         Cmdlet = 0x0008,
 
         /// <summary>
-        /// An MSH script (*.ps1 file)
+        /// An PowerShell script (*.ps1 file)
         /// </summary>
         ExternalScript = 0x0010,
 
         /// <summary>
         /// Any existing application (can be console or GUI).
-        /// </summary>
-        /// <remarks>
         /// An application can have any extension that can be executed either directly through CreateProcess
         /// or indirectly through ShellExecute.
-        /// </remarks>
+        /// </summary>
         Application = 0x0020,
 
         /// <summary>
@@ -77,11 +69,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// All possible command types.
+        /// NOTE: a CommandInfo instance will never specify All as its CommandType
+        /// but All can be used when filtering the CommandTypes.
         /// </summary>
-        /// <remarks>
-        /// Note, a CommandInfo instance will never specify
-        /// All as its CommandType but All can be used when filtering the CommandTypes.
-        /// </remarks>
         All = Alias | Function | Filter | Cmdlet | Script | ExternalScript | Application | Configuration,
     }
 
@@ -110,10 +100,7 @@ namespace System.Management.Automation
             // The name can be empty for functions and filters but it
             // can't be null
 
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            ArgumentNullException.ThrowIfNull(name);
 
             Name = name;
             CommandType = type;
@@ -230,7 +217,10 @@ namespace System.Management.Automation
         /// </summary>
         internal ExecutionContext Context
         {
-            get { return _context; }
+            get
+            {
+                return _context;
+            }
 
             set
             {
@@ -285,10 +275,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void Rename(string newName)
         {
-            if (string.IsNullOrEmpty(newName))
-            {
-                throw new ArgumentNullException(nameof(newName));
-            }
+            ArgumentException.ThrowIfNullOrEmpty(newName);
 
             Name = newName;
         }
@@ -464,11 +451,8 @@ namespace System.Management.Automation
                         processInCurrentThread: true,
                         waitForCompletionInCurrentThread: true);
 
-                    if (eventArgs.Exception != null)
-                    {
-                        // An exception happened on a different thread, rethrow it here on the correct thread.
-                        eventArgs.Exception.Throw();
-                    }
+                    // An exception happened on a different thread, rethrow it here on the correct thread.
+                    eventArgs.Exception?.Throw();
 
                     return eventArgs.Result;
                 }
@@ -478,7 +462,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        private class GetMergedCommandParameterMetadataSafelyEventArgs : EventArgs
+        private sealed class GetMergedCommandParameterMetadataSafelyEventArgs : EventArgs
         {
             public MergedCommandParameterMetadata Result;
             public ExceptionDispatchInfo Exception;
@@ -526,7 +510,7 @@ namespace System.Management.Automation
                 processor = scriptCommand != null
                     ? new CommandProcessor(scriptCommand, _context, useLocalScope: true, fromScriptFile: false,
                         sessionState: scriptCommand.ScriptBlock.SessionStateInternal ?? Context.EngineSessionState)
-                    : new CommandProcessor((CmdletInfo)this, _context) { UseLocalScope = true };
+                    : new CommandProcessor((CmdletInfo)this, _context);
 
                 ParameterBinderController.AddArgumentsToCommandProcessor(processor, Arguments);
                 CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
@@ -583,7 +567,7 @@ namespace System.Management.Automation
 
         internal CommandMetadata ExternalCommandMetadata
         {
-            get { return _externalCommandMetadata ?? (_externalCommandMetadata = new CommandMetadata(this, true)); }
+            get { return _externalCommandMetadata ??= new CommandMetadata(this, true); }
 
             set { _externalCommandMetadata = value; }
         }
@@ -889,7 +873,7 @@ namespace System.Management.Automation
         /// <summary>
         /// When a type is defined by PowerShell, the ast for that type.
         /// </summary>
-        public TypeDefinitionAst TypeDefinitionAst { get; private set; }
+        public TypeDefinitionAst TypeDefinitionAst { get; }
 
         private bool _typeWasCalculated;
 
@@ -904,7 +888,7 @@ namespace System.Management.Automation
     }
 
     [DebuggerDisplay("{PSTypeName} {Name}")]
-    internal struct PSMemberNameAndType
+    internal readonly struct PSMemberNameAndType
     {
         public readonly string Name;
 
@@ -925,7 +909,7 @@ namespace System.Management.Automation
     /// but can be used where a real type might not be available, in which case the name of the type can be used.
     /// The type encodes the members of dynamic objects in the type name.
     /// </summary>
-    internal class PSSyntheticTypeName : PSTypeName
+    internal sealed class PSSyntheticTypeName : PSTypeName
     {
         internal static PSSyntheticTypeName Create(string typename, IList<PSMemberNameAndType> membersTypes) => Create(new PSTypeName(typename), membersTypes);
 
@@ -936,7 +920,7 @@ namespace System.Management.Automation
             var typeName = GetMemberTypeProjection(typename.Name, membersTypes);
             var members = new List<PSMemberNameAndType>();
             members.AddRange(membersTypes);
-            members.Sort((c1, c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
+            members.Sort(static (c1, c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
             return new PSSyntheticTypeName(typeName, typename.Type, members);
         }
 
@@ -960,7 +944,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static bool IsPSTypeName(PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
+        private static bool IsPSTypeName(in PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
 
         private static string GetMemberTypeProjection(string typename, IList<PSMemberNameAndType> members)
         {
@@ -977,11 +961,11 @@ namespace System.Management.Automation
 
             var builder = new StringBuilder(typename, members.Count * 7);
             builder.Append('#');
-            foreach (var m in members.OrderBy(m => m.Name))
+            foreach (var m in members.OrderBy(static m => m.Name))
             {
                 if (!IsPSTypeName(m))
                 {
-                    builder.Append(m.Name).Append(":");
+                    builder.Append(m.Name).Append(':');
                 }
             }
 
@@ -992,6 +976,7 @@ namespace System.Management.Automation
         public IList<PSMemberNameAndType> Members { get; }
     }
 
+#nullable enable
     internal interface IScriptCommandInfo
     {
         ScriptBlock ScriptBlock { get; }

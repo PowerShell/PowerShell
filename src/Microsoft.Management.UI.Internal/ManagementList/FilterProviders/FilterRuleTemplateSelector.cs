@@ -26,7 +26,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Selects a template based upon the type of the item and and the
+        /// Selects a template based upon the type of the item and the
         /// corresponding template that is registered in the TemplateDictionary.
         /// </summary>
         /// <param name="item">

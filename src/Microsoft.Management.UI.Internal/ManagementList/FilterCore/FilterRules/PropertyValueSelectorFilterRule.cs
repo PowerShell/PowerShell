@@ -15,8 +15,8 @@ namespace Microsoft.Management.UI.Internal
     /// <typeparam name="T">
     /// The generic parameter.
     /// </typeparam>
-    [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
+    [Serializable]
     public class PropertyValueSelectorFilterRule<T> : SelectorFilterRule where T : IComparable
     {
         #region Properties
@@ -66,21 +66,6 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         public PropertyValueSelectorFilterRule(string propertyName, string propertyDisplayName, IEnumerable<FilterRule> rules)
         {
-            if (string.IsNullOrEmpty(propertyName))
-            {
-                throw new ArgumentNullException("propertyName");
-            }
-
-            if (string.IsNullOrEmpty(propertyDisplayName))
-            {
-                throw new ArgumentNullException("propertyDisplayName");
-            }
-
-            if (rules == null)
-            {
-                throw new ArgumentNullException("rules");
-            }
-
             this.PropertyName = propertyName;
             this.DisplayName = propertyDisplayName;
 

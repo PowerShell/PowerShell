@@ -4,6 +4,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+#nullable enable
 namespace System.Management.Automation
 {
     /// <summary>
@@ -26,7 +27,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Helper class for WinRT types.
     /// </summary>
-    internal class WinRTHelper
+    internal static class WinRTHelper
     {
         internal static bool IsWinRTType(Type type)
         {

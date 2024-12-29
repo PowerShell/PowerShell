@@ -1,0 +1,64 @@
+name: Distribution Support Request
+description: Requests support for a new distribution
+title: Distribution Support Request
+labels: [Distribution-Request, Needs-Triage]
+body:
+- type: input
+  attributes:
+    label: Name of the Distribution
+  validations:
+    required: true
+- type: input
+  attributes:
+    label: Version of the Distribution
+  validations:
+    required: true
+- type: checkboxes
+  attributes:
+    label: Package Types
+    options:
+    - label: Deb
+    - label: RPM
+    - label: Tar.gz
+    - label: Snap - Stop! Please file your issue in [PowerShell-Snap](https://github.com/powershell/powershell-snap) instead.
+- type: input
+  attributes:
+    label: Processor Architecture
+    description: One per request!
+  validations:
+    required: true
+- type: checkboxes
+  attributes:
+    label: .NET Core Support
+    description: The following is a requirement for supporting a distribution **without exception.**
+    options:
+    - label: The version and architecture of the Distribution is [supported by .NET Core](https://github.com/dotnet/core/blob/master/release-notes/5.0/5.0-supported-os.md#linux).
+      required: true
+- type: checkboxes
+  attributes:
+    label: Distribution Requirements
+    description: The following are requirements for supporting a distribution.
+    options:
+    - label: The version of the Distribution is supported for at least one year.
+    - label: The version of the Distribution is not an [interim release](https://ubuntu.com/about/release-cycle) or equivalent.
+- type: input
+  attributes:
+    label: Exemption Justification
+    description: |
+      Please write a justification for any exception where the above criteria
+      are not met. The PowerShell committee will review the request.
+- type: checkboxes
+  attributes:
+    label: Progress
+    options:
+    - label: An issue has been filed to create a Docker image in [PowerShell-Docker](https://github.com/powershell/powershell-docker)
+- type: checkboxes
+  attributes:
+    label: For PowerShell Team **ONLY**
+    options:
+    - label: Docker image created
+    - label: Docker image published
+    - label: Distribution tested
+    - label: Update `packages.microsoft.com` deployment
+    - label: "[Lifecycle](https://github.com/MicrosoftDocs/PowerShell-Docs/blob/staging/reference/docs-conceptual/PowerShell-Support-Lifecycle.md) updated"
+    - label: Documentation Updated

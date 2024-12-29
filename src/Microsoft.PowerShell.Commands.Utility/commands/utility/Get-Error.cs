@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// Class for Get-Error implementation.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Error",
-        HelpUri = "https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/get-error",
+        HelpUri = "https://go.microsoft.com/fwlink/?linkid=2241804",
         DefaultParameterSetName = NewestParameterSetName)]
     [OutputType("System.Management.Automation.ErrorRecord#PSExtendedError", "System.Exception#PSExtendedError")]
     public sealed class GetErrorCommand : PSCmdlet
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             index = 0;
-            bool addErrorIdentifier = errorRecords.Count > 1 ? true : false;
+            bool addErrorIdentifier = errorRecords.Count > 1;
 
             foreach (object errorRecord in errorRecords)
             {

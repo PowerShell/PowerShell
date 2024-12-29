@@ -10,7 +10,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for all Extended type system related errors.
     /// </summary>
-    [Serializable]
     public class ExtendedTypeSystemException : RuntimeException
     {
         #region ctor
@@ -18,7 +17,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of ExtendedTypeSystemException with the message set
         /// to typeof(ExtendedTypeSystemException).FullName.
         /// </summary>
-        public ExtendedTypeSystemException() : base(typeof(ExtendedTypeSystemException).FullName)
+        public ExtendedTypeSystemException()
+            : base(typeof(ExtendedTypeSystemException).FullName)
         {
         }
 
@@ -26,7 +26,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of ExtendedTypeSystemException setting the message.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        public ExtendedTypeSystemException(string message) : base(message)
+        public ExtendedTypeSystemException(string message)
+            : base(message)
         {
         }
 
@@ -34,8 +35,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of ExtendedTypeSystemException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
-        public ExtendedTypeSystemException(string message, Exception innerException) : base(message, innerException)
+        /// <param name="innerException">The exception's inner exception.</param>
+        public ExtendedTypeSystemException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
@@ -46,9 +48,14 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception, null for none.</param>
         /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
-        internal ExtendedTypeSystemException(string errorId, Exception innerException, string resourceString,
-            params object[] arguments) :
-            base(StringUtil.Format(resourceString, arguments), innerException)
+        internal ExtendedTypeSystemException(
+            string errorId,
+            Exception innerException,
+            string resourceString,
+            params object[] arguments)
+            : base(
+                  StringUtil.Format(resourceString, arguments),
+                  innerException)
         {
             SetErrorId(errorId);
         }
@@ -59,8 +66,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected ExtendedTypeSystemException(SerializationInfo info, StreamingContext context)
-                : base(info, context)
+            : base(info, context)
         {
         }
         #endregion Serialization
@@ -72,7 +80,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for Method related errors.
     /// </summary>
-    [Serializable]
     public class MethodException : ExtendedTypeSystemException
     {
         internal const string MethodArgumentCountExceptionMsg = "MethodArgumentCountException";
@@ -86,7 +93,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of MethodException with the message set
         /// to typeof(MethodException).FullName.
         /// </summary>
-        public MethodException() : base(typeof(MethodException).FullName)
+        public MethodException()
+            : base(typeof(MethodException).FullName)
         {
         }
 
@@ -94,7 +102,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of MethodException setting the message.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        public MethodException(string message) : base(message)
+        public MethodException(string message)
+            : base(message)
         {
         }
 
@@ -102,8 +111,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of MethodException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
-        public MethodException(string message, Exception innerException) : base(message, innerException)
+        /// <param name="innerException">The exception's inner exception.</param>
+        public MethodException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
@@ -114,9 +124,12 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception.</param>
         /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
-        internal MethodException(string errorId, Exception innerException,
-            string resourceString, params object[] arguments) :
-            base(errorId, innerException, resourceString, arguments)
+        internal MethodException(
+            string errorId,
+            Exception innerException,
+            string resourceString,
+            params object[] arguments)
+            : base(errorId, innerException, resourceString, arguments)
         {
         }
 
@@ -126,9 +139,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected MethodException(SerializationInfo info, StreamingContext context)
-                : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
 
@@ -139,7 +153,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for Method invocation exceptions.
     /// </summary>
-    [Serializable]
     public class MethodInvocationException : MethodException
     {
         internal const string MethodInvocationExceptionMsg = "MethodInvocationException";
@@ -151,7 +164,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of MethodInvocationException with the message set
         /// to typeof(MethodInvocationException).FullName.
         /// </summary>
-        public MethodInvocationException() : base(typeof(MethodInvocationException).FullName)
+        public MethodInvocationException()
+            : base(typeof(MethodInvocationException).FullName)
         {
         }
 
@@ -159,7 +173,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of MethodInvocationException setting the message.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        public MethodInvocationException(string message) : base(message)
+        public MethodInvocationException(string message)
+            : base(message)
         {
         }
 
@@ -167,8 +182,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of MethodInvocationException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
-        public MethodInvocationException(string message, Exception innerException) : base(message, innerException)
+        /// <param name="innerException">The exception's inner exception.</param>
+        public MethodInvocationException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
@@ -179,9 +195,12 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception.</param>
         /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
-        internal MethodInvocationException(string errorId, Exception innerException,
-            string resourceString, params object[] arguments) :
-            base(errorId, innerException, resourceString, arguments)
+        internal MethodInvocationException(
+            string errorId,
+            Exception innerException,
+            string resourceString,
+            params object[] arguments)
+            : base(errorId, innerException, resourceString, arguments)
         {
         }
 
@@ -191,9 +210,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected MethodInvocationException(SerializationInfo info, StreamingContext context)
-                : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
 
@@ -204,7 +224,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for errors getting the value of properties.
     /// </summary>
-    [Serializable]
     public class GetValueException : ExtendedTypeSystemException
     {
         internal const string GetWithoutGetterExceptionMsg = "GetWithoutGetterException";
@@ -214,7 +233,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of GetValueException with the message set
         /// to typeof(GetValueException).FullName.
         /// </summary>
-        public GetValueException() : base(typeof(GetValueException).FullName)
+        public GetValueException()
+            : base(typeof(GetValueException).FullName)
         {
         }
 
@@ -222,7 +242,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of GetValueException setting the message.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        public GetValueException(string message) : base(message)
+        public GetValueException(string message)
+            : base(message)
         {
         }
 
@@ -230,8 +251,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of GetValueException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
-        public GetValueException(string message, Exception innerException) : base(message, innerException)
+        /// <param name="innerException">The exception's inner exception.</param>
+        public GetValueException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
@@ -242,9 +264,12 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception.</param>
         /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
-        internal GetValueException(string errorId, Exception innerException,
-            string resourceString, params object[] arguments) :
-            base(errorId, innerException, resourceString, arguments)
+        internal GetValueException(
+            string errorId,
+            Exception innerException,
+            string resourceString,
+            params object[] arguments)
+            : base(errorId, innerException, resourceString, arguments)
         {
         }
 
@@ -254,9 +279,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected GetValueException(SerializationInfo info, StreamingContext context)
-                : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
 
@@ -267,7 +293,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for errors getting the value of properties.
     /// </summary>
-    [Serializable]
     public class PropertyNotFoundException : ExtendedTypeSystemException
     {
         #region ctor
@@ -293,7 +318,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of GetValueException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
+        /// <param name="innerException">The exception's inner exception.</param>
         public PropertyNotFoundException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -306,9 +331,12 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception.</param>
         /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
-        internal PropertyNotFoundException(string errorId, Exception innerException,
-            string resourceString, params object[] arguments) :
-            base(errorId, innerException, resourceString, arguments)
+        internal PropertyNotFoundException(
+            string errorId,
+            Exception innerException,
+            string resourceString,
+            params object[] arguments)
+            : base(errorId, innerException, resourceString, arguments)
         {
         }
 
@@ -318,12 +346,12 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected PropertyNotFoundException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
-
         #endregion ctor
 
     }
@@ -331,7 +359,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for exceptions thrown by property getters.
     /// </summary>
-    [Serializable]
     public class GetValueInvocationException : GetValueException
     {
         internal const string ExceptionWhenGettingMsg = "ExceptionWhenGetting";
@@ -341,7 +368,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of GetValueInvocationException with the message set
         /// to typeof(GetValueInvocationException).FullName.
         /// </summary>
-        public GetValueInvocationException() : base(typeof(GetValueInvocationException).FullName)
+        public GetValueInvocationException()
+            : base(typeof(GetValueInvocationException).FullName)
         {
         }
 
@@ -349,7 +377,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of GetValueInvocationException setting the message.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        public GetValueInvocationException(string message) : base(message)
+        public GetValueInvocationException(string message)
+            : base(message)
         {
         }
 
@@ -357,8 +386,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of GetValueInvocationException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
-        public GetValueInvocationException(string message, Exception innerException) : base(message, innerException)
+        /// <param name="innerException">The exception's inner exception.</param>
+        public GetValueInvocationException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
@@ -369,9 +399,12 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception.</param>
         /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
-        internal GetValueInvocationException(string errorId, Exception innerException,
-            string resourceString, params object[] arguments) :
-            base(errorId, innerException, resourceString, arguments)
+        internal GetValueInvocationException(
+            string errorId,
+            Exception innerException,
+            string resourceString,
+            params object[] arguments)
+            : base(errorId, innerException, resourceString, arguments)
         {
         }
 
@@ -381,9 +414,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected GetValueInvocationException(SerializationInfo info, StreamingContext context)
-                : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
 
@@ -394,7 +428,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for errors setting the value of properties.
     /// </summary>
-    [Serializable]
     public class SetValueException : ExtendedTypeSystemException
     {
         #region ctor
@@ -402,7 +435,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of SetValueException with the message set
         /// to typeof(SetValueException).FullName.
         /// </summary>
-        public SetValueException() : base(typeof(SetValueException).FullName)
+        public SetValueException()
+            : base(typeof(SetValueException).FullName)
         {
         }
 
@@ -410,7 +444,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of SetValueException setting the message.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        public SetValueException(string message) : base(message)
+        public SetValueException(string message)
+            : base(message)
         {
         }
 
@@ -418,8 +453,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of SetValueException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
-        public SetValueException(string message, Exception innerException) : base(message, innerException)
+        /// <param name="innerException">The exception's inner exception.</param>
+        public SetValueException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
@@ -430,9 +466,12 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception.</param>
         /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
-        internal SetValueException(string errorId, Exception innerException,
-            string resourceString, params object[] arguments) :
-            base(errorId, innerException, resourceString, arguments)
+        internal SetValueException(
+            string errorId,
+            Exception innerException,
+            string resourceString,
+            params object[] arguments)
+            : base(errorId, innerException, resourceString, arguments)
         {
         }
 
@@ -442,9 +481,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected SetValueException(SerializationInfo info, StreamingContext context)
-                : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
 
@@ -455,7 +495,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for exceptions thrown by property setters.
     /// </summary>
-    [Serializable]
     public class SetValueInvocationException : SetValueException
     {
         #region ctor
@@ -463,7 +502,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of SetValueInvocationException with the message set
         /// to typeof(SetValueInvocationException).FullName.
         /// </summary>
-        public SetValueInvocationException() : base(typeof(SetValueInvocationException).FullName)
+        public SetValueInvocationException()
+            : base(typeof(SetValueInvocationException).FullName)
         {
         }
 
@@ -471,7 +511,8 @@ namespace System.Management.Automation
         /// Initializes a new instance of SetValueInvocationException setting the message.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        public SetValueInvocationException(string message) : base(message)
+        public SetValueInvocationException(string message)
+            : base(message)
         {
         }
 
@@ -479,8 +520,9 @@ namespace System.Management.Automation
         /// Initializes a new instance of SetValueInvocationException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
-        public SetValueInvocationException(string message, Exception innerException) : base(message, innerException)
+        /// <param name="innerException">The exception's inner exception.</param>
+        public SetValueInvocationException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
@@ -491,9 +533,12 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception.</param>
         /// <param name="resourceString">Resource string.</param>
         /// <param name="arguments">Arguments to the resource string.</param>
-        internal SetValueInvocationException(string errorId, Exception innerException,
-            string resourceString, params object[] arguments) :
-            base(errorId, innerException, resourceString, arguments)
+        internal SetValueInvocationException(
+            string errorId,
+            Exception innerException,
+            string resourceString,
+            params object[] arguments)
+            : base(errorId, innerException, resourceString, arguments)
         {
         }
 
@@ -503,9 +548,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
         protected SetValueInvocationException(SerializationInfo info, StreamingContext context)
-                : base(info, context)
         {
+            throw new NotSupportedException();
         }
         #endregion Serialization
 
@@ -516,60 +562,42 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines the exception thrown for type conversion errors.
     /// </summary>
-    [Serializable]
     public class PSInvalidCastException : InvalidCastException, IContainsErrorRecord
     {
-        #region Serialization
-
-        /// <summary>
-        /// Populates a <see cref="System.Runtime.Serialization.SerializationInfo"/> with the
-        /// data needed to serialize the PSInvalidCastException object.
-        /// </summary>
-        /// <param name="info">The <see cref="System.Runtime.Serialization.SerializationInfo"/> to populate with data.</param>
-        /// <param name="context">The destination for this serialization.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("ErrorId", _errorId);
-        }
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException with serialization parameters.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        protected PSInvalidCastException(SerializationInfo info, StreamingContext context) : base(info, context)
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")]
+        protected PSInvalidCastException(SerializationInfo info, StreamingContext context)
         {
-            _errorId = info.GetString("ErrorId");
+            throw new NotSupportedException();
         }
-
-        #endregion Serialization
 
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException with the message set
         /// to typeof(PSInvalidCastException).FullName.
         /// </summary>
-        public PSInvalidCastException() : base(typeof(PSInvalidCastException).FullName)
+        public PSInvalidCastException()
+            : base(typeof(PSInvalidCastException).FullName)
         {
         }
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException setting the message.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        public PSInvalidCastException(string message) : base(message)
+        public PSInvalidCastException(string message)
+            : base(message)
         {
         }
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException setting the message and innerException.
         /// </summary>
         /// <param name="message">The exception's message.</param>
-        /// <param name="innerException">The exceptions's inner exception.</param>
-        public PSInvalidCastException(string message, Exception innerException) : base(message, innerException)
+        /// <param name="innerException">The exception's inner exception.</param>
+        public PSInvalidCastException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
@@ -579,8 +607,14 @@ namespace System.Management.Automation
             _errorId = errorId;
         }
 
-        internal PSInvalidCastException(string errorId, Exception innerException, string resourceString, params object[] arguments)
-            : this(errorId, StringUtil.Format(resourceString, arguments), innerException)
+        internal PSInvalidCastException(
+            string errorId,
+            Exception innerException,
+            string resourceString,
+            params object[] arguments)
+            : this(
+                errorId, StringUtil.Format(resourceString, arguments),
+                innerException)
         {
         }
 
@@ -591,21 +625,17 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_errorRecord == null)
-                {
-                    _errorRecord = new ErrorRecord(
-                        new ParentContainsErrorRecordException(this),
-                        _errorId,
-                        ErrorCategory.InvalidArgument,
-                        null);
-                }
+                _errorRecord ??= new ErrorRecord(
+                    new ParentContainsErrorRecordException(this),
+                    _errorId,
+                    ErrorCategory.InvalidArgument,
+                    null);
 
                 return _errorRecord;
             }
         }
 
         private ErrorRecord _errorRecord;
-        private string _errorId = "PSInvalidCastException";
+        private readonly string _errorId = "PSInvalidCastException";
     }
 }
-

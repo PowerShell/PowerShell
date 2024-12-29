@@ -107,8 +107,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ComplexControlBody complexBody = null;
 
             // we might have a reference
-            ControlReference controlReference = control as ControlReference;
-            if (controlReference != null && controlReference.controlType == typeof(ComplexControlBody))
+            if (control is ControlReference controlReference && controlReference.controlType == typeof(ComplexControlBody))
             {
                 // retrieve the reference
                 complexBody = DisplayDataQuery.ResolveControlReference(
@@ -205,8 +204,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             #region foreach loop
             foreach (FormatToken t in formatTokenList)
             {
-                TextToken tt = t as TextToken;
-                if (tt != null)
+                if (t is TextToken tt)
                 {
                     FormatTextField ftf = new FormatTextField();
                     ftf.text = _db.displayResourceManagerCache.GetTextTokenString(tt);
@@ -214,8 +212,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                var newline = t as NewLineToken;
-                if (newline != null)
+                if (t is NewLineToken newline)
                 {
                     for (int i = 0; i < newline.count; i++)
                     {
@@ -225,8 +222,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
 
-                FrameToken ft = t as FrameToken;
-                if (ft != null)
+                if (t is FrameToken ft)
                 {
                     // instantiate a new entry and attach a frame info object
                     FormatEntry feFrame = new FormatEntry();
@@ -245,8 +241,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
                 }
                 #region CompoundPropertyToken
-                CompoundPropertyToken cpt = t as CompoundPropertyToken;
-                if (cpt != null)
+                if (t is CompoundPropertyToken cpt)
                 {
                     if (!EvaluateDisplayCondition(so, cpt.conditionToken))
                     {
@@ -283,10 +278,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         // Since it is a leaf node we just consider it an empty string and go
                         // on with formatting
-                        if (val == null)
-                        {
-                            val = string.Empty;
-                        }
+                        val ??= string.Empty;
 
                         FieldFormattingDirective fieldFormattingDirective = null;
                         StringFormatError formatErrorObject = null;
@@ -383,13 +375,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return retVal;
         }
 
-        private TypeInfoDataBase _db;
-        private DatabaseLoadingInfo _loadingInfo;
-        private PSPropertyExpressionFactory _expressionFactory;
-        private List<ControlDefinition> _controlDefinitionList;
-        private FormatErrorManager _errorManager;
-        private TerminatingErrorContext _errorContext;
-        private int _enumerationLimit;
+        private readonly TypeInfoDataBase _db;
+        private readonly DatabaseLoadingInfo _loadingInfo;
+        private readonly PSPropertyExpressionFactory _expressionFactory;
+        private readonly List<ControlDefinition> _controlDefinitionList;
+        private readonly FormatErrorManager _errorManager;
+        private readonly TerminatingErrorContext _errorContext;
+        private readonly int _enumerationLimit;
     }
 
     internal class TraversalInfo
@@ -412,8 +404,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private int _level;
-        private int _maxDepth;
+        private readonly int _level;
+        private readonly int _maxDepth;
     }
 
     /// <summary>
@@ -494,7 +486,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (formatErrorObject != null && formatErrorObject.exception != null)
             {
-                // if we did no thave any errors in the expression evaluation
+                // if we did not have any errors in the expression evaluation
                 // we might have errors in the formatting, if present
                 _errorManager.LogStringFormatError(formatErrorObject);
                 if (_errorManager.DisplayFormatErrorString)
@@ -717,7 +709,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (_complexSpecificParameters.classDisplay == ComplexSpecificParameters.ClassInfoDisplay.shortName)
             {
                 // get the last token in the full name
-                string[] arr = typeNames[0].Split(Utils.Separators.Dot);
+                string[] arr = typeNames[0].Split('.');
                 if (arr.Length > 0)
                     return arr[arr.Length - 1];
             }
@@ -771,13 +763,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Indentation added to each level in the recursion.
         /// </summary>
-        private int _indentationStep = 2;
+        private readonly int _indentationStep = 2;
 
-        private FormatErrorManager _errorManager;
+        private readonly FormatErrorManager _errorManager;
 
-        private PSPropertyExpressionFactory _expressionFactory;
+        private readonly PSPropertyExpressionFactory _expressionFactory;
 
-        private int _enumerationLimit;
+        private readonly int _enumerationLimit;
     }
 }
-

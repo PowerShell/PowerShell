@@ -117,17 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Suggestion_StartTransaction" xml:space="preserve">
-    <value>Once a transaction is started, only commands that get called with the -UseTransaction flag become part of that transaction.</value>
-  </data>
-  <data name="Suggestion_UseTransaction" xml:space="preserve">
-    <value>The Use-Transaction cmdlet is intended for scripting of transaction-enabled .NET objects. Its ScriptBlock should contain nothing else.</value>
-  </data>
   <data name="Suggestion_CommandExistsInCurrentDirectory" xml:space="preserve">
-    <value>The command {0} was not found, but does exist in the current location. PowerShell does not load commands from the current location by default. If you trust this command, instead type: "{1}". See "get-help about_Command_Precedence" for more details.</value>
+    <value>The command "{0}" was not found, but does exist in the current location.
+PowerShell does not load commands from the current location by default (see 'Get-Help about_Command_Precedence').
+
+If you trust this command, run the following command instead:</value>
   </data>
   <data name="Suggestion_CommandNotFound" xml:space="preserve">
-    <value>The most similar commands are: {0}.</value>
+    <value>The most similar commands are:</value>
   </data>
   <data name="RuleMustBeScriptBlock" xml:space="preserve">
     <value>Rule must be a ScriptBlock for dynamic match types.</value>

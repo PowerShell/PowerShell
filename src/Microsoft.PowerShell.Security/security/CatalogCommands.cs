@@ -4,14 +4,10 @@
 #if !UNIX
 
 using System;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Management.Automation;
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Collections;
-using System.IO;
-using System.Management.Automation.Provider;
-using System.Runtime.InteropServices;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -60,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // name of this command
         //
-        private string commandName;
+        private readonly string commandName;
 
         /// <summary>
         /// Initializes a new instance of the CatalogCommandsBase class,
@@ -90,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert((CatalogFilePath != null) && (CatalogFilePath.Length > 0),
                        "CatalogCommands: Param binder did not bind catalogFilePath");
 
-            Collection<string> paths = new Collection<string>();
+            Collection<string> paths = new();
 
             if (Path != null)
             {
@@ -149,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Catalog version.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public int CatalogVersion
         {
             get
@@ -164,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Based on the Catalog version we will decide which hashing Algorithm to use
-        private int catalogVersion = 1;
+        private int catalogVersion = 2;
 
         /// <summary>
         /// Generate the Catalog for the Path.
@@ -186,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
                 path.Add(SessionState.Path.CurrentFileSystemLocation.Path);
             }
 
-            FileInfo catalogFileInfo = new FileInfo(catalogFilePath);
+            FileInfo catalogFileInfo = new(catalogFilePath);
 
             // If Path points to the expected cat file make sure
             // parent Directory exists other wise CryptoAPI fails to create a .cat file
@@ -227,7 +223,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Detailed
         {
             get { return detailed; }
@@ -240,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Patterns used to exclude files from DiskPaths and Catalog.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string[] FilesToSkip
         {
             get

@@ -24,10 +24,10 @@ namespace Microsoft.PowerShell.Commands
         private const int BUFFERSIZE = 16;
 
         /// <summary>
-        /// For cases where a homogenous collection of bytes or other items are directly piped in, we collect all the
+        /// For cases where a homogeneous collection of bytes or other items are directly piped in, we collect all the
         /// bytes in a List&lt;byte&gt; and then output the formatted result all at once in EndProcessing().
         /// </summary>
-        private readonly List<byte> _inputBuffer = new List<byte>();
+        private readonly List<byte> _inputBuffer = new();
 
         /// <summary>
         /// Expect to group <see cref="InputObject"/>s by default. When receiving input that should not be grouped,
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _groupInput = true;
 
         /// <summary>
-        /// Keep track of prior input types to determine if we're given a heterogenous collection.
+        /// Keep track of prior input types to determine if we're given a heterogeneous collection.
         /// </summary>
         private Type _lastInputType;
 
@@ -47,14 +47,14 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the path of file(s) to process.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Path")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string[] Path { get; set; }
 
         /// <summary>
         /// Gets or sets the literal path of file to process.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LiteralPath")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath { get; set; }
 
@@ -68,10 +68,24 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the type of character encoding for InputObject.
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
-        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
-        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
+        public Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+
+            set
+            {
+                EncodingConversion.WarnIfObsolete(this, value);
+                _encoding = value;
+            }
+        }
+
+        private Encoding _encoding = Encoding.Default;
 
         /// <summary>
         /// Gets or sets count of bytes to read from the input stream.
@@ -139,12 +153,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<string> ResolvePaths(string[] path, bool literalPath)
         {
-            List<string> pathsToProcess = new List<string>();
+            List<string> pathsToProcess = new();
             ProviderInfo provider = null;
 
             foreach (string currentPath in path)
             {
-                List<string> newPaths = new List<string>();
+                List<string> newPaths = new();
 
                 if (literalPath)
                 {
@@ -160,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (!WildcardPattern.ContainsWildcardCharacters(currentPath))
                         {
-                            ErrorRecord errorRecord = new ErrorRecord(e, "FileNotFound", ErrorCategory.ObjectNotFound, path);
+                            ErrorRecord errorRecord = new(e, "FileNotFound", ErrorCategory.ObjectNotFound, path);
                             WriteError(errorRecord);
                             continue;
                         }
@@ -171,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Write a non-terminating error message indicating that path specified is not supported.
                     string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexOnlySupportsFileSystemPaths, currentPath);
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         new ArgumentException(errorMessage),
                         "FormatHexOnlySupportsFileSystemPaths",
                         ErrorCategory.InvalidArgument,
@@ -279,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static readonly Random _idGenerator = new Random();
+        private static readonly Random _idGenerator = new();
 
         private static string GetGroupLabel(Type inputType)
             => string.Format("{0} ({1}) <{2:X8}>", inputType.Name, inputType.FullName, _idGenerator.Next());
@@ -356,7 +370,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new ArgumentException(errorMessage),
                     "FormatHexTypeNotSupported",
                     ErrorCategory.InvalidArgument,
@@ -377,7 +391,6 @@ namespace Microsoft.PowerShell.Commands
             byte[] result = null;
             int elements = 1;
             bool isArray = false;
-            bool isBool = false;
             bool isEnum = false;
             if (baseType.IsArray)
             {
@@ -410,11 +423,6 @@ namespace Microsoft.PowerShell.Commands
                     _lastInputType = baseType;
                 }
 
-                if (baseType == typeof(bool))
-                {
-                    isBool = true;
-                }
-
                 var elementSize = Marshal.SizeOf(baseType);
                 result = new byte[elementSize * elements];
                 if (!isArray)
@@ -435,11 +443,6 @@ namespace Microsoft.PowerShell.Commands
                         if (isEnum)
                         {
                             toBytes = Convert.ChangeType(obj, baseType);
-                        }
-                        else if (isBool)
-                        {
-                            // bool is 1 byte apparently
-                            toBytes = Convert.ToByte(obj);
                         }
                         else
                         {
@@ -472,7 +475,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="offset">Offset in the file.</param>
         private void WriteHexadecimal(Span<byte> inputBytes, string path, long offset)
         {
-            var bytesPerObject = 16;
+            const int bytesPerObject = 16;
             for (int index = 0; index < inputBytes.Length; index += bytesPerObject)
             {
                 var count = inputBytes.Length - index < bytesPerObject
@@ -494,7 +497,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void WriteHexadecimal(Span<byte> inputBytes, long offset, string label)
         {
-            var bytesPerObject = 16;
+            const int bytesPerObject = 16;
             for (int index = 0; index < inputBytes.Length; index += bytesPerObject)
             {
                 var count = inputBytes.Length - index < bytesPerObject

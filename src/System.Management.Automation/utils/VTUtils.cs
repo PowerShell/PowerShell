@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections.Generic;
 
 namespace System.Management.Automation
@@ -8,6 +9,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Class to help with VT escape sequences.
     /// </summary>
+    [Obsolete("This class is deprecated. Use 'System.Management.Automation.PSStyle' instead.", error: true)]
     public sealed class VTUtility
     {
         /// <summary>

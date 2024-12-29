@@ -28,18 +28,18 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _isWindowStarted;
 
-        private string _title;
+        private readonly string _title;
 
-        private OutputModeOption _outputMode;
+        private readonly OutputModeOption _outputMode;
 
         private AutoResetEvent _closedEvent;
 
-        private OutGridViewCommand _parentCmdlet;
+        private readonly OutGridViewCommand _parentCmdlet;
 
-        private GraphicalHostReflectionWrapper _graphicalHostReflectionWrapper;
+        private readonly GraphicalHostReflectionWrapper _graphicalHostReflectionWrapper;
 
         /// <summary>
-        /// Initializes a new instance of the OutWindowProxy class.
+        /// Initializes a new instance of the <see cref="OutWindowProxy"/> class.
         /// </summary>
         internal OutWindowProxy(string title, OutputModeOption outPutMode, OutGridViewCommand parentCmdlet)
         {
@@ -58,20 +58,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="types">An array of types to add.</param>
         internal void AddColumns(string[] propertyNames, string[] displayNames, Type[] types)
         {
-            if (propertyNames == null)
-            {
-                throw new ArgumentNullException(nameof(propertyNames));
-            }
+            ArgumentNullException.ThrowIfNull(propertyNames);
 
-            if (displayNames == null)
-            {
-                throw new ArgumentNullException(nameof(displayNames));
-            }
+            ArgumentNullException.ThrowIfNull(displayNames);
 
-            if (types == null)
-            {
-                throw new ArgumentNullException(nameof(types));
-            }
+            ArgumentNullException.ThrowIfNull(types);
 
             try
             {
@@ -80,8 +71,7 @@ namespace Microsoft.PowerShell.Commands
             catch (TargetInvocationException ex)
             {
                 // Verify if this is an error loading the System.Core dll.
-                FileNotFoundException fileNotFoundEx = ex.InnerException as FileNotFoundException;
-                if (fileNotFoundEx != null && fileNotFoundEx.FileName.Contains("System.Core"))
+                if (ex.InnerException is FileNotFoundException fileNotFoundEx && fileNotFoundEx.FileName.Contains("System.Core"))
                 {
                     _parentCmdlet.ThrowTerminatingError(
                         new ErrorRecord(new InvalidOperationException(
@@ -177,10 +167,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         internal void AddItem(PSObject livePSObject)
         {
-            if (livePSObject == null)
-            {
-                throw new ArgumentNullException(nameof(livePSObject));
-            }
+            ArgumentNullException.ThrowIfNull(livePSObject);
 
             if (_headerInfo == null)
             {
@@ -203,10 +190,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         internal void AddHeteroViewItem(PSObject livePSObject)
         {
-            if (livePSObject == null)
-            {
-                throw new ArgumentNullException(nameof(livePSObject));
-            }
+            ArgumentNullException.ThrowIfNull(livePSObject);
 
             if (_headerInfo == null)
             {
@@ -230,13 +214,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal void BlockUntillClosed()
-        {
-            if (_closedEvent != null)
-            {
-                _closedEvent.WaitOne();
-            }
-        }
+        internal void BlockUntilClosed() => _closedEvent?.WaitOne();
 
         /// <summary>
         /// Implements IDisposable logic.

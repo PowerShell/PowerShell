@@ -4,8 +4,6 @@
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
-using Dbg = System.Management.Automation;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -31,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(GetCurrentContext());
+            CmdletProviderContext context = new(GetCurrentContext());
 
             foreach (string path in paths)
             {
@@ -90,4 +88,3 @@ namespace Microsoft.PowerShell.Commands
         #endregion protected members
     }
 }
-

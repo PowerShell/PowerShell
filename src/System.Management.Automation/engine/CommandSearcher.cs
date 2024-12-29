@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -24,29 +25,20 @@ namespace System.Management.Automation
         /// Constructs a command searching enumerator that resolves the location
         /// to a command using a standard algorithm.
         /// </summary>
-        /// <param name="commandName">
-        /// The name of the command to look for.
-        /// </param>
-        /// <param name="options">
-        /// Determines which types of commands glob resolution of the name will take place on.
-        /// </param>
-        /// <param name="commandTypes">
-        /// The types of commands to look for.
-        /// </param>
-        /// <param name="context">
-        /// The execution context for this engine instance...
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// If <paramref name="context"/> is null.
-        /// </exception>
-        /// <exception cref="PSArgumentException">
-        /// If <paramref name="commandName"/> is null or empty.
-        /// </exception>
+        /// <param name="commandName">The name of the command to look for.</param>
+        /// <param name="options">Determines which types of commands glob resolution of the name will take place on.</param>
+        /// <param name="commandTypes">The types of commands to look for.</param>
+        /// <param name="context">The execution context for this engine instance.</param>
+        /// <param name="fuzzyMatcher">The fuzzy matcher to use for fuzzy searching.</param>
+        ///
+        /// <exception cref="ArgumentNullException">If <paramref name="context"/> is null.</exception>
+        /// <exception cref="PSArgumentException">If <paramref name="commandName"/> is null or empty.</exception>
         internal CommandSearcher(
             string commandName,
             SearchResolutionOptions options,
             CommandTypes commandTypes,
-            ExecutionContext context)
+            ExecutionContext context,
+            FuzzyMatcher? fuzzyMatcher = null)
         {
             Diagnostics.Assert(context != null, "caller to verify context is not null");
             Diagnostics.Assert(!string.IsNullOrEmpty(commandName), "caller to verify commandName is valid");
@@ -55,6 +47,7 @@ namespace System.Management.Automation
             _context = context;
             _commandResolutionOptions = options;
             _commandTypes = commandTypes;
+            _fuzzyMatcher = fuzzyMatcher;
 
             // Initialize the enumerators
             this.Reset();
@@ -158,7 +151,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        // Ok see it it's in the applications list
+                        // Ok, see if it's in the applications list
                         foreach (string path in _context.EngineSessionState.Applications)
                         {
                             if (checkPath(path, _commandName))
@@ -705,8 +698,7 @@ namespace System.Management.Automation
                     foreach (KeyValuePair<string, AliasInfo> aliasEntry in _context.EngineSessionState.GetAliasTable())
                     {
                         if (aliasMatcher.IsMatch(aliasEntry.Key) ||
-                            (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
-                            FuzzyMatcher.IsFuzzyMatch(aliasEntry.Key, _commandName)))
+                            (_fuzzyMatcher is not null && _fuzzyMatcher.IsFuzzyMatch(aliasEntry.Key, _commandName)))
                         {
                             matchingAliases.Add(aliasEntry.Value);
                         }
@@ -785,8 +777,7 @@ namespace System.Management.Automation
                     foreach ((string functionName, FunctionInfo functionInfo) in _context.EngineSessionState.GetFunctionTable())
                     {
                         if (functionMatcher.IsMatch(functionName) ||
-                            (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
-                            FuzzyMatcher.IsFuzzyMatch(functionName, _commandName)))
+                            (_fuzzyMatcher is not null && _fuzzyMatcher.IsFuzzyMatch(functionName, _commandName)))
                         {
                             matchingFunction.Add(functionInfo);
                         }
@@ -842,18 +833,28 @@ namespace System.Management.Automation
         // Don't return commands to the user if that might result in:
         //     - Trusted commands calling untrusted functions that the user has overridden
         //     - Debug prompts calling internal functions that are likely to have code injection
-        private bool ShouldSkipCommandResolutionForConstrainedLanguage(CommandInfo? result, ExecutionContext executionContext)
+        private static bool ShouldSkipCommandResolutionForConstrainedLanguage(CommandInfo? result, ExecutionContext executionContext)
         {
             if (result == null)
             {
                 return false;
             }
 
-            // Don't return untrusted commands to trusted functions
-            if ((result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage) &&
-                (executionContext.LanguageMode == PSLanguageMode.FullLanguage))
+            // Don't return untrusted commands to trusted functions.
+            if (result.DefiningLanguageMode == PSLanguageMode.ConstrainedLanguage && executionContext.LanguageMode == PSLanguageMode.FullLanguage)
             {
-                return true;
+                if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Audit)
+                {
+                    return true;
+                }
+
+                // This audit log message is to inform the user that an expected command will not be available because it is not trusted
+                // when the machine is in policy enforcement mode.
+                SystemPolicy.LogWDACAuditMessage(
+                    context: executionContext,
+                    title: CommandBaseStrings.SearcherWDACLogTitle,
+                    message: StringUtil.Format(CommandBaseStrings.SearcherWDACLogMessage, result.Name, result.ModuleName ?? string.Empty),
+                    fqid: "CommandSearchFailureForUntrustedCommand");
             }
 
             // Don't allow invocation of trusted functions from debug breakpoints.
@@ -928,10 +929,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (module == null)
-                {
-                    module = modules[0];
-                }
+                module ??= modules[0];
             }
 
             return module;
@@ -953,24 +951,13 @@ namespace System.Management.Automation
 
             if (result != null)
             {
-                if (result is FilterInfo)
+                var formatString = result switch 
                 {
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "Filter found: {0}",
-                        function);
-                }
-                else if (result is ConfigurationInfo)
-                {
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "Configuration found: {0}",
-                        function);
-                }
-                else
-                {
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "Function found: {0}  {1}",
-                        function);
-                }
+                    FilterInfo => "Filter found: {0}",
+                    ConfigurationInfo => "Configuration found: {0}",
+                    _ => "Function found: {0}",
+                };
+                CommandDiscovery.discoveryTracer.WriteLine(formatString, function);
             }
             else
             {
@@ -1021,10 +1008,8 @@ namespace System.Management.Automation
                     {
                         foreach (CmdletInfo cmdlet in cmdletList)
                         {
-                            if (cmdletMatcher != null &&
-                                cmdletMatcher.IsMatch(cmdlet.Name) ||
-                                (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
-                                 FuzzyMatcher.IsFuzzyMatch(cmdlet.Name, _commandName)))
+                            if ((cmdletMatcher is not null && cmdletMatcher.IsMatch(cmdlet.Name)) ||
+                                (_fuzzyMatcher is not null && _fuzzyMatcher.IsFuzzyMatch(cmdlet.Name, _commandName)))
                             {
                                 if (string.IsNullOrEmpty(moduleName) || moduleName.Equals(cmdlet.ModuleName, StringComparison.OrdinalIgnoreCase))
                                 {
@@ -1087,7 +1072,7 @@ namespace System.Management.Automation
             string? result = null;
 
             if (_context.EngineSessionState != null &&
-                _context.EngineSessionState.ProviderCount > 0)
+                _context.EngineSessionState.ProviderCount > 0 && _commandName.Length != 0)
             {
                 // NTRAID#Windows OS Bugs-1009294-2004/02/04-JeffJon
                 // This is really slow.  Maybe since we are only allowing FS paths right
@@ -1099,7 +1084,9 @@ namespace System.Management.Automation
                 // Relative Path:       ".\command.exe"
                 // Home Path:           "~\command.exe"
                 // Drive Relative Path: "\Users\User\AppData\Local\Temp\command.exe"
-                if (_commandName[0] == '.' || _commandName[0] == '~' || _commandName[0] == '\\')
+
+                char firstChar = _commandName[0];
+                if (firstChar == '.' || firstChar == '~' || firstChar == '\\')
                 {
                     using (CommandDiscovery.discoveryTracer.TraceScope(
                         "{0} appears to be a relative path. Trying to resolve relative path",
@@ -1334,10 +1321,6 @@ namespace System.Management.Automation
         /// </exception>
         internal LookupPathCollection ConstructSearchPatternsFromName(string name, bool commandDiscovery = false)
         {
-            Dbg.Assert(
-                !string.IsNullOrEmpty(name),
-                "Caller should verify name");
-
             var result = new LookupPathCollection();
 
             // First check to see if the commandName has an extension, if so
@@ -1456,7 +1439,7 @@ namespace System.Management.Automation
 
                 // If the command contains any path separators, we can't
                 // do the path lookup
-                if (possiblePath.IndexOfAny(Utils.Separators.Directory) != -1)
+                if (possiblePath.AsSpan().IndexOfAny('\\', '/') != -1)
                 {
                     result = CanDoPathLookupResult.DirectorySeparator;
                     break;
@@ -1502,6 +1485,11 @@ namespace System.Management.Automation
         private readonly ExecutionContext _context;
 
         /// <summary>
+        /// The fuzzy matcher to use for fuzzy searching.
+        /// </summary>
+        private readonly FuzzyMatcher? _fuzzyMatcher;
+
+        /// <summary>
         /// A routine to initialize the path searcher...
         /// </summary>
         /// <exception cref="ArgumentException">
@@ -1533,7 +1521,7 @@ namespace System.Management.Automation
                         _context.CommandDiscovery.GetLookupDirectoryPaths(),
                         _context,
                         acceptableCommandNames: null,
-                        useFuzzyMatch: _commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch));
+                        _fuzzyMatcher);
             }
             else
             {
@@ -1549,7 +1537,7 @@ namespace System.Management.Automation
                             _context.CommandDiscovery.GetLookupDirectoryPaths(),
                             _context,
                             ConstructSearchPatternsFromName(_commandName, commandDiscovery: true),
-                            useFuzzyMatch: false);
+                            fuzzyMatcher: null);
                 }
                 else if (_canDoPathLookupResult == CanDoPathLookupResult.PathIsRooted)
                 {
@@ -1573,7 +1561,7 @@ namespace System.Management.Automation
                                 directoryCollection,
                                 _context,
                                 ConstructSearchPatternsFromName(fileName, commandDiscovery: true),
-                                useFuzzyMatch: false);
+                                fuzzyMatcher: null);
                     }
                     else
                     {
@@ -1613,7 +1601,7 @@ namespace System.Management.Automation
                                     directoryCollection,
                                     _context,
                                     ConstructSearchPatternsFromName(fileName, commandDiscovery: true),
-                                    useFuzzyMatch: false);
+                                    fuzzyMatcher: null);
                         }
                         else
                         {
@@ -1732,17 +1720,14 @@ namespace System.Management.Automation
         CommandNameIsPattern = 0x04,
         SearchAllScopes = 0x08,
 
-        /// <summary>Use fuzzy matching.</summary>
-        FuzzyMatch = 0x10,
-
         /// <summary>
         /// Enable searching for cmdlets/functions by abbreviation expansion.
         /// </summary>
-        UseAbbreviationExpansion = 0x20,
+        UseAbbreviationExpansion = 0x10,
 
         /// <summary>
         /// Enable resolving wildcard in paths.
         /// </summary>
-        ResolveLiteralThenPathPatterns = 0x40
+        ResolveLiteralThenPathPatterns = 0x20
     }
 }

@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the number of the matching line.
         /// </summary>
         /// <value>The number of the matching line.</value>
-        public int LineNumber { get; set; }
+        public ulong LineNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the text of the matching line.
@@ -127,11 +127,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets the base name of the file containing the matching line.
+        /// </summary>
         /// <remarks>
         /// It will be the string "InputStream" if the object came from the input stream.
         /// This is a readonly property calculated from the path <see cref="Path"/>.
         /// </remarks>
-        /// </summary>
         /// <value>The file name.</value>
         public string Filename
         {
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
                     return s_inputStream;
                 }
 
-                return _filename ?? (_filename = System.IO.Path.GetFileName(_path));
+                return _filename ??= System.IO.Path.GetFileName(_path);
             }
         }
 
@@ -150,10 +150,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the full path of the file containing the matching line.
+        /// </summary>
         /// <remarks>
         /// It will be "InputStream" if the object came from the input stream.
         /// </remarks>
-        /// </summary>
         /// <value>The path name.</value>
         public string Path
         {
@@ -182,11 +182,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Returns the path of the matching file truncated relative to the <paramref name="directory"/> parameter.
+        /// </summary>
         /// <remarks>
         /// For example, if the matching path was c:\foo\bar\baz.c and the directory argument was c:\foo
         /// the routine would return bar\baz.c .
         /// </remarks>
-        /// </summary>
         /// <param name="directory">The directory base the truncation on.</param>
         /// <returns>The relative path that was produced.</returns>
         public string RelativePath(string directory)
@@ -232,12 +232,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returns the string representation of this object. The format
         /// depends on whether a path has been set for this object or not.
+        /// </summary>
         /// <remarks>
         /// If the path component is set, as would be the case when matching
         /// in a file, ToString() would return the path, line number and line text.
         /// If path is not set, then just the line text is presented.
         /// </remarks>
-        /// </summary>
         /// <returns>The string representation of the match object.</returns>
         public override string ToString()
         {
@@ -275,9 +275,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Otherwise, render the full context.
-            List<string> lines = new List<string>(Context.DisplayPreContext.Length + Context.DisplayPostContext.Length + 1);
+            List<string> lines = new(Context.DisplayPreContext.Length + Context.DisplayPostContext.Length + 1);
 
-            int displayLineNumber = this.LineNumber - Context.DisplayPreContext.Length;
+            ulong displayLineNumber = this.LineNumber - (ulong)Context.DisplayPreContext.Length;
             foreach (string contextLine in Context.DisplayPreContext)
             {
                 lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
@@ -315,8 +315,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The matched line with matched text inverted.</returns>
         private string EmphasizeLine()
         {
-            string invertColorsVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Inverse);
-            string resetVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Reset);
+            string invertColorsVT100 = PSStyle.Instance.Reverse;
+            string resetVT100 = PSStyle.Instance.Reset;
 
             char[] chars = new char[(_matchIndexes.Count * (invertColorsVT100.Length + resetVT100.Length)) + Line.Length];
             int lineIndex = 0;
@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="displayPath">The file path, formatted for display.</param>
         /// <param name="prefix">The match prefix.</param>
         /// <returns>The formatted line as a string.</returns>
-        private string FormatLine(string lineStr, int displayLineNumber, string displayPath, string prefix)
+        private string FormatLine(string lineStr, ulong displayLineNumber, string displayPath, string prefix)
         {
             return _pathSet
                        ? StringUtil.Format(MatchFormat, prefix, displayPath, displayLineNumber, lineStr)
@@ -366,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets a list of all Regex matches on the matching line.
         /// </summary>
-        public Match[] Matches { get; set; } = new Match[] { };
+        public Match[] Matches { get; set; } = Array.Empty<Match>();
 
         /// <summary>
         /// Create a deep copy of this MatchInfo instance.
@@ -410,7 +410,7 @@ namespace Microsoft.PowerShell.Commands
         /// A generic circular buffer.
         /// </summary>
         /// <typeparam name="T">The type of items that are buffered.</typeparam>
-        private class CircularBuffer<T> : ICollection<T>
+        private sealed class CircularBuffer<T> : ICollection<T>
         {
             // Ring of items
             private readonly T[] _items;
@@ -425,13 +425,10 @@ namespace Microsoft.PowerShell.Commands
             /// Initializes a new instance of the <see cref="CircularBuffer{T}"/> class.
             /// </summary>
             /// <param name="capacity">The maximum capacity of the buffer.</param>
-            /// <exception cref="ArgumentOutOfRangeException">If <paramref name="capacity" /> is negative.</exception>
+            /// <exception cref="ArgumentOutOfRangeException">If <paramref name="capacity"/> is negative.</exception>
             public CircularBuffer(int capacity)
             {
-                if (capacity < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(capacity));
-                }
+                ArgumentOutOfRangeException.ThrowIfNegative(capacity);
 
                 _items = new T[capacity];
                 Clear();
@@ -455,9 +452,9 @@ namespace Microsoft.PowerShell.Commands
             /// has been properly offset and wrapped.
             /// </summary>
             /// <param name="zeroBasedIndex">The index to wrap.</param>
-            /// <exception cref="ArgumentOutOfRangeException">If <paramref name="zeroBasedIndex" /> is out of range.</exception>
+            /// <exception cref="ArgumentOutOfRangeException">If <paramref name="zeroBasedIndex"/> is out of range.</exception>
             /// <returns>
-            /// The actual index that <param ref="zeroBasedIndex" />
+            /// The actual index that <paramref name="zeroBasedIndex"/>
             /// maps to.
             /// </returns>
             private int WrapIndex(int zeroBasedIndex)
@@ -532,15 +529,8 @@ namespace Microsoft.PowerShell.Commands
 
             public void CopyTo(T[] array, int arrayIndex)
             {
-                if (array == null)
-                {
-                    throw new ArgumentNullException(nameof(array));
-                }
-
-                if (arrayIndex < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(arrayIndex));
-                }
+                ArgumentNullException.ThrowIfNull(array);
+                ArgumentOutOfRangeException.ThrowIfNegative(arrayIndex);
 
                 if (Count > (array.Length - arrayIndex))
                 {
@@ -627,7 +617,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A state machine to track display context for each match.
         /// </summary>
-        private class DisplayContextTracker : IContextTracker
+        private sealed class DisplayContextTracker : IContextTracker
         {
             private enum ContextState
             {
@@ -784,12 +774,12 @@ namespace Microsoft.PowerShell.Commands
         /// and other matching lines (since they will appear
         /// as their own match entries.).
         /// </remarks>
-        private class LogicalContextTracker : IContextTracker
+        private sealed class LogicalContextTracker : IContextTracker
         {
             // A union: string | MatchInfo. Needed since
             // context lines could be either proper matches
             // or non-matching lines.
-            private class ContextEntry
+            private sealed class ContextEntry
             {
                 public readonly string Line;
                 public readonly MatchInfo Match;
@@ -851,14 +841,14 @@ namespace Microsoft.PowerShell.Commands
 
             public void TrackLine(string line)
             {
-                ContextEntry entry = new ContextEntry(line);
+                ContextEntry entry = new(line);
                 _collectedContext.Add(entry);
                 UpdateQueue();
             }
 
             public void TrackMatch(MatchInfo match)
             {
-                ContextEntry entry = new ContextEntry(match);
+                ContextEntry entry = new(match);
                 _collectedContext.Add(entry);
                 UpdateQueue();
             }
@@ -989,7 +979,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A class to track both logical and display contexts.
         /// </summary>
-        private class ContextTracker : IContextTracker
+        private sealed class ContextTracker : IContextTracker
         {
             private readonly IContextTracker _displayTracker;
             private readonly IContextTracker _logicalTracker;
@@ -1058,7 +1048,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ContextTracker that does not work for the case when pre- and post context is 0.
         /// </summary>
-        private class NoContextTracker : IContextTracker
+        private sealed class NoContextTracker : IContextTracker
         {
             private readonly IList<MatchInfo> _matches = new List<MatchInfo>(1);
 
@@ -1346,10 +1336,24 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the text encoding to process each file as.
         /// </summary>
         [Parameter]
-        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentToEncodingTransformationAttribute]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
-        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
+        public Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+
+            set
+            {
+                EncodingConversion.WarnIfObsolete(this, value);
+                _encoding = value;
+            }
+        }
+
+        private Encoding _encoding = Encoding.Default;
 
         /// <summary>
         /// Gets or sets the number of context lines to collect. If set to a
@@ -1362,7 +1366,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [ValidateCount(1, 2)]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public new int[] Context
         {
             get => _context;
@@ -1413,7 +1417,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private bool _doneProcessing;
 
-        private int _inputRecordNumber;
+        private ulong _inputRecordNumber;
 
         /// <summary>
         /// Read command line parameters.
@@ -1422,8 +1426,8 @@ namespace Microsoft.PowerShell.Commands
         {
             if (this.MyInvocation.BoundParameters.ContainsKey(nameof(Culture)) && !this.MyInvocation.BoundParameters.ContainsKey(nameof(SimpleMatch)))
             {
-                InvalidOperationException exception = new InvalidOperationException(MatchStringStrings.CannotSpecifyCultureWithoutSimpleMatch);
-                ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyCultureWithoutSimpleMatch", ErrorCategory.InvalidData, null);
+                InvalidOperationException exception = new(MatchStringStrings.CannotSpecifyCultureWithoutSimpleMatch);
+                ErrorRecord errorRecord = new(exception, "CannotSpecifyCultureWithoutSimpleMatch", ErrorCategory.InvalidData, null);
                 this.ThrowTerminatingError(errorRecord);
             }
 
@@ -1457,7 +1461,7 @@ namespace Microsoft.PowerShell.Commands
             _globalContextTracker = GetContextTracker();
         }
 
-        private readonly List<string> _inputObjectFileList = new List<string>(1) { string.Empty };
+        private readonly List<string> _inputObjectFileList = new(1) { string.Empty };
 
         /// <summary>
         /// Process the input.
@@ -1586,12 +1590,12 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (FileStream fs = new(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    using (StreamReader sr = new StreamReader(fs, Encoding))
+                    using (StreamReader sr = new(fs, Encoding))
                     {
                         string line;
-                        int lineNo = 0;
+                        ulong lineNo = 0;
 
                         // Read and display lines from the file until the end of
                         // the file is reached.
@@ -1883,8 +1887,8 @@ namespace Microsoft.PowerShell.Commands
                     if (matchInfo.Context != null)
                     {
                         matchResult = matchInfo.Clone();
-                        matchResult.Context.DisplayPreContext = new string[] { };
-                        matchResult.Context.DisplayPostContext = new string[] { };
+                        matchResult.Context.DisplayPreContext = Array.Empty<string>();
+                        matchResult.Context.DisplayPostContext = Array.Empty<string>();
                     }
                     else
                     {
@@ -1910,7 +1914,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Matches should be an empty list, rather than null,
                 // in the cases of notMatch and simpleMatch.
-                matchResult.Matches = matches ?? new Match[] { };
+                matchResult.Matches = matches ?? Array.Empty<Match>();
 
                 return true;
             }
@@ -1926,7 +1930,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The resolved (absolute) paths.</returns>
         private List<string> ResolveFilePaths(string[] filePaths, bool isLiteralPath)
         {
-            List<string> allPaths = new List<string>();
+            List<string> allPaths = new();
 
             foreach (string path in filePaths)
             {
@@ -1969,7 +1973,7 @@ namespace Microsoft.PowerShell.Commands
         private static ErrorRecord BuildErrorRecord(string messageId, object[] arguments, string errorId, Exception innerException)
         {
             string fmtedMsg = StringUtil.Format(messageId, arguments);
-            ArgumentException e = new ArgumentException(fmtedMsg, innerException);
+            ArgumentException e = new(fmtedMsg, innerException);
             return new ErrorRecord(e, errorId, ErrorCategory.InvalidArgument, null);
         }
 
@@ -1982,7 +1986,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Magic class that works around the limitations on ToString() for FileInfo.
         /// </summary>
-        private class FileinfoToStringAttribute : ArgumentTransformationAttribute
+        private sealed class FileinfoToStringAttribute : ArgumentTransformationAttribute
         {
             public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
             {

@@ -80,11 +80,9 @@ namespace System.Management.Automation
             else
                 patternList.Add(target);
 
-            bool useWildCards = true;
-
             foreach (string pattern in patternList)
             {
-                PSClassSearcher searcher = new PSClassSearcher(pattern, useWildCards, _context);
+                PSClassSearcher searcher = new PSClassSearcher(pattern, useWildCards: true, _context);
 
                 foreach (var helpInfo in GetHelpInfo(searcher))
                 {
@@ -108,10 +106,7 @@ namespace System.Management.Automation
                 yield return null;
             }
 
-            string target = helpRequest.Target;
-            bool useWildCards = false;
-
-            PSClassSearcher searcher = new PSClassSearcher(target, useWildCards, _context);
+            PSClassSearcher searcher = new PSClassSearcher(helpRequest.Target, useWildCards: false, _context);
 
             foreach (var helpInfo in GetHelpInfo(searcher))
             {
@@ -284,7 +279,7 @@ namespace System.Management.Automation
             }
 
             if (e != null)
-                s_tracer.WriteLine("Error occured in PSClassHelpProvider {0}", e.Message);
+                s_tracer.WriteLine("Error occurred in PSClassHelpProvider {0}", e.Message);
 
             if (reportErrors && (e != null))
             {

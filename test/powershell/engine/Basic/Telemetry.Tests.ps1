@@ -129,28 +129,14 @@ Describe "Telemetry for shell startup" -Tag CI {
         $result | Should -Be $expectedValue
     }
 
-    It "Should resend startup event if the semaphore says we haven't sent telemetry" {
-
+    It "Should send startup event" {
         $resultJson = & $PWSH -NoProfile -c {
+            # this should ensure that the startup telemetry event is sent.
+            $null = Get-Date | Out-String
             $telemetryType = [Microsoft.PowerShell.Telemetry.ApplicationInsightsTelemetry]
             $bindingFlags = [System.Reflection.BindingFlags]"NonPublic,Static"
-            $initialValue = ${telemetryType}.GetMember("s_startupEventSent", $bindingFlags)[0].GetValue($null)
-            # force a resend of the startup telemetry
-            $null = ${telemetryType}.GetMember("s_startupEventSent", $bindingFlags)[0].SetValue($null,0)
-            $null = Get-Date | Out-String
-            # now check it again, it should be true now that something has executed
-            $finalValue = ${telemetryType}.GetMember("s_startupEventSent", $bindingFlags)[0].GetValue($null)
-            @{
-                initialValue = $initialValue
-                finalValue = $finalValue
-            } | ConvertTo-Json -Compress
+            $observedValue = ${telemetryType}.GetMember("s_startupEventSent", $bindingFlags)[0].GetValue($null)
+            $observedValue | Should -Be 1  -Because "Should have sent telemetry on console startup"
         }
-
-        $result = $resultJson | ConvertFrom-Json
-
-        $result.InitialValue | Should -Be 1  -Because "Should have sent telemetry on console startup"
-
-        $result.FinalValue | Should -Be 1  -Because "Should have resent telemetry"
     }
-
 }

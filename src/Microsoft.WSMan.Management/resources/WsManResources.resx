@@ -191,7 +191,7 @@ Do you want to enable CredSSP authentication?</value>
   <data name="NoAttributeMatch" xml:space="preserve">
     <value>This command cannot be used because the parameter matches a non-text property on the ResourceURI.Check the input parameters and run your command.</value>
   </data>
-  <data name="AmbiguosAuthentication" xml:space="preserve">
+  <data name="AmbiguousAuthentication" xml:space="preserve">
     <value>A {0} cannot be specified when {1} is specified.</value>
   </data>
   <data name="InvalidComputerName" xml:space="preserve">

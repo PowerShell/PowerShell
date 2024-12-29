@@ -32,7 +32,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "CmdletProviderContext",
              "The context under which a core command is being run.")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("CmdletProviderContext",
              "The context under which a core command is being run.");
 
@@ -250,7 +250,6 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="contextToCopyFrom"/> is null.
         /// </exception>
-
         internal CmdletProviderContext(
             CmdletProviderContext contextToCopyFrom)
         {
@@ -295,12 +294,12 @@ namespace System.Management.Automation
         /// If the constructor that takes a context to copy is
         /// called, this will be set to the context being copied.
         /// </summary>
-        private CmdletProviderContext _copiedContext;
+        private readonly CmdletProviderContext _copiedContext;
 
         /// <summary>
         /// The credentials under which the operation should run.
         /// </summary>
-        private PSCredential _credentials = PSCredential.Empty;
+        private readonly PSCredential _credentials = PSCredential.Empty;
 
         /// <summary>
         /// The force parameter gives guidance to providers on how vigorously they
@@ -313,7 +312,7 @@ namespace System.Management.Automation
         /// made visible to anyone and should only be set through the
         /// constructor.
         /// </summary>
-        private Cmdlet _command;
+        private readonly Cmdlet _command;
 
         /// <summary>
         /// This makes the origin of the provider request visible to the internals.
@@ -328,17 +327,17 @@ namespace System.Management.Automation
         /// If it is false, the objects will be accumulated until the
         /// GetErrorObjects method is called.
         /// </summary>
-        private bool _streamErrors;
+        private readonly bool _streamErrors;
 
         /// <summary>
         /// A collection in which objects that are written using the WriteObject(s)
-        /// methods are accumulated if <see cref="PassThru" /> is false.
+        /// methods are accumulated if <see cref="PassThru"/> is false.
         /// </summary>
         private Collection<PSObject> _accumulatedObjects = new Collection<PSObject>();
 
         /// <summary>
         /// A collection in which objects that are written using the WriteError
-        /// method are accumulated if <see cref="PassThru" /> is false.
+        /// method are accumulated if <see cref="PassThru"/> is false.
         /// </summary>
         private Collection<ErrorRecord> _accumulatedErrorObjects = new Collection<ErrorRecord>();
 
@@ -391,13 +390,8 @@ namespace System.Management.Automation
             Filter = context.Filter;
         }
 
-        internal void RemoveStopReferral()
-        {
-            if (_copiedContext != null)
-            {
-                _copiedContext.StopReferrals.Remove(this);
-            }
-        }
+        internal void RemoveStopReferral() => _copiedContext?.StopReferrals.Remove(this);
+
         #endregion Internal properties
 
         #region Public properties
@@ -557,7 +551,7 @@ namespace System.Management.Automation
         /// <param name="target">
         /// Name of the target resource being acted upon
         /// </param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true if-and-only-if the action should be performed</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
         /// triggered a terminating error.  The pipeline failure will be
@@ -583,7 +577,7 @@ namespace System.Management.Automation
         /// Name of the target resource being acted upon
         /// </param>
         /// <param name="action">What action was being performed.</param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true if-and-only-if the action should be performed</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
         /// triggered a terminating error.  The pipeline failure will be
@@ -622,7 +616,7 @@ namespace System.Management.Automation
         /// if the user is prompted whether or not to perform the action.
         /// It may be displayed by some hosts, but not all.
         /// </param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true if-and-only-if the action should be performed</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
         /// triggered a terminating error.  The pipeline failure will be
@@ -671,7 +665,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ShouldProcessReason"/>
         /// are returned.
         /// </param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true if-and-only-if the action should be performed</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
         /// triggered a terminating error.  The pipeline failure will be
@@ -775,13 +769,7 @@ namespace System.Management.Automation
         /// <param name="text">
         /// The string that needs to be written.
         /// </param>
-        internal void WriteVerbose(string text)
-        {
-            if (_command != null)
-            {
-                _command.WriteVerbose(text);
-            }
-        }
+        internal void WriteVerbose(string text) => _command?.WriteVerbose(text);
 
         /// <summary>
         /// Writes the object to the Warning pipe.
@@ -789,21 +777,9 @@ namespace System.Management.Automation
         /// <param name="text">
         /// The string that needs to be written.
         /// </param>
-        internal void WriteWarning(string text)
-        {
-            if (_command != null)
-            {
-                _command.WriteWarning(text);
-            }
-        }
+        internal void WriteWarning(string text) => _command?.WriteWarning(text);
 
-        internal void WriteProgress(ProgressRecord record)
-        {
-            if (_command != null)
-            {
-                _command.WriteProgress(record);
-            }
-        }
+        internal void WriteProgress(ProgressRecord record) => _command?.WriteProgress(record);
 
         /// <summary>
         /// Writes a debug string.
@@ -811,29 +787,11 @@ namespace System.Management.Automation
         /// <param name="text">
         /// The String that needs to be written.
         /// </param>
-        internal void WriteDebug(string text)
-        {
-            if (_command != null)
-            {
-                _command.WriteDebug(text);
-            }
-        }
+        internal void WriteDebug(string text) => _command?.WriteDebug(text);
 
-        internal void WriteInformation(InformationRecord record)
-        {
-            if (_command != null)
-            {
-                _command.WriteInformation(record);
-            }
-        }
+        internal void WriteInformation(InformationRecord record) => _command?.WriteInformation(record);
 
-        internal void WriteInformation(object messageData, string[] tags)
-        {
-            if (_command != null)
-            {
-                _command.WriteInformation(messageData, tags);
-            }
-        }
+        internal void WriteInformation(object messageData, string[] tags) => _command?.WriteInformation(messageData, tags);
 
         #endregion User feedback mechanisms
 
@@ -1155,14 +1113,10 @@ namespace System.Management.Automation
         {
             Stopping = true;
 
-            if (_providerInstance != null)
-            {
-                // We don't need to catch any of the exceptions here because
-                // we are terminating the pipeline and any exception will
-                // be caught by the engine.
-
-                _providerInstance.StopProcessing();
-            }
+            // We don't need to catch any of the exceptions here because
+            // we are terminating the pipeline and any exception will
+            // be caught by the engine.
+            _providerInstance?.StopProcessing();
 
             // Call the stop referrals if any
 
@@ -1192,4 +1146,3 @@ namespace System.Management.Automation
         #endregion Public methods
     }
 }
-

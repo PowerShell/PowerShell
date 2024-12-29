@@ -52,7 +52,8 @@ function Register-PSSessionConfiguration
       [system.security.securestring] $runAsPassword,
       [System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode] $accessMode,
       [bool] $isSddlSpecified,
-      [string] $configTableSddl
+      [string] $configTableSddl,
+      [bool] $noRestart
     )
 
     begin
@@ -139,7 +140,7 @@ function Register-PSSessionConfiguration
         ## Replace the SDDL with any groups or restrictions defined in the PSSessionConfigurationFile
         if($? -and $configTableSddl -and (-not $isSddlSpecified))
         {{
-            $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $configTableSddl -Force:$force
+            $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $configTableSddl -NoServiceRestart:$noRestart -Force:$force
         }}
 
         if ($? -and $shouldShowUI)
@@ -227,11 +228,11 @@ function Register-PSSessionConfiguration
                 if ($runAsUserName)
                 {{
                     $runAsCredential = new-object system.management.automation.PSCredential($runAsUserName, $runAsPassword)
-                    $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $newSDDL -NoServiceRestart -force -WarningAction 0 -RunAsCredential $runAsCredential
+                    $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $newSDDL -NoServiceRestart:$noRestart -Force:$force -WarningAction 0 -RunAsCredential $runAsCredential
                 }}
                 else
                 {{
-                    $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $newSDDL -NoServiceRestart -force -WarningAction 0
+                    $null = Set-PSSessionConfiguration -Name $pluginName -SecurityDescriptorSddl $newSDDL -NoServiceRestart:$noRestart -Force:$force -WarningAction 0
                 }}
 
             }} catch {{
@@ -262,13 +263,13 @@ function Register-PSSessionConfiguration
     }}
 }}
 
-if ($null -eq $args[14])
+if ($null -eq $args[15])
 {{
-    Register-PSSessionConfiguration -filepath $args[0] -pluginName $args[1] -shouldShowUI $args[2] -force $args[3] -whatif:$args[4] -confirm:$args[5] -restartWSManTarget $args[6] -restartWSManAction $args[7] -restartWSManRequired $args[8] -runAsUserName $args[9] -runAsPassword $args[10] -accessMode $args[11] -isSddlSpecified $args[12] -configTableSddl $args[13]
+    Register-PSSessionConfiguration -filepath $args[0] -pluginName $args[1] -shouldShowUI $args[2] -force $args[3] -whatif:$args[4] -confirm:$args[5] -restartWSManTarget $args[6] -restartWSManAction $args[7] -restartWSManRequired $args[8] -runAsUserName $args[9] -runAsPassword $args[10] -accessMode $args[11] -isSddlSpecified $args[12] -configTableSddl $args[13] -noRestart $args[14]
 }}
 else
 {{
-    Register-PSSessionConfiguration -filepath $args[0] -pluginName $args[1] -shouldShowUI $args[2] -force $args[3] -whatif:$args[4] -confirm:$args[5] -restartWSManTarget $args[6] -restartWSManAction $args[7] -restartWSManRequired $args[8] -runAsUserName $args[9] -runAsPassword $args[10] -accessMode $args[11] -isSddlSpecified $args[12] -configTableSddl $args[13] -erroraction $args[14]
+    Register-PSSessionConfiguration -filepath $args[0] -pluginName $args[1] -shouldShowUI $args[2] -force $args[3] -whatif:$args[4] -confirm:$args[5] -restartWSManTarget $args[6] -restartWSManAction $args[7] -restartWSManRequired $args[8] -runAsUserName $args[9] -runAsPassword $args[10] -accessMode $args[11] -isSddlSpecified $args[12] -configTableSddl $args[13] -noRestart $args[14] -erroraction $args[15]
 }}
 ";
 
@@ -348,7 +349,7 @@ else
             string localSDDL = GetLocalSddl();
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             string newPluginSbString = string.Format(CultureInfo.InvariantCulture,
                 newPluginSbFormat,
                 WSManNativeApi.ResourceURIPrefix, localSDDL, RemoteManagementUsersSID, InteractiveUsersSID);
@@ -544,9 +545,7 @@ else
                 string restartServiceTarget = StringUtil.Format(RemotingErrorIdStrings.RestartWSManServiceTarget, "WinRM");
 
                 string restartWSManRequiredForUI = StringUtil.Format(RemotingErrorIdStrings.RestartWSManRequiredShowUI,
-                    string.Format(CultureInfo.InvariantCulture,
-                        "Set-PSSessionConfiguration {0} -ShowSecurityDescriptorUI",
-                        shellName));
+                    string.Create(CultureInfo.InvariantCulture, $"Set-PSSessionConfiguration {shellName} -ShowSecurityDescriptorUI"));
 
                 // gather -WhatIf, -Confirm parameter data and pass it to the script block
                 bool whatIf = false;
@@ -589,11 +588,12 @@ else
                                             restartServiceTarget,
                                             restartServiceAction,
                                             restartWSManRequiredForUI,
-                                            runAsCredential != null ? runAsCredential.UserName : null,
-                                            runAsCredential != null ? runAsCredential.Password : null,
+                                            runAsCredential?.UserName,
+                                            runAsCredential?.Password,
                                             AccessMode,
                                             isSddlSpecified,
                                             _configTableSDDL,
+                                            noRestart,
                                             errorAction
                                        });
 
@@ -641,7 +641,7 @@ else
         /// 1. New shell successfully registered. However cannot delete temporary plugin file {0}.
         ///    Reason for failure: {1}.
         /// </exception>
-        private void DeleteFile(string tmpFileName)
+        private static void DeleteFile(string tmpFileName)
         {
             Dbg.Assert(!string.IsNullOrEmpty(tmpFileName), "tmpFile cannot be null or empty.");
 
@@ -693,7 +693,7 @@ else
         /// 2. Cannot write shell configuration data into temporary file {0}. Try again.
         ///    Reason for failure: {1}.
         /// </exception>
-        private string ConstructTemporaryFile(string pluginContent)
+        private static string ConstructTemporaryFile(string pluginContent)
         {
             // Path.GetTempFileName creates a temporary file whereas GetRandomFileName does not.
             string tmpFileName = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName()) + "psshell.xml";
@@ -708,7 +708,7 @@ else
                     try
                     {
                         // Make sure the file is not read only
-                        destfile.Attributes = destfile.Attributes & ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
+                        destfile.Attributes &= ~(FileAttributes.ReadOnly | FileAttributes.Hidden);
                         destfile.Delete();
                     }
                     catch (FileNotFoundException fnf)
@@ -798,7 +798,7 @@ else
             destConfigFilePath = null;
             StringBuilder initParameters = new StringBuilder();
 
-            bool assemblyAndTypeTokensSet = false;
+            const bool assemblyAndTypeTokensSet = false;
 
             // DISC endpoint
             if (Path != null)
@@ -869,7 +869,7 @@ else
 
                     if (configTable.ContainsKey(ConfigFileConstants.PowerShellVersion))
                     {
-                        if (isPSVersionSpecified == false)
+                        if (!isPSVersionSpecified)
                         {
                             try
                             {
@@ -1071,7 +1071,7 @@ else
             }
 
             // Default value for PSVersion
-            if (isPSVersionSpecified == false)
+            if (!isPSVersionSpecified)
             {
                 psVersion = PSVersionInfo.PSVersion;
             }
@@ -1373,7 +1373,7 @@ else
             Dbg.Assert(!string.IsNullOrEmpty(gmsaAccount), "Should not be null or empty string.");
 
             // Validate account name form (must be DomainName\UserName)
-            var parts = gmsaAccount.Split(Utils.Separators.Backslash);
+            var parts = gmsaAccount.Split('\\');
             if ((parts.Length != 2) ||
                 (string.IsNullOrEmpty(parts[0])) ||
                 (string.IsNullOrEmpty(parts[1]))
@@ -1462,7 +1462,7 @@ else
         {
             if (groups == null) { return string.Empty; }
 
-            return string.Join(";", groups);
+            return string.Join(';', groups);
         }
 
         /// <summary>
@@ -1753,8 +1753,7 @@ else
             }
 
             StringBuilder conditionalACE = new StringBuilder();
-            Hashtable requiredGroupsHash = configTable[ConfigFileConstants.RequiredGroups] as Hashtable;
-            if (requiredGroupsHash == null)
+            if (!(configTable[ConfigFileConstants.RequiredGroups] is Hashtable requiredGroupsHash))
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.RequiredGroupsNotHashTable);
             }
@@ -1963,7 +1962,10 @@ else
         [Parameter(Position = 1, Mandatory = true, ParameterSetName = PSSessionConfigurationCommandBase.AssemblyNameParameterSetName)]
         public string AssemblyName
         {
-            get { return assemblyName; }
+            get
+            {
+                return assemblyName;
+            }
 
             set
             {
@@ -1985,7 +1987,10 @@ else
         [Parameter(ParameterSetName = AssemblyNameParameterSetName)]
         public string ApplicationBase
         {
-            get { return applicationBase; }
+            get
+            {
+                return applicationBase;
+            }
 
             set
             {
@@ -2005,7 +2010,10 @@ else
         [Parameter(Position = 2, Mandatory = true, ParameterSetName = PSSessionConfigurationCommandBase.AssemblyNameParameterSetName)]
         public string ConfigurationTypeName
         {
-            get { return configurationTypeName; }
+            get
+            {
+                return configurationTypeName;
+            }
 
             set
             {
@@ -2054,7 +2062,10 @@ else
                 return ApartmentState.Unknown;
             }
 
-            set { threadAptState = value; }
+            set
+            {
+                threadAptState = value;
+            }
         }
 
         internal ApartmentState? threadAptState;
@@ -2075,7 +2086,10 @@ else
                 return PSThreadOptions.UseCurrentThread;
             }
 
-            set { threadOptions = value; }
+            set
+            {
+                threadOptions = value;
+            }
         }
 
         internal PSThreadOptions? threadOptions;
@@ -2086,7 +2100,10 @@ else
         [Parameter]
         public PSSessionConfigurationAccessMode AccessMode
         {
-            get { return _accessMode; }
+            get
+            {
+                return _accessMode;
+            }
 
             set
             {
@@ -2125,7 +2142,10 @@ else
         [Parameter()]
         public string StartupScript
         {
-            get { return configurationScript; }
+            get
+            {
+                return configurationScript;
+            }
 
             set
             {
@@ -2145,7 +2165,10 @@ else
         [AllowNull]
         public double? MaximumReceivedDataSizePerCommandMB
         {
-            get { return maxCommandSizeMB; }
+            get
+            {
+                return maxCommandSizeMB;
+            }
 
             set
             {
@@ -2172,7 +2195,10 @@ else
         [AllowNull]
         public double? MaximumReceivedObjectSizeMB
         {
-            get { return maxObjectSizeMB; }
+            get
+            {
+                return maxObjectSizeMB;
+            }
 
             set
             {
@@ -2199,7 +2225,10 @@ else
         [Parameter()]
         public string SecurityDescriptorSddl
         {
-            get { return sddl; }
+            get
+            {
+                return sddl;
+            }
 
             set
             {
@@ -2229,7 +2258,10 @@ else
         [Parameter()]
         public SwitchParameter ShowSecurityDescriptorUI
         {
-            get { return _showUI; }
+            get
+            {
+                return _showUI;
+            }
 
             set
             {
@@ -2281,17 +2313,15 @@ else
         [ValidateNotNullOrEmpty]
         public Version PSVersion
         {
-            get { return psVersion; }
+            get
+            {
+                return psVersion;
+            }
 
             set
             {
-                RemotingCommandUtil.CheckPSVersion(value);
-
-                // Check if specified version of PowerShell is installed
-                RemotingCommandUtil.CheckIfPowerShellVersionIsInstalled(value);
-
-                psVersion = value;
-                isPSVersionSpecified = true;
+                // PowerShell 7 remoting endpoints do not support PSVersion.
+                throw new PSNotSupportedException(RemotingErrorIdStrings.PowerShellVersionNotSupported);
             }
         }
 
@@ -2374,7 +2404,7 @@ else
                         // Add this check after checking if it a path
                         if (!string.IsNullOrEmpty(modulepath.Trim()))
                         {
-                            if ((modulepath.Contains("\\") || modulepath.Contains(":")) &&
+                            if ((modulepath.Contains('\\') || modulepath.Contains(':')) &&
                                 !(Directory.Exists(modulepath) || File.Exists(modulepath)))
                             {
                                 throw new ArgumentException(
@@ -2590,7 +2620,7 @@ else
                 removePluginSbFormat,
                 RemotingConstants.PSPluginDLLName);
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_removePluginSb = ScriptBlock.Create(removePluginScript);
             s_removePluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -2806,7 +2836,7 @@ $args[0] | ForEach-Object {{
                 PSSessionConfigurationCommandUtilities.PSCustomShellTypeName,
                 RemotingConstants.PSPluginDLLName);
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_getPluginSb = ScriptBlock.Create(scriptToRun);
             s_getPluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -3230,7 +3260,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 RemotingConstants.PSPluginDLLName, localSDDL, RemoteManagementUsersSID, InteractiveUsersSID);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_setPluginSb = ScriptBlock.Create(setPluginScript);
             s_setPluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -3570,56 +3600,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 setQuotasSb.LanguageMode = PSLanguageMode.FullLanguage;
 
                 Hashtable quotas = transportOption.ConstructQuotasAsHashtable();
-
-                int idleTimeOut = 0;
-
-                if (idleTimeOut != 0 && quotas.ContainsKey(WSManConfigurationOption.AttribMaxIdleTimeout))
-                {
-                    bool setMaxIdleTimeoutFirst = true;
-                    int maxIdleTimeOut;
-
-                    if (LanguagePrimitives.TryConvertTo<int>(quotas[WSManConfigurationOption.AttribMaxIdleTimeout], out maxIdleTimeOut))
-                    {
-                        int? currentIdleTimeoutms = WSManConfigurationOption.DefaultIdleTimeout;
-
-                        // Get the current IdleTimeOut quota value
-                        //
-                        using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
-                        {
-                            ps.AddScript(string.Format(CultureInfo.InvariantCulture, getCurrentIdleTimeoutmsFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
-                            Collection<PSObject> psObjectCollection = ps.Invoke(new object[] { Name }) as Collection<PSObject>;
-                            if (psObjectCollection == null || psObjectCollection.Count != 1)
-                            {
-                                Dbg.Assert(false, "This should never happen. ps.Invoke always return a Collection<PSObject>");
-                            }
-
-                            currentIdleTimeoutms = Convert.ToInt32(psObjectCollection[0].ToString(), CultureInfo.InvariantCulture);
-                        }
-
-                        if (currentIdleTimeoutms >= maxIdleTimeOut && currentIdleTimeoutms >= idleTimeOut)
-                        {
-                            setMaxIdleTimeoutFirst = false;
-                        }
-                    }
-
-                    ScriptBlock setTimeoutQuotasSb = ScriptBlock.Create(
-                           string.Format(CultureInfo.InvariantCulture, setSessionConfigurationTimeoutQuotasSbFormat, CodeGeneration.EscapeSingleQuotedStringContent(Name)));
-                    setTimeoutQuotasSb.LanguageMode = PSLanguageMode.FullLanguage;
-
-                    setTimeoutQuotasSb.InvokeUsingCmdlet(
-                        contextCmdlet: this,
-                        useLocalScope: true,
-                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                        dollarUnder: AutomationNull.Value,
-                        input: Array.Empty<object>(),
-                        scriptThis: AutomationNull.Value,
-                        args: new object[] { maxIdleTimeOut, idleTimeOut, setMaxIdleTimeoutFirst });
-
-                    // Remove Idle timeout values as we have set them above
-                    //
-                    quotas.Remove(WSManConfigurationOption.AttribMaxIdleTimeout);
-                    quotas.Remove(WSManConfigurationOption.AttribIdleTimeout);
-                }
 
                 setQuotasSb.InvokeUsingCmdlet(
                     contextCmdlet: this,
@@ -4013,7 +3993,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
 function Test-WinRMQuickConfigNeeded
 {{
-    # see issue #11005 - Function Test-WinRMQuickConfigNeeded needs to be updated: 
+    # see issue #11005 - Function Test-WinRMQuickConfigNeeded needs to be updated:
     # 1) currently this function always returns $True
     # 2) checking for a firewall rule using Get-NetFirewallRule engages WinCompat code and has significant perf impact on Enable-PSRemoting; maybe change to Get-CimInstance -ClassName MSFT_NetFirewallRule
     return $True
@@ -4218,7 +4198,7 @@ param(
 $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecified $args[2] -queryForSet $args[3] -captionForSet $args[4] -queryForQC $args[5] -captionForQC $args[6] -whatif:$args[7] -confirm:$args[8] -shouldProcessDescForQC $args[9] -setEnabledTarget $args[10] -setEnabledAction $args[11] -skipNetworkProfileCheck $args[12] -noServiceRestart $args[13]
 ";
 
-        private static ScriptBlock s_enablePluginSb;
+        private static readonly ScriptBlock s_enablePluginSb;
 
         #endregion
 
@@ -4230,7 +4210,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
                 enablePluginSbFormat, setWSManConfigCommand, PSSessionConfigurationCommandBase.RemoteManagementUsersSID, PSSessionConfigurationCommandBase.InteractiveUsersSID);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_enablePluginSb = ScriptBlock.Create(enablePluginScript);
             s_enablePluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -4246,7 +4226,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
 
-        private Collection<string> _shellsToEnable = new Collection<string>();
+        private readonly Collection<string> _shellsToEnable = new Collection<string>();
 
         /// <summary>
         /// Property that sets force parameter. This will allow
@@ -4505,7 +4485,7 @@ param(
 $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$args[2] -restartWinRMMessage $args[3] -setEnabledTarget $args[4] -setEnabledAction $args[5] -noServiceRestart $args[6]
 ";
 
-        private static ScriptBlock s_disablePluginSb;
+        private static readonly ScriptBlock s_disablePluginSb;
 
         #endregion
 
@@ -4517,7 +4497,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
                 disablePluginSbFormat);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_disablePluginSb = ScriptBlock.Create(disablePluginScript);
             s_disablePluginSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -4533,7 +4513,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
 
-        private Collection<string> _shellsToDisable = new Collection<string>();
+        private readonly Collection<string> _shellsToDisable = new Collection<string>();
 
         /// <summary>
         /// Property that sets force parameter. This will allow
@@ -4910,7 +4890,7 @@ param(
 Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForRegisterDefault $args[2] -queryForSet $args[3] -captionForSet $args[4] -whatif:$args[5] -confirm:$args[6] -skipNetworkProfileCheck $args[7] -errorMsgUnableToInstallPlugin $args[8]
 ";
 
-        private static ScriptBlock s_enableRemotingSb;
+        private static readonly ScriptBlock s_enableRemotingSb;
 
         #endregion
 
@@ -4924,7 +4904,7 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
                 RemotingConstants.MaxIdleTimeoutMS, RemotingConstants.PSPluginDLLName);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_enableRemotingSb = ScriptBlock.Create(enableRemotingScript);
             s_enableRemotingSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -5136,7 +5116,7 @@ param(
 Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2] -restartWinRMMessage $args[3] -whatif:$args[4] -confirm:$args[5]
 ";
 
-        private static ScriptBlock s_disableRemotingSb;
+        private static readonly ScriptBlock s_disableRemotingSb;
 
         #endregion Private Data
 
@@ -5148,7 +5128,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
             string disableRemotingScript = string.Format(CultureInfo.InvariantCulture, disablePSRemotingFormat, localSDDL);
 
             // compile the script block statically and reuse the same instance
-            // everytime the command is run..This will save on parsing time.
+            // every time the command is run..This will save on parsing time.
             s_disableRemotingSb = ScriptBlock.Create(disableRemotingScript);
             s_disableRemotingSb.LanguageMode = PSLanguageMode.FullLanguage;
         }
@@ -5284,7 +5264,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
             }
 
             // The validator that will be applied to the role lookup
-            Func<string, bool> validator = (role) => true;
+            Func<string, bool> validator = static (role) => true;
 
             if (!string.IsNullOrEmpty(this.Username))
             {
@@ -5293,7 +5273,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
                     validator = null;
 
                     // Convert DOMAIN\user to the upn (user@DOMAIN)
-                    string[] upnComponents = this.Username.Split(Utils.Separators.Backslash);
+                    string[] upnComponents = this.Username.Split('\\');
                     if (upnComponents.Length == 2)
                     {
                         this.Username = upnComponents[1] + "@" + upnComponents[0];

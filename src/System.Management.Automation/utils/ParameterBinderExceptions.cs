@@ -4,14 +4,12 @@
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace System.Management.Automation
 {
     /// <summary>
     /// The exception thrown if the specified value can not be bound parameter of a command.
     /// </summary>
-    [Serializable]
     public class ParameterBindingException : RuntimeException
     {
         #region Constructors
@@ -213,10 +211,7 @@ namespace System.Management.Automation
             _parameterType = parameterType;
             _typeSpecified = typeSpecified;
 
-            if (errorPosition == null)
-            {
-                errorPosition = invocationInfo.ScriptPosition;
-            }
+            errorPosition ??= invocationInfo.ScriptPosition;
 
             if (errorPosition != null)
             {
@@ -302,39 +297,12 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected ParameterBindingException(
             SerializationInfo info,
             StreamingContext context)
-            : base(info, context)
         {
-            _message = info.GetString("ParameterBindingException_Message");
-            _parameterName = info.GetString("ParameterName");
-            _line = info.GetInt64("Line");
-            _offset = info.GetInt64("Offset");
-        }
-
-        /// <summary>
-        /// Serializes the exception.
-        /// </summary>
-        /// <param name="info">
-        /// serialization information
-        /// </param>
-        /// <param name="context">
-        /// streaming context
-        /// </param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new PSArgumentNullException(nameof(info));
-            }
-
-            base.GetObjectData(info, context);
-            info.AddValue("ParameterBindingException_Message", this.Message);
-            info.AddValue("ParameterName", _parameterName);
-            info.AddValue("Line", _line);
-            info.AddValue("Offset", _offset);
+            throw new NotSupportedException();
         }
         #endregion serialization
 
@@ -386,7 +354,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string Message
         {
-            get { return _message ?? (_message = BuildMessage()); }
+            get { return _message ??= BuildMessage(); }
         }
 
         private string _message;
@@ -403,7 +371,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _parameterName = string.Empty;
+        private readonly string _parameterName = string.Empty;
 
         /// <summary>
         /// Gets the type the parameter is expecting.
@@ -416,7 +384,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Type _parameterType;
+        private readonly Type _parameterType;
 
         /// <summary>
         /// Gets the Type that was specified as the parameter value.
@@ -429,7 +397,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Type _typeSpecified;
+        private readonly Type _typeSpecified;
 
         /// <summary>
         /// Gets the errorId of this ParameterBindingException.
@@ -442,7 +410,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _errorId;
+        private readonly string _errorId;
 
         /// <summary>
         /// Gets the line in the script at which the error occurred.
@@ -455,7 +423,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Int64 _line = Int64.MinValue;
+        private readonly Int64 _line = Int64.MinValue;
 
         /// <summary>
         /// Gets the offset on the line in the script at which the error occurred.
@@ -468,7 +436,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Int64 _offset = Int64.MinValue;
+        private readonly Int64 _offset = Int64.MinValue;
 
         /// <summary>
         /// Gets the invocation information about the command.
@@ -481,14 +449,14 @@ namespace System.Management.Automation
             }
         }
 
-        private InvocationInfo _invocationInfo;
+        private readonly InvocationInfo _invocationInfo;
         #endregion Properties
 
         #region private
 
-        private string _resourceString;
-        private object[] _args = Array.Empty<object>();
-        private string _commandName;
+        private readonly string _resourceString;
+        private readonly object[] _args = Array.Empty<object>();
+        private readonly string _commandName;
 
         private string BuildMessage()
         {
@@ -518,8 +486,7 @@ namespace System.Management.Automation
 
         #endregion Private
     }
-
-    [Serializable]
+    
     internal class ParameterBindingValidationException : ParameterBindingException
     {
         #region Preferred constructors
@@ -670,8 +637,7 @@ namespace System.Management.Automation
                 errorId,
                 args)
         {
-            ValidationMetadataException validationException = innerException as ValidationMetadataException;
-            if (validationException != null && validationException.SwallowException)
+            if (innerException is ValidationMetadataException validationException && validationException.SwallowException)
             {
                 _swallowException = true;
             }
@@ -688,11 +654,12 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected ParameterBindingValidationException(
             SerializationInfo info,
             StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion serialization
@@ -715,7 +682,6 @@ namespace System.Management.Automation
         #endregion Property
     }
 
-    [Serializable]
     internal class ParameterBindingArgumentTransformationException : ParameterBindingException
     {
         #region Preferred constructors
@@ -878,17 +844,17 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected ParameterBindingArgumentTransformationException(
             SerializationInfo info,
             StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion serialization
     }
-
-    [Serializable]
+    
     internal class ParameterBindingParameterDefaultValueException : ParameterBindingException
     {
         #region Preferred constructors
@@ -1052,14 +1018,14 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
+        [Obsolete("Legacy serialization support is deprecated since .NET 8", DiagnosticId = "SYSLIB0051")] 
         protected ParameterBindingParameterDefaultValueException(
             SerializationInfo info,
             StreamingContext context)
-            : base(info, context)
         {
+            throw new NotSupportedException();
         }
 
         #endregion serialization
     }
 }
-

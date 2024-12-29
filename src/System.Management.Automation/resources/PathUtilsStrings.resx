@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Utf7EncodingObsolete" xml:space="preserve">
+    <value>Encoding 'UTF-7' is obsolete, please use UTF-8.</value>
+  </data>
   <data name="UtilityFileExistsNoClobber" xml:space="preserve">
     <value>File {0} already exists and {1} was specified.</value>
   </data>
@@ -134,6 +137,9 @@
   </data>
   <data name="ExportPSSession_ErrorDirectoryExists" xml:space="preserve">
     <value>The directory '{0}' already exists.  Use the -Force parameter if you want to overwrite the directory and files within the directory.</value>
+  </data>
+  <data name="ExportPSSession_ErrorModuleNameOrPath" xml:space="preserve">
+    <value>The user module path does not exist, and hence a module folder cannot be created for the provided module name '{0}'.</value>
   </data>
   <data name="ExportPSSession_CannotCreateOutputDirectory" xml:space="preserve">
     <value>Cannot create the module {0} due to the following: {1}. Use a different argument for the -OutputModule parameter and retry.</value>

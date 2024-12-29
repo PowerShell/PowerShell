@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         private const string DynamicTypeSet = "DynamicTypeSet";
         private const string TypeDataSet = "TypeDataSet";
 
-        private static object s_notSpecified = new object();
+        private static readonly object s_notSpecified = new();
 
         private static bool HasBeenSpecified(object obj)
         {
@@ -50,13 +50,16 @@ namespace Microsoft.PowerShell.Commands
                      System.Management.Automation.Runspaces.TypeData.CodeMethod, IgnoreCase = true)]
         public PSMemberTypes MemberType
         {
+            get
+            {
+                return _memberType;
+            }
+
             set
             {
                 _memberType = value;
                 _isMemberTypeSet = true;
             }
-
-            get { return _memberType; }
         }
 
         private string _memberName;
@@ -67,9 +70,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string MemberName
         {
-            set { _memberName = value; }
-
             get { return _memberName; }
+
+            set { _memberName = value; }
         }
 
         private object _value1 = s_notSpecified;
@@ -80,9 +83,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = DynamicTypeSet)]
         public object Value
         {
-            set { _value1 = value; }
-
             get { return _value1; }
+
+            set { _value1 = value; }
         }
 
         private object _value2;
@@ -94,9 +97,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public object SecondValue
         {
-            set { _value2 = value; }
-
             get { return _value2; }
+
+            set { _value2 = value; }
         }
 
         private Type _typeConverter;
@@ -107,9 +110,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Type TypeConverter
         {
-            set { _typeConverter = value; }
-
             get { return _typeConverter; }
+
+            set { _typeConverter = value; }
         }
 
         private Type _typeAdapter;
@@ -120,9 +123,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Type TypeAdapter
         {
-            set { _typeAdapter = value; }
-
             get { return _typeAdapter; }
+
+            set { _typeAdapter = value; }
         }
 
         /// <summary>
@@ -132,9 +135,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string SerializationMethod
         {
-            set { _serializationMethod = value; }
-
             get { return _serializationMethod; }
+
+            set { _serializationMethod = value; }
         }
 
         /// <summary>
@@ -144,9 +147,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Type TargetTypeForDeserialization
         {
-            set { _targetTypeForDeserialization = value; }
-
             get { return _targetTypeForDeserialization; }
+
+            set { _targetTypeForDeserialization = value; }
         }
 
         /// <summary>
@@ -157,9 +160,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(0, int.MaxValue)]
         public int SerializationDepth
         {
-            set { _serializationDepth = value; }
-
             get { return _serializationDepth; }
+
+            set { _serializationDepth = value; }
         }
 
         /// <summary>
@@ -169,9 +172,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string DefaultDisplayProperty
         {
-            set { _defaultDisplayProperty = value; }
-
             get { return _defaultDisplayProperty; }
+
+            set { _defaultDisplayProperty = value; }
         }
 
         /// <summary>
@@ -181,9 +184,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public bool? InheritPropertySerializationSet
         {
-            set { _inheritPropertySerializationSet = value; }
-
             get { return _inheritPropertySerializationSet; }
+
+            set { _inheritPropertySerializationSet = value; }
         }
 
         /// <summary>
@@ -193,9 +196,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string StringSerializationSource
         {
-            set { _stringSerializationSource = value; }
-
             get { return _stringSerializationSource; }
+
+            set { _stringSerializationSource = value; }
         }
 
         /// <summary>
@@ -206,9 +209,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] DefaultDisplayPropertySet
         {
-            set { _defaultDisplayPropertySet = value; }
-
             get { return _defaultDisplayPropertySet; }
+
+            set { _defaultDisplayPropertySet = value; }
         }
 
         /// <summary>
@@ -219,9 +222,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] DefaultKeyPropertySet
         {
-            set { _defaultKeyPropertySet = value; }
-
             get { return _defaultKeyPropertySet; }
+
+            set { _defaultKeyPropertySet = value; }
         }
 
         /// <summary>
@@ -232,9 +235,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] PropertySerializationSet
         {
-            set { _propertySerializationSet = value; }
-
             get { return _propertySerializationSet; }
+
+            set { _propertySerializationSet = value; }
         }
 
         // These members are represented as NoteProperty in types.ps1xml
@@ -257,13 +260,13 @@ namespace Microsoft.PowerShell.Commands
         /// The type name we want to update on.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = DynamicTypeSet)]
-        [ArgumentToTypeNameTransformationAttribute()]
+        [ArgumentToTypeNameTransformationAttribute]
         [ValidateNotNullOrEmpty]
         public string TypeName
         {
-            set { _typeName = value; }
-
             get { return _typeName; }
+
+            set { _typeName = value; }
         }
 
         private bool _force = false;
@@ -274,9 +277,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = TypeDataSet)]
         public SwitchParameter Force
         {
-            set { _force = value; }
-
             get { return _force; }
+
+            set { _force = value; }
         }
 
         #endregion dynamic type set
@@ -291,9 +294,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = TypeDataSet)]
         public TypeData[] TypeData
         {
-            set { _typeData = value; }
-
             get { return _typeData; }
+
+            set { _typeData = value; }
         }
 
         #endregion strong type data set
@@ -368,11 +371,11 @@ namespace Microsoft.PowerShell.Commands
                         var errors = new ConcurrentBag<string>();
                         this.Context.TypeTable.Update(type, errors, false);
                         // Write out errors...
-                        if (errors.Count > 0)
+                        if (!errors.IsEmpty)
                         {
                             foreach (string s in errors)
                             {
-                                RuntimeException rte = new RuntimeException(s);
+                                RuntimeException rte = new(s);
                                 this.WriteError(new ErrorRecord(rte, "TypesDynamicUpdateException", ErrorCategory.InvalidOperation, null));
                             }
                         }
@@ -411,7 +414,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(NewError("TargetTypeNameEmpty", UpdateDataStrings.TargetTypeNameEmpty, _typeName));
             }
 
-            TypeData type = new TypeData(_typeName) { IsOverride = _force };
+            TypeData type = new(_typeName) { IsOverride = _force };
 
             GetMembers(type.Members);
 
@@ -457,19 +460,19 @@ namespace Microsoft.PowerShell.Commands
 
             if (_defaultDisplayPropertySet != null)
             {
-                PropertySetData defaultDisplayPropertySet = new PropertySetData(_defaultDisplayPropertySet);
+                PropertySetData defaultDisplayPropertySet = new(_defaultDisplayPropertySet);
                 type.DefaultDisplayPropertySet = defaultDisplayPropertySet;
             }
 
             if (_defaultKeyPropertySet != null)
             {
-                PropertySetData defaultKeyPropertySet = new PropertySetData(_defaultKeyPropertySet);
+                PropertySetData defaultKeyPropertySet = new(_defaultKeyPropertySet);
                 type.DefaultKeyPropertySet = defaultKeyPropertySet;
             }
 
             if (_propertySerializationSet != null)
             {
-                PropertySetData propertySerializationSet = new PropertySetData(_propertySerializationSet);
+                PropertySetData propertySerializationSet = new(_propertySerializationSet);
                 type.PropertySerializationSet = propertySerializationSet;
             }
 
@@ -492,11 +495,11 @@ namespace Microsoft.PowerShell.Commands
                     var errors = new ConcurrentBag<string>();
                     this.Context.TypeTable.Update(type, errors, false);
                     // Write out errors...
-                    if (errors.Count > 0)
+                    if (!errors.IsEmpty)
                     {
                         foreach (string s in errors)
                         {
-                            RuntimeException rte = new RuntimeException(s);
+                            RuntimeException rte = new(s);
                             this.WriteError(new ErrorRecord(rte, "TypesDynamicUpdateException", ErrorCategory.InvalidOperation, null));
                         }
                     }
@@ -570,7 +573,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private T GetParameterType<T>(object sourceValue)
+        private static T GetParameterType<T>(object sourceValue)
         {
             return (T)LanguagePrimitives.ConvertTo(sourceValue, typeof(T), CultureInfo.InvariantCulture);
         }
@@ -690,7 +693,7 @@ namespace Microsoft.PowerShell.Commands
                 value2ScriptBlock = GetParameterType<ScriptBlock>(_value2);
             }
 
-            ScriptPropertyData scriptProperty = new ScriptPropertyData(_memberName, value1ScriptBlock, value2ScriptBlock);
+            ScriptPropertyData scriptProperty = new(_memberName, value1ScriptBlock, value2ScriptBlock);
             return scriptProperty;
         }
 
@@ -712,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
                 value2CodeReference = GetParameterType<MethodInfo>(_value2);
             }
 
-            CodePropertyData codeProperty = new CodePropertyData(_memberName, value1CodeReference, value2CodeReference);
+            CodePropertyData codeProperty = new(_memberName, value1CodeReference, value2CodeReference);
             return codeProperty;
         }
 
@@ -723,7 +726,7 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue2HasNotBeenSpecified();
 
             ScriptBlock method = GetParameterType<ScriptBlock>(_value1);
-            ScriptMethodData scriptMethod = new ScriptMethodData(_memberName, method);
+            ScriptMethodData scriptMethod = new(_memberName, method);
             return scriptMethod;
         }
 
@@ -734,7 +737,7 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue2HasNotBeenSpecified();
 
             MethodInfo codeReference = GetParameterType<MethodInfo>(_value1);
-            CodeMethodData codeMethod = new CodeMethodData(_memberName, codeReference);
+            CodeMethodData codeMethod = new(_memberName, codeReference);
             return codeMethod;
         }
 
@@ -746,10 +749,10 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="targetObject"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        private ErrorRecord NewError(string errorId, string template, object targetObject, params object[] args)
+        private static ErrorRecord NewError(string errorId, string template, object targetObject, params object[] args)
         {
             string message = string.Format(CultureInfo.CurrentCulture, template, args);
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new InvalidOperationException(message),
                 errorId,
                 ErrorCategory.InvalidOperation,
@@ -789,9 +792,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (ShouldProcess(formattedTarget, action))
                     {
-                        if (!fullFileNameHash.Contains(resolvedPath))
+                        if (fullFileNameHash.Add(resolvedPath))
                         {
-                            fullFileNameHash.Add(resolvedPath);
                             newTypes.Add(new SessionStateTypeEntry(prependPathTotal[i]));
                         }
                     }
@@ -803,9 +805,8 @@ namespace Microsoft.PowerShell.Commands
                     if (entry.FileName != null)
                     {
                         string resolvedPath = ModuleCmdletBase.ResolveRootedFilePath(entry.FileName, Context) ?? entry.FileName;
-                        if (!fullFileNameHash.Contains(resolvedPath))
+                        if (fullFileNameHash.Add(resolvedPath))
                         {
-                            fullFileNameHash.Add(resolvedPath);
                             newTypes.Add(entry);
                         }
                     }
@@ -822,9 +823,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (ShouldProcess(formattedTarget, action))
                     {
-                        if (!fullFileNameHash.Contains(resolvedPath))
+                        if (fullFileNameHash.Add(resolvedPath))
                         {
-                            fullFileNameHash.Add(resolvedPath);
                             newTypes.Add(new SessionStateTypeEntry(appendPathTotalItem));
                         }
                     }
@@ -846,8 +846,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else if (sste.FileName != null)
                         {
-                            bool unused;
-                            Context.TypeTable.Update(sste.FileName, sste.FileName, errors, Context.AuthorizationManager, Context.InitialSessionState.Host, out unused);
+                            Context.TypeTable.Update(sste.FileName, sste.FileName, errors, Context.AuthorizationManager, Context.InitialSessionState.Host, out _);
                         }
                         else
                         {
@@ -862,11 +861,11 @@ namespace Microsoft.PowerShell.Commands
                     Context.InitialSessionState.Types.Add(sste);
 
                     // Write out any errors...
-                    if (errors.Count > 0)
+                    if (!errors.IsEmpty)
                     {
                         foreach (string s in errors)
                         {
-                            RuntimeException rte = new RuntimeException(s);
+                            RuntimeException rte = new(s);
                             this.WriteError(new ErrorRecord(rte, "TypesXmlUpdateException", ErrorCategory.InvalidOperation, null));
                         }
 
@@ -969,9 +968,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (ShouldProcess(formattedTarget, action))
                     {
-                        if (!fullFileNameHash.Contains(appendPathTotalItem))
+                        if (fullFileNameHash.Add(appendPathTotalItem))
                         {
-                            fullFileNameHash.Add(appendPathTotalItem);
                             newFormats.Add(new SessionStateFormatEntry(appendPathTotalItem));
                         }
                     }
@@ -1053,7 +1051,7 @@ namespace Microsoft.PowerShell.Commands
         /// The target type to remove.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = RemoveTypeSet)]
-        [ArgumentToTypeNameTransformationAttribute()]
+        [ArgumentToTypeNameTransformationAttribute]
         [ValidateNotNullOrEmpty]
         public string TypeName
         {
@@ -1115,19 +1113,25 @@ namespace Microsoft.PowerShell.Commands
                 string removeFileTarget = UpdateDataStrings.UpdateTarget;
 
                 Collection<string> typeFileTotal = UpdateData.Glob(_typeFiles, "TypePathException", this);
-                if (typeFileTotal.Count == 0) { return; }
+                if (typeFileTotal.Count == 0)
+                {
+                    return;
+                }
 
                 // Key of the map is the name of the file that is in the cache. Value of the map is a index list. Duplicate files might
                 // exist in the cache because the user can add arbitrary files to the cache by $host.Runspace.InitialSessionState.Types.Add()
-                Dictionary<string, List<int>> fileToIndexMap = new Dictionary<string, List<int>>(StringComparer.OrdinalIgnoreCase);
-                List<int> indicesToRemove = new List<int>();
+                Dictionary<string, List<int>> fileToIndexMap = new(StringComparer.OrdinalIgnoreCase);
+                List<int> indicesToRemove = new();
 
                 if (Context.InitialSessionState != null)
                 {
                     for (int index = 0; index < Context.InitialSessionState.Types.Count; index++)
                     {
                         string fileName = Context.InitialSessionState.Types[index].FileName;
-                        if (fileName == null) { continue; }
+                        if (fileName == null)
+                        {
+                            continue;
+                        }
 
                         // Resolving the file path because the path to the types file in module manifest is now specified as
                         // ..\..\types.ps1xml which expands to C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Core\..\..\types.ps1xml
@@ -1158,10 +1162,7 @@ namespace Microsoft.PowerShell.Commands
                     indicesToRemove.Sort();
                     for (int i = indicesToRemove.Count - 1; i >= 0; i--)
                     {
-                        if (Context.InitialSessionState != null)
-                        {
-                            Context.InitialSessionState.Types.RemoveItem(indicesToRemove[i]);
-                        }
+                        Context.InitialSessionState?.Types.RemoveItem(indicesToRemove[i]);
                     }
 
                     try
@@ -1209,7 +1210,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             Dbg.Assert(!string.IsNullOrEmpty(typeNameToRemove), "TypeNameToRemove should be not null and not empty at this point");
-            TypeData type = new TypeData(typeNameToRemove);
+            TypeData type = new(typeNameToRemove);
             string removeTypeFormattedTarget = string.Format(CultureInfo.InvariantCulture, removeTypeTarget, typeNameToRemove);
 
             if (ShouldProcess(removeTypeFormattedTarget, removeTypeAction))
@@ -1219,11 +1220,11 @@ namespace Microsoft.PowerShell.Commands
                     var errors = new ConcurrentBag<string>();
                     Context.TypeTable.Update(type, errors, true);
                     // Write out errors...
-                    if (errors.Count > 0)
+                    if (!errors.IsEmpty)
                     {
                         foreach (string s in errors)
                         {
-                            RuntimeException rte = new RuntimeException(s);
+                            RuntimeException rte = new(s);
                             this.WriteError(new ErrorRecord(rte, "TypesDynamicRemoveException", ErrorCategory.InvalidOperation, null));
                         }
                     }
@@ -1255,10 +1256,10 @@ namespace Microsoft.PowerShell.Commands
             this.Context.TypeTable.ClearConsolidatedMembers();
         }
 
-        private ErrorRecord NewError(string errorId, string template, object targetObject, params object[] args)
+        private static ErrorRecord NewError(string errorId, string template, object targetObject, params object[] args)
         {
             string message = string.Format(CultureInfo.CurrentCulture, template, args);
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new InvalidOperationException(message),
                 errorId,
                 ErrorCategory.InvalidOperation,
@@ -1334,7 +1335,6 @@ namespace Microsoft.PowerShell.Commands
             ValidateTypeName();
 
             Dictionary<string, TypeData> alltypes = Context.TypeTable.GetAllTypeData();
-            Collection<TypeData> typedefs = new Collection<TypeData>();
 
             foreach (string type in alltypes.Keys)
             {
@@ -1342,16 +1342,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (pattern.IsMatch(type))
                     {
-                        typedefs.Add(alltypes[type]);
+                        WriteObject(alltypes[type]);
                         break;
                     }
                 }
-            }
-
-            // write out all the available type definitions
-            foreach (TypeData typedef in typedefs)
-            {
-                WriteObject(typedef);
             }
         }
     }

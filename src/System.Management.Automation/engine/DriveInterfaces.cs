@@ -70,7 +70,7 @@ namespace System.Management.Automation
         #region New
 
         /// <summary>
-        /// Creates a new MSH drive in session state.
+        /// Creates a new PSDrive in session state.
         /// </summary>
         /// <param name="drive">
         /// The drive to be created.
@@ -387,9 +387,8 @@ namespace System.Management.Automation
         #region private data
 
         // A private reference to the internal session state of the engine.
-        private SessionStateInternal _sessionState;
+        private readonly SessionStateInternal _sessionState;
 
         #endregion private data
     }
 }
-

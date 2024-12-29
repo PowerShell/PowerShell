@@ -2,24 +2,15 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.Loader;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-
-using Microsoft.Win32.SafeHandles;
 
 namespace System.Management.Automation
 {
@@ -31,13 +22,23 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// Initialize powershell AssemblyLoadContext and register the 'Resolving' event, if it's not done already.
-        /// If powershell is hosted by a native host such as DSC, then PS ALC might be initialized via 'SetPowerShellAssemblyLoadContext' before loading S.M.A.
+        /// If powershell is hosted by a native host such as DSC, then PS ALC may be initialized via 'SetPowerShellAssemblyLoadContext' before loading S.M.A.
         /// </summary>
+        /// <remarks>
+        /// We do this both here and during the initialization of the 'RunspaceBase' type.
+        /// This is because we want to make sure the assembly/library resolvers are:
+        ///  1. registered before any script/cmdlet can run.
+        ///  2. registered before 'ClrFacade' gets used for assembly related operations.
+        ///
+        /// The 'ClrFacade' type may be used without a Runspace created, for example, by calling type conversion methods in the 'LanguagePrimitive' type.
+        /// And at the mean time, script or cmdlet may run without the 'ClrFacade' type initialized.
+        /// That's why we attempt to create the singleton of 'PowerShellAssemblyLoadContext' at both places.
+        /// </remarks>
         static ClrFacade()
         {
-            if (PowerShellAssemblyLoadContext.Instance == null)
+            if (PowerShellAssemblyLoadContext.Instance is null)
             {
-                PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty);
+                PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty, throwOnReentry: false);
             }
         }
 
@@ -109,23 +110,6 @@ namespace System.Management.Automation
         #region Encoding
 
         /// <summary>
-        /// Facade for getting default encoding.
-        /// </summary>
-        internal static Encoding GetDefaultEncoding()
-        {
-            if (s_defaultEncoding == null)
-            {
-                // load all available encodings
-                EncodingRegisterProvider();
-                s_defaultEncoding = new UTF8Encoding(false);
-            }
-
-            return s_defaultEncoding;
-        }
-
-        private static volatile Encoding s_defaultEncoding;
-
-        /// <summary>
         /// Facade for getting OEM encoding
         /// OEM encodings work on all platforms, or rather codepage 437 is available on both Windows and Non-Windows.
         /// </summary>
@@ -133,12 +117,10 @@ namespace System.Management.Automation
         {
             if (s_oemEncoding == null)
             {
-                // load all available encodings
-                EncodingRegisterProvider();
 #if UNIX
-                s_oemEncoding = new UTF8Encoding(false);
+                s_oemEncoding = Encoding.Default;
 #else
-                uint oemCp = NativeMethods.GetOEMCP();
+                uint oemCp = Interop.Windows.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
 #endif
             }
@@ -147,14 +129,6 @@ namespace System.Management.Automation
         }
 
         private static volatile Encoding s_oemEncoding;
-
-        private static void EncodingRegisterProvider()
-        {
-            if (s_defaultEncoding == null && s_oemEncoding == null)
-            {
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            }
-        }
 
         #endregion Encoding
 
@@ -209,8 +183,19 @@ namespace System.Management.Automation
         /// </remarks>
         private static SecurityZone MapSecurityZone(string filePath)
         {
+            // WSL introduces a new filesystem path to access the Linux filesystem from Windows, like '\\wsl$\ubuntu'.
+            // If the given file path is such a special case, we consider it's in 'MyComputer' zone.
+            if (filePath.StartsWith(Utils.WslRootPath, StringComparison.OrdinalIgnoreCase))
+            {
+                return SecurityZone.MyComputer;
+            }
+
             SecurityZone reval = ReadFromZoneIdentifierDataStream(filePath);
-            if (reval != SecurityZone.NoZone) { return reval; }
+            if (reval != SecurityZone.NoZone)
+            {
+                return reval;
+            }
+
             // If it reaches here, then we either couldn't get the ZoneId information, or the ZoneId is invalid.
             // In this case, we try to determine the SecurityZone by analyzing the file path.
             Uri uri = new Uri(filePath);
@@ -231,7 +216,7 @@ namespace System.Management.Automation
                 // has 'dot' in it, the file will be treated as in Internet security zone. Otherwise, it's
                 // in Intranet security zone.
                 string hostName = uri.Host;
-                return hostName.Contains('.') ? SecurityZone.Intranet : SecurityZone.Internet;
+                return hostName.Contains('.') ? SecurityZone.Internet : SecurityZone.Intranet;
             }
 
             string root = Path.GetPathRoot(filePath);
@@ -260,7 +245,7 @@ namespace System.Management.Automation
             }
 
             // If we successfully get the zone data stream, try to read the ZoneId information
-            using (StreamReader zoneDataReader = new StreamReader(zoneDataStream, GetDefaultEncoding()))
+            using (StreamReader zoneDataReader = new StreamReader(zoneDataStream, Encoding.Default))
             {
                 string line = null;
                 bool zoneTransferMatched = false;
@@ -285,12 +270,18 @@ namespace System.Management.Automation
                     else
                     {
                         Match match = Regex.Match(line, @"^ZoneId\s*=\s*(.*)", RegexOptions.IgnoreCase);
-                        if (!match.Success) { continue; }
+                        if (!match.Success)
+                        {
+                            continue;
+                        }
 
                         // Match found. Validate ZoneId value.
                         string zoneIdRawValue = match.Groups[1].Value;
                         match = Regex.Match(zoneIdRawValue, @"^[+-]?\d+", RegexOptions.IgnoreCase);
-                        if (!match.Success) { return SecurityZone.NoZone; }
+                        if (!match.Success)
+                        {
+                            return SecurityZone.NoZone;
+                        }
 
                         string zoneId = match.Groups[0].Value;
                         SecurityZone result;
@@ -346,14 +337,14 @@ namespace System.Management.Automation
 
             string dmtfDateTime = date.Year.ToString(frmInt32).PadLeft(4, '0');
 
-            dmtfDateTime = (dmtfDateTime + date.Month.ToString(frmInt32).PadLeft(2, '0'));
-            dmtfDateTime = (dmtfDateTime + date.Day.ToString(frmInt32).PadLeft(2, '0'));
-            dmtfDateTime = (dmtfDateTime + date.Hour.ToString(frmInt32).PadLeft(2, '0'));
-            dmtfDateTime = (dmtfDateTime + date.Minute.ToString(frmInt32).PadLeft(2, '0'));
-            dmtfDateTime = (dmtfDateTime + date.Second.ToString(frmInt32).PadLeft(2, '0'));
-            dmtfDateTime = (dmtfDateTime + ".");
+            dmtfDateTime += date.Month.ToString(frmInt32).PadLeft(2, '0');
+            dmtfDateTime += date.Day.ToString(frmInt32).PadLeft(2, '0');
+            dmtfDateTime += date.Hour.ToString(frmInt32).PadLeft(2, '0');
+            dmtfDateTime += date.Minute.ToString(frmInt32).PadLeft(2, '0');
+            dmtfDateTime += date.Second.ToString(frmInt32).PadLeft(2, '0');
+            dmtfDateTime += ".";
 
-            // Construct a DateTime with with the precision to Second as same as the passed DateTime and so get
+            // Construct a DateTime with the precision to Second as same as the passed DateTime and so get
             // the ticks difference so that the microseconds can be calculated
             DateTime dtTemp = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, 0);
             Int64 microsec = ((date.Ticks - dtTemp.Ticks) * 1000) / TimeSpan.TicksPerMillisecond;
@@ -365,9 +356,9 @@ namespace System.Management.Automation
                 strMicrosec = strMicrosec.Substring(0, 6);
             }
 
-            dmtfDateTime = dmtfDateTime + strMicrosec.PadLeft(6, '0');
+            dmtfDateTime += strMicrosec.PadLeft(6, '0');
             // adding the UTC offset
-            dmtfDateTime = dmtfDateTime + UtcString;
+            dmtfDateTime += UtcString;
 
             return dmtfDateTime;
 #else
@@ -376,17 +367,5 @@ namespace System.Management.Automation
         }
 
         #endregion Misc
-
-        /// <summary>
-        /// Native methods that are used by facade methods.
-        /// </summary>
-        private static class NativeMethods
-        {
-            /// <summary>
-            /// Pinvoke for GetOEMCP to get the OEM code page.
-            /// </summary>
-            [DllImport(PinvokeDllNames.GetOEMCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
-            internal static extern uint GetOEMCP();
-        }
     }
 }

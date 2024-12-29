@@ -17,7 +17,7 @@ namespace System.Management.Automation
     public sealed class RunspacePoolStateInfo
     {
         /// <summary>
-        /// State of the runspace pool when this event occured.
+        /// State of the runspace pool when this event occurred.
         /// </summary>
         public RunspacePoolState State { get; }
 
