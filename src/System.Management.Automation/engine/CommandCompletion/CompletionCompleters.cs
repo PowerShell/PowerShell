@@ -4558,29 +4558,36 @@ namespace System.Management.Automation
                 .AddParameter("Path", basePath);
 
             string relativeBasePath;
-            var lastAst = context.RelatedAsts[^1];
-            if (lastAst.Parent is UsingStatementAst usingStatement
-                && usingStatement.UsingStatementKind is UsingStatementKind.Module or UsingStatementKind.Assembly
-                && lastAst.Extent.File is not null)
+            var useRelativePath = context.GetOption("RelativePaths", @default: defaultRelativePath);
+            if (useRelativePath)
             {
-                relativeBasePath = Directory.GetParent(lastAst.Extent.File).FullName;
-                _ = currentPS.AddParameter("RelativeBasePath", relativeBasePath);
+                if (providerSeparatorIndex != -1)
+                {
+                    // User must have requested relative paths but that's not valid with provider paths.
+                    return CommandCompletion.EmptyCompletionResult;
+                }
+
+                var lastAst = context.RelatedAsts[^1];
+                if (lastAst.Parent is UsingStatementAst usingStatement
+                    && usingStatement.UsingStatementKind is UsingStatementKind.Module or UsingStatementKind.Assembly
+                    && lastAst.Extent.File is not null)
+                {
+                    relativeBasePath = Directory.GetParent(lastAst.Extent.File).FullName;
+                    _ = currentPS.AddParameter("RelativeBasePath", relativeBasePath);
+                }
+                else
+                {
+                    relativeBasePath = context.ExecutionContext.SessionState.Internal.CurrentLocation.ProviderPath;
+                }
             }
             else
             {
-                relativeBasePath = context.ExecutionContext.SessionState.Internal.CurrentLocation.ProviderPath;
+                relativeBasePath = string.Empty;
             }
 
             var resolvedPaths = context.Helper.ExecuteCurrentPowerShell(out _);
             if (resolvedPaths is null || resolvedPaths.Count == 0)
             {
-                return CommandCompletion.EmptyCompletionResult;
-            }
-
-            var useRelativePath = context.GetOption("RelativePaths", @default: defaultRelativePath);
-            if (useRelativePath && providerSeparatorIndex != -1)
-            {
-                // User must have requested relative paths but that's not valid with provider paths.
                 return CommandCompletion.EmptyCompletionResult;
             }
 
